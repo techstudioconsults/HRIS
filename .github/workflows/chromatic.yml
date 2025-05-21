@@ -1,0 +1,39 @@
+name: "Chromatic"
+on: push
+
+jobs:
+  chromatic-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Required for Git history
+          path: '.'
+
+      # Setup PNPM
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 10
+
+      # Setup Node.js
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: |
+          ls -la # Debug: list files to verify pnpm-lock.yaml exists
+          pnpm install --frozen-lockfile
+
+      # Build Storybook
+      - name: Build Storybook
+        run: pnpm build-storybook
+
+      # Publish to Chromatic
+      - name: Publish to Chromatic
+        uses: chromaui/action@v1
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          buildScriptName: build-storybook
+          exitOnceUploaded: true

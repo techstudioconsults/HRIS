@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
+import { LucideLoader, LucidePlus } from "lucide-react";
 import Link from "next/link";
 import { cloneElement, forwardRef, MouseEventHandler, ReactElement, ReactNode } from "react";
-import { LuLoader, LuPlus } from "react-icons/lu";
 
 type Variant =
   | "default"
@@ -81,13 +81,13 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
         } as React.HTMLAttributes<HTMLElement>,
       )
     ) : (
-      <LuPlus className="h-[1rem] w-[1rem]" data-testid="icon" />
+      <LucidePlus className="h-[1rem] w-[1rem]" data-testid="icon" />
     );
 
     const buttonContent = (
       <>
         {isLeftIconVisible && !isLoading && modifiedIcon}
-        {isLoading && <LuLoader className="h-[1rem] w-[1rem] animate-spin" data-testid="loading-spinner" />}
+        {isLoading && <LucideLoader className="h-[1rem] w-[1rem] animate-spin" data-testid="loading-spinner" />}
         {isIconOnly && !isLoading && modifiedIcon}
         {!isIconOnly && children}
         {!isIconOnly && !children && isLoading && "Loading"}

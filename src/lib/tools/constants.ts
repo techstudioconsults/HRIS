@@ -1,223 +1,3 @@
-"use client";
-
-export const statusOptions = [
-  { label: "All Products", value: "all" },
-  { label: "Published", value: "published" },
-  { label: "Draft", value: "draft" },
-];
-
-export const customersData = {
-  data: [
-    {
-      id: "9ad4f0b6-aa97-49aa-9a68-f11e701e474c",
-
-      name: "Kingsley Solomon Free",
-      email: "kinxly@testemail.com",
-      free_products: 5,
-      sale_products: 5,
-      total_order: 1,
-      total_transactions: "17085",
-      latest_purchase_title: "Porro cum aut.",
-      latest_purchase_price: 5695,
-      latest_purchase_date: "2023-12-12T15:07:02.000000Z",
-      joined: "2023-12-12T15:07:02.000000Z",
-      latest_purchases: [
-        {
-          id: "9ad4f0b6-ac34-4445-a5e8-d4dbc882d5ac",
-          product_title: "Porro cum aut.",
-          product_price: 5695,
-          product_thumbnail:
-            "https://productize.nyc3.cdn.digitaloceanspaces.com/products-thumbnail/3d_collection_showcase-20210110-0001.jpg",
-          quantity: 3,
-          total_amount: 17_085,
-          customer_name: "Kingsley Solomon Free",
-          customer_email: "kinxly@testemail.com",
-          total_order: 1,
-          total_sales: 17_085,
-          total_views: 1,
-          date: "2023-12-12T15:07:02.000000Z",
-        },
-        {
-          id: "9ad4f0b6-ac34-4445-a5e8-d4dbc882d5ac",
-          product_title: "Porro cum aut.",
-          product_price: 5695,
-          product_thumbnail:
-            "https://productize.nyc3.cdn.digitaloceanspaces.com/products-thumbnail/3d_collection_showcase-20210110-0001.jpg",
-          quantity: 3,
-          total_amount: 17_085,
-          customer_name: "Kingsley Solomon Free",
-          customer_email: "kinxly@testemail.com",
-          total_order: 1,
-          total_sales: 17_085,
-          total_views: 1,
-          date: "2023-12-12T15:07:02.000000Z",
-        },
-        {
-          id: "9ad4f0b6-ac34-4445-a5e8-d4dbc882d5ac",
-          product_title: "Porro cum aut.",
-          product_price: 5695,
-          product_thumbnail:
-            "https://productize.nyc3.cdn.digitaloceanspaces.com/products-thumbnail/3d_collection_showcase-20210110-0001.jpg",
-          quantity: 3,
-          total_amount: 17_085,
-          customer_name: "Kingsley Solomon Free",
-          customer_email: "kinxly@testemail.com",
-          total_order: 1,
-          total_sales: 17_085,
-          total_views: 1,
-          date: "2023-12-12T15:07:02.000000Z",
-        },
-      ],
-    },
-    {
-      id: "9ad4f0b6-aa97-49aa-9a68-f11e701e474c",
-      name: "Kingsley Solomon Free",
-      email: "kinxly@testemail.com",
-      free_products: 5,
-      sale_products: 5,
-      total_order: 1,
-      total_transactions: "17085",
-      latest_purchase_title: "Porro cum aut.",
-      latest_purchase_price: 5695,
-      latest_purchase_date: "2023-12-12T15:07:02.000000Z",
-      joined: "2023-12-12T15:07:02.000000Z",
-      latest_purchases: [
-        {
-          id: "9ad4f0b6-ac34-4445-a5e8-d4dbc882d5ac",
-          product_title: "Porro cum aut.",
-          product_price: 5695,
-          product_thumbnail:
-            "https://productize.nyc3.cdn.digitaloceanspaces.com/products-thumbnail/3d_collection_showcase-20210110-0001.jpg",
-          quantity: 3,
-          total_amount: 17_085,
-          customer_name: "Kingsley Solomon Free",
-          customer_email: "kinxly@testemail.com",
-          total_order: 1,
-          total_sales: 17_085,
-          total_views: 1,
-          date: "2023-12-12T15:07:02.000000Z",
-        },
-      ],
-    },
-    {
-      id: "9ad4f0b6-aa97-49aa-9a68-f11e701e474c",
-      name: "Kingsley Solomon Free",
-      email: "kinxly@testemail.com",
-      free_products: 5,
-      sale_products: 5,
-      total_order: 1,
-      total_transactions: "17085",
-      latest_purchase_title: "Porro cum aut.",
-      latest_purchase_price: 5695,
-      latest_purchase_date: "2023-12-12T15:07:02.000000Z",
-      joined: "2023-12-12T15:07:02.000000Z",
-      latest_purchases: [
-        {
-          id: "9ad4f0b6-ac34-4445-a5e8-d4dbc882d5ac",
-          product_title: "Porro cum aut.",
-          product_price: 5695,
-          product_thumbnail:
-            "https://productize.nyc3.cdn.digitaloceanspaces.com/products-thumbnail/3d_collection_showcase-20210110-0001.jpg",
-          quantity: 3,
-          total_amount: 17_085,
-          customer_name: "Kingsley Solomon Free",
-          customer_email: "kinxly@testemail.com",
-          total_order: 1,
-          total_sales: 17_085,
-          total_views: 1,
-          date: "2023-12-12T15:07:02.000000Z",
-        },
-      ],
-    },
-    {
-      id: "9ad4f0b6-aa97-49aa-9a68-f11e701e474c",
-      name: "Kingsley Solomon Free",
-      email: "kinxly@testemail.com",
-      free_products: 5,
-      sale_products: 5,
-      total_order: 1,
-      total_transactions: "17085",
-      latest_purchase_title: "Porro cum aut.",
-      latest_purchase_price: 5695,
-      latest_purchase_date: "2023-12-12T15:07:02.000000Z",
-      joined: "2023-12-12T15:07:02.000000Z",
-      latest_purchases: [
-        {
-          id: "9ad4f0b6-ac34-4445-a5e8-d4dbc882d5ac",
-          product_title: "Porro cum aut.",
-          product_price: 5695,
-          product_thumbnail:
-            "https://productize.nyc3.cdn.digitaloceanspaces.com/products-thumbnail/3d_collection_showcase-20210110-0001.jpg",
-          quantity: 3,
-          total_amount: 17_085,
-          customer_name: "Kingsley Solomon Free",
-          customer_email: "kinxly@testemail.com",
-          total_order: 1,
-          total_sales: 17_085,
-          total_views: 1,
-          date: "2023-12-12T15:07:02.000000Z",
-        },
-      ],
-    },
-    {
-      id: "9ad4f0b6-aa97-49aa-9a68-f11e701e474c",
-      name: "Kingsley Solomon Free",
-      email: "kinxly@testemail.com",
-      free_products: 5,
-      sale_products: 5,
-      total_order: 1,
-      total_transactions: "17085",
-      latest_purchase_title: "Porro cum aut.",
-      latest_purchase_price: 5695,
-      latest_purchase_date: "2023-12-12T15:07:02.000000Z",
-      joined: "2023-12-12T15:07:02.000000Z",
-      latest_purchases: [
-        {
-          id: "9ad4f0b6-ac34-4445-a5e8-d4dbc882d5ac",
-          product_title: "Porro cum aut.",
-          product_price: 5695,
-          product_thumbnail:
-            "https://productize.nyc3.cdn.digitaloceanspaces.com/products-thumbnail/3d_collection_showcase-20210110-0001.jpg",
-          quantity: 3,
-          total_amount: 17_085,
-          customer_name: "Kingsley Solomon Free",
-          customer_email: "kinxly@testemail.com",
-          total_order: 1,
-          total_sales: 17_085,
-          total_views: 1,
-          date: "2023-12-12T15:07:02.000000Z",
-        },
-      ],
-    },
-  ],
-  meta: {
-    current_page: 1,
-    from: 1,
-    last_page: 1,
-    links: [
-      {
-        url: null,
-        label: "&laquo; Previous",
-        active: false,
-      },
-      {
-        url: "http://localhost:8000/api/customers?page=1",
-        label: "1",
-        active: true,
-      },
-      {
-        url: null,
-        label: "Next &raquo;",
-        active: false,
-      },
-    ],
-    path: "http://localhost:8000/api/customers",
-    per_page: 10,
-    to: 1,
-    total: 1,
-  },
-};
-
 export const countries = [
   { value: "afghanistan", label: "🇦🇫 Afghanistan" },
   { value: "albania", label: "🇦🇱 Albania" },
@@ -413,17 +193,6 @@ export const countries = [
   { value: "zimbabwe", label: "🇿🇼 Zimbabwe" },
 ];
 
-export const documentType = [
-  {
-    value: `National Id Card`,
-    label: `National ID Card`,
-  },
-  {
-    value: `National Passport`,
-    label: `National Passport`,
-  },
-];
-
 export const months = [
   { value: "1", label: "January" },
   { value: "2", label: "February" },
@@ -439,14 +208,43 @@ export const months = [
   { value: "12", label: "December" },
 ];
 
-export const externalNavlinks = [
+export const NAV_LINKS: NavLink[] = [
+  {
+    id: 1,
+    title: "Hello",
+    href: "/",
+    type: "link",
+  },
+  { id: 2, title: "About Me", href: "/about", type: "link" },
+  { id: 3, title: "Projects", href: "/projects", type: "link" },
+];
+
+export const testimonials = [
+  {
+    id: 1,
+    image: "/images/auth/register-img.svg",
+    name: "John Doe",
+    position: "Designer",
+    message:
+      "“TechstudioHR has completely transformed how we manage payroll and employee records. What used to take hours now happens in minutes.”",
+    rating: 5,
+  },
+  {
+    id: 2,
+    image: "/images/auth/login-img.svg",
+    name: "Jane Doe",
+    position: "Developer",
+    message:
+      "“TechstudioHR has completely transformed how we manage payroll and employee records. What used to take hours now happens in minutes.”",
+    rating: 2,
+  },
   {
     id: 3,
-    name: "Explore",
-    path: "/explore",
-    type: "dropdown",
-    subLinks: [{ id: 1, name: "All", path: "/explore?category=all", type: "link" }],
+    image: "/images/auth/register-img.svg",
+    name: "James Doe",
+    position: "Customer Service",
+    message:
+      "“TechstudioHR has completely transformed how we manage payroll and employee records. What used to take hours now happens in minutes.”",
+    rating: 4,
   },
-  { id: 5, name: "Features", path: "/features", type: "link" },
-  { id: 4, name: "Pricing", path: "/pricing", type: "link" },
 ];

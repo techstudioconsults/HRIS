@@ -1,9 +1,9 @@
 export const Register = () => {
   return (
     <div>
-      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nulla nesciunt, velit veritatis qui dicta ipsum,
-      similique, officia quos quidem possimus minima. Laboriosam similique atque impedit blanditiis ex, minus
-      perspiciatis repellat?
+      mpedit, officia debitis quas eius incidunt, rem alias corrupti non. Porro assumenda, cumque veniam, in
+      reprehenderit modi quidem minima debitis inventore nobis tempora earum, vitae nihil labore architecto ex placeat
+      enim? Veniam rem unde rerum?
     </div>
   );
 };

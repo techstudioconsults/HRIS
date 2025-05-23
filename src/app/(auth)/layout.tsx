@@ -2,10 +2,12 @@ import { AuthCarousel } from "@/modules/@org/auth";
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <main className={`max-w-screen overflow-x-hidden`}>
-      <section className="grid min-h-[100dvh] grid-cols-1 justify-center md:-mx-4 md:grid-cols-[50%_50%] lg:mx-0">
-        <section>{children}</section>
-        <div className="relative order-1 overflow-hidden">
+    <main className="min-h-screen">
+      <section className="grid min-h-[100dvh] grid-cols-1 md:grid-cols-2">
+        {/* Content Section (Left on desktop, top on mobile) */}
+        <div className="max-h-[100dvh] overflow-y-auto p-4">{children}</div>
+        {/* Carousel Section (Right on desktop, hidden on mobile) */}
+        <div className="hidden max-h-[100dvh] md:block">
           <AuthCarousel />
         </div>
       </section>

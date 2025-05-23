@@ -8,10 +8,10 @@ import Image from "next/image";
 export const AuthCarousel = () => {
   return (
     <UniversalSwiper
-      className="h-fit w-full overflow-hidden lg:min-h-[100dvh]"
+      className="overflow-hidden"
       items={testimonials}
       renderItem={(testimonial: AuthCarouselProperties) => (
-        <section className="relative flex items-end justify-center p-9 lg:min-h-[100dvh]">
+        <section className="relative flex h-[100dvh] items-end justify-center p-9">
           <Image
             src={testimonial.image}
             alt={testimonial.name}

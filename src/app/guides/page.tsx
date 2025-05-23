@@ -1,8 +1,8 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
+import { LucideOrbit, LucidePlus } from "lucide-react";
 import { FC } from "react";
-import { LuOrbit, LuPlus } from "react-icons/lu";
 
 const StyleGuide: FC = () => {
   return (
@@ -29,69 +29,120 @@ const StyleGuide: FC = () => {
         </div>
       </div>
       <h2 className="text-2xl font-semibold">HRIS Design system</h2>
-      <div className="grid w-full grid-cols-3 items-start gap-4">
+      <div className="grid w-full grid-cols-7 items-start gap-4">
+        {/* primary */}
         <div className="bg-primary-500 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
           bg-primary-500
         </div>
         <div className="bg-primary-400 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
           bg-primary-400
         </div>
-        <div className="bg-low-blue flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-black">
-          bg-low-blue
+        <div className="bg-primary flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-primary
         </div>
-        <div className="bg-high-danger flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
-          bg-high-danger
+        <div className="bg-primary-200 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-primary-200
         </div>
-        <div className="bg-mid-danger flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
-          bg-mid-danger
+        <div className="bg-primary-100 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-primary-100
         </div>
-        <div className="bg-low-danger flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-black">
-          bg-low-danger
+        <div className="bg-primary-75 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-primary-75
         </div>
-        <div className="bg-high-warning flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
-          bg-high-warning
+        <div className="bg-primary-50 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-primary-50
         </div>
-        <div className="bg-mid-warning flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
-          bg-mid-warning
+        {/* secondary/warning  */}
+        <div className="bg-secondary-500 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-secondary-500
         </div>
-        <div className="bg-low-warning flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-black">
-          bg-low-warning
+        <div className="bg-secondary-400 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-secondary-400
         </div>
-        <div className="bg-high-success flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
-          bg-high-success
+        <div className="bg-secondary flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-secondary
         </div>
-        <div className="bg-mid-success flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
-          bg-mid-success
+        <div className="bg-secondary-200 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-secondary-200
         </div>
-        <div className="bg-low-success flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-black">
-          bg-low-success
+        <div className="bg-secondary-100 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-secondary-100
         </div>
-        <div className="bg-high-grey-III flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
-          bg-high-grey-III
+        <div className="bg-secondary-75 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-secondary-75
         </div>
-        <div className="bg-mid-grey-III flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
-          bg-mid-grey-III
+        <div className="bg-secondary-50 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-secondary-50
         </div>
-        <div className="bg-low-grey-III flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
-          bg-low-grey-III
+
+        {/* succes  */}
+
+        <div className="bg-success-500 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-success-500
         </div>
-        <div className="bg-high-grey-II flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
-          bg-high-grey-II
+        <div className="bg-success-400 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-success-400
         </div>
-        <div className="bg-mid-grey-II flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
-          bg-mid-grey-II
+        <div className="bg-success flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-success
         </div>
-        <div className="bg-low-grey-II flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
-          bg-low-grey-II
+        <div className="bg-success-200 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-success-200
         </div>
-        <div className="bg-high-grey-I flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-black">
-          bg-high-grey-I
+        <div className="bg-success-100 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-success-100
         </div>
-        <div className="bg-mid-grey-I flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-black">
-          bg-mid-grey-I
+        <div className="bg-success-75 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-success-75
         </div>
-        <div className="bg-low-grey-I flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-black">
-          bg-low-grey-I
+        <div className="bg-success-50 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-success-50
+        </div>
+
+        {/* danger */}
+        <div className="bg-danger-500 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-danger-500
+        </div>
+        <div className="bg-danger-400 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-danger-400
+        </div>
+        <div className="bg-danger flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-danger
+        </div>
+        <div className="bg-danger-200 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-danger-200
+        </div>
+        <div className="bg-danger-100 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-danger-100
+        </div>
+        <div className="bg-danger-75 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-danger-75
+        </div>
+        <div className="bg-danger-50 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-danger-50
+        </div>
+
+        {/* gray */}
+        <div className="flex w-full items-center justify-center rounded-lg bg-gray-500 px-4 py-4 whitespace-nowrap text-white">
+          bg-gray-500
+        </div>
+        <div className="flex w-full items-center justify-center rounded-lg bg-gray-400 px-4 py-4 whitespace-nowrap text-white">
+          bg-gray-400
+        </div>
+        <div className="bg-gray flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-gray
+        </div>
+        <div className="flex w-full items-center justify-center rounded-lg bg-gray-200 px-4 py-4 whitespace-nowrap text-white">
+          bg-gray-200
+        </div>
+        <div className="flex w-full items-center justify-center rounded-lg bg-gray-100 px-4 py-4 whitespace-nowrap text-white">
+          bg-gray-100
+        </div>
+        <div className="bg-gray-75 flex w-full items-center justify-center rounded-lg px-4 py-4 whitespace-nowrap text-white">
+          bg-gray-75
+        </div>
+        <div className="flex w-full items-center justify-center rounded-lg bg-gray-50 px-4 py-4 whitespace-nowrap text-white">
+          bg-gray-50
         </div>
       </div>
       <h2 className="text-2xl font-semibold">Button Variants</h2>
@@ -126,7 +177,7 @@ const StyleGuide: FC = () => {
         <div className="group flex h-full flex-col items-start justify-between rounded-lg border px-5 py-5">
           <h2 className="mb-3 text-2xl font-semibold">With Icon Default Button</h2>
           <div className="flex items-center gap-4">
-            <MainButton isLeftIconVisible={true} icon={<LuOrbit />}>
+            <MainButton isLeftIconVisible={true} icon={<LucideOrbit />}>
               Button CTA
             </MainButton>
           </div>
@@ -134,7 +185,7 @@ const StyleGuide: FC = () => {
         <div className="group flex h-full flex-col items-start justify-between rounded-lg border px-5 py-5">
           <h2 className="mb-3 text-2xl font-semibold">With Icon Primary Button</h2>
           <div className="flex items-center gap-4">
-            <MainButton variant="primary" isLeftIconVisible={true} icon={<LuOrbit />}>
+            <MainButton variant="primary" isLeftIconVisible={true} icon={<LucideOrbit />}>
               Button CTA
             </MainButton>
           </div>
@@ -154,7 +205,7 @@ const StyleGuide: FC = () => {
         <div className="group flex h-full flex-col items-start justify-between rounded-lg border px-5 py-5">
           <h2 className="mb-3 text-2xl font-semibold">Link With Left Icon Button</h2>
           <div className="flex items-center gap-4">
-            <MainButton variant="link" size="link" isLeftIconVisible={true} icon={<LuOrbit />}>
+            <MainButton variant="link" size="link" isLeftIconVisible={true} icon={<LucideOrbit />}>
               Button CTA
             </MainButton>
           </div>
@@ -162,7 +213,7 @@ const StyleGuide: FC = () => {
         <div className="group flex h-full flex-col items-start justify-between rounded-lg border px-5 py-5">
           <h2 className="mb-3 text-2xl font-semibold">Link With Right Icon Button</h2>
           <div className="flex items-center gap-4">
-            <MainButton variant="link" size="link" isRightIconVisible={true} icon={<LuOrbit />}>
+            <MainButton variant="link" size="link" isRightIconVisible={true} icon={<LucideOrbit />}>
               Button CTA
             </MainButton>
           </div>
@@ -178,220 +229,16 @@ const StyleGuide: FC = () => {
         <div className="group flex h-full flex-col items-start justify-between rounded-lg border px-5 py-5">
           <h2 className="mb-3 text-2xl font-semibold">Icon Only Button</h2>
           <div className="flex items-center gap-4">
-            <MainButton variant="outline" size="icon" isIconOnly={true} icon={<LuPlus />} />
+            <MainButton variant="outline" size="icon" isIconOnly={true} icon={<LucidePlus />} />
           </div>
         </div>
         <div className="group flex h-full flex-col items-start justify-between rounded-lg border px-5 py-5">
           <h2 className="mb-3 text-2xl font-semibold">Icon Only Circle Button</h2>
           <div className="flex items-center gap-4">
-            <MainButton variant="outline" size="circle" isIconOnly={true} icon={<LuPlus />} />
+            <MainButton variant="outline" size="circle" isIconOnly={true} icon={<LucidePlus />} />
           </div>
         </div>
       </div>
-      <h2 className="text-2xl font-semibold">Usage</h2>
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <span>Import the custom button component</span>
-          <div className="rounded-lg bg-zinc-950 p-4">
-            <span className="block font-mono text-sm text-white">
-              import <span className="text-blue-400">MainButton</span> from{" "}
-              <span className="text-yellow-400">&quot;~/components/common/Button/button&quot;</span>;
-            </span>
-          </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <span>Variant Types</span>
-          <div className="rounded-lg bg-zinc-950 p-4">
-            <span className="block font-mono text-sm text-gray-100">
-              <span className="text-pink-400">type Variant</span> {"{"}
-            </span>
-            <span className="ml-4 block font-mono text-sm text-gray-100">
-              default <br />
-              primary <br />
-              destructive <br />
-              subtle <br />
-              loading <br />
-              outline <br />
-              link
-            </span>
-            <span className="block font-mono text-sm text-gray-100">{"}"}</span>
-          </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <span>Size Types</span>
-          <div className="rounded-lg bg-zinc-950 p-4">
-            <span className="block font-mono text-sm text-gray-100">
-              <span className="text-pink-400">type Size</span> {"{"}
-            </span>
-            <span className="ml-4 block font-mono text-sm text-gray-100">
-              default <br />
-              sm <br />
-              lg <br />
-              link <br />
-              icon <br />
-              circle
-            </span>
-            <span className="block font-mono text-sm text-gray-100">{"}"}</span>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <span>Accepted Custom Button Props</span>
-          <div className="rounded-lg bg-zinc-950 p-4">
-            <span className="block font-mono text-sm text-gray-100">
-              <span className="text-pink-400">ButtonProps</span> {"{"}
-            </span>
-            <span className="ml-4 block font-mono text-sm text-gray-100">
-              variant<span className="text-pink-400">?: </span>Variant;
-              <br />
-              size<span className="text-pink-400">?: </span>Size;
-              <br />
-              icon<span className="text-pink-400">?: </span>React.ReactNode;
-              <br />
-              children<span className="text-pink-400">?: </span>
-              React.ReactNode;
-              <br />
-              isLoading<span className="text-pink-400">?: </span>boolean;
-              <br />
-              isIconOnly<span className="text-pink-400">?: </span>boolean;
-              <br />
-              isLeftIconVisible<span className="text-pink-400">?: </span>
-              boolean;
-              <br />
-              isRightIconVisible<span className="text-pink-400">?: </span>
-              boolean;
-              <br />
-              isDisabled<span className="text-pink-400">?: </span>boolean;
-              <br />
-              ariaLabel<span className="text-pink-400">?: </span>string;
-            </span>
-            <span className="block font-mono text-sm text-gray-100">{"}"}</span>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <span>Example</span>
-          <div className="rounded-lg bg-zinc-950 p-4">
-            <span className="block font-mono text-sm text-gray-100">return (</span>
-            <span className="ml-4 block font-mono text-sm text-gray-100">
-              <span className="text-green-400">{"<"}</span>
-              <span className="text-blue-400">MainButton</span>
-              <br />
-              <span className="ml-4">
-                variant=
-                <span className="text-yellow-400">&quot;subtle&quot;</span> <br />
-              </span>
-              <span className="ml-4">
-                icon=<span className="text-yellow-400">{"{<Plus />}"}</span> <br />
-              </span>
-              <span className="ml-4">
-                isLeftIconVisible=
-                <span className="text-yellow-400">{"{true}"}</span> <br />
-              </span>
-              <span className="ml-4">
-                isLoading={<span className="text-yellow-400">false</span>} <br />
-              </span>
-              <span className="ml-4">
-                isDisabled={<span className="text-yellow-400">false</span>} <br />
-              </span>
-              <span className="text-green-400">{">"}</span> <br />
-              <span className="ml-4">Click Me</span> <br />
-              <span className="text-green-400">{"<"}</span>/<span className="text-blue-400">MainButton</span>
-              <span className="text-green-400">{">"}</span>
-            </span>
-            <span className="block font-mono text-sm text-gray-100">);</span>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <span>Example</span>
-          <div className="rounded-lg bg-zinc-950 p-4">
-            <span className="block font-mono text-sm text-gray-100">return (</span>
-            <span className="ml-4 block font-mono text-sm text-gray-100">
-              <span className="text-green-400">{"<"}</span>
-              <span className="text-blue-400">DataCard</span>
-              <br />
-              <span className="ml-4">
-                price=
-                <span className="text-yellow-400">{"{500}"}</span> <br />
-              </span>
-              <span className="ml-4">
-                initialPrice=
-                <span className="text-yellow-400">{"{1500}"}</span> <br />
-              </span>
-              <span className="ml-4">
-                plan=
-                {<span className="text-yellow-400">{"{2-Days Plan}"}</span>} <br />
-              </span>
-              <span className="ml-4">
-                packages=
-                {<span className="text-yellow-400">{"{packages}"}</span>} <br />
-              </span>
-              <span className="text-green-400">{"/>"}</span> <br />
-            </span>
-            <span className="block font-mono text-sm text-gray-100">);</span>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <span>Example</span>
-          <div className="rounded-lg bg-zinc-950 p-4">
-            <span className="block font-mono text-sm text-gray-100">return (</span>
-            <span className="ml-4 block font-mono text-sm text-gray-100">
-              <span className="text-green-400">{"<"}</span>
-              <span className="text-blue-400">JobCard</span>
-              <br />
-              <span className="ml-4">
-                position=
-                <span className="text-yellow-400">{"{position name}"}</span> <br />
-              </span>
-              <span className="ml-4">
-                Description=
-                <span className="text-yellow-400">{"{Job description}"}</span> <br />
-              </span>
-              <span className="ml-4">
-                jobDescription=
-                {<span className="text-yellow-400">{"{jobDescriptions}"}</span>} <br />
-              </span>
-              <span className="text-green-400">{"/>"}</span> <br />
-            </span>
-            <span className="block font-mono text-sm text-gray-100">);</span>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <span>Example</span>
-          <div className="rounded-lg bg-zinc-950 p-4">
-            <span className="block font-mono text-sm text-gray-100">return (</span>
-            <span className="ml-4 block font-mono text-sm text-gray-100">
-              <span className="text-green-400">{"<"}</span>
-              <span className="text-blue-400">ArticlesCard</span>
-              <br />
-              <span className="ml-4">
-                articleImage=
-                <span className="text-yellow-400">{"{articleImage}"}</span> <br />
-              </span>
-              <span className="ml-4">
-                heading=
-                <span className="text-yellow-400">{"{heading}"}</span> <br />
-              </span>
-              <span className="ml-4">
-                dateSent
-                {<span className="text-yellow-400">{"{dateSent}"}</span>} <br />
-              </span>
-              <span className="ml-4">
-                subHeading
-                {<span className="text-yellow-400">{"{subHeading}"}</span>} <br />
-              </span>
-              <span className="text-green-400">{"/>"}</span> <br />
-            </span>
-            <span className="block font-mono text-sm text-gray-100">);</span>
-          </div>
-        </div>
-      </div>
-      <section>
-        <h1 className="text-4xl">Components</h1>
-      </section>
     </main>
   );
 };

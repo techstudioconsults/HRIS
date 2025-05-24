@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import MainButton from "@/components/shared/button";
 import { Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import * as React from "react";
@@ -13,9 +13,13 @@ export function ModeToggle() {
   }, [resolvedTheme, setTheme]);
 
   return (
-    <Button variant="secondary" size="icon" className="group/toggle size-8" onClick={toggleTheme}>
-      <Sun />
-      <span className="sr-only">Toggle theme</span>
-    </Button>
+    <MainButton
+      variant="secondary"
+      isIconOnly
+      icon={<Sun />}
+      size="icon"
+      className="group/toggle fixed top-0 right-0 size-8"
+      onClick={toggleTheme}
+    />
   );
 }

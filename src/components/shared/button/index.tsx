@@ -14,7 +14,7 @@ type Variant =
   | "ghost"
   | "link"
   | "accent";
-type Size = "default" | "sm" | "lg" | "xl" | "link" | "icon" | "circle";
+type Size = "default" | "sm" | "lg" | "xl" | "2xl" | "link" | "icon" | "circle";
 
 interface ButtonProperties {
   type?: "submit" | "button" | "reset";
@@ -95,7 +95,7 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
       </>
     );
 
-    const buttonClasses = `transition-all duration-300 ease-in-out shadown-none ${
+    const buttonClasses = `transition-all duration-300 ease-in-out rounded-lg shadown-none ${
       isDisabled ? "opacity-50 cursor-not-allowed" : "hover:shadow-sneob dark:hover:shadow-sneobw focus:shadow-none"
     } ${className}`;
 

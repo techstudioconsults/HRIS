@@ -9,6 +9,7 @@ import "../styles/theme.css";
 import "../styles/global.css";
 
 import ThemeProvider from "@/components/core/layout/ThemeToggle/theme-provider";
+import { ModeToggle } from "@/components/core/layout/ThemeToggle/theme-toggle";
 // import { ModeToggle } from "@/components/core/layout/ThemeToggle/theme-toggle";
 import { Toast } from "@/components/shared/Toast";
 import { AppProvider } from "@/context/app-provider";
@@ -62,14 +63,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <ReactQueryProvider>
               <ThemeProvider
                 attribute="class"
-                // defaultTheme="system"
-                // enableSystem
-                // disableTransitionOnChange
-                // enableColorScheme
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+                enableColorScheme
               >
                 <Toast />
                 {children}
-                {/* <ModeToggle /> */}
+                <ModeToggle />
               </ThemeProvider>
             </ReactQueryProvider>
           </NuqsAdapter>

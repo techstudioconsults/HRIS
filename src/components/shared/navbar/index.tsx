@@ -1,7 +1,7 @@
 "use client";
 
 import { ModeToggle } from "@/components/core/layout/ThemeToggle/theme-toggle";
-import { NAV_LINKS } from "@/lib/constants";
+import { NAV_LINKS } from "@/lib/tools/constants";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";

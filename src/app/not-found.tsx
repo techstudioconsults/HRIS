@@ -1,10 +1,9 @@
 "use client";
 
+import { Home, LucideArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LuArrowLeft } from "react-icons/lu";
-import { MdOutlineHome } from "react-icons/md";
 
 const NotFoundPage = () => {
   const router = useRouter();
@@ -22,7 +21,7 @@ const NotFoundPage = () => {
             onClick={() => router.back()}
             className="hover:text-accent-color pointer-events-auto flex items-center gap-x-2 rounded-xl border border-gray-200 bg-white px-4 py-2 transition-colors duration-300"
           >
-            <LuArrowLeft className="size-5 xl:size-6" />
+            <LucideArrowLeft className="size-5 xl:size-6" />
             Back
           </button>
           <Link
@@ -30,7 +29,7 @@ const NotFoundPage = () => {
             prefetch
             className="hover:text-accent-color pointer-events-auto flex items-center gap-x-2 rounded-xl border border-gray-200 bg-white px-4 py-2 transition-colors duration-300"
           >
-            <MdOutlineHome className="size-5 xl:size-6" />
+            <Home className="size-5 xl:size-6" />
             Home
           </Link>
         </div>

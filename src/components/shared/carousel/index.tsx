@@ -9,15 +9,16 @@ import type { Swiper as SwiperType } from "swiper/types";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/pagination";
-// import "swiper/css/navigation";
+import "swiper/css/navigation";
 import "swiper/css/scrollbar";
 import "swiper/css/free-mode";
 import "swiper/css/thumbs";
 
+// import { Icons } from "@/components/core/miscellaneous/icons";
 import { cn } from "@/lib/utils";
 import { ChevronLeftCircle, ChevronRightCircle } from "lucide-react";
 
-import SkiButton from "../button";
+import MainButton from "../button";
 
 export const UniversalSwiper = ({
   items,
@@ -26,8 +27,8 @@ export const UniversalSwiper = ({
   showNavigation = false,
   showPagination = false,
   showScrollbar = false,
-  // navigationSize = 24,
-  // navigationOffset = 0,
+  navigationSize = 24,
+  navigationOffset = 0,
   className,
   swiperClassName,
   slideClassName,
@@ -94,8 +95,7 @@ export const UniversalSwiper = ({
             {renderItem(item, index)}
           </SwiperSlide>
         ))}
-        {/* <div className={`py-5`}></div> */}
-        {/* {showNavigation && swiperInstance && <CustomNavigation iconSize={navigationSize} offset={navigationOffset} />} */}
+        {showNavigation && <CustomNavigation iconSize={navigationSize} offset={navigationOffset} />}
       </Swiper>
     </div>
   );
@@ -127,8 +127,8 @@ export const CustomNavigation = ({ iconSize = 24, className }: CustomNavigationP
   }, [swiper]);
 
   return (
-    <div className={cn("absolute inset-0 flex items-center justify-between p-2", className)}>
-      <SkiButton
+    <div className={cn("absolute inset-0 right-10 bottom-10 flex items-end justify-end gap-4", className)}>
+      <MainButton
         onClick={(event) => {
           event.stopPropagation();
           swiper.slidePrev();
@@ -136,15 +136,15 @@ export const CustomNavigation = ({ iconSize = 24, className }: CustomNavigationP
         isDisabled={isBeginning}
         isIconOnly
         icon={<ChevronLeftCircle size={iconSize} />}
-        variant="ghost"
+        variant="outline"
         size="circle"
         aria-label="Previous slide"
         className={cn(
-          "hover:bg-primary z-10 bg-black/50 text-white hover:text-white",
-          isBeginning ? "hidden" : "block",
+          "hover:bg-primary z-10 size-10 bg-black/50 text-white hover:text-white",
+          // isBeginning ? "hidden" : "block",
         )}
       />
-      <SkiButton
+      <MainButton
         onClick={(event) => {
           event.stopPropagation();
           swiper.slideNext();
@@ -152,10 +152,13 @@ export const CustomNavigation = ({ iconSize = 24, className }: CustomNavigationP
         isDisabled={isEnd}
         isIconOnly
         icon={<ChevronRightCircle size={iconSize} />}
-        variant="ghost"
+        variant="outline"
         size="circle"
         aria-label="Next slide"
-        className={cn("hover:bg-primary z-10 bg-black/50 text-white hover:text-white", isEnd ? "hidden" : "block")}
+        className={cn(
+          "hover:bg-primary z-10 bg-black/50 text-white hover:text-white",
+          // isEnd ? "hidden" : "block"
+        )}
       />
     </div>
   );

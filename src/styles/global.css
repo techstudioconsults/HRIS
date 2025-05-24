@@ -51,6 +51,15 @@
   --color-warning-400: var(--warning-400);
   --color-warning-500: var(--warning-500);
 
+  /* grays */
+  --color-gray: var(--gray);
+  --color-gray-50: var(--gray-50);
+  --color-gray-75: var(--gray-75);
+  --color-gray-100: var(--gray-100);
+  --color-gray-200: var(--gray-200);
+  --color-gray-400: var(--gray-400);
+  --color-gray-500: var(--gray-500);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -173,7 +182,7 @@
   /* Border */
   --border: oklch(0.88 0 0);
   --input: oklch(0.96 0 0);
-  --ring: oklch(0.55 0.1 260);
+  --ring: oklch(50.5% 0.235 257.6);
 
   /* Radius (same as dark) */
   --radius: 0.5rem;

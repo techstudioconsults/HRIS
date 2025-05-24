@@ -11,7 +11,7 @@ type LogoProperties = {
   className?: string;
 };
 
-export const Logo: FC<LogoProperties> = ({ logo = "/images/skicom.svg", width = 89, height = 60, className }) => {
+export const Logo: FC<LogoProperties> = ({ logo = "/images/logo.svg", width = 89, height = 60, className }) => {
   return (
     <Link href="/" data-testid="logo" className="">
       {logo ? (

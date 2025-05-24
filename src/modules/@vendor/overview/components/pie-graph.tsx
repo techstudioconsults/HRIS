@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { IconTrendingUp } from "@tabler/icons-react";
+import { TrendingUp } from "lucide-react";
 import * as React from "react";
 import { Label, Pie, PieChart } from "recharts";
 
@@ -100,7 +100,7 @@ export function PieGraph() {
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 leading-none font-medium">
           Chrome leads with {((chartData[0].visitors / totalVisitors) * 100).toFixed(1)}%{" "}
-          <IconTrendingUp className="h-4 w-4" />
+          <TrendingUp className="h-4 w-4" />
         </div>
         <div className="text-muted-foreground leading-none">Based on data from January - June 2024</div>
       </CardFooter>

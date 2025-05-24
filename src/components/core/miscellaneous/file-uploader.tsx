@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useControllableState } from "@/hooks/use-controllable-state";
-import { cn, formatBytes } from "@/lib/utils";
-import { IconUpload, IconX } from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
+import { LucideFileUp, X } from "lucide-react";
 import Image from "next/image";
 import * as React from "react";
 import Dropzone, { type DropzoneProps, type FileRejection } from "react-dropzone";
@@ -201,25 +201,25 @@ export function FileUploader(properties: FileUploaderProperties) {
             {isDragActive ? (
               <div className="flex flex-col items-center justify-center gap-4 sm:px-5">
                 <div className="rounded-full border border-dashed p-3">
-                  <IconUpload className="text-muted-foreground size-7" aria-hidden="true" />
+                  <LucideFileUp className="text-muted-foreground size-7" aria-hidden="true" />
                 </div>
                 <p className="text-muted-foreground font-medium">Drop the files here</p>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center gap-4 sm:px-5">
                 <div className="rounded-full border border-dashed p-3">
-                  <IconUpload className="text-muted-foreground size-7" aria-hidden="true" />
+                  <LucideFileUp className="text-muted-foreground size-7" aria-hidden="true" />
                 </div>
                 <div className="space-y-px">
                   <p className="text-muted-foreground font-medium">
                     Drag {`'n'`} drop files here, or click to select files
                   </p>
                   <p className="text-muted-foreground/70 text-sm">
-                    You can upload
-                    {maxFiles > 1
+                    You can upload a maximum of {maxFiles} files
+                    {/* {maxFiles > 1
                       ? ` ${maxFiles === Infinity ? "multiple" : maxFiles}
                       files (up to ${formatBytes(maxSize)} each)`
-                      : ` a file with ${formatBytes(maxSize)}`}
+                      : ` a file with ${formatBytes(maxSize)}`} */}
                   </p>
                 </div>
               </div>
@@ -263,7 +263,7 @@ function FileCard({ file, progress, onRemove }: FileCardProperties) {
         <div className="flex w-full flex-col gap-2">
           <div className="space-y-px">
             <p className="text-foreground/80 line-clamp-1 text-sm font-medium">{file.name}</p>
-            <p className="text-muted-foreground text-xs">{formatBytes(file.size)}</p>
+            {/* <p className="text-muted-foreground text-xs">{formatBytes(file.size)}</p> */}
           </div>
           {progress ? <Progress value={progress} /> : null}
         </div>
@@ -277,7 +277,7 @@ function FileCard({ file, progress, onRemove }: FileCardProperties) {
           disabled={progress !== undefined && progress < 100}
           className="size-8 rounded-full"
         >
-          <IconX className="text-muted-foreground" />
+          <X className="text-muted-foreground" />
           <span className="sr-only">Remove file</span>
         </Button>
       </div>

@@ -1,30 +1,24 @@
 // @/lib/tools/font.ts
 import { cn } from "@/lib/utils";
-import { East_Sea_Dokdo, Fira_Code, Inter, Raleway } from "next/font/google";
+import { Fira_Code, Work_Sans } from "next/font/google";
 
 // Primary sans-serif font (clean, modern, highly readable)
-const eastSeaDokdo = East_Sea_Dokdo({
+const workSans = Work_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
-  weight: "400",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-san",
 });
 
 // Monospace font for code blocks/technical content
 const firaCode = Fira_Code({
   subsets: ["latin"],
-  variable: "--font-mon",
+  variable: "--font-mono",
 });
 
 // Secondary sans-serif font for headings/accent
-const raleway = Raleway({
+const workSansHeading = Work_Sans({
   subsets: ["latin"],
   variable: "--font-heading",
 });
 
-export const fontVariables = cn(eastSeaDokdo.variable, inter.variable, firaCode.variable, raleway.variable);
+export const fontVariables = cn(workSans.variable, firaCode.variable, workSansHeading.variable);
 // export {};

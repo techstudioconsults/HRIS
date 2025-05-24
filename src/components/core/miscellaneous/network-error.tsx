@@ -1,9 +1,8 @@
 "use client";
 
+import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { AlertCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-
-import { ReusableDialog } from "../molecules/dialog/Dialog";
 
 export const NetworkStatusModal = () => {
   const [, setIsOnline] = useState(true);

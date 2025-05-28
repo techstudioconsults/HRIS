@@ -21,8 +21,8 @@ const META_THEME_COLORS = {
 };
 
 export const metadata: Metadata = {
-  title: "Kingsley Solomon",
-  description: "Kingsley solomon Portfolio",
+  title: "TechstudioHR",
+  description: "HRI System",
 };
 
 export const viewport: Viewport = {

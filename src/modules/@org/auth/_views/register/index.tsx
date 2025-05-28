@@ -13,12 +13,12 @@ import { FormProvider, useForm } from "react-hook-form";
 export const Register = () => {
   const methods = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: {
-      full_name: "",
-      email: "",
-      password: "",
-      password_confirmation: "",
-    },
+    // defaultValues: {
+    //   full_name: "",
+    //   email: "",
+    //   password: "",
+    //   password_confirmation: "",
+    // },
   });
 
   const {
@@ -45,13 +45,19 @@ export const Register = () => {
               placeholder={`Enter company name`}
               className={`h-14 w-full`}
               label={`Company's Name`}
-              name={"full_name"}
+              name={"company_name"}
             />
             <FormField
-              placeholder={`Enter full name`}
+              placeholder={`Enter first name`}
               className={`h-14 w-full`}
-              label={`Full Name`}
-              name={"full_name"}
+              label={`First Name`}
+              name={"first_name"}
+            />
+            <FormField
+              placeholder={`Enter last name`}
+              className={`h-14 w-full`}
+              label={`Last Name`}
+              name={"last_name"}
             />
             <FormField
               placeholder={`Enter email address`}

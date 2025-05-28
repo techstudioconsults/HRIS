@@ -15,10 +15,14 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
       <section className={cn("grid min-h-[100dvh] grid-cols-1", !shouldHideCarousel && "md:grid-cols-2")}>
         {/* Content Section (Left on desktop, top on mobile) */}
         <section
-          style={{
-            background: "url(images/auth/bg-img.svg) no-repeat",
-            backgroundSize: "cover",
-          }}
+          style={
+            shouldHideCarousel
+              ? {
+                  background: "url(images/auth/bg-img.svg) no-repeat",
+                  backgroundSize: "cover",
+                }
+              : {}
+          }
           className="max-h-[100dvh] overflow-y-auto px-4 py-12"
         >
           <div className={cn("mx-auto mb-16 flex", !shouldHideCarousel && "max-w-[527px]")}>

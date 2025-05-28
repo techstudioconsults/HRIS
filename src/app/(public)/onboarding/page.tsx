@@ -1,24 +1,21 @@
+"use client";
+
 import { StepOne, StepThree, StepTwo, Welcome } from "@/modules/@org/onboarding";
+import { useSearchParams } from "next/navigation";
 
-type OnboardingPageProperties = {
-  searchParams: {
-    step?: number;
-  };
-};
-
-const OnboardingPage = ({ searchParams }: OnboardingPageProperties) => {
-  // Determine the current step from query params, default to 'welcome'
-  const currentStep = searchParams.step || "welcome";
+const OnboardingPage = () => {
+  const searchParameters = useSearchParams();
+  const step = searchParameters.get("step");
 
   const renderStep = () => {
-    switch (currentStep) {
-      case 1: {
+    switch (step) {
+      case "1": {
         return <StepOne />;
       }
-      case 2: {
+      case "2": {
         return <StepTwo />;
       }
-      case 3: {
+      case "3": {
         return <StepThree />;
       }
       default: {

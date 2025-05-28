@@ -14,12 +14,12 @@ import { FormProvider, useForm } from "react-hook-form";
 export const ResetPassword = () => {
   const methods = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: {
-      full_name: "",
-      email: "",
-      password: "",
-      password_confirmation: "",
-    },
+    // defaultValues: {
+    //   full_name: "",
+    //   email: "",
+    //   password: "",
+    //   password_confirmation: "",
+    // },
   });
 
   const {

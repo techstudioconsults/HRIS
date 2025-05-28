@@ -17,7 +17,7 @@ export const InputOtpCard = () => {
       </section>
       <div className={`mt-10`}>
         <MainButton type="submit" variant="primary" className="w-full" size="2xl">
-          Verify & Continue
+          Login
         </MainButton>
         <p className="text-grey-500 mt-4 text-center text-sm">
           Didnt receive the code?{" "}

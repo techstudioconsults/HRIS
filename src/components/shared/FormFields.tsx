@@ -73,7 +73,7 @@ export function FormField({
         name={name}
         control={control}
         render={({ field }) => {
-          const inputClassName = cn("flex h-10 w-full", error && "border-destructive", className);
+          const inputClassName = cn("flex h-10 w-full border-gray-100", error && "border-destructive", className);
 
           const inputWithAddons = (
             <div className={cn(`flex items-center gap-2`, containerClassName)}>
@@ -269,6 +269,7 @@ export function SwitchField({
   name,
   required = false,
   disabled = false,
+  description,
   className = "",
   onChange, // Add an onChange prop
 }: {
@@ -277,6 +278,7 @@ export function SwitchField({
   required?: boolean;
   disabled?: boolean;
   className?: string;
+  description?: string;
   onChange?: (checked: boolean) => void; // Callback function to handle switch toggle
 }) {
   const {
@@ -289,10 +291,13 @@ export function SwitchField({
     <div>
       <div className={cn(className)}>
         {label && (
-          <Label className="h-fit text-sm font-medium">
-            {label}
-            {required && <span className="text-destructive ml-1">*</span>}
-          </Label>
+          <div className={`space-y-1`}>
+            <Label className="h-fit font-medium">
+              {label}
+              {required && <span className="text-destructive ml-1">*</span>}
+            </Label>
+            <p className={`text-gray text-xs`}>{description}</p>
+          </div>
         )}
 
         <Controller

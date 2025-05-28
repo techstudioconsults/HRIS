@@ -2,7 +2,7 @@ import { StepOne, StepThree, StepTwo, Welcome } from "@/modules/@org/onboarding"
 
 type OnboardingPageProperties = {
   searchParams: {
-    step?: string;
+    step?: number;
   };
 };
 
@@ -12,13 +12,13 @@ const OnboardingPage = ({ searchParams }: OnboardingPageProperties) => {
 
   const renderStep = () => {
     switch (currentStep) {
-      case "1": {
+      case 1: {
         return <StepOne />;
       }
-      case "2": {
+      case 2: {
         return <StepTwo />;
       }
-      case "3": {
+      case 3: {
         return <StepThree />;
       }
       default: {

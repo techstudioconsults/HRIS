@@ -1,14 +1,13 @@
 "use client";
 
+import { useSearchParameters } from "@/hooks/use-search-parameters";
 import { StepOne, StepThree, StepTwo, Welcome } from "@/modules/@org/onboarding";
-import { useSearchParams } from "next/navigation";
 
 const OnboardingPage = () => {
-  const searchParameters = useSearchParams();
-  const step = searchParameters.get("step");
+  const value = useSearchParameters("step");
 
   const renderStep = () => {
-    switch (step) {
+    switch (value) {
       case "1": {
         return <StepOne />;
       }

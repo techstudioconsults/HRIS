@@ -10,7 +10,7 @@ import { FormProvider, useForm } from "react-hook-form";
 
 // import { toast } from "sonner";
 
-export const Login = () => {
+export const OTPLogin = () => {
   const methods = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     // defaultValues: {
@@ -35,7 +35,10 @@ export const Login = () => {
     <section className="mx-auto max-w-[527px]">
       <div className={`mb-8 space-y-2`}>
         <h3 className="text-[32px]/[120%] font-[600] tracking-[-2%] text-black">Welcome Back, HR</h3>
-        <p className={`text-gray text-lg`}>Login to access your HR dashboard, and simplify operations.</p>
+        <p className={`text-gray text-lg`}>
+          Sign in with your work email to continue. We&apos;ll send a one-time passcode to your email to verify
+          it&apos;s you.
+        </p>
       </div>
 
       <FormProvider {...methods}>
@@ -47,20 +50,6 @@ export const Login = () => {
               label={`Email Address`}
               name={"email_address"}
             />
-            <div className="space-y-2">
-              <FormField
-                type={`password`}
-                placeholder={`Enter password`}
-                className={`h-14 w-full`}
-                label={`Password`}
-                name={"password"}
-              />
-              <div className="flex justify-end">
-                <Link href="/forgot-password" className="text-primary font-medium hover:underline">
-                  Forgot Password?
-                </Link>
-              </div>
-            </div>
           </section>
           <div className="pt-8">
             <MainButton
@@ -71,7 +60,7 @@ export const Login = () => {
               className="w-full"
               size="2xl"
             >
-              Log In
+              Send OTP
             </MainButton>
           </div>
         </form>
@@ -85,17 +74,8 @@ export const Login = () => {
           </div>
         </div>
 
-        <MainButton
-          href={`/login?type=otp`}
-          type="button"
-          variant="outline"
-          className="w-full"
-          size={`2xl`}
-          // isDisabled={isGooglePending}
-          // isLoading={isGooglePending}
-          // onClick={handleGoogleSignIn}
-        >
-          Log in with OTP instead
+        <MainButton href={`/login`} type="button" variant="outline" className="w-full" size={`2xl`}>
+          Log in with Password instead
         </MainButton>
 
         <p className="text-grey-500 mt-4 text-center text-sm">

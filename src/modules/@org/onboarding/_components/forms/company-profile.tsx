@@ -59,66 +59,45 @@ export const CompanyProfile = () => {
             label={`Company Size`}
             name={"industry"}
           />
-          <fieldset className={`space-y-4 rounded-lg border p-4`}>
-            <legend className={`font-medium`}>Address 1</legend>
-            <FormField
-              type={`select`}
-              placeholder={`Select country`}
-              className={`!h-14 w-full`}
-              label={`Country`}
-              name={"country"}
-            />
-            <FormField
-              type={`select`}
-              placeholder={`Select state`}
-              className={`!h-14 w-full`}
-              label={`State`}
-              name={"state"}
-            />
-            <FormField
-              type={`select`}
-              placeholder={`Select city`}
-              className={`!h-14 w-full`}
-              label={`City`}
-              name={"city"}
-            />
-            <FormField
-              placeholder={`Enter postal code`}
-              className={`!h-14 w-full`}
-              label={`Post Code`}
-              name={"post code"}
-            />
-          </fieldset>
-          <fieldset className={`space-y-4 rounded-lg border p-4`}>
-            <legend className={`font-medium`}>Address 2</legend>
-            <FormField
-              type={`select`}
-              placeholder={`Select country`}
-              className={`!h-14 w-full`}
-              label={`Country`}
-              name={"country"}
-            />
-            <FormField
-              type={`select`}
-              placeholder={`Select state`}
-              className={`!h-14 w-full`}
-              label={`State`}
-              name={"state"}
-            />
-            <FormField
-              type={`select`}
-              placeholder={`Select city`}
-              className={`!h-14 w-full`}
-              label={`City`}
-              name={"city"}
-            />
-            <FormField
-              placeholder={`Enter postal code`}
-              className={`!h-14 w-full`}
-              label={`Post Code`}
-              name={"post code"}
-            />
-          </fieldset>
+          <FormField
+            placeholder={`Enter company's location`}
+            className={`h-14 w-full`}
+            label={`Address Line 1`}
+            name={"address_line_1"}
+          />
+          <FormField
+            placeholder={`Enter company's location`}
+            className={`h-14 w-full`}
+            label={`Address Line 2`}
+            name={"address_line_2"}
+          />
+          <FormField
+            type={`select`}
+            placeholder={`Select country`}
+            className={`!h-14 w-full`}
+            label={`Country`}
+            name={"country"}
+          />
+          <FormField
+            type={`select`}
+            placeholder={`Select state`}
+            className={`!h-14 w-full`}
+            label={`State`}
+            name={"state"}
+          />
+          <FormField
+            type={`select`}
+            placeholder={`Select city`}
+            className={`!h-14 w-full`}
+            label={`City`}
+            name={"city"}
+          />
+          <FormField
+            placeholder={`Enter postal code`}
+            className={`!h-14 w-full`}
+            label={`Post Code`}
+            name={"post code"}
+          />
         </section>
         <div className="pt-8">
           <MainButton

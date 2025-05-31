@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -38,22 +37,16 @@ export const UniversalSwiper = ({
   onSwiperInit,
 }: UniversalSwiperProperties) => {
   const [isMounted, setIsMounted] = useState(false);
-  const [, setSwiperInstance] = useState<SwiperType | null>(null);
   const swiperReference = useRef<SwiperType | null>(null);
-  const autoplayReference = useRef<any>(null);
 
   useEffect(() => {
     setIsMounted(true);
     return () => {
-      // Cleanup autoplay on unmount
-      if (autoplayReference.current) {
-        autoplayReference.current.stop();
+      // Cleanup Swiper instance on unmount
+      if (swiperReference.current) {
+        swiperReference.current.destroy(true, true);
       }
     };
-  }, []);
-
-  useEffect(() => {
-    setIsMounted(true);
   }, []);
 
   if (!isMounted || !items?.length) return null;
@@ -73,7 +66,7 @@ export const UniversalSwiper = ({
       <Swiper
         {...swiperOptions}
         autoplay={{
-          delay: 3000, // 3 seconds delay
+          delay: 3000,
           disableOnInteraction: false,
           pauseOnMouseEnter: true,
         }}
@@ -83,10 +76,7 @@ export const UniversalSwiper = ({
         freeMode={freeMode}
         className={cn(swiperClassName)}
         onSwiper={(swiper) => {
-          setSwiperInstance(swiper);
-          onSwiperInit?.(swiper);
           swiperReference.current = swiper;
-          autoplayReference.current = swiper.autoplay;
           onSwiperInit?.(swiper);
         }}
       >

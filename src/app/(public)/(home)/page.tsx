@@ -1,4 +1,4 @@
-const page = () => {
+const Page = () => {
   return (
     <section>
       <p className={`text-primary-500 text-xl`}>
@@ -8,4 +8,4 @@ const page = () => {
     </section>
   );
 };
-export default page;
+export default Page;

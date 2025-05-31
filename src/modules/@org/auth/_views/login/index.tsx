@@ -1,9 +1,9 @@
-/* eslint-disable no-console */
 "use client";
 
 import MainButton from "@/components/shared/button";
 import { FormField } from "@/components/shared/FormFields";
-import { RegisterFormData, registerSchema } from "@/schemas";
+import { login } from "@/modules/@org/auth/lib/next-auth/auth-action";
+import { LoginFormData, loginSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { FormProvider, useForm } from "react-hook-form";
@@ -11,24 +11,22 @@ import { FormProvider, useForm } from "react-hook-form";
 // import { toast } from "sonner";
 
 export const Login = () => {
-  const methods = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
-    // defaultValues: {
-    //   full_name: "",
-    //   email: "",
-    //   password: "",
-    //   password_confirmation: "",
-    // },
+  // const { data: session } = useSession();
+  const methods = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
-    // watch,
+    formState: { isSubmitting, isValid },
   } = methods;
 
-  const handleSubmitForm = async (data: RegisterFormData) => {
-    console.log("Registering user with data:", data);
+  const handleSubmitForm = async (data: LoginFormData) => {
+    await login(data);
   };
 
   return (
@@ -45,7 +43,7 @@ export const Login = () => {
               placeholder={`Enter email address`}
               className={`h-14 w-full`}
               label={`Email Address`}
-              name={"email_address"}
+              name={"email"}
             />
             <div className="space-y-2">
               <FormField
@@ -85,16 +83,7 @@ export const Login = () => {
           </div>
         </div>
 
-        <MainButton
-          href={`/login?type=otp`}
-          type="button"
-          variant="outline"
-          className="w-full"
-          size={`2xl`}
-          // isDisabled={isGooglePending}
-          // isLoading={isGooglePending}
-          // onClick={handleGoogleSignIn}
-        >
+        <MainButton href={`/login?type=otp`} variant="outline" className="w-full" size={`2xl`} isDisabled={isValid}>
           Log in with OTP instead
         </MainButton>
 

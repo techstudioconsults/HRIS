@@ -24,7 +24,7 @@ export const ForgotPassword = () => {
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isValid },
     // watch,
   } = methods;
 
@@ -60,7 +60,7 @@ export const ForgotPassword = () => {
             <MainButton
               type="submit"
               variant="primary"
-              isDisabled={isSubmitting}
+              isDisabled={isSubmitting || !isValid}
               isLoading={isSubmitting}
               className="w-full"
               size="2xl"

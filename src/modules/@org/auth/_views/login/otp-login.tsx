@@ -1,9 +1,8 @@
-/* eslint-disable no-console */
 "use client";
 
 import MainButton from "@/components/shared/button";
 import { FormField } from "@/components/shared/FormFields";
-import { RegisterFormData, registerSchema } from "@/schemas";
+import { LoginOTPFormData, loginOTPSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { FormProvider, useForm } from "react-hook-form";
@@ -11,24 +10,32 @@ import { FormProvider, useForm } from "react-hook-form";
 // import { toast } from "sonner";
 
 export const OTPLogin = () => {
-  const methods = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
-    // defaultValues: {
-    //   full_name: "",
-    //   email: "",
-    //   password: "",
-    //   password_confirmation: "",
-    // },
+  const methods = useForm<LoginOTPFormData>({
+    resolver: zodResolver(loginOTPSchema),
+    defaultValues: {
+      email: "",
+    },
   });
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
-    // watch,
+    formState: { isSubmitting, isValid },
   } = methods;
 
-  const handleSubmitForm = async (data: RegisterFormData) => {
-    console.log("Registering user with data:", data);
+  const handleSubmitForm = async (data: LoginOTPFormData) => {
+    // eslint-disable-next-line no-console
+    console.log(data);
+
+    // const response = await loginWithOTP(data);
+    // console.log(response);
+    // if (response?.success) {
+    //   router.push(`/login/otp?email=${data.email}`);
+    //   toast.success("Sent", {
+    //     description: response.data,
+    //     position: "bottom-left",
+    //     richColors: true,
+    //   });
+    // }
   };
 
   return (
@@ -48,14 +55,15 @@ export const OTPLogin = () => {
               placeholder={`Enter email address`}
               className={`h-14 w-full`}
               label={`Email Address`}
-              name={"email_address"}
+              name={"email"}
+              required
             />
           </section>
           <div className="pt-8">
             <MainButton
               type="submit"
               variant="primary"
-              isDisabled={isSubmitting}
+              isDisabled={isSubmitting || !isValid}
               isLoading={isSubmitting}
               className="w-full"
               size="2xl"

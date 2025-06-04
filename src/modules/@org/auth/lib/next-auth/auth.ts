@@ -40,6 +40,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
   // debug: process.env.NODE_ENV === "development",
   providers: [
+    // In your NextAuth configuration
     Credentials({
       name: "Credentials",
       credentials: {
@@ -50,7 +51,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         try {
           const { email, password } = credentials;
           if (!email || !password) {
-            throw new CredentialsSignin("Please provide both email & password");
+            throw new CredentialsSignin("Please provide both email and password");
           }
 
           const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login/password`, {
@@ -59,7 +60,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           });
 
           if (response.status === 200) {
-            const user = {
+            return {
               id: response.data.data.employee.id,
               name: response.data.data.employee.fullName,
               email: response.data.data.employee.email,
@@ -67,11 +68,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               accessToken: response.data.data.tokens.accessToken,
               refreshToken: response.data.data.tokens.refreshToken,
             };
-            return user;
           }
-          return null;
-        } catch {
-          return null;
+
+          throw new CredentialsSignin("Invalid email or password");
+        } catch (error) {
+          if (error instanceof CredentialsSignin) {
+            throw error;
+          }
+          if (axios.isAxiosError(error)) {
+            const message = error.response?.data?.message || "Login failed";
+            throw new CredentialsSignin(message);
+          }
+          throw new CredentialsSignin("An unexpected error occurred");
         }
       },
     }),

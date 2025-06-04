@@ -2,16 +2,14 @@
 
 import MainButton from "@/components/shared/button";
 import { FormField } from "@/components/shared/FormFields";
-import { login } from "@/modules/@org/auth/lib/next-auth/auth-action";
+import { login } from "@/modules/@org/auth/actions/auth-action";
 import { LoginFormData, loginSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { FormProvider, useForm } from "react-hook-form";
-
-// import { toast } from "sonner";
+import { toast } from "sonner";
 
 export const Login = () => {
-  // const { data: session } = useSession();
   const methods = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -26,7 +24,18 @@ export const Login = () => {
   } = methods;
 
   const handleSubmitForm = async (data: LoginFormData) => {
-    await login(data);
+    const result = await login(data);
+
+    if (result?.error) {
+      toast.error("Login Failed", {
+        description: result.error,
+      });
+    } else if (result?.success) {
+      toast.success(`Login Successful`, {
+        description: `Redirecting to onboarding...`,
+      });
+      window.location.href = "/onboarding";
+    }
   };
 
   return (
@@ -44,6 +53,7 @@ export const Login = () => {
               className={`h-14 w-full`}
               label={`Email Address`}
               name={"email"}
+              required
             />
             <div className="space-y-2">
               <FormField
@@ -52,9 +62,10 @@ export const Login = () => {
                 className={`h-14 w-full`}
                 label={`Password`}
                 name={"password"}
+                required
               />
               <div className="flex justify-end">
-                <Link href="/forgot-password" className="text-primary font-medium hover:underline">
+                <Link href="/forgot-password" className="text-destructive font-medium hover:underline">
                   Forgot Password?
                 </Link>
               </div>
@@ -64,7 +75,7 @@ export const Login = () => {
             <MainButton
               type="submit"
               variant="primary"
-              isDisabled={isSubmitting}
+              isDisabled={isSubmitting || !isValid}
               isLoading={isSubmitting}
               className="w-full"
               size="2xl"
@@ -83,7 +94,7 @@ export const Login = () => {
           </div>
         </div>
 
-        <MainButton href={`/login?type=otp`} variant="outline" className="w-full" size={`2xl`} isDisabled={isValid}>
+        <MainButton href={`/login?type=otp`} variant="outline" className="w-full" size={`2xl`}>
           Log in with OTP instead
         </MainButton>
 

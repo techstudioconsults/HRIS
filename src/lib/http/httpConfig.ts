@@ -3,6 +3,7 @@ import axios from "axios";
 // import Cookies from "js-cookie";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL as string;
+
 // const CSRF_URL = `${BASE_URL}/sanctum/csrf-cookie`;
 const TIMEOUTMSG = "Waiting for too long...Aborted!";
 

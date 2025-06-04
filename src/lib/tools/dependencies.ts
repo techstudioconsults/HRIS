@@ -1,9 +1,11 @@
+import { AuthService } from "@/modules/@org/auth/services/auth.service";
 import { AppService } from "@/services/app/app.service";
 
 import { HttpAdapter } from "../http/http-adapter";
 
 const dependencies = {
   HTTP_ADAPTER: Symbol("httpAdapter"),
+  AUTH_SERVICE: Symbol("AuthService"),
   APP_SERVICE: Symbol("AppService"),
 };
 
@@ -14,6 +16,7 @@ interface IDependencyContainer {
 
 const httpAdapter = new HttpAdapter();
 const appService = new AppService(httpAdapter);
+const authService = new AuthService(httpAdapter);
 
 class DependencyContainer implements IDependencyContainer {
   _dependencies = {};
@@ -32,6 +35,7 @@ class DependencyContainer implements IDependencyContainer {
 const container = new DependencyContainer();
 
 container.add(dependencies.HTTP_ADAPTER, httpAdapter);
+container.add(dependencies.AUTH_SERVICE, authService);
 container.add(dependencies.APP_SERVICE, appService);
 
 export { container, dependencies };

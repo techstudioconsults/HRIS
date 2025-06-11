@@ -23,7 +23,7 @@ export const loginSchema = z.object({
 
 export const loginOTPSchema = z.object({
   email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
-  password: z.string().min(1, "Password is required"),
+  // password: z.string().min(1, "Password is required"),
 });
 
 export const forgotPasswordSchema = z.object({

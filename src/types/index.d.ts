@@ -2,7 +2,7 @@
 import { ChangeEventHandler, FocusEventHandler, HTMLAttributes, MouseEventHandler } from "react";
 
 declare global {
-  export interface LogoProperties {
+  interface LogoProperties {
     logo: string;
     width?: number;
     height?: number;

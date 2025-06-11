@@ -36,12 +36,6 @@ export function RecentActivities() {
       timestamp: "2 days ago",
       type: "report",
     },
-    {
-      id: "5",
-      action: "Company-wide announcement sent by HR Admin",
-      timestamp: "2 days ago",
-      type: "announcement",
-    },
   ];
   const getActivityIcon = (type: Activity["type"]) => {
     switch (type) {
@@ -74,7 +68,7 @@ export function RecentActivities() {
 
       <div className="divide-y">
         {activities.map((activity) => (
-          <div key={activity.id} className="hover:bg-muted/50 flex items-start gap-3 border-0 p-4 transition-colors">
+          <div key={activity.id} className="hover:bg-muted/50 flex items-start gap-3 border-0 p-3 transition-colors">
             <div className="mt-1 flex-shrink-0">{getActivityIcon(activity.type)}</div>
 
             <div className="min-w-0 flex-1">

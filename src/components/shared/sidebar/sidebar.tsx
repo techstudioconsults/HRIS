@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import {
@@ -11,25 +10,69 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { CardReceive, Clock, Element3, People, Profile2User } from "iconsax-reactjs";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 
-// import { Logo } from "../logo";
+import { Logo } from "../logo";
 
-export function DashboardSidebar({ navItems }: { navItems: any }) {
+// Define types for the icon components
+type IconComponentType = React.ComponentType<{
+  size?: string | number;
+  variant?: "Bold" | "Outline";
+  className?: string;
+}>;
+
+// Define types for navigation items
+interface NavItemBadge {
+  variant: "danger" | "default";
+  count: number;
+}
+
+interface NavItem {
+  id: string;
+  route: string;
+  link: string;
+  icon: string;
+  divider?: boolean;
+  badge?: NavItemBadge;
+}
+
+// Define props for the DashboardSidebar component
+interface DashboardSidebarProperties {
+  navItems: NavItem[];
+}
+
+// Create a typed icon mapping object
+const iconComponents: Record<string, IconComponentType> = {
+  Element3: Element3,
+  Profile2User: Profile2User,
+  People: People,
+  CardReceive: CardReceive,
+  Clock: Clock,
+};
+
+export function DashboardSidebar({ navItems }: DashboardSidebarProperties) {
   const pathname = usePathname();
-  const userID = pathname.split("/")[2];
+  const { userID } = useParams() as { userID?: string };
   const { setOpenMobile } = useSidebar();
 
   const handleCloseOnMobile = () => {
     setOpenMobile(false);
   };
 
+  const renderIcon = (item: NavItem) => {
+    const IconComponent = iconComponents[item.icon];
+    if (!IconComponent) return null;
+    return <IconComponent size="20" variant={pathname.includes(item.id) ? "Bold" : "Outline"} />;
+  };
+
   return (
-    <Sidebar className={`cc-border -z-10 border-r shadow-none`}>
-      <SidebarContent>
-        <SidebarMenu className={`space-y-2 p-4`}>
-          {navItems?.map((item: any) => {
+    <Sidebar className="cc-border border-r shadow-none">
+      <SidebarContent className="bg-background">
+        <Logo width={148} className="mx-auto py-2 md:py-4" />
+        <SidebarMenu className="space-y-2.5 p-5">
+          {navItems?.map((item: NavItem) => {
             if (item.divider) {
               return <div key={item.id} />;
             }
@@ -41,15 +84,15 @@ export function DashboardSidebar({ navItems }: { navItems: any }) {
                 <SidebarMenuButton
                   asChild
                   className={cn(
-                    "flex h-[48px] items-center gap-3 rounded-lg text-[16px] font-medium transition-all duration-200",
+                    "flex h-11 items-center gap-3 rounded-lg text-[16px] font-medium transition-all duration-200",
                     isActive
-                      ? "border-primary text-primary shadow-active border-2"
-                      : "text-mid-grey-II hover:bg-low-grey-I",
+                      ? "border-primary text-primary shadow-active border-2 bg-[#ECF4FF]"
+                      : "text-gray hover:text-primary hover:bg-[#ECF4FF]",
                   )}
                 >
                   <Link onClick={handleCloseOnMobile} href={link} data-testid={item.id} role="sidebar-link">
-                    {/* {renderIcon(item)} */}
-                    <span className={`font-medium dark:text-white`}>{item.route}</span>
+                    {renderIcon(item)}
+                    <span className="font-medium dark:text-white">{item.route}</span>
                     {item.badge && (
                       <SidebarMenuBadge
                         className={cn(

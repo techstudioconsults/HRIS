@@ -1,9 +1,14 @@
 "use client";
 
 import { DashboardSidebar } from "@/components/shared/sidebar/sidebar";
+import TopBar from "@/components/shared/top-bar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { adminNavItems } from "@/lib/tools/constants";
 
+// const handleSearch = (query: string) => {
+//   Implement search functionality
+//   console.log("Search query:", query);
+// };
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider defaultOpen={true}>
@@ -15,11 +20,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <SidebarInset className="flex-1">
           <div className="flex h-full flex-col">
             {/* Header with Sidebar Trigger */}
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <header className="flex h-20 shrink-0 items-center gap-2 border-b px-4 py-5">
               <SidebarTrigger className="-ml-1" />
               <div className="flex-1">
                 {/* header content here */}
-                <h1 className="text-lg font-semibold">Dashboard</h1>
+                {/* onSearch={handleSearch} */}
+                <TopBar adminName="Tosin Sanya" notificationsCount={12} className="px-6" />
               </div>
             </header>
 

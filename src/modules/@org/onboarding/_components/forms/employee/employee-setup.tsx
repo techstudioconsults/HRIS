@@ -2,31 +2,63 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
-import { RegisterFormData, registerSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { FormEvent } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { z } from "zod";
 
+import { Employee, employeeSchema } from "../../../_views/step-three";
+import { OnboardingService } from "../../../services/service";
 import { EmployeeConfig } from "../../accordions/employee-config";
 
-export const EmployeeSetupForm = () => {
-  const methods = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
-    // defaultValues: {
-    //   full_name: "",
-    //   email: "",
-    //   password: "",
-    //   password_confirmation: "",
-    // },
+interface EmployeeSetupFormProperties {
+  onBoardingService: OnboardingService;
+}
+
+export const EmployeeSetupForm = ({ onBoardingService }: EmployeeSetupFormProperties) => {
+  const methods = useForm<{ employees: Employee[] }>({
+    resolver: zodResolver(
+      z.object({
+        employees: z.array(employeeSchema),
+      }),
+    ),
+    defaultValues: {
+      employees: [
+        {
+          firstName: "",
+          lastName: "",
+          email: "",
+          phoneNumber: "",
+          password: "PleaseSetAdefaultHere1.",
+          teamId: "",
+          roleId: "",
+        },
+      ],
+    },
   });
 
   const {
     handleSubmit,
     formState: { isSubmitting },
-    // watch,
+    reset,
   } = methods;
 
-  const handleSubmitForm = async (data: RegisterFormData) => {
-    console.log("Registering user with data:", data);
+  const handleSubmitForm = async (data: { employees: Employee[] }) => {
+    try {
+      console.log("Submitting employees:", data);
+      const response = await onBoardingService.onboardEmployees(data);
+      console.log("Onboarding successful:", response);
+      // Handle success (redirect, show notification, etc.)
+    } catch (error) {
+      console.error("Onboarding failed:", error);
+      // Handle error (show error message, etc.)
+    }
+  };
+
+  const handleSkip = () => {
+    // Handle skip logic
+    console.log("Skipping employee onboarding");
+    reset();
   };
 
   return (
@@ -36,33 +68,40 @@ export const EmployeeSetupForm = () => {
       </div>
 
       <FormProvider {...methods}>
-        {/* <form onSubmit={handleSubmit(handleSubmitForm)} className=""> */}
-        <section className={`hide-scrollbar max-h-[500px] space-y-4 overflow-auto`}>
-          <EmployeeConfig />
-        </section>
-        <div className="mt-4">
-          <MainButton
-            type="submit"
-            onClick={handleSubmit(handleSubmitForm)}
-            variant="primary"
-            isDisabled={isSubmitting}
-            isLoading={isSubmitting}
-            className="w-full"
-            size="2xl"
-          >
-            Proceed to Dashbaord
-          </MainButton>
-          <MainButton
-            variant="link"
-            isDisabled={isSubmitting}
-            isLoading={isSubmitting}
-            className="w-full font-semibold"
-            size="2xl"
-          >
-            Skip for Later
-          </MainButton>
-        </div>
-        {/* </form> */}
+        <form
+          onSubmit={(event: FormEvent) => {
+            event.preventDefault();
+            handleSubmit(handleSubmitForm)(event);
+          }}
+          className=""
+        >
+          <section className={`hide-scrollbar max-h-[500px] space-y-4 overflow-auto`}>
+            <EmployeeConfig />
+          </section>
+          <div className="mt-4">
+            <MainButton
+              type="submit"
+              variant="primary"
+              isDisabled={isSubmitting}
+              isLoading={isSubmitting}
+              className="w-full"
+              size="2xl"
+            >
+              Proceed to Dashboard
+            </MainButton>
+            <MainButton
+              type="button"
+              variant="link"
+              isDisabled={isSubmitting}
+              isLoading={isSubmitting}
+              className="w-full font-semibold"
+              size="2xl"
+              onClick={handleSkip}
+            >
+              Skip for Later
+            </MainButton>
+          </div>
+        </form>
       </FormProvider>
     </section>
   );

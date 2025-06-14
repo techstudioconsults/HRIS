@@ -83,6 +83,50 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
       },
     }),
+
+    // New OTP-based credentials provider
+    Credentials({
+      name: "OTP",
+      credentials: {
+        email: {},
+        password: {},
+      },
+      authorize: async (credentials) => {
+        try {
+          const { email, password } = credentials;
+          if (!email || !password) {
+            throw new CredentialsSignin("Please provide both email and OTP");
+          }
+
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login/otp`, {
+            email,
+            password,
+          });
+
+          if (response.status === 200) {
+            return {
+              id: response.data.data.employee.id,
+              name: response.data.data.employee.fullName,
+              email: response.data.data.employee.email,
+              role: response.data.data.employee.role,
+              accessToken: response.data.data.tokens.accessToken,
+              refreshToken: response.data.data.tokens.refreshToken,
+            };
+          }
+
+          throw new CredentialsSignin("Invalid OTP");
+        } catch (error) {
+          if (error instanceof CredentialsSignin) {
+            throw error;
+          }
+          if (axios.isAxiosError(error)) {
+            const message = error.response?.data?.message || "OTP verification failed";
+            throw new CredentialsSignin(message);
+          }
+          throw new CredentialsSignin("An unexpected error occurred");
+        }
+      },
+    }),
   ],
   callbacks: {
     authorized({ request, auth }) {

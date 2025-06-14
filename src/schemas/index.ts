@@ -23,6 +23,10 @@ export const loginSchema = z.object({
 
 export const loginOTPSchema = z.object({
   email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+export const loginOTPFormSchema = z.object({
+  email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
   // password: z.string().min(1, "Password is required"),
 });
 
@@ -32,44 +36,10 @@ export const forgotPasswordSchema = z.object({
   }),
 });
 export const resetPasswordSchema = z.object({
-  token: z.string().min(1, "Title is required").optional(),
-  email: z.string().min(1, "Email is required").email("Please enter a valid email address").optional(),
+  token: z.string().min(1, "Token is required").optional(),
+  // email: z.string().min(1, "Email is required").email("Please enter a valid email address").optional(),
   password: z.string().min(1, "Password is required").min(8, "Password must be at least 8 characters"),
-  password_confirmation: z.string().min(1, "Confirm password is required"),
-});
-
-// Base schema for common fields
-const BaseSchema = z.object({
-  product_type: z.enum(["digital_product", "skill_selling"]),
-  title: z.string().min(1, "Title is required"),
-  category: z.string().min(1, "Category is required"),
-  price: z.number().min(1, "Price must be a positive number"),
-  discount_price: z.number().min(0, "Discount must be a positive number"),
-  description: z.string().min(1, "Description is required"),
-  cover_photos: z.array(z.any()).min(1, "Cover photo is required"),
-  thumbnail: z.any().refine((file) => file !== null, "Thumbnail is required"),
-  tags: z.array(z.string()).min(1, "At least one tag is required"),
-  highlights: z.array(z.string()).min(1, "At least one highlight is required"),
-});
-
-// Digital product schema
-const DigitalProductSchema = BaseSchema.extend({
-  product_type: z.literal("digital_product"),
-  assets: z.array(z.any()).min(1, "Product files are required").max(4, "You can upload up to 4 files"),
-});
-
-// Skill selling schema
-const SkillSellingSchema = BaseSchema.extend({
-  product_type: z.literal("skill_selling"),
-  resource_link: z.array(z.string()).min(1, "At least one resource link is required"),
-  portfolio_link: z.string().min(1, "Portfolio link is required"),
-});
-
-// Combined schema using Zod's union
-export const ProductFormSchema = z.discriminatedUnion("product_type", [DigitalProductSchema, SkillSellingSchema]);
-
-export const withdrawalSchema = z.object({
-  amount: z.number().min(1, "Price must be a positive number"),
+  confirmPassword: z.string().min(1, "Confirm password is required"),
 });
 
 export const bankFormSchema = z.object({
@@ -138,12 +108,25 @@ export const kycSchema = z.object({
   document_image: z.any().refine((file) => file !== null, "document image is required"),
 });
 
+export const companyProfileSchema = z.object({
+  domain: z.string().min(1, "Company name is required"),
+  industry: z.string().min(1, "Industry is required"),
+  size: z.string().min(1, "Company size is required"),
+  addressLine1: z.string().min(1, "Address line 1 is required"),
+  addressLine2: z.string().optional(),
+  country: z.string().min(1, "Country is required"),
+  state: z.string().min(1, "State is required"),
+  city: z.string().min(1, "City is required"),
+  postcode: z.string().min(1, "Postal code is required"),
+});
+
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type LoginOTPFormData = z.infer<typeof loginOTPSchema>;
+export type LoginOTPFFormData = z.infer<typeof loginOTPFormSchema>;
 export type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordData = z.infer<typeof resetPasswordSchema>;
-export type WithdrawalData = z.infer<typeof withdrawalSchema>;
+export type CompanyProfileFormData = z.infer<typeof companyProfileSchema>;
 export type BankFormData = z.infer<typeof bankFormSchema>;
 export type ReviewFormData = z.infer<typeof reviewSchema>;
 export type ContactFormData = z.infer<typeof contactSchema>;

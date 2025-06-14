@@ -1,24 +1,9 @@
 import MainButton from "@/components/shared/button";
-import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { useState } from "react";
 
 import { SingleEmployeeForm } from "../forms/employee/single-employee";
-import { RolesAndPermission } from "../forms/roles&permission";
 
 export const EmployeeConfig = () => {
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogContent, setDialogContent] = useState<{
-    title: string;
-    description?: string;
-    children?: React.ReactNode;
-  }>({ title: "" });
-
-  const handleDialogOpen = (content: { title: string; description?: string; children?: React.ReactNode }) => {
-    setDialogContent(content);
-    setDialogOpen(true);
-  };
-
   return (
     <>
       <Accordion type="single" collapsible className="w-full space-y-4">
@@ -37,26 +22,13 @@ export const EmployeeConfig = () => {
           size={`sm`}
           isLeftIconVisible
           className={`text-primary text-[16px]`}
-          onClick={() =>
-            handleDialogOpen({
-              title: "Add New Team",
-              description: "Create a new team for your organization.",
-            })
-          }
+          // onClick={
+          //   // add more accordion form
+          // }
         >
           Add team member
         </MainButton>
       </Accordion>
-
-      <ReusableDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        title={dialogContent.title}
-        description={dialogContent.description}
-        className={``}
-      >
-        <RolesAndPermission />
-      </ReusableDialog>
     </>
   );
 };

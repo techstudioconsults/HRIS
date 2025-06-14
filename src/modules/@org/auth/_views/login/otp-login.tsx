@@ -4,7 +4,7 @@ import MainButton from "@/components/shared/button";
 import { FormField } from "@/components/shared/FormFields";
 import { WithDependency } from "@/HOC/withDependencies";
 import { dependencies } from "@/lib/tools/dependencies";
-import { LoginOTPFormData, loginOTPSchema } from "@/schemas";
+import { LoginOTPFFormData, loginOTPFormSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,8 +15,8 @@ import { AuthService } from "../../services/auth.service";
 
 export const BaseOTPLogin = ({ authService }: { authService: AuthService }) => {
   const router = useRouter();
-  const methods = useForm<LoginOTPFormData>({
-    resolver: zodResolver(loginOTPSchema),
+  const methods = useForm<LoginOTPFFormData>({
+    resolver: zodResolver(loginOTPFormSchema),
     defaultValues: {
       email: "",
     },
@@ -27,7 +27,7 @@ export const BaseOTPLogin = ({ authService }: { authService: AuthService }) => {
     formState: { isSubmitting, isValid },
   } = methods;
 
-  const handleSubmitForm = async (data: LoginOTPFormData) => {
+  const handleSubmitForm = async (data: LoginOTPFFormData) => {
     const response = await authService.loginWithOTP(data);
     if (response?.success) {
       router.push(`/login/otp?email=${data.email}`);
@@ -53,6 +53,7 @@ export const BaseOTPLogin = ({ authService }: { authService: AuthService }) => {
         <form onSubmit={handleSubmit(handleSubmitForm)} className="">
           <section className={`space-y-4`}>
             <FormField
+              type={`email`}
               placeholder={`Enter email address`}
               className={`h-14 w-full`}
               label={`Email Address`}

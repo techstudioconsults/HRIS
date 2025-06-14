@@ -6,8 +6,10 @@ import { LoginOTPFormData, loginOTPSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { OTPInput } from "../../_components/input-otp";
+import { OTPLogin } from "../../actions/auth-action";
 
 export const InputOtpCard = () => {
   const email = useSearchParameters("email");
@@ -28,22 +30,18 @@ export const InputOtpCard = () => {
   } = methods;
 
   const handleSubmitForm = async (data: LoginOTPFormData) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
-    // if (response.success) {
-    //   router.push("/onboarding"); // or wherever you want to redirect after successful verification
-    //   toast.success("Verified", {
-    //     description: response.data,
-    //     position: "bottom-left",
-    //     richColors: true,
-    //   });
-    // } else {
-    //   toast.error("Error", {
-    //     description: response.error,
-    //     position: "bottom-left",
-    //     richColors: true,
-    //   });
-    // }
+    const result = await OTPLogin(data);
+
+    if (result?.error) {
+      toast.error("Login Failed", {
+        description: result.error,
+      });
+    } else if (result?.success) {
+      toast.success(`Login Successful`, {
+        description: `Redirecting to onboarding...`,
+      });
+      // window.location.href = "/onboarding";
+    }
   };
 
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParameters } from "@/hooks/use-search-parameters";
-import { StepOne, StepThree, StepTwo, Welcome } from "@/modules/@org/onboarding";
+import { EmployeeSetup, StepOne, TeamSetupPage, Welcome } from "@/modules/@org/onboarding";
 
 const OnboardingPage = () => {
   const value = useSearchParameters("step");
@@ -12,10 +12,10 @@ const OnboardingPage = () => {
         return <StepOne />;
       }
       case "2": {
-        return <StepTwo />;
+        return <TeamSetupPage />;
       }
       case "3": {
-        return <StepThree />;
+        return <EmployeeSetup />;
       }
       default: {
         return <Welcome />;

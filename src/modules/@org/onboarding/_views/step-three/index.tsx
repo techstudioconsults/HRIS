@@ -1,4 +1,26 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { WithDependency } from "@/HOC/withDependencies";
+import { dependencies } from "@/lib/tools/dependencies";
+
 import { EmployeeSetupForm } from "../../_components/forms/employee/employee-setup";
+
+// import { OnboardingService } from "../../services/service";
+
+// types/employee.ts
+export interface Employee {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  password?: string; // Optional since we'll set a default
+  teamId: string;
+  roleId: string;
+  permissions?: any[]; // Adjust based on your permission structure
+}
+
+export interface OnboardEmployeesPayload {
+  employees: Employee[];
+}
 
 export const StepThree = () => {
   return (
@@ -28,3 +50,7 @@ export const StepThree = () => {
     </section>
   );
 };
+
+export const EmployeeSetup = WithDependency(StepThree, {
+  onBoardingService: dependencies.ONBOARDING_SERVICE,
+});

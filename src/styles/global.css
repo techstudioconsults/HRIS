@@ -197,6 +197,7 @@
   /* Link */
   --link: oklch(0.55 0.18 260);
   --link-hover: oklch(0.6 0.18 260);
+  --link-active: oklch(96.5% 0.01 258);
 
   /* Shadows */
   --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
@@ -232,6 +233,8 @@
   /* for daniel */
   --background: oklch(21.3% 0 0);
   --foreground: oklch(0.95 0 0);
+
+  --link-active: oklch(20% 0.01 258);
 }
 
 @layer utilities {
@@ -337,6 +340,17 @@
   .leading-loose {
     line-height: var(--leading-loose);
   }
+}
+
+/* For card hover effects */
+.card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
 }
 
 /* Scrollbar styling */

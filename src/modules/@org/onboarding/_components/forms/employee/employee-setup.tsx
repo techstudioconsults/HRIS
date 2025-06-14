@@ -3,8 +3,10 @@
 
 import MainButton from "@/components/shared/button";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { FormEvent } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Employee, employeeSchema } from "../../../_views/step-three";
@@ -16,6 +18,7 @@ interface EmployeeSetupFormProperties {
 }
 
 export const EmployeeSetupForm = ({ onBoardingService }: EmployeeSetupFormProperties) => {
+  const router = useRouter();
   const methods = useForm<{ employees: Employee[] }>({
     resolver: zodResolver(
       z.object({
@@ -40,25 +43,24 @@ export const EmployeeSetupForm = ({ onBoardingService }: EmployeeSetupFormProper
   const {
     handleSubmit,
     formState: { isSubmitting },
-    reset,
   } = methods;
 
   const handleSubmitForm = async (data: { employees: Employee[] }) => {
     try {
       console.log("Submitting employees:", data);
       const response = await onBoardingService.onboardEmployees(data);
-      console.log("Onboarding successful:", response);
-      // Handle success (redirect, show notification, etc.)
+      if (response.success) {
+        toast.success(`Registration Successful`, {
+          description: `Employees registration completed, you can edit employee status in setting.`,
+        });
+        router.push(`/`);
+      }
     } catch (error) {
       console.error("Onboarding failed:", error);
-      // Handle error (show error message, etc.)
+      toast.error(`Registration Failed`, {
+        description: `Form not filled properly..please try again`,
+      });
     }
-  };
-
-  const handleSkip = () => {
-    // Handle skip logic
-    console.log("Skipping employee onboarding");
-    reset();
   };
 
   return (
@@ -90,13 +92,11 @@ export const EmployeeSetupForm = ({ onBoardingService }: EmployeeSetupFormProper
               Proceed to Dashboard
             </MainButton>
             <MainButton
+              href={`/org/dashboard`}
               type="button"
               variant="link"
-              isDisabled={isSubmitting}
-              isLoading={isSubmitting}
               className="w-full font-semibold"
               size="2xl"
-              onClick={handleSkip}
             >
               Skip for Later
             </MainButton>

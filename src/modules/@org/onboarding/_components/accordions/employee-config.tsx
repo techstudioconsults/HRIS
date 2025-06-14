@@ -33,7 +33,7 @@ export const EmployeeConfig = ({ onBoardingService }: { onBoardingService: Onboa
   return (
     <Accordion type="multiple" className="w-full space-y-4">
       {fields.map((field, index) => (
-        <AccordionItem key={field.id} value={`member-${field.id}`} className="relative rounded-none !border-b">
+        <AccordionItem key={field.id} value={`member-${field.id}`} className="border-danger relative">
           <AccordionTrigger className="p-4 text-left text-sm lg:text-xl/[120%]">
             <div className="flex w-full items-center justify-between">
               <p className="font-semibold">
@@ -45,7 +45,7 @@ export const EmployeeConfig = ({ onBoardingService }: { onBoardingService: Onboa
                     event.stopPropagation();
                     removeTeamMember(index);
                   }}
-                  className="text-xs text-red-500 hover:text-red-700"
+                  className="text-destructive hover:text-destructive text-xs"
                 >
                   Remove
                 </span>

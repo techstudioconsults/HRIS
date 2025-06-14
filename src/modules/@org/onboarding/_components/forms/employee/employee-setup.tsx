@@ -76,7 +76,7 @@ export const EmployeeSetupForm = ({ onBoardingService }: EmployeeSetupFormProper
           className=""
         >
           <section className={`hide-scrollbar max-h-[500px] space-y-4 overflow-auto`}>
-            <EmployeeConfig />
+            <EmployeeConfig onBoardingService={onBoardingService} />
           </section>
           <div className="mt-4">
             <MainButton

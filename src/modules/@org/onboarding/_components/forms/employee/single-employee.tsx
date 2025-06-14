@@ -1,19 +1,88 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { FormField } from "@/components/shared/FormFields";
 import { Label } from "@/components/ui/label";
 import { ChevronRight } from "lucide-react";
-import { useFormContext } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useFormContext, useWatch } from "react-hook-form";
 
 import { Employee } from "../../../_views/step-three";
+import { OnboardingService } from "../../../services/service";
 
 interface SingleEmployeeFormProperties {
   index: number;
+  onBoardingService: OnboardingService;
 }
 
-export const SingleEmployeeForm = ({ index }: SingleEmployeeFormProperties) => {
-  const { watch } = useFormContext<{ employees: Employee[] }>();
-  const employee = watch(`employees.${index}`);
+interface Department {
+  id: string;
+  name: string;
+}
+
+interface Role {
+  id: string;
+  name: string;
+}
+
+export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeFormProperties) => {
+  const { control, setValue } = useFormContext<{ employees: Employee[] }>();
+  const employee = useWatch({ control, name: `employees.${index}` });
+  const selectedTeamId = useWatch({ control, name: `employees.${index}.teamId` });
+
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [loadingDepartments, setLoadingDepartments] = useState(false);
+  const [loadingRoles, setLoadingRoles] = useState(false);
+
+  // Fetch departments on component mount
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      setLoadingDepartments(true);
+      try {
+        const teams = await onBoardingService.getTeams();
+        const departmentOptions = teams.map((team: { id: any; name: any }) => ({
+          id: team.id,
+          name: team.name,
+        }));
+        setDepartments(departmentOptions);
+      } catch (error) {
+        console.error("Failed to fetch departments:", error);
+      } finally {
+        setLoadingDepartments(false);
+      }
+    };
+
+    fetchDepartments();
+  }, [onBoardingService]);
+
+  // Fetch roles when department changes
+  useEffect(() => {
+    const fetchRoles = async () => {
+      if (!selectedTeamId) {
+        setRoles([]);
+        setValue(`employees.${index}.roleId`, ""); // Reset role when department changes
+        return;
+      }
+
+      setLoadingRoles(true);
+      try {
+        const rolesData = await onBoardingService.getRoles(selectedTeamId);
+        const roleOptions = rolesData.map((role: { id: any; name: any }) => ({
+          id: role.id,
+          name: role.name,
+        }));
+        setRoles(roleOptions);
+      } catch (error) {
+        console.error("Failed to fetch roles:", error);
+      } finally {
+        setLoadingRoles(false);
+      }
+    };
+
+    fetchRoles();
+  }, [selectedTeamId, onBoardingService, index, setValue]);
 
   return (
     <section className="w-full">
@@ -45,38 +114,29 @@ export const SingleEmployeeForm = ({ index }: SingleEmployeeFormProperties) => {
         />
         <FormField
           type="select"
-          placeholder="Select department"
+          placeholder={loadingDepartments ? "Loading departments..." : "Select department"}
           className="!h-14 w-full"
           label="Department"
           name={`employees.${index}.teamId`}
-          options={[
-            { value: "sales", label: "Sales" },
-            { value: "marketing", label: "Marketing" },
-            { value: "engineering", label: "Engineering" },
-            { value: "hr", label: "Human Resources" },
-            { value: "finance", label: "Finance" },
-            { value: "operations", label: "Operations" },
-            { value: "customer_support", label: "Customer Support" },
-            { value: "product", label: "Product Management" },
-            { value: "it", label: "IT Support" },
-          ]}
+          options={departments.map((dept) => ({
+            value: dept.id,
+            label: dept.name,
+          }))}
+          disabled={loadingDepartments}
         />
         <FormField
           type="select"
-          placeholder="Select role"
+          placeholder={
+            selectedTeamId ? (loadingRoles ? "Loading roles..." : "Select role") : "Select a department first"
+          }
           className="!h-14 w-full"
           label="Role"
           name={`employees.${index}.roleId`}
-          options={[
-            { value: "manager", label: "Manager" },
-            { value: "supervisor", label: "Supervisor" },
-            { value: "team_lead", label: "Team Lead" },
-            { value: "senior", label: "Senior Staff" },
-            { value: "staff", label: "Staff" },
-            { value: "junior", label: "Junior Staff" },
-            { value: "intern", label: "Intern" },
-            { value: "contractor", label: "Contractor" },
-          ]}
+          options={roles.map((role) => ({
+            value: role.id,
+            label: role.name,
+          }))}
+          disabled={!selectedTeamId || loadingRoles}
         />
         <input
           type="hidden"

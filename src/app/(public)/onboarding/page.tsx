@@ -1,22 +1,21 @@
 "use client";
 
-import { StepOne, StepThree, StepTwo, Welcome } from "@/modules/@org/onboarding";
-import { useSearchParams } from "next/navigation";
+import { useSearchParameters } from "@/hooks/use-search-parameters";
+import { EmployeeSetup, StepOne, TeamSetupPage, Welcome } from "@/modules/@org/onboarding";
 
 const OnboardingPage = () => {
-  const searchParameters = useSearchParams();
-  const step = searchParameters.get("step");
+  const value = useSearchParameters("step");
 
   const renderStep = () => {
-    switch (step) {
+    switch (value) {
       case "1": {
         return <StepOne />;
       }
       case "2": {
-        return <StepTwo />;
+        return <TeamSetupPage />;
       }
       case "3": {
-        return <StepThree />;
+        return <EmployeeSetup />;
       }
       default: {
         return <Welcome />;

@@ -281,3 +281,36 @@ export const testimonials = [
     rating: 4,
   },
 ];
+
+// Mock options for select fields
+export const industryOptions = [
+  { value: "Tech Education", label: "Tech Education" },
+  { value: "Finance", label: "Finance" },
+  { value: "Healthcare", label: "Healthcare" },
+  { value: "Retail", label: "Retail" },
+];
+
+export const sizeOptions = [
+  { value: "small", label: "Small (1-50)" },
+  { value: "medium", label: "Medium (51-200)" },
+  { value: "large", label: "Large (201-1000)" },
+  { value: "enterprise", label: "Enterprise (1000+)" },
+];
+
+// const countryOptions = [
+//   { value: "united kingdom", label: "United Kingdom" },
+//   { value: "united states", label: "United States" },
+//   { value: "canada", label: "Canada" },
+// ];
+
+export const stateOptions = [
+  { value: "london", label: "London" },
+  { value: "new york", label: "New York" },
+  { value: "ontario", label: "Ontario" },
+];
+
+export const cityOptions = [
+  { value: "barking", label: "Barking" },
+  { value: "manhattan", label: "Manhattan" },
+  { value: "toronto", label: "Toronto" },
+];

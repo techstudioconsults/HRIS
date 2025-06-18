@@ -90,7 +90,7 @@ export function FormField({
                   <SelectTrigger className={cn(inputClassName, "w-full")}>
                     <SelectValue placeholder={placeholder} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className={`bg-background`}>
                     {options.map((option, index) => (
                       <SelectItem key={index} value={option.value}>
                         {option.label}

@@ -1,17 +1,38 @@
-import http from "@/lib/http/httpConfig";
+import { HttpAdapter } from "@/lib/http/http-adapter";
+import { ForgotPasswordData, LoginOTPFFormData, RegisterFormData, ResetPasswordData } from "@/schemas";
 
-export const AuthService = {
-  login: async (credentials: { email: string; password: string }) => {
-    const response = await http.post("/auth/login", credentials);
-    return response.data;
-  },
+export class AuthService {
+  private readonly http: HttpAdapter;
 
-  logout: async () => {
-    await http.post("/auth/logout");
-  },
+  constructor(httpAdapter: HttpAdapter) {
+    this.http = httpAdapter;
+  }
 
-  getCurrentUser: async () => {
-    const response = await http.get("/auth/me");
-    return response.data;
-  },
-};
+  async signUp(data: RegisterFormData) {
+    const response = await this.http.post<{ data: string; success: boolean }>(`/auth/onboard`, data);
+    if (response?.status === 201) {
+      return response.data;
+    }
+  }
+
+  async loginWithOTP(data: LoginOTPFFormData) {
+    const response = await this.http.post<{ data: string; success: boolean }>(`auth/login/requestotp`, data);
+    if (response?.status === 200) {
+      return response.data;
+    }
+  }
+
+  async forgotPassword(data: ForgotPasswordData) {
+    const response = await this.http.post<{ data: string; success: boolean }>(`/auth/forgotpassword`, data);
+    if (response?.status === 200) {
+      return response.data;
+    }
+  }
+
+  async resetPassword(data: ResetPasswordData) {
+    const response = await this.http.post<{ data: string; success: boolean }>(`/auth/resetpassword`, data);
+    if (response?.status === 200) {
+      return response.data;
+    }
+  }
+}

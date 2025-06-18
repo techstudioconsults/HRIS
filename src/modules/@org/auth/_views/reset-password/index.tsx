@@ -1,19 +1,27 @@
-/* eslint-disable no-console */
 "use client";
 
 import MainButton from "@/components/shared/button";
 import { FormField } from "@/components/shared/FormFields";
-import { RegisterFormData, registerSchema } from "@/schemas";
+import { WithDependency } from "@/HOC/withDependencies";
+import { useSearchParameters } from "@/hooks/use-search-parameters";
+import { dependencies } from "@/lib/tools/dependencies";
+import { ResetPasswordData, resetPasswordSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "iconsax-reactjs";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
+
+import { AuthService } from "../../services/auth.service";
 
 // import { toast } from "sonner";
 
-export const ResetPassword = () => {
-  const methods = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
+export const BaseResetPassword = ({ authService }: { authService: AuthService }) => {
+  const token = useSearchParameters("token");
+  const router = useRouter();
+  const methods = useForm<ResetPasswordData>({
+    resolver: zodResolver(resetPasswordSchema),
     // defaultValues: {
     //   full_name: "",
     //   email: "",
@@ -28,10 +36,24 @@ export const ResetPassword = () => {
     // watch,
   } = methods;
 
-  const handleSubmitForm = async (data: RegisterFormData) => {
-    console.log("Registering user with data:", data);
-  };
+  const handleSubmitForm = async (data: ResetPasswordData) => {
+    const tokenizedData: {
+      token?: string;
+      password: string;
+      confirmPassword: string;
+    } = {
+      ...data,
+      ...(token ? { token } : {}),
+    };
+    const response = await authService.resetPassword(tokenizedData);
 
+    if (response?.success) {
+      toast.success(`Message Sent`, {
+        description: response.data,
+      });
+      router.push(`/login`);
+    }
+  };
   return (
     <section className="mx-auto max-w-[589px] rounded-xl bg-white p-8 shadow-2xl shadow-gray-100">
       <div className={`mb-8 space-y-2`}>
@@ -47,14 +69,14 @@ export const ResetPassword = () => {
               placeholder={`Enter password`}
               className={`h-14 w-full`}
               label={`New Password`}
-              name={"email_address"}
+              name={"password"}
             />
             <FormField
               type={`password`}
               placeholder={`Enter password`}
               className={`h-14 w-full`}
               label={`Confirm Password`}
-              name={"email_address"}
+              name={"confirmPassword"}
             />
           </section>
           <div className="pt-8">
@@ -81,3 +103,7 @@ export const ResetPassword = () => {
     </section>
   );
 };
+
+export const ResetPassword = WithDependency(BaseResetPassword, {
+  authService: dependencies.AUTH_SERVICE,
+});

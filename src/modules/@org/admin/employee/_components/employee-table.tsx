@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
-  Pagination,
+  // Pagination,
   PaginationContent,
   PaginationItem,
   PaginationNext,
@@ -21,6 +21,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { cn } from "@/lib/utils";
 // import { MoreHorizontal } from "lucide-react";
 import { Add, Export, Filter, More } from "iconsax-reactjs";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -57,31 +58,31 @@ export function EmployeeTable({ employees, className }: EmployeeTableProperties)
       {/* Filter Controls */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="">
-          <h1 className="text-2xl font-bold">Employees</h1>
-          <p>All Employee</p>
+          <h1 className="text-2xl font-bold">Employee</h1>
+          <p>All Employees</p>
         </div>
         <div className="">
           <div className="flex items-center gap-2">
-            <Input placeholder="Filter employees..." className="h-8" />
+            <Input placeholder="Filter employees..." className="border-gray-75 h-10 border-1" />
             <MainButton
-              className="border-gray-75 text-black dark:text-white"
+              className="border-gray-75 bg-background border-1 px-3 text-black dark:text-white"
               variant="outline"
               isLeftIconVisible={true}
-              size="sm"
+              size="lg"
               icon={<Filter />}
             >
               Filter
             </MainButton>
             <MainButton
-              className="border-gray-75 text-black dark:text-white"
+              className="border-gray-75 bg-background border-1 px-3 text-black dark:text-white"
               variant="outline"
-              size="sm"
+              size="lg"
               isLeftIconVisible={true}
               icon={<Export />}
             >
               Export
             </MainButton>
-            <MainButton variant="primary" isLeftIconVisible={true} size="sm" icon={<Add />}>
+            <MainButton variant="primary" isLeftIconVisible={true} size="lg" icon={<Add />}>
               Add Employee
             </MainButton>
           </div>
@@ -143,7 +144,7 @@ export function EmployeeTable({ employees, className }: EmployeeTableProperties)
       </div>
 
       {/* Employee Table */}
-      <div className="border">
+      <div className="bg-background">
         <Table>
           <TableHeader>
             <TableRow>
@@ -158,13 +159,16 @@ export function EmployeeTable({ employees, className }: EmployeeTableProperties)
           <TableBody>
             {employees.map((employee) => (
               <TableRow key={employee.id}>
-                <TableCell className="font-medium">{employee.name}</TableCell>
+                <TableCell className="flex items-center gap-2 font-medium">
+                  <Image src="/images/Frame 20955855692.svg" alt="employee image" width="30" height="30" />
+                  <span>{employee.name}</span>
+                </TableCell>
                 <TableCell>{employee.email}</TableCell>
                 <TableCell>{employee.role}</TableCell>
                 <TableCell>{employee.department}</TableCell>
                 <TableCell>
                   <span
-                    className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium", {
+                    className={cn("inline-flex items-center rounded-full px-3 py-1 text-xs font-medium", {
                       "bg-green-100 text-green-800": employee.status === "Active",
                       "bg-yellow-100 text-yellow-800": employee.status === "On Leave",
                       "bg-red-100 text-red-800": employee.status === "Inactive",
@@ -195,50 +199,30 @@ export function EmployeeTable({ employees, className }: EmployeeTableProperties)
       </div>
 
       {/* Custom Pagination */}
-      <div className="flex items-center justify-between">
-        <div className="text-muted-foreground text-sm">{itemsPerPage} Entries per page</div>
 
-        <Pagination className="mx-0 w-auto">
-          <PaginationContent>
-            <PaginationItem>
-              <span className="text-muted-foreground text-sm">
-                Page {currentPage} of {totalPages}
-              </span>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationPrevious
-                // variant="outline"
-                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                // disabled={currentPage === 1}
-                className="ml-2"
-              />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext
-                // variant="outline"
-                className=""
-                onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                // disabled={currentPage === totalPages}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+      <div className="flex w-full items-center justify-between">
+        {/* Entries per page */}
+        <div className="text-muted-foreground text-sm whitespace-nowrap">{itemsPerPage} Entries per page</div>
+
+        {/* Page info */}
+        <div className="flex flex-grow justify-center">
+          <span className="text-muted-foreground text-sm">
+            Page {currentPage} of {totalPages}
+          </span>
+        </div>
+
+        <PaginationContent className="flex items-center gap-1">
+          <PaginationItem>
+            <PaginationPrevious
+              onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+              // disabled={currentPage === 1}
+            />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))} />
+          </PaginationItem>
+        </PaginationContent>
       </div>
-
-      {/* Pagination */}
-      {/* <div className="flex items-center justify-between">
-        <div className="text-muted-foreground text-sm">
-          Showing <strong>1-{employees.length}</strong> of <strong>{employees.length}</strong> employees
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm" disabled>
-            Previous
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            Next
-          </Button>
-        </div>
-      </div> */}
     </div>
   );
 }

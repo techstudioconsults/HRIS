@@ -1,34 +1,47 @@
-/* eslint-disable no-console */
 "use client";
 
 import MainButton from "@/components/shared/button";
 import { FormField } from "@/components/shared/FormFields";
+import { WithDependency } from "@/HOC/withDependencies";
+import { dependencies } from "@/lib/tools/dependencies";
 import { RegisterFormData, registerSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
-// import { toast } from "sonner";
+import { AuthService } from "../../services/auth.service";
 
-export const Register = () => {
+const BaseRegister = ({ authService }: { authService: AuthService }) => {
+  const router = useRouter();
   const methods = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    // defaultValues: {
-    //   full_name: "",
-    //   email: "",
-    //   password: "",
-    //   password_confirmation: "",
-    // },
+    defaultValues: {
+      companyName: "",
+      domain: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isValid },
     // watch,
   } = methods;
 
   const handleSubmitForm = async (data: RegisterFormData) => {
-    console.log("Registering user with data:", data);
+    const response = await authService.signUp(data);
+    if (response) {
+      toast.success(`Registration Successful`, {
+        description: response.data,
+      });
+      router.push(`/login`);
+    }
   };
 
   return (
@@ -45,25 +58,41 @@ export const Register = () => {
               placeholder={`Enter company name`}
               className={`h-14 w-full`}
               label={`Company's Name`}
-              name={"company_name"}
+              name={"companyName"}
+              required
             />
             <FormField
               placeholder={`Enter first name`}
               className={`h-14 w-full`}
               label={`First Name`}
-              name={"first_name"}
+              name={"firstName"}
+              required
             />
             <FormField
               placeholder={`Enter last name`}
               className={`h-14 w-full`}
               label={`Last Name`}
-              name={"last_name"}
+              name={"lastName"}
+              required
             />
+            <div>
+              <FormField
+                placeholder={`Enter company domain e.g https://www.techstudioacademy.com`}
+                className={`h-14 w-full`}
+                label={`Company Domain`}
+                name={"domain"}
+                required
+              />
+              <p className={`text-destructive text-sm italic`}>
+                Used to identify your organization and help verify employee emails (e.g., @techstudio.com).
+              </p>
+            </div>
             <FormField
               placeholder={`Enter email address`}
               className={`h-14 w-full`}
-              label={`Email Address`}
-              name={"email_address"}
+              label={`Work Email Address`}
+              name={"email"}
+              required
             />
             <FormField
               type={`password`}
@@ -71,14 +100,15 @@ export const Register = () => {
               className={`h-14 w-full`}
               label={`Create Password`}
               name={"password"}
+              required
             />
-
             <FormField
               type={`password`}
               placeholder={`Enter password`}
               className={`h-14 w-full`}
               label={`Confirm Password`}
-              name={"password_confirmation"}
+              name={"confirmPassword"}
+              required
             />
           </section>
           <div className="pt-8">
@@ -98,7 +128,7 @@ export const Register = () => {
             <MainButton
               type="submit"
               variant="primary"
-              isDisabled={isSubmitting}
+              isDisabled={isSubmitting || !isValid}
               isLoading={isSubmitting}
               className="w-full"
               size="2xl"
@@ -118,3 +148,7 @@ export const Register = () => {
     </section>
   );
 };
+
+export const Register = WithDependency(BaseRegister, {
+  authService: dependencies.AUTH_SERVICE,
+});

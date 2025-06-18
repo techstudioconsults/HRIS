@@ -219,6 +219,39 @@ export const NAV_LINKS: NavLink[] = [
   { id: 3, title: "Projects", href: "/projects", type: "link" },
 ];
 
+export const adminNavItems = [
+  {
+    id: "dashboard",
+    route: "Dashboard",
+    link: "/admin/dashboard",
+    icon: "Element3",
+  },
+  {
+    id: "employees",
+    route: "Employees",
+    link: "/admin/employees",
+    icon: "Profile2User",
+  },
+  {
+    id: "teams",
+    route: "Teams",
+    link: "/admin/teams",
+    icon: "People",
+  },
+  {
+    id: "payroll",
+    route: "Payroll",
+    link: "/admin/payroll",
+    icon: "CardReceive",
+  },
+  {
+    id: "attendance",
+    route: "Attendance",
+    link: "/admin/attendance",
+    icon: "Clock",
+  },
+];
+
 export const testimonials = [
   {
     id: 1,

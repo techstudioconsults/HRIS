@@ -120,6 +120,26 @@ export const companyProfileSchema = z.object({
   postcode: z.string().min(1, "Postal code is required"),
 });
 
+// Define validation schema
+export const employeeSchema = z.object({
+  full_name: z.string().min(1, "Full name is required"),
+  gender: z.string().min(1, "Gender is required"),
+  phone_number: z.string().min(1, "Phone number is required"),
+  date_of_birth: z.string().min(1, "Date of birth is required"),
+  work_email: z.string().email("Invalid email format"),
+  start_date: z.string().min(1, "Start date is required"),
+  work_mode: z.string().optional(),
+  role: z.string().min(1, "Role is required"),
+  employment_type: z.string().optional(),
+  teams: z.string().min(1, "Teams selection is required"),
+  monthly_gross_salary: z.number().min(0, "Salary must be positive"),
+  bank_name: z.string().optional(),
+  account_name: z.string().min(1, "Account name is required"),
+  account_number: z.string().min(1, "Account number is required"),
+  documents: z.any().optional(),
+});
+
+export type EmployeeFormData = z.infer<typeof employeeSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type LoginOTPFormData = z.infer<typeof loginOTPSchema>;

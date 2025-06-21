@@ -1,35 +1,45 @@
-/* eslint-disable no-console */
 "use client";
 
 import MainButton from "@/components/shared/button";
 import { FormField } from "@/components/shared/FormFields";
-import { RegisterFormData, registerSchema } from "@/schemas";
+import { WithDependency } from "@/HOC/withDependencies";
+import { dependencies } from "@/lib/tools/dependencies";
+import { ForgotPasswordData, forgotPasswordSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "iconsax-reactjs";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
+
+import { AuthService } from "../../services/auth.service";
 
 // import { toast } from "sonner";
 
-export const ForgotPassword = () => {
-  const methods = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
-    // defaultValues: {
-    //   full_name: "",
-    //   email: "",
-    //   password: "",
-    //   password_confirmation: "",
-    // },
+export const BaseForgotPassword = ({ authService }: { authService: AuthService }) => {
+  const router = useRouter();
+  const methods = useForm<ForgotPasswordData>({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: {
+      email: "",
+    },
   });
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isValid },
     // watch,
   } = methods;
 
-  const handleSubmitForm = async (data: RegisterFormData) => {
-    console.log("Registering user with data:", data);
+  const handleSubmitForm = async (data: ForgotPasswordData) => {
+    const response = await authService.forgotPassword(data);
+
+    if (response?.success) {
+      toast.success(`Message Sent`, {
+        description: response.data,
+      });
+      router.push(`/reset-password`);
+    }
   };
 
   return (
@@ -53,14 +63,15 @@ export const ForgotPassword = () => {
               placeholder={`Enter email address`}
               className={`h-14 w-full`}
               label={`Email Address`}
-              name={"email_address"}
+              name={"email"}
+              type={`email`}
             />
           </section>
           <div className="pt-8">
             <MainButton
               type="submit"
               variant="primary"
-              isDisabled={isSubmitting}
+              isDisabled={isSubmitting || !isValid}
               isLoading={isSubmitting}
               className="w-full"
               size="2xl"
@@ -80,3 +91,7 @@ export const ForgotPassword = () => {
     </section>
   );
 };
+
+export const ForgotPassword = WithDependency(BaseForgotPassword, {
+  authService: dependencies.AUTH_SERVICE,
+});

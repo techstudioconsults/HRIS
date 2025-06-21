@@ -1,34 +1,41 @@
-/* eslint-disable no-console */
 "use client";
 
 import MainButton from "@/components/shared/button";
 import { FormField } from "@/components/shared/FormFields";
-import { RegisterFormData, registerSchema } from "@/schemas";
+import { login } from "@/modules/@org/auth/actions/auth-action";
+import { LoginFormData, loginSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { FormProvider, useForm } from "react-hook-form";
-
-// import { toast } from "sonner";
+import { toast } from "sonner";
 
 export const Login = () => {
-  const methods = useForm<RegisterFormData>({
-    resolver: zodResolver(registerSchema),
-    // defaultValues: {
-    //   full_name: "",
-    //   email: "",
-    //   password: "",
-    //   password_confirmation: "",
-    // },
+  const methods = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
-    // watch,
+    formState: { isSubmitting, isValid },
   } = methods;
 
-  const handleSubmitForm = async (data: RegisterFormData) => {
-    console.log("Registering user with data:", data);
+  const handleSubmitForm = async (data: LoginFormData) => {
+    const result = await login(data);
+
+    if (result?.error) {
+      toast.error("Login Failed", {
+        description: result.error,
+      });
+    } else if (result?.success) {
+      toast.success(`Login Successful`, {
+        description: `Redirecting to onboarding...`,
+      });
+      window.location.href = "/onboarding";
+    }
   };
 
   return (
@@ -45,7 +52,8 @@ export const Login = () => {
               placeholder={`Enter email address`}
               className={`h-14 w-full`}
               label={`Email Address`}
-              name={"email_address"}
+              name={"email"}
+              required
             />
             <div className="space-y-2">
               <FormField
@@ -54,32 +62,20 @@ export const Login = () => {
                 className={`h-14 w-full`}
                 label={`Password`}
                 name={"password"}
+                required
               />
               <div className="flex justify-end">
-                <Link href="/forgot-password" className="text-primary font-medium hover:underline">
+                <Link href="/forgot-password" className="text-destructive font-medium hover:underline">
                   Forgot Password?
                 </Link>
               </div>
             </div>
           </section>
           <div className="pt-8">
-            <div className="text-muted-foreground mb-4 text-sm">
-              <p>
-                By signing up, you’re agreeing to TechstudioHR’s{" "}
-                <Link href="/privacy" className="text-primary hover:underline">
-                  Privacy Policy
-                </Link>
-                , and{" "}
-                <Link href="/terms" className="text-primary hover:underline">
-                  Terms & Conditions.
-                </Link>
-              </p>
-            </div>
-
             <MainButton
               type="submit"
               variant="primary"
-              isDisabled={isSubmitting}
+              isDisabled={isSubmitting || !isValid}
               isLoading={isSubmitting}
               className="w-full"
               size="2xl"
@@ -98,15 +94,7 @@ export const Login = () => {
           </div>
         </div>
 
-        <MainButton
-          type="button"
-          variant="outline"
-          className="w-full"
-          size={`2xl`}
-          // isDisabled={isGooglePending}
-          // isLoading={isGooglePending}
-          // onClick={handleGoogleSignIn}
-        >
+        <MainButton href={`/login?type=otp`} variant="outline" className="w-full" size={`2xl`}>
           Log in with OTP instead
         </MainButton>
 

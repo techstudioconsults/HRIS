@@ -1,3 +1,5 @@
+"use client";
+
 import { BlurImage } from "@/components/core/miscellaneous/blur-image";
 import MainButton from "@/components/shared/button";
 
@@ -6,7 +8,7 @@ export const Welcome = () => {
     <section className={`flex flex-col-reverse items-center justify-between gap-8 lg:flex-row`}>
       <section className={`max-w-[646px]`}>
         <div className={`space-y-[24px]`}>
-          <h1 className={`text-4xl/[100%] font-semibold`}>Welcome to TechstudioHR</h1>
+          <h1 className={`text-4xl/[100%] font-semibold`}>Welcome to TechstudioHR,</h1>
           <p className={`text-xl/[120%]`}>
             Let’s help you get started. You can take a quick tour to understand how Techstudio HR works or you can jump
             straight in and begin set up.
@@ -16,7 +18,7 @@ export const Welcome = () => {
           <MainButton className={`w-full lg:w-fit`} variant={`primary`}>
             Take a Quick Tour
           </MainButton>
-          <MainButton className={`w-full lg:w-fit`} variant={`outline`}>
+          <MainButton href={`/onboarding?step=1`} className={`w-full lg:w-fit`} variant={`outline`}>
             Skip Tour & Continue
           </MainButton>
         </div>

@@ -15,7 +15,16 @@ const NotFoundPage = () => {
         <p className="text-primary text-center font-medium uppercase sm:text-2xl md:text-3xl lg:text-4xl lg:font-bold xl:font-bold">
           Page Not Found
         </p>
-        <Image src="/images/404.svg" alt="404" width={480} height={204} unoptimized loading="eager" priority />
+        <Image
+          src="/images/logo.svg"
+          alt="404"
+          width={180}
+          height={104}
+          unoptimized
+          loading="eager"
+          priority
+          className={`mx-auto`}
+        />
         <div className="flex w-full items-center justify-center gap-x-4">
           <button
             onClick={() => router.back()}

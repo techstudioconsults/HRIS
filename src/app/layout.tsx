@@ -10,10 +10,9 @@ import "../styles/global.css";
 
 import ThemeProvider from "@/components/core/layout/ThemeToggle/theme-provider";
 import { ModeToggle } from "@/components/core/layout/ThemeToggle/theme-toggle";
-// import { ModeToggle } from "@/components/core/layout/ThemeToggle/theme-toggle";
 import { Toast } from "@/components/shared/Toast";
-import { AppProvider } from "@/context/app-provider";
 import { ReactQueryProvider } from "@/lib/react-query/query-provider";
+import { SessionProvider } from "next-auth/react";
 
 const META_THEME_COLORS = {
   light: "#ffffff",
@@ -43,21 +42,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               try {
                 if (localStorage.theme === 'dark' || ((!('theme' in localStorage) || localStorage.theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                   document.querySelector('meta[name="theme-color"]').setAttribute('content', '${META_THEME_COLORS.dark}')
-                }
-              } catch (_) {}
-            `,
+                  }
+                  } catch (_) {}
+                  `,
           }}
         />
       </head>
-      <body
-        className={cn(
-          "bg-background font-sans antialiased",
-          activeThemeValue ? `theme-${activeThemeValue}` : "",
-          isScaled ? "theme-scaled" : "",
-          fontVariables,
-        )}
-      >
-        <AppProvider>
+      <SessionProvider>
+        <body
+          className={cn(
+            "bg-background font-sans antialiased",
+            activeThemeValue ? `theme-${activeThemeValue}` : "",
+            isScaled ? "theme-scaled" : "",
+            fontVariables,
+          )}
+        >
           <NextTopLoader showSpinner={false} />
           <NuqsAdapter>
             <ReactQueryProvider>
@@ -74,8 +73,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               </ThemeProvider>
             </ReactQueryProvider>
           </NuqsAdapter>
-        </AppProvider>
-      </body>
+        </body>
+      </SessionProvider>
     </html>
   );
 }

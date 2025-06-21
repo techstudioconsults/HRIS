@@ -1,15 +1,13 @@
 "use client";
 
-import { CheckMailCard, ForgotPassword, InputOtpCard } from "@/modules/@org/auth";
-import { useSearchParams } from "next/navigation";
+import { useSearchParameters } from "@/hooks/use-search-parameters";
+import { CheckMailCard, ForgotPassword } from "@/modules/@org/auth";
 
 const Page = () => {
-  const searchParameters = useSearchParams();
-  const view = searchParameters.get("view");
+  const value = useSearchParameters("view");
 
   const getCurrentView = () => {
-    if (view === "mail") return <CheckMailCard />;
-    if (view === "otp") return <InputOtpCard />;
+    if (value === "mail") return <CheckMailCard />;
     return <ForgotPassword />;
   };
 

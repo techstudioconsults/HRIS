@@ -32,6 +32,15 @@ export class HttpAdapter {
 
     return result;
   }
+  // private async handleRequest<T>(
+  //   requestFunction: () => Promise<{ data: T; status: number }>,
+  // ): Promise<HttpResponse<T> | undefined> {
+  //   const response = await requestFunction();
+  //   return {
+  //     data: response.data,
+  //     status: response.status,
+  //   };
+  // }
 
   async get<T>(endpoint: string, query: QueryParameters = {}, headers?: Headers): Promise<HttpResponse<T> | undefined> {
     const queryString = this.buildQueryString(query);

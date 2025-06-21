@@ -68,7 +68,7 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProperties) {
   };
 
   return (
-    <Sidebar className="cc-border border-r shadow-none">
+    <Sidebar className="shadow-none">
       <SidebarContent className="bg-background">
         <Logo width={148} className="mx-auto py-2 md:py-4" />
         <SidebarMenu className="space-y-2.5 p-5">

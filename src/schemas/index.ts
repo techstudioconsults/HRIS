@@ -2,12 +2,15 @@ import * as z from "zod";
 
 export const registerSchema = z
   .object({
-    full_name: z.string().min(2, "Full name must be at least 2 characters"),
+    companyName: z.string(),
+    domain: z.string(),
+    firstName: z.string().min(2, "First name must be at least 2 characters"),
+    lastName: z.string().min(2, "Last name must be at least 2 characters"),
     email: z.string().email("Please enter a valid email"),
     password: z.string().min(8, "Password must be at least 8 characters"),
-    password_confirmation: z.string(),
+    confirmPassword: z.string(),
   })
-  .refine((data) => data.password === data.password_confirmation, {
+  .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["password_confirmation"],
   });
@@ -18,50 +21,25 @@ export const loginSchema = z.object({
   // .min(8, "Password must be at least 8 characters"),
 });
 
+export const loginOTPSchema = z.object({
+  email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+export const loginOTPFormSchema = z.object({
+  email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
+  // password: z.string().min(1, "Password is required"),
+});
+
 export const forgotPasswordSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address",
   }),
 });
 export const resetPasswordSchema = z.object({
-  token: z.string().min(1, "Title is required").optional(),
-  email: z.string().min(1, "Email is required").email("Please enter a valid email address").optional(),
+  token: z.string().min(1, "Token is required").optional(),
+  // email: z.string().min(1, "Email is required").email("Please enter a valid email address").optional(),
   password: z.string().min(1, "Password is required").min(8, "Password must be at least 8 characters"),
-  password_confirmation: z.string().min(1, "Confirm password is required"),
-});
-
-// Base schema for common fields
-const BaseSchema = z.object({
-  product_type: z.enum(["digital_product", "skill_selling"]),
-  title: z.string().min(1, "Title is required"),
-  category: z.string().min(1, "Category is required"),
-  price: z.number().min(1, "Price must be a positive number"),
-  discount_price: z.number().min(0, "Discount must be a positive number"),
-  description: z.string().min(1, "Description is required"),
-  cover_photos: z.array(z.any()).min(1, "Cover photo is required"),
-  thumbnail: z.any().refine((file) => file !== null, "Thumbnail is required"),
-  tags: z.array(z.string()).min(1, "At least one tag is required"),
-  highlights: z.array(z.string()).min(1, "At least one highlight is required"),
-});
-
-// Digital product schema
-const DigitalProductSchema = BaseSchema.extend({
-  product_type: z.literal("digital_product"),
-  assets: z.array(z.any()).min(1, "Product files are required").max(4, "You can upload up to 4 files"),
-});
-
-// Skill selling schema
-const SkillSellingSchema = BaseSchema.extend({
-  product_type: z.literal("skill_selling"),
-  resource_link: z.array(z.string()).min(1, "At least one resource link is required"),
-  portfolio_link: z.string().min(1, "Portfolio link is required"),
-});
-
-// Combined schema using Zod's union
-export const ProductFormSchema = z.discriminatedUnion("product_type", [DigitalProductSchema, SkillSellingSchema]);
-
-export const withdrawalSchema = z.object({
-  amount: z.number().min(1, "Price must be a positive number"),
+  confirmPassword: z.string().min(1, "Confirm password is required"),
 });
 
 export const bankFormSchema = z.object({
@@ -130,25 +108,16 @@ export const kycSchema = z.object({
   document_image: z.any().refine((file) => file !== null, "document image is required"),
 });
 
-export const emailIntegrationSchema = z.object({
-  provider: z.string().optional(),
-  token: z.string().min(1, "API key is required"),
-});
-
-export const funnelSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  thumbnail: z.any().refine((file) => file !== null, "Thumbnail is required"),
-  product_id: z.string().min(1, "At least one product is required"),
-  // asset: z.any().refine((file) => file !== null, "asset is required"),
-  assets: z.array(z.any()).min(1, "Product files are required").max(4, "You can upload up to 4 files"),
-});
-
-export const funnelSettingsSchema = z.object({
-  title: z.string().min(1, "Title is required").optional(),
-  logo: z
-    .any()
-    .refine((file) => file !== null, "Thumbnail is required")
-    .optional(),
+export const companyProfileSchema = z.object({
+  domain: z.string().min(1, "Company name is required"),
+  industry: z.string().min(1, "Industry is required"),
+  size: z.string().min(1, "Company size is required"),
+  addressLine1: z.string().min(1, "Address line 1 is required"),
+  addressLine2: z.string().optional(),
+  country: z.string().min(1, "Country is required"),
+  state: z.string().min(1, "State is required"),
+  city: z.string().min(1, "City is required"),
+  postcode: z.string().min(1, "Postal code is required"),
 });
 
 // Define validation schema
@@ -161,6 +130,7 @@ export const employeeSchema = z.object({
   start_date: z.string().min(1, "Start date is required"),
   work_mode: z.string().optional(),
   role: z.string().min(1, "Role is required"),
+  department: z.string().min(1, "Department is required"),
   employment_type: z.string().optional(),
   teams: z.string().min(1, "Teams selection is required"),
   monthly_gross_salary: z.number().min(0, "Salary must be positive"),
@@ -173,9 +143,11 @@ export const employeeSchema = z.object({
 export type EmployeeFormData = z.infer<typeof employeeSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;
+export type LoginOTPFormData = z.infer<typeof loginOTPSchema>;
+export type LoginOTPFFormData = z.infer<typeof loginOTPFormSchema>;
 export type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordData = z.infer<typeof resetPasswordSchema>;
-export type WithdrawalData = z.infer<typeof withdrawalSchema>;
+export type CompanyProfileFormData = z.infer<typeof companyProfileSchema>;
 export type BankFormData = z.infer<typeof bankFormSchema>;
 export type ReviewFormData = z.infer<typeof reviewSchema>;
 export type ContactFormData = z.infer<typeof contactSchema>;
@@ -184,9 +156,4 @@ export type EmailNotificationSettingFormData = z.infer<typeof emailNotificationS
 export type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 export type ChangeEmailFormData = z.infer<typeof changeEmailSchema>;
 export type KycFormData = z.infer<typeof kycSchema>;
-export type EmailIntegrationFormData = z.infer<typeof emailIntegrationSchema>;
-export type FunnelFormData = z.infer<typeof funnelSchema>;
-export type FunnelSettingFormData = z.infer<typeof funnelSettingsSchema>;
 export type ExternalContactFormData = z.infer<typeof externalContactSchema>;
-
-// export type ProductFormData = z.infer<typeof ProductFormSchema>;

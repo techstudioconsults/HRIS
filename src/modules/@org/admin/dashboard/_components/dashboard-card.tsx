@@ -28,7 +28,7 @@ export function DashboardCard({
   trend = "up",
 }: DashboardCardProperties) {
   return (
-    <div className={cn("bg-card rounded-xl p-6 shadow-sm transition-all hover:shadow-md", className)}>
+    <div className={cn("bg-background rounded-xl p-6 transition-all hover:shadow-md", className)}>
       <h3 className="text-muted-foreground pb-3 text-sm font-medium">{title}</h3>
       <div className="flex items-center justify-between">
         <p className="text-3xl font-bold">{value}</p>

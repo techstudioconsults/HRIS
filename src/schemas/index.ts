@@ -130,6 +130,7 @@ export const employeeSchema = z.object({
   start_date: z.string().min(1, "Start date is required"),
   work_mode: z.string().optional(),
   role: z.string().min(1, "Role is required"),
+  department: z.string().min(1, "Department is required"),
   employment_type: z.string().optional(),
   teams: z.string().min(1, "Teams selection is required"),
   monthly_gross_salary: z.number().min(0, "Salary must be positive"),

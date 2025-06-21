@@ -26,7 +26,7 @@ const formatCurrency = (value: number) => {
 
 export function PayrollLineChart() {
   return (
-    <Card className="w-full shadow-sm">
+    <Card className="bg-background w-full">
       <CardHeader>
         <CardTitle className="text-lg font-semibold text-gray-800">Monthly Payroll Summary</CardTitle>
         {/* <p className="text-sm text-gray-500">This year</p> */}

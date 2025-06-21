@@ -20,10 +20,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <SidebarInset className="flex-1">
           <div className="flex h-full flex-col">
             {/* Header with Sidebar Trigger */}
-            <header className="flex h-20 shrink-0 items-center gap-2 border-b px-4 py-5">
+            <header className="flex h-20 shrink-0 items-center gap-2 px-4 py-5">
               <SidebarTrigger className="-ml-1" />
               <div className="flex-1">
-                {/* header content here */}
                 {/* onSearch={handleSearch} */}
                 <TopBar adminName="Tosin Sanya" notificationsCount={12} className="px-6" />
               </div>

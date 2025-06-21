@@ -314,3 +314,38 @@ export const cityOptions = [
   { value: "manhattan", label: "Manhattan" },
   { value: "toronto", label: "Toronto" },
 ];
+
+export const genderOptions = [
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+  { value: "other", label: "Other" },
+];
+
+export const employmentTypeOptions = [
+  { value: "full-time", label: "Full-time" },
+  { value: "part-time", label: "Part-time" },
+  { value: "contract", label: "Contract" },
+  { value: "internship", label: "Internship" },
+];
+
+export const workModeOptions = [
+  { value: "remote", label: "Remote" },
+  { value: "onsite", label: "Onsite" },
+  { value: "hybrid", label: "Hybrid" },
+];
+
+export const departmentOptions = [
+  { value: "engineering", label: "Engineering" },
+  { value: "marketing", label: "Marketing" },
+  { value: "sales", label: "Sales" },
+  { value: "hr", label: "Human Resources" },
+  { value: "finance", label: "Finance" },
+];
+
+export const roleOptions = [
+  { value: "developer", label: "Developer" },
+  { value: "designer", label: "Designer" },
+  { value: "manager", label: "Manager" },
+  { value: "analyst", label: "Analyst" },
+  { value: "administrator", label: "Administrator" },
+];

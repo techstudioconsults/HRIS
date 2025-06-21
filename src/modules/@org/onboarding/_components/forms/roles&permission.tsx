@@ -8,14 +8,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { InfoCircle } from "iconsax-reactjs";
+import { FormEvent } from "react";
 import { useForm } from "react-hook-form";
 
 import { Role, roleSchema } from "./schema";
 
 interface RolesAndPermissionProperties {
+  isEdit?: boolean;
   initialData?: any;
   onSubmit: (data: Role) => Promise<void>;
-  onCancel: () => void;
+  onCancel: (event: FormEvent) => void;
   isSubmitting?: boolean;
 }
 
@@ -23,6 +26,7 @@ const modules = ["admin", "company", "leave", "employee", "team", "role"] as con
 const actions = ["read", "create", "edit", "delete", "manage"] as const;
 
 export const RolesAndPermission = ({
+  isEdit,
   initialData,
   onSubmit,
   onCancel,
@@ -38,6 +42,7 @@ export const RolesAndPermission = ({
 
   const handleSubmit = (data: Role) => {
     // Transform the form data to match your desired output format
+
     const output = {
       name: data.name,
       permissions: data.permissions,
@@ -47,24 +52,38 @@ export const RolesAndPermission = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+      <form className="space-y-4">
         {/* Role Name Input */}
-        <Card className={`border-none p-0 shadow-none`}>
-          <CardContent className={`p-0`}>
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Role Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter role name" {...field} className="h-[48px] w-full shadow-none" />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
+        {isEdit ? (
+          <div className={`bg-warning-50 text-warning-200 rounded-lg p-4 text-sm`}>
+            <p className={`flex items-start gap-2`}>
+              <div>
+                <InfoCircle size={12} className={`mt-1 text-sm`} />
+              </div>
+              <span>
+                You can tailor what this employee can view or manage on the platform. These permissions apply only to
+                this employee and can be changed later..
+              </span>
+            </p>
+          </div>
+        ) : (
+          <Card className={`border-none p-0 shadow-none`}>
+            <CardContent className={`p-0`}>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Role Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter role name" {...field} className="h-[48px] w-full shadow-none" />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+        )}
 
         {/* Claims Matrix Table */}
         <Card className={`border-none p-0 shadow-none`}>
@@ -130,7 +149,13 @@ export const RolesAndPermission = ({
           <MainButton type="button" variant="outline" onClick={onCancel} isDisabled={isSubmitting} className="w-full">
             Cancel
           </MainButton>
-          <MainButton type="submit" variant={`primary`} isDisabled={isSubmitting} className="w-full">
+          <MainButton
+            onClick={form.handleSubmit(handleSubmit)}
+            type="button"
+            variant={`primary`}
+            isDisabled={isSubmitting}
+            className="w-full"
+          >
             {isSubmitting ? "Saving..." : "Save & Continue"}
           </MainButton>
         </div>

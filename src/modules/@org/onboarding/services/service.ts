@@ -54,7 +54,7 @@ export class OnboardingService {
   }
 
   async updateCompanyProfile(data: CompanyProfileFormData) {
-    const response = await this.http.patch<{ data: string; success: boolean }>(`/companies`, data);
+    const response = await this.http.patch<{ data: string; success: boolean }>(`/companies/current`, data);
     if (response?.status === 200) {
       return response.data;
     }
@@ -132,6 +132,12 @@ export class OnboardingService {
       }));
     }
     return [];
+  }
+  async getRole(roleId: string) {
+    const response = await this.http.get<{ data: RoleApiResponse }>(`/roles/${roleId}`);
+    if (response?.status === 200) {
+      return response.data.data;
+    }
   }
 
   async createRole(role: Omit<Role, "id">): Promise<Role> {

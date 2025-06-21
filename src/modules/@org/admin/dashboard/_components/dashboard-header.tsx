@@ -1,5 +1,6 @@
 import MainButton from "@/components/shared/button";
 import { Add, Calendar, Export } from "iconsax-reactjs";
+import Link from "next/link";
 
 export const DashboardHeader = () => {
   return (
@@ -25,9 +26,11 @@ export const DashboardHeader = () => {
         >
           Export
         </MainButton>
-        <MainButton variant="primary" isLeftIconVisible={true} icon={<Add />}>
-          Add Employee
-        </MainButton>
+        <Link href="/admin/employees/add-employee">
+          <MainButton variant="primary" isLeftIconVisible={true} icon={<Add />}>
+            Add Employee
+          </MainButton>
+        </Link>
       </div>
     </div>
   );

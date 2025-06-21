@@ -1,6 +1,6 @@
 // app/employees/[id]/page.tsx
 import MainButton from "@/components/shared/button";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { Call, More, Sms } from "iconsax-reactjs";
 import Image from "next/image";
 import Link from "next/link";
@@ -197,12 +197,15 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
           {/* Employee Documents Section */}
           <div className="bg-white p-6 dark:bg-black">
             <h2 className="mb-4 text-lg font-semibold">Employee Documents</h2>
-            <div className="border-gray-75 flex items-center justify-between rounded-lg border p-4">
-              <div>
-                <p className="font-medium">Employment Letter</p>
-                <p className="text-muted-foreground">Uploaded on Jan 12, 2024 - 245 KB</p>
+            <div className="border-gray-75 flex w-1/2 items-center justify-between rounded-lg border p-4">
+              <div className="flex items-center gap-4">
+                <Image src="/images/pdf-icon.svg" width="32" height="44" alt="PDF Icon" />
+                <div>
+                  <p className="font-medium">Employment Letter</p>
+                  <p className="text-muted-foreground text-sm">Uploaded on Jan 12, 2024 - 245 KB</p>
+                </div>
               </div>
-              <Button variant="outline">View</Button>
+              <More className="rotate-90" />
             </div>
           </div>
         </div>

@@ -1,8 +1,10 @@
 import axios from "axios";
+import { getSession } from "next-auth/react";
 
 // import Cookies from "js-cookie";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL as string;
+
 // const CSRF_URL = `${BASE_URL}/sanctum/csrf-cookie`;
 const TIMEOUTMSG = "Waiting for too long...Aborted!";
 
@@ -38,10 +40,11 @@ http.interceptors.request.use(
   async (config) => {
     // await initializeCsrf();
     // const xsrfToken = getCsrfToken();
-    // const session = await getSession();
-    // if (session?.user.token) {
-    //   config.headers.Authorization = `Bearer ${session.user.token}`;
-    // }
+    const session = await getSession();
+
+    if (session?.accessToken) {
+      config.headers.Authorization = `Bearer ${session.accessToken}`;
+    }
 
     // if (xsrfToken) {
     //   config.headers["X-XSRF-TOKEN"] = decodeURIComponent(xsrfToken);

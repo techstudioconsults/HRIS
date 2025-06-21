@@ -281,3 +281,71 @@ export const testimonials = [
     rating: 4,
   },
 ];
+
+// Mock options for select fields
+export const industryOptions = [
+  { value: "Tech Education", label: "Tech Education" },
+  { value: "Finance", label: "Finance" },
+  { value: "Healthcare", label: "Healthcare" },
+  { value: "Retail", label: "Retail" },
+];
+
+export const sizeOptions = [
+  { value: "small", label: "Small (1-50)" },
+  { value: "medium", label: "Medium (51-200)" },
+  { value: "large", label: "Large (201-1000)" },
+  { value: "enterprise", label: "Enterprise (1000+)" },
+];
+
+// const countryOptions = [
+//   { value: "united kingdom", label: "United Kingdom" },
+//   { value: "united states", label: "United States" },
+//   { value: "canada", label: "Canada" },
+// ];
+
+export const stateOptions = [
+  { value: "london", label: "London" },
+  { value: "new york", label: "New York" },
+  { value: "ontario", label: "Ontario" },
+];
+
+export const cityOptions = [
+  { value: "barking", label: "Barking" },
+  { value: "manhattan", label: "Manhattan" },
+  { value: "toronto", label: "Toronto" },
+];
+
+export const genderOptions = [
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+  { value: "other", label: "Other" },
+];
+
+export const employmentTypeOptions = [
+  { value: "full-time", label: "Full-time" },
+  { value: "part-time", label: "Part-time" },
+  { value: "contract", label: "Contract" },
+  { value: "internship", label: "Internship" },
+];
+
+export const workModeOptions = [
+  { value: "remote", label: "Remote" },
+  { value: "onsite", label: "Onsite" },
+  { value: "hybrid", label: "Hybrid" },
+];
+
+export const departmentOptions = [
+  { value: "engineering", label: "Engineering" },
+  { value: "marketing", label: "Marketing" },
+  { value: "sales", label: "Sales" },
+  { value: "hr", label: "Human Resources" },
+  { value: "finance", label: "Finance" },
+];
+
+export const roleOptions = [
+  { value: "developer", label: "Developer" },
+  { value: "designer", label: "Designer" },
+  { value: "manager", label: "Manager" },
+  { value: "analyst", label: "Analyst" },
+  { value: "administrator", label: "Administrator" },
+];

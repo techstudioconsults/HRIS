@@ -19,7 +19,7 @@ interface FormFieldProperties {
   label?: string;
   labelDetailedNode?: React.ReactNode;
   name: string;
-  type?: "text" | "textarea" | "select" | "number" | "password" | "email";
+  type?: "text" | "textarea" | "select" | "number" | "password" | "email" | "date";
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
@@ -90,7 +90,7 @@ export function FormField({
                   <SelectTrigger className={cn(inputClassName, "w-full")}>
                     <SelectValue placeholder={placeholder} />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className={`bg-background`}>
                     {options.map((option, index) => (
                       <SelectItem key={index} value={option.value}>
                         {option.label}

@@ -82,9 +82,11 @@ export function EmployeeTable({ employees, className }: EmployeeTableProperties)
             >
               Export
             </MainButton>
-            <MainButton variant="primary" isLeftIconVisible={true} size="lg" icon={<Add />}>
-              Add Employee
-            </MainButton>
+            <Link href="/admin/employees/add-employee">
+              <MainButton variant="primary" isLeftIconVisible={true} size="lg" icon={<Add />}>
+                Add Employee
+              </MainButton>
+            </Link>
           </div>
         </div>
         {/* 

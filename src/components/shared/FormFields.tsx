@@ -19,7 +19,7 @@ interface FormFieldProperties {
   label?: string;
   labelDetailedNode?: React.ReactNode;
   name: string;
-  type?: "text" | "textarea" | "select" | "number" | "password" | "email";
+  type?: "text" | "textarea" | "select" | "number" | "password" | "email" | "date";
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;

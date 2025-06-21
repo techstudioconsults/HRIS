@@ -74,13 +74,11 @@ export function LeaveDistributionPieChart() {
           </ResponsiveContainer>
         </div>
 
-        <div className="grid w-full grid-cols-2 items-start justify-between md:grid-cols-3 md:items-center lg:grid-cols-4">
+        <div className="grid w-full grid-cols-2 items-start justify-between md:grid-cols-3 md:items-center md:px-3 lg:grid-cols-4">
           {teamData.map((team) => (
-            <div key={team.name} className="">
-              <div className="flex items-center justify-center gap-2">
-                <div className="h-3 w-3 rounded-full" style={{ backgroundColor: team.fill }} />
-                <span className="text-sm font-medium">{team.name}</span>
-              </div>
+            <div key={team.name} className="flex items-center justify-start gap-2">
+              <div className="h-3 w-3 rounded-full" style={{ backgroundColor: team.fill }} />
+              <span className="text-sm font-medium">{team.name}</span>
             </div>
           ))}
         </div>

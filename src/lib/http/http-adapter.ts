@@ -1,6 +1,6 @@
 import http from "@/lib/http/httpConfig";
 
-import tryCatchWrapper from "../tools/tryCatchFunction";
+// import tryCatchWrapper from "../tools/tryCatchFunction";
 
 interface HttpResponse<T> {
   data: T;
@@ -19,28 +19,28 @@ export class HttpAdapter {
       .join("&");
   }
 
-  private async handleRequest<T>(
-    requestFunction: () => Promise<{ data: T; status: number }>,
-  ): Promise<HttpResponse<T> | undefined> {
-    const result = await tryCatchWrapper(async () => {
-      const response = await requestFunction();
-      return {
-        data: response.data,
-        status: response.status,
-      };
-    });
-
-    return result;
-  }
   // private async handleRequest<T>(
   //   requestFunction: () => Promise<{ data: T; status: number }>,
   // ): Promise<HttpResponse<T> | undefined> {
-  //   const response = await requestFunction();
-  //   return {
-  //     data: response.data,
-  //     status: response.status,
-  //   };
+  //   const result = await tryCatchWrapper(async () => {
+  //     const response = await requestFunction();
+  //     return {
+  //       data: response.data,
+  //       status: response.status,
+  //     };
+  //   });
+
+  //   return result;
   // }
+  private async handleRequest<T>(
+    requestFunction: () => Promise<{ data: T; status: number }>,
+  ): Promise<HttpResponse<T> | undefined> {
+    const response = await requestFunction();
+    return {
+      data: response.data,
+      status: response.status,
+    };
+  }
 
   async get<T>(endpoint: string, query: QueryParameters = {}, headers?: Headers): Promise<HttpResponse<T> | undefined> {
     const queryString = this.buildQueryString(query);

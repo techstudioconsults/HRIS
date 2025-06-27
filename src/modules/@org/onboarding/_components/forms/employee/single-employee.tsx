@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -61,9 +60,10 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
           name: team.name,
         }));
         setDepartments(departmentOptions);
-      } catch (error) {
-        console.error("Failed to fetch departments:", error);
-        toast.error("Failed to load departments");
+      } catch (error: any) {
+        toast.error("Failed to load department", {
+          description: error.response.data.message,
+        });
       } finally {
         setLoadingDepartments(false);
       }
@@ -90,9 +90,10 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
           permissions: role.permissions || [],
         }));
         setRoles(roleOptions);
-      } catch (error) {
-        console.error("Failed to fetch roles:", error);
-        toast.error("Failed to load roles");
+      } catch (error: any) {
+        toast.error("Failed to load roles", {
+          description: error.response.data.message,
+        });
       } finally {
         setLoadingRoles(false);
       }
@@ -116,9 +117,10 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
           } else {
             setCurrentPermissions({ name: "", permissions: [] });
           }
-        } catch (error) {
-          console.error("Failed to fetch role permissions:", error);
-          toast.error("Failed to load role permissions");
+        } catch (error: any) {
+          toast.error("Failed to load permission", {
+            description: error.response.data.message,
+          });
           setCurrentPermissions(null);
         }
       } else {
@@ -138,14 +140,17 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
   };
 
   const handleSavePermissions = async (permissions: { name: string; permissions: any[] }) => {
-    console.log("Saving permissions:", permissions);
-    const updatedRole = await onBoardingService.updateRole(selectedRoleId, permissions);
-    if (updatedRole) {
-      toast.success("Permissions updated successfully");
-      setCurrentPermissions(permissions);
-      setPermissionsDialogOpen(false);
-    } else {
-      toast.error("Failed to update permissions");
+    try {
+      const updatedRole = await onBoardingService.updateRole(selectedRoleId, permissions);
+      if (updatedRole) {
+        toast.success("Permissions updated successfully");
+        setCurrentPermissions(permissions);
+        setPermissionsDialogOpen(false);
+      }
+    } catch (error: any) {
+      toast.error("Failed to update permissions", {
+        description: error.response.data.message,
+      });
     }
   };
 

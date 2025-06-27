@@ -83,7 +83,7 @@ const BaseRegister = ({ authService }: { authService: AuthService }) => {
                 name={"domain"}
                 required
               />
-              <p className={`text-destructive text-sm italic`}>
+              <p className={`text-primary text-sm italic`}>
                 Used to identify your organization and help verify employee emails (e.g., @techstudio.com).
               </p>
             </div>

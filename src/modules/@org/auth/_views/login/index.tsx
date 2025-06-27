@@ -6,10 +6,12 @@ import { login } from "@/modules/@org/auth/actions/auth-action";
 import { LoginFormData, loginSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 export const Login = () => {
+  const router = useRouter();
   const methods = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -21,6 +23,7 @@ export const Login = () => {
   const {
     handleSubmit,
     formState: { isSubmitting, isValid },
+    setError,
   } = methods;
 
   const handleSubmitForm = async (data: LoginFormData) => {
@@ -30,11 +33,18 @@ export const Login = () => {
       toast.error("Login Failed", {
         description: result.error,
       });
-    } else if (result?.success) {
-      toast.success(`Login Successful`, {
-        description: `Redirecting to onboarding...`,
+
+      // Optionally set field errors
+      if (result.error.toLowerCase().includes("email")) {
+        setError("email", { message: result.error });
+      } else if (result.error.toLowerCase().includes("password")) {
+        setError("password", { message: result.error });
+      }
+    } else {
+      toast.success("Login Successful", {
+        description: "Redirecting to dashboard...",
       });
-      window.location.href = "/onboarding";
+      router.push("/onboarding");
     }
   };
 
@@ -65,7 +75,7 @@ export const Login = () => {
                 required
               />
               <div className="flex justify-end">
-                <Link href="/forgot-password" className="text-destructive font-medium hover:underline">
+                <Link href="/forgot-password" className="text-primary font-medium hover:underline">
                   Forgot Password?
                 </Link>
               </div>

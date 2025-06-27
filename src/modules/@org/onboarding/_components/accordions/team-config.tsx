@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable unused-imports/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // components/accordions/TeamConfig.tsx
@@ -49,8 +50,10 @@ export const TeamConfig = ({ teams, onTeamsChange, onBoardingService }: TeamConf
       if (!newTeam) throw new Error("Failed to create team");
       onTeamsChange([...teams, newTeam]);
       setDialogOpen(false);
-    } catch {
-      toast.error("Failed to create team");
+    } catch (error: any) {
+      toast.error("Failed to add team", {
+        description: error.response.data.message,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -73,8 +76,10 @@ export const TeamConfig = ({ teams, onTeamsChange, onBoardingService }: TeamConf
     try {
       await onBoardingService.deleteTeam(teamId);
       onTeamsChange(teams.filter((t) => t.id !== teamId));
-    } catch {
-      toast.error("Failed to delete team");
+    } catch (error: any) {
+      toast.error("Failed to delete team", {
+        description: error.response.data.message,
+      });
     }
   };
 
@@ -85,8 +90,10 @@ export const TeamConfig = ({ teams, onTeamsChange, onBoardingService }: TeamConf
       if (!newRole) throw new Error("Failed to create team");
       onTeamsChange(teams.map((team) => (team.id === teamId ? { ...team, roles: [...team.roles, newRole] } : team)));
       setDialogOpen(false);
-    } catch {
-      toast.error("Failed to create role");
+    } catch (error: any) {
+      toast.error("Failed to add role", {
+        description: error.response.data.message,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -107,8 +114,10 @@ export const TeamConfig = ({ teams, onTeamsChange, onBoardingService }: TeamConf
         ),
       );
       setDialogOpen(false);
-    } catch {
-      toast.error("Failed to update role");
+    } catch (error: any) {
+      toast.error("Failed to update role", {
+        description: error.response.data.message,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -122,8 +131,10 @@ export const TeamConfig = ({ teams, onTeamsChange, onBoardingService }: TeamConf
           team.id === teamId ? { ...team, roles: team.roles.filter((r) => r.id !== roleId) } : team,
         ),
       );
-    } catch {
-      toast.error("Failed to delete role");
+    } catch (error: any) {
+      toast.error("Failed to delete role", {
+        description: error.response.data.message,
+      });
     }
   };
 

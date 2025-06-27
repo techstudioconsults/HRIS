@@ -11,15 +11,14 @@ export const login = async (data: LoginFormData) => {
       redirect: false,
       ...data,
     });
-    if (result?.error) {
-      return { error: result.error };
+    if (result?.ok) {
+      return { success: true };
     }
-    return { success: true };
   } catch (error) {
     if (error instanceof CredentialsSignin) {
-      return { error: error.message, cause: error.cause };
+      return { error: error.message || "Invalid email or password, please try again" };
     }
-    return { error: "An unexpected error occurred" };
+    return { error: "An unexpected error occurred. Please try again." };
   }
 };
 
@@ -29,13 +28,12 @@ export const OTPLogin = async (data: LoginOTPFormData) => {
       redirect: false,
       ...data,
     });
-    if (result?.error) {
-      return { error: result.error };
+    if (result?.ok) {
+      return { success: true };
     }
-    return { success: true };
   } catch (error) {
     if (error instanceof CredentialsSignin) {
-      return { error: error.message, cause: error.cause };
+      return { error: error.message || "Invalid email or password, please try again" };
     }
     return { error: "An unexpected error occurred" };
   }

@@ -56,15 +56,15 @@ export const RolesAndPermission = ({
         {/* Role Name Input */}
         {isEdit ? (
           <div className={`bg-warning-50 text-warning-200 rounded-lg p-4 text-sm`}>
-            <p className={`flex items-start gap-2`}>
+            <div className={`flex items-start gap-2`}>
               <div>
                 <InfoCircle size={12} className={`mt-1 text-sm`} />
               </div>
-              <span>
+              <p>
                 You can tailor what this employee can view or manage on the platform. These permissions apply only to
                 this employee and can be changed later..
-              </span>
-            </p>
+              </p>
+            </div>
           </div>
         ) : (
           <Card className={`border-none p-0 shadow-none`}>

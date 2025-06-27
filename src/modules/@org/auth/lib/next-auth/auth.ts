@@ -48,12 +48,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: {},
       },
       authorize: async (credentials) => {
-        try {
-          const { email, password } = credentials;
-          if (!email || !password) {
-            throw new CredentialsSignin("Please provide both email and password");
-          }
+        const { email, password } = credentials;
+        if (!email || !password) {
+          throw new CredentialsSignin("Please provide both email and password");
+        }
 
+        try {
           const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login/password`, {
             email,
             password,
@@ -69,18 +69,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               refreshToken: response.data.data.tokens.refreshToken,
             };
           }
-
-          throw new CredentialsSignin("Invalid email or password");
         } catch (error) {
-          if (error instanceof CredentialsSignin) {
-            throw error;
-          }
           if (axios.isAxiosError(error)) {
-            const message = error.response?.data?.message || "Login failed";
+            const message = error.response?.data?.message || "Invalid email or password";
             throw new CredentialsSignin(message);
           }
-          throw new CredentialsSignin("An unexpected error occurred");
+          throw new CredentialsSignin("Login failed. Please try again.");
         }
+
+        throw new CredentialsSignin("Login failed. Please try again.");
       },
     }),
 
@@ -113,18 +110,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               refreshToken: response.data.data.tokens.refreshToken,
             };
           }
-
-          throw new CredentialsSignin("Invalid OTP");
         } catch (error) {
-          if (error instanceof CredentialsSignin) {
-            throw error;
-          }
           if (axios.isAxiosError(error)) {
-            const message = error.response?.data?.message || "OTP verification failed";
+            const message = error.response?.data?.message || "Invalid email or password";
             throw new CredentialsSignin(message);
           }
-          throw new CredentialsSignin("An unexpected error occurred");
+          throw new CredentialsSignin("Login failed. Please try again.");
         }
+        throw new CredentialsSignin("Login failed. Please try again.");
       },
     }),
   ],

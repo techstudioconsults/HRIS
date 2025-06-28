@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown2, Notification, SearchNormal1 } from "iconsax-reactjs";
+import { ArrowDown2, Notification } from "iconsax-reactjs";
 import { useState } from "react";
 
 type TopBarProperties = {
@@ -17,17 +17,7 @@ export default function TopBar({ adminName, notificationsCount = 0, className = 
   return (
     <header className={`bg-background flex h-16 items-center justify-between px-4 ${className}`}>
       {/* Search Input */}
-      <div className="relative hidden w-full max-w-[240px] md:block">
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-          <SearchNormal1 size="15" className="text-gray-400" variant="Outline" />
-        </div>
-        <input
-          type="text"
-          placeholder="Search..."
-          className="focus:ring-primary-500 block w-full rounded border-0 py-2 pr-4 pl-10 text-gray-900 ring-1 ring-gray-200 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
-          // onChange={(e) => onSearch(e.target.value)}
-        />
-      </div>
+      <div className="relative hidden w-full max-w-[240px] md:block"></div>
 
       {/* Right Section */}
       <div className="flex items-center gap-4">

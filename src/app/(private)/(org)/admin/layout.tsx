@@ -4,12 +4,15 @@ import { DashboardSidebar } from "@/components/shared/sidebar/sidebar";
 import TopBar from "@/components/shared/top-bar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { adminNavItems } from "@/lib/tools/constants";
+import { useSession } from "next-auth/react";
 
 // const handleSearch = (query: string) => {
 //   Implement search functionality
 //   console.log("Search query:", query);
 // };
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { data: session } = useSession();
+
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="bg-background flex min-h-screen w-full">
@@ -24,7 +27,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <SidebarTrigger className="-ml-1" />
               <div className="flex-1">
                 {/* onSearch={handleSearch} */}
-                <TopBar adminName="Tosin Sanya" notificationsCount={12} className="px-6" />
+                <TopBar adminName={session?.user.name || ""} notificationsCount={12} className="px-6" />
               </div>
             </header>
 

@@ -131,7 +131,7 @@
 
   /* Success */
   --success: oklch(59.8% 0.225 137.8);
-  --success-50: oklch(96.5% 0.035 85.2);
+  --success-50: hsla(144, 83%, 96%, 1);
   --success-75: oklch(84.5% 0.095 148.2);
   --success-100: oklch(76.8% 0.145 144.5);
   --success-200: oklch(66.2% 0.195 140.1);
@@ -284,6 +284,7 @@
 
   p {
     color: #393e46;
+    /* font-weight: 500; */
   }
 
   code,

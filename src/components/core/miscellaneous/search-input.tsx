@@ -1,25 +1,40 @@
 "use client";
 
-import { useKBar } from "kbar";
-import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { SearchIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDebounce } from "use-debounce";
 
-import { Button } from "../../ui/button";
+interface SearchInputProperties {
+  placeholder?: string;
+  onSearch: (query: string) => void;
+  delay?: number; // debounce delay in ms
+  className?: string;
+}
 
-export default function SearchInput() {
-  const { query } = useKBar();
+export const SearchInput = ({
+  placeholder = "Search...",
+  onSearch,
+  delay = 300,
+  className = "",
+}: SearchInputProperties) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery] = useDebounce(searchQuery, delay);
+
+  useEffect(() => {
+    onSearch(debouncedQuery);
+  }, [debouncedQuery, onSearch]);
+
   return (
-    <div className="w-full space-y-2">
-      <Button
-        variant="outline"
-        className="bg-background text-muted-foreground relative h-9 w-full justify-start rounded-[0.5rem] text-sm font-normal shadow-none sm:pr-12 md:w-40 lg:w-64"
-        onClick={query.toggle}
-      >
-        <Search className="mr-2 h-4 w-4" />
-        Search...
-        <kbd className="bg-muted pointer-events-none absolute top-[0.3rem] right-[0.3rem] hidden h-6 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none sm:flex">
-          <span className="text-xs">⌘</span>K
-        </kbd>
-      </Button>
+    <div className={`relative ${className}`}>
+      <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
+      <Input
+        type="search"
+        placeholder={placeholder}
+        className="pr-4 pl-10"
+        value={searchQuery}
+        onChange={(event) => setSearchQuery(event.target.value)}
+      />
     </div>
   );
-}
+};

@@ -122,22 +122,39 @@ export const companyProfileSchema = z.object({
 
 // Define validation schema
 export const employeeSchema = z.object({
-  full_name: z.string().min(1, "Full name is required"),
-  gender: z.string().min(1, "Gender is required"),
-  phone_number: z.string().min(1, "Phone number is required"),
-  date_of_birth: z.string().min(1, "Date of birth is required"),
-  work_email: z.string().email("Invalid email format"),
-  start_date: z.string().min(1, "Start date is required"),
-  work_mode: z.string().optional(),
-  role: z.string().min(1, "Role is required"),
-  department: z.string().min(1, "Department is required"),
-  employment_type: z.string().optional(),
-  teams: z.string().min(1, "Teams selection is required"),
-  monthly_gross_salary: z.number().min(0, "Salary must be positive"),
-  bank_name: z.string().optional(),
-  account_name: z.string().min(1, "Account name is required"),
-  account_number: z.string().min(1, "Account number is required"),
-  documents: z.any().optional(),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
+  phoneNumber: z
+    .string()
+    .min(1, "Phone number is required")
+    .max(11, "Phone number must be at most 11 digits")
+    .regex(/^\d{1,11}$/, "Phone number must be a number with up to 11 digits"),
+  teamId: z.string().min(1, "Teams selection is required"),
+  roleId: z.string().min(1, "Role is required"),
+  // documents: z.array(z.any()),
+  dateOfBirth: z
+    .string()
+    .min(1, "Date of birth is required")
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Date of birth must be in YYYY-MM-DD format"),
+  gender: z.enum(["male", "female"], { required_error: "Gender is required" }),
+  startDate: z
+    .string()
+    .min(1, "Start date is required")
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Start date must be in YYYY-MM-DD format"),
+  employmentType: z.enum(["full time", "part time", "contract"]),
+  monthlySalary: z.string().min(1, "Salary must be positive"),
+  pension: z.string().min(1, "Pension must be a positive number"),
+  healthInsurance: z.string().min(1, "Insurance must be a positive number"),
+  otherDeductions: z.string().min(1, "Deduction number is required"),
+  bankName: z.string().min(1, "Bank name is required"),
+  accountName: z.string().min(1, "Account name is required"),
+  accountNumber: z
+    .string()
+    .min(1, "Account number is required")
+    .max(11, "Account number must be at most 11 digits")
+    .regex(/^\d{1,10}$/, "Account number must be a number with up to 10 digits"),
+  workMode: z.enum(["remote", "on site", "hybrid"]),
 });
 
 export type EmployeeFormData = z.infer<typeof employeeSchema>;

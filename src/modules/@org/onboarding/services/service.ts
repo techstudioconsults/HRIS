@@ -2,20 +2,6 @@ import { HttpAdapter } from "@/lib/http/http-adapter";
 import { CompanyProfileFormData } from "@/schemas";
 
 // types/api.ts
-export interface ApiResponse<T> {
-  success: boolean;
-  data: {
-    items: T[];
-    metadata: {
-      total: number;
-      page: number;
-      limit: number;
-      totalPages: number;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-    };
-  };
-}
 
 export interface TeamApiResponse {
   id: string;

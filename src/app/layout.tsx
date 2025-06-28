@@ -11,6 +11,7 @@ import "../styles/global.css";
 import ThemeProvider from "@/components/core/layout/ThemeToggle/theme-provider";
 import { ModeToggle } from "@/components/core/layout/ThemeToggle/theme-toggle";
 import { Toast } from "@/components/shared/Toast";
+import { KBarProviderWrapper } from "@/lib/kbar/kbar-provider";
 import { ReactQueryProvider } from "@/lib/react-query/query-provider";
 import { SessionProvider } from "next-auth/react";
 
@@ -68,7 +69,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 enableColorScheme
               >
                 <Toast />
-                {children}
+                <KBarProviderWrapper>{children}</KBarProviderWrapper>
                 <ModeToggle />
               </ThemeProvider>
             </ReactQueryProvider>

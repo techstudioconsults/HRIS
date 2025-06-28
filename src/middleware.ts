@@ -7,7 +7,7 @@ export default auth((request) => {
   const isLoggedIn = !!request.auth;
 
   // Define protected routes
-  const protectedRoutes = ["/onboarding", "/dashboard"];
+  const protectedRoutes = ["/onboarding", "/admin"];
 
   // Check if the current path is protected
   const isProtectedRoute = protectedRoutes.some((route) => nextUrl.pathname.startsWith(route));

@@ -3,8 +3,8 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
-import empty1 from "~/images/alert.png";
-import SkiButton from "../button";
+import empty1 from "~/images/empty-state.svg";
+import MainButton from "../button";
 
 interface ImageConfig {
   src: string;
@@ -14,7 +14,7 @@ interface ImageConfig {
 }
 
 interface EmptyStateProperties {
-  images: ImageConfig[];
+  images?: ImageConfig[];
   title?: string;
   description: string;
   button?: {
@@ -35,15 +35,10 @@ export const EmptyState = ({
   className = "",
 }: EmptyStateProperties) => {
   return (
-    <div
-      className={cn(
-        "flex min-h-[400px] w-full flex-col items-center justify-center space-y-8 px-4 text-center",
-        className,
-      )}
-    >
+    <div className={cn("flex min-h-[400px] w-full flex-col items-center justify-center px-4 text-center", className)}>
       {/* Images container */}
       <div className="flex flex-wrap items-center justify-center gap-4">
-        {images.map((image, index) => (
+        {images?.map((image, index) => (
           <div key={index} className="relative">
             <Image
               src={image.src}
@@ -58,16 +53,20 @@ export const EmptyState = ({
       </div>
 
       {/* Content container */}
-      <div className="flex flex-col items-center space-y-4">
-        {title && <h3 className="text-h5 text-primary font-semibold">{title}</h3>}
-
-        <p className="text-muted-foreground max-w-[500px] text-base font-medium">{description}</p>
-
+      <div className="flex flex-col items-center">
+        {title && <p className="text-xl font-semibold">{title}</p>}
+        <p className="my-2 max-w-[400px] text-gray-500">{description}</p>
         {button ? (
-          <SkiButton onClick={button.onClick} variant="primary" size="xl" className="mt-6">
-            {button.icon && <span className="mr-2">{button.icon}</span>}
+          <MainButton
+            onClick={button.onClick}
+            variant="primary"
+            size="xl"
+            className=""
+            isLeftIconVisible
+            icon={button.icon}
+          >
             {button.text}
-          </SkiButton>
+          </MainButton>
         ) : (
           actionButton
         )}

@@ -322,15 +322,15 @@ export const genderOptions = [
 ];
 
 export const employmentTypeOptions = [
-  { value: "full-time", label: "Full-time" },
-  { value: "part-time", label: "Part-time" },
+  { value: "full time", label: "Full time" },
+  { value: "part time", label: "Part time" },
   { value: "contract", label: "Contract" },
-  { value: "internship", label: "Internship" },
+  // { value: "internship", label: "Internship" },
 ];
 
 export const workModeOptions = [
   { value: "remote", label: "Remote" },
-  { value: "onsite", label: "Onsite" },
+  { value: "on-site", label: "Onsite" },
   { value: "hybrid", label: "Hybrid" },
 ];
 

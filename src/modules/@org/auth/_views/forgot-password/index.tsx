@@ -49,8 +49,11 @@ export const BaseForgotPassword = ({ authService }: { authService: AuthService }
           isIconOnly
           icon={<ArrowLeft />}
           size={`icon`}
-          className={`size-10 bg-gray-50`}
+          className={`hover:bg-primary size-10 bg-gray-50 hover:text-white`}
           variant={`default`}
+          onClick={() => {
+            router.back();
+          }}
         />
         <h3 className="text-[32px]/[120%] font-[600] tracking-[-2%] text-black">Forgot Password</h3>
         <p className={`text-gray text-lg`}>Enter your email address to reset your password</p>

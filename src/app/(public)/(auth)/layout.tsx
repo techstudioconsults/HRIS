@@ -23,7 +23,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
                 }
               : {}
           }
-          className="max-h-[100dvh] overflow-y-auto px-4 py-12"
+          className="hide-scrollbar max-h-[100dvh] overflow-y-auto px-4 py-12"
         >
           <div className={cn("mx-auto mb-16 flex", !shouldHideCarousel && "max-w-[527px]")}>
             <Logo width={214} />

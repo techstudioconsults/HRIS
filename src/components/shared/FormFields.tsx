@@ -63,7 +63,7 @@ export function FormField({
         <div>
           <Label className="text-[16px] font-medium">
             {label}
-            {required && <span className="text-destructive ml-1">*</span>}
+            {required && <span className="text-destructive -ml-1">*</span>}
           </Label>
           {labelDetailedNode && <div className="text-mid-grey-II text-xs">{labelDetailedNode}</div>}
         </div>
@@ -73,7 +73,11 @@ export function FormField({
         name={name}
         control={control}
         render={({ field }) => {
-          const inputClassName = cn("flex h-10 w-full border-gray-100", error && "border-destructive", className);
+          const inputClassName = cn(
+            "flex h-10 w-full rounded-md border border-gray-200 bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+            error && "border-destructive",
+            className,
+          );
 
           const inputWithAddons = (
             <div className={cn(`flex items-center gap-2`, containerClassName)}>
@@ -83,16 +87,16 @@ export function FormField({
                   {...field}
                   placeholder={placeholder}
                   disabled={disabled}
-                  className={cn(inputClassName, "resize-y")}
+                  className={cn(inputClassName, "min-h-[80px] resize-y")}
                 />
               ) : type === "select" ? (
                 <Select onValueChange={field.onChange} value={field.value} disabled={disabled}>
                   <SelectTrigger className={cn(inputClassName, "w-full")}>
-                    <SelectValue placeholder={placeholder} />
+                    <SelectValue placeholder={placeholder || "Select a value"} />
                   </SelectTrigger>
-                  <SelectContent className={`bg-background`}>
+                  <SelectContent className="bg-background">
                     {options.map((option, index) => (
-                      <SelectItem key={index} value={option.value}>
+                      <SelectItem key={index} value={option.value} className="hover:bg-gray-50">
                         {option.label}
                       </SelectItem>
                     ))}

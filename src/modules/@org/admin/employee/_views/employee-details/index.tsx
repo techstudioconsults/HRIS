@@ -4,6 +4,7 @@
 import Loading from "@/app/Loading";
 import MainButton from "@/components/shared/button";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { format } from "date-fns";
 // import { Button } from "@/components/ui/button";
 import { Call, More, Sms } from "iconsax-reactjs";
 import Image from "next/image";
@@ -65,18 +66,18 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
             <div className="grid grid-cols-1 gap-5 border-t border-b py-5">
               <div className="flex gap-4">
                 <Call className="text-muted-foreground h-5 w-5" />
-                <p className="font-medium">{employeeData?.phoneNumber || `01010101010`}</p>
+                <p className="font-medium">{employeeData?.phoneNumber || ``}</p>
               </div>
               <div className="flex gap-4">
-                {/* <span> */}
-                <Sms className="text-muted-foreground h-5 w-5" />
-                {/* </span> */}
-                <p className="font-medium">{employeeData?.email}</p>
+                <span>
+                  <Sms className="text-muted-foreground h-5 w-5" />
+                </span>
+                <p className="text-base font-medium">{employeeData?.email}</p>
               </div>
             </div>
             <div>
               <p className="text-muted-foreground">Department</p>
-              <p className="font-medium">{employeeData?.role.name} Department</p>
+              <p className="font-medium">{employeeData?.role.name}</p>
             </div>
             <div>
               <p className="text-muted-foreground">Team Manager</p>
@@ -84,7 +85,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
             </div>
             <div>
               <p className="text-muted-foreground">Work Mode</p>
-              <p className="font-medium">{employeeData?.status}</p>
+              <p className="font-medium">{employeeData?.workMode || `Hybrid`}</p>
             </div>
             <div className="w-full">
               <MainButton variant="primary" size="lg" className="w-full">
@@ -105,7 +106,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
               </div>
               <div>
                 <p className="text-muted-foreground">Date of Birth</p>
-                <p className="font-medium">{employeeData?.status || `10-5-2002`}</p>
+                <p className="font-medium">{format(new Date(employeeData?.dateOfBirth || ""), "MM/dd/yyyy")}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Gender</p>
@@ -128,7 +129,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
             <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
               <div>
                 <p className="text-muted-foreground">Start Date</p>
-                <p className="font-medium">{employeeData?.id}</p>
+                <p className="font-medium">{format(new Date(employeeData?.startDate || ""), "MM/dd/yyyy")}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Employment Type</p>
@@ -136,7 +137,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
               </div>
               <div>
                 <p className="text-muted-foreground">Work Mode</p>
-                <p className="font-medium">{employeeData?.status}</p>
+                <p className="font-medium">{employeeData?.workMode || "Hybrid"}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Department</p>
@@ -155,37 +156,38 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
             <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
               <div>
                 <p className="text-muted-foreground">Monthly Gross Salary</p>
-                <p className="font-medium">{employeeData?.status}</p>
+                <p className="font-medium">{employeeData?.monthlySalary}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Bank Name</p>
-                <p className="font-medium">{employeeData?.status}</p>
+                <p className="font-medium">{employeeData?.bankName}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Account Number</p>
-                <p className="font-medium">{employeeData?.status}</p>
+                <p className="font-medium">{employeeData?.accountNumber}</p>
               </div>
               <div className="md:col-span-3">
                 <p className="text-muted-foreground">Account Name</p>
-                <p className="font-medium">{employeeData?.status}</p>
+                <p className="font-medium">{employeeData?.accountName}</p>
               </div>
             </div>
           </div>
 
-          {/* Employee Documents Section */}
-          <div className="bg-white p-6 dark:bg-black">
-            <h2 className="mb-4 text-lg font-semibold">Employee Documents</h2>
-            <div className="border-gray-75 flex w-1/2 items-center justify-between rounded-lg border p-4">
-              <div className="flex items-center gap-4">
-                <Image src="/images/pdf-icon.svg" width="32" height="44" alt="PDF Icon" />
-                <div>
-                  <p className="font-medium">Employment Letter</p>
-                  <p className="text-muted-foreground text-sm">Uploaded on Jan 12, 2024 - 245 KB</p>
+          {employeeData?.document && (
+            <div className="bg-white p-6 dark:bg-black">
+              <h2 className="mb-4 text-lg font-semibold">Employee Documents</h2>
+              <div className="border-gray-75 flex w-1/2 items-center justify-between rounded-lg border p-4">
+                <div className="flex items-center gap-4">
+                  <Image src="/images/pdf-icon.svg" width="32" height="44" alt="PDF Icon" />
+                  <div>
+                    <p className="font-medium">Employment Letter</p>
+                    <p className="text-muted-foreground text-sm">Uploaded on Jan 12, 2024 - 245 KB</p>
+                  </div>
                 </div>
+                <More className="rotate-90" />
               </div>
-              <More className="rotate-90" />
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

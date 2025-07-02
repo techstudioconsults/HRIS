@@ -57,7 +57,7 @@ const BaseCompanyProfile = ({ onBoardingService }: { onBoardingService: Onboardi
 
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(handleSubmitForm)}>
-          <section className={`hide-scrollbar max-h-[500px] space-y-4 overflow-auto`}>
+          <section className={`hide-scrollbar max-h-[500px] space-y-4 overflow-auto px-1`}>
             <FormField
               placeholder="Enter company name"
               className="h-14 w-full"
@@ -103,8 +103,8 @@ const BaseCompanyProfile = ({ onBoardingService }: { onBoardingService: Onboardi
 
             <FormField
               type="select"
-              placeholder="Select country"
-              className="!h-14 w-full"
+              placeholder="Select your country"
+              className="!h-14 w-full hover:text-black"
               label="Country"
               name="country"
               options={countries}
@@ -150,6 +150,15 @@ const BaseCompanyProfile = ({ onBoardingService }: { onBoardingService: Onboardi
               size="2xl"
             >
               Continue
+            </MainButton>
+            <MainButton
+              href={`/admin/dashboard`}
+              type="button"
+              variant="link"
+              className="w-full font-semibold"
+              size="2xl"
+            >
+              Skip for Later
             </MainButton>
           </div>
         </form>

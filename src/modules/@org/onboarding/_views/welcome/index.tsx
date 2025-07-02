@@ -3,13 +3,30 @@
 import { BlurImage } from "@/components/core/miscellaneous/blur-image";
 import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
-import { useState } from "react";
+import { updateQueryParamameters } from "@/hooks/use-search-parameters";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export const Welcome = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParameters = useSearchParams();
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  // Initialize dialog state from URL
+  useEffect(() => {
+    const modalState = searchParameters.get("modal");
+    setDialogOpen(modalState === "tour");
+  }, [searchParameters]);
+
   const handleOpenTeamDialog = () => {
-    setDialogOpen(true);
+    updateQueryParamameters(router, pathname, searchParameters, { modal: "tour" });
   };
+
+  const handleCloseDialog = () => {
+    updateQueryParamameters(router, pathname, searchParameters, { modal: null });
+  };
+
   return (
     <>
       <section className={`flex flex-col-reverse items-center justify-between gap-8 lg:flex-row`}>
@@ -17,8 +34,8 @@ export const Welcome = () => {
           <div className={`space-y-[24px]`}>
             <h1 className={`text-4xl/[100%] font-semibold`}>Welcome to TechstudioHR,</h1>
             <p className={`text-xl/[120%]`}>
-              Let’s help you get started. You can take a quick tour to understand how Techstudio HR works or you can
-              jump straight in and begin set up.
+              Let&apos;s help you get started. You can take a quick tour to understand how Techstudio HR works or you
+              can jump straight in and begin set up.
             </p>
           </div>
           <div className={`mt-[36px] flex flex-col gap-[28px] lg:flex-row`}>
@@ -36,15 +53,16 @@ export const Welcome = () => {
           height={561}
           src={"/images/onboarding/deal.svg"}
           alt={"onboarding"}
-          className={`max-h-[561px] w-[500px] rounded-2xl object-cover shadow-xl`}
+          className={`max-h-[561px] w-[500px] rounded-2xl bg-gray-50 object-cover shadow-xl`}
         />
       </section>
       <ReusableDialog
         open={dialogOpen}
         className={`!max-w-3xl`}
-        onOpenChange={setDialogOpen}
-        // title={"Video"}
-        // description={"more video"}
+        onOpenChange={(open) => {
+          setDialogOpen(open);
+          if (!open) handleCloseDialog();
+        }}
       >
         <video
           width="100%"

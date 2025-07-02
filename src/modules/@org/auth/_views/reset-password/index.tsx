@@ -93,9 +93,9 @@ export const BaseResetPassword = ({ authService }: { authService: AuthService })
           </div>
         </form>
 
-        <span className="text-grey-500 mt-4 flex items-center justify-center gap-2 text-center text-sm">
+        <span className="text-grey-500 text-primary mt-4 flex items-center justify-center gap-2 text-center text-sm">
           <ArrowLeft />
-          <Link href="/register" className="text-primary font-medium hover:underline">
+          <Link href="/register" className="font-medium hover:underline">
             Back to Sign In
           </Link>
         </span>

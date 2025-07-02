@@ -1,9 +1,9 @@
-import { Dashboard } from "@/modules/@org/admin/dashboard";
+import { DashboardHomePage } from "@/modules/@org/admin/dashboard";
 
 const page = () => {
   return (
     <div>
-      <Dashboard />
+      <DashboardHomePage />
     </div>
   );
 };

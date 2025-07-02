@@ -126,6 +126,15 @@ declare global {
     name: string;
     // ... other role properties
   }
+
+  interface OnboardingStep {
+    title: string;
+    description: string;
+    buttonLabel: string;
+    icon: string;
+    isCompleted: boolean | undefined;
+    action: () => void;
+  }
 }
 
 export {};

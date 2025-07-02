@@ -4,7 +4,7 @@ import { Logo } from "@/components/shared/logo";
 function OnboardingLayout({ children }: { children: React.ReactNode }) {
   return (
     <main className={``}>
-      <section className={`sticky top-0 flex items-center border-b py-8`}>
+      <section className={`bg-background sticky top-0 z-10 flex items-center border-b py-8`}>
         <Wrapper className={`max-w-[1272px]`}>
           <Logo width={214} />
         </Wrapper>

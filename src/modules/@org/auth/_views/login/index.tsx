@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import MainButton from "@/components/shared/button";
 import { FormField } from "@/components/shared/FormFields";
-import { login } from "@/modules/@org/auth/actions/auth-action";
 import { LoginFormData, loginSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
@@ -27,24 +28,28 @@ export const Login = () => {
   } = methods;
 
   const handleSubmitForm = async (data: LoginFormData) => {
-    const result = await login(data);
-
-    if (result?.error) {
-      toast.error("Login Failed", {
-        description: result.error,
+    try {
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
       });
 
-      // Optionally set field errors
-      if (result.error.toLowerCase().includes("email")) {
-        setError("email", { message: result.error });
-      } else if (result.error.toLowerCase().includes("password")) {
-        setError("password", { message: result.error });
+      if (result?.error) {
+        throw new Error(result.error);
       }
-    } else {
-      toast.success("Login Successful", {
-        description: "Redirecting to dashboard...",
+
+      if (result?.ok) {
+        toast.success("Login Successful", {
+          description: "Redirecting to dashboard...",
+        });
+        router.push("/onboarding");
+      }
+    } catch (error: any) {
+      toast.error("Login Failed", {
+        description: error.message || "An error occurred during login",
       });
-      router.push("/onboarding");
+      setError("password", { message: error.message || "Invalid OTP" });
     }
   };
 

@@ -69,6 +69,9 @@ declare global {
   interface Team {
     id: string;
     name: string;
+    lead: string;
+    subTeam: string;
+    members: number;
   }
 
   interface Role {
@@ -118,6 +121,7 @@ declare global {
   interface Team {
     id: string;
     name: string;
+
     // ... other team properties
   }
 

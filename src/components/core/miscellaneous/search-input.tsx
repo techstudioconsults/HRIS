@@ -1,7 +1,9 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { SearchIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useKBar } from "kbar";
+import { Search, SearchIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 
@@ -31,10 +33,43 @@ export const SearchInput = ({
       <Input
         type="search"
         placeholder={placeholder}
-        className="pr-4 pl-10"
+        className="h-full pr-4 pl-10"
         value={searchQuery}
         onChange={(event) => setSearchQuery(event.target.value)}
       />
     </div>
   );
 };
+
+// global search
+
+export function GlobalSearchInput({
+  className,
+  placeholder = "Search...",
+}: {
+  className?: string;
+  placeholder?: string;
+}) {
+  const { query } = useKBar();
+
+  return (
+    <div
+      onClick={() => query.toggle()}
+      className={cn(
+        "bg-background border-border flex h-10 min-w-[350px] cursor-pointer items-center gap-2 rounded-md border p-1 text-sm text-gray-500 transition-colors hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus-visible:ring-gray-600",
+        className,
+      )}
+    >
+      <Search className="h-4" />
+      <span className="flex-1 text-left">{placeholder}</span>
+      <div className="flex h-full items-center gap-1">
+        <kbd className="bg-border flex h-full items-center justify-center rounded px-2 text-xs font-medium dark:bg-gray-700">
+          ⌘
+        </kbd>
+        <kbd className="bg-border flex h-full items-center justify-center rounded px-2 text-xs font-medium dark:bg-gray-700">
+          K
+        </kbd>
+      </div>
+    </div>
+  );
+}

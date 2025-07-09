@@ -212,7 +212,7 @@ export const TeamConfig = ({ teams, onTeamsChange, onBoardingService }: TeamConf
           className="text-primary h-fit rounded-none p-0"
           icon={<Plus className="mr-2 h-4 w-4" />}
           isLeftIconVisible
-          onClick={() => handleOpenTeamDialog()} // Simplify the click handler
+          onClick={() => handleOpenTeamDialog()}
         >
           Add New Team
         </MainButton>

@@ -173,7 +173,7 @@ export const DashboardTable = <T extends DataItem>({
               size={`lg`}
               icon={<ChevronLeftIcon />}
               className={cn(currentPage === 1 ? "opacity-50" : "", "w-full rounded-sm sm:w-[137px]")}
-              onClick={() => onPageChange?.(currentPage - 1)}
+              onClick={() => onPageChange?.(Number.parseInt(currentPage as unknown as string) - 1)}
               isDisabled={!hasPreviousPage}
             >
               Previous
@@ -184,7 +184,9 @@ export const DashboardTable = <T extends DataItem>({
               size={`lg`}
               icon={<ChevronRightIcon />}
               className={cn(currentPage === totalPages ? "opacity-50" : "", "w-full rounded-sm sm:w-[137px]")}
-              onClick={() => onPageChange?.(currentPage + 1)}
+              onClick={() => {
+                onPageChange?.(Number.parseInt(currentPage as unknown as string) + 1);
+              }}
               isDisabled={!hasNextPage}
             >
               Next

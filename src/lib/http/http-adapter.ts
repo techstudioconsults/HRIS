@@ -1,7 +1,5 @@
 import http from "@/lib/http/httpConfig";
 
-// import tryCatchWrapper from "../tools/tryCatchFunction";
-
 interface HttpResponse<T> {
   data: T;
   status: number;
@@ -19,6 +17,18 @@ export class HttpAdapter {
       .join("&");
   }
 
+  private async handleRequest<T>(
+    requestFunction: () => Promise<{ data: T; status: number }>,
+  ): Promise<HttpResponse<T> | undefined> {
+    const result = await (async () => {
+      const response = await requestFunction();
+      return {
+        data: response.data,
+        status: response.status,
+      };
+    })();
+    return result;
+  }
   // private async handleRequest<T>(
   //   requestFunction: () => Promise<{ data: T; status: number }>,
   // ): Promise<HttpResponse<T> | undefined> {
@@ -29,18 +39,8 @@ export class HttpAdapter {
   //       status: response.status,
   //     };
   //   });
-
   //   return result;
   // }
-  private async handleRequest<T>(
-    requestFunction: () => Promise<{ data: T; status: number }>,
-  ): Promise<HttpResponse<T> | undefined> {
-    const response = await requestFunction();
-    return {
-      data: response.data,
-      status: response.status,
-    };
-  }
 
   async get<T>(endpoint: string, query: QueryParameters = {}, headers?: Headers): Promise<HttpResponse<T> | undefined> {
     const queryString = this.buildQueryString(query);

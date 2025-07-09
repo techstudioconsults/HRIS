@@ -1,5 +1,6 @@
 "use client";
 
+import { GlobalSearchInput } from "@/components/core/miscellaneous/search-input";
 import { ArrowDown2, Notification } from "iconsax-reactjs";
 import { useState } from "react";
 
@@ -17,7 +18,9 @@ export default function TopBar({ adminName, notificationsCount = 0, className = 
   return (
     <header className={`bg-background flex h-16 items-center justify-between px-4 ${className}`}>
       {/* Search Input */}
-      <div className="relative hidden w-full max-w-[240px] md:block"></div>
+      <div className="relative hidden w-full max-w-[240px] md:block">
+        <GlobalSearchInput />
+      </div>
 
       {/* Right Section */}
       <div className="flex items-center gap-4">

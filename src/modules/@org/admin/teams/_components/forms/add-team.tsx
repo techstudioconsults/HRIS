@@ -3,7 +3,6 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
-import { AlertDialog } from "@/components/shared/dialog/alert-dialog";
 import { FormField } from "@/components/shared/FormFields";
 import { WithDependency } from "@/HOC/withDependencies";
 import { employmentTypeOptions, genderOptions, workModeOptions } from "@/lib/tools/constants";
@@ -17,8 +16,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import FileUpload from "../../../_components/file-upload/file-upload";
-import { EmployeeService } from "../../services/service";
-import { EmployeeFormSkeleton } from "./skeleton";
+import { EmployeeService } from "../../../employee/services/service";
 
 interface TeamWithRoles {
   id: string;
@@ -40,9 +38,6 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
   const [loadingTeams, setLoadingTeams] = useState(true);
   const [loadingRoles, setLoadingRoles] = useState(false);
   const [, setIsLoadingEmployee] = useState(!!employeeId);
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertTitle, setAlertTitle] = useState("");
-  const [alertDescription, setAlertDescription] = useState("");
 
   const methods = useForm<EmployeeFormData>({
     resolver: zodResolver(employeeSchema),
@@ -199,38 +194,26 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
 
       // Call the appropriate service method
       if (employeeId) {
+        // Update existing employee
         await employeeService.updateEmployee(employeeId, formDataToSend);
-        setAlertTitle("Employee Profile Updated");
-        setAlertDescription("Changes to the employee’s information have been saved successfully.");
+        toast.success("Employee updated successfully!");
       } else {
+        // Create new employee
         await employeeService.createEmployee(formDataToSend);
-        setAlertTitle("Employee Added Successfully");
-        setAlertDescription(
-          "You've successfully added an employee to your team. They'll receive an email with login instructions to access the platform.",
-        );
+        toast.success("Employee created successfully!");
       }
 
-      setShowAlert(true);
+      router.push("/admin/employees");
     } catch (error) {
       console.error("Error saving employee:", error);
-      // You could also set error state here and show an error alert
+      toast.error(`Failed to ${employeeId ? "update" : "create"} employee. Please try again.`);
     }
   };
-
-  if (loadingTeams) {
-    return <EmployeeFormSkeleton />;
-  }
-
-  const handleAlertClose = () => {
-    setShowAlert(false);
-    router.push("/admin/employees");
-  };
-
   return (
     <div className="space-y-8">
       {/* Breadcrumb and Title */}
       <div className="flex flex-col items-start gap-2">
-        <h1 className="text-2xl font-bold">{employeeId ? "Edit Employee" : "Add Employee"}</h1>
+        <h1 className="text-2xl font-bold">Add Employee</h1>
         <div className="flex items-center gap-1 text-sm">
           <Link href="/admin/employees" className="text-primary">
             All Employee
@@ -414,7 +397,6 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
           </div>
         </form>
       </FormProvider>
-      <AlertDialog open={showAlert} onOpenChange={handleAlertClose} title={alertTitle} description={alertDescription} />
     </div>
   );
 };

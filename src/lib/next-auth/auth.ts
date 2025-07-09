@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 import NextAuth, { CredentialsSignin, DefaultSession } from "next-auth";
@@ -40,7 +41,39 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
   // debug: process.env.NODE_ENV === "development",
   providers: [
-    // In your NextAuth configuration
+    // Google OAuth via credentials provider
+    Credentials({
+      id: "google",
+      name: "Google",
+      credentials: {
+        name: {},
+        email: {},
+        accessToken: {},
+        refreshToken: {},
+        role: {},
+      },
+      authorize: async (credentials) => {
+        try {
+          if (!credentials.email || !credentials.accessToken) {
+            throw new CredentialsSignin("Missing Google authentication data");
+          }
+
+          return {
+            id: credentials.email as string, // Use email as a fallback unique id
+            name: (credentials.name as string) || "",
+            email: credentials.email as string,
+            role: credentials.role ? JSON.parse(credentials.role as string) : { id: "", name: "" },
+            accessToken: credentials.accessToken as string,
+            refreshToken: credentials.refreshToken as string,
+          };
+        } catch (error) {
+          console.error("Google auth error:", error);
+          throw new CredentialsSignin("Google authentication failed");
+        }
+      },
+    }),
+
+    // conventional credentials
     Credentials({
       name: "Credentials",
       credentials: {
@@ -54,17 +87,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         try {
-          const response = await axios.post<AuthResponse>(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login/password`, {
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login/password`, {
             email,
             password,
           });
 
           if (response.status === 200) {
             return {
-              id: response.data.data.employee.id,
-              name: response.data.data.employee.fullName,
-              email: response.data.data.employee.email,
-              role: response.data.data.employee.role,
+              id: response.data.data.user.id,
+              name: response.data.data.user.fullName,
+              email: response.data.data.user.email,
+              role: response.data.data.user.role,
               accessToken: response.data.data.tokens.accessToken,
               refreshToken: response.data.data.tokens.refreshToken,
             };
@@ -78,49 +111,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         throw new CredentialsSignin("Login failed. Please try again.");
-      },
-    }),
-
-    // New OTP-based credentials provider
-    // In your Credentials provider for OTP
-    Credentials({
-      id: "otp",
-      name: "Otp",
-      credentials: {
-        email: {},
-        otp: {}, // Changed from password to otp for clarity
-      },
-      authorize: async (credentials) => {
-        try {
-          if (!credentials.email || !credentials.otp) {
-            throw new CredentialsSignin("Missing OTP or email");
-          }
-
-          // Call your OTP verification endpoint directly here
-          const response = await axios.post<AuthResponse>(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login/otp`, {
-            email: credentials.email,
-            password: credentials.otp,
-          });
-
-          if (response.status === 200) {
-            return {
-              id: response.data.data.employee.id,
-              name: response.data.data.employee.fullName,
-              email: response.data.data.employee.email,
-              role: response.data.data.employee.role,
-              accessToken: response.data.data.tokens.accessToken,
-              refreshToken: response.data.data.tokens.refreshToken,
-            };
-          }
-
-          throw new CredentialsSignin("Invalid OTP");
-        } catch (error) {
-          if (axios.isAxiosError(error)) {
-            const message = error.response?.data?.message || "OTP verification failed";
-            throw new CredentialsSignin(message);
-          }
-          throw new CredentialsSignin("OTP verification failed");
-        }
       },
     }),
   ],

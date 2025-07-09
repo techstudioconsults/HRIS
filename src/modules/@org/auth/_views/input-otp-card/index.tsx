@@ -1,18 +1,25 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import MainButton from "@/components/shared/button";
 import { useSearchParameters } from "@/hooks/use-search-parameters";
 import { LoginOTPFormData, loginOTPSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { OTPInput } from "../../_components/input-otp";
-import { OTPLogin } from "../../actions/auth-action";
+import { useAuthService } from "../../services/use-auth-service";
 
 export const InputOtpCard = () => {
   const email = useSearchParameters("email");
+  const router = useRouter();
+  const { useRequestOTP } = useAuthService();
+  const { mutateAsync: requestOTP, isPending: otpPending } = useRequestOTP();
 
   const methods = useForm<LoginOTPFormData>({
     resolver: zodResolver(loginOTPSchema),
@@ -27,20 +34,51 @@ export const InputOtpCard = () => {
     formState: { isSubmitting, isValid },
     setValue,
     watch,
+    setError,
   } = methods;
 
   const handleSubmitForm = async (data: LoginOTPFormData) => {
-    const result = await OTPLogin(data);
+    try {
+      // Directly call signIn with the OTP provider
+      const result = await signIn("otp", {
+        email: data.email,
+        otp: data.password,
+        redirect: false,
+      });
 
-    if (result?.error) {
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+
+      if (result?.ok) {
+        toast.success("Login Successful", {
+          description: "Redirecting to dashboard...",
+        });
+        router.push("/onboarding");
+      }
+    } catch (error: any) {
+      console.error("Login error:", error);
       toast.error("Login Failed", {
-        description: result.error,
+        description: error.message || "An error occurred during login",
       });
-    } else if (result?.success) {
-      toast.success(`Login Successful`, {
-        description: `Redirecting to onboarding...`,
+      setError("password", { message: error.message || "Invalid OTP" });
+    }
+  };
+
+  const resendOTP = async () => {
+    try {
+      if (email) {
+        const response = await requestOTP({ email });
+        if (response?.success) {
+          toast.success(`Request Sent Successfully`, {
+            description: `Please check you mail for OTP`,
+          });
+        }
+      }
+    } catch (error) {
+      toast.error("Registration Failed", {
+        description: error instanceof Error ? error.message : "An unknown error occurred",
       });
-      // window.location.href = "/onboarding";
     }
   };
 
@@ -49,7 +87,7 @@ export const InputOtpCard = () => {
       <div className={`mb-8 space-y-2`}>
         <h3 className="text-[32px]/[120%] font-[600] tracking-[-2%] text-black">Enter the 6-digit Code</h3>
         <p className={`text-gray text-lg`}>
-          A verification code has been sent to <span className={`font-bold`}>“{email}”</span>
+          A verification code has been sent to <span className={`font-bold`}>{email}</span>
         </p>
       </div>
 
@@ -73,10 +111,10 @@ export const InputOtpCard = () => {
               Login
             </MainButton>
             <p className="text-grey-500 mt-4 text-center text-sm">
-              Didnt receive the code?{" "}
-              <Link href="/register" className="text-primary font-medium hover:underline">
-                Resend
-              </Link>
+              Didn&apos;t receive the code?{" "}
+              <span onClick={resendOTP} className="text-primary font-medium hover:underline">
+                {otpPending ? "Sent" : "Resend"}
+              </span>
             </p>
             <p className="text-grey-500 mt-4 text-center text-sm">
               Wrong email?{" "}

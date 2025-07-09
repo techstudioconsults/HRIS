@@ -2,8 +2,6 @@
 
 import MainButton from "@/components/shared/button";
 import { FormField } from "@/components/shared/FormFields";
-import { WithDependency } from "@/HOC/withDependencies";
-import { dependencies } from "@/lib/tools/dependencies";
 import { RegisterFormData, registerSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -11,10 +9,12 @@ import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { AuthService } from "../../services/auth.service";
+import { useAuthService } from "../../services/use-auth-service";
 
-const BaseRegister = ({ authService }: { authService: AuthService }) => {
+export const Register = () => {
   const router = useRouter();
+  const { useSignUp } = useAuthService();
+  const { mutateAsync: signUp, isPending } = useSignUp();
   const methods = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -30,17 +30,22 @@ const BaseRegister = ({ authService }: { authService: AuthService }) => {
 
   const {
     handleSubmit,
-    formState: { isSubmitting, isValid },
-    // watch,
+    formState: { isValid },
   } = methods;
 
   const handleSubmitForm = async (data: RegisterFormData) => {
-    const response = await authService.signUp(data);
-    if (response) {
-      toast.success(`Registration Successful`, {
-        description: response.data,
+    try {
+      const response = await signUp(data);
+      if (response?.success) {
+        toast.success(`Registration Successful`, {
+          description: `Registration Successful`,
+        });
+        router.push(`/login`);
+      }
+    } catch (error) {
+      toast.error("Registration Failed", {
+        description: error instanceof Error ? error.message : "An unknown error occurred",
       });
-      router.push(`/login`);
     }
   };
 
@@ -128,8 +133,8 @@ const BaseRegister = ({ authService }: { authService: AuthService }) => {
             <MainButton
               type="submit"
               variant="primary"
-              isDisabled={isSubmitting || !isValid}
-              isLoading={isSubmitting}
+              isDisabled={isPending || !isValid}
+              isLoading={isPending}
               className="w-full"
               size="2xl"
             >
@@ -148,7 +153,3 @@ const BaseRegister = ({ authService }: { authService: AuthService }) => {
     </section>
   );
 };
-
-export const Register = WithDependency(BaseRegister, {
-  authService: dependencies.AUTH_SERVICE,
-});

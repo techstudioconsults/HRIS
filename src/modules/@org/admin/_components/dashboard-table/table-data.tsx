@@ -84,6 +84,60 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
   },
 ];
 
+export const teamColumn: IColumnDefinition<Team>[] = [
+  {
+    header: "Team Name",
+    accessorKey: "name",
+    render: (_, team: Team) => <span>{team.name} Team</span>,
+  },
+  {
+    header: "Team Lead",
+    accessorKey: "lead",
+  },
+  {
+    header: "Sub Teams",
+    accessorKey: "subTeam",
+    // render: (_, team: Team) => <span>{team.subTeam} Team</span>,
+  },
+  {
+    header: "Members",
+    accessorKey: "members",
+  },
+];
+
+export const useTeamRowActions = () => {
+  const router = useRouter();
+
+  const getRowActions = () => {
+    const actions: IRowAction<Team>[] = [];
+    actions.push(
+      {
+        label: "View team",
+        onClick: async () => {
+          router.push(`/`);
+        },
+        // icon: <MinusCircle className={`text-high-warning`} />,
+      },
+      {
+        label: "Edit team",
+        onClick: () => {
+          router.push(`/`);
+        },
+        // icon: <Eye className={`text-high-primary`} />,
+      },
+      {
+        label: "Delete team",
+        onClick: () => {
+          router.push(`/`);
+        },
+        // icon: <Eye className={`text-high-primary`} />,
+      },
+    );
+    return actions;
+  };
+  return { getRowActions };
+};
+
 // export const useDeletedProductRowActions = () => {
 //   const router = useRouter();
 //   const { useDeleteProductPermanently, useRestoreDeleteProduct } = useProductService();

@@ -44,14 +44,14 @@ export function ReusableDialog({
       <div className={cn("fixed inset-0 z-50", open ? "bg-black/50 backdrop-blur-sm" : "pointer-events-none")}>
         <DialogContent
           hideClose={hideClose}
-          className={cn("border-default h-full max-w-xl items-center md:h-fit", className)}
+          className={cn("border-default h-full max-w-xl items-center text-center md:h-fit", className)}
         >
           {/* {wrapperClassName ?? */}
           {/* (img && ( */}
           <DialogHeader className={cn("h-fit", wrapperClassName)}>
             {img && <Image width={100} height={100} src={img || ""} alt="dangerous" className="h-[100px] w-[100px]" />}
             <DialogTitle className={cn("text-lg", headerClassName)}>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
+            <DialogDescription className={`text-center`}>{description}</DialogDescription>
           </DialogHeader>
           {/* )) */}
           {/* } */}

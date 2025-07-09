@@ -7,7 +7,7 @@ import { dependencies } from "@/lib/tools/dependencies";
 import { useRouter } from "next/navigation";
 
 import { ActiveUser } from "./_views/active-user";
-// import { NewUser } from "./_views/new-user";
+import { NewUser } from "./_views/new-user";
 import { Onboarding } from "./_views/onboarding";
 
 const BaseDashboardHomePage = () => {
@@ -65,7 +65,7 @@ const BaseDashboardHomePage = () => {
     },
   ];
 
-  const completedSteps = ONBOARDING_STEPS.filter((step) => step.isCompleted).length || 5;
+  const completedSteps = ONBOARDING_STEPS.filter((step) => step.isCompleted).length || 4;
   // Less than 4 steps completed -> Onboarding
   if (completedSteps < 4) {
     return (
@@ -75,9 +75,9 @@ const BaseDashboardHomePage = () => {
     );
   }
   // Exactly 4 steps completed -> NewUser
-  // if (completedSteps >= 4 && completedSteps < ONBOARDING_STEPS.length) {
-  //   return <NewUser steps={ONBOARDING_STEPS} completedSteps={completedSteps} />;
-  // }
+  if (completedSteps >= 4 && completedSteps < ONBOARDING_STEPS.length) {
+    return <NewUser steps={ONBOARDING_STEPS} completedSteps={completedSteps} />;
+  }
   // All 5 steps completed -> ActiveUser
   return <ActiveUser />;
 };

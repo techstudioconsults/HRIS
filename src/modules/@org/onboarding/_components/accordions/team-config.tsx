@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable unused-imports/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // components/accordions/TeamConfig.tsx
 "use client";
 
@@ -11,7 +9,7 @@ import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { OnboardingService } from "../../services/service";
+import { useOnboardingService } from "../../services/use-onboarding-service";
 import { RolesAndPermission } from "../forms/roles&permission";
 import { Role, Team } from "../forms/schema";
 import { TeamForm } from "../forms/team/team-form";
@@ -19,24 +17,33 @@ import { TeamForm } from "../forms/team/team-form";
 interface TeamConfigProperties {
   teams: Team[];
   onTeamsChange: (teams: Team[]) => void;
-  onBoardingService: OnboardingService;
 }
 
-export const TeamConfig = ({ teams, onTeamsChange, onBoardingService }: TeamConfigProperties) => {
+export const TeamConfig = ({ teams, onTeamsChange }: TeamConfigProperties) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
   const [currentRole, setCurrentRole] = useState<Role | null>(null);
   const [dialogType, setDialogType] = useState<"team" | "role">("team");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleOpenTeamDialog = (team?: Team, isEditing = false) => {
+  const { useCreateTeam, useUpdateTeam, useDeleteTeam, useCreateRole, useUpdateRole, useDeleteRole } =
+    useOnboardingService();
+
+  // Mutations
+  const { mutateAsync: createTeam, isPending: isCreatingTeam } = useCreateTeam();
+  const { mutateAsync: updateTeam, isPending: isUpdatingTeam } = useUpdateTeam();
+  const { mutateAsync: deleteTeam } = useDeleteTeam();
+  const { mutateAsync: createRole, isPending: isCreatingRole } = useCreateRole();
+  const { mutateAsync: updateRole, isPending: isUpdatingRole } = useUpdateRole();
+  const { mutateAsync: deleteRole } = useDeleteRole();
+
+  const handleOpenTeamDialog = (team?: Team) => {
     setCurrentTeam(team || null);
     setCurrentRole(null);
     setDialogType("team");
     setDialogOpen(true);
   };
 
-  const handleOpenRoleDialog = (team: Team, role?: Role, isEditing = false) => {
+  const handleOpenRoleDialog = (team: Team, role?: Role) => {
     setCurrentTeam(team);
     setCurrentRole(role || null);
     setDialogType("role");
@@ -44,65 +51,55 @@ export const TeamConfig = ({ teams, onTeamsChange, onBoardingService }: TeamConf
   };
 
   const handleAddTeam = async (name: string) => {
-    setIsSubmitting(true);
     try {
-      const newTeam = await onBoardingService.createTeam(name);
-      if (!newTeam) throw new Error("Failed to create team");
+      const newTeam = await createTeam(name);
       onTeamsChange([...teams, newTeam]);
       setDialogOpen(false);
     } catch (error: any) {
       toast.error("Failed to add team", {
-        description: error.response.data.message,
+        description: error.message,
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleUpdateTeam = async (teamId: string, name: string) => {
-    setIsSubmitting(true);
     try {
-      const updatedTeam = await onBoardingService.updateTeam(teamId, name);
+      const updatedTeam = await updateTeam({ teamId, name });
       onTeamsChange(teams.map((t) => (t.id === teamId ? { ...updatedTeam, roles: t.roles } : t)));
       setDialogOpen(false);
-    } catch {
-      toast.error("Failed to update team");
-    } finally {
-      setIsSubmitting(false);
+    } catch (error: any) {
+      toast.error("Failed to update team", {
+        description: error.message,
+      });
     }
   };
 
   const handleDeleteTeam = async (teamId: string) => {
     try {
-      await onBoardingService.deleteTeam(teamId);
+      await deleteTeam(teamId);
       onTeamsChange(teams.filter((t) => t.id !== teamId));
     } catch (error: any) {
       toast.error("Failed to delete team", {
-        description: error.response.data.message,
+        description: error.message,
       });
     }
   };
 
   const handleAddRole = async (teamId: string, role: Omit<Role, "id">) => {
-    setIsSubmitting(true);
     try {
-      const newRole = await onBoardingService.createRole({ ...role, teamId });
-      if (!newRole) throw new Error("Failed to create team");
+      const newRole = await createRole({ ...role, teamId });
       onTeamsChange(teams.map((team) => (team.id === teamId ? { ...team, roles: [...team.roles, newRole] } : team)));
       setDialogOpen(false);
     } catch (error: any) {
       toast.error("Failed to add role", {
-        description: error.response.data.message,
+        description: error.message,
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleUpdateRole = async (roleId: string, role: Partial<Role>) => {
-    setIsSubmitting(true);
     try {
-      const updatedRole = await onBoardingService.updateRole(roleId, role);
+      const updatedRole = await updateRole({ roleId, role });
       onTeamsChange(
         teams.map((team) =>
           team.id === currentTeam?.id
@@ -116,16 +113,14 @@ export const TeamConfig = ({ teams, onTeamsChange, onBoardingService }: TeamConf
       setDialogOpen(false);
     } catch (error: any) {
       toast.error("Failed to update role", {
-        description: error.response.data.message,
+        description: error.message,
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleDeleteRole = async (teamId: string, roleId: string) => {
     try {
-      await onBoardingService.deleteRole(roleId);
+      await deleteRole(roleId);
       onTeamsChange(
         teams.map((team) =>
           team.id === teamId ? { ...team, roles: team.roles.filter((r) => r.id !== roleId) } : team,
@@ -133,7 +128,7 @@ export const TeamConfig = ({ teams, onTeamsChange, onBoardingService }: TeamConf
       );
     } catch (error: any) {
       toast.error("Failed to delete role", {
-        description: error.response.data.message,
+        description: error.message,
       });
     }
   };
@@ -149,7 +144,7 @@ export const TeamConfig = ({ teams, onTeamsChange, onBoardingService }: TeamConf
                 <div className="flex items-center gap-1 space-x-2 text-sm">
                   <span
                     className="flex cursor-pointer items-center gap-1 text-gray-600 hover:text-gray-900"
-                    onClick={() => handleOpenTeamDialog(team, true)} // Remove event.stopPropagation()
+                    onClick={() => handleOpenTeamDialog(team)}
                   >
                     <Pencil className="mr-2 h-4 w-4" />
                     Edit
@@ -172,7 +167,7 @@ export const TeamConfig = ({ teams, onTeamsChange, onBoardingService }: TeamConf
                     <div className="flex items-center gap-4 text-xs">
                       <span
                         className="flex cursor-pointer items-center text-gray-600 hover:text-gray-900"
-                        onClick={() => handleOpenRoleDialog(team, role, true)}
+                        onClick={() => handleOpenRoleDialog(team, role)}
                       >
                         <Pencil className="mr-2 h-4 w-4" />
                         Edit
@@ -231,7 +226,7 @@ export const TeamConfig = ({ teams, onTeamsChange, onBoardingService }: TeamConf
             return currentTeam ? handleUpdateTeam(currentTeam.id!, data.name) : handleAddTeam(data.name);
           }}
           onCancel={() => setDialogOpen(false)}
-          isSubmitting={isSubmitting}
+          isSubmitting={isCreatingTeam || isUpdatingTeam}
         />
       </ReusableDialog>
 
@@ -241,7 +236,7 @@ export const TeamConfig = ({ teams, onTeamsChange, onBoardingService }: TeamConf
         onOpenChange={setDialogOpen}
         title={currentRole ? "Edit Role" : "Add New Role"}
         description={currentRole ? "Modify the role details" : "Create a new role for this team"}
-        className={`!max-w-2xl`}
+        className="!max-w-2xl"
       >
         {currentTeam && (
           <RolesAndPermission
@@ -250,7 +245,7 @@ export const TeamConfig = ({ teams, onTeamsChange, onBoardingService }: TeamConf
               return currentRole ? handleUpdateRole(currentRole.id!, data) : handleAddRole(currentTeam.id!, data);
             }}
             onCancel={() => setDialogOpen(false)}
-            isSubmitting={isSubmitting}
+            isSubmitting={isCreatingRole || isUpdatingRole}
           />
         )}
       </ReusableDialog>

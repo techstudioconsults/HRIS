@@ -1,3 +1,4 @@
+import { KBarProviderWrapper } from "@/lib/kbar/kbar-provider";
 import { fontVariables } from "@/lib/tools/font";
 import { cn } from "@/lib/utils";
 import type { Metadata, Viewport } from "next";
@@ -9,9 +10,8 @@ import "../styles/theme.css";
 import "../styles/global.css";
 
 import ThemeProvider from "@/components/core/layout/ThemeToggle/theme-provider";
-import { ModeToggle } from "@/components/core/layout/ThemeToggle/theme-toggle";
+// import { ModeToggle } from "@/components/core/layout/ThemeToggle/theme-toggle";
 import { Toast } from "@/components/shared/Toast";
-import { KBarProviderWrapper } from "@/lib/kbar/kbar-provider";
 import { ReactQueryProvider } from "@/lib/react-query/query-provider";
 import { SessionProvider } from "next-auth/react";
 
@@ -21,8 +21,8 @@ const META_THEME_COLORS = {
 };
 
 export const metadata: Metadata = {
-  title: "TechstudioHR",
-  description: "HRI System",
+  title: "Ski Shop",
+  description: "Shop Smart and Save More with Ski-Shop",
 };
 
 export const viewport: Viewport = {
@@ -43,9 +43,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               try {
                 if (localStorage.theme === 'dark' || ((!('theme' in localStorage) || localStorage.theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                   document.querySelector('meta[name="theme-color"]').setAttribute('content', '${META_THEME_COLORS.dark}')
-                  }
-                  } catch (_) {}
-                  `,
+                }
+              } catch (_) {}
+            `,
           }}
         />
       </head>
@@ -68,9 +68,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 disableTransitionOnChange
                 enableColorScheme
               >
-                <Toast />
                 <KBarProviderWrapper>{children}</KBarProviderWrapper>
-                <ModeToggle />
+                <Toast />
               </ThemeProvider>
             </ReactQueryProvider>
           </NuqsAdapter>

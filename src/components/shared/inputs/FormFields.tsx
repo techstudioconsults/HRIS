@@ -1,19 +1,18 @@
 "use client";
 
+import { BlurImage } from "@/components/core/miscellaneous/blur-image";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-
-import { BlurImage } from "../core/miscellaneous/blur-image";
-import { Badge } from "../ui/badge";
-import { Checkbox } from "../ui/checkbox";
-import { Switch } from "../ui/switch";
 
 interface FormFieldProperties {
   label?: string;
@@ -90,13 +89,20 @@ export function FormField({
                   className={cn(inputClassName, "min-h-[80px] resize-y")}
                 />
               ) : type === "select" ? (
-                <Select onValueChange={field.onChange} value={field.value} disabled={disabled}>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  defaultValue={field.value}
+                  disabled={disabled}
+                >
                   <SelectTrigger className={cn(inputClassName, "w-full")}>
-                    <SelectValue placeholder={placeholder || "Select a value"} />
+                    <SelectValue placeholder={placeholder || "Select a value"}>
+                      {options.find((opt) => opt.value === field.value)?.label || placeholder}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent className="bg-background">
-                    {options.map((option, index) => (
-                      <SelectItem key={index} value={option.value} className="hover:bg-gray-50">
+                    {options.map((option) => (
+                      <SelectItem key={option.value} value={option.value} className="hover:bg-gray-50">
                         {option.label}
                       </SelectItem>
                     ))}

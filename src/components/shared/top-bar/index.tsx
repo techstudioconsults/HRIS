@@ -2,13 +2,26 @@
 
 import { GlobalSearchInput } from "@/components/core/miscellaneous/search-input";
 import { ArrowDown2, Notification } from "iconsax-reactjs";
+import { signOut } from "next-auth/react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 type TopBarProperties = {
   adminName: string;
   // onSearch: (query: string) => void;
   notificationsCount?: number;
   className?: string;
+};
+
+const handleLogout = async () => {
+  try {
+    await signOut({
+      redirect: true,
+      callbackUrl: "/login",
+    });
+  } catch {
+    toast.error(`Something went wrong`);
+  }
 };
 
 // onSearch,
@@ -62,9 +75,9 @@ export default function TopBar({ adminName, notificationsCount = 0, className = 
               <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                 Account Settings
               </a>
-              <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+              <span onClick={handleLogout} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                 Logout
-              </a>
+              </span>
             </div>
           )}
         </div>

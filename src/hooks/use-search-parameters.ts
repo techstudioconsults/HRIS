@@ -2,8 +2,28 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 
+export const useDecodedSearchParameters = (key: string) => {
+  const searchParameters = useSearchParams();
+
+  // Use the standard method which automatically decodes values
+  const value = searchParameters.get(key);
+  return value;
+};
+
 export const useSearchParameters = (key: string) => {
   const searchParameters = useSearchParams();
+
+  // For Google auth codes and other sensitive parameters, we need to preserve URL encoding
+  // The standard searchParams.get() automatically decodes values, which can break auth codes
+  if (typeof window !== "undefined") {
+    const searchString = window.location.search;
+    // Manually parse the search string to preserve encoding using regex
+    const regex = new RegExp(`[?&]${key}=([^&#]*)`);
+    const match = searchString.match(regex);
+    return match ? match[1] : null;
+  }
+
+  // Fallback to the standard method
   const value = searchParameters.get(key);
   return value;
 };

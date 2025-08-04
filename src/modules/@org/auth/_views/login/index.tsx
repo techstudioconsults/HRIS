@@ -2,7 +2,7 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
-import { FormField } from "@/components/shared/FormFields";
+import { FormField } from "@/components/shared/inputs/FormFields";
 import { LoginFormData, loginSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";

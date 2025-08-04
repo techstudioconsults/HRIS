@@ -252,6 +252,142 @@ export const adminNavItems = [
   },
 ];
 
+// Admin navigation items
+export const adminSideItems = [
+  {
+    route: "Dashboard",
+    link: "/admin/home",
+    // icon: MdDashboard,
+    id: "home",
+  },
+  {
+    route: "Users",
+    link: "/admin/users",
+    // icon: PiUsersThreeLight,
+    id: "users",
+  },
+  {
+    route: "Orders",
+    link: "/admin/orders",
+    // icon: RiShoppingCartLine,
+    id: "orders",
+  },
+  {
+    route: "Payouts",
+    link: "/admin/payouts",
+    // icon: MdOutlineAddCard,
+    id: "payouts",
+  },
+  {
+    route: "Skicom Products",
+    link: "/admin/products",
+    // icon: TbShoppingBag,
+    id: "skicom-products",
+  },
+  {
+    route: "Revenues",
+    link: "/admin/revenues",
+    // icon: GiWallet,
+    id: "revenues",
+  },
+  {
+    route: "Subscriptions",
+    link: "/admin/subscriptions",
+    // icon: IoRibbonOutline,
+    id: "subscriptions",
+  },
+  {
+    route: "Promotions & ads",
+    link: "/admin/promotions",
+    // icon: RiAdvertisementLine,
+    id: "promotions",
+  },
+  {
+    route: "Play 2 win",
+    link: "/admin/promotions",
+    // icon: FaGamepad,
+    id: "play-to-win",
+  },
+  {
+    route: "Settings",
+    link: "/admin/settings",
+    // icon: TbSettings2,
+    id: "settings",
+  },
+];
+
+// Vendor navigation items
+export const vendorSideItems = [
+  {
+    route: "Dashboard",
+    link: "/dashboard/home",
+    // icon: MdDashboard,
+    id: "home",
+  },
+  {
+    route: "Products",
+    link: "/dashboard/products",
+    // icon: TbShoppingBag,
+    id: "products",
+  },
+  {
+    route: "Orders",
+    link: "/dashboard/orders",
+    // icon: RiShoppingCartLine,
+    id: "orders",
+  },
+  {
+    route: "Users",
+    link: "/dashboard/users",
+    // icon: PiUsersThreeLight,
+    id: "users",
+  },
+  {
+    route: "Downloads",
+    link: "/dashboard/downloads",
+    // icon: MdOutlineAddCard,
+    id: "downloads",
+  },
+  {
+    route: "Settings",
+    link: "/dashboard/settings",
+    // icon: TbSettings2,
+    id: "settings",
+  },
+];
+
+// Super Admin navigation items (includes all admin items plus super admin specific ones)
+export const superAdminSideItems = [
+  ...adminSideItems,
+  {
+    route: "Super Admin",
+    link: "/super-admin/dashboard",
+    // icon: MdDashboard,
+    id: "super-admin",
+  },
+  {
+    route: "Admin Management",
+    link: "/super-admin/admin-management",
+    // icon: PiUsersThreeLight,
+    id: "admin-management",
+  },
+  {
+    route: "System Settings",
+    link: "/super-admin/system-settings",
+    // icon: TbSettings2,
+    id: "system-settings",
+  },
+  {
+    route: "Audit Logs",
+    link: "/super-admin/audit-logs",
+    // icon: RiAdvertisementLine,
+    id: "audit-logs",
+  },
+];
+
+// Legacy export for backward compatibility
+export const sideItems = adminSideItems;
+
 export const testimonials = [
   {
     id: 1,
@@ -297,12 +433,6 @@ export const sizeOptions = [
   { value: "enterprise", label: "Enterprise (1000+)" },
 ];
 
-// const countryOptions = [
-//   { value: "united kingdom", label: "United Kingdom" },
-//   { value: "united states", label: "United States" },
-//   { value: "canada", label: "Canada" },
-// ];
-
 export const stateOptions = [
   { value: "london", label: "London" },
   { value: "new york", label: "New York" },
@@ -310,7 +440,7 @@ export const stateOptions = [
 ];
 
 export const cityOptions = [
-  { value: "barking", label: "Barking" },
+  { value: "Barking", label: "Barking" },
   { value: "manhattan", label: "Manhattan" },
   { value: "toronto", label: "Toronto" },
 ];

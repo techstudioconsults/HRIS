@@ -4,6 +4,8 @@
 
 import MainButton from "@/components/shared/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { WithDependency } from "@/HOC/withDependencies";
+import { dependencies } from "@/lib/tools/dependencies";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
@@ -18,7 +20,7 @@ interface TeamSetupFormProperties {
   onBoardingService: OnboardingService;
 }
 
-export const TeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) => {
+const BaseTeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [, setInitialTeams] = useState<Team[]>([]);
@@ -111,7 +113,7 @@ export const TeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) =>
           }}
         >
           <section className="hide-scrollbar max-h-[500px] space-y-4 overflow-auto">
-            <TeamConfig teams={teams} onTeamsChange={handleTeamsChange} onBoardingService={onBoardingService} />
+            <TeamConfig teams={teams} onTeamsChange={handleTeamsChange} />
           </section>
 
           <div className="mt-8 space-y-4">
@@ -180,3 +182,7 @@ const FormLoadingSkeleton = () => {
     </section>
   );
 };
+
+export const TeamSetupForm = WithDependency(BaseTeamSetupForm, {
+  onBoardingService: dependencies.ONBOARDING_SERVICE,
+});

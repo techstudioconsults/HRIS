@@ -2,8 +2,7 @@
 "use client";
 
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
-import { FormField } from "@/components/shared/FormFields";
-import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/shared/inputs/FormFields";
 import { ChevronRight } from "lucide-react";
 import { FormEvent, useEffect, useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
@@ -215,7 +214,7 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
         />
         <input type="hidden" name={`employees.${index}.permissions`} value={JSON.stringify(currentPermissions)} />
         <div>
-          <Label className={`mb-2 text-[16px]`}>Customize Permissions</Label>
+          <label className={`mb-2 block text-[16px] font-medium`}>Customize Permissions</label>
           <div
             className={`flex h-14 cursor-pointer items-center justify-between rounded-lg border px-4`}
             onClick={handleOpenPermissionsDialog}
@@ -235,6 +234,7 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
         title="Customize Permissions"
         description="Select the permissions for this employee"
         className="!max-w-2xl"
+        trigger={""}
       >
         <RolesAndPermission
           isEdit

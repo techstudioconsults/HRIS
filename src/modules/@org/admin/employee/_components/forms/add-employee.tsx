@@ -18,7 +18,6 @@ import { toast } from "sonner";
 
 import FileUpload from "../../../_components/file-upload/file-upload";
 import { EmployeeService } from "../../services/service";
-import { EmployeeFormSkeleton } from "./skeleton";
 
 interface TeamWithRoles {
   id: string;
@@ -101,13 +100,13 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
             }
 
             // Set salary and bank info
-            setValue("monthlySalary", employee.monthlySalary.toString() || "0");
-            setValue("pension", employee.pension?.toString() || "0");
-            setValue("healthInsurance", employee.healthInsurance?.toString() || "0");
-            setValue("otherDeductions", employee.otherDeductions?.toString() || "0");
-            setValue("bankName", employee.bankName || "");
-            setValue("accountName", employee.accountName || "");
-            setValue("accountNumber", employee.accountNumber || "");
+            // setValue("monthlySalary", employee.monthlySalary.toString() || "0");
+            // setValue("pension", employee.pension?.toString() || "0");
+            // setValue("healthInsurance", employee.healthInsurance?.toString() || "0");
+            // setValue("otherDeductions", employee.otherDeductions?.toString() || "0");
+            // setValue("bankName", employee.bankName || "");
+            // setValue("accountName", employee.accountName || "");
+            // setValue("accountNumber", employee.accountNumber || "");
           }
         }
       } catch (error) {
@@ -187,15 +186,15 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
       formDataToSend.append("employmentType", formData.employmentType || "");
 
       // Salary info
-      formDataToSend.append("monthlySalary", formData.monthlySalary?.toString() || "0");
-      formDataToSend.append("pension", formData.pension?.toString() || "0");
-      formDataToSend.append("healthInsurance", formData.healthInsurance?.toString() || "0");
-      formDataToSend.append("otherDeductions", formData.otherDeductions?.toString() || "0");
+      // formDataToSend.append("monthlySalary", formData.monthlySalary?.toString() || "0");
+      // formDataToSend.append("pension", formData.pension?.toString() || "0");
+      // formDataToSend.append("healthInsurance", formData.healthInsurance?.toString() || "0");
+      // formDataToSend.append("otherDeductions", formData.otherDeductions?.toString() || "0");
 
       // Bank info
-      formDataToSend.append("bankName", formData.bankName || "");
-      formDataToSend.append("accountName", formData.accountName || "");
-      formDataToSend.append("accountNumber", formData.accountNumber || "");
+      // formDataToSend.append("bankName", formData.bankName || "");
+      // formDataToSend.append("accountName", formData.accountName || "");
+      // formDataToSend.append("accountNumber", formData.accountNumber || "");
 
       // Call the appropriate service method
       if (employeeId) {
@@ -217,9 +216,9 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
     }
   };
 
-  if (loadingTeams) {
-    return <EmployeeFormSkeleton />;
-  }
+  // if (loadingTeams) {
+  //   return <EmployeeFormSkeleton />;
+  // }
 
   const handleAlertClose = () => {
     setShowAlert(false);
@@ -250,7 +249,7 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
                   name="firstName"
                   label="First Name"
                   type="text"
-                  placeholder="John"
+                  placeholder={loadingTeams ? `Loading first name...` : `John`}
                   className="!h-14 w-full"
                   required
                 />
@@ -259,15 +258,22 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
                   label="Last Name"
                   type="text"
                   className="!h-14 w-full"
-                  placeholder="Doe"
+                  placeholder={loadingTeams ? `Loading last name...` : `Doe`}
                   required
                 />
-                <FormField name="dateOfBirth" label="Date of Birth" className="!h-14 w-full" type="date" required />
+                <FormField
+                  name="dateOfBirth"
+                  placeholder={loadingTeams ? `Loading first name...` : `John`}
+                  label="Date of Birth"
+                  className="!h-14 w-full"
+                  type="date"
+                  required
+                />
                 <FormField
                   name="gender"
                   label="Gender"
                   type="select"
-                  placeholder={`Select employee gender`}
+                  placeholder={loadingTeams ? `Loading employee gender...` : `Select employee gender`}
                   className="bg-background !h-14 w-full"
                   options={genderOptions}
                   required
@@ -276,7 +282,7 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
                   name="email"
                   label="Work Email"
                   type="email"
-                  placeholder="john.doe@example.com"
+                  placeholder={loadingTeams ? `Loading email...` : `Johndoe@gmail.com`}
                   className="!h-14 w-full"
                   required
                 />
@@ -285,7 +291,7 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
                   label="Phone Number"
                   className="!h-14 w-full"
                   type="text"
-                  placeholder="08123456789"
+                  placeholder={loadingTeams ? `Loading phone number...` : `080123456789`}
                   required
                 />
               </div>
@@ -301,7 +307,7 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
                   className="bg-background !h-14 w-full"
                   label="Employment Type"
                   type="select"
-                  placeholder={`Select employment type`}
+                  placeholder={loadingTeams ? `Loading employee type...` : `Select employment type`}
                   options={employmentTypeOptions}
                   required
                 />
@@ -309,7 +315,7 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
                   name="workMode"
                   label="Work Mode"
                   type="select"
-                  placeholder={`Select employee work mode`}
+                  placeholder={loadingTeams ? `Loading employee work mode...` : `Select employee work mode`}
                   className="bg-background !h-14 w-full"
                   options={workModeOptions}
                   required
@@ -343,7 +349,7 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
             </section>
 
             {/* Salary Details Section */}
-            <section>
+            {/* <section>
               <h2 className="mb-4 text-lg font-semibold">Salary Details</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
                 <FormField
@@ -387,7 +393,7 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
                   className="!h-14 w-full"
                 />
               </div>
-            </section>
+            </section> */}
 
             {/* Documents Section */}
             <section>

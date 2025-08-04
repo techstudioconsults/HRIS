@@ -89,7 +89,7 @@ export function EmployeeTable({ employees, className }: EmployeeTableProperties)
             </Link>
           </div>
         </div>
-        {/* 
+        {/*
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:flex md:gap-2">
           <Select>
             <SelectTrigger className="w-[180px]">
@@ -165,9 +165,9 @@ export function EmployeeTable({ employees, className }: EmployeeTableProperties)
                   <Image src="/images/Frame 20955855692.svg" alt="employee image" width="30" height="30" />
                   <span>{employee.name}</span>
                 </TableCell>
-                <TableCell>{employee.email}</TableCell>
+                {/* <TableCell>{employee.email}</TableCell>
                 <TableCell>{employee.role}</TableCell>
-                <TableCell>{employee.department}</TableCell>
+                <TableCell>{employee.department}</TableCell> */}
                 <TableCell>
                   <span
                     className={cn("inline-flex items-center rounded-full px-3 py-1 text-xs font-medium", {

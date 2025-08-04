@@ -46,7 +46,7 @@ export const WithImage: Story = {
       description: "This will permanently delete the item from your collection.",
       onConfirm: () => console.log("Item deleted"),
       buttonName: "Delete",
-      img: "/images/logo.svg",
+      img: "/images/skicom.svg",
     },
   },
 };

@@ -1,23 +1,22 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
-import { FormField } from "@/components/shared/FormFields";
-import { WithDependency } from "@/HOC/withDependencies";
-import { dependencies } from "@/lib/tools/dependencies";
+import { FormField } from "@/components/shared/inputs/FormFields";
 import { ForgotPasswordData, forgotPasswordSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft } from "iconsax-reactjs";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { AuthService } from "../../services/auth.service";
+import { useAuthService } from "../../services/use-auth-service";
 
-// import { toast } from "sonner";
-
-export const BaseForgotPassword = ({ authService }: { authService: AuthService }) => {
+export const ForgotPassword = () => {
   const router = useRouter();
+  const { useForgotPassword } = useAuthService();
+  const { mutateAsync: forgotPassword, isPending } = useForgotPassword();
+
   const methods = useForm<ForgotPasswordData>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
@@ -27,18 +26,20 @@ export const BaseForgotPassword = ({ authService }: { authService: AuthService }
 
   const {
     handleSubmit,
-    formState: { isSubmitting, isValid },
-    // watch,
+    formState: { isValid },
   } = methods;
 
   const handleSubmitForm = async (data: ForgotPasswordData) => {
-    const response = await authService.forgotPassword(data);
-
-    if (response?.success) {
-      toast.success(`Message Sent`, {
-        description: response.data,
+    try {
+      const response = await forgotPassword(data);
+      toast.success(`Registration Successful`, {
+        description: response?.data,
       });
-      router.push(`/reset-password`);
+      router.push(`/reset-password?email=${encodeURIComponent(data.email)}`);
+    } catch (error) {
+      toast.error("Registration Failed", {
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+      });
     }
   };
 
@@ -74,8 +75,8 @@ export const BaseForgotPassword = ({ authService }: { authService: AuthService }
             <MainButton
               type="submit"
               variant="primary"
-              isDisabled={isSubmitting || !isValid}
-              isLoading={isSubmitting}
+              isDisabled={isPending || !isValid}
+              isLoading={isPending}
               className="w-full"
               size="2xl"
             >
@@ -94,7 +95,3 @@ export const BaseForgotPassword = ({ authService }: { authService: AuthService }
     </section>
   );
 };
-
-export const ForgotPassword = WithDependency(BaseForgotPassword, {
-  authService: dependencies.AUTH_SERVICE,
-});

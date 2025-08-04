@@ -22,8 +22,55 @@ interface RolesAndPermissionProperties {
   isSubmitting?: boolean;
 }
 
-const modules = ["admin", "company", "leave", "employee", "team", "role"] as const;
-const actions = ["read", "create", "edit", "delete", "manage"] as const;
+const modules = ["company", "employee", "team", "role", "payroll", "leave", "attendance"] as const;
+const actions = ["read", "update", "manage"] as const;
+
+const handleManageChange = (module: string, checked: boolean, currentPermissions: string[]) => {
+  if (checked) {
+    // If manage is checked, add all permissions for this module
+    const newPermissions = [
+      ...currentPermissions.filter((p) => !p.startsWith(`${module}:`)),
+      `${module}:read`,
+      `${module}:update`,
+      `${module}:manage`,
+    ];
+    return newPermissions;
+  } else {
+    // If manage is unchecked, remove all permissions for this module
+    return currentPermissions.filter((p) => !p.startsWith(`${module}:`));
+  }
+};
+
+const handlePermissionChange = (module: string, action: string, checked: boolean, currentPermissions: string[]) => {
+  const permissionString = `${module}:${action}`;
+  let newPermissions = [...currentPermissions];
+
+  if (checked) {
+    // Add the permission
+    if (!newPermissions.includes(permissionString)) {
+      newPermissions.push(permissionString);
+    }
+
+    // If all non-manage permissions are checked, also check manage
+    if (
+      action !== "manage" &&
+      newPermissions.includes(`${module}:read`) &&
+      newPermissions.includes(`${module}:update`)
+    ) {
+      newPermissions.push(`${module}:manage`);
+    }
+  } else {
+    // Remove the permission
+    newPermissions = newPermissions.filter((p) => p !== permissionString);
+
+    // If manage was checked and any sub-permission is unchecked, uncheck manage
+    if (action !== "manage" && newPermissions.includes(`${module}:manage`)) {
+      newPermissions = newPermissions.filter((p) => p !== `${module}:manage`);
+    }
+  }
+
+  return newPermissions;
+};
 
 export const RolesAndPermission = ({
   isEdit,
@@ -41,13 +88,7 @@ export const RolesAndPermission = ({
   });
 
   const handleSubmit = (data: Role) => {
-    // Transform the form data to match your desired output format
-
-    const output = {
-      name: data.name,
-      permissions: data.permissions,
-    };
-    onSubmit(output);
+    onSubmit(data);
   };
 
   return (
@@ -116,17 +157,23 @@ export const RolesAndPermission = ({
                             control={form.control}
                             name="permissions"
                             render={({ field }) => {
-                              const permissionString = `${module.toLowerCase()}:${action}`;
+                              const permissionString = `${module}:${action}`;
+                              const isChecked = field.value?.includes(permissionString);
+
                               return (
                                 <FormItem className="flex justify-center">
                                   <Checkbox
                                     className={`border-primary/30 data-[state=checked]:border-primary data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary`}
-                                    checked={field.value?.includes(permissionString)}
+                                    checked={isChecked}
                                     onCheckedChange={(checked) => {
-                                      const newValue = checked
-                                        ? [...(field.value || []), permissionString]
-                                        : field.value?.filter((p) => p !== permissionString) || [];
-                                      field.onChange(newValue);
+                                      let newPermissions = [...(field.value || [])];
+
+                                      newPermissions =
+                                        action === "manage"
+                                          ? handleManageChange(module, !!checked, newPermissions)
+                                          : handlePermissionChange(module, action, !!checked, newPermissions);
+
+                                      field.onChange(newPermissions);
                                     }}
                                     aria-label={`${module} ${action} permission`}
                                   />

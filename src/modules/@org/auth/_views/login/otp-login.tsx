@@ -1,7 +1,7 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
-import { FormField } from "@/components/shared/FormFields";
+import { FormField } from "@/components/shared/inputs/FormFields";
 import { LoginOTPFFormData, loginOTPFormSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";

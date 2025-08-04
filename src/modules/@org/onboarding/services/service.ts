@@ -126,6 +126,33 @@ export class OnboardingService {
     }
   }
 
+  async getCompanyProfile() {
+    return {
+      success: true,
+      data: {
+        id: "6a2f67c7-fb25-4e6d-94c5-fac023a2c42f",
+        name: "Techstudio Academy",
+        industry: "Tech Education",
+        size: "medium",
+        domain: "techstudioacademy.com",
+        address: {
+          addressLine1: "205",
+          addressLine2: "lewsham rd",
+          city: "Barking",
+          state: "london",
+          country: "united kingdom",
+          postcode: "CR20 3NL",
+        },
+        createdAt: "2025-06-16T18:48:39.212Z",
+        updatedAt: "2025-06-16T18:57:31.287Z",
+      },
+    };
+    // const response = await this.http.get<{ data: RoleApiResponse }>(`/companies/current`);
+    // if (response?.status === 200) {
+    //   return response.data.data;
+    // }
+  }
+
   async createRole(role: Omit<Role, "id">): Promise<Role> {
     const response = await this.http.post<{ data: RoleApiResponse; success: boolean }>(`/roles`, role);
     if (response?.status === 201) {

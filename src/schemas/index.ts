@@ -35,12 +35,17 @@ export const forgotPasswordSchema = z.object({
     message: "Please enter a valid email address",
   }),
 });
-export const resetPasswordSchema = z.object({
-  token: z.string().min(1, "Token is required").optional(),
-  // email: z.string().min(1, "Email is required").email("Please enter a valid email address").optional(),
-  password: z.string().min(1, "Password is required").min(8, "Password must be at least 8 characters"),
-  confirmPassword: z.string().min(1, "Confirm password is required"),
-});
+export const resetPasswordSchema = z
+  .object({
+    // token: z.string().min(1, "Token is required").optional(),
+    // email: z.string().min(1, "Email is required").email("Please enter a valid email address").optional(),
+    password: z.string().min(1, "Password is required").min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string().min(1, "Confirm password is required"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["password_confirmation"],
+  });
 
 export const bankFormSchema = z.object({
   name: z.string().min(1, "Account name is required"),
@@ -109,7 +114,7 @@ export const kycSchema = z.object({
 });
 
 export const companyProfileSchema = z.object({
-  domain: z.string().min(1, "Company name is required"),
+  // domain: z.string().min(1, "Company name is required"),
   industry: z.string().min(1, "Industry is required"),
   size: z.string().min(1, "Company size is required"),
   addressLine1: z.string().min(1, "Address line 1 is required"),
@@ -143,17 +148,17 @@ export const employeeSchema = z.object({
     .min(1, "Start date is required")
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Start date must be in YYYY-MM-DD format"),
   employmentType: z.enum(["full time", "part time", "contract"]),
-  monthlySalary: z.string().min(1, "Salary must be positive"),
-  pension: z.string().min(1, "Pension must be a positive number"),
-  healthInsurance: z.string().min(1, "Insurance must be a positive number"),
-  otherDeductions: z.string().min(1, "Deduction number is required"),
-  bankName: z.string().min(1, "Bank name is required"),
-  accountName: z.string().min(1, "Account name is required"),
-  accountNumber: z
-    .string()
-    .min(1, "Account number is required")
-    .max(11, "Account number must be at most 11 digits")
-    .regex(/^\d{1,10}$/, "Account number must be a number with up to 10 digits"),
+  // monthlySalary: z.string().min(1, "Salary must be positive"),
+  // pension: z.string().min(1, "Pension must be a positive number"),
+  // healthInsurance: z.string().min(1, "Insurance must be a positive number"),
+  // otherDeductions: z.string().min(1, "Deduction number is required"),
+  // bankName: z.string().min(1, "Bank name is required"),
+  // accountName: z.string().min(1, "Account name is required"),
+  // accountNumber: z
+  //   .string()
+  //   .min(1, "Account number is required")
+  //   .max(11, "Account number must be at most 11 digits")
+  //   .regex(/^\d{1,10}$/, "Account number must be a number with up to 10 digits"),
   workMode: z.enum(["remote", "on site", "hybrid"]),
 });
 

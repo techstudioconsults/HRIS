@@ -3,6 +3,7 @@
 import { GlobalSearchInput } from "@/components/core/miscellaneous/search-input";
 import { ArrowDown2, Notification } from "iconsax-reactjs";
 import { signOut } from "next-auth/react";
+import { useLocale } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -13,20 +14,21 @@ type TopBarProperties = {
   className?: string;
 };
 
-const handleLogout = async () => {
-  try {
-    await signOut({
-      redirect: true,
-      callbackUrl: "/login",
-    });
-  } catch {
-    toast.error(`Something went wrong`);
-  }
-};
-
 // onSearch,
 export default function TopBar({ adminName, notificationsCount = 0, className = "" }: TopBarProperties) {
+  const locale = useLocale();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await signOut({
+        redirect: true,
+        callbackUrl: `/${locale}/login`,
+      });
+    } catch {
+      toast.error(`Something went wrong`);
+    }
+  };
 
   return (
     <header className={`bg-background flex h-16 items-center justify-between px-4 ${className}`}>

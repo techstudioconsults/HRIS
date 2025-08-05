@@ -2,12 +2,7 @@
 
 import { InputOtpCard } from "@/modules/@org/auth";
 
-const LoginPage = () => {
-  const getCurrentView = () => {
-    return <InputOtpCard />;
-  };
-
-  return <section>{getCurrentView()}</section>;
+const LoginOtpPage = () => {
+  return <InputOtpCard />;
 };
-
-export default LoginPage;
+export default LoginOtpPage;

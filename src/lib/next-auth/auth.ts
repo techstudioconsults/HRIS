@@ -1,78 +1,11 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
-import NextAuth, { CredentialsSignin, DefaultSession } from "next-auth";
+import NextAuth, { CredentialsSignin, Session, User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-
-declare module "next-auth" {
-  interface User {
-    id: string;
-    accessToken: string;
-    refreshToken: string;
-    role: { id: string; name: string };
-  }
-
-  interface Session {
-    user: {
-      id: string;
-      name: string;
-      email: string;
-      role: { id: string; name: string };
-    } & DefaultSession["user"];
-    accessToken: string;
-    refreshToken: string;
-    expires: string;
-  }
-
-  interface JWT {
-    id: string;
-    name: string;
-    email: string;
-    role: { id: string; name: string };
-    accessToken: string;
-    refreshToken: string;
-    iat: number;
-    exp: number;
-    jti: string;
-  }
-}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
   // debug: process.env.NODE_ENV === "development",
   providers: [
-    // Google OAuth via credentials provider
-    Credentials({
-      id: "google",
-      name: "Google",
-      credentials: {
-        name: {},
-        email: {},
-        accessToken: {},
-        refreshToken: {},
-        role: {},
-      },
-      authorize: async (credentials) => {
-        try {
-          if (!credentials.email || !credentials.accessToken) {
-            throw new CredentialsSignin("Missing Google authentication data");
-          }
-
-          return {
-            id: credentials.email as string, // Use email as a fallback unique id
-            name: (credentials.name as string) || "",
-            email: credentials.email as string,
-            role: credentials.role ? JSON.parse(credentials.role as string) : { id: "", name: "" },
-            accessToken: credentials.accessToken as string,
-            refreshToken: credentials.refreshToken as string,
-          };
-        } catch (error) {
-          console.error("Google auth error:", error);
-          throw new CredentialsSignin("Google authentication failed");
-        }
-      },
-    }),
-
     // conventional credentials
     Credentials({
       name: "Credentials",
@@ -92,15 +25,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             password,
           });
 
-          if (response.status === 200) {
+          if (response.status === 200 && response.data.success) {
+            const { employee, tokens, permissions } = response.data.data;
+
             return {
-              id: response.data.data.user.id,
-              name: response.data.data.user.fullName,
-              email: response.data.data.user.email,
-              role: response.data.data.user.role,
-              accessToken: response.data.data.tokens.accessToken,
-              refreshToken: response.data.data.tokens.refreshToken,
-            };
+              id: employee.id,
+              employee,
+              tokens,
+              permissions,
+            } as User;
           }
         } catch (error) {
           if (axios.isAxiosError(error)) {
@@ -127,11 +60,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return {
           ...token,
           id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          accessToken: user.accessToken,
-          refreshToken: user.refreshToken,
+          employee: user.employee,
+          tokens: user.tokens,
+          permissions: user.permissions,
         };
       }
 
@@ -139,28 +70,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (trigger === "update" && session) {
         return {
           ...token,
-          accessToken: session.accessToken,
-          refreshToken: session.refreshToken,
+          tokens: session.tokens,
         };
       }
 
       return token;
     },
 
-    session({ session, token }): Promise<any> {
-      return Promise.resolve({
+    session({ session, token }): Promise<Session> {
+      // Ensure we have the correct structure
+      const sessionData = {
         ...session,
         user: {
           ...session.user,
           id: token.id as string,
-          name: token.name as string,
-          email: token.email as string,
-          role: token.role,
+          employee: token.employee,
+          permissions: token.permissions || [],
         },
-        accessToken: token.accessToken,
-        refreshToken: token.refreshToken,
+        tokens: token.tokens,
         expires: session.expires,
-      });
+      };
+
+      return Promise.resolve(sessionData);
     },
   },
   session: {

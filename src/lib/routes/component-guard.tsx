@@ -1,157 +1,149 @@
 "use client";
 
-import Loading from "@/app/Loading";
 import { useSession } from "next-auth/react";
-import { ReactNode, useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ReactNode, useEffect, useMemo } from "react";
+
+import { ACCESS_LEVELS, MODULE_PERMISSIONS, ROLES } from "../auth-types";
 
 interface ComponentGuardProperties {
   children: ReactNode;
-  // Authentication requirements
-  requireAuth?: boolean;
-  allowedRoles?: string[];
-  // Custom conditions
-  customCondition?: () => boolean | Promise<boolean>;
-  // Fallback content
+  accessLevel: (typeof ACCESS_LEVELS)[keyof typeof ACCESS_LEVELS];
+  requiredPermissions?: string[];
   fallback?: ReactNode;
-  // Loading states
-  showLoading?: boolean;
-  loadingText?: string;
-  // Error handling
-  onUnauthorized?: () => void;
-  onError?: (error: Error) => void;
+  redirectTo?: string;
 }
+
+// Check if user has required permissions
+const checkPermissions = (userPermissions: string[], requiredPermissions: string[]): boolean => {
+  if (!requiredPermissions || requiredPermissions.length === 0) {
+    return true;
+  }
+
+  return requiredPermissions.every((permission) => userPermissions.includes(permission));
+};
+
+// Check if user has owner role and admin permission
+const isOwnerWithAdminPermission = (userRole: string, userPermissions: string[]): boolean => {
+  return userRole === ROLES.OWNER && userPermissions.includes(MODULE_PERMISSIONS.ADMIN);
+};
 
 export const ComponentGuard = ({
   children,
-  requireAuth = false,
-  allowedRoles = [],
-  customCondition,
+  accessLevel,
+  requiredPermissions = [],
   fallback = null,
-  showLoading = true,
-  loadingText = "Loading...",
-  onUnauthorized,
-  onError,
+  redirectTo = "/login",
 }: ComponentGuardProperties) => {
   const { data: session, status } = useSession();
-  const [isCustomConditionMet, setIsCustomConditionMet] = useState<boolean | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
-  // Check custom condition if provided
+  const isAuthenticated = !!session;
+  const userRole = session?.user?.employee?.role?.name || "";
+  const userPermissions = useMemo(() => session?.user?.permissions || [], [session?.user?.permissions]);
+
   useEffect(() => {
-    if (customCondition) {
-      setIsLoading(true);
-      const checkCondition = async () => {
-        try {
-          const result = await customCondition();
-          setIsCustomConditionMet(result);
-        } catch (error) {
-          onError?.(error as Error);
-          setIsCustomConditionMet(false);
-        } finally {
-          setIsLoading(false);
+    if (status === "loading") return;
+
+    switch (accessLevel) {
+      case ACCESS_LEVELS.PUBLIC: {
+        // Public routes - accessible to everyone
+        return;
+      }
+
+      case ACCESS_LEVELS.AUTHENTICATED: {
+        // Authenticated routes - require login but no specific permissions
+        if (!isAuthenticated) {
+          router.push(redirectTo);
         }
-      };
+        return;
+      }
 
-      checkCondition();
+      case ACCESS_LEVELS.OWNER_ONLY: {
+        // Owner-only routes - only accessible to owner role with admin permission
+        if (!isAuthenticated) {
+          router.push(redirectTo);
+          return;
+        }
+
+        if (!isOwnerWithAdminPermission(userRole, userPermissions)) {
+          router.push(redirectTo);
+          return;
+        }
+        return;
+      }
+
+      case ACCESS_LEVELS.PERMISSION_BASED: {
+        // Permission-based routes - require specific module permissions
+        if (!isAuthenticated) {
+          router.push(redirectTo);
+          return;
+        }
+
+        if (!checkPermissions(userPermissions, requiredPermissions)) {
+          router.push(redirectTo);
+          return;
+        }
+        return;
+      }
+
+      default: {
+        // Unknown access level - redirect to login
+        router.push(redirectTo);
+        return;
+      }
     }
-  }, [customCondition, onError]);
+  }, [status, isAuthenticated, userRole, userPermissions, accessLevel, requiredPermissions, router, redirectTo]);
 
-  // Check authentication requirements
-  const isAuthenticated = status === "authenticated";
-  const isAuthLoading = status === "loading";
-
-  // Check role requirements
-  const hasRequiredRole =
-    allowedRoles.length === 0 ||
-    (isAuthenticated && allowedRoles.includes(session?.user?.role?.name.toUpperCase() || ""));
-
-  // Determine if component should be rendered
-  const shouldRender = useCallback(() => {
-    // If custom condition is provided, it takes precedence
-    if (customCondition !== undefined) {
-      return isCustomConditionMet === true;
-    }
-
-    // Check authentication requirement
-    if (requireAuth && !isAuthenticated) {
-      return false;
-    }
-
-    // Check role requirement
-    if (requireAuth && !hasRequiredRole) {
-      return false;
-    }
-
-    return true;
-  }, [isAuthenticated, hasRequiredRole, isCustomConditionMet, requireAuth, customCondition]);
-
-  // Handle unauthorized access
-  useEffect(() => {
-    if (!shouldRender() && onUnauthorized) {
-      onUnauthorized();
-    }
-  }, [isAuthenticated, hasRequiredRole, isCustomConditionMet, onUnauthorized, shouldRender]);
-
-  // Show loading states
-  if (isAuthLoading || (customCondition && isLoading) || (customCondition && isCustomConditionMet === null)) {
-    return showLoading ? <Loading text={loadingText} /> : null;
+  // Show fallback while loading or if access is denied
+  if (status === "loading") {
+    return fallback;
   }
 
-  // Render component if all conditions are met
-  if (shouldRender()) {
-    return <>{children}</>;
+  // Check access based on level
+  switch (accessLevel) {
+    case ACCESS_LEVELS.PUBLIC: {
+      return <>{children}</>;
+    }
+
+    case ACCESS_LEVELS.AUTHENTICATED: {
+      if (!isAuthenticated) {
+        return fallback;
+      }
+      return <>{children}</>;
+    }
+
+    case ACCESS_LEVELS.OWNER_ONLY: {
+      if (!isAuthenticated || !isOwnerWithAdminPermission(userRole, userPermissions)) {
+        return fallback;
+      }
+      return <>{children}</>;
+    }
+
+    case ACCESS_LEVELS.PERMISSION_BASED: {
+      if (!isAuthenticated || !checkPermissions(userPermissions, requiredPermissions)) {
+        return fallback;
+      }
+      return <>{children}</>;
+    }
+
+    default: {
+      return fallback;
+    }
   }
-
-  // Render fallback if conditions are not met
-  return <>{fallback}</>;
 };
 
-// Higher-order component version for easier usage
-export const withComponentGuard = <T extends Record<string, unknown>>(
-  Component: React.ComponentType<T>,
-  guardProperties: Omit<ComponentGuardProperties, "children">,
+// Higher-order component for protecting components
+export const withAuth = <P extends object>(
+  Component: React.ComponentType<P>,
+  accessLevel: (typeof ACCESS_LEVELS)[keyof typeof ACCESS_LEVELS],
+  requiredPermissions?: string[],
 ) => {
-  const GuardedComponent = (properties: T) => (
-    <ComponentGuard {...guardProperties}>
-      <Component {...properties} />
-    </ComponentGuard>
-  );
-
-  GuardedComponent.displayName = `withComponentGuard(${Component.displayName || Component.name})`;
-
-  return GuardedComponent;
-};
-
-// Specialized guards for common use cases
-export const withAuth = <T extends Record<string, unknown>>(Component: React.ComponentType<T>, roles?: string[]) => {
-  return withComponentGuard(Component, {
-    requireAuth: true,
-    allowedRoles: roles || [],
-  });
-};
-
-export const withRole = <T extends Record<string, unknown>>(Component: React.ComponentType<T>, roles: string[]) => {
-  return withComponentGuard(Component, {
-    requireAuth: true,
-    allowedRoles: roles,
-  });
-};
-
-export const withCondition = <T extends Record<string, unknown>>(
-  Component: React.ComponentType<T>,
-  condition: () => boolean | Promise<boolean>,
-) => {
-  return withComponentGuard(Component, {
-    customCondition: condition,
-  });
-};
-
-// Utility function to check if user has specific role
-export const hasRole = (userRole: string, requiredRoles: string[]): boolean => {
-  return requiredRoles.includes(userRole);
-};
-
-// Utility function to check if user has any of the required roles
-export const hasAnyRole = (userRole: string, requiredRoles: string[]): boolean => {
-  return requiredRoles.includes(userRole);
+  return function AuthenticatedComponent(properties: P) {
+    return (
+      <ComponentGuard accessLevel={accessLevel} requiredPermissions={requiredPermissions}>
+        <Component {...properties} />
+      </ComponentGuard>
+    );
+  };
 };

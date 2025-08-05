@@ -9,11 +9,11 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "../styles/theme.css";
 import "../styles/global.css";
 
-import ThemeProvider from "@/components/core/layout/ThemeToggle/theme-provider";
 // import { ModeToggle } from "@/components/core/layout/ThemeToggle/theme-toggle";
+import { SessionProvider } from "@/components/core/layout/SessionProvider";
+import ThemeProvider from "@/components/core/layout/ThemeToggle/theme-provider";
 import { Toast } from "@/components/shared/Toast";
 import { ReactQueryProvider } from "@/lib/react-query/query-provider";
-import { SessionProvider } from "next-auth/react";
 
 const META_THEME_COLORS = {
   light: "#ffffff",
@@ -49,15 +49,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           }}
         />
       </head>
-      <SessionProvider>
-        <body
-          className={cn(
-            "bg-background font-sans antialiased",
-            activeThemeValue ? `theme-${activeThemeValue}` : "",
-            isScaled ? "theme-scaled" : "",
-            fontVariables,
-          )}
-        >
+      <body
+        className={cn(
+          "bg-background font-sans antialiased",
+          activeThemeValue ? `theme-${activeThemeValue}` : "",
+          isScaled ? "theme-scaled" : "",
+          fontVariables,
+        )}
+      >
+        <SessionProvider>
           <NextTopLoader showSpinner={false} />
           <NuqsAdapter>
             <ReactQueryProvider>
@@ -73,8 +73,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               </ThemeProvider>
             </ReactQueryProvider>
           </NuqsAdapter>
-        </body>
-      </SessionProvider>
+        </SessionProvider>
+      </body>
     </html>
   );
 }

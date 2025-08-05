@@ -1,10 +1,11 @@
+/* eslint-disable unicorn/prefer-ternary */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
 "use client";
 
 import MainButton from "@/components/shared/button";
-import { AlertDialog } from "@/components/shared/dialog/alert-dialog";
-import { FormField } from "@/components/shared/FormFields";
+import { FormField } from "@/components/shared/inputs/FormFields";
+// import { AlertDialog } from "@/components/ui/alert-dialog";
 import { WithDependency } from "@/HOC/withDependencies";
 import { employmentTypeOptions, genderOptions, workModeOptions } from "@/lib/tools/constants";
 import { dependencies } from "@/lib/tools/dependencies";
@@ -39,9 +40,9 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
   const [loadingTeams, setLoadingTeams] = useState(true);
   const [loadingRoles, setLoadingRoles] = useState(false);
   const [, setIsLoadingEmployee] = useState(!!employeeId);
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertTitle, setAlertTitle] = useState("");
-  const [alertDescription, setAlertDescription] = useState("");
+  // const [showAlert, setShowAlert] = useState(false);
+  // const [alertTitle, setAlertTitle] = useState("");
+  // const [alertDescription, setAlertDescription] = useState("");
 
   const methods = useForm<EmployeeFormData>({
     resolver: zodResolver(employeeSchema),
@@ -199,17 +200,17 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
       // Call the appropriate service method
       if (employeeId) {
         await employeeService.updateEmployee(employeeId, formDataToSend);
-        setAlertTitle("Employee Profile Updated");
-        setAlertDescription("Changes to the employee’s information have been saved successfully.");
+        // setAlertTitle("Employee Profile Updated");
+        // setAlertDescription("Changes to the employee’s information have been saved successfully.");
       } else {
         await employeeService.createEmployee(formDataToSend);
-        setAlertTitle("Employee Added Successfully");
-        setAlertDescription(
-          "You've successfully added an employee to your team. They'll receive an email with login instructions to access the platform.",
-        );
+        // setAlertTitle("Employee Added Successfully");
+        // setAlertDescription(
+        //   "You've successfully added an employee to your team. They'll receive an email with login instructions to access the platform.",
+        // );
       }
 
-      setShowAlert(true);
+      // setShowAlert(true);
     } catch (error) {
       console.error("Error saving employee:", error);
       // You could also set error state here and show an error alert
@@ -220,10 +221,10 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
   //   return <EmployeeFormSkeleton />;
   // }
 
-  const handleAlertClose = () => {
-    setShowAlert(false);
-    router.push("/admin/employees");
-  };
+  // const handleAlertClose = () => {
+  //   setShowAlert(false);
+  //   router.push("/admin/employees");
+  // };
 
   return (
     <div className="space-y-8">
@@ -420,7 +421,7 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
           </div>
         </form>
       </FormProvider>
-      <AlertDialog open={showAlert} onOpenChange={handleAlertClose} title={alertTitle} description={alertDescription} />
+      {/* <AlertDialog open={showAlert} onOpenChange={handleAlertClose} title={alertTitle} description={alertDescription} /> */}
     </div>
   );
 };

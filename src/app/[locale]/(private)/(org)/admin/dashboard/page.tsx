@@ -1,11 +1,9 @@
+"use client";
+
 import { DashboardHomePage } from "@/modules/@org/admin/dashboard";
 
-const page = () => {
-  return (
-    <div>
-      <DashboardHomePage />
-    </div>
-  );
+const AdminDashboardPage = () => {
+  return <DashboardHomePage />;
 };
 
-export default page;
+export default AdminDashboardPage;

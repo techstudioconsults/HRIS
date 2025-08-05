@@ -42,8 +42,8 @@ http.interceptors.request.use(
     // const xsrfToken = getCsrfToken();
     const session = await getSession();
 
-    if (session?.accessToken) {
-      config.headers.Authorization = `Bearer ${session.accessToken}`;
+    if (session?.tokens.accessToken) {
+      config.headers.Authorization = `Bearer ${session.tokens.accessToken}`;
     }
 
     // if (xsrfToken) {

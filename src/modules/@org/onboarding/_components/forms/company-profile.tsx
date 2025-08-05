@@ -45,7 +45,7 @@ export const CompanyProfile = () => {
         toast.success("Company's Profile", {
           description: `Company profile saved successfully`,
         });
-        router.push(`/onboarding?step=2`);
+        router.push(`/onboarding/step-2`);
       },
     });
   };
@@ -170,7 +170,7 @@ export const CompanyProfile = () => {
               Continue
             </MainButton>
             <MainButton
-              href={`/onboarding?step=2`}
+              href={`/onboarding/step-2`}
               type="button"
               variant="link"
               className="w-full font-semibold"

@@ -87,7 +87,7 @@ const BaseTeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) => {
       }
 
       toast.success("Team setup saved successfully");
-      router.push("/next-step");
+      router.push("/onboarding/step-3");
     } catch (error) {
       toast.error("Failed to save team setup");
       console.error("Error saving team setup:", error);
@@ -117,11 +117,17 @@ const BaseTeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) => {
           </section>
 
           <div className="mt-8 space-y-4">
-            <MainButton href={`/onboarding?step=3`} type="button" variant="primary" className="w-full" size="xl">
+            <MainButton href={`/onboarding/step-3`} type="button" variant="primary" className="w-full" size="xl">
               Continue
             </MainButton>
 
-            <MainButton href={`/dashboard`} type="button" variant="link" className="w-full font-semibold" size="xl">
+            <MainButton
+              href={`/admin/dashboard`}
+              type="button"
+              variant="link"
+              className="w-full font-semibold"
+              size="xl"
+            >
               Skip for Later
             </MainButton>
           </div>

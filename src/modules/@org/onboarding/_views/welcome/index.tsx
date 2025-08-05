@@ -42,7 +42,7 @@ export const Welcome = () => {
             <MainButton onClick={handleOpenTeamDialog} className={`w-full lg:w-fit`} variant={`primary`}>
               Take a Quick Tour
             </MainButton>
-            <MainButton href={`/onboarding?step=1`} className={`w-full lg:w-fit`} variant={`outline`}>
+            <MainButton href={`/onboarding/step-1`} className={`w-full lg:w-fit`} variant={`outline`}>
               Skip Tour & Continue
             </MainButton>
           </div>

@@ -2,7 +2,7 @@
 
 import { StepOne } from "@/modules/@org/onboarding";
 
-const StepOnePage = () => {
+const OnboardingStepOnePage = () => {
   return (
     <div className="onboarding-container">
       <StepOne />
@@ -10,4 +10,4 @@ const StepOnePage = () => {
   );
 };
 
-export default StepOnePage;
+export default OnboardingStepOnePage;

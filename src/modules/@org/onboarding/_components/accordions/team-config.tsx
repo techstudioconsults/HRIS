@@ -219,6 +219,7 @@ export const TeamConfig = ({ teams, onTeamsChange }: TeamConfigProperties) => {
         onOpenChange={setDialogOpen}
         title={currentTeam ? "Edit Team" : "Add New Team"}
         description={currentTeam ? "Modify the team details" : "Create a new team for your organization"}
+        trigger={undefined}
       >
         <TeamForm
           initialData={currentTeam}
@@ -237,6 +238,7 @@ export const TeamConfig = ({ teams, onTeamsChange }: TeamConfigProperties) => {
         title={currentRole ? "Edit Role" : "Add New Role"}
         description={currentRole ? "Modify the role details" : "Create a new role for this team"}
         className="!max-w-2xl"
+        trigger={undefined}
       >
         {currentTeam && (
           <RolesAndPermission

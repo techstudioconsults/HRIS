@@ -1,6 +1,8 @@
 // app/setup/teams/page.tsx
 "use client";
 
+import MainButton from "@/components/shared/button";
+
 import { TeamSetupForm } from "../../_components/forms/team-setup";
 
 export const TeamSetupPage = () => {
@@ -23,6 +25,11 @@ export const TeamSetupPage = () => {
             Start with suggested departments and tailor them to fit your organization. Add custom roles under each
             department and control what they can access.
           </p>
+        </div>
+        <div className="flex gap-4">
+          <MainButton href="/onboarding/step-1" variant="outline">
+            Back
+          </MainButton>
         </div>
       </section>
       <section className="flex-1">

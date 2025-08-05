@@ -93,7 +93,7 @@ export const RolesAndPermission = ({
 
   return (
     <Form {...form}>
-      <form className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
         {/* Role Name Input */}
         {isEdit ? (
           <div className={`bg-warning-50 text-warning-200 rounded-lg p-4 text-sm`}>
@@ -196,13 +196,7 @@ export const RolesAndPermission = ({
           <MainButton type="button" variant="outline" onClick={onCancel} isDisabled={isSubmitting} className="w-full">
             Cancel
           </MainButton>
-          <MainButton
-            onClick={form.handleSubmit(handleSubmit)}
-            type="button"
-            variant={`primary`}
-            isDisabled={isSubmitting}
-            className="w-full"
-          >
+          <MainButton type="submit" variant={`primary`} isDisabled={isSubmitting} className="w-full">
             {isSubmitting ? "Saving..." : "Save & Continue"}
           </MainButton>
         </div>

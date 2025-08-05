@@ -87,7 +87,11 @@ export const TeamConfig = ({ teams, onTeamsChange }: TeamConfigProperties) => {
 
   const handleAddRole = async (teamId: string, role: Omit<Role, "id">) => {
     try {
-      const newRole = await createRole({ ...role, teamId });
+      const newRole = await createRole({
+        name: role.name!,
+        teamId,
+        permissions: role.permissions,
+      });
       onTeamsChange(teams.map((team) => (team.id === teamId ? { ...team, roles: [...team.roles, newRole] } : team)));
       setDialogOpen(false);
     } catch (error: any) {
@@ -99,7 +103,11 @@ export const TeamConfig = ({ teams, onTeamsChange }: TeamConfigProperties) => {
 
   const handleUpdateRole = async (roleId: string, role: Partial<Role>) => {
     try {
-      const updatedRole = await updateRole({ roleId, role });
+      const updateData: { roleId: string; name?: string; permissions?: string[] } = { roleId };
+      if (role.name !== undefined) updateData.name = role.name;
+      if (role.permissions !== undefined) updateData.permissions = role.permissions;
+
+      const updatedRole = await updateRole(updateData);
       onTeamsChange(
         teams.map((team) =>
           team.id === currentTeam?.id
@@ -120,7 +128,18 @@ export const TeamConfig = ({ teams, onTeamsChange }: TeamConfigProperties) => {
 
   const handleDeleteRole = async (teamId: string, roleId: string) => {
     try {
-      await deleteRole(roleId);
+      await deleteRole(roleId, {
+        onSuccess: (response) => {
+          if (response.success) {
+            toast.success("Role deleted successfully");
+          }
+        },
+        onError: (error) => {
+          toast.error("Failed to delete role", {
+            description: error.message,
+          });
+        },
+      });
       onTeamsChange(
         teams.map((team) =>
           team.id === teamId ? { ...team, roles: team.roles.filter((r) => r.id !== roleId) } : team,

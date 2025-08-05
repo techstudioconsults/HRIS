@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-  const hideCarouselRoutes = ["forgot-password", "reset-password", "otp"];
+  const hideCarouselRoutes = ["forgot-password", "reset-password", "otp-verify"];
   const shouldHideCarousel = hideCarouselRoutes.some((route) => pathname.includes(route));
 
   return (

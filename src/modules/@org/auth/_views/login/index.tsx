@@ -109,7 +109,7 @@ export const Login = () => {
           </div>
         </div>
 
-        <MainButton href={`/login?type=otp`} variant="outline" className="w-full" size={`2xl`}>
+        <MainButton href={`/login/otp`} variant="outline" className="w-full" size={`2xl`}>
           Log in with OTP instead
         </MainButton>
 

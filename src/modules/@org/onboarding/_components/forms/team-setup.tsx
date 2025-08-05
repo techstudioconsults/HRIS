@@ -72,17 +72,34 @@ const BaseTeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) => {
           await onBoardingService.updateTeam(team.id, team.name);
           // Handle role updates
           for (const role of team.roles) {
-            await (role.id
-              ? onBoardingService.updateRole(role.id, role)
-              : onBoardingService.createRole({ ...role, teamId: team.id }));
+            if (role.id) {
+              const updateData: { name?: string; permissions?: string[] } = {};
+              if (role.name !== undefined) updateData.name = role.name;
+              if (role.permissions !== undefined) updateData.permissions = role.permissions;
+              await onBoardingService.updateRole(role.id, updateData);
+            } else {
+              await onBoardingService.createRole({
+                name: role.name,
+                teamId: team.id!,
+                permissions: role.permissions,
+              });
+            }
           }
         } else {
           // Create new team
           const createdTeam = await onBoardingService.createTeam(team.name);
           // Create roles for new team
-          await Promise.all(
-            team.roles.map((role) => onBoardingService.createRole({ ...role, teamId: createdTeam?.id })),
-          );
+          if (createdTeam?.id) {
+            await Promise.all(
+              team.roles.map((role) =>
+                onBoardingService.createRole({
+                  name: role.name,
+                  teamId: createdTeam.id,
+                  permissions: role.permissions,
+                }),
+              ),
+            );
+          }
         }
       }
 

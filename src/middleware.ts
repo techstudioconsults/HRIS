@@ -53,7 +53,10 @@ export async function middleware(request: NextRequest) {
   // If no locale in pathname, redirect to default locale (en)
   if (!pathnameHasLocale) {
     const locale = "en";
-    return NextResponse.redirect(new URL(`/${locale}${pathname}`, request.url));
+    const redirectUrl = new URL(`/${locale}${pathname}`, request.url);
+    // Preserve query parameters
+    redirectUrl.search = request.nextUrl.search;
+    return NextResponse.redirect(redirectUrl);
   }
 
   // Extract locale and path without locale
@@ -63,7 +66,10 @@ export async function middleware(request: NextRequest) {
 
   // Check if locale is supported
   if (!SUPPORTED_LOCALES.includes(locale)) {
-    return NextResponse.redirect(new URL(`/en${pathWithoutLocale}`, request.url));
+    const redirectUrl = new URL(`/en${pathWithoutLocale}`, request.url);
+    // Preserve query parameters
+    redirectUrl.search = request.nextUrl.search;
+    return NextResponse.redirect(redirectUrl);
   }
 
   // Get user token to check authentication and role
@@ -98,6 +104,10 @@ export async function middleware(request: NextRequest) {
       if (!isAuthenticated) {
         const loginUrl = new URL(`/${locale}/login`, request.url);
         loginUrl.searchParams.set("callbackUrl", pathname);
+        // Preserve original query parameters
+        if (request.nextUrl.search) {
+          loginUrl.search += (loginUrl.search ? "&" : "?") + request.nextUrl.search.slice(1);
+        }
         return NextResponse.redirect(loginUrl);
       }
       return NextResponse.next();
@@ -108,12 +118,20 @@ export async function middleware(request: NextRequest) {
       if (!isAuthenticated) {
         const loginUrl = new URL(`/${locale}/login`, request.url);
         loginUrl.searchParams.set("callbackUrl", pathname);
+        // Preserve original query parameters
+        if (request.nextUrl.search) {
+          loginUrl.search += (loginUrl.search ? "&" : "?") + request.nextUrl.search.slice(1);
+        }
         return NextResponse.redirect(loginUrl);
       }
 
       if (!isOwnerWithAdminPermission(userRole, userPermissions)) {
         // Redirect to login page if not owner with admin permission
         const loginUrl = new URL(`/${locale}/login`, request.url);
+        // Preserve original query parameters
+        if (request.nextUrl.search) {
+          loginUrl.search += (loginUrl.search ? "&" : "?") + request.nextUrl.search.slice(1);
+        }
         return NextResponse.redirect(loginUrl);
       }
 
@@ -125,6 +143,10 @@ export async function middleware(request: NextRequest) {
       if (!isAuthenticated) {
         const loginUrl = new URL(`/${locale}/login`, request.url);
         loginUrl.searchParams.set("callbackUrl", pathname);
+        // Preserve original query parameters
+        if (request.nextUrl.search) {
+          loginUrl.search += (loginUrl.search ? "&" : "?") + request.nextUrl.search.slice(1);
+        }
         return NextResponse.redirect(loginUrl);
       }
 
@@ -137,6 +159,10 @@ export async function middleware(request: NextRequest) {
       if (!permissionCheck.hasAccess) {
         // Redirect to login page if missing required permissions
         const loginUrl = new URL(`/${locale}/login`, request.url);
+        // Preserve original query parameters
+        if (request.nextUrl.search) {
+          loginUrl.search += (loginUrl.search ? "&" : "?") + request.nextUrl.search.slice(1);
+        }
         return NextResponse.redirect(loginUrl);
       }
 
@@ -146,6 +172,10 @@ export async function middleware(request: NextRequest) {
     default: {
       // Unknown access level - redirect to login
       const loginUrl = new URL(`/${locale}/login`, request.url);
+      // Preserve original query parameters
+      if (request.nextUrl.search) {
+        loginUrl.search += (loginUrl.search ? "&" : "?") + request.nextUrl.search.slice(1);
+      }
       return NextResponse.redirect(loginUrl);
     }
   }

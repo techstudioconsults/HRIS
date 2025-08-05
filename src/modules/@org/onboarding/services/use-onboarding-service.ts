@@ -3,7 +3,7 @@ import { createServiceHooks } from "@/lib/react-query/use-service-query";
 import { dependencies } from "@/lib/tools/dependencies";
 import { CompanyProfileFormData } from "@/schemas";
 
-import { OnboardingService, Role } from "./service";
+import { OnboardingService } from "./service";
 
 export const useOnboardingService = () => {
   const { useServiceMutation, useServiceQuery } = createServiceHooks<OnboardingService>(
@@ -35,11 +35,15 @@ export const useOnboardingService = () => {
 
   const useDeleteTeam = () => useServiceMutation((service, teamId: string) => service.deleteTeam(teamId));
 
-  const useCreateRole = () => useServiceMutation((service, role: Omit<Role, "id">) => service.createRole(role));
+  const useCreateRole = () =>
+    useServiceMutation((service, roleData: { name: string; teamId: string; permissions: string[] }) =>
+      service.createRole(roleData),
+    );
 
   const useUpdateRole = () =>
-    useServiceMutation((service, { roleId, role }: { roleId: string; role: Partial<Role> }) =>
-      service.updateRole(roleId, role),
+    useServiceMutation(
+      (service, { roleId, name, permissions }: { roleId: string; name?: string; permissions?: string[] }) =>
+        service.updateRole(roleId, { name, permissions }),
     );
 
   const useDeleteRole = () => useServiceMutation((service, roleId: string) => service.deleteRole(roleId));

@@ -1,8 +1,8 @@
 "use client";
 
-import { InputOtpCard } from "@/modules/@org/auth";
+import { OTPLogin } from "@/modules/@org/auth";
 
-const LoginOtpPage = () => {
-  return <InputOtpCard />;
+const LoginOtp = () => {
+  return <OTPLogin />;
 };
-export default LoginOtpPage;
+export default LoginOtp;

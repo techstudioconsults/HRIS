@@ -3,7 +3,7 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
-import { useSearchParameters } from "@/hooks/use-search-parameters";
+import { useDecodedSearchParameters } from "@/hooks/use-search-parameters";
 import { LoginOTPFormData, loginOTPSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
@@ -16,7 +16,7 @@ import { OTPInput } from "../../_components/input-otp";
 import { useAuthService } from "../../services/use-auth-service";
 
 export const InputOtpCard = () => {
-  const email = useSearchParameters("email");
+  const email = useDecodedSearchParameters("email");
   const router = useRouter();
   const { useRequestOTP } = useAuthService();
   const { mutateAsync: requestOTP, isPending: otpPending } = useRequestOTP();

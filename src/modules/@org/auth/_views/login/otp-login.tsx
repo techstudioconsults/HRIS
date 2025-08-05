@@ -28,19 +28,21 @@ export const OTPLogin = () => {
   } = methods;
 
   const handleSubmitForm = async (data: LoginOTPFFormData) => {
-    try {
-      const response = await requestOTP(data);
-      if (response?.success) {
-        toast.success(`Request Sent Successfully`, {
-          description: `Please check you mail for OTP`,
+    requestOTP(data, {
+      onSuccess: (response) => {
+        if (response?.success) {
+          toast.success(`Request Sent Successfully`, {
+            description: `Please check you mail for OTP`,
+          });
+          router.push(`/login/otp-verify?email=${data.email}`);
+        }
+      },
+      onError: (error) => {
+        toast.error("Registration Failed", {
+          description: error instanceof Error ? error.message : "An unknown error occurred",
         });
-        router.push(`/login/otp?email=${data.email}`);
-      }
-    } catch (error) {
-      toast.error("Registration Failed", {
-        description: error instanceof Error ? error.message : "An unknown error occurred",
-      });
-    }
+      },
+    });
   };
 
   return (

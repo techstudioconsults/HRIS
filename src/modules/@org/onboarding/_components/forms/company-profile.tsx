@@ -2,12 +2,14 @@
 
 import MainButton from "@/components/shared/button";
 import { FormField } from "@/components/shared/inputs/FormFields";
+import { ComboBox } from "@/components/shared/select-dropdown/combo-box";
 import { cityOptions, countries, industryOptions, sizeOptions, stateOptions } from "@/lib/tools/constants";
+import { cn } from "@/lib/utils";
 import { CompanyProfileFormData, companyProfileSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { useOnboardingService } from "../../services/use-onboarding-service";
@@ -86,7 +88,7 @@ export const CompanyProfile = () => {
 
             <FormField
               type="select"
-              placeholder={isPending ? `Getting company's profile` : `"Select industry"`}
+              placeholder={isPending ? `Getting company's profile` : `Select industry`}
               className="!h-14 w-full"
               label="Industry"
               name="industry"
@@ -96,7 +98,7 @@ export const CompanyProfile = () => {
 
             <FormField
               type="select"
-              placeholder={isPending ? `Getting company's profile` : `"Select size"`}
+              placeholder={isPending ? `Getting company's profile` : `Select size`}
               className="!h-14 w-full"
               label="Company Size"
               name="size"
@@ -105,7 +107,7 @@ export const CompanyProfile = () => {
             />
 
             <FormField
-              placeholder={isPending ? `Getting company's profile` : `"Enter address line 1"`}
+              placeholder={isPending ? `Getting company's profile` : `Enter address line 1`}
               className="h-14 w-full"
               label="Address Line 1"
               name="addressLine1"
@@ -113,21 +115,34 @@ export const CompanyProfile = () => {
             />
 
             <FormField
-              placeholder={isPending ? `Getting company's profile` : `"Enter address line 2 (optional)"`}
+              placeholder={isPending ? `Getting company's profile` : `Enter address line 2 (optional)`}
               className="h-14 w-full"
               label="Address Line 2"
               name="addressLine2"
             />
 
-            <FormField
-              type="select"
-              placeholder={isPending ? `Getting company's profile` : `"Select your country"`}
-              className="!h-14 w-full hover:text-black"
-              label="Country"
-              name="country"
-              options={countries}
-              required
-            />
+            <div className="space-y-2">
+              <div>
+                <label className="text-[16px] font-medium">
+                  Country
+                  <span className="text-destructive -ml-1">*</span>
+                </label>
+              </div>
+              <Controller
+                name="country"
+                control={methods.control}
+                render={({ field, fieldState }) => (
+                  <ComboBox
+                    options={countries}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    placeholder={isPending ? `Getting company's profile` : `Select your country`}
+                    disabled={isPending}
+                    className={cn(fieldState.error && "border-destructive")}
+                  />
+                )}
+              />
+            </div>
 
             <FormField
               type="select"
@@ -150,7 +165,7 @@ export const CompanyProfile = () => {
             />
 
             <FormField
-              placeholder={isPending ? `Getting company's profile` : `"Enter postal code"`}
+              placeholder={isPending ? `Getting company's profile` : `Enter postal code`}
               className="!h-14 w-full"
               label="Postal Code"
               name="postcode"

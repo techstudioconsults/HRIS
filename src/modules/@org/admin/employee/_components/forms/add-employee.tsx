@@ -1,14 +1,10 @@
-/* eslint-disable unicorn/prefer-ternary */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
 "use client";
 
 import MainButton from "@/components/shared/button";
 import { FormField } from "@/components/shared/inputs/FormFields";
 // import { AlertDialog } from "@/components/ui/alert-dialog";
-import { WithDependency } from "@/HOC/withDependencies";
 import { employmentTypeOptions, genderOptions, workModeOptions } from "@/lib/tools/constants";
-import { dependencies } from "@/lib/tools/dependencies";
 import { EmployeeFormData, employeeSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -18,28 +14,26 @@ import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import FileUpload from "../../../_components/file-upload/file-upload";
-import { EmployeeService } from "../../services/service";
+import { useEmployeeService } from "../../services/use-service";
 
-interface TeamWithRoles {
-  id: string;
-  name: string;
-  roles: {
-    id: string;
-    name: string;
-  }[];
-}
-
-export const BaseEmployeeForm = ({ employeeService }: { employeeService: EmployeeService }) => {
+export const BaseEmployeeForm = () => {
   const router = useRouter();
   const searchParameters = useSearchParams();
   const employeeId = searchParameters.get("employeeid");
 
   const [files, setFiles] = useState<File[]>([]);
-  const [teams, setTeams] = useState<TeamWithRoles[]>([]);
   const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
-  const [loadingTeams, setLoadingTeams] = useState(true);
-  const [loadingRoles, setLoadingRoles] = useState(false);
-  const [, setIsLoadingEmployee] = useState(!!employeeId);
+
+  // Query hooks
+  const { useGetAllTeams, useGetEmployeeById, useCreateEmployee, useUpdateEmployee } = useEmployeeService();
+
+  const { data: teams = [], isLoading: loadingTeams } = useGetAllTeams();
+  const { data: employee } = useGetEmployeeById(employeeId || "", {
+    enabled: !!employeeId,
+  });
+
+  const createEmployeeMutation = useCreateEmployee();
+  const updateEmployeeMutation = useUpdateEmployee();
   // const [showAlert, setShowAlert] = useState(false);
   // const [alertTitle, setAlertTitle] = useState("");
   // const [alertDescription, setAlertDescription] = useState("");
@@ -58,96 +52,58 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
 
   const selectedTeamId = watch("teamId");
 
+  // Set employee data when it's loaded
   useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        setLoadingTeams(true);
+    if (employee && employeeId) {
+      // Set all form values
+      setValue("firstName", employee.firstName);
+      setValue("lastName", employee.lastName);
+      setValue("email", employee.email);
+      setValue("phoneNumber", employee.phoneNumber);
+      setValue("dateOfBirth", employee.dateOfBirth?.split("T")[0] || "");
+      setValue("gender", employee.gender);
+      setValue("startDate", employee.startDate?.split("T")[0] || "");
+      setValue("employmentType", employee.employmentType);
+      setValue("workMode", employee.workMode);
 
-        // Fetch teams first
-        const teamsData = await employeeService.getTeams();
-        const teamsWithRoles: TeamWithRoles[] = (teamsData || []).map((team: any) => ({
-          id: team.id,
-          name: team.name,
-          roles: team.roles ?? [],
-        }));
-        setTeams(teamsWithRoles);
-
-        // If we're editing, fetch employee data
-        if (employeeId) {
-          setIsLoadingEmployee(true);
-          const employee = await employeeService.getEmployeeById(employeeId);
-          if (employee) {
-            // Set all form values
-            setValue("firstName", employee.firstName);
-            setValue("lastName", employee.lastName);
-            setValue("email", employee.email);
-            setValue("phoneNumber", employee.phoneNumber);
-            setValue("dateOfBirth", employee.dateOfBirth?.split("T")[0] || "");
-            setValue("gender", employee.gender);
-            setValue("startDate", employee.startDate?.split("T")[0] || "");
-            setValue("employmentType", employee.employmentType);
-            setValue("workMode", employee.workMode);
-
-            // Set team and role if they exist
-            if (employee.team?.id) {
-              setValue("teamId", employee.team.id);
-              const selectedTeam = teamsWithRoles.find((team) => team.id === employee.team?.id);
-              if (selectedTeam) {
-                setRoles(selectedTeam.roles);
-                if (employee.role?.id) {
-                  setValue("roleId", employee.role.id);
-                }
-              }
-            }
-
-            // Set salary and bank info
-            // setValue("monthlySalary", employee.monthlySalary.toString() || "0");
-            // setValue("pension", employee.pension?.toString() || "0");
-            // setValue("healthInsurance", employee.healthInsurance?.toString() || "0");
-            // setValue("otherDeductions", employee.otherDeductions?.toString() || "0");
-            // setValue("bankName", employee.bankName || "");
-            // setValue("accountName", employee.accountName || "");
-            // setValue("accountNumber", employee.accountNumber || "");
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching initial data:", error);
-        toast.error("Failed to load initial data");
-      } finally {
-        setLoadingTeams(false);
-        setIsLoadingEmployee(false);
-      }
-    };
-
-    fetchInitialData();
-  }, [employeeId, employeeService, setValue]);
-
-  useEffect(() => {
-    const fetchRolesForTeam = async () => {
-      if (!selectedTeamId) {
-        setRoles([]);
-        setValue("roleId", "");
-        return;
-      }
-
-      try {
-        setLoadingRoles(true);
-        const selectedTeam = teams.find((team) => team.id === selectedTeamId);
+      // Set team and role if they exist
+      if (employee.team?.id) {
+        setValue("teamId", employee.team.id);
+        const selectedTeam = teams.find((team) => team.id === employee.team?.id);
         if (selectedTeam) {
           setRoles(selectedTeam.roles);
-        } else {
-          setRoles([]);
-          setValue("roleId", "");
+          if (employee.role?.id) {
+            setValue("roleId", employee.role.id);
+          }
         }
-      } catch (error) {
-        console.error("Error fetching roles:", error);
-        toast.error("Failed to load roles for selected department");
-      } finally {
-        setLoadingRoles(false);
       }
-    };
 
-    fetchRolesForTeam();
+      // Set salary and bank info
+      // setValue("monthlySalary", employee.monthlySalary.toString() || "0");
+      // setValue("pension", employee.pension?.toString() || "0");
+      // setValue("healthInsurance", employee.healthInsurance?.toString() || "0");
+      // setValue("otherDeductions", employee.otherDeductions?.toString() || "0");
+      // setValue("bankName", employee.bankName || "");
+      // setValue("accountName", employee.accountName || "");
+      // setValue("accountNumber", employee.accountNumber || "");
+    }
+  }, [employee, employeeId, teams, setValue]);
+
+  // Update roles when team changes
+  useEffect(() => {
+    if (!selectedTeamId) {
+      setRoles([]);
+      setValue("roleId", "");
+      return;
+    }
+
+    const selectedTeam = teams.find((team) => team.id === selectedTeamId);
+    if (selectedTeam) {
+      setRoles(selectedTeam.roles);
+    } else {
+      setRoles([]);
+      setValue("roleId", "");
+    }
   }, [selectedTeamId, teams, setValue]);
 
   const handleFilesSelected = (files: File[]) => {
@@ -199,18 +155,20 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
 
       // Call the appropriate service method
       if (employeeId) {
-        const response = await employeeService.updateEmployee(employeeId, formDataToSend);
+        const response = await updateEmployeeMutation.mutateAsync({ id: employeeId, data: formDataToSend });
         if (response) {
           toast.success("Employee Profile Updated");
+          router.push("/admin/employees");
         } else {
           toast.error("Failed to update employee profile");
         }
         // setAlertTitle("Employee Profile Updated");
         // setAlertDescription("Changes to the employee’s information have been saved successfully.");
       } else {
-        const response = await employeeService.createEmployee(formDataToSend);
+        const response = await createEmployeeMutation.mutateAsync(formDataToSend);
         if (response) {
           toast.success("Employee Added Successfully");
+          router.push("/admin/employees");
         } else {
           toast.error("Failed to add employee");
         }
@@ -347,13 +305,13 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
                   name="roleId"
                   label="Role"
                   type="select"
-                  placeholder={loadingRoles ? `Loading roles...` : `Select a role`}
+                  placeholder={`Select a role`}
                   className="bg-background !h-14 w-full"
                   options={roles.map((role) => ({
                     value: role.id,
                     label: role.name,
                   }))}
-                  disabled={!selectedTeamId || loadingRoles}
+                  disabled={!selectedTeamId}
                   required
                 />
               </div>
@@ -436,6 +394,4 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
   );
 };
 
-export const EmployeeForm = WithDependency(BaseEmployeeForm, {
-  employeeService: dependencies.EMPLOYEE_SERVICE,
-});
+export const EmployeeForm = BaseEmployeeForm;

@@ -56,7 +56,11 @@ export const AllEmployees = () => {
     [debouncedFilters, debouncedSearch], // Add debouncedSearch to dependencies
   );
 
-  const { data: employeeData, isLoading } = useGetAllEmployees(apiFilters, {
+  const {
+    data: employeeData,
+    isLoading,
+    refetch,
+  } = useGetAllEmployees(apiFilters, {
     keepPreviousData: true,
     staleTime: 1000 * 60 * 5,
   });
@@ -71,6 +75,10 @@ export const AllEmployees = () => {
       return previous;
     });
   }, []);
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   // Update URL when filters change
   useEffect(() => {

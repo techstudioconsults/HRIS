@@ -1,31 +1,61 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { queryKeys } from "@/lib/react-query/query-keys";
 import { createServiceHooks } from "@/lib/react-query/use-service-query";
 import { dependencies } from "@/lib/tools/dependencies";
 
 import { EmployeeService } from "./service";
 
-// use-service.ts
 export const useEmployeeService = () => {
-  const { useServiceQuery } = createServiceHooks<EmployeeService>(dependencies.EMPLOYEE_SERVICE);
+  const { useServiceQuery, useServiceMutation } = createServiceHooks<EmployeeService>(dependencies.EMPLOYEE_SERVICE);
 
   // Queries
   const useGetAllEmployees = (filters: IFilters = {}, options?: any) =>
-    useServiceQuery(["employees", "list", filters], (service) => service.getAllEmployees(filters), options);
+    useServiceQuery(queryKeys.employee.list(filters), (service) => service.getAllEmployees(filters), options);
 
   const useGetEmployeeById = (id: string, options?: any) =>
-    useServiceQuery(["employees", "detail", id], (service) => service.getEmployeeById(id), options);
+    useServiceQuery(queryKeys.employee.details(id), (service) => service.getEmployeeById(id), options);
 
   const useGetAllTeams = (options?: any) =>
-    useServiceQuery(["employees", "teams"], (service) => service.getTeams(), options);
+    useServiceQuery(queryKeys.employee.teams(), (service) => service.getTeams(), options);
 
   const useDownloadEmployees = (options?: any) =>
-    useServiceQuery(["employees", "download"], (service) => service.downloadEmployees(), options);
+    useServiceQuery(queryKeys.employee.download(), (service) => service.downloadEmployees(), options);
+
+  // Mutations with proper cache invalidation
+  const useCreateEmployee = () =>
+    useServiceMutation((service, data: FormData) => service.createEmployee(data), {
+      onSuccess: () => {
+        // Invalidate all employee list queries
+        return [queryKeys.employee.list()];
+      },
+    });
+
+  const useUpdateEmployee = () =>
+    useServiceMutation((service, { id, data }: { id: string; data: FormData }) => service.updateEmployee(id, data), {
+      onSuccess: (_, { id }) => {
+        // Invalidate employee list and specific employee details
+        return [queryKeys.employee.list(), queryKeys.employee.details(id)];
+      },
+    });
+
+  const useDeleteEmployee = () =>
+    useServiceMutation((service, id: string) => service.deleteEmployee(id), {
+      onSuccess: () => {
+        // Invalidate all employee list queries
+        return [queryKeys.employee.list()];
+      },
+    });
 
   return {
+    // Queries
     useGetAllEmployees,
     useGetEmployeeById,
     useGetAllTeams,
     useDownloadEmployees,
+    // Mutations
+    useCreateEmployee,
+    useUpdateEmployee,
+    useDeleteEmployee,
   };
 };

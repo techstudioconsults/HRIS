@@ -33,7 +33,7 @@ export const SearchInput = ({
       <Input
         type="search"
         placeholder={placeholder}
-        className="h-full pr-4 pl-10"
+        className="border-border h-full pr-4 pl-10 shadow-none"
         value={searchQuery}
         onChange={(event) => setSearchQuery(event.target.value)}
       />

@@ -31,7 +31,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
             <p className="text-muted-foreground"> &gt; {employeeData?.firstName}</p>
           </div>
         </div>
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-5">
           <MainButton href={`/admin/employees/add-employee?employeeid=${employeeData?.id}`} variant="primary" size="lg">
             Edit Employee
           </MainButton>

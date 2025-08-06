@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { FormField } from "@/components/shared/inputs/FormFields";
+import { useEffect } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import { useDebounce } from "use-debounce";
 
 interface Role {
@@ -33,120 +35,98 @@ export const FilterForm = ({
   onFilterChange: (filters: FilterValues) => void;
   teams: Team[];
 }) => {
-  const [localFilters, setLocalFilters] = useState<FilterValues>(initialFilters);
-  const [debouncedFilters] = useDebounce(localFilters, 300);
+  const methods = useForm<FilterValues>({
+    defaultValues: initialFilters,
+  });
+  const [debouncedFilters] = useDebounce(methods.watch(), 300);
 
   // Get roles for the selected team
-  const roles = teams.find((team) => team.id === localFilters.teamId)?.roles || [];
+  const selectedTeamId = methods.watch("teamId");
+  const roles = teams.find((team) => team.id === selectedTeamId)?.roles || [];
 
   useEffect(() => {
     onFilterChange(debouncedFilters);
   }, [debouncedFilters, onFilterChange]);
 
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = event.target;
-    const newValue = value || undefined;
+  const handleTeamChange = (value: string) => {
+    const actualValue = value === "all" ? undefined : value;
+    methods.setValue("teamId", actualValue);
+    methods.setValue("roleId", undefined); // Reset role when team changes
+    methods.setValue("page", "1"); // Reset to first page on filter change
+  };
 
-    setLocalFilters((previous) => {
-      const newFilters = {
-        ...previous,
-        [name]: newValue,
-        page: "1", // Reset to first page on filter change
-      };
-
-      // Reset role when team changes
-      if (name === "teamId" && newValue !== previous.teamId) {
-        newFilters.roleId = undefined;
-      }
-
-      return newFilters;
-    });
+  const handleFilterChange = (name: keyof FilterValues, value: string) => {
+    const actualValue = value === "all" ? undefined : value;
+    methods.setValue(name, actualValue);
+    methods.setValue("page", "1"); // Reset to first page on filter change
   };
 
   return (
-    <section className="mx-auto max-w-[527px] p-7">
-      <h5 className="mb-4 text-xl">Filter Employees</h5>
-      <div className="space-y-4">
-        {/* Team Dropdown */}
-        <div className="space-y-2">
-          <label htmlFor="teamId" className="block text-sm font-medium text-gray-700">
-            Department
-          </label>
-          <select
-            id="teamId"
+    <FormProvider {...methods}>
+      <section className="mx-auto max-w-[527px] p-7">
+        <h5 className="mb-4 text-xl">Filter Employees</h5>
+        <div className="space-y-4">
+          {/* Team Dropdown */}
+          <FormField
             name="teamId"
-            value={localFilters.teamId || ""}
-            onChange={handleChange}
-            className="block h-14 w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
-          >
-            <option value="">All Departments</option>
-            {teams.map((team) => (
-              <option key={team.id} value={team.id}>
-                {team.name}
-              </option>
-            ))}
-          </select>
-        </div>
+            label="Department"
+            type="select"
+            placeholder="All Departments"
+            options={[
+              { value: "all", label: "All Departments" },
+              ...teams.map((team) => ({ value: team.id, label: team.name })),
+            ]}
+            onChange={(event) => handleTeamChange(event.target.value)}
+            className="!h-12"
+          />
 
-        {/* Role Dropdown */}
-        <div className="space-y-2">
-          <label htmlFor="roleId" className="block text-sm font-medium text-gray-700">
-            Role
-          </label>
-          <select
-            id="roleId"
+          {/* Role Dropdown */}
+          <FormField
             name="roleId"
-            value={localFilters.roleId || ""}
-            onChange={handleChange}
-            disabled={!localFilters.teamId}
-            className="block h-14 w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500"
-          >
-            <option value="">All Roles</option>
-            {roles.map((role) => (
-              <option key={role.id} value={role.id}>
-                {role.name}
-              </option>
-            ))}
-          </select>
-        </div>
+            label="Role"
+            type="select"
+            placeholder="All Roles"
+            disabled={!selectedTeamId}
+            options={[
+              { value: "all", label: "All Roles" },
+              ...roles.map((role) => ({ value: role.id, label: role.name })),
+            ]}
+            onChange={(event) => handleFilterChange("roleId", event.target.value)}
+            className="!h-12"
+          />
 
-        {/* Status Dropdown */}
-        <div className="space-y-2">
-          <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-            Status
-          </label>
-          <select
-            id="status"
+          {/* Status Dropdown */}
+          <FormField
             name="status"
-            value={localFilters.status || ""}
-            onChange={handleChange}
-            className="block h-14 w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
-          >
-            <option value="">All Statuses</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-            <option value="on_leave">On Leave</option>
-          </select>
-        </div>
+            label="Status"
+            type="select"
+            placeholder="All Statuses"
+            options={[
+              { value: "all", label: "All Statuses" },
+              { value: "active", label: "Active" },
+              { value: "inactive", label: "Inactive" },
+              { value: "on_leave", label: "On Leave" },
+            ]}
+            onChange={(event) => handleFilterChange("status", event.target.value)}
+            className="!h-12"
+          />
 
-        {/* Sort By Dropdown */}
-        <div className="space-y-2">
-          <label htmlFor="sortBy" className="block text-sm font-medium text-gray-700">
-            Sort By
-          </label>
-          <select
-            id="sortBy"
+          {/* Sort By Dropdown */}
+          <FormField
             name="sortBy"
-            value={localFilters.sortBy || ""}
-            onChange={handleChange}
-            className="block h-14 w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none"
-          >
-            <option value="">Default</option>
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
-          </select>
+            label="Sort By"
+            type="select"
+            placeholder="Default"
+            options={[
+              { value: "all", label: "Default" },
+              { value: "asc", label: "Ascending" },
+              { value: "desc", label: "Descending" },
+            ]}
+            onChange={(event) => handleFilterChange("sortBy", event.target.value)}
+            className="!h-12"
+          />
         </div>
-      </div>
-    </section>
+      </section>
+    </FormProvider>
   );
 };

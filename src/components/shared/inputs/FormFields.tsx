@@ -139,6 +139,22 @@ export function FormField({
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
+              ) : type === "date" ? (
+                <Input
+                  {...field}
+                  type={type}
+                  placeholder={placeholder}
+                  disabled={disabled}
+                  className={cn(inputClassName, "cursor-pointer pr-10")}
+                  onClick={(event) => {
+                    // Prevent the click from being handled by the input itself
+                    event.preventDefault();
+                    // Trigger the date picker by focusing and then clicking
+                    const input = event.target as HTMLInputElement;
+                    input.focus();
+                    input.showPicker?.();
+                  }}
+                />
               ) : (
                 <Input
                   {...field}

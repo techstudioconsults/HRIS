@@ -199,11 +199,21 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
 
       // Call the appropriate service method
       if (employeeId) {
-        await employeeService.updateEmployee(employeeId, formDataToSend);
+        const response = await employeeService.updateEmployee(employeeId, formDataToSend);
+        if (response) {
+          toast.success("Employee Profile Updated");
+        } else {
+          toast.error("Failed to update employee profile");
+        }
         // setAlertTitle("Employee Profile Updated");
         // setAlertDescription("Changes to the employee’s information have been saved successfully.");
       } else {
-        await employeeService.createEmployee(formDataToSend);
+        const response = await employeeService.createEmployee(formDataToSend);
+        if (response) {
+          toast.success("Employee Added Successfully");
+        } else {
+          toast.error("Failed to add employee");
+        }
         // setAlertTitle("Employee Added Successfully");
         // setAlertDescription(
         //   "You've successfully added an employee to your team. They'll receive an email with login instructions to access the platform.",

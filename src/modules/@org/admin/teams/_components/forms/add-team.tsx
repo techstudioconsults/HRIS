@@ -3,7 +3,7 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
-import { FormField } from "@/components/shared/FormFields";
+import { FormField } from "@/components/shared/inputs/FormFields";
 import { WithDependency } from "@/HOC/withDependencies";
 import { employmentTypeOptions, genderOptions, workModeOptions } from "@/lib/tools/constants";
 import { dependencies } from "@/lib/tools/dependencies";
@@ -96,13 +96,13 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
             }
 
             // Set salary and bank info
-            setValue("monthlySalary", employee.monthlySalary.toString() || "0");
-            setValue("pension", employee.pension?.toString() || "0");
-            setValue("healthInsurance", employee.healthInsurance?.toString() || "0");
-            setValue("otherDeductions", employee.otherDeductions?.toString() || "0");
-            setValue("bankName", employee.bankName || "");
-            setValue("accountName", employee.accountName || "");
-            setValue("accountNumber", employee.accountNumber || "");
+            // setValue("monthlySalary", employee.monthlySalary.toString() || "0");
+            // setValue("pension", employee.pension?.toString() || "0");
+            // setValue("healthInsurance", employee.healthInsurance?.toString() || "0");
+            // setValue("otherDeductions", employee.otherDeductions?.toString() || "0");
+            // setValue("bankName", employee.bankName || "");
+            // setValue("accountName", employee.accountName || "");
+            // setValue("accountNumber", employee.accountNumber || "");
           }
         }
       } catch (error) {
@@ -182,15 +182,15 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
       formDataToSend.append("employmentType", formData.employmentType || "");
 
       // Salary info
-      formDataToSend.append("monthlySalary", formData.monthlySalary?.toString() || "0");
-      formDataToSend.append("pension", formData.pension?.toString() || "0");
-      formDataToSend.append("healthInsurance", formData.healthInsurance?.toString() || "0");
-      formDataToSend.append("otherDeductions", formData.otherDeductions?.toString() || "0");
+      // formDataToSend.append("monthlySalary", formData.monthlySalary?.toString() || "0");
+      // formDataToSend.append("pension", formData.pension?.toString() || "0");
+      // formDataToSend.append("healthInsurance", formData.healthInsurance?.toString() || "0");
+      // formDataToSend.append("otherDeductions", formData.otherDeductions?.toString() || "0");
 
       // Bank info
-      formDataToSend.append("bankName", formData.bankName || "");
-      formDataToSend.append("accountName", formData.accountName || "");
-      formDataToSend.append("accountNumber", formData.accountNumber || "");
+      // formDataToSend.append("bankName", formData.bankName || "");
+      // formDataToSend.append("accountName", formData.accountName || "");
+      // formDataToSend.append("accountNumber", formData.accountNumber || "");
 
       // Call the appropriate service method
       if (employeeId) {

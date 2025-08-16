@@ -24,7 +24,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <SidebarTrigger className="-ml-1" />
               <div className="flex-1">
                 {/* onSearch={handleSearch} */}
-                <TopBar adminName="Tosin Sanya" notificationsCount={12} className="px-6" />
+                <TopBar adminName="Tosin Sanya" notificationsCount={12} className="px-0 lg:px-6" />
               </div>
             </header>
 

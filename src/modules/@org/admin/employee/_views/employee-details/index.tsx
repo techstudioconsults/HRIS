@@ -49,7 +49,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
     <div className="space-y-6">
       {/* Header with back button */}
       <div className="flex items-center justify-between pb-4">
-        <div className="flex flex-col items-start gap-2">
+        <div className="flex flex-col items-start gap-2 text-center md:text-left">
           <h1 className="text-2xl font-bold">Employee Details</h1>
           <div className="flex items-center gap-1 text-sm">
             <Link href="/admin/employees" className="text-primary">
@@ -59,7 +59,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
             <p className="text-muted-foreground"> &gt; {employee.name}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="hidden items-center gap-2 md:flex">
           <MainButton variant="primary" size="lg">
             Edit Employee
           </MainButton>
@@ -197,7 +197,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
           {/* Employee Documents Section */}
           <div className="bg-white p-6 dark:bg-black">
             <h2 className="mb-4 text-lg font-semibold">Employee Documents</h2>
-            <div className="border-gray-75 flex w-1/2 items-center justify-between rounded-lg border p-4">
+            <div className="border-gray-75 flex w-full items-center justify-between rounded-lg border p-4 lg:w-1/2">
               <div className="flex items-center gap-4">
                 <Image src="/images/pdf-icon.svg" width="32" height="44" alt="PDF Icon" />
                 <div>

@@ -6,13 +6,11 @@ import { LucideLoader } from "lucide-react";
 
 export default function Loading({ text, className }: { text?: string; className?: string }) {
   return (
-    <div className={cn("flex h-screen flex-col items-center justify-center bg-white dark:bg-[#000000]", className)}>
+    <div className={cn("flex !h-[70dvh] flex-col items-center justify-center bg-white dark:bg-[#000000]", className)}>
       <div className="flex flex-col items-center gap-2">
+        <LucideLoader className="text-primary animate-spin" />
         <Logo width={100} height={47} />
-        <div className="flex items-center gap-1">
-          <LucideLoader className="text-primary animate-spin text-xl" />
-          {<p className="text-sm font-medium">{text || "Loading..."}</p>}
-        </div>
+        <div className="flex items-center gap-1">{<p className="text-sm font-medium">{text || "Loading..."}</p>}</div>
       </div>
     </div>
   );

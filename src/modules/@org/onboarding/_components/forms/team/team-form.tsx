@@ -2,7 +2,7 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
-import { FormField } from "@/components/shared/FormFields";
+import { FormField } from "@/components/shared/inputs/FormFields";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { Team } from "../schema";

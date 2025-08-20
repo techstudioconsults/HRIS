@@ -53,7 +53,7 @@ export const EmployeeSetupForm = ({ onBoardingService }: EmployeeSetupFormProper
         toast.success(`Registration Successful`, {
           description: `Employees registration completed, you can edit employee status in setting.`,
         });
-        router.push(`/`);
+        router.push(`/admin/dashboard`);
       }
     } catch (error) {
       console.error("Onboarding failed:", error);
@@ -92,7 +92,7 @@ export const EmployeeSetupForm = ({ onBoardingService }: EmployeeSetupFormProper
               Proceed to Dashboard
             </MainButton>
             <MainButton
-              href={`/org/dashboard`}
+              href={`/admin/dashboard`}
               type="button"
               variant="link"
               className="w-full font-semibold"

@@ -2,6 +2,23 @@
 import { ChangeEventHandler, FocusEventHandler, HTMLAttributes, MouseEventHandler } from "react";
 
 declare global {
+  interface Metadata {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  }
+
+  interface ApiResponse<T> {
+    success: boolean;
+    data: {
+      items: T[];
+      metadata: Metadata;
+    };
+  }
+
   interface LogoProperties {
     logo: string;
     width?: number;
@@ -64,67 +81,6 @@ declare global {
     leftAddon?: React.ReactNode; // Add left icon or button
     rightAddon?: React.ReactNode; // Add right icon or button
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  }
-
-  interface IPaginationLink {
-    url: string | null;
-    label: string;
-    active: boolean;
-  }
-
-  interface IPaginationMeta {
-    current_page: number;
-    from: number;
-    last_page: number;
-    links: IPaginationLink[];
-    path: string;
-    per_page: number;
-    to: number;
-    total: number;
-  }
-
-  interface IPaginationLinks {
-    first: string;
-    last: string;
-    prev: string | null;
-    next: string | null;
-  }
-
-  interface IPaginatedResponse<T> {
-    data: T[];
-    links: IPaginationLinks;
-    meta: IPaginationMeta;
-  }
-
-  interface IFilters {
-    page?: number;
-    status?: string;
-    start_date?: string;
-    end_date?: string;
-  }
-
-  interface IColumnDefinition<T extends DataItem> {
-    header: string;
-    accessorKey: keyof T;
-    render?: (value: T[keyof T], row: T) => ReactNode;
-  }
-
-  interface IRowAction<T> {
-    label: string;
-    icon?: ReactNode;
-    onClick: (row: T) => void;
-  }
-
-  interface IDashboardTableProperties<T extends DataItem> {
-    data: T[];
-    columns: IColumnDefinition<T>[];
-    currentPage?: number;
-    onPageChange?: (page: number) => void;
-    totalPages?: number;
-    itemsPerPage?: number;
-    rowActions?: (row: T) => IRowAction<T>[];
-    onRowClick?: (row: T) => void;
-    showPagination?: boolean;
   }
 
   interface Review {
@@ -199,6 +155,34 @@ declare global {
     position: string;
     message: string;
     rating: number;
+  }
+
+  interface Role {
+    id: string;
+    name: string;
+  }
+
+  interface Employee {
+    id: string;
+    fullName: string;
+    email: string;
+    role: Role;
+  }
+
+  interface Tokens {
+    accessToken: string;
+    refreshToken: string;
+  }
+
+  interface AuthResponseData {
+    employee: Employee;
+    tokens: Tokens;
+    permissions: string[];
+  }
+
+  interface AuthResponse {
+    success: boolean;
+    data: AuthResponseData;
   }
 }
 export {};

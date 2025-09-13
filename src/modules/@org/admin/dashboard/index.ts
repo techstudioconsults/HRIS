@@ -1,1 +1,1 @@
-export { Dashboard } from "./_views/dashboard";
+export { DashboardHomePage } from "./_views/dashboard/dashboard-home";

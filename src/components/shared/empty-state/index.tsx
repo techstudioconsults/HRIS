@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
-import empty1 from "~/images/alert.png";
+import empty1 from "~/images/empty-state.svg";
 import SkiButton from "../button";
 
 interface ImageConfig {
@@ -23,6 +23,8 @@ interface EmptyStateProperties {
     icon?: React.ReactNode;
   };
   className?: string;
+  descriptionClassName?: string;
+  titleClassName?: string;
   actionButton?: React.ReactNode;
 }
 
@@ -33,11 +35,13 @@ export const EmptyState = ({
   button,
   actionButton,
   className = "",
+  descriptionClassName = "",
+  titleClassName = "",
 }: EmptyStateProperties) => {
   return (
     <div
       className={cn(
-        "flex min-h-[400px] w-full flex-col items-center justify-center space-y-8 px-4 text-center",
+        "mb-4 flex min-h-[400px] w-full flex-col items-center justify-center space-y-8 px-4 text-center",
         className,
       )}
     >
@@ -58,11 +62,9 @@ export const EmptyState = ({
       </div>
 
       {/* Content container */}
-      <div className="flex flex-col items-center space-y-4">
-        {title && <h3 className="text-h5 text-primary font-semibold">{title}</h3>}
-
-        <p className="text-muted-foreground max-w-[500px] text-base font-medium">{description}</p>
-
+      <div className="flex flex-col items-center">
+        {title && <h3 className={cn(`text-h5 text-primary font-semibold`, titleClassName)}>{title}</h3>}
+        <p className={cn("text-muted-foreground max-w-[500px] font-medium", descriptionClassName)}>{description}</p>
         {button ? (
           <SkiButton onClick={button.onClick} variant="primary" size="xl" className="mt-6">
             {button.icon && <span className="mr-2">{button.icon}</span>}
@@ -78,9 +80,12 @@ export const EmptyState = ({
 
 export const FilteredEmptyState = ({ onReset }: { onReset: () => void }) => (
   <EmptyState
-    images={[{ src: empty1.src, alt: "No filtered results", width: 100, height: 100 }]}
+    images={[{ src: empty1.src, alt: "No filtered results", width: 50, height: 50 }]}
     title="No matching results found"
     description="Try adjusting your date range or status filter to find what you're looking for."
+    className={`space-y-0`}
+    titleClassName={`!text-2xl text-primary font-semibold`}
+    descriptionClassName={`text-muted-foreground max-w-[500px] font-medium`}
     button={{
       text: "Reset Filters",
       onClick: onReset,

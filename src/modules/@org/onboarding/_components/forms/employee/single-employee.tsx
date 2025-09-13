@@ -1,10 +1,8 @@
-/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
-import { FormField } from "@/components/shared/FormFields";
-import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/shared/inputs/FormFields";
 import { ChevronRight } from "lucide-react";
 import { FormEvent, useEffect, useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
@@ -61,9 +59,10 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
           name: team.name,
         }));
         setDepartments(departmentOptions);
-      } catch (error) {
-        console.error("Failed to fetch departments:", error);
-        toast.error("Failed to load departments");
+      } catch (error: any) {
+        toast.error("Failed to load department", {
+          description: error.response.data.message,
+        });
       } finally {
         setLoadingDepartments(false);
       }
@@ -90,9 +89,10 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
           permissions: role.permissions || [],
         }));
         setRoles(roleOptions);
-      } catch (error) {
-        console.error("Failed to fetch roles:", error);
-        toast.error("Failed to load roles");
+      } catch (error: any) {
+        toast.error("Failed to load roles", {
+          description: error.response.data.message,
+        });
       } finally {
         setLoadingRoles(false);
       }
@@ -116,9 +116,10 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
           } else {
             setCurrentPermissions({ name: "", permissions: [] });
           }
-        } catch (error) {
-          console.error("Failed to fetch role permissions:", error);
-          toast.error("Failed to load role permissions");
+        } catch (error: any) {
+          toast.error("Failed to load permission", {
+            description: error.response.data.message,
+          });
           setCurrentPermissions(null);
         }
       } else {
@@ -138,14 +139,17 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
   };
 
   const handleSavePermissions = async (permissions: { name: string; permissions: any[] }) => {
-    console.log("Saving permissions:", permissions);
-    const updatedRole = await onBoardingService.updateRole(selectedRoleId, permissions);
-    if (updatedRole) {
-      toast.success("Permissions updated successfully");
-      setCurrentPermissions(permissions);
-      setPermissionsDialogOpen(false);
-    } else {
-      toast.error("Failed to update permissions");
+    try {
+      const updatedRole = await onBoardingService.updateRole(selectedRoleId, permissions);
+      if (updatedRole) {
+        toast.success("Permissions updated successfully");
+        setCurrentPermissions(permissions);
+        setPermissionsDialogOpen(false);
+      }
+    } catch (error: any) {
+      toast.error("Failed to update permissions", {
+        description: error.response.data.message,
+      });
     }
   };
 
@@ -210,7 +214,7 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
         />
         <input type="hidden" name={`employees.${index}.permissions`} value={JSON.stringify(currentPermissions)} />
         <div>
-          <Label className={`mb-2 text-[16px]`}>Customize Permissions</Label>
+          <label className={`mb-2 block text-[16px] font-medium`}>Customize Permissions</label>
           <div
             className={`flex h-14 cursor-pointer items-center justify-between rounded-lg border px-4`}
             onClick={handleOpenPermissionsDialog}
@@ -230,6 +234,7 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
         title="Customize Permissions"
         description="Select the permissions for this employee"
         className="!max-w-2xl"
+        trigger={""}
       >
         <RolesAndPermission
           isEdit

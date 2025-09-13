@@ -1,13 +1,11 @@
 // app/setup/teams/page.tsx
 "use client";
 
-import { WithDependency } from "@/HOC/withDependencies";
-import { dependencies } from "@/lib/tools/dependencies";
+import MainButton from "@/components/shared/button";
 
 import { TeamSetupForm } from "../../_components/forms/team-setup";
-import { OnboardingService } from "../../services/service";
 
-const BaseTeamSetupPage = ({ onBoardingService }: { onBoardingService: OnboardingService }) => {
+export const TeamSetupPage = () => {
   return (
     <section className="flex flex-col items-center justify-between gap-8 lg:flex-row">
       <section className="max-w-[646px] flex-1 space-y-[41px]">
@@ -28,14 +26,15 @@ const BaseTeamSetupPage = ({ onBoardingService }: { onBoardingService: Onboardin
             department and control what they can access.
           </p>
         </div>
+        <div className="flex gap-4">
+          <MainButton href="/onboarding/step-1" variant="outline">
+            Back
+          </MainButton>
+        </div>
       </section>
       <section className="flex-1">
-        <TeamSetupForm onBoardingService={onBoardingService} />
+        <TeamSetupForm />
       </section>
     </section>
   );
 };
-
-export const TeamSetupPage = WithDependency(BaseTeamSetupPage, {
-  onBoardingService: dependencies.ONBOARDING_SERVICE,
-});

@@ -1,0 +1,646 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "success": "Succès",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "view": "Voir",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Soumettre",
+    "reset": "Réinitialiser",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non",
+    "ok": "OK",
+    "retry": "Réessayer",
+    "refresh": "Actualiser",
+    "download": "Télécharger",
+    "upload": "Téléverser",
+    "select": "Sélectionner",
+    "all": "Tout",
+    "none": "Aucun",
+    "more": "Plus",
+    "less": "Moins",
+    "show": "Afficher",
+    "hide": "Masquer",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "online": "En ligne",
+    "offline": "Hors ligne",
+    "public": "Public",
+    "private": "Privé",
+    "draft": "Brouillon",
+    "published": "Publié",
+    "pending": "En attente",
+    "approved": "Approuvé",
+    "rejected": "Rejeté",
+    "completed": "Terminé",
+    "cancelled": "Annulé",
+    "processing": "En cours",
+    "shipped": "Expédié",
+    "delivered": "Livré",
+    "returned": "Retourné",
+    "refunded": "Remboursé",
+    "languageSelector": "Sélectionner la langue",
+    "switchTo": "Passer à",
+    "currentLanguage": "Langue actuelle"
+  },
+  "auth": {
+    "login": "Connexion",
+    "signup": "S'inscrire",
+    "logout": "Déconnexion",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "firstName": "Prénom",
+    "lastName": "Nom de famille",
+    "phone": "Téléphone",
+    "address": "Adresse",
+    "city": "Ville",
+    "state": "État",
+    "country": "Pays",
+    "zipCode": "Code postal",
+    "forgotPassword": "Mot de passe oublié ?",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "rememberMe": "Se souvenir de moi",
+    "dontHaveAccount": "Vous n'avez pas de compte ?",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "signInWithGoogle": "Se connecter avec Google",
+    "signUpWithGoogle": "S'inscrire avec Google",
+    "loginSuccess": "Connexion réussie",
+    "loginFailed": "Échec de la connexion",
+    "signupSuccess": "Compte créé avec succès",
+    "signupFailed": "Échec de la création du compte",
+    "passwordResetSent": "Email de réinitialisation envoyé",
+    "passwordResetFailed": "Échec de la réinitialisation du mot de passe",
+    "invalidCredentials": "Email ou mot de passe invalide",
+    "emailAlreadyExists": "L'email existe déjà",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "weakPassword": "Le mot de passe est trop faible",
+    "invalidEmail": "Veuillez entrer une adresse email valide"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "shop": "Boutique",
+    "products": "Produits",
+    "categories": "Catégories",
+    "cart": "Panier",
+    "wishlist": "Liste de souhaits",
+    "orders": "Commandes",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "dashboard": "Tableau de bord",
+    "admin": "Administration",
+    "users": "Utilisateurs",
+    "analytics": "Analyses",
+    "reports": "Rapports",
+    "about": "À propos",
+    "contact": "Contact",
+    "help": "Aide",
+    "support": "Support",
+    "faq": "FAQ",
+    "terms": "Conditions d'utilisation",
+    "privacy": "Politique de confidentialité",
+    "language": "Langue",
+    "currency": "Devise",
+    "selectLanguage": "Sélectionner la langue",
+    "examples": "Exemples de traduction",
+    "greeting": "Salutation",
+    "hello": "Bonjour, le monde !",
+    "welcome": "Bienvenue",
+    "welcomeMessage": "Bienvenue dans notre application !",
+    "currentTime": "Heure actuelle",
+    "uiElements": "Éléments d'interface",
+    "status": "Messages de statut"
+  },
+  "shop": {
+    "addToCart": "Ajouter au panier",
+    "buyNow": "Acheter maintenant",
+    "addToWishlist": "Ajouter aux favoris",
+    "removeFromWishlist": "Retirer des favoris",
+    "price": "Prix",
+    "originalPrice": "Prix original",
+    "salePrice": "Prix de vente",
+    "discount": "Réduction",
+    "description": "Description",
+    "specifications": "Spécifications",
+    "reviews": "Avis",
+    "rating": "Note",
+    "availability": "Disponibilité",
+    "inStock": "En stock",
+    "outOfStock": "Rupture de stock",
+    "lowStock": "Stock limité",
+    "quantity": "Quantité",
+    "size": "Taille",
+    "color": "Couleur",
+    "brand": "Marque",
+    "category": "Catégorie",
+    "tags": "Étiquettes",
+    "relatedProducts": "Produits connexes",
+    "featuredProducts": "Produits en vedette",
+    "newArrivals": "Nouveautés",
+    "bestSellers": "Meilleures ventes",
+    "onSale": "En promotion",
+    "clearance": "Liquidation",
+    "sortBy": "Trier par",
+    "filterBy": "Filtrer par",
+    "priceRange": "Fourchette de prix",
+    "brandFilter": "Marque",
+    "categoryFilter": "Catégorie",
+    "colorFilter": "Couleur",
+    "sizeFilter": "Taille",
+    "ratingFilter": "Note",
+    "availabilityFilter": "Disponibilité",
+    "applyFilters": "Appliquer les filtres",
+    "clearFilters": "Effacer les filtres",
+    "noProductsFound": "Aucun produit trouvé",
+    "loadingProducts": "Chargement des produits...",
+    "productAddedToCart": "Produit ajouté au panier",
+    "productRemovedFromCart": "Produit retiré du panier",
+    "productAddedToWishlist": "Produit ajouté aux favoris",
+    "productRemovedFromWishlist": "Produit retiré des favoris"
+  },
+  "cart": {
+    "title": "Panier d'achat",
+    "empty": "Votre panier est vide",
+    "subtotal": "Sous-total",
+    "tax": "Taxe",
+    "shipping": "Livraison",
+    "total": "Total",
+    "checkout": "Commander",
+    "continueShopping": "Continuer les achats",
+    "updateCart": "Mettre à jour le panier",
+    "removeItem": "Retirer l'article",
+    "saveForLater": "Sauvegarder pour plus tard",
+    "moveToWishlist": "Déplacer vers les favoris",
+    "estimatedTotal": "Total estimé",
+    "freeShipping": "Livraison gratuite",
+    "shippingCalculated": "Livraison calculée à la commande",
+    "promoCode": "Code promo",
+    "applyPromo": "Appliquer le promo",
+    "invalidPromo": "Code promo invalide",
+    "promoApplied": "Code promo appliqué",
+    "promoRemoved": "Code promo retiré"
+  },
+  "checkout": {
+    "title": "Commande",
+    "billingAddress": "Adresse de facturation",
+    "shippingAddress": "Adresse de livraison",
+    "paymentMethod": "Méthode de paiement",
+    "orderSummary": "Résumé de la commande",
+    "placeOrder": "Passer la commande",
+    "orderConfirmation": "Confirmation de commande",
+    "orderNumber": "Numéro de commande",
+    "orderDate": "Date de commande",
+    "estimatedDelivery": "Livraison estimée",
+    "trackingNumber": "Numéro de suivi",
+    "orderStatus": "Statut de la commande",
+    "creditCard": "Carte de crédit",
+    "debitCard": "Carte de débit",
+    "paypal": "PayPal",
+    "applePay": "Apple Pay",
+    "googlePay": "Google Pay",
+    "cardNumber": "Numéro de carte",
+    "expiryDate": "Date d'expiration",
+    "cvv": "CVV",
+    "cardholderName": "Nom du titulaire",
+    "billingZip": "Code postal de facturation",
+    "sameAsShipping": "Même que l'adresse de livraison",
+    "differentBilling": "Utiliser une adresse de facturation différente",
+    "orderNotes": "Notes de commande",
+    "termsAccepted": "J'accepte les conditions d'utilisation",
+    "privacyAccepted": "J'accepte la politique de confidentialité",
+    "orderPlaced": "Commande passée avec succès",
+    "orderFailed": "Échec de la commande",
+    "paymentFailed": "Échec du paiement",
+    "insufficientStock": "Certains articles sont en rupture de stock"
+  },
+  "dashboard": {
+    "overview": "Vue d'ensemble",
+    "sales": "Ventes",
+    "orders": "Commandes",
+    "customers": "Clients",
+    "products": "Produits",
+    "inventory": "Inventaire",
+    "analytics": "Analyses",
+    "reports": "Rapports",
+    "settings": "Paramètres",
+    "profile": "Profil",
+    "notifications": "Notifications",
+    "help": "Aide",
+    "logout": "Déconnexion",
+    "totalSales": "Ventes totales",
+    "totalOrders": "Commandes totales",
+    "totalCustomers": "Clients totaux",
+    "totalProducts": "Produits totaux",
+    "recentOrders": "Commandes récentes",
+    "topProducts": "Meilleurs produits",
+    "salesChart": "Graphique des ventes",
+    "orderStatus": "Statut des commandes",
+    "customerGrowth": "Croissance des clients",
+    "productPerformance": "Performance des produits",
+    "revenue": "Revenus",
+    "profit": "Bénéfice",
+    "expenses": "Dépenses",
+    "growth": "Croissance",
+    "decline": "Déclin",
+    "thisMonth": "Ce mois",
+    "lastMonth": "Le mois dernier",
+    "thisYear": "Cette année",
+    "lastYear": "L'année dernière",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "week": "Semaine",
+    "month": "Mois",
+    "quarter": "Trimestre",
+    "year": "Année"
+  },
+  "admin": {
+    "dashboard": "Tableau de bord admin",
+    "users": "Gestion des utilisateurs",
+    "products": "Gestion des produits",
+    "orders": "Gestion des commandes",
+    "categories": "Gestion des catégories",
+    "brands": "Gestion des marques",
+    "analytics": "Analyses",
+    "reports": "Rapports",
+    "settings": "Paramètres",
+    "system": "Paramètres système",
+    "backup": "Sauvegarde et restauration",
+    "logs": "Journaux système",
+    "permissions": "Permissions",
+    "roles": "Rôles",
+    "addUser": "Ajouter un utilisateur",
+    "editUser": "Modifier l'utilisateur",
+    "deleteUser": "Supprimer l'utilisateur",
+    "addProduct": "Ajouter un produit",
+    "editProduct": "Modifier le produit",
+    "deleteProduct": "Supprimer le produit",
+    "addCategory": "Ajouter une catégorie",
+    "editCategory": "Modifier la catégorie",
+    "deleteCategory": "Supprimer la catégorie",
+    "addBrand": "Ajouter une marque",
+    "editBrand": "Modifier la marque",
+    "deleteBrand": "Supprimer la marque",
+    "viewOrder": "Voir la commande",
+    "updateOrder": "Mettre à jour la commande",
+    "cancelOrder": "Annuler la commande",
+    "refundOrder": "Rembourser la commande",
+    "exportData": "Exporter les données",
+    "importData": "Importer les données",
+    "bulkActions": "Actions en lot",
+    "selectAll": "Tout sélectionner",
+    "deselectAll": "Tout désélectionner",
+    "deleteSelected": "Supprimer la sélection",
+    "updateSelected": "Mettre à jour la sélection"
+  },
+  "profile": {
+    "title": "Profil",
+    "personalInfo": "Informations personnelles",
+    "accountSettings": "Paramètres du compte",
+    "security": "Sécurité",
+    "notifications": "Notifications",
+    "preferences": "Préférences",
+    "language": "Langue",
+    "currency": "Devise",
+    "timezone": "Fuseau horaire",
+    "dateFormat": "Format de date",
+    "timeFormat": "Format d'heure",
+    "theme": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système",
+    "emailNotifications": "Notifications par email",
+    "pushNotifications": "Notifications push",
+    "smsNotifications": "Notifications SMS",
+    "marketingEmails": "Emails marketing",
+    "orderUpdates": "Mises à jour de commande",
+    "productUpdates": "Mises à jour de produit",
+    "securityAlerts": "Alertes de sécurité",
+    "changePassword": "Changer le mot de passe",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "confirmNewPassword": "Confirmer le nouveau mot de passe",
+    "passwordChanged": "Mot de passe changé avec succès",
+    "passwordChangeFailed": "Échec du changement de mot de passe",
+    "profileUpdated": "Profil mis à jour avec succès",
+    "profileUpdateFailed": "Échec de la mise à jour du profil",
+    "deleteAccount": "Supprimer le compte",
+    "deleteAccountWarning": "Cette action ne peut pas être annulée",
+    "accountDeleted": "Compte supprimé avec succès",
+    "userAvatar": "Avatar utilisateur",
+    "saveItems": "Sauvegarder les articles",
+    "myOrders": "Mes commandes",
+    "investEarn": "Investir et gagner",
+    "logout": "Se déconnecter",
+    "logoutSuccess": "Déconnexion réussie",
+    "logoutFailed": "Échec de la déconnexion"
+  },
+  "home": {
+    "hero": {
+      "title": "Achetez Malin et Économisez Plus avec Ski-Shop",
+      "subtitle": "Votre marketplace tout-en-un pour tout ce dont vous avez besoin",
+      "shopNow": "Acheter Maintenant",
+      "becomeSeller": "Devenir Vendeur"
+    },
+    "popularProducts": {
+      "seeAll": "Voir Tout",
+      "retry": "Réessayer",
+      "failedToLoad": "Échec du chargement du produit. Veuillez réessayer.",
+      "noProductsFound": "Aucun produit trouvé"
+    },
+    "skicomProducts": "Produits Skicom",
+    "topSellers": "Meilleures Ventes",
+    "featuredProducts": "Produits Vedettes",
+    "handPickedForYou": "Sélectionnés Pour Vous",
+    "blackFridayDeals": "Offres Black Friday - Jusqu'à 70% de Réduction",
+    "beAVendor": {
+      "tagTitle": "Devenez Vendeur",
+      "title": "Commencez à Vendre sur Ski-Shop",
+      "description": "Rejoignez des milliers de vendeurs qui développent déjà leur entreprise avec Ski-Shop. Listez vos produits, atteignez plus de clients et gérez les commandes facilement—tout en un seul endroit.",
+      "action": "Explorer"
+    },
+    "blackFriday": {
+      "tagTitle": "Réductions Massives. Temps Limité.",
+      "title": "Frappe Ski-Shop Chaque Année",
+      "description": "Chaque octobre, nous proposons des offres exclusives sur les gadgets, la mode, les essentiels de la maison et plus encore. C'est notre tradition annuelle—ne la manquez pas !💃",
+      "comingSoon": {
+        "tagTitle": "Le Black Friday Arrive...",
+        "title": "Coupons, Cadeaux et Offres Incendiaires Vous Attendent !",
+        "description": "Chaque octobre, nous proposons des offres exclusives sur les gadgets, la mode, les essentiels de la maison et plus encore. C'est notre tradition annuelle—ne la manquez pas !💃"
+      }
+    },
+    "deliveryNetwork": {
+      "tagTitle": "Livrez Avec Nous",
+      "title": "Rejoignez Notre Réseau de Livraison",
+      "description": "Aidez à alimenter le e-commerce en devenant partenaire logistique sur Ski-Shop. Que vous rouliez, conduisiez ou dirigiez votre propre entreprise de livraison, nous avons une place pour vous. Paiements rapides et flexibles.",
+      "action": "Explorer"
+    },
+    "features": {
+      "freeDelivery": {
+        "title": "LIVRAISON GRATUITE ET RAPIDE",
+        "description": "Livraison gratuite pour toutes les commandes de plus de 140€"
+      },
+      "customerService": {
+        "title": "SERVICE CLIENT 24/7",
+        "description": "Support client amical 24h/24 et 7j/7"
+      },
+      "moneyBack": {
+        "title": "GARANTIE DE REMBOURSEMENT",
+        "description": "Nous remboursons l'argent sous 30 jours"
+      }
+    },
+    "testimonial": {
+      "tagTitle": "Nos Témoignages",
+      "title": "Ce Que Disent Les Gens Sur Nous"
+    },
+    "mobileDownload": {
+      "title": "Achetez Plus Intelligemment et Plus Rapidement Où Que Vous Soyez.",
+      "description": "Obtenez l'application Ski-Shop et débloquez des achats sans problème, des livraisons plus rapides, l'accès au portefeuille et des offres exclusives tout dans votre poche.",
+      "appStore": {
+        "subtitle": "Téléchargez sur",
+        "title": "App Store"
+      },
+      "googlePlay": {
+        "subtitle": "Téléchargez sur",
+        "title": "Google Play"
+      }
+    },
+    "playToWin": {
+      "badge": "Gagnez Gros",
+      "title": "Jouez-2-Gagnez",
+      "description": "Profitez de cadeaux quand vous participez à notre jeu-2-gagnez",
+      "action": "Obtenez L'App"
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "À Propos de Nous"
+    },
+    "sectionOne": {
+      "tagTitle": "À Propos de Ski-Shop",
+      "title": "Le Nouveau Visage du Commerce Numérique en Afrique",
+      "description": "Notre mission est d'alimenter le commerce africain en créant un marché numérique où chaque vendeur — d'un vendeur de quartier à une marque mondiale — peut prospérer. Nous fournissons les outils, la visibilité et l'infrastructure nécessaires pour rendre le commerce fluide, sécurisé et évolutif."
+    },
+    "sectionTwo": {
+      "title": "Ce Qui Nous Rend Différents",
+      "description": "Notre mission est d'alimenter le commerce africain en créant un marché numérique où chaque vendeur peut prospérer. Nous fournissons les outils, la visibilité et l'infrastructure nécessaires pour améliorer le commerce.",
+      "strengths": {
+        "securedPayment": {
+          "title": "Paiement Sécurisé",
+          "description": "Paiements et transactions sécurisés et instantanés avec notre solution financière intégrée."
+        },
+        "fastDelivery": {
+          "title": "Livraison Rapide",
+          "description": "Paiements et transactions sécurisés et instantanés avec notre solution financière intégrée."
+        },
+        "verifiedVendors": {
+          "title": "Vendeurs Vérifiés",
+          "description": "Paiements et transactions sécurisés et instantanés avec notre solution financière intégrée."
+        },
+        "seamlessExperience": {
+          "title": "Expérience Fluide",
+          "description": "Paiements et transactions sécurisés et instantanés avec notre solution financière intégrée."
+        }
+      }
+    },
+    "sectionThree": {
+      "title": "Qui Nous Servons",
+      "description": "Notre mission est d'alimenter le commerce africain en créant un marché numérique où chaque vendeur peut prospérer. Nous fournissons les outils, la visibilité et l'infrastructure nécessaires pour améliorer le commerce.",
+      "services": {
+        "vendors": {
+          "title": "Vendeurs",
+          "description": "Entreprises cherchant à étendre leur portée et accéder à de nouveaux clients numériquement."
+        },
+        "buyers": {
+          "title": "Acheteurs",
+          "description": "Entreprises cherchant à étendre leur portée et accéder à de nouveaux clients numériquement."
+        },
+        "deliveryPartners": {
+          "title": "Partenaires de Livraison",
+          "description": "Entreprises cherchant à étendre leur portée et accéder à de nouveaux clients numériquement."
+        }
+      }
+    },
+    "teams": {
+      "title": "Rencontrez Notre Équipe",
+      "description": "Lorem ipsum dolor sit amet consectetur. Lorem libero arcu ut venenatis feugiat lacus. Elit tellus morbi quis a aliquam mi pretium nam donec. Duis posuere venenatis et amet sed."
+    }
+  },
+  "contact": {
+    "hero": {
+      "title": "Contactez-Nous"
+    },
+    "sectionOne": {
+      "title": "N'Hésitez Pas À Nous Contacter",
+      "description": "Nous sommes là pour vous ! Que vous ayez des questions sur les achats, les ventes, les livraisons, ou que vous souhaitiez simplement en savoir plus sur la façon dont Ski-Shop façonne l'avenir du commerce, n'hésitez pas à nous contacter — nous sommes heureux de vous aider.",
+      "contactInfo": {
+        "title": "Informations de Contact",
+        "phone": "+2348130054558",
+        "email": "seanlawson@skicomltd.com",
+        "address": "49, Adeyemi Street, Otubu Bus Stop, Agege, Lagos."
+      },
+      "form": {
+        "fullName": "Nom Complet",
+        "emailAddress": "Adresse E-mail",
+        "subject": "Sujet",
+        "message": "Message",
+        "sendMessage": "Envoyer le Message"
+      },
+      "map": {
+        "title": "Trouvez-Nous Ici",
+        "apiKeyNotConfigured": "Clé API Google Maps non configurée",
+        "apiKeyInstructions": "Veuillez ajouter NEXT_PUBLIC_GOOGLE_MAPS_API_KEY à vos variables d'environnement"
+      }
+    }
+  },
+  "shopPage": {
+    "hero": {
+      "title": "Boutique"
+    },
+    "filters": {
+      "categories": "Catégories",
+      "vendor": "Vendeur",
+      "allCategories": "Toutes les Catégories",
+      "allVendor": "Tous les Vendeurs"
+    },
+    "search": {
+      "placeholder": "Rechercher des produits...",
+      "sortBy": "Trier Par:",
+      "sortOptions": {
+        "newest": "plus récent",
+        "name": "nom",
+        "price": "prix",
+        "rating": "évaluation"
+      },
+      "chooseSortOption": "Choisir l'option de tri"
+    },
+    "activeFilters": {
+      "title": "Filtres Actifs:",
+      "resultsFound": "résultats trouvés"
+    },
+    "errors": {
+      "failedToLoadProducts": "Échec du chargement des produits",
+      "retry": "Réessayer",
+      "noProductsFound": "Aucun produit trouvé correspondant à vos filtres"
+    }
+  },
+  "navbar": {
+    "cart": {
+      "ariaLabel": "Panier d'achat ({count} articles)",
+      "items": "articles"
+    },
+    "menu": {
+      "toggleMenu": "Basculer le menu",
+      "myAccount": "Mon Compte"
+    },
+    "auth": {
+      "signIn": "Se connecter",
+      "signUp": "S'inscrire",
+      "createAccount": "Créer un compte"
+    }
+  },
+  "userProfile": {
+    "userAvatar": "Avatar utilisateur",
+    "user": "Utilisateur",
+    "saveItems": "Sauvegarder les Articles",
+    "myOrders": "Mes Commandes",
+    "investEarn": "Investir et Gagner",
+    "dashboard": "Tableau de Bord",
+    "logout": "Se déconnecter",
+    "logoutSuccess": "Déconnexion réussie",
+    "logoutFailed": "Échec de la déconnexion"
+  },
+  "footer": {
+    "about": "À propos",
+    "contact": "Nous contacter",
+    "help": "Aide",
+    "terms": "Conditions et termes",
+    "privacy": "Politique de confidentialité",
+    "cookies": "Politique des cookies",
+    "shipping": "Informations de livraison",
+    "returns": "Retours et échanges",
+    "sizeGuide": "Guide des tailles",
+    "trackOrder": "Suivre la commande",
+    "newsletter": "Newsletter",
+    "subscribe": "S'abonner",
+    "emailPlaceholder": "Entrez votre email",
+    "followUs": "Suivez-nous",
+    "socialMedia": "Réseaux sociaux",
+    "copyright": "© Copyright {year}. Tous droits réservés par SKICOM",
+    "poweredBy": "Propulsé par",
+    "madeWith": "Fait avec ❤️ par",
+    "getItOn": "OBTENEZ-LE SUR",
+    "googlePlay": "Google Play",
+    "downloadOnThe": "Téléchargez sur",
+    "appStore": "App Store",
+    "explore": "Explorer",
+    "shop": "Boutique",
+    "liveChat": "Chat en direct",
+    "contactInfo": {
+      "title": "Contact",
+      "address": "Parcelle 1, Rue Kwara Osun, Lagos.",
+      "phone1": "08130054558",
+      "phone2": "08123456443"
+    },
+    "quickLinks": {
+      "title": "Liens rapides"
+    }
+  },
+  "errors": {
+    "404": "Page non trouvée",
+    "404Message": "La page que vous recherchez n'existe pas.",
+    "500": "Erreur serveur",
+    "500Message": "Quelque chose s'est mal passé de notre côté. Veuillez réessayer plus tard.",
+    "networkError": "Erreur réseau",
+    "networkErrorMessage": "Veuillez vérifier votre connexion internet et réessayer.",
+    "unauthorized": "Non autorisé",
+    "unauthorizedMessage": "Vous n'avez pas la permission d'accéder à cette ressource.",
+    "forbidden": "Interdit",
+    "forbiddenMessage": "L'accès à cette ressource est interdit.",
+    "notFound": "Non trouvé",
+    "notFoundMessage": "La ressource demandée n'a pas été trouvée.",
+    "validationError": "Erreur de validation",
+    "validationErrorMessage": "Veuillez vérifier votre saisie et réessayer.",
+    "serverError": "Erreur serveur",
+    "serverErrorMessage": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard.",
+    "timeoutError": "Délai d'attente dépassé",
+    "timeoutErrorMessage": "La requête a expiré. Veuillez réessayer.",
+    "unknownError": "Erreur inconnue",
+    "unknownErrorMessage": "Une erreur inconnue s'est produite. Veuillez réessayer."
+  },
+  "validation": {
+    "required": "Ce champ est requis",
+    "email": "Veuillez entrer une adresse email valide",
+    "minLength": "Doit contenir au moins {min} caractères",
+    "maxLength": "Ne doit pas dépasser {max} caractères",
+    "minValue": "Doit être au moins {min}",
+    "maxValue": "Ne doit pas dépasser {max}",
+    "pattern": "Veuillez entrer une valeur valide",
+    "url": "Veuillez entrer une URL valide",
+    "phone": "Veuillez entrer un numéro de téléphone valide",
+    "password": "Le mot de passe doit contenir au moins 8 caractères",
+    "passwordMatch": "Les mots de passe doivent correspondre",
+    "unique": "Cette valeur doit être unique",
+    "exists": "Cette valeur doit exister",
+    "futureDate": "La date doit être dans le futur",
+    "pastDate": "La date doit être dans le passé",
+    "positiveNumber": "Doit être un nombre positif",
+    "integer": "Doit être un nombre entier",
+    "decimal": "Doit être un nombre décimal",
+    "fileSize": "La taille du fichier doit être inférieure à {max}MB",
+    "fileType": "Type de fichier non pris en charge",
+    "imageDimensions": "Les dimensions de l'image doivent être d'au moins {width}x{height}px"
+  }
+}

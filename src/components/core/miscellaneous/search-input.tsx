@@ -1,25 +1,75 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { useKBar } from "kbar";
-import { Search } from "lucide-react";
+import { Search, SearchIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDebounce } from "use-debounce";
 
-import { Button } from "../../ui/button";
+interface SearchInputProperties {
+  placeholder?: string;
+  onSearch: (query: string) => void;
+  delay?: number; // debounce delay in ms
+  className?: string;
+}
 
-export default function SearchInput() {
-  const { query } = useKBar();
+export const SearchInput = ({
+  placeholder = "Search...",
+  onSearch,
+  delay = 300,
+  className = "",
+}: SearchInputProperties) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery] = useDebounce(searchQuery, delay);
+
+  useEffect(() => {
+    onSearch(debouncedQuery);
+  }, [debouncedQuery, onSearch]);
+
   return (
-    <div className="w-full space-y-2">
-      <Button
-        variant="outline"
-        className="bg-background text-muted-foreground relative h-9 w-full justify-start rounded-[0.5rem] text-sm font-normal shadow-none sm:pr-12 md:w-40 lg:w-64"
-        onClick={query.toggle}
-      >
-        <Search className="mr-2 h-4 w-4" />
-        Search...
-        <kbd className="bg-muted pointer-events-none absolute top-[0.3rem] right-[0.3rem] hidden h-6 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none sm:flex">
-          <span className="text-xs">⌘</span>K
+    <div className={`relative ${className}`}>
+      <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
+      <Input
+        type="search"
+        placeholder={placeholder}
+        className="border-border h-full pr-4 pl-10 shadow-none"
+        value={searchQuery}
+        onChange={(event) => setSearchQuery(event.target.value)}
+      />
+    </div>
+  );
+};
+
+// global search
+
+export function GlobalSearchInput({
+  className,
+  placeholder = "Search...",
+}: {
+  className?: string;
+  placeholder?: string;
+}) {
+  const { query } = useKBar();
+
+  return (
+    <div
+      onClick={() => query.toggle()}
+      className={cn(
+        "bg-background border-border flex h-10 min-w-[350px] cursor-pointer items-center gap-2 rounded-md border p-1 text-sm text-gray-500 transition-colors hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus-visible:ring-gray-600",
+        className,
+      )}
+    >
+      <Search className="h-4" />
+      <span className="flex-1 text-left">{placeholder}</span>
+      <div className="flex h-full items-center gap-1">
+        <kbd className="bg-border flex h-full items-center justify-center rounded px-2 text-xs font-medium dark:bg-gray-700">
+          ⌘
         </kbd>
-      </Button>
+        <kbd className="bg-border flex h-full items-center justify-center rounded px-2 text-xs font-medium dark:bg-gray-700">
+          K
+        </kbd>
+      </div>
     </div>
   );
 }

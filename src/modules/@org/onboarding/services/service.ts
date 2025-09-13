@@ -2,20 +2,6 @@ import { HttpAdapter } from "@/lib/http/http-adapter";
 import { CompanyProfileFormData } from "@/schemas";
 
 // types/api.ts
-export interface ApiResponse<T> {
-  success: boolean;
-  data: {
-    items: T[];
-    metadata: {
-      total: number;
-      page: number;
-      limit: number;
-      totalPages: number;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-    };
-  };
-}
 
 export interface TeamApiResponse {
   id: string;
@@ -140,8 +126,35 @@ export class OnboardingService {
     }
   }
 
-  async createRole(role: Omit<Role, "id">): Promise<Role> {
-    const response = await this.http.post<{ data: RoleApiResponse; success: boolean }>(`/roles`, role);
+  async getCompanyProfile() {
+    return {
+      success: true,
+      data: {
+        id: "6a2f67c7-fb25-4e6d-94c5-fac023a2c42f",
+        name: "Techstudio Academy",
+        industry: "Tech Education",
+        size: "medium",
+        domain: "techstudioacademy.com",
+        address: {
+          addressLine1: "205",
+          addressLine2: "lewsham rd",
+          city: "Barking",
+          state: "london",
+          country: "united kingdom",
+          postcode: "CR20 3NL",
+        },
+        createdAt: "2025-06-16T18:48:39.212Z",
+        updatedAt: "2025-06-16T18:57:31.287Z",
+      },
+    };
+    // const response = await this.http.get<{ data: RoleApiResponse }>(`/companies/current`);
+    // if (response?.status === 200) {
+    //   return response.data.data;
+    // }
+  }
+
+  async createRole(roleData: { name: string; teamId: string; permissions: string[] }): Promise<Role> {
+    const response = await this.http.post<{ data: RoleApiResponse; success: boolean }>(`/roles`, roleData);
     if (response?.status === 201) {
       return {
         id: response.data.data.id,
@@ -153,8 +166,8 @@ export class OnboardingService {
     throw new Error("Failed to create role");
   }
 
-  async updateRole(roleId: string, role: Partial<Role>): Promise<Role> {
-    const response = await this.http.patch<{ data: RoleApiResponse; success: boolean }>(`/roles/${roleId}`, role);
+  async updateRole(roleId: string, roleData: { name?: string; permissions?: string[] }): Promise<Role> {
+    const response = await this.http.patch<{ data: RoleApiResponse; success: boolean }>(`/roles/${roleId}`, roleData);
     if (response?.status === 200) {
       return {
         id: response.data.data.id,
@@ -166,8 +179,12 @@ export class OnboardingService {
     throw new Error("Failed to update role");
   }
 
-  async deleteRole(roleId: string): Promise<void> {
-    await this.http.delete(`/roles/${roleId}`);
+  async deleteRole(roleId: string): Promise<{ success: boolean }> {
+    const response = await this.http.delete<{ success: boolean; data: string }>(`/roles/${roleId}`);
+    if (response?.status === 200) {
+      return response.data;
+    }
+    throw new Error("Failed to delete role");
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

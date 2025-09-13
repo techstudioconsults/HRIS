@@ -33,7 +33,7 @@ export const EmployeeConfig = ({ onBoardingService }: { onBoardingService: Onboa
   return (
     <Accordion type="multiple" className="w-full space-y-4">
       {fields.map((field, index) => (
-        <AccordionItem key={field.id} value={`member-${field.id}`} className="border-danger relative">
+        <AccordionItem key={field.id} value={`member-${field.id}`} className="relative">
           <AccordionTrigger className="p-4 text-left text-sm lg:text-xl/[120%]">
             <div className="flex w-full items-center justify-between">
               <p className="font-semibold">

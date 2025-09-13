@@ -78,27 +78,6 @@ export const CreateFileForm = ({ onClose }: CreateFolderFormProperties) => {
     methods.setValue("file", files);
   };
 
-  // const onSubmit = async (data: FileFormData) => {
-  //   try {
-  //     console.log("Form data:", data);
-  //     console.log("Selected folder ID:", data.folderId);
-  //     console.log("Selected files:", data.file);
-
-  //     // Your actual submission logic would go here
-  //     // Example: await uploadFilesToFolder(data.folderId, data.file);
-
-  //     toast.success(`Files uploaded successfully!`);
-
-  //     // Reset form and close modal on success
-  //     reset();
-  //     setSelectedFiles([]);
-  //     onClose?.();
-  //   } catch (error) {
-  //     console.error("Submission error:", error);
-  //     toast.error("Failed to upload files. Please try again.");
-  //   }
-  // };
-
   const addFilesMutation = useAddFilesToFolder();
 
   const onSubmit = async (data: FileFormData) => {
@@ -109,6 +88,7 @@ export const CreateFileForm = ({ onClose }: CreateFolderFormProperties) => {
       });
 
       toast.success("Files uploaded successfully!");
+      window.location.reload();
       reset();
       onClose?.();
     } catch {

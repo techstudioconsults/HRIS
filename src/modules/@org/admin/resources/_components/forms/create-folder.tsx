@@ -61,6 +61,7 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
 
       // Success handling
       toast.success(`Folder "${data.name}" created successfully!`);
+      window.location.reload();
       reset();
       setSelectedFiles([]);
       onClose?.();

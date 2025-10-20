@@ -88,16 +88,16 @@ export const teamColumn: IColumnDefinition<Team>[] = [
   {
     header: "Team Name",
     accessorKey: "name",
-    render: (_, team: Team) => <span>{team.name} Team</span>,
+    render: (_, team: Team) => <span>{team.name}</span>,
   },
   {
     header: "Team Lead",
-    accessorKey: "lead",
+    accessorKey: "manager",
   },
   {
     header: "Sub Teams",
-    accessorKey: "subTeam",
-    // render: (_, team: Team) => <span>{team.subTeam} Team</span>,
+    accessorKey: "subteams",
+    render: (_, team: Team) => <span>{team.subteams?.length} Team</span>,
   },
   {
     header: "Members",

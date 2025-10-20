@@ -1,4 +1,4 @@
-const index = () => {
+const TeamDetails = () => {
   return (
     <div>
       Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis voluptatibus, maxime unde distinctio doloremque
@@ -8,4 +8,4 @@ const index = () => {
   );
 };
 
-export default index;
+export { TeamDetails };

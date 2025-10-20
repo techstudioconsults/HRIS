@@ -239,6 +239,12 @@ export const adminNavItems = [
     icon: "People",
   },
   {
+    id: "resources",
+    route: "Resources",
+    link: "/admin/resources",
+    icon: "People",
+  },
+  {
     id: "payroll",
     route: "Payroll",
     link: "/admin/payroll",

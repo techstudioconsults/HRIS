@@ -154,6 +154,7 @@ export const AllTeams = () => {
         onOpenChange={setDialogOpen}
         title={currentTeam ? "Edit Team" : "Add New Team"}
         description={currentTeam ? "Modify the team details" : "Create a new team for your organization"}
+        trigger={undefined}
       >
         {/* <TeamForm
           // onSubmit={(data) => {

@@ -21,8 +21,8 @@ const META_THEME_COLORS = {
 };
 
 export const metadata: Metadata = {
-  title: "Ski Shop",
-  description: "Shop Smart and Save More with Ski-Shop",
+  title: "HRIS",
+  description: "A New HR System by Techstudio Academy",
 };
 
 export const viewport: Viewport = {

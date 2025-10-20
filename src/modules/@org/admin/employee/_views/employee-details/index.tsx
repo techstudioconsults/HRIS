@@ -22,7 +22,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
     <div className="space-y-6">
       {/* Header with back button */}
       <div className="flex items-center justify-between pb-4">
-        <div className="flex flex-col items-start gap-2">
+        <div className="flex flex-col items-start gap-2 text-center md:text-left">
           <h1 className="text-2xl font-bold">Employee Details</h1>
           <div className="flex items-center gap-1 text-sm">
             <Link href="/admin/employees" className="text-primary">

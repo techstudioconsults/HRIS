@@ -56,16 +56,16 @@ export function EmployeeTable({ employees, className }: EmployeeTableProperties)
   return (
     <div className={cn("space-y-6", className)}>
       {/* Filter Controls */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex items-center justify-between gap-4">
         <div className="">
           <h1 className="text-2xl font-bold">Employee</h1>
           <p>All Employees</p>
         </div>
         <div className="">
           <div className="flex items-center gap-2">
-            <Input placeholder="Filter employees..." className="border-gray-75 h-10 border-1" />
+            <Input placeholder="Filter employees..." className="border-gray-75 hidden h-10 border-1" />
             <MainButton
-              className="border-gray-75 bg-background border-1 px-3 text-black dark:text-white"
+              className="border-gray-75 bg-background hidden border-1 px-3 text-black md:flex dark:text-white"
               variant="outline"
               isLeftIconVisible={true}
               size="lg"
@@ -74,7 +74,7 @@ export function EmployeeTable({ employees, className }: EmployeeTableProperties)
               Filter
             </MainButton>
             <MainButton
-              className="border-gray-75 bg-background border-1 px-3 text-black dark:text-white"
+              className="border-gray-75 bg-background hidden border-1 px-3 text-black md:flex dark:text-white"
               variant="outline"
               size="lg"
               isLeftIconVisible={true}

@@ -162,6 +162,18 @@ export const employeeSchema = z.object({
   workMode: z.enum(["remote", "on site", "hybrid"]),
 });
 
+export const folderSchema = z.object({
+  name: z.string().min(1, "Folder name is required"),
+  file: z.array(z.instanceof(File)).optional(),
+});
+export const fileSchema = z.object({
+  folderId: z.string().min(1, "Folder name is required"),
+  file: z
+    .array(z.instanceof(File))
+    .min(1, "Please select at least one file")
+    .refine((files) => files.every((file) => file.size > 0), "File cannot be empty")
+    .refine((files) => files.every((file) => file.size <= 10 * 1024 * 1024), "File size must be less than 10MB"),
+});
 export type EmployeeFormData = z.infer<typeof employeeSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;
@@ -179,3 +191,5 @@ export type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 export type ChangeEmailFormData = z.infer<typeof changeEmailSchema>;
 export type KycFormData = z.infer<typeof kycSchema>;
 export type ExternalContactFormData = z.infer<typeof externalContactSchema>;
+export type FolderFormData = z.infer<typeof folderSchema>;
+export type FileFormData = z.infer<typeof fileSchema>;

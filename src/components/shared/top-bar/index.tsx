@@ -31,14 +31,14 @@ export default function TopBar({ adminName, notificationsCount = 0, className = 
   };
 
   return (
-    <header className={`bg-background flex h-16 items-center justify-between px-4 ${className}`}>
+    <header className={`bg-background grid h-16 grid-cols-2 items-center gap-4 px-0 lg:px-4 ${className}`}>
       {/* Search Input */}
       <div className="relative hidden w-full max-w-[240px] md:block">
         <GlobalSearchInput />
       </div>
 
       {/* Right Section */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-end gap-2 md:gap-4">
         {/* Notification Bell */}
         <button
           type="button"

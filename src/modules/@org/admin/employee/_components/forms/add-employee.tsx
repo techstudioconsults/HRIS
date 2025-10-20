@@ -62,30 +62,32 @@ export const BaseEmployeeForm = () => {
       setValue("phoneNumber", employee.phoneNumber);
       setValue("dateOfBirth", employee.dateOfBirth?.split("T")[0] || "");
       setValue("gender", employee.gender);
-      setValue("startDate", employee.startDate?.split("T")[0] || "");
-      setValue("employmentType", employee.employmentType);
-      setValue("workMode", employee.workMode);
+      setValue("startDate", employee.employmentDetails?.startDate?.split("T")[0] || "");
+      const employmentType = employee.employmentDetails?.employmentType;
+      if (employmentType) setValue("employmentType", employmentType);
+      const workMode = employee.employmentDetails?.workMode;
+      if (workMode) setValue("workMode", workMode);
 
       // Set team and role if they exist
-      if (employee.team?.id) {
-        setValue("teamId", employee.team.id);
-        const selectedTeam = teams.find((team) => team.id === employee.team?.id);
+      if (employee.employmentDetails?.team?.id) {
+        setValue("teamId", employee.employmentDetails.team.id);
+        const selectedTeam = teams.find((team) => team.id === employee.employmentDetails?.team?.id);
         if (selectedTeam) {
           setRoles(selectedTeam.roles);
-          if (employee.role?.id) {
-            setValue("roleId", employee.role.id);
+          if (employee.employmentDetails?.role?.id) {
+            setValue("roleId", employee.employmentDetails.role.id);
           }
         }
       }
 
       // Set salary and bank info
-      // setValue("monthlySalary", employee.monthlySalary.toString() || "0");
+      // setValue("monthlySalary", employee.payProfile?.grossSalary?.toString() || "0");
       // setValue("pension", employee.pension?.toString() || "0");
       // setValue("healthInsurance", employee.healthInsurance?.toString() || "0");
       // setValue("otherDeductions", employee.otherDeductions?.toString() || "0");
-      // setValue("bankName", employee.bankName || "");
-      // setValue("accountName", employee.accountName || "");
-      // setValue("accountNumber", employee.accountNumber || "");
+      // setValue("bankName", employee.payProfile?.bankName || "");
+      // setValue("accountName", employee.payProfile?.accountName || "");
+      // setValue("accountNumber", employee.payProfile?.accountNumber || "");
     }
   }, [employee, employeeId, teams, setValue]);
 

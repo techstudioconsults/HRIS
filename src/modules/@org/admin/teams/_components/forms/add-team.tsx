@@ -79,18 +79,20 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
             setValue("phoneNumber", employee.phoneNumber);
             setValue("dateOfBirth", employee.dateOfBirth?.split("T")[0] || "");
             setValue("gender", employee.gender);
-            setValue("startDate", employee.startDate?.split("T")[0] || "");
-            setValue("employmentType", employee.employmentType);
-            setValue("workMode", employee.workMode);
+            setValue("startDate", employee.employmentDetails?.startDate?.split("T")[0] || "");
+            const employmentType = employee.employmentDetails?.employmentType;
+            if (employmentType) setValue("employmentType", employmentType);
+            const workMode = employee.employmentDetails?.workMode;
+            if (workMode) setValue("workMode", workMode);
 
             // Set team and role if they exist
-            if (employee.team?.id) {
-              setValue("teamId", employee.team.id);
-              const selectedTeam = teamsWithRoles.find((team) => team.id === employee.team?.id);
+            if (employee.employmentDetails?.team?.id) {
+              setValue("teamId", employee.employmentDetails.team.id);
+              const selectedTeam = teamsWithRoles.find((team) => team.id === employee.employmentDetails?.team?.id);
               if (selectedTeam) {
                 setRoles(selectedTeam.roles);
-                if (employee.role?.id) {
-                  setValue("roleId", employee.role.id);
+                if (employee.employmentDetails?.role?.id) {
+                  setValue("roleId", employee.employmentDetails.role.id);
                 }
               }
             }

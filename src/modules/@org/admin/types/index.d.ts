@@ -69,9 +69,9 @@ declare global {
   interface Team {
     id: string;
     name: string;
-    lead: string;
-    subTeam: string;
-    members: number;
+    lead?: string;
+    subTeam?: string;
+    members?: number;
   }
 
   interface Role {
@@ -87,48 +87,58 @@ declare global {
     | "role:manage"
     | "payroll:manage"
     | "attendance:manage"
-    | "leave:manage";
+    | "leave:manage"
+    | "resource:manage"
+    | "company:read"
+    | "employee:read"
+    | "team:read"
+    | "role:read"
+    | "payroll:read"
+    | "attendance:read"
+    | "leave:read"
+    | "resource:read";
+
+  // New employee shape types based on backend payload
+  type Gender = "male" | "female";
+  type EmploymentType = "full time" | "part time" | "contract" | null;
+  type WorkMode = "remote" | "hybrid" | "on site" | null;
+
+  interface EmploymentDetails {
+    startDate: string; // ISO date string
+    employmentType: EmploymentType;
+    workMode: WorkMode;
+    team: {
+      id: string;
+      name: string;
+    };
+    role: Role;
+  }
+
+  interface PayProfile {
+    id: string;
+    netPay: number;
+    grossSalary: number;
+    baseSalary: number;
+    bankName: string;
+    accountName: string;
+    accountNumber: string;
+  }
 
   interface Employee {
     id: string;
     firstName: string;
     lastName: string;
-    fullName: string;
-    thumbnail: string;
     email: string;
-    status: string;
+    gender: Gender;
+    avatar?: string | null;
     phoneNumber: string;
-    password: string;
-    team: Team;
-    role: Role;
-    document?: string; // Assuming this is a file path or URL
     dateOfBirth: string; // ISO date string
-    gender: "male" | "female";
-    startDate: string; // ISO date string
-    employmentType: "full time" | "part time" | "contract";
-    monthlySalary: number;
-    pension: number;
-    healthInsurance: number;
-    otherDeductions: number;
-    bankName: string;
-    accountName: string;
-    accountNumber: string;
+    status: string;
+    document?: string | null; // File path or URL
+    employmentDetails: EmploymentDetails;
+    payProfile: PayProfile;
     createdAt: string; // ISO date string
     updatedAt: string; // ISO date string
-    workMode: "remote" | "hybrid" | "on site";
-  }
-
-  interface Team {
-    id: string;
-    name: string;
-
-    // ... other team properties
-  }
-
-  interface Role {
-    id: string;
-    name: string;
-    // ... other role properties
   }
 
   interface OnboardingStep {

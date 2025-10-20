@@ -9,9 +9,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "../styles/theme.css";
 import "../styles/global.css";
 
-// import { ModeToggle } from "@/components/core/layout/ThemeToggle/theme-toggle";
 import { SessionProvider } from "@/components/core/layout/SessionProvider";
-import ThemeProvider from "@/components/core/layout/ThemeToggle/theme-provider";
 import { Toast } from "@/components/shared/Toast";
 import { ReactQueryProvider } from "@/lib/react-query/query-provider";
 
@@ -61,16 +59,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <NextTopLoader showSpinner={false} />
           <NuqsAdapter>
             <ReactQueryProvider>
-              <ThemeProvider
+              {/* <ThemeProvider
                 attribute="class"
                 defaultTheme="system"
                 enableSystem
                 disableTransitionOnChange
                 enableColorScheme
-              >
-                <KBarProviderWrapper>{children}</KBarProviderWrapper>
-                <Toast />
-              </ThemeProvider>
+              > */}
+              <KBarProviderWrapper>{children}</KBarProviderWrapper>
+              <Toast />
+              {/* </ThemeProvider> */}
             </ReactQueryProvider>
           </NuqsAdapter>
         </SessionProvider>

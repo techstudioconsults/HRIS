@@ -65,10 +65,10 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
           <div className="bg-white p-6 lg:p-8 dark:bg-black">
             <div className="flex flex-col items-center justify-between text-center">
               <Avatar className="border-primary bg-gray size-[8rem]">
-                <AvatarImage src={employeeData?.thumbnail || "https://github.com/shadcn.png"} />
+                <AvatarImage src={employeeData?.avatar || "https://github.com/shadcn.png"} />
               </Avatar>
               <h2 className="text-xl font-semibold">{employeeData?.firstName}</h2>
-              <p className="text-muted-foreground">{employeeData?.role.name}</p>
+              <p className="text-muted-foreground">{employeeData?.employmentDetails?.role?.name}</p>
               <span className="mt-2 inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
                 {employeeData?.status}
               </span>
@@ -91,15 +91,15 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
               </div>
               <div>
                 <p className="text-muted-foreground">Department</p>
-                <p className="font-medium">{employeeData?.role.name}</p>
+                <p className="font-medium">{employeeData?.employmentDetails?.team?.name}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Team Manager</p>
-                <p className="font-medium">{employeeData?.team.name}</p>
+                <p className="font-medium">{employeeData?.employmentDetails?.team?.name}</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Work Mode</p>
-                <p className="font-medium">{employeeData?.workMode || `N/A`}</p>
+                <p className="font-medium">{employeeData?.employmentDetails?.workMode || `N/A`}</p>
               </div>
               <div className="w-full">
                 <MainButton
@@ -129,7 +129,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
                 </div>
                 <div>
                   <p className="text-muted-foreground">Gender</p>
-                  <p className="font-medium">{employeeData?.lastName}</p>
+                  <p className="font-medium">{employeeData?.gender}</p>
                 </div>
                 <div className={`col-span-2 w-fit`}>
                   <p className="text-muted-foreground">Work Email</p>
@@ -148,23 +148,23 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
               <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
                 <div>
                   <p className="text-muted-foreground">Start Date</p>
-                  <p className="font-medium">{formatDate(employeeData?.createdAt || "")}</p>
+                  <p className="font-medium">{formatDate(employeeData?.employmentDetails?.startDate || "")}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Employment Type</p>
-                  <p className="font-medium">Full-time</p>
+                  <p className="font-medium">{employeeData?.employmentDetails?.employmentType || "N/A"}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Work Mode</p>
-                  <p className="font-medium">{employeeData?.workMode || "N/A"}</p>
+                  <p className="font-medium">{employeeData?.employmentDetails?.workMode || "N/A"}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Department</p>
-                  <p className="font-medium">{employeeData?.team.name}</p>
+                  <p className="font-medium">{employeeData?.employmentDetails?.team?.name}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Role</p>
-                  <p className="font-medium">{employeeData?.role.name}</p>
+                  <p className="font-medium">{employeeData?.employmentDetails?.role?.name}</p>
                 </div>
               </div>
             </div>
@@ -175,19 +175,19 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
               <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
                 <div>
                   <p className="text-muted-foreground">Monthly Gross Salary</p>
-                  <p className="font-medium">{employeeData?.monthlySalary}</p>
+                  <p className="font-medium">{employeeData?.payProfile?.grossSalary}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Bank Name</p>
-                  <p className="font-medium">{employeeData?.bankName || `N/A`}</p>
+                  <p className="font-medium">{employeeData?.payProfile?.bankName || `N/A`}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Account Number</p>
-                  <p className="font-medium">{employeeData?.accountNumber || `N/A`}</p>
+                  <p className="font-medium">{employeeData?.payProfile?.accountNumber || `N/A`}</p>
                 </div>
                 <div className="md:col-span-3">
                   <p className="text-muted-foreground">Account Name</p>
-                  <p className="font-medium">{employeeData?.accountName || `N/A`}</p>
+                  <p className="font-medium">{employeeData?.payProfile?.accountName || `N/A`}</p>
                 </div>
               </div>
             </div>

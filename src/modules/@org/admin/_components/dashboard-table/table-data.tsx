@@ -33,13 +33,13 @@ export const useEmployeeRowActions = () => {
 export const employeeColumn: IColumnDefinition<Employee>[] = [
   {
     header: "Name",
-    accessorKey: "fullName",
+    accessorKey: "firstName",
     render: (_, employee: Employee) => (
       <div className={`flex w-fit items-center gap-2`}>
         <Image
           src={
-            typeof employee.thumbnail === "string"
-              ? employee.thumbnail
+            typeof employee.avatar === "string" && employee.avatar.length > 0
+              ? employee.avatar
               : "https://res.cloudinary.com/kingsleysolomon/image/upload/v1742989662/byte-alley/fisnolvvuvfiebxskgbs.svg"
           }
           alt={employee.firstName}
@@ -59,13 +59,13 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
   },
   {
     header: "Role",
-    accessorKey: "role",
-    render: (_, employee: Employee) => <span>{employee.role.name}</span>,
+    accessorKey: "email",
+    render: (_, employee: Employee) => <span>{employee?.employmentDetails?.role?.name}</span>,
   },
   {
     header: "Department",
-    accessorKey: "team",
-    render: (_, employee: Employee) => <span>{employee.team.name}</span>,
+    accessorKey: "email",
+    render: (_, employee: Employee) => <span>{employee?.employmentDetails?.team?.name}</span>,
   },
   {
     header: "Status",

@@ -95,12 +95,12 @@ export const teamColumn: IColumnDefinition<Team>[] = [
     accessorKey: "manager",
   },
   {
-    header: "Sub Teams",
-    accessorKey: "subteams",
-    render: (_, team: Team) => <span>{team.subteams?.length} Team</span>,
+    header: "Team Members",
+    accessorKey: "members",
+    render: (_, team: Team) => <span>{team.members}</span>,
   },
   {
-    header: "Members",
+    header: "Created on",
     accessorKey: "members",
   },
 ];
@@ -108,13 +108,67 @@ export const teamColumn: IColumnDefinition<Team>[] = [
 export const useTeamRowActions = () => {
   const router = useRouter();
 
-  const getRowActions = () => {
+  const getRowActions = (team: Team) => {
     const actions: IRowAction<Team>[] = [];
     actions.push(
       {
         label: "View team",
         onClick: async () => {
+          router.push(`/admin/teams/${team.id}`);
+        },
+        // icon: <MinusCircle className={`text-high-warning`} />,
+      },
+      {
+        label: "Edit team",
+        onClick: () => {
           router.push(`/`);
+        },
+        // icon: <Eye className={`text-high-primary`} />,
+      },
+      {
+        label: "Delete team",
+        onClick: () => {
+          router.push(`/`);
+        },
+        // icon: <Eye className={`text-high-primary`} />,
+      },
+    );
+    return actions;
+  };
+  return { getRowActions };
+};
+
+export const subTeamColumn: IColumnDefinition<Team>[] = [
+  {
+    header: "Sub-team Name",
+    accessorKey: "name",
+    render: (_, team: Team) => <span>{team.name}</span>,
+  },
+  {
+    header: "Team Lead",
+    accessorKey: "manager",
+  },
+  {
+    header: "Team Members",
+    accessorKey: "members",
+    render: (_, team: Team) => <span>{team.members}</span>,
+  },
+  {
+    header: "Created on",
+    accessorKey: "members",
+  },
+];
+
+export const useSubTeamRowActions = () => {
+  const router = useRouter();
+
+  const getRowActions = (team: Team) => {
+    const actions: IRowAction<Team>[] = [];
+    actions.push(
+      {
+        label: "View team",
+        onClick: async () => {
+          router.push(`/admin/teams/sub-team/${team.id}`);
         },
         // icon: <MinusCircle className={`text-high-warning`} />,
       },

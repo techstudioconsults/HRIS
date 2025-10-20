@@ -72,6 +72,7 @@ declare global {
     manager?: string;
     subteams?: string;
     members?: number;
+    createdAt?: string;
   }
 
   interface Role {

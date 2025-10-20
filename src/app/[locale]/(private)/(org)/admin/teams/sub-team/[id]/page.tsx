@@ -1,13 +1,11 @@
-// import { AddEmployeeForm } from "@/modules/@org/admin/employee/_components/forms/add-employee";
-
-import { TeamDetails } from "@/modules/@org/admin/teams/_views/team-details";
+import { SubTeamDetails } from "@/modules/@org/admin/teams";
 
 const Page = async ({ params }: { params: { id: string } }) => {
   const { id } = params;
 
   return (
     <>
-      <TeamDetails
+      <SubTeamDetails
         params={{
           id,
         }}
@@ -15,4 +13,5 @@ const Page = async ({ params }: { params: { id: string } }) => {
     </>
   );
 };
+
 export default Page;

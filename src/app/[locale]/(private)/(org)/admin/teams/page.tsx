@@ -1,6 +1,12 @@
-import { AllTeams } from "@/modules/@org/admin/teams";
+"use client";
 
-const page = () => {
+import { AllTeams } from "@/modules/@org/admin/teams";
+import { useSession } from "next-auth/react";
+
+const Page = () => {
+  const { data: session } = useSession();
+  // eslint-disable-next-line no-console
+  console.log(session);
   return (
     <div>
       <AllTeams />
@@ -8,4 +14,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

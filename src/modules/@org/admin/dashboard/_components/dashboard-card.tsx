@@ -4,7 +4,7 @@ import { Diagram } from "iconsax-reactjs";
 
 interface DashboardCardProperties {
   title: string;
-  value: string | number;
+  value: string | number | React.ReactNode;
   percentage?: string;
   icon?: React.ReactNode;
   iconVariant?: "success" | "primary" | "warning" | "purple-500";
@@ -46,34 +46,38 @@ export function DashboardCard({
         )}
       </div>
 
-      <div className="mt-3 flex items-end justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            {showTrendIcon && (
-              <Diagram
-                size={16}
-                variant={trend === "up" ? "Bold" : "Broken"}
-                className={trend === "up" ? "text-success" : "text-danger"}
-              />
-            )}
-            {percentage && (
-              <p className={cn("text-sm", percentage.startsWith("+") ? "text-success" : "text-success")}>
-                {percentage}
-              </p>
-            )}
+      {showTrendIcon ||
+        percentage ||
+        (actionText && (
+          <div className="mt-3 flex items-end justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                {showTrendIcon && (
+                  <Diagram
+                    size={16}
+                    variant={trend === "up" ? "Bold" : "Broken"}
+                    className={trend === "up" ? "text-success" : "text-danger"}
+                  />
+                )}
+                {percentage && (
+                  <p className={cn("text-sm", percentage.startsWith("+") ? "text-success" : "text-success")}>
+                    {percentage}
+                  </p>
+                )}
+              </div>
+              {actionText && (
+                <MainButton
+                  variant="link"
+                  size="sm"
+                  onClick={onAction}
+                  className="text-primary p-0 text-sm font-medium hover:underline"
+                >
+                  {actionText}
+                </MainButton>
+              )}
+            </div>
           </div>
-          {actionText && (
-            <MainButton
-              variant="link"
-              size="sm"
-              onClick={onAction}
-              className="text-primary p-0 text-sm font-medium hover:underline"
-            >
-              {actionText}
-            </MainButton>
-          )}
-        </div>
-      </div>
+        ))}
     </div>
   );
 }

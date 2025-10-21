@@ -15,8 +15,10 @@ import { useState } from "react";
 import { DateRange } from "react-day-picker";
 
 import empty1 from "~/images/empty-state.svg";
+import { AddNewEmployees } from "../../_components/forms/add-new-employees";
 import { RolesAndPermission } from "../../_components/forms/add-new-roles";
 import { DashboardTable } from "../../../_components/dashboard-table";
+import { useEmployeeService } from "../../../employee/services/use-service";
 import { useTeamService } from "../../services/use-service";
 import { teamColumn, useTeamRowActions } from "../table-data";
 
@@ -25,12 +27,27 @@ export const AllTeams = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [status, setStatus] = useState<string>("all");
-  const { getRowActions, DeleteConfirmationModal } = useTeamRowActions();
+  const handleOpenEmployeeDialog = (team: Team) => {
+    const formTeam: TeamFormType = {
+      id: team.id,
+      name: team.name,
+      roles: [],
+    };
+    setCurrentTeam(formTeam);
+    setCurrentRole(null);
+    setDialogType("employee");
+    setDialogOpen(true);
+
+    // Force refetch roles for this team
+    queryClient.invalidateQueries({ queryKey: ["roles", team.id] });
+  };
+
+  const { getRowActions, DeleteConfirmationModal } = useTeamRowActions(handleOpenEmployeeDialog);
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentTeam, setCurrentTeam] = useState<TeamFormType | null>(null);
   const [currentRole, setCurrentRole] = useState<FormRole | null>(null);
-  const [dialogType, setDialogType] = useState<"team" | "role">("team");
+  const [dialogType, setDialogType] = useState<"team" | "role" | "employee">("team");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleOpenTeamDialog = (team?: TeamFormType) => {
@@ -40,7 +57,8 @@ export const AllTeams = () => {
     setDialogOpen(true);
   };
 
-  const { useGetAllTeams } = useTeamService();
+  const { useGetAllTeams, useGetRoles, useCreateRole, useUpdateRole, useAssignEmployeeToTeam } = useTeamService();
+  const { useGetAllEmployees } = useEmployeeService();
 
   // Create filters object
   const filters: IFilters = {
@@ -49,16 +67,25 @@ export const AllTeams = () => {
     ...(searchQuery && { search: searchQuery }),
   };
 
-  // Fetch products data
+  // Fetch teams data
   const { data: teamData, isLoading: isProductsLoading } = useGetAllTeams(filters);
 
+  // Fetch employees data
+  const { data: employeesData } = useGetAllEmployees({ page: 1 });
+
+  // Fetch roles for current team - only when employee dialog is open
+  const { data: rolesData } = useGetRoles(currentTeam?.id || "", {
+    enabled: !!currentTeam?.id && dialogType === "employee",
+  });
+
   const queryClient = useQueryClient();
-  const { useCreateTeam, useUpdateTeam, useCreateRole, useUpdateRole } = useOnboardingService();
+  const { useCreateTeam, useUpdateTeam } = useOnboardingService();
 
   const createTeamMutation = useCreateTeam();
   const updateTeamMutation = useUpdateTeam();
   const createRoleMutation = useCreateRole();
   const updateRoleMutation = useUpdateRole();
+  const assignEmployeeMutation = useAssignEmployeeToTeam();
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -108,6 +135,12 @@ export const AllTeams = () => {
     await queryClient.invalidateQueries({ queryKey: ["teams"] });
   };
 
+  const handleRoleCreationComplete = () => {
+    // After roles are created, automatically open employee assignment dialog
+    setDialogType("employee");
+    setDialogOpen(true);
+  };
+
   const handleUpdateRole = async (roleId: string, data: FormRole) => {
     try {
       setIsSubmitting(true);
@@ -121,6 +154,28 @@ export const AllTeams = () => {
       await queryClient.invalidateQueries({ queryKey: ["teams"] });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleAssignEmployee = async (data: { employeeId: string; roleId: string; customPermissions?: string[] }) => {
+    if (!currentTeam?.id) {
+      throw new Error("No team selected");
+    }
+
+    try {
+      await assignEmployeeMutation.mutateAsync({
+        employeeId: data.employeeId,
+        teamId: currentTeam.id,
+        roleId: data.roleId,
+        customPermissions: data.customPermissions,
+      });
+
+      // Invalidate queries to refresh the UI
+      await queryClient.invalidateQueries({ queryKey: ["teams"] });
+      await queryClient.invalidateQueries({ queryKey: ["employee", "list"] });
+    } catch {
+      // Handle error silently or show toast notification
+      throw new Error("Failed to assign employee");
     }
   };
 
@@ -249,7 +304,43 @@ export const AllTeams = () => {
               event?.preventDefault?.();
               setDialogOpen(false);
             }}
+            onComplete={handleRoleCreationComplete}
             isSubmitting={isSubmitting}
+          />
+        )}
+      </ReusableDialog>
+
+      <ReusableDialog
+        open={dialogOpen && dialogType === "employee"}
+        onOpenChange={setDialogOpen}
+        title="Add Employee"
+        description="Assign employees to this team and customize their roles"
+        className={`!max-w-2xl`}
+        trigger={<span />}
+      >
+        {currentTeam && (
+          <AddNewEmployees
+            onSubmit={handleAssignEmployee}
+            onCancel={(event) => {
+              // prevent dialog bubbling issues and close
+              event?.preventDefault?.();
+              setDialogOpen(false);
+            }}
+            isSubmitting={isSubmitting}
+            availableRoles={
+              rolesData?.map((role) => ({
+                id: role.id,
+                name: role.name,
+                description: `Role with ${role.permissions.length} permissions`,
+              })) || []
+            }
+            availableEmployees={
+              employeesData?.data?.items?.map((employee) => ({
+                id: employee.id,
+                name: `${employee.firstName} ${employee.lastName}`,
+                email: employee.email,
+              })) || []
+            }
           />
         )}
       </ReusableDialog>

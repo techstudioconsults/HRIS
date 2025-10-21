@@ -27,7 +27,7 @@ export const teamColumn: IColumnDefinition<Team>[] = [
   },
 ];
 
-export const useTeamRowActions = () => {
+export const useTeamRowActions = (onAddEmployees?: (team: Team) => void) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { useDeleteTeam } = useTeamService();
@@ -73,15 +73,28 @@ export const useTeamRowActions = () => {
         },
         // icon: <Eye className={`text-high-primary`} />,
       },
-      {
-        label: "Delete team",
-        onClick: () => {
-          setTeamToDelete(team);
-          setIsDeleteModalOpen(true);
-        },
-        // icon: <Eye className={`text-high-primary`} />,
-      },
     );
+
+    // Add "Add Employees" action if callback is provided
+    if (onAddEmployees) {
+      actions.push({
+        label: "Add Employees",
+        onClick: () => {
+          onAddEmployees(team);
+        },
+        // icon: <UserPlus className={`text-high-primary`} />,
+      });
+    }
+
+    actions.push({
+      label: "Delete team",
+      onClick: () => {
+        setTeamToDelete(team);
+        setIsDeleteModalOpen(true);
+      },
+      // icon: <Eye className={`text-high-primary`} />,
+    });
+
     return actions;
   };
 

@@ -23,6 +23,7 @@ interface RolesAndPermissionProperties {
   onSubmit: (data: Role) => Promise<void>;
   onCancel: (event: FormEvent) => void;
   onDelete?: (roleId: string) => Promise<void>;
+  onComplete?: () => void;
   isSubmitting?: boolean;
 }
 
@@ -87,6 +88,7 @@ export const RolesAndPermission = ({
   onSubmit,
   onCancel,
   onDelete,
+  onComplete,
   isSubmitting = false,
 }: RolesAndPermissionProperties) => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -159,9 +161,13 @@ export const RolesAndPermission = ({
 
       setSubmissionStatus("All roles created successfully!");
 
-      // Close dialog after successful completion
+      // Call completion handler after successful role creation
       setTimeout(() => {
-        onCancel(new Event("submit") as any);
+        if (onComplete) {
+          onComplete();
+        } else {
+          onCancel(new Event("submit") as any);
+        }
       }, 1500); // Give user time to see success message
     } catch {
       setSubmissionStatus("Error creating roles. Please try again.");

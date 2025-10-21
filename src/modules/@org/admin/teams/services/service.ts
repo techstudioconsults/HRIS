@@ -92,14 +92,53 @@ export class TeamService {
     const response = await this.http.get<ApiResponse<RoleApiResponse>>(`/roles?teamId=${teamId}`);
 
     if (response?.status === 200) {
-      return response.data.data.items.map((role) => ({
+      const roles = response.data.data.items.map((role) => ({
         id: role.id,
         name: role.name,
         teamId: role.teamId,
         permissions: role.permissions,
       }));
+      return roles;
     }
     return [];
+  }
+
+  async createRole(roleData: { name: string; teamId: string; permissions: string[] }) {
+    const response = await this.http.post<{ data: RoleApiResponse; success: boolean }>(`/roles`, roleData);
+    if (response?.status === 201) {
+      return {
+        id: response.data.data.id,
+        name: response.data.data.name,
+        teamId: response.data.data.teamId,
+        permissions: response.data.data.permissions,
+      };
+    }
+    throw new Error("Failed to create role");
+  }
+
+  async updateRole(roleId: string, roleData: { name?: string; permissions?: string[] }) {
+    const response = await this.http.patch<{ data: RoleApiResponse; success: boolean }>(`/roles/${roleId}`, roleData);
+    if (response?.status === 200) {
+      return {
+        id: response.data.data.id,
+        name: response.data.data.name,
+        teamId: response.data.data.teamId,
+        permissions: response.data.data.permissions,
+      };
+    }
+    throw new Error("Failed to update role");
+  }
+
+  async assignEmployeeToTeam(employeeId: string, teamId: string, roleId: string, customPermissions?: string[]) {
+    const response = await this.http.post<{ data: unknown; success: boolean }>(`/teams/${teamId}/employees`, {
+      employeeId,
+      roleId,
+      customPermissions,
+    });
+    if (response?.status === 201) {
+      return response.data;
+    }
+    throw new Error("Failed to assign employee to team");
   }
 
   private buildQueryParameters(filters: IFilters): string {

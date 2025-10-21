@@ -5,7 +5,12 @@ import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { EmptyState, FilteredEmptyState } from "@/components/shared/empty-state";
-// import { TeamForm } from "@/modules/@org/onboarding/_components/forms/team/team-form";
+import { RolesAndPermission } from "@/modules/@org/onboarding/_components/forms/roles&permission";
+import type { Role as FormRole, Team as TeamFormType } from "@/modules/@org/onboarding/_components/forms/schema";
+import { TeamForm } from "@/modules/@org/onboarding/_components/forms/team/team-form";
+import type { Team as ServiceTeam } from "@/modules/@org/onboarding/services/service";
+import { useOnboardingService } from "@/modules/@org/onboarding/services/use-onboarding-service";
+import { useQueryClient } from "@tanstack/react-query";
 import { Add } from "iconsax-reactjs";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
@@ -23,11 +28,12 @@ export const AllTeams = () => {
   const { getRowActions } = useTeamRowActions();
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
-  const [, setCurrentRole] = useState<Role | null>(null);
+  const [currentTeam, setCurrentTeam] = useState<TeamFormType | null>(null);
+  const [currentRole, setCurrentRole] = useState<FormRole | null>(null);
   const [dialogType, setDialogType] = useState<"team" | "role">("team");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleOpenTeamDialog = (team?: Team) => {
+  const handleOpenTeamDialog = (team?: TeamFormType) => {
     setCurrentTeam(team || null);
     setCurrentRole(null);
     setDialogType("team");
@@ -53,8 +59,82 @@ export const AllTeams = () => {
   // Fetch products data
   const { data: teamData, isLoading: isProductsLoading } = useGetAllTeams(filters);
 
+  const queryClient = useQueryClient();
+  const { useCreateTeam, useUpdateTeam, useCreateRole, useUpdateRole } = useOnboardingService();
+
+  const createTeamMutation = useCreateTeam();
+  const updateTeamMutation = useUpdateTeam();
+  const createRoleMutation = useCreateRole();
+  const updateRoleMutation = useUpdateRole();
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleAddTeam = async (name: string) => {
+    try {
+      setIsSubmitting(true);
+      const newTeam = await createTeamMutation.mutateAsync(name);
+      // Close team dialog and guide user to create a role for the new team
+      setDialogOpen(false);
+      const formTeam: TeamFormType = {
+        id: (newTeam as ServiceTeam)?.id,
+        name: (newTeam as ServiceTeam)?.name,
+        roles: [],
+      };
+      setCurrentTeam(formTeam);
+      await queryClient.invalidateQueries({ queryKey: ["teams"] });
+      // Continue workflow to Role creation
+      setDialogType("role");
+      setCurrentRole(null);
+      setDialogOpen(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleUpdateTeam = async (id: string, name: string) => {
+    try {
+      setIsSubmitting(true);
+      await updateTeamMutation.mutateAsync({ teamId: id, name });
+      setDialogOpen(false);
+      setCurrentTeam(null);
+      await queryClient.invalidateQueries({ queryKey: ["teams"] });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleAddRole = async (teamId: string, data: FormRole) => {
+    try {
+      setIsSubmitting(true);
+      await createRoleMutation.mutateAsync({
+        name: data.name,
+        teamId,
+        permissions: data.permissions || [],
+      });
+      setDialogOpen(false);
+      setCurrentRole(null);
+      await queryClient.invalidateQueries({ queryKey: ["teams"] });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleUpdateRole = async (roleId: string, data: FormRole) => {
+    try {
+      setIsSubmitting(true);
+      await updateRoleMutation.mutateAsync({
+        roleId,
+        name: data.name,
+        permissions: data.permissions,
+      });
+      setDialogOpen(false);
+      setCurrentRole(null);
+      await queryClient.invalidateQueries({ queryKey: ["teams"] });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -137,10 +217,7 @@ export const AllTeams = () => {
                   description="Add teams  to better organize your workforce, assign leads, and manage roles across your organization.."
                   button={{
                     text: "Add New Team",
-                    onClick: () => {
-                      return;
-                      // router.push(`/dashboard/products/new`);
-                    },
+                    onClick: () => handleOpenTeamDialog(),
                   }}
                 />
               )}
@@ -154,23 +231,25 @@ export const AllTeams = () => {
         onOpenChange={setDialogOpen}
         title={currentTeam ? "Edit Team" : "Add New Team"}
         description={currentTeam ? "Modify the team details" : "Create a new team for your organization"}
-        trigger={undefined}
+        trigger={<span />}
       >
-        {/* <TeamForm
-          // onSubmit={(data) => {
-          //   return currentTeam ? handleUpdateTeam(currentTeam.id!, data.name) : handleAddTeam(data.name);
-          // }}
+        <TeamForm
+          initialData={currentTeam}
+          onSubmit={async (data) => {
+            return currentTeam ? handleUpdateTeam(currentTeam.id!, data.name) : handleAddTeam(data.name);
+          }}
           onCancel={() => setDialogOpen(false)}
-          onSubmit={() => {}} // isSubmitting={isSubmitting}
-        /> */}
+          isSubmitting={isSubmitting}
+        />
       </ReusableDialog>
 
-      {/* <ReusableDialog
+      <ReusableDialog
         open={dialogOpen && dialogType === "role"}
         onOpenChange={setDialogOpen}
         title={currentRole ? "Edit Role" : "Add New Role"}
         description={currentRole ? "Modify the role details" : "Create a new role for this team"}
         className={`!max-w-2xl`}
+        trigger={<span />}
       >
         {currentTeam && (
           <RolesAndPermission
@@ -178,11 +257,15 @@ export const AllTeams = () => {
             onSubmit={(data) => {
               return currentRole ? handleUpdateRole(currentRole.id!, data) : handleAddRole(currentTeam.id!, data);
             }}
-            onCancel={() => setDialogOpen(false)}
+            onCancel={(event) => {
+              // prevent dialog bubbling issues and close
+              event?.preventDefault?.();
+              setDialogOpen(false);
+            }}
             isSubmitting={isSubmitting}
           />
         )}
-      </ReusableDialog> */}
+      </ReusableDialog>
     </>
   );
 };

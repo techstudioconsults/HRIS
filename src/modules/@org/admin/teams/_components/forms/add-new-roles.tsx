@@ -6,8 +6,7 @@ import MainButton from "@/components/shared/button";
 import { FormField } from "@/components/shared/inputs/FormFields";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { roleSchema } from "@/modules/@org/onboarding/_components/forms/schema";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Progress } from "@/components/ui/progress";
 import { InfoCircle, Trash } from "iconsax-reactjs";
 import { Plus } from "lucide-react";
 import { FormEvent, useEffect, useState } from "react";
@@ -93,6 +92,10 @@ export const RolesAndPermission = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const [roles, setRoles] = useState<FormRole[]>([{ name: "", permissions: [] }]);
   const [openPermissions, setOpenPermissions] = useState<boolean[]>([false]);
+  const [isSubmittingRoles, setIsSubmittingRoles] = useState(false);
+  const [submissionProgress, setSubmissionProgress] = useState(0);
+  const [currentSubmittingRole, setCurrentSubmittingRole] = useState(0);
+  const [submissionStatus, setSubmissionStatus] = useState<string>("");
 
   const addNewRole = () => {
     setRoles((previous) => [...previous, { name: "", permissions: [] }]);
@@ -121,29 +124,49 @@ export const RolesAndPermission = ({
     }
   }, [roles, openPermissions.length]);
 
-  const methods = useForm<Role>({
-    resolver: zodResolver(roleSchema),
-    defaultValues: initialData || {
-      name: "",
-      permissions: [],
+  const methods = useForm({
+    defaultValues: {
+      roles: [{ name: "", permissions: [] }],
     },
   });
 
-  const { handleSubmit } = methods;
-
-  // Check if all roles have valid names
-  const allRolesValid = roles.every((role) => role.name.trim().length > 0);
+  // Check if all roles have valid names and at least one permission
+  const allRolesValid = roles.every((role) => role.name.trim().length > 0 && role.permissions.length > 0);
 
   const handleSubmitForm = async () => {
+    if (isSubmittingRoles) return;
+
+    setIsSubmittingRoles(true);
+    setSubmissionProgress(0);
+    setCurrentSubmittingRole(0);
+    setSubmissionStatus("Starting role creation...");
+
     try {
-      // Submit all roles
-      for (const role of roles) {
-        if (role.name.trim()) {
-          await onSubmit(role as Role);
-        }
+      const validRoles = roles.filter((role) => role.name.trim());
+      const totalRoles = validRoles.length;
+
+      for (const [index, role] of validRoles.entries()) {
+        setCurrentSubmittingRole(index + 1);
+        setSubmissionStatus(`Creating role ${index + 1} of ${totalRoles}: ${role.name}`);
+
+        // Submit the role
+        await onSubmit(role as Role);
+
+        // Update progress
+        const progress = ((index + 1) / totalRoles) * 100;
+        setSubmissionProgress(progress);
       }
+
+      setSubmissionStatus("All roles created successfully!");
+
+      // Close dialog after successful completion
+      setTimeout(() => {
+        onCancel(new Event("submit") as any);
+      }, 1500); // Give user time to see success message
     } catch {
-      // Handle error silently or show toast notification
+      setSubmissionStatus("Error creating roles. Please try again.");
+    } finally {
+      setIsSubmittingRoles(false);
     }
   };
 
@@ -165,132 +188,183 @@ export const RolesAndPermission = ({
   return (
     <FormProvider {...methods}>
       <div className="max-h-[70vh] overflow-y-auto pr-2">
-        <form onSubmit={handleSubmit(handleSubmitForm)} className="space-y-4">
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            handleSubmitForm();
+          }}
+          className="space-y-4"
+        >
+          {/* Progress Bar - Fixed at top */}
+          {!isSubmittingRoles && (
+            <div className="bg-primary/5 border-primary/20 space-y-3 rounded-lg border p-4">
+              <div className="flex items-center justify-between">
+                <span className="text-primary text-sm font-medium">Creating Roles</span>
+                <span className="text-muted-foreground text-sm">
+                  {currentSubmittingRole} of {roles.filter((role) => role.name.trim()).length}
+                </span>
+              </div>
+              <div className="space-y-2">
+                <Progress value={submissionProgress} className="h-1" />
+                <div className="text-muted-foreground flex justify-between text-xs">
+                  <span>Progress: {Math.round(submissionProgress)}%</span>
+                  <span>{submissionStatus}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
           <section className="flex items-center justify-between">
             <p className="text-lg font-semibold">Add New Role(s) to Team</p>
-            <p className="text-primary flex cursor-pointer items-center gap-1 font-medium" onClick={addNewRole}>
+            <p className="text-primary flex cursor-pointer items-center gap-1 text-sm font-medium" onClick={addNewRole}>
               <Plus className="h-4 w-4" /> Add New Role
             </p>
           </section>
 
-          {roles.map((role, index) => (
-            <section key={index} className="bg-primary/5 space-y-4 rounded-lg p-4">
-              <section className="flex items-center justify-between">
-                <p className="text-lg font-semibold">Role {index + 1}</p>
-                {roles.length > 1 && (
-                  <p
-                    className="text-destructive flex cursor-pointer items-center gap-1 font-medium"
-                    onClick={() => removeRole(index)}
-                  >
-                    <Trash className="size-4" /> Remove
-                  </p>
-                )}
-              </section>
-              {isEdit ? (
-                <>
-                  <div className={`bg-warning-50 text-warning-200 rounded-lg p-4 text-sm`}>
-                    <div className={`flex items-start gap-2`}>
-                      <div>
-                        <InfoCircle size={12} className={`mt-1 text-sm`} />
-                      </div>
-                      <p>
-                        You can tailor what this employee can view or manage on the platform. These permissions apply
-                        only to this employee and can be changed later.
-                      </p>
-                    </div>
+          {[...roles].reverse().map((role, originalIndex) => {
+            const index = roles.length - 1 - originalIndex; // Calculate original index for state updates
+            const isRoleValid = role.name.trim().length > 0 && role.permissions.length > 0;
+            return (
+              <section
+                key={index}
+                className={`space-y-4 rounded-lg p-4 ${isRoleValid ? "bg-primary/5" : "bg-destructive/5 border-destructive/20 border"}`}
+              >
+                <section className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <p className="text-lg font-semibold">Role {index + 1}</p>
+                    {!isRoleValid && (
+                      <span className="text-destructive bg-destructive/10 rounded px-2 py-1 text-xs">
+                        {role.name.trim().length === 0 ? "Name required" : "Permissions required"}
+                      </span>
+                    )}
                   </div>
-                  {/* Hidden name field for edit mode to maintain form validation */}
-                  <FormField
-                    name="name"
-                    label="Role Name"
-                    type="text"
-                    placeholder="Enter role name"
-                    className="h-[48px] w-full shadow-none"
-                  />
-                </>
-              ) : (
-                <Card className={`border-none bg-transparent p-0 shadow-none`}>
-                  <CardContent className={`p-0`}>
-                    <input
-                      name={`role_${index}_name`}
+                  {roles.length > 1 && (
+                    <p
+                      className="text-destructive flex cursor-pointer items-center gap-1 font-medium"
+                      onClick={() => removeRole(index)}
+                    >
+                      <Trash className="size-4" /> Remove
+                    </p>
+                  )}
+                </section>
+                {isEdit ? (
+                  <>
+                    <div className={`bg-warning-50 text-warning-200 rounded-lg p-4 text-sm`}>
+                      <div className={`flex items-start gap-2`}>
+                        <div>
+                          <InfoCircle size={12} className={`mt-1 text-sm`} />
+                        </div>
+                        <p>
+                          You can tailor what this employee can view or manage on the platform. These permissions apply
+                          only to this employee and can be changed later.
+                        </p>
+                      </div>
+                    </div>
+                    {/* Hidden name field for edit mode to maintain form validation */}
+                    <FormField
+                      name="name"
+                      label="Role Name"
                       type="text"
                       placeholder="Enter role name"
-                      className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring h-[48px] w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                      value={role.name}
-                      onChange={(event) => updateRole(index, "name", event.target.value)}
+                      className="h-[48px] w-full shadow-none"
                     />
-                  </CardContent>
-                </Card>
-              )}
-              <p
-                onClick={() => togglePermissions(index)}
-                className="text-primary hover:text-primary/80 cursor-pointer text-sm font-medium transition-colors"
-              >
-                {openPermissions[index] ? "Hide permissions" : "Assign permissions for this role"}
-              </p>
-              {/* Claims Matrix Table */}
-              {openPermissions[index] && (
-                <Card className={`border-none bg-transparent p-0 shadow-none`}>
-                  <CardHeader className={`p-0`}>
-                    <CardTitle className="text-lg">Assign Module Permissions (Claims)</CardTitle>
-                    <p className="text-muted-foreground text-sm">
-                      Select the areas this role should access and define their level of control.
-                    </p>
-                  </CardHeader>
-                  <CardContent className={`p-0`}>
-                    <div className="overflow-x-auto rounded-md border">
-                      <table className="w-full border-collapse">
-                        <thead className={`bg-primary/10`}>
-                          <tr className="">
-                            <th className="border-r px-4 py-2 text-left text-sm">Module</th>
-                            {actions.map((action) => (
-                              <th
-                                key={action}
-                                className="divide-x px-4 py-2 text-center text-sm font-medium capitalize"
-                              >
-                                {action}
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {modules.map((module) => (
-                            <tr key={module} className="border-border/50 border-b">
-                              <td className="border-r px-4 py-2 text-sm capitalize">{module}</td>
+                  </>
+                ) : (
+                  <Card className={`border-none bg-transparent p-0 shadow-none`}>
+                    <CardContent className={`p-0`}>
+                      <input
+                        name={`role_${index}_name`}
+                        type="text"
+                        placeholder="Enter role name"
+                        className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring h-[48px] w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                        value={role.name}
+                        onChange={(event) => updateRole(index, "name", event.target.value)}
+                      />
+                    </CardContent>
+                  </Card>
+                )}
+                <p
+                  onClick={() => togglePermissions(index)}
+                  className="text-primary hover:text-primary/80 cursor-pointer text-sm font-medium transition-colors"
+                >
+                  {openPermissions[index] ? "Hide permissions" : "Assign permissions for this role"}
+                </p>
+                {/* Claims Matrix Table */}
+                {openPermissions[index] && (
+                  <Card className={`border-none bg-transparent p-0 shadow-none`}>
+                    <CardHeader className={`p-0`}>
+                      <CardTitle className="text-lg">Assign Module Permissions (Claims)</CardTitle>
+                      <p className="text-muted-foreground text-sm">
+                        Select the areas this role should access and define their level of control.
+                      </p>
+                    </CardHeader>
+                    <CardContent className={`p-0`}>
+                      <div className="overflow-x-auto rounded-md border">
+                        <table className="w-full border-collapse">
+                          <thead className={`bg-primary/10`}>
+                            <tr className="">
+                              <th className="border-r px-4 py-2 text-left text-sm">Module</th>
                               {actions.map((action) => (
-                                <td key={`${module}-${action}`} className="border-r px-4 py-2 text-center">
-                                  <div className="flex justify-center">
-                                    <Checkbox
-                                      className={`border-primary/30 data-[state=checked]:border-primary data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary`}
-                                      checked={
-                                        role.permissions?.includes(`${module}:${action}`) ||
-                                        (action !== "manage" && role.permissions?.includes(`${module}:manage`))
-                                      }
-                                      onCheckedChange={(checked) => {
-                                        let newPermissions = [...(role.permissions || [])];
-
-                                        newPermissions =
-                                          action === "manage"
-                                            ? handleManageChange(module, !!checked, newPermissions)
-                                            : handlePermissionChange(module, action, !!checked, newPermissions);
-
-                                        updateRole(index, "permissions", newPermissions);
-                                      }}
-                                      aria-label={`${module} ${action} permission`}
-                                    />
-                                  </div>
-                                </td>
+                                <th
+                                  key={action}
+                                  className="divide-x px-4 py-2 text-center text-sm font-medium capitalize"
+                                >
+                                  {action}
+                                </th>
                               ))}
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </section>
-          ))}
+                          </thead>
+                          <tbody>
+                            {modules.map((module) => (
+                              <tr key={module} className="border-border/50 border-b">
+                                <td className="border-r px-4 py-2 text-sm capitalize">{module}</td>
+                                {actions.map((action) => (
+                                  <td key={`${module}-${action}`} className="border-r px-4 py-2 text-center">
+                                    <div className="flex justify-center">
+                                      <Checkbox
+                                        className={`border-primary/30 data-[state=checked]:border-primary data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary`}
+                                        checked={
+                                          role.permissions?.includes(`${module}:${action}`) ||
+                                          (action !== "manage" && role.permissions?.includes(`${module}:manage`))
+                                        }
+                                        onCheckedChange={(checked) => {
+                                          let newPermissions = [...(role.permissions || [])];
+
+                                          newPermissions =
+                                            action === "manage"
+                                              ? handleManageChange(module, !!checked, newPermissions)
+                                              : handlePermissionChange(module, action, !!checked, newPermissions);
+
+                                          updateRole(index, "permissions", newPermissions);
+                                        }}
+                                        aria-label={`${module} ${action} permission`}
+                                      />
+                                    </div>
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </section>
+            );
+          })}
+
+          {/* Validation Summary */}
+          {!allRolesValid && (
+            <div className="bg-warning/10 border-warning/20 rounded-lg border p-4">
+              <div className="flex items-center gap-2">
+                <InfoCircle className="text-warning h-4 w-4" />
+                <p className="text-warning text-sm">
+                  Please complete all roles by adding a name and selecting at least one permission for each role.
+                </p>
+              </div>
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="flex flex-col gap-4 sm:flex-row">
@@ -319,14 +393,16 @@ export const RolesAndPermission = ({
             <MainButton
               type="submit"
               variant={`primary`}
-              isDisabled={isSubmitting || isDeleting || !allRolesValid}
+              isDisabled={isSubmitting || isDeleting || !allRolesValid || isSubmittingRoles}
               className="w-full"
             >
-              {isSubmitting
-                ? "Saving..."
-                : isEdit
-                  ? "Update Role"
-                  : `Create ${roles.length} Role${roles.length > 1 ? "s" : ""}`}
+              {isSubmittingRoles
+                ? `Creating Role ${currentSubmittingRole}...`
+                : isSubmitting
+                  ? "Saving..."
+                  : isEdit
+                    ? "Update Role"
+                    : `Create ${roles.length} Role${roles.length > 1 ? "s" : ""}`}
             </MainButton>
           </div>
         </form>

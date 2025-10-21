@@ -40,13 +40,6 @@ export const AllTeams = () => {
     setDialogOpen(true);
   };
 
-  // const handleOpenRoleDialog = (team: Team, role?: Role) => {
-  //   setCurrentTeam(team);
-  //   setCurrentRole(role || null);
-  //   setDialogType("role");
-  //   setDialogOpen(true);
-  // };
-
   const { useGetAllTeams } = useTeamService();
 
   // Create filters object
@@ -106,19 +99,13 @@ export const AllTeams = () => {
   };
 
   const handleAddRole = async (teamId: string, data: FormRole) => {
-    try {
-      setIsSubmitting(true);
-      await createRoleMutation.mutateAsync({
-        name: data.name,
-        teamId,
-        permissions: data.permissions || [],
-      });
-      setDialogOpen(false);
-      setCurrentRole(null);
-      await queryClient.invalidateQueries({ queryKey: ["teams"] });
-    } finally {
-      setIsSubmitting(false);
-    }
+    await createRoleMutation.mutateAsync({
+      name: data.name,
+      teamId,
+      permissions: data.permissions || [],
+    });
+    // Don't close dialog here - let the form handle completion
+    await queryClient.invalidateQueries({ queryKey: ["teams"] });
   };
 
   const handleUpdateRole = async (roleId: string, data: FormRole) => {
@@ -244,35 +231,26 @@ export const AllTeams = () => {
       </ReusableDialog>
 
       <ReusableDialog
-        open={true}
+        open={dialogOpen && dialogType === "role"}
         onOpenChange={setDialogOpen}
         title={currentRole ? "Edit Role" : "Create Roles"}
         description={currentRole ? "Modify the role details" : "Create new roles for this team"}
         className={`!max-w-2xl`}
         trigger={<span />}
       >
-        {!currentTeam && (
+        {currentTeam && (
           <RolesAndPermission
+            initialData={currentRole}
             onSubmit={async (data) => {
               return currentRole ? handleUpdateRole(currentRole.id!, data) : handleAddRole(currentTeam.id!, data);
             }}
             onCancel={(event) => {
+              // prevent dialog bubbling issues and close
               event?.preventDefault?.();
               setDialogOpen(false);
             }}
+            isSubmitting={isSubmitting}
           />
-          // <RolesAndPermission
-          //   initialData={currentRole}
-          //   onSubmit={(data) => {
-          //     return currentRole ? handleUpdateRole(currentRole.id!, data) : handleAddRole(currentTeam.id!, data);
-          //   }}
-          //   onCancel={(event) => {
-          //     // prevent dialog bubbling issues and close
-          //     event?.preventDefault?.();
-          //     setDialogOpen(false);
-          //   }}
-          //   isSubmitting={isSubmitting}
-          // />
         )}
       </ReusableDialog>
 

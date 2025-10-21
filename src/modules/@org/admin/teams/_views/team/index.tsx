@@ -17,6 +17,7 @@ import { DateRange } from "react-day-picker";
 import empty1 from "~/images/empty-state.svg";
 import { AddNewEmployees } from "../../_components/forms/add-new-employees";
 import { RolesAndPermission } from "../../_components/forms/add-new-roles";
+import { useTeamEditing } from "../../_hooks/use-team-editing";
 import { DashboardTable } from "../../../_components/dashboard-table";
 import { useEmployeeService } from "../../../employee/services/use-service";
 import { useTeamService } from "../../services/use-service";
@@ -42,7 +43,26 @@ export const AllTeams = () => {
     queryClient.invalidateQueries({ queryKey: ["roles", team.id] });
   };
 
-  const { getRowActions, DeleteConfirmationModal } = useTeamRowActions(handleOpenEmployeeDialog);
+  const handleOpenEditDialog = (team: Team) => {
+    const formTeam: TeamFormType = {
+      id: team.id,
+      name: team.name,
+      roles: [],
+    };
+    openEditDialog(formTeam);
+  };
+
+  // Team editing hook
+  const {
+    isEditing,
+    editingTeam,
+    openEditDialog,
+    closeEditDialog,
+    handleUpdateTeam,
+    isSubmitting: isEditSubmitting,
+  } = useTeamEditing();
+
+  const { getRowActions, DeleteConfirmationModal } = useTeamRowActions(handleOpenEmployeeDialog, handleOpenEditDialog);
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentTeam, setCurrentTeam] = useState<TeamFormType | null>(null);
@@ -79,10 +99,9 @@ export const AllTeams = () => {
   });
 
   const queryClient = useQueryClient();
-  const { useCreateTeam, useUpdateTeam } = useOnboardingService();
+  const { useCreateTeam } = useOnboardingService();
 
   const createTeamMutation = useCreateTeam();
-  const updateTeamMutation = useUpdateTeam();
   const createRoleMutation = useCreateRole();
   const updateRoleMutation = useUpdateRole();
   const assignEmployeeMutation = useAssignEmployeeToTeam();
@@ -108,18 +127,6 @@ export const AllTeams = () => {
       setDialogType("role");
       setCurrentRole(null);
       setDialogOpen(true);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleUpdateTeam = async (id: string, name: string) => {
-    try {
-      setIsSubmitting(true);
-      await updateTeamMutation.mutateAsync({ teamId: id, name });
-      setDialogOpen(false);
-      setCurrentTeam(null);
-      await queryClient.invalidateQueries({ queryKey: ["teams"] });
     } finally {
       setIsSubmitting(false);
     }
@@ -278,7 +285,7 @@ export const AllTeams = () => {
         <TeamForm
           initialData={currentTeam}
           onSubmit={async (data) => {
-            return currentTeam ? handleUpdateTeam(currentTeam.id!, data.name) : handleAddTeam(data.name);
+            return currentTeam ? handleUpdateTeam({ name: data.name }) : handleAddTeam(data.name);
           }}
           onCancel={() => setDialogOpen(false)}
           isSubmitting={isSubmitting}
@@ -346,6 +353,31 @@ export const AllTeams = () => {
       </ReusableDialog>
 
       <DeleteConfirmationModal />
+
+      {/* Edit Team Dialog */}
+      <ReusableDialog
+        open={isEditing}
+        onOpenChange={(open) => {
+          if (!open) closeEditDialog();
+        }}
+        title="Edit Team"
+        description="Update team information and settings"
+        className="!max-w-2xl"
+        trigger={<span />}
+      >
+        {editingTeam && (
+          <TeamForm
+            initialData={editingTeam}
+            onSubmit={async (data) => {
+              await handleUpdateTeam({ name: data.name });
+            }}
+            onCancel={() => {
+              closeEditDialog();
+            }}
+            isSubmitting={isEditSubmitting}
+          />
+        )}
+      </ReusableDialog>
     </>
   );
 };

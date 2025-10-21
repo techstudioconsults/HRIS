@@ -1,7 +1,6 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
-import { SetToolTip } from "@/components/shared/tool-tip";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -67,11 +66,9 @@ export const DashboardTable = <T extends DataItem>({
                 {rowActions && (
                   <TableCell>
                     <DropdownMenu>
-                      <SetToolTip content={"More actions"}>
-                        <DropdownMenuTrigger className={`p-2`}>
-                          <More className="h-4 w-4" />
-                        </DropdownMenuTrigger>
-                      </SetToolTip>
+                      <DropdownMenuTrigger className={`p-2`}>
+                        <More className="h-4 w-4" />
+                      </DropdownMenuTrigger>
                       <DropdownMenuContent className={`bg-white`} align="end">
                         {rowActions(item).map((action: IRowAction<T>, actionIndex: number) => (
                           <DropdownMenuItem

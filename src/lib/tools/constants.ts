@@ -1,3 +1,6 @@
+import { CardReceive, Element3, People, Profile2User } from "iconsax-reactjs";
+import { Clock } from "lucide-react";
+
 export const countries = [
   { value: "afghanistan", label: "🇦🇫 Afghanistan" },
   { value: "albania", label: "🇦🇱 Albania" },
@@ -221,40 +224,44 @@ export const NAV_LINKS: NavLink[] = [
 
 export const adminNavItems = [
   {
-    id: "dashboard",
-    route: "Dashboard",
-    link: "/admin/dashboard",
-    icon: "Element3",
+    title: "Dashboard",
+    url: "/admin/dashboard",
+    icon: Element3,
+    isActive: true,
   },
   {
-    id: "employees",
-    route: "Employees",
-    link: "/admin/employees",
-    icon: "Profile2User",
+    title: "Employees",
+    url: "/admin/employees",
+    icon: Profile2User,
+    isActive: true,
   },
   {
     id: "teams",
-    route: "Teams",
-    link: "/admin/teams",
-    icon: "People",
+    title: "Teams",
+    url: "/admin/teams",
+    icon: People,
+    isActive: true,
   },
   {
     id: "resources",
-    route: "Resources",
-    link: "/admin/resources",
-    icon: "People",
+    title: "Resources",
+    url: "/admin/resources",
+    icon: People,
+    isActive: true,
   },
   {
     id: "payroll",
-    route: "Payroll",
-    link: "/admin/payroll",
-    icon: "CardReceive",
+    title: "Payroll",
+    url: "/admin/payroll",
+    icon: CardReceive,
+    isActive: true,
   },
   {
     id: "attendance",
-    route: "Attendance",
-    link: "/admin/attendance",
-    icon: "Clock",
+    title: "Attendance",
+    url: "/admin/attendance",
+    icon: Clock,
+    isActive: true,
   },
 ];
 

@@ -27,7 +27,7 @@ export const teamColumn: IColumnDefinition<Team>[] = [
   },
 ];
 
-export const useTeamRowActions = (onAddEmployees?: (team: Team) => void) => {
+export const useTeamRowActions = (onAddEmployees?: (team: Team) => void, onEditTeam?: (team: Team) => void) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { useDeleteTeam } = useTeamService();
@@ -69,9 +69,13 @@ export const useTeamRowActions = (onAddEmployees?: (team: Team) => void) => {
       {
         label: "Edit team",
         onClick: () => {
-          router.push(`/`);
+          if (onEditTeam) {
+            onEditTeam(team);
+          } else {
+            router.push(`/admin/teams/${team.id}/edit`);
+          }
         },
-        // icon: <Eye className={`text-high-primary`} />,
+        // icon: <Edit className={`text-high-primary`} />,
       },
     );
 

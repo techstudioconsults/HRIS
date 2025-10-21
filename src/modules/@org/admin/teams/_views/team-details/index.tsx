@@ -13,10 +13,10 @@ import Link from "next/link";
 
 import empty1 from "~/images/empty-state.svg";
 import { DashboardTable } from "../../../_components/dashboard-table";
-import { subTeamColumn, useSubTeamRowActions } from "../../../_components/dashboard-table/table-data";
 import { CardGroup } from "../../../dashboard/_components/card-group";
 import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
 import { useTeamService } from "../../services/use-service";
+import { subTeamColumn, useSubTeamRowActions } from "../table-data";
 
 const TeamDetails = ({ params }: { params: { id: string } }) => {
   const { id } = params;

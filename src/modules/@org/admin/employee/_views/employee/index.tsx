@@ -17,8 +17,8 @@ import empty1 from "~/images/empty-state.svg";
 import { FilterForm } from "../../_components/forms/filter-form";
 import { DashboardTable } from "../../../_components/dashboard-table";
 import { DashboardTableSkeleton } from "../../../_components/dashboard-table/skeleton";
-import { employeeColumn, useEmployeeRowActions } from "../../../_components/dashboard-table/table-data";
 import { useEmployeeService } from "../../services/use-service";
+import { employeeColumn, useEmployeeRowActions } from "../table-data";
 
 export const AllEmployees = () => {
   const router = useRouter();

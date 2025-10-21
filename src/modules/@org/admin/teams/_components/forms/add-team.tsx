@@ -27,7 +27,7 @@ interface TeamWithRoles {
   }[];
 }
 
-export const BaseEmployeeForm = ({ employeeService }: { employeeService: EmployeeService }) => {
+export const BaseTeamForm = ({ employeeService }: { employeeService: EmployeeService }) => {
   const router = useRouter();
   const searchParameters = useSearchParams();
   const employeeId = searchParameters.get("employeeid");
@@ -403,6 +403,6 @@ export const BaseEmployeeForm = ({ employeeService }: { employeeService: Employe
   );
 };
 
-export const EmployeeForm = WithDependency(BaseEmployeeForm, {
+export const TeamForm = WithDependency(BaseTeamForm, {
   employeeService: dependencies.EMPLOYEE_SERVICE,
 });

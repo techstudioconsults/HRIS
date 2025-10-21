@@ -5,7 +5,6 @@ import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { EmptyState, FilteredEmptyState } from "@/components/shared/empty-state";
-import { RolesAndPermission } from "@/modules/@org/onboarding/_components/forms/roles&permission";
 import type { Role as FormRole, Team as TeamFormType } from "@/modules/@org/onboarding/_components/forms/schema";
 import { TeamForm } from "@/modules/@org/onboarding/_components/forms/team/team-form";
 import type { Team as ServiceTeam } from "@/modules/@org/onboarding/services/service";
@@ -16,16 +15,17 @@ import { useState } from "react";
 import { DateRange } from "react-day-picker";
 
 import empty1 from "~/images/empty-state.svg";
+import { RolesAndPermission } from "../../_components/forms/add-new-roles";
 import { DashboardTable } from "../../../_components/dashboard-table";
-import { teamColumn, useTeamRowActions } from "../../../_components/dashboard-table/table-data";
 import { useTeamService } from "../../services/use-service";
+import { teamColumn, useTeamRowActions } from "../table-data";
 
 export const AllTeams = () => {
   // const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [status, setStatus] = useState<string>("all");
-  const { getRowActions } = useTeamRowActions();
+  const { getRowActions, DeleteConfirmationModal } = useTeamRowActions();
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentTeam, setCurrentTeam] = useState<TeamFormType | null>(null);
@@ -244,28 +244,39 @@ export const AllTeams = () => {
       </ReusableDialog>
 
       <ReusableDialog
-        open={dialogOpen && dialogType === "role"}
+        open={true}
         onOpenChange={setDialogOpen}
-        title={currentRole ? "Edit Role" : "Add New Role"}
-        description={currentRole ? "Modify the role details" : "Create a new role for this team"}
+        title={currentRole ? "Edit Role" : "Create Roles"}
+        description={currentRole ? "Modify the role details" : "Create new roles for this team"}
         className={`!max-w-2xl`}
         trigger={<span />}
       >
-        {currentTeam && (
+        {!currentTeam && (
           <RolesAndPermission
-            initialData={currentRole}
-            onSubmit={(data) => {
+            onSubmit={async (data) => {
               return currentRole ? handleUpdateRole(currentRole.id!, data) : handleAddRole(currentTeam.id!, data);
             }}
             onCancel={(event) => {
-              // prevent dialog bubbling issues and close
               event?.preventDefault?.();
               setDialogOpen(false);
             }}
-            isSubmitting={isSubmitting}
           />
+          // <RolesAndPermission
+          //   initialData={currentRole}
+          //   onSubmit={(data) => {
+          //     return currentRole ? handleUpdateRole(currentRole.id!, data) : handleAddRole(currentTeam.id!, data);
+          //   }}
+          //   onCancel={(event) => {
+          //     // prevent dialog bubbling issues and close
+          //     event?.preventDefault?.();
+          //     setDialogOpen(false);
+          //   }}
+          //   isSubmitting={isSubmitting}
+          // />
         )}
       </ReusableDialog>
+
+      <DeleteConfirmationModal />
     </>
   );
 };

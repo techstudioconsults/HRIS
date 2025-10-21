@@ -25,5 +25,9 @@ export const queryKeys = {
     recent: (limit?: number) => ["file", "recent", limit] as const,
     byType: (fileType: string, filters?: IFilters) => ["file", "byType", fileType, filters] as const,
   },
+  team: {
+    list: (filters?: IFilters) => ["teams", "list", filters] as const,
+    details: (id: string) => ["teams", "detail", id] as const,
+  },
   // Add other domains as needed
 };

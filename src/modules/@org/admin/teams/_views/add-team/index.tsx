@@ -1,9 +1,9 @@
-import { EmployeeForm } from "../../_components/forms/add-team";
+import { TeamForm } from "../../_components/forms/add-team";
 
-export const AddEmployee = () => {
+export const AddTeam = () => {
   return (
     <>
-      <EmployeeForm />
+      <TeamForm />
     </>
   );
 };

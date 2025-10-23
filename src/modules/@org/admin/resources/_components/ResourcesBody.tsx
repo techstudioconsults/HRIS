@@ -156,6 +156,7 @@ export const ResourcesBody = ({ defaultView = "files" }: ResourcesViewProperties
       handleDownloadResponse(downloadFolderQuery.data, folderToDownload);
       setFolderToDownload(null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [downloadFolderQuery.data, folderToDownload]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

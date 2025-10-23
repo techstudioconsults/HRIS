@@ -61,18 +61,21 @@ declare global {
 
   interface IFilters {
     page?: number;
+    limit?: number;
+    search?: string;
     status?: string;
     start_date?: string;
     end_date?: string;
   }
 
-  interface Team {
+  interface Team extends Record<string, unknown> {
     id: string;
     name: string;
     manager?: string;
     subteams?: string;
     members?: number;
     createdAt?: string;
+    updatedAt?: string;
   }
 
   interface Role {
@@ -125,7 +128,7 @@ declare global {
     accountNumber: string;
   }
 
-  interface Employee {
+  interface Employee extends Record<string, unknown> {
     id: string;
     firstName: string;
     lastName: string;

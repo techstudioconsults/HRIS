@@ -5,6 +5,7 @@ import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { EmptyState, FilteredEmptyState } from "@/components/shared/empty-state";
+import { AdvancedDataTable } from "@/components/shared/table/table";
 import type { Role as FormRole, Team as TeamFormType } from "@/modules/@org/onboarding/_components/forms/schema";
 import { TeamForm } from "@/modules/@org/onboarding/_components/forms/team/team-form";
 import type { Team as ServiceTeam } from "@/modules/@org/onboarding/services/service";
@@ -18,13 +19,11 @@ import empty1 from "~/images/empty-state.svg";
 import { AddNewEmployees } from "../../_components/forms/add-new-employees";
 import { RolesAndPermission } from "../../_components/forms/add-new-roles";
 import { useTeamEditing } from "../../_hooks/use-team-editing";
-import { DashboardTable } from "../../../_components/dashboard-table";
 import { useEmployeeService } from "../../../employee/services/use-service";
 import { useTeamService } from "../../services/use-service";
 import { teamColumn, useTeamRowActions } from "../table-data";
 
 export const AllTeams = () => {
-  // const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [status, setStatus] = useState<string>("all");
@@ -234,20 +233,24 @@ export const AllTeams = () => {
             <section>
               {teamData?.data?.items.length ? (
                 <section>
-                  <DashboardTable
+                  <AdvancedDataTable
                     data={teamData.data.items}
                     columns={teamColumn}
-                    // currentPage={teamData.data.metadata.page}
-                    // totalPages={teamData.data.metadata.totalPages}
-                    // itemsPerPage={teamData.data.metadata.limit}
-                    // hasPreviousPage={teamData.data.metadata.hasPreviousPage}
-                    // hasNextPage={teamData.data.metadata.hasNextPage}
+                    currentPage={teamData.data.metadata.page}
+                    totalPages={teamData.data.metadata.totalPages}
+                    itemsPerPage={teamData.data.metadata.limit}
+                    hasPreviousPage={teamData.data.metadata.hasPreviousPage}
+                    hasNextPage={teamData.data.metadata.hasNextPage}
                     onPageChange={handlePageChange}
                     rowActions={getRowActions}
-                    showPagination
-                    // onRowClick={(employee) => {
-                    //   router.push(`/dashboard/${user?.id}/products/${product.id}`);
-                    // }}
+                    showPagination={true}
+                    enableDragAndDrop={true}
+                    enableRowSelection={true}
+                    enableColumnVisibility={true}
+                    enableSorting={true}
+                    enableFiltering={true}
+                    mobileCardView={true}
+                    showColumnCustomization={false}
                   />
                 </section>
               ) : dateRange?.from || dateRange?.to || status !== "all" ? (

@@ -1,4 +1,5 @@
 import { AlertModal } from "@/components/shared/dialog/alert-modal";
+import { formatDate } from "@/lib/i18n/utils";
 import { useTeamService } from "@/modules/@org/admin/teams/services/use-service";
 // import { Edit, Eye, MinusCircle, Trash } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -23,7 +24,8 @@ export const teamColumn: IColumnDefinition<Team>[] = [
   },
   {
     header: "Created on",
-    accessorKey: "members",
+    accessorKey: "createdAt",
+    render: (_, team: Team) => <span>{formatDate(team.createdAt as string)}</span>,
   },
 ];
 
@@ -141,7 +143,7 @@ export const subTeamColumn: IColumnDefinition<Team>[] = [
   },
   {
     header: "Created on",
-    accessorKey: "members",
+    accessorKey: "createdAt",
   },
 ];
 

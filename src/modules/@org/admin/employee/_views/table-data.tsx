@@ -1,10 +1,43 @@
+import { AlertModal } from "@/components/shared/dialog/alert-modal";
+import { IColumnDefinition, IRowAction } from "@/components/shared/table/table";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+
+import { useEmployeeService } from "../services/use-service";
 
 export const useEmployeeRowActions = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const { useDeleteEmployee } = useEmployeeService();
+  const { mutateAsync: deleteEmployee, isPending } = useDeleteEmployee();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const resetModalState = () => {
+    setIsDeleteModalOpen(false);
+    setEmployeeToDelete(null);
+    setIsDeleting(false);
+  };
+
+  const handleDeleteEmployee = async () => {
+    if (!employeeToDelete || isDeleting) return;
+
+    setIsDeleting(true);
+
+    await deleteEmployee(employeeToDelete.id);
+    // Manually invalidate the employees cache to ensure table refreshes
+    await queryClient.invalidateQueries({ queryKey: ["employee", "list"] });
+    toast.success(`Employee ${employeeToDelete.firstName} ${employeeToDelete.lastName} deleted successfully!`);
+
+    // Close modal after successful deletion
+    resetModalState();
+  };
 
   const getRowActions = (employee: Employee) => {
     const actions: IRowAction<Employee>[] = [];
@@ -21,12 +54,40 @@ export const useEmployeeRowActions = () => {
         onClick: () => {
           router.push(`/admin/employees/add-employee?employeeid=${employee.id}`);
         },
-        // icon: <Eye className={`text-high-primary`} />,
+        // icon: <Edit className={`text-high-primary`} />,
+      },
+      {
+        label: "Delete Employee",
+        onClick: () => {
+          setEmployeeToDelete(employee);
+          setIsDeleteModalOpen(true);
+        },
+        // icon: <Trash className={`text-high-error`} />,
       },
     );
     return actions;
   };
-  return { getRowActions };
+
+  const DeleteConfirmationModal = () => (
+    <AlertModal
+      isOpen={isDeleteModalOpen}
+      onClose={() => {
+        // Only allow closing if not currently deleting
+        if (!isDeleting && !isPending) {
+          resetModalState();
+        }
+      }}
+      onConfirm={handleDeleteEmployee}
+      loading={isDeleting || isPending}
+      type="warning"
+      title="Delete Employee"
+      description={`Are you sure you want to delete "${employeeToDelete?.firstName} ${employeeToDelete?.lastName}"? This action cannot be undone.`}
+      confirmText="Delete Employee"
+      cancelText="Cancel"
+    />
+  );
+
+  return { getRowActions, DeleteConfirmationModal };
 };
 
 export const employeeColumn: IColumnDefinition<Employee>[] = [
@@ -39,7 +100,7 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
           src={
             typeof employee.avatar === "string" && employee.avatar.length > 0
               ? employee.avatar
-              : "https://res.cloudinary.com/kingsleysolomon/image/upload/v1742989662/byte-alley/fisnolvvuvfiebxskgbs.svg"
+              : "https://res.cloudinary.com/kingsleysolomon/image/upload/v1699879092/techstudio/icons/avatar_vvgjji_zzdq9m.png"
           }
           alt={employee.firstName}
           width={100}
@@ -58,12 +119,12 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
   },
   {
     header: "Role",
-    accessorKey: "email",
+    accessorKey: "role",
     render: (_, employee: Employee) => <span>{employee?.employmentDetails?.role?.name}</span>,
   },
   {
     header: "Department",
-    accessorKey: "email",
+    accessorKey: "department",
     render: (_, employee: Employee) => <span>{employee?.employmentDetails?.team?.name}</span>,
   },
   {

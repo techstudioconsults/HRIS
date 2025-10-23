@@ -2,6 +2,7 @@
 "use client";
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
+import { useActiveNavigation } from "@/hooks/use-active-navigation";
 import {
   AudioWaveform,
   BookOpen,
@@ -160,13 +161,16 @@ export function AppSidebar({
     secondaryTitle: secondaryTitle ?? `project`,
   };
 
+  // Use active navigation hook to determine active states
+  const activeNavItems = useActiveNavigation(resolved.navMain);
+
   return (
     <Sidebar collapsible="icon" {...properties}>
       <SidebarHeader>
         <TeamSwitcher teams={resolved.teams} />
       </SidebarHeader>
       <SidebarContent>
-        {navMainTitle && <NavMain title={resolved.mainTitle} items={resolved.navMain} />}
+        {navMainTitle && <NavMain title={resolved.mainTitle} items={activeNavItems} />}
         {secondaryTitle && <NavProjects title={resolved.secondaryTitle} projects={resolved.projects} />}
       </SidebarContent>
       <SidebarFooter>

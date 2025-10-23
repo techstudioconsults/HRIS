@@ -227,41 +227,40 @@ export const adminNavItems = [
     title: "Dashboard",
     url: "/admin/dashboard",
     icon: Element3,
-    isActive: true,
   },
   {
     title: "Employees",
     url: "/admin/employees",
     icon: Profile2User,
-    isActive: true,
+    // subItems: [
+    //   { title: "All Employees", url: "/admin/employees" },
+    //   { title: "Add Employee", url: "/admin/employees/add" },
+    //   { title: "Employee Records", url: "/admin/employees/records" },
+    // ],
   },
   {
     id: "teams",
     title: "Teams",
     url: "/admin/teams",
     icon: People,
-    isActive: true,
   },
   {
     id: "resources",
     title: "Resources",
     url: "/admin/resources",
     icon: People,
-    isActive: true,
   },
   {
     id: "payroll",
     title: "Payroll",
     url: "/admin/payroll",
     icon: CardReceive,
-    isActive: true,
   },
   {
     id: "attendance",
     title: "Attendance",
     url: "/admin/attendance",
     icon: Clock,
-    isActive: true,
   },
 ];
 

@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import Loading from "@/app/Loading";
 import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import MainButton from "@/components/shared/button";
 import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState, FilteredEmptyState } from "@/components/shared/empty-state";
 import ExportAction from "@/components/shared/export-action";
+import { AdvancedDataTable } from "@/components/shared/table/table";
 import { Button } from "@/components/ui/button";
 import { updateQueryParamameters } from "@/hooks/use-search-parameters";
 import { Add, Filter } from "iconsax-reactjs";
@@ -15,8 +17,6 @@ import { useDebounce } from "use-debounce";
 
 import empty1 from "~/images/empty-state.svg";
 import { FilterForm } from "../../_components/forms/filter-form";
-import { DashboardTable } from "../../../_components/dashboard-table";
-import { DashboardTableSkeleton } from "../../../_components/dashboard-table/skeleton";
 import { useEmployeeService } from "../../services/use-service";
 import { employeeColumn, useEmployeeRowActions } from "../table-data";
 
@@ -41,7 +41,7 @@ export const AllEmployees = () => {
   const [filters, setFilters] = useState<any>(initialFilters);
   const [debouncedFilters] = useDebounce(filters, 300);
 
-  const { getRowActions } = useEmployeeRowActions();
+  const { getRowActions, DeleteConfirmationModal } = useEmployeeRowActions();
   const { useGetAllEmployees, useGetAllTeams, useDownloadEmployees } = useEmployeeService();
   const { refetch: downloadProducts } = useDownloadEmployees();
   const { data: teams = [] } = useGetAllTeams();
@@ -169,11 +169,11 @@ export const AllEmployees = () => {
         </section>
 
         {isLoading ? (
-          <DashboardTableSkeleton />
+          <Loading text={`Loading employees table...`} className={`w-fill h-fit p-20`} />
         ) : (
           <section>
             {employeeData?.data?.items.length ? (
-              <DashboardTable
+              <AdvancedDataTable
                 data={employeeData.data.items}
                 columns={employeeColumn}
                 currentPage={employeeData.data.metadata.page}
@@ -183,7 +183,14 @@ export const AllEmployees = () => {
                 hasNextPage={employeeData.data.metadata.hasNextPage}
                 onPageChange={handlePageChange}
                 rowActions={getRowActions}
-                showPagination
+                showPagination={true}
+                enableDragAndDrop={true}
+                enableRowSelection={true}
+                enableColumnVisibility={true}
+                enableSorting={true}
+                enableFiltering={true}
+                mobileCardView={true}
+                showColumnCustomization={false}
               />
             ) : debouncedSearch || Object.values(filters).some((value) => value && value !== "1") ? (
               <FilteredEmptyState onReset={handleResetFilters} />
@@ -202,6 +209,8 @@ export const AllEmployees = () => {
           </section>
         )}
       </section>
+
+      <DeleteConfirmationModal />
     </section>
   );
 };

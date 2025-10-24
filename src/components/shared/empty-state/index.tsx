@@ -64,7 +64,7 @@ export const EmptyState = ({
       {/* Content container */}
       <div className="flex flex-col items-center">
         {title && <h3 className={cn(`text-h5 text-primary font-semibold`, titleClassName)}>{title}</h3>}
-        <p className={cn("text-muted-foreground max-w-[500px] font-medium", descriptionClassName)}>{description}</p>
+        <p className={cn("text-muted-foreground font-medium", descriptionClassName)}>{description}</p>
         {button ? (
           <SkiButton onClick={button.onClick} variant="primary" size="xl" className="mt-6">
             {button.icon && <span className="mr-2">{button.icon}</span>}

@@ -2,6 +2,7 @@
 
 import { GlobalSearchInput } from "@/components/core/miscellaneous/search-input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 import { ArrowDown2, Notification } from "iconsax-reactjs";
 import { signOut } from "next-auth/react";
 import { useLocale } from "next-intl";
@@ -32,7 +33,7 @@ export default function TopBar({ adminName, notificationsCount = 0, className = 
   };
 
   return (
-    <header className={`bg-background grid h-16 grid-cols-2 items-center gap-4 px-0 lg:px-4 ${className}`}>
+    <header className={cn("bg-background grid h-16 grid-cols-2 items-center gap-4 px-0 lg:px-4", className)}>
       {/* Search Input */}
       <div className="relative hidden w-full max-w-[240px] items-center gap-4 md:flex">
         <SidebarTrigger className="-ml-1" />

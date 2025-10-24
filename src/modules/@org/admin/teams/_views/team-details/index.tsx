@@ -4,6 +4,7 @@ import Loading from "@/app/Loading";
 import MainButton from "@/components/shared/button";
 import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState } from "@/components/shared/empty-state";
+import { AdvancedDataTable } from "@/components/shared/table/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { formatDate } from "@/lib/tools/format";
@@ -12,7 +13,6 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 
 import empty1 from "~/images/empty-state.svg";
-import { DashboardTable } from "../../../_components/dashboard-table";
 import { CardGroup } from "../../../dashboard/_components/card-group";
 import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
 import { useTeamService } from "../../services/use-service";
@@ -42,13 +42,13 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
           </div>
         </div>
         <div className="flex items-center gap-5">
-          <MainButton variant="primary" size="lg" isLeftIconVisible icon={<Plus />}>
+          <MainButton variant="primary" size="xl" isLeftIconVisible icon={<Plus />}>
             Add Sub-team
           </MainButton>
           <GenericDropdown
             align={`end`}
             trigger={
-              <div className={`bg-background border-border flex size-10 items-center justify-center rounded-md border`}>
+              <div className={`bg-background border-border flex size-12 items-center justify-center rounded-md border`}>
                 <More className="size-5" />
               </div>
             }
@@ -94,11 +94,18 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
         {isLoading ? (
           <Loading text={`Loading sub-teams...`} className={`w-fill h-fit p-20`} />
         ) : subTeams.length > 0 ? (
-          <DashboardTable<Team>
+          <AdvancedDataTable
             data={subTeams}
             columns={subTeamColumn}
             rowActions={getRowActions}
             showPagination={false}
+            enableDragAndDrop={true}
+            enableRowSelection={true}
+            enableColumnVisibility={true}
+            enableSorting={true}
+            enableFiltering={true}
+            mobileCardView={true}
+            showColumnCustomization={false}
           />
         ) : (
           <EmptyState

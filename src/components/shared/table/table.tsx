@@ -117,6 +117,7 @@ interface IAdvancedTableProperties<T extends DataItem> {
   customRowRenderer?: (row: Row<T>) => React.ReactNode;
   customHeaderRenderer?: () => React.ReactNode;
   customFooterRenderer?: () => React.ReactNode;
+  emptyState?: React.ReactNode;
 }
 
 export const schema = z.object({
@@ -302,6 +303,7 @@ export function AdvancedDataTable<T extends DataItem>({
   customRowRenderer: _customRowRenderer, // eslint-disable-line @typescript-eslint/no-unused-vars
   customHeaderRenderer,
   customFooterRenderer,
+  emptyState,
 }: IAdvancedTableProperties<T>) {
   const [data, setData] = React.useState(() => initialData);
   const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({});
@@ -469,7 +471,7 @@ export function AdvancedDataTable<T extends DataItem>({
       {renderHeader()}
 
       {/* Desktop Table View */}
-      <div className="hidden h-full overflow-auto rounded-lg bg-white md:block">
+      <div className="hidden h-full overflow-auto rounded-lg bg-white shadow-md md:block">
         {enableDragAndDrop ? (
           <DndContext
             collisionDetection={closestCenter}
@@ -505,7 +507,7 @@ export function AdvancedDataTable<T extends DataItem>({
                 ) : (
                   <TableRow>
                     <TableCell colSpan={columns.length + (rowActions ? 1 : 0)} className="h-24 text-center">
-                      No results.
+                      {emptyState || "No results."}
                     </TableCell>
                   </TableRow>
                 )}
@@ -528,7 +530,7 @@ export function AdvancedDataTable<T extends DataItem>({
                 </TableRow>
               ))}
             </TableHeader>
-            <TableBody>
+            <TableBody className="bg-red-600">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow

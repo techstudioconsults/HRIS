@@ -127,12 +127,12 @@ export const AllEmployees = () => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <SearchInput className="h-10" placeholder="Search employee..." onSearch={handleSearchChange} />
+              <SearchInput className="h-12" placeholder="Search employee..." onSearch={handleSearchChange} />
               <GenericDropdown
                 contentClassName="bg-background"
                 trigger={
                   <Button
-                    className="border-gray-75 bg-background rounded-md border-1 px-3 text-black dark:text-white"
+                    className="border-gray-75 bg-background h-12 rounded-md border-1 px-3 text-black dark:text-white"
                     size="lg"
                   >
                     <Filter className="size-5" />
@@ -154,12 +154,13 @@ export const AllEmployees = () => {
                 status={undefined}
                 buttonText="Export Employees"
                 fileName="Product"
+                size="xl"
               />
               <MainButton
                 href="/admin/employees/add-employee"
                 variant="primary"
                 isLeftIconVisible
-                size="lg"
+                size="xl"
                 icon={<Add />}
               >
                 Add Employee

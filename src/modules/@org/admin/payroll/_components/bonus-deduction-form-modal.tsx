@@ -1,0 +1,152 @@
+"use client";
+
+import MainButton from "@/components/shared/button";
+import { ReusableDialog } from "@/components/shared/dialog/Dialog";
+import { FormField } from "@/components/shared/inputs/FormFields";
+import { Switch } from "@/components/ui/switch";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { BonusDeductionFormData } from "../types";
+
+const bonusDeductionSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  valueType: z.enum(["percentage", "fixed"]),
+  value: z.number().min(0, "Value must be positive"),
+  status: z.boolean(),
+  type: z.enum(["bonus", "deduction"]),
+});
+
+interface BonusDeductionFormModalProperties {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (data: BonusDeductionFormData) => void;
+  type: "bonus" | "deduction";
+  initialData?: BonusDeductionFormData;
+  isEditing?: boolean;
+}
+
+export function BonusDeductionFormModal({
+  open,
+  onOpenChange,
+  onSubmit,
+  type,
+  initialData,
+  isEditing = false,
+}: BonusDeductionFormModalProperties) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const methods = useForm<BonusDeductionFormData>({
+    resolver: zodResolver(bonusDeductionSchema),
+    defaultValues: initialData || {
+      name: "",
+      valueType: "percentage",
+      value: 0,
+      status: true,
+      type: type,
+    },
+  });
+
+  const { handleSubmit, watch, setValue } = methods;
+  const valueType = watch("valueType");
+  const status = watch("status");
+
+  const handleFormSubmit = async (data: BonusDeductionFormData, event?: React.BaseSyntheticEvent) => {
+    if (event) {
+      event.preventDefault();
+    }
+    setIsSubmitting(true);
+    try {
+      await onSubmit(data);
+      methods.reset();
+      onOpenChange(false);
+    } catch {
+      // Handle error silently or show toast notification
+      // Error handling can be improved with toast notifications
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCancel = () => {
+    methods.reset();
+    onOpenChange(false);
+  };
+
+  return (
+    <ReusableDialog
+      trigger={<></>}
+      open={open}
+      onOpenChange={onOpenChange}
+      title={`${isEditing ? "Edit" : "Add"} ${type}`}
+      className="!max-w-lg"
+    >
+      <FormProvider {...methods}>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            handleSubmit(handleFormSubmit)(event);
+          }}
+          className="space-y-6"
+        >
+          <div className="space-y-4">
+            <FormField
+              name="name"
+              label={`${type} Name`}
+              placeholder={`Enter ${type} name`}
+              type="text"
+              className="!h-14 w-full"
+            />
+
+            <FormField
+              name="valueType"
+              label="Value Type"
+              placeholder="Select type"
+              type="select"
+              className="!h-14 w-full"
+              options={[
+                { label: "Percentage", value: "percentage" },
+                { label: "Fixed Amount", value: "fixed" },
+              ]}
+            />
+
+            <FormField
+              name="value"
+              label="Value"
+              placeholder={`Enter value${valueType === "percentage" ? " (e.g., 4.5)" : " (e.g., 3000)"}`}
+              type="number"
+              className="!h-14 w-full"
+            />
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium">Active</label>
+                <Switch checked={status} onCheckedChange={(checked) => setValue("status", checked)} />
+              </div>
+              <p className="text-xs text-gray-500">
+                Setting this to active means you want this {type} to reoccur in the other cycles.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <MainButton
+              className="w-full"
+              type="button"
+              variant="outline"
+              onClick={handleCancel}
+              isDisabled={isSubmitting}
+            >
+              Cancel
+            </MainButton>
+            <MainButton className="w-full" type="submit" variant="primary" isDisabled={isSubmitting}>
+              {isSubmitting ? "Saving..." : "Continue"}
+            </MainButton>
+          </div>
+        </form>
+      </FormProvider>
+    </ReusableDialog>
+  );
+}

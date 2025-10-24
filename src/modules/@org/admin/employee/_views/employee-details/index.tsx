@@ -4,6 +4,7 @@
 import MainButton from "@/components/shared/button";
 import { GenericDropdown } from "@/components/shared/drop-down";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Card } from "@/components/ui/card";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { formatDate } from "@/lib/tools/format";
 import { Call, More, Sms } from "iconsax-reactjs";
@@ -32,13 +33,13 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
           </div>
         </div>
         <div className="flex items-center gap-5">
-          <MainButton href={`/admin/employees/add-employee?employeeid=${employeeData?.id}`} variant="primary" size="lg">
+          <MainButton href={`/admin/employees/add-employee?employeeid=${employeeData?.id}`} variant="primary" size="xl">
             Edit Employee
           </MainButton>
           <GenericDropdown
             align={`end`}
             trigger={
-              <div className={`bg-background border-border flex size-10 items-center justify-center rounded-md border`}>
+              <div className={`bg-background border-border flex size-12 items-center justify-center rounded-md border`}>
                 <More className="size-5" />
               </div>
             }
@@ -60,9 +61,9 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
       {isLoading ? (
         <EmployeeDetailsSkeleton />
       ) : (
-        <div className="grid grid-cols-1 gap-5 py-5 lg:grid-cols-[minmax(0,30%)_minmax(0,70%)]">
+        <section className="grid grid-cols-1 gap-5 py-5 lg:grid-cols-[minmax(0,30%)_minmax(0,70%)]">
           {/* Employee summary */}
-          <div className="bg-white p-6 lg:p-8 dark:bg-black">
+          <Card className="bg-background p-6 shadow-md lg:p-8">
             <div className="flex flex-col items-center justify-between text-center">
               <Avatar className="border-primary bg-gray size-[8rem]">
                 <AvatarImage src={employeeData?.avatar || "https://github.com/shadcn.png"} />
@@ -112,11 +113,11 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
                 </MainButton>
               </div>
             </div>
-          </div>
+          </Card>
 
-          <div>
+          <section className="space-y-6">
             {/* Personal Information Section */}
-            <div className="bg-white p-8 dark:bg-black">
+            <Card className="bg-background p-8 shadow-md">
               <h2 className="mb-4 text-lg font-semibold">Personal Information</h2>
               <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
                 <div>
@@ -140,10 +141,10 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
                   <p className="font-medium">{employeeData?.phoneNumber}</p>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Employment Details Section */}
-            <div className="bg-white p-6 dark:bg-black">
+            <Card className="bg-background p-6 shadow-md">
               <h2 className="mb-4 text-lg font-semibold">Employment Details</h2>
               <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
                 <div>
@@ -167,10 +168,10 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
                   <p className="font-medium">{employeeData?.employmentDetails?.role?.name}</p>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Salary & Payroll Details */}
-            <div className="bg-white p-6 dark:bg-black">
+            <Card className="bg-background p-6 shadow-md">
               <h2 className="mb-4 text-lg font-semibold">Salary & Payroll Details</h2>
               <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
                 <div>
@@ -190,7 +191,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
                   <p className="font-medium">{employeeData?.payProfile?.accountName || `N/A`}</p>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {employeeData?.document && (
               <div className="bg-white p-6 dark:bg-black">
@@ -207,8 +208,8 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
                 </div>
               </div>
             )}
-          </div>
-        </div>
+          </section>
+        </section>
       )}
     </div>
   );

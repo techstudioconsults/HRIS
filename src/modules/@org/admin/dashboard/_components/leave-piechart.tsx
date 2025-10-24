@@ -32,7 +32,7 @@ const teamData = [
 
 export function LeaveDistributionPieChart() {
   return (
-    <Card className="bg-background w-full">
+    <Card className="bg-background w-full shadow-md">
       <CardHeader>
         <CardTitle className="text-lg font-semibold text-gray-800">Leave Distribution by Teams</CardTitle>
         {/* <p className="text-sm text-gray-500">This month</p> */}

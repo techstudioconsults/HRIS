@@ -196,7 +196,7 @@ export const AllTeams = () => {
             </div>
             <div className="">
               <div className="flex items-center gap-2">
-                <SearchInput className={`h-10`} placeholder={`Search teams...`} onSearch={setSearchQuery} />
+                <SearchInput className={`h-12`} placeholder={`Search teams...`} onSearch={setSearchQuery} />
                 {/* <MainButton
                 className="border-gray-75 bg-background border-1 px-3 text-black dark:text-white"
                 variant="outline"
@@ -218,7 +218,7 @@ export const AllTeams = () => {
                 <MainButton
                   variant="primary"
                   isLeftIconVisible
-                  size="lg"
+                  size="xl"
                   icon={<Add />}
                   onClick={() => handleOpenTeamDialog()}
                 >

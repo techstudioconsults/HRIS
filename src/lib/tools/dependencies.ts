@@ -1,4 +1,5 @@
 import { EmployeeService } from "@/modules/@org/admin/employee/services/service";
+import { PayrollService } from "@/modules/@org/admin/payroll/services/service";
 import { ResourceService } from "@/modules/@org/admin/resources/services/service";
 import { TeamService } from "@/modules/@org/admin/teams/services/service";
 import { AuthService } from "@/modules/@org/auth/services/auth.service";
@@ -15,6 +16,7 @@ const dependencies = {
   EMPLOYEE_SERVICE: Symbol("EmployeeService"),
   TEAM_SERVICE: Symbol("TeamService"),
   RESOURCE_SERVICE: Symbol("ResourceService"),
+  PAYROLL_SERVICE: Symbol("PayrollService"),
 };
 
 interface IDependencyContainer {
@@ -29,7 +31,7 @@ const onBoardingService = new OnboardingService(httpAdapter);
 const employeeService = new EmployeeService(httpAdapter);
 const teamService = new TeamService(httpAdapter);
 const resourceService = new ResourceService(httpAdapter);
-
+const payrollService = new PayrollService(httpAdapter);
 class DependencyContainer implements IDependencyContainer {
   _dependencies = {};
 
@@ -53,5 +55,6 @@ container.add(dependencies.ONBOARDING_SERVICE, onBoardingService);
 container.add(dependencies.EMPLOYEE_SERVICE, employeeService);
 container.add(dependencies.TEAM_SERVICE, teamService);
 container.add(dependencies.RESOURCE_SERVICE, resourceService);
+container.add(dependencies.PAYROLL_SERVICE, payrollService);
 
 export { container, dependencies };

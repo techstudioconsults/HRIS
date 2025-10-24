@@ -3,6 +3,7 @@
 import Loading from "@/app/Loading";
 import MainButton from "@/components/shared/button";
 import { EmptyState } from "@/components/shared/empty-state";
+import { AdvancedDataTable } from "@/components/shared/table/table";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -20,7 +21,6 @@ import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 import empty1 from "~/images/empty-state.svg";
-import { DashboardTable } from "../../../_components/dashboard-table";
 import { CardGroup } from "../../../dashboard/_components/card-group";
 import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
 import { useEmployeeService } from "../../../employee/services/use-service";
@@ -211,7 +211,18 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
         {isLoading ? (
           <Loading text={`Loading team members...`} className={`w-fill h-fit p-20`} />
         ) : members.length > 0 ? (
-          <DashboardTable<Employee> data={members} columns={columns} showPagination={false} />
+          <AdvancedDataTable
+            data={members}
+            columns={columns}
+            showPagination={false}
+            enableDragAndDrop={true}
+            enableRowSelection={true}
+            enableColumnVisibility={true}
+            enableSorting={true}
+            enableFiltering={true}
+            mobileCardView={true}
+            showColumnCustomization={false}
+          />
         ) : (
           <EmptyState
             className="bg-background"

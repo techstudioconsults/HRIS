@@ -13,6 +13,11 @@ interface DashboardCardProperties {
   showTrendIcon?: boolean; // New prop to control trend icon visibility
   trend?: "up" | "down"; // New prop to control trend direction
   onAction?: () => void;
+  // Text color customization props
+  titleColor?: string;
+  valueColor?: string;
+  percentageColor?: string;
+  actionTextColor?: string;
 }
 
 export function DashboardCard({
@@ -26,12 +31,16 @@ export function DashboardCard({
   onAction,
   showTrendIcon = false, // Default to false
   trend = "up",
+  titleColor,
+  valueColor,
+  percentageColor,
+  actionTextColor,
 }: DashboardCardProperties) {
   return (
-    <div className={cn("bg-background rounded-xl p-6 transition-all hover:shadow-md", className)}>
-      <h3 className="text-muted-foreground pb-3 text-sm font-medium">{title}</h3>
+    <div className={cn("bg-background rounded-xl p-6 shadow-md transition-all", className)}>
+      <h3 className={cn("pb-3 text-sm font-medium", titleColor)}>{title}</h3>
       <div className="flex items-center justify-between">
-        <p className="text-3xl font-bold">{value}</p>
+        <p className={cn("text-3xl font-bold", valueColor)}>{value}</p>
         {icon && (
           <div
             className={cn("flex h-10 w-10 items-center justify-center rounded-full", {
@@ -60,20 +69,28 @@ export function DashboardCard({
                   />
                 )}
                 {percentage && (
-                  <p className={cn("text-sm", percentage.startsWith("+") ? "text-success" : "text-success")}>
+                  <p
+                    className={cn(
+                      "text-sm",
+                      !percentageColor && (percentage.startsWith("+") ? "text-success" : "text-success"),
+                    )}
+                    style={percentageColor ? { color: percentageColor } : undefined}
+                  >
                     {percentage}
                   </p>
                 )}
               </div>
               {actionText && (
-                <MainButton
-                  variant="link"
-                  size="sm"
-                  onClick={onAction}
-                  className="text-primary p-0 text-sm font-medium hover:underline"
-                >
-                  {actionText}
-                </MainButton>
+                <div style={actionTextColor ? { color: actionTextColor } : undefined}>
+                  <MainButton
+                    variant="link"
+                    size="sm"
+                    onClick={onAction}
+                    className={cn("p-0 text-sm font-medium hover:underline", !actionTextColor && "text-primary")}
+                  >
+                    {actionText}
+                  </MainButton>
+                </div>
               )}
             </div>
           </div>

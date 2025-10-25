@@ -2,13 +2,14 @@
 
 import { BackButton } from "@/components/shared/back-button";
 import MainButton from "@/components/shared/button";
+import { ConfirmationDialog } from "@/components/shared/dialog/confirmation-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { formatDate } from "@/lib/tools/format";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { CalendarModal } from "@/modules/@org/admin/payroll/_components/calendar-modal";
 import { Eye, EyeSlash } from "iconsax-reactjs";
 import { CalendarIcon, Info } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 import { DashboardCard } from "../../dashboard/_components/dashboard-card";
@@ -18,10 +19,26 @@ interface SchedulePayrollDrawerProperties {
   onOpenChange: (open: boolean) => void;
 }
 
-export const SchedulePayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerProperties) => {
+export const AddPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerProperties) => {
   const [isNetPayVisible, setIsNetPayVisible] = useState(false);
   const [isChangeDateModalOpen, setIsChangeDateModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [isPayrollRunning, setIsPayrollRunning] = useState(false);
+
+  const handleRunPayroll = async () => {
+    setIsPayrollRunning(true);
+    try {
+      // Add your payroll run logic here
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Close the drawer after successful payroll run
+      onOpenChange(false);
+    } catch {
+      // Handle error appropriately
+    } finally {
+      setIsPayrollRunning(false);
+    }
+  };
 
   return (
     <>
@@ -35,8 +52,8 @@ export const SchedulePayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDra
                   <CalendarIcon className="size-5 text-blue-600" />
                 </div>
                 <div>
-                  <DrawerTitle className="text-lg font-semibold">Schedule Payroll</DrawerTitle>
-                  <DrawerDescription>Set up automated payroll processing</DrawerDescription>
+                  <DrawerTitle className="text-lg font-semibold">Payroll Review(July Cycle)</DrawerTitle>
+                  {/* <DrawerDescription>Set up automated payroll processing</DrawerDescription> */}
                 </div>
               </div>
             </div>
@@ -44,12 +61,6 @@ export const SchedulePayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDra
 
           <section className="flex-1 space-y-6 overflow-y-auto p-6">
             <h1 className="text-xl font-bold">Summary Overview</h1>
-            <div className="bg-accent/10 border-accent item-center flex gap-4 rounded-lg border p-4 text-sm text-gray-500">
-              <Info size={16} />
-              <p>
-                Payroll is scheduled for {formatDate(selectedDate, { day: "2-digit", month: "long", year: "numeric" })}
-              </p>
-            </div>
             <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <DashboardCard
                 title="Total Employees"
@@ -88,10 +99,22 @@ export const SchedulePayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDra
                 <p>N10000</p>
               </div>
               <div className="flex items-center justify-between font-bold">
-                <p>Total</p>
+                <p>Total Amount</p>
                 <p>N10000</p>
               </div>
             </section>
+            <div className="bg-accent/10 border-accent item-center flex gap-4 rounded-lg border p-4 text-sm text-gray-500">
+              <div className="size-8">
+                <Info size={20} />
+              </div>
+              <p>
+                Your current wallet balance is insufficient to complete this payroll. Please{" "}
+                <Link href={"/"} className="font-semibold underline">
+                  top up your wallet
+                </Link>{" "}
+                to proceed.
+              </p>
+            </div>
             <section>
               <h1 className="text-xl font-bold">Approvers</h1>
               <section className="space-y-8 rounded-lg p-4 shadow-md">
@@ -126,20 +149,24 @@ export const SchedulePayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDra
           </section>
           <div className="border-t p-6">
             <div className="flex gap-3">
-              <MainButton
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                className="border-destructive text-destructive flex-1"
+              <ConfirmationDialog
+                action={{
+                  pending: isPayrollRunning,
+                  onOpenChange: () => {},
+                  title: "Confirm Payroll Run?",
+                  description:
+                    "Once you proceed, payroll will be sent for approval. After all required approvers approve it, the funds will be disbursed to employees' accounts.",
+                  onConfirm: handleRunPayroll,
+                  buttonName: "Yes, Run Payroll",
+                  img: "/images/alert.png",
+                }}
               >
-                Cancel
-              </MainButton>
-              <MainButton
-                variant="primary"
-                type="button"
-                onClick={() => setIsChangeDateModalOpen(true)}
-                className="flex-1"
-              >
-                Change Schedule Date
+                <MainButton variant="primary" type="button" className="flex-1">
+                  Run Payroll
+                </MainButton>
+              </ConfirmationDialog>
+              <MainButton variant="outline" onClick={() => setIsChangeDateModalOpen(true)} className="flex-1">
+                Schedule Payment
               </MainButton>
             </div>
           </div>

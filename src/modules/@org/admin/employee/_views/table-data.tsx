@@ -1,5 +1,6 @@
 import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { IColumnDefinition, IRowAction } from "@/components/shared/table/table";
+import { EmailTooltip, NameTooltip } from "@/components/shared/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
@@ -108,7 +109,9 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
           className={`bg-low-grey-III h-8 w-8 rounded-full object-cover`}
         />
         <div className="flex flex-col space-y-2">
-          <span className="text-sm font-medium lg:text-[16px]">{`${employee.firstName} ${employee.lastName}`}</span>
+          <NameTooltip name={`${employee.firstName} ${employee.lastName}`}>
+            <span className="text-sm font-medium lg:text-[16px]">{`${employee.firstName} ${employee.lastName}`}</span>
+          </NameTooltip>
         </div>
       </div>
     ),
@@ -116,6 +119,11 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
   {
     header: "Email",
     accessorKey: "email",
+    render: (_, employee: Employee) => (
+      <EmailTooltip email={employee?.email}>
+        <span className="truncate">{employee?.email.slice(0, 10)}...</span>
+      </EmailTooltip>
+    ),
   },
   {
     header: "Role",

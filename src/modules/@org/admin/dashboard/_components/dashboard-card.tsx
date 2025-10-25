@@ -40,7 +40,7 @@ export function DashboardCard({
     <div className={cn("bg-background rounded-xl p-6 shadow-md transition-all", className)}>
       <h3 className={cn("pb-3 text-sm font-medium", titleColor)}>{title}</h3>
       <div className="flex items-center justify-between">
-        <p className={cn("text-3xl font-bold", valueColor)}>{value}</p>
+        <div className={cn("text-3xl font-bold", valueColor)}>{value}</div>
         {icon && (
           <div
             className={cn("flex h-10 w-10 items-center justify-center rounded-full", {

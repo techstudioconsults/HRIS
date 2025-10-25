@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import SkiButton from "../button";
+import MainButton from "../button";
 import { ReusableDialog } from "./Dialog";
 
 export const ConfirmationDialog = ({
@@ -31,13 +31,18 @@ export const ConfirmationDialog = ({
       wrapperClassName={`flex flex-col items-center justify-center text-center`}
     >
       <div className="flex justify-center gap-4 pt-4">
-        <SkiButton variant="outline" onClick={() => setIsDialogOpen(false)}>
+        <MainButton
+          className="text-destructive border-destructive w-full"
+          variant="outline"
+          onClick={() => setIsDialogOpen(false)}
+        >
           Cancel
-        </SkiButton>
-        <SkiButton
+        </MainButton>
+        <MainButton
+          className="w-full"
           isDisabled={action.pending}
           isLoading={action.pending}
-          variant="destructive"
+          variant="primary"
           onClick={() => {
             action.onConfirm();
             setIsDialogOpen(false);
@@ -45,7 +50,7 @@ export const ConfirmationDialog = ({
           }}
         >
           {action.buttonName}
-        </SkiButton>
+        </MainButton>
       </div>
     </ReusableDialog>
   );

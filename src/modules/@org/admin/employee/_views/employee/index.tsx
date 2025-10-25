@@ -50,7 +50,8 @@ export const AllEmployees = () => {
   const apiFilters = useMemo(
     () => ({
       ...debouncedFilters,
-      ...(debouncedSearch && { search: debouncedSearch }), // Include search here
+      // Always include search parameter - empty string means no search filter
+      search: debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : undefined,
       page: debouncedFilters.page ? Number(debouncedFilters.page) : 1,
     }),
     [debouncedFilters, debouncedSearch], // Add debouncedSearch to dependencies
@@ -61,8 +62,14 @@ export const AllEmployees = () => {
     isLoading,
     refetch,
   } = useGetAllEmployees(apiFilters, {
-    keepPreviousData: true,
-    staleTime: 1000 * 60 * 5,
+    keepPreviousData: false, // Don't keep previous data to ensure fresh results
+    staleTime: 0, // Always consider data stale to ensure fresh API calls
+    cacheTime: 0, // Don't cache data to prevent stale data issues
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnMount: true, // Always refetch when component mounts
+    refetchOnReconnect: true, // Refetch when network reconnects
+    retry: 1, // Only retry once on failure
+    retryDelay: 1000, // Wait 1 second before retry
   });
 
   // Stable filter change handler
@@ -83,7 +90,8 @@ export const AllEmployees = () => {
   // Update URL when filters change
   useEffect(() => {
     const parameters = {
-      ...(debouncedSearch && { search: debouncedSearch }),
+      // Only include search in URL if it has actual content
+      ...(debouncedSearch && debouncedSearch.trim() && { search: debouncedSearch.trim() }),
       ...(debouncedFilters.teamId && { teamId: debouncedFilters.teamId }),
       ...(debouncedFilters.roleId && { roleId: debouncedFilters.roleId }),
       ...(debouncedFilters.status && { status: debouncedFilters.status }),
@@ -94,9 +102,16 @@ export const AllEmployees = () => {
     updateQueryParamameters(router, pathname, searchParameters, parameters);
   }, [debouncedSearch, debouncedFilters, router, pathname, searchParameters]);
 
-  const handlePageChange = useCallback((page: number) => {
-    setFilters((previous: any) => ({ ...previous, page: page.toString() }));
-  }, []);
+  const handlePageChange = useCallback(
+    (page: number) => {
+      setFilters((previous: any) => ({ ...previous, page: page.toString() }));
+      // Force refetch when page changes to ensure fresh data
+      if (refetch) {
+        refetch();
+      }
+    },
+    [refetch],
+  );
 
   const handleSearchChange = useCallback((query: string) => {
     setSearchQuery(query);
@@ -193,7 +208,8 @@ export const AllEmployees = () => {
                 mobileCardView={true}
                 showColumnCustomization={false}
               />
-            ) : debouncedSearch || Object.values(filters).some((value) => value && value !== "1") ? (
+            ) : (debouncedSearch && debouncedSearch.trim()) ||
+              Object.values(filters).some((value) => value && value !== "1") ? (
               <FilteredEmptyState onReset={handleResetFilters} />
             ) : (
               <EmptyState

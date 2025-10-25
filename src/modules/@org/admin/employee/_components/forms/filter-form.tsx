@@ -44,6 +44,11 @@ export const FilterForm = ({
   const selectedTeamId = methods.watch("teamId");
   const roles = teams.find((team) => team.id === selectedTeamId)?.roles || [];
 
+  // Sync form with parent's filter state when it changes (e.g., on reset)
+  useEffect(() => {
+    methods.reset(initialFilters);
+  }, [initialFilters, methods]);
+
   useEffect(() => {
     onFilterChange(debouncedFilters);
   }, [debouncedFilters, onFilterChange]);

@@ -3,18 +3,7 @@
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
 import { useActiveNavigation } from "@/hooks/use-active-navigation";
-import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react";
+import { BookOpen, Bot, Frame, Map, PieChart, Settings2, SquareTerminal } from "lucide-react";
 import * as React from "react";
 
 import { NavMain } from "../components/nav-main";
@@ -33,7 +22,8 @@ export type DashboardUser = {
 
 export type DashboardTeam = {
   name: string;
-  logo: React.ElementType;
+  logo: React.ReactNode;
+  // logo: React.ReactNode | React.ElementType | string;
   plan: string;
 };
 
@@ -77,17 +67,17 @@ const defaultData: {
   teams: [
     {
       name: "Acme Inc",
-      logo: GalleryVerticalEnd,
+      logo: ``,
       plan: "Enterprise",
     },
     {
       name: "Acme Corp.",
-      logo: AudioWaveform,
+      logo: ``,
       plan: "Startup",
     },
     {
       name: "Evil Corp.",
-      logo: Command,
+      logo: ``,
       plan: "Free",
     },
   ],

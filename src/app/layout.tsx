@@ -11,6 +11,7 @@ import "../styles/global.css";
 
 import { SessionProvider } from "@/components/core/layout/SessionProvider";
 import { Toast } from "@/components/shared/Toast";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { ReactQueryProvider } from "@/lib/react-query/query-provider";
 
 const META_THEME_COLORS = {
@@ -59,16 +60,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <NextTopLoader showSpinner={false} />
           <NuqsAdapter>
             <ReactQueryProvider>
-              {/* <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-                disableTransitionOnChange
-                enableColorScheme
-              > */}
-              <KBarProviderWrapper>{children}</KBarProviderWrapper>
-              <Toast />
-              {/* </ThemeProvider> */}
+              <TooltipProvider>
+                {/* <ThemeProvider
+                  attribute="class"
+                  defaultTheme="system"
+                  enableSystem
+                  disableTransitionOnChange
+                  enableColorScheme
+                > */}
+                <KBarProviderWrapper>{children}</KBarProviderWrapper>
+                <Toast />
+                {/* </ThemeProvider> */}
+              </TooltipProvider>
             </ReactQueryProvider>
           </NuqsAdapter>
         </SessionProvider>

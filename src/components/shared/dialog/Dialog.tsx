@@ -50,7 +50,14 @@ export function ReusableDialog({
           {/* {wrapperClassName ?? */}
           {/* (img && ( */}
           <DialogHeader className={cn("h-fit", wrapperClassName)}>
-            {img && <Image width={100} height={100} src={img || ""} alt="dangerous" className="h-[100px] w-[100px]" />}
+            {img &&
+              (img.startsWith("http") || img.startsWith("/") ? (
+                <Image width={100} height={100} src={img} alt="icon" className="h-[100px] w-[100px]" />
+              ) : (
+                <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full bg-orange-100 text-6xl">
+                  {img}
+                </div>
+              ))}
             <DialogTitle className={cn("text-2xl", headerClassName)}>{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
           </DialogHeader>

@@ -68,7 +68,7 @@ export function FundWalletFormModal({ open, onOpenChange, onSubmit, initialData 
 
   return (
     <ReusableDialog
-      trigger={<></>}
+      trigger={""}
       open={open}
       onOpenChange={onOpenChange}
       title="Set up Payroll Wallet"

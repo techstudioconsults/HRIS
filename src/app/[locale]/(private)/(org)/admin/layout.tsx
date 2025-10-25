@@ -1,6 +1,7 @@
 "use client";
 
 import { AppSidebar } from "@/components/shared/dashboard/sidebar/app-sidebar";
+import { Logo } from "@/components/shared/logo";
 import TopBar from "@/components/shared/top-bar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { adminNavItems } from "@/lib/tools/constants";
@@ -17,6 +18,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         navSecondary={[]}
         navMain={adminNavItems}
         navMainTitle="Dashboard"
+        teams={[
+          {
+            name: "Tech Studio Academy",
+            logo: <Logo logo="/images/logo.png" />,
+            plan: "Enterprise",
+          },
+        ]}
       />
       <SidebarInset className="bg-[#F7F9FC]">
         <main className="flex flex-1 flex-col gap-4 p-4">

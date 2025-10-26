@@ -10,6 +10,7 @@ import { CalendarModal } from "@/modules/@org/admin/payroll/_components/calendar
 import { Eye, EyeSlash } from "iconsax-reactjs";
 import { CalendarIcon, Info } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { DashboardCard } from "../../dashboard/_components/dashboard-card";
@@ -25,6 +26,9 @@ export const AddPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerPr
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [isPayrollRunning, setIsPayrollRunning] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isRunSubmittedAlertOpen, setIsRunSubmittedAlertOpen] = useState(false);
+
+  const router = useRouter();
 
   const handleRunPayroll = async () => {
     setIsPayrollRunning(true);
@@ -35,6 +39,10 @@ export const AddPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerPr
       await new Promise((resolve) => setTimeout(resolve, 2000));
       // Close the drawer after successful payroll run
       onOpenChange(false);
+      // Show success alert after closing the drawer for a smooth transition
+      setTimeout(() => {
+        setIsRunSubmittedAlertOpen(true);
+      }, 300);
     } catch {
       // Handle error appropriately
     } finally {
@@ -192,6 +200,22 @@ export const AddPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerPr
         description="Once you proceed, payroll will be sent for approval. After all required approvers approve it, the funds will be disbursed to employees' accounts."
         confirmText="Yes, Run Payroll"
         cancelText="Cancel"
+      />
+
+      {/* Run submitted success modal */}
+      <AlertModal
+        isOpen={isRunSubmittedAlertOpen}
+        onClose={() => setIsRunSubmittedAlertOpen(false)}
+        onConfirm={() => {
+          setIsRunSubmittedAlertOpen(false);
+          router.push("/admin/payroll");
+        }}
+        type="success"
+        title="Payroll Submitted for Approval"
+        description="Payroll is now pending approval. Once all required approvers approve it, salary disbursement will begin automatically."
+        confirmText="Back to Payroll"
+        showCancelButton={false}
+        autoClose={false}
       />
     </>
   );

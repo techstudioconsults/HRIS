@@ -1,12 +1,15 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
+import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { FormField } from "@/components/shared/inputs/FormFields";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
+
+import { FundWalletAccountModal } from "../fund-wallet-account-modal";
 
 const fundWalletSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -26,11 +29,20 @@ interface FundWalletFormModalProperties {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: FundWalletFormData) => void;
+  onFundWallet?: () => void;
   initialData?: FundWalletFormData;
 }
 
-export function FundWalletFormModal({ open, onOpenChange, onSubmit, initialData }: FundWalletFormModalProperties) {
+export function FundWalletFormModal({
+  open,
+  onOpenChange,
+  onSubmit,
+  onFundWallet,
+  initialData,
+}: FundWalletFormModalProperties) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccessAlertOpen, setIsSuccessAlertOpen] = useState(false);
+  const [isFundWalletModalOpen, setIsFundWalletModalOpen] = useState(false);
 
   const methods = useForm<FundWalletFormData>({
     resolver: zodResolver(fundWalletSchema),
@@ -51,8 +63,12 @@ export function FundWalletFormModal({ open, onOpenChange, onSubmit, initialData 
     setIsSubmitting(true);
     try {
       await onSubmit(data);
-      methods.reset();
+      // Close the main modal first
       onOpenChange(false);
+      // Add a small delay before showing the success alert modal
+      setTimeout(() => {
+        setIsSuccessAlertOpen(true);
+      }, 300); // 300ms delay for smooth transition
     } catch {
       // Handle error silently or show toast notification
       // Error handling can be improved with toast notifications
@@ -66,72 +82,116 @@ export function FundWalletFormModal({ open, onOpenChange, onSubmit, initialData 
     onOpenChange(false);
   };
 
+  const handleSuccessAlertClose = () => {
+    setIsSuccessAlertOpen(false);
+    // Reset form after a small delay to allow modal close animation
+    setTimeout(() => {
+      methods.reset();
+    }, 200);
+  };
+
+  const handleFundWalletClick = () => {
+    setIsSuccessAlertOpen(false);
+    // Add a small delay before showing the fund wallet modal
+    setTimeout(() => {
+      setIsFundWalletModalOpen(true);
+    }, 300);
+  };
+
+  const handleFundWalletSubmit = async () => {
+    if (onFundWallet) {
+      await onFundWallet();
+    }
+    setIsFundWalletModalOpen(false);
+  };
+
   return (
-    <ReusableDialog
-      trigger={""}
-      open={open}
-      onOpenChange={onOpenChange}
-      title="Set up Payroll Wallet"
-      className="!max-w-lg"
-    >
-      <FormProvider {...methods}>
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            handleSubmit(handleFormSubmit)(event);
-          }}
-          className="space-y-6"
-        >
-          <div className="space-y-4">
-            <FormField
-              name="firstName"
-              label="First Name"
-              placeholder="Enter name"
-              type="text"
-              className="!h-14 w-full"
-            />
+    <>
+      <ReusableDialog
+        trigger={""}
+        open={open}
+        onOpenChange={onOpenChange}
+        title="Set up Payroll Wallet"
+        className="!max-w-lg"
+      >
+        <FormProvider {...methods}>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              handleSubmit(handleFormSubmit)(event);
+            }}
+            className="space-y-6"
+          >
+            <div className="space-y-4">
+              <FormField
+                name="firstName"
+                label="First Name"
+                placeholder="Enter name"
+                type="text"
+                className="!h-12 w-full"
+              />
 
-            <FormField
-              name="lastName"
-              label="Last Name"
-              placeholder="Enter name"
-              type="text"
-              className="!h-14 w-full"
-            />
+              <FormField
+                name="lastName"
+                label="Last Name"
+                placeholder="Enter name"
+                type="text"
+                className="!h-12 w-full"
+              />
 
-            <FormField
-              name="email"
-              label="Email Address"
-              placeholder="Enter address"
-              type="email"
-              className="!h-14 w-full"
-            />
+              <FormField
+                name="email"
+                label="Email Address"
+                placeholder="Enter address"
+                type="email"
+                className="!h-12 w-full"
+              />
 
-            <FormField
-              name="phoneNumber"
-              label="Phone Number"
-              placeholder="Enter phone number"
-              type="text"
-              className="!h-14 w-full"
-            />
-          </div>
+              <FormField
+                name="phoneNumber"
+                label="Phone Number"
+                placeholder="Enter phone number"
+                type="text"
+                className="!h-12 w-full"
+              />
+            </div>
 
-          <div className="flex gap-3 pt-4">
-            <MainButton
-              className="w-full"
-              type="button"
-              variant="outline"
-              onClick={handleCancel}
-              isDisabled={isSubmitting}
-            >
-              Cancel
-            </MainButton>
-            <MainButton className="w-full" type="submit" variant="primary" isDisabled={isSubmitting}>
-              {isSubmitting ? "Saving..." : "Save & Continue"}
-            </MainButton>
-          </div>
-        </form>
-      </FormProvider>
-    </ReusableDialog>
+            <div className="flex gap-3 pt-4">
+              <MainButton
+                className="w-full"
+                type="button"
+                variant="outline"
+                onClick={handleCancel}
+                isDisabled={isSubmitting}
+              >
+                Cancel
+              </MainButton>
+              <MainButton className="w-full" type="submit" variant="primary" isDisabled={isSubmitting}>
+                {isSubmitting ? "Saving..." : "Save & Continue"}
+              </MainButton>
+            </div>
+          </form>
+        </FormProvider>
+      </ReusableDialog>
+
+      <AlertModal
+        isOpen={isSuccessAlertOpen}
+        onClose={handleSuccessAlertClose}
+        onConfirm={handleFundWalletClick}
+        type="success"
+        title="Wallet Setup Completed"
+        description="Your payroll wallet setup has been completed successfully!"
+        confirmText="Fund Wallet"
+        cancelText="Cancel"
+        showCancelButton={true}
+        autoClose={false}
+      />
+
+      <FundWalletAccountModal
+        open={isFundWalletModalOpen}
+        onOpenChange={setIsFundWalletModalOpen}
+        onConfirm={handleFundWalletSubmit}
+      />
+    </>
   );
 }

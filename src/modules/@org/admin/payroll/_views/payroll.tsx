@@ -57,7 +57,7 @@ const PayrollView = () => {
   const [searchInput, setSearchInput] = useState(search || "");
   const [debouncedSearch] = useDebounce(searchInput, 300);
 
-  const [showSetupModal, setShowSetupModal] = useState(false);
+  const [showSetupModal, setShowSetupModal] = useState(true);
   const [showFundWalletModal, setShowFundWalletModal] = useState(false);
   const [showScheduleDrawer, setShowScheduleDrawer] = useState(false);
   const [showPayrollDrawer, setShowPayrollDrawer] = useState(false);

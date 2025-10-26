@@ -3,6 +3,7 @@
 import Loading from "@/app/Loading";
 import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import MainButton from "@/components/shared/button";
+import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState, FilteredEmptyState } from "@/components/shared/empty-state";
@@ -58,6 +59,10 @@ export const AddEmployeeModal = ({ open, onOpenChange }: AddEmployeeModalPropert
   // Local input state (debounced) to throttle URL updates via nuqs
   const [searchInput, setSearchInput] = useState(search || "");
   const [debouncedSearch] = useDebounce(searchInput, 300);
+
+  // Alert modal state
+  const [isSuccessAlertOpen, setIsSuccessAlertOpen] = useState(false);
+  const [addedEmployee, setAddedEmployee] = useState<Employee | null>(null);
 
   const { useGetAllEmployees, useGetAllTeams } = useEmployeeService();
   const { data: teams = [] } = useGetAllTeams();
@@ -124,10 +129,19 @@ export const AddEmployeeModal = ({ open, onOpenChange }: AddEmployeeModalPropert
   }, [open, refetch]);
 
   const handleAddEmployee = (employee: Employee) => {
-    // TODO: Handle adding employee to payroll
-    // eslint-disable-next-line no-console
-    console.log("Adding employee:", employee);
+    // Store the employee data for the success alert
+    setAddedEmployee(employee);
+
+    // Close the main modal
     onOpenChange(false);
+
+    // Show success alert modal
+    setIsSuccessAlertOpen(true);
+  };
+
+  const handleSuccessAlertClose = () => {
+    setIsSuccessAlertOpen(false);
+    setAddedEmployee(null);
   };
 
   // Table columns for employee selection
@@ -178,100 +192,115 @@ export const AddEmployeeModal = ({ open, onOpenChange }: AddEmployeeModalPropert
   ];
 
   return (
-    <ReusableDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      trigger={<div />} // Hidden trigger since we're controlling the modal externally
-      title="Add Employees to Payroll"
-      description="Select employees who are currently excluded or not added to this payroll cycle. Use search or filters to quickly find employees."
-      className="!max-w-4xl scale-[0.75] p-10"
-      wrapperClassName="text-left"
-    >
-      <div className="space-y-6">
-        {/* Search and Filter Section */}
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <SearchInput
-              className="border-border h-12 w-full rounded-md border"
-              placeholder="Search employee..."
-              onSearch={handleSearchChange}
-            />
+    <>
+      <ReusableDialog
+        open={open}
+        onOpenChange={onOpenChange}
+        trigger={<div />} // Hidden trigger since we're controlling the modal externally
+        title="Add Employees to Payroll"
+        description="Select employees who are currently excluded or not added to this payroll cycle. Use search or filters to quickly find employees."
+        className="!max-w-4xl scale-[0.75] p-10"
+        wrapperClassName="text-left"
+      >
+        <div className="space-y-6">
+          {/* Search and Filter Section */}
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <SearchInput
+                className="border-border h-12 w-full rounded-md border shadow"
+                placeholder="Search employee..."
+                onSearch={handleSearchChange}
+              />
+            </div>
+            <div>
+              <GenericDropdown
+                contentClassName="bg-background"
+                trigger={
+                  <Button
+                    variant={"ghost"}
+                    className="border-border bg-background flex h-12.5 items-center rounded-md border px-3 text-black shadow dark:text-white"
+                    size="lg"
+                  >
+                    <Filter className="size-4" />
+                    <span>Filter</span>
+                  </Button>
+                }
+              >
+                <section className="min-w-sm">
+                  <FilterForm
+                    initialFilters={{
+                      search: search || undefined,
+                      teamId: teamId || undefined,
+                      roleId: roleId || undefined,
+                      status: status || undefined,
+                      sortBy: sortBy || undefined,
+                      limit: limit ? String(limit) : undefined,
+                      page: page ? String(page) : undefined,
+                    }}
+                    onFilterChange={handleFilterChange}
+                    teams={teams}
+                  />
+                </section>
+              </GenericDropdown>
+            </div>
           </div>
-          <div>
-            <GenericDropdown
-              contentClassName="bg-background"
-              trigger={
-                <Button
-                  className="border-border bg-background flex h-12 items-center rounded-md border-1 px-3 text-black shadow dark:text-white"
-                  size="lg"
-                >
-                  <Filter className="size-4" />
-                  <span>Filter</span>
-                </Button>
-              }
-            >
-              <section className="min-w-sm">
-                <FilterForm
-                  initialFilters={{
-                    search: search || undefined,
-                    teamId: teamId || undefined,
-                    roleId: roleId || undefined,
-                    status: status || undefined,
-                    sortBy: sortBy || undefined,
-                    limit: limit ? String(limit) : undefined,
-                    page: page ? String(page) : undefined,
-                  }}
-                  onFilterChange={handleFilterChange}
-                  teams={teams}
-                />
-              </section>
-            </GenericDropdown>
-          </div>
-        </div>
 
-        {/* Employee Table */}
-        <div className="rounded-lg">
-          {isLoading ? (
-            <Loading text={`Loading employees...`} className={`w-fill h-fit p-20`} />
-          ) : (
-            <section className="overflow-y-auto">
-              {employeesData?.data?.items.length ? (
-                <AdvancedDataTable
-                  data={employeesData.data.items}
-                  columns={employeeColumns}
-                  currentPage={employeesData.data.metadata.page}
-                  totalPages={employeesData.data.metadata.totalPages}
-                  itemsPerPage={employeesData.data.metadata.limit}
-                  hasPreviousPage={employeesData.data.metadata.hasPreviousPage}
-                  hasNextPage={employeesData.data.metadata.hasNextPage}
-                  onPageChange={handlePageChange}
-                  showPagination={true}
-                  enableRowSelection={false}
-                  enableColumnVisibility={false}
-                  enableSorting={true}
-                  enableFiltering={false}
-                  mobileCardView={false}
-                  showColumnCustomization={false}
-                />
-              ) : (debouncedSearch && debouncedSearch.trim()) ||
-                teamId ||
-                roleId ||
-                (status && status !== "all") ||
-                sortBy ? (
-                <FilteredEmptyState onReset={handleResetFilters} />
-              ) : (
-                <EmptyState
-                  className="bg-background"
-                  images={[{ src: "/images/empty-state.svg", alt: "No employees found", width: 100, height: 100 }]}
-                  title="No employees found."
-                  description="No employees are available to add to payroll. Try adjusting your search or filters."
-                  titleClassName="text-xl font-bold"
-                />
-              )}
-            </section>
-          )}
+          {/* Employee Table */}
+          <div className="rounded-lg">
+            {isLoading ? (
+              <Loading text={`Loading employees...`} className={`w-fill h-fit p-20`} />
+            ) : (
+              <section className="overflow-y-auto">
+                {employeesData?.data?.items.length ? (
+                  <AdvancedDataTable
+                    data={employeesData.data.items}
+                    columns={employeeColumns}
+                    currentPage={employeesData.data.metadata.page}
+                    totalPages={employeesData.data.metadata.totalPages}
+                    itemsPerPage={employeesData.data.metadata.limit}
+                    hasPreviousPage={employeesData.data.metadata.hasPreviousPage}
+                    hasNextPage={employeesData.data.metadata.hasNextPage}
+                    onPageChange={handlePageChange}
+                    showPagination={true}
+                    enableRowSelection={true}
+                    enableColumnVisibility={false}
+                    enableSorting={true}
+                    enableFiltering={false}
+                    mobileCardView={false}
+                    showColumnCustomization={false}
+                  />
+                ) : (debouncedSearch && debouncedSearch.trim()) ||
+                  teamId ||
+                  roleId ||
+                  (status && status !== "all") ||
+                  sortBy ? (
+                  <FilteredEmptyState onReset={handleResetFilters} />
+                ) : (
+                  <EmptyState
+                    className="bg-background"
+                    images={[{ src: "/images/empty-state.svg", alt: "No employees found", width: 100, height: 100 }]}
+                    title="No employees found."
+                    description="No employees are available to add to payroll. Try adjusting your search or filters."
+                    titleClassName="text-xl font-bold"
+                  />
+                )}
+              </section>
+            )}
+          </div>
         </div>
-      </div>
-    </ReusableDialog>
+      </ReusableDialog>
+
+      {/* Success Alert Modal */}
+      <AlertModal
+        isOpen={isSuccessAlertOpen}
+        onClose={handleSuccessAlertClose}
+        type="success"
+        title="Added Successfully"
+        description={`Employee "${addedEmployee?.firstName} ${addedEmployee?.lastName}" has been added to payroll successfully`}
+        confirmText="Continue"
+        showCancelButton={false}
+        autoClose={false}
+      />
+    </>
   );
 };

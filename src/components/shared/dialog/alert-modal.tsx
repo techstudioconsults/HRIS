@@ -4,7 +4,7 @@ import { Modal } from "@/components/ui/modal";
 import { AlertTriangle, Info } from "lucide-react";
 import { useEffect, useState } from "react";
 
-import SkiButton from "../button";
+import MainButton from "../button";
 
 export type AlertType = "success" | "error" | "warning" | "info";
 
@@ -47,7 +47,7 @@ const alertConfig = {
     iconColor: "text-green-600",
     bgColor: "bg-green-100",
     borderColor: "border-green-500",
-    buttonVariant: "outline" as const,
+    buttonVariant: "primary" as const,
   },
   error: {
     icon: ErrorIcon,
@@ -131,19 +131,19 @@ export const AlertModal: React.FC<AlertModalProperties> = ({
         {/* Buttons */}
         <div className="flex w-full gap-3">
           {showCancelButton && (
-            <SkiButton isDisabled={loading} variant="outline" onClick={onClose} className="flex-1">
+            <MainButton isDisabled={loading} variant="outline" onClick={onClose} className="flex-1">
               {cancelText}
-            </SkiButton>
+            </MainButton>
           )}
           {onConfirm && (
-            <SkiButton isDisabled={loading} variant={config.buttonVariant} onClick={onConfirm} className="flex-1">
+            <MainButton isDisabled={loading} variant={config.buttonVariant} onClick={onConfirm} className="flex-1">
               {loading ? "Loading..." : confirmText}
-            </SkiButton>
+            </MainButton>
           )}
           {!onConfirm && (
-            <SkiButton isDisabled={loading} variant={config.buttonVariant} onClick={onClose} className="flex-1">
+            <MainButton isDisabled={loading} variant={config.buttonVariant} onClick={onClose} className="flex-1">
               {confirmText}
-            </SkiButton>
+            </MainButton>
           )}
         </div>
       </div>

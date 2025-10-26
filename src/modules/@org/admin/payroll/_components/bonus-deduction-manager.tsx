@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { useState } from "react";
 
 import { BonusDeduction, BonusDeductionFormData } from "../types";
@@ -19,6 +20,11 @@ export function BonusDeductionManager({ type, initialItems = [] }: BonusDeductio
   const [items, setItems] = useState<BonusDeduction[]>(initialItems);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<BonusDeduction | null>(null);
+
+  // Success alert state for delete actions
+  const [isDeletedAlertOpen, setIsDeletedAlertOpen] = useState(false);
+  const [deletedAlertTitle, setDeletedAlertTitle] = useState("");
+  const [deletedAlertDescription, setDeletedAlertDescription] = useState("");
 
   const handleAdd = (formData: BonusDeductionFormData) => {
     const newItem: BonusDeduction = {
@@ -73,6 +79,14 @@ export function BonusDeductionManager({ type, initialItems = [] }: BonusDeductio
 
   const handleDelete = (id: string) => {
     setItems((previous) => previous.filter((item) => item.id !== id));
+
+    const title = type === "bonus" ? "Bonus Deleted" : "Deduction Deleted";
+    const description =
+      type === "bonus" ? "Bonus has been deleted successfully!" : "Deduction has been deleted successfully!";
+
+    setDeletedAlertTitle(title);
+    setDeletedAlertDescription(description);
+    setIsDeletedAlertOpen(true);
   };
 
   const handleToggleStatus = (id: string) => {
@@ -129,6 +143,18 @@ export function BonusDeductionManager({ type, initialItems = [] }: BonusDeductio
             : undefined
         }
         isEditing={!!editingItem}
+      />
+
+      {/* Delete success alert - independent of any dialog */}
+      <AlertModal
+        isOpen={isDeletedAlertOpen}
+        onClose={() => setIsDeletedAlertOpen(false)}
+        type="success"
+        title={deletedAlertTitle}
+        description={deletedAlertDescription}
+        confirmText="Close"
+        showCancelButton={false}
+        autoClose={false}
       />
     </>
   );

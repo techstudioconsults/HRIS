@@ -9,9 +9,9 @@ import { EmptyState, FilteredEmptyState } from "@/components/shared/empty-state"
 import ExportAction from "@/components/shared/export-action";
 import { AdvancedDataTable } from "@/components/shared/table/table";
 import { Button } from "@/components/ui/button";
-import { updateQueryParamameters } from "@/hooks/use-search-parameters";
+import { useEmployeeSearchParameters } from "@/lib/nuqs/use-employee-search-parameters";
 import { Add, Filter } from "iconsax-reactjs";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDebounce } from "use-debounce";
 
@@ -22,40 +22,43 @@ import { employeeColumn, useEmployeeRowActions } from "../table-data";
 
 export const AllEmployees = () => {
   const router = useRouter();
-  const pathname = usePathname();
-  const searchParameters = useSearchParams();
+  const {
+    page,
+    search,
+    teamId,
+    roleId,
+    status,
+    sortBy,
+    limit,
+    setPage,
+    setSearch,
+    setTeamId,
+    setRoleId,
+    setStatus,
+    setSortBy,
+    setLimit,
+    resetFilters,
+    resetToFirstPage,
+    getApiFilters,
+  } = useEmployeeSearchParameters();
 
-  // Initialize state from URL params
-  const initialFilters = {
-    search: searchParameters.get("search") || undefined,
-    teamId: searchParameters.get("teamId") || undefined,
-    roleId: searchParameters.get("roleId") || undefined,
-    status: searchParameters.get("status") || undefined,
-    sortBy: searchParameters.get("sortBy") || undefined,
-    limit: searchParameters.get("limit") || undefined,
-    page: searchParameters.get("page") || "1",
-  };
-
-  const [searchQuery, setSearchQuery] = useState(initialFilters.search || "");
-  const [debouncedSearch] = useDebounce(searchQuery, 300);
-  const [filters, setFilters] = useState<any>(initialFilters);
-  const [debouncedFilters] = useDebounce(filters, 300);
+  // Local input state (debounced) to throttle URL updates via nuqs
+  const [searchInput, setSearchInput] = useState(search || "");
+  const [debouncedSearch] = useDebounce(searchInput, 300);
 
   const { getRowActions, DeleteConfirmationModal } = useEmployeeRowActions();
   const { useGetAllEmployees, useGetAllTeams, useDownloadEmployees } = useEmployeeService();
   const { refetch: downloadProducts } = useDownloadEmployees();
   const { data: teams = [] } = useGetAllTeams();
 
-  // Create stable API filters object - include search in debouncedFilters instead of separate
-  const apiFilters = useMemo(
-    () => ({
-      ...debouncedFilters,
-      // Always include search parameter - empty string means no search filter
-      search: debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : undefined,
-      page: debouncedFilters.page ? Number(debouncedFilters.page) : 1,
-    }),
-    [debouncedFilters, debouncedSearch], // Add debouncedSearch to dependencies
-  );
+  // Apply debounced search to URL (nuqs) and reset page to 1
+  useEffect(() => {
+    setSearch(debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : null);
+    resetToFirstPage();
+  }, [debouncedSearch, setSearch, resetToFirstPage]);
+
+  // Build API filters from URL state (nuqs)
+  const apiFilters = useMemo(() => getApiFilters(), [getApiFilters]);
 
   const {
     data: employeeData,
@@ -72,65 +75,40 @@ export const AllEmployees = () => {
     retryDelay: 1000, // Wait 1 second before retry
   });
 
-  // Stable filter change handler
-  const handleFilterChange = useCallback((newFilters: any) => {
-    setFilters((previous: any) => {
-      // Only update if something actually changed
-      if (JSON.stringify(previous) !== JSON.stringify(newFilters)) {
-        return newFilters;
-      }
-      return previous;
-    });
-  }, []);
+  // Apply filter values to URL (nuqs) and reset page
+  const handleFilterChange = useCallback(
+    (newFilters: any) => {
+      setTeamId(newFilters.teamId ?? null);
+      setRoleId(newFilters.roleId ?? null);
+      setStatus(newFilters.status ?? null);
+      setSortBy(newFilters.sortBy ?? null);
+      if (newFilters.limit != null) setLimit(Number(newFilters.limit));
+      resetToFirstPage();
+    },
+    [setTeamId, setRoleId, setStatus, setSortBy, setLimit, resetToFirstPage],
+  );
 
   useEffect(() => {
     refetch();
   }, [refetch]);
 
-  // Update URL when filters change
-  useEffect(() => {
-    const parameters = {
-      // Only include search in URL if it has actual content
-      ...(debouncedSearch && debouncedSearch.trim() && { search: debouncedSearch.trim() }),
-      ...(debouncedFilters.teamId && { teamId: debouncedFilters.teamId }),
-      ...(debouncedFilters.roleId && { roleId: debouncedFilters.roleId }),
-      ...(debouncedFilters.status && { status: debouncedFilters.status }),
-      ...(debouncedFilters.sortBy && { sortBy: debouncedFilters.sortBy }),
-      page: debouncedFilters.page || "1",
-    };
-
-    updateQueryParamameters(router, pathname, searchParameters, parameters);
-  }, [debouncedSearch, debouncedFilters, router, pathname, searchParameters]);
+  // URL synchronization is handled by nuqs useQueryState. No manual updates needed here.
 
   const handlePageChange = useCallback(
-    (page: number) => {
-      setFilters((previous: any) => ({ ...previous, page: page.toString() }));
-      // Force refetch when page changes to ensure fresh data
-      if (refetch) {
-        refetch();
-      }
+    (newPage: number) => {
+      setPage(newPage);
     },
-    [refetch],
+    [setPage],
   );
 
   const handleSearchChange = useCallback((query: string) => {
-    setSearchQuery(query);
-    // Reset to first page when search changes
-    setFilters((previous: any) => ({ ...previous, page: "1" }));
+    setSearchInput(query);
   }, []);
 
   const handleResetFilters = useCallback(() => {
-    setSearchQuery("");
-    setFilters({
-      search: undefined,
-      teamId: undefined,
-      roleId: undefined,
-      status: undefined,
-      sortBy: undefined,
-      limit: undefined,
-      page: "1",
-    });
-  }, []);
+    setSearchInput("");
+    resetFilters();
+  }, [resetFilters]);
 
   return (
     <section className="space-y-10">
@@ -156,7 +134,19 @@ export const AllEmployees = () => {
                 }
               >
                 <section className="min-w-sm">
-                  <FilterForm initialFilters={filters} onFilterChange={handleFilterChange} teams={teams} />
+                  <FilterForm
+                    initialFilters={{
+                      search: search || undefined,
+                      teamId: teamId || undefined,
+                      roleId: roleId || undefined,
+                      status: status || undefined,
+                      sortBy: sortBy || undefined,
+                      limit: limit ? String(limit) : undefined,
+                      page: page ? String(page) : undefined,
+                    }}
+                    onFilterChange={handleFilterChange}
+                    teams={teams}
+                  />
                 </section>
               </GenericDropdown>
               <ExportAction
@@ -209,7 +199,10 @@ export const AllEmployees = () => {
                 showColumnCustomization={false}
               />
             ) : (debouncedSearch && debouncedSearch.trim()) ||
-              Object.values(filters).some((value) => value && value !== "1") ? (
+              teamId ||
+              roleId ||
+              (status && status !== "all") ||
+              sortBy ? (
               <FilteredEmptyState onReset={handleResetFilters} />
             ) : (
               <EmptyState

@@ -318,6 +318,17 @@ export function AdvancedDataTable<T extends DataItem>({
   const sortableId = React.useId();
   const sensors = useSensors(useSensor(MouseSensor, {}), useSensor(TouchSensor, {}), useSensor(KeyboardSensor, {}));
 
+  // Keep table data in sync with incoming props to avoid stale rows across server pages
+  React.useEffect(() => {
+    setData(initialData);
+    // Clear any previous selection when dataset changes (e.g., switching pages)
+    setRowSelection({});
+  }, [initialData]);
+
+  // Keep internal pageSize aligned with server-provided itemsPerPage
+  React.useEffect(() => {
+    setPagination((previous) => ({ ...previous, pageSize: itemsPerPage }));
+  }, [itemsPerPage]);
   // Convert IColumnDefinition to TanStack ColumnDef
   const columns = React.useMemo(
     () => convertColumnsToTanStackFormat(inputColumns, enableDragAndDrop, enableRowSelection),

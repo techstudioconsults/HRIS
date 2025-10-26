@@ -1,7 +1,9 @@
 "use client";
 
 // app/employees/[id]/page.tsx
+import { BreadCrumb } from "@/components/shared/breadcrumb";
 import MainButton from "@/components/shared/button";
+import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { GenericDropdown } from "@/components/shared/drop-down";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
@@ -9,7 +11,6 @@ import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { formatDate } from "@/lib/tools/format";
 import { Call, More, Sms } from "iconsax-reactjs";
 import Image from "next/image";
-import Link from "next/link";
 
 import { useEmployeeService } from "../../services/use-service";
 import { EmployeeDetailsSkeleton } from "./skeleton";
@@ -22,48 +23,55 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
   return (
     <div className="space-y-6">
       {/* Header with back button */}
-      <div className="flex items-center justify-between pb-4">
-        <div className="flex flex-col items-start gap-2 text-center md:text-left">
-          <h1 className="text-2xl font-bold">Employee Details</h1>
-          <div className="flex items-center gap-1 text-sm">
-            <Link href="/admin/employees" className="text-primary">
-              All Employee
-            </Link>
-            <p className="text-muted-foreground"> &gt; {employeeData?.firstName}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-5">
-          <MainButton href={`/admin/employees/add-employee?employeeid=${employeeData?.id}`} variant="primary" size="xl">
-            Edit Employee
-          </MainButton>
-          <GenericDropdown
-            align={`end`}
-            trigger={
-              <div className={`bg-background border-border flex size-12 items-center justify-center rounded-md border`}>
-                <More className="size-5" />
-              </div>
-            }
-          >
-            <DropdownMenuItem disabled>Download Profile PDF</DropdownMenuItem>
-            <DropdownMenuItem disabled>Reset Password</DropdownMenuItem>
-            <DropdownMenuItem disabled>Suspend Employee</DropdownMenuItem>
-            <DropdownMenuItem disabled>Terminate Employee</DropdownMenuItem>
-          </GenericDropdown>
-          {/* <MainButton
+
+      <DashboardHeader
+        title="Employee Details"
+        subtitle={
+          <BreadCrumb
+            items={[
+              { label: "Employee", href: `/admin/employees` },
+              { label: employeeData?.firstName || "", href: `/admin/employees/${employeeData?.id}` },
+            ]}
+            showHome={true}
+          />
+        }
+        actionComponent={
+          <div className="flex items-center gap-5">
+            <MainButton href={`/admin/employees/add-employee?employeeid=${employeeData?.id}`} variant="primary">
+              Edit Employee
+            </MainButton>
+            <GenericDropdown
+              align={`end`}
+              trigger={
+                <div
+                  className={`bg-background border-border flex size-10 items-center justify-center rounded-md border shadow`}
+                >
+                  <More className="size-5" />
+                </div>
+              }
+            >
+              <DropdownMenuItem disabled>Download Profile PDF</DropdownMenuItem>
+              <DropdownMenuItem disabled>Reset Password</DropdownMenuItem>
+              <DropdownMenuItem disabled>Suspend Employee</DropdownMenuItem>
+              <DropdownMenuItem disabled>Terminate Employee</DropdownMenuItem>
+            </GenericDropdown>
+            {/* <MainButton
             variant="outline"
             size="default"
             isIconOnly={true}
             icon={<More className="text-black" />}
             className="border-gray-200"
           /> */}
-        </div>
-      </div>
+          </div>
+        }
+      />
+
       {isLoading ? (
         <EmployeeDetailsSkeleton />
       ) : (
         <section className="grid grid-cols-1 gap-5 py-5 lg:grid-cols-[minmax(0,30%)_minmax(0,70%)]">
           {/* Employee summary */}
-          <Card className="bg-background p-6 shadow-md lg:p-8">
+          <Card className="bg-background p-6 shadow lg:p-8">
             <div className="flex flex-col items-center justify-between text-center">
               <Avatar className="border-primary bg-gray size-[8rem]">
                 <AvatarImage src={employeeData?.avatar || "https://github.com/shadcn.png"} />
@@ -117,7 +125,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
 
           <section className="space-y-6">
             {/* Personal Information Section */}
-            <Card className="bg-background p-8 shadow-md">
+            <Card className="bg-background p-8 shadow">
               <h2 className="mb-4 text-lg font-semibold">Personal Information</h2>
               <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
                 <div>
@@ -144,7 +152,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
             </Card>
 
             {/* Employment Details Section */}
-            <Card className="bg-background p-6 shadow-md">
+            <Card className="bg-background p-6 shadow">
               <h2 className="mb-4 text-lg font-semibold">Employment Details</h2>
               <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
                 <div>
@@ -171,7 +179,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
             </Card>
 
             {/* Salary & Payroll Details */}
-            <Card className="bg-background p-6 shadow-md">
+            <Card className="bg-background p-6 shadow">
               <h2 className="mb-4 text-lg font-semibold">Salary & Payroll Details</h2>
               <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
                 <div>

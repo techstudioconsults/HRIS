@@ -1,13 +1,14 @@
 /* eslint-disable no-console */
 "use client";
 
+import { BreadCrumb } from "@/components/shared/breadcrumb";
 import MainButton from "@/components/shared/button";
+import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { FormField } from "@/components/shared/inputs/FormFields";
 // import { AlertDialog } from "@/components/ui/alert-dialog";
 import { employmentTypeOptions, genderOptions, workModeOptions } from "@/lib/tools/constants";
 import { EmployeeFormData, employeeSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -199,15 +200,18 @@ export const BaseEmployeeForm = () => {
   return (
     <div className="space-y-8">
       {/* Breadcrumb and Title */}
-      <div className="flex flex-col items-start gap-2">
-        <h1 className="text-2xl font-bold">{employeeId ? "Edit Employee" : "Add Employee"}</h1>
-        <div className="flex items-center gap-1 text-sm">
-          <Link href="/admin/employees" className="text-primary">
-            All Employee
-          </Link>
-          <p className="text-muted-foreground">&gt; Add New Employee</p>
-        </div>
-      </div>
+      <DashboardHeader
+        title={employeeId ? "Edit Employee" : "Add Employee"}
+        subtitle={
+          <BreadCrumb
+            items={[
+              { label: "Employee", href: "/admin/employees" },
+              { label: employeeId ? "Edit Employee" : "Add Employee", href: "" },
+            ]}
+            showHome={true}
+          />
+        }
+      />
 
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -221,14 +225,14 @@ export const BaseEmployeeForm = () => {
                   label="First Name"
                   type="text"
                   placeholder={loadingTeams ? `Loading first name...` : `John`}
-                  className="!h-14 w-full"
+                  className="border-border !h-14 w-full"
                   required
                 />
                 <FormField
                   name="lastName"
                   label="Last Name"
                   type="text"
-                  className="!h-14 w-full"
+                  className="border-border !h-14 w-full"
                   placeholder={loadingTeams ? `Loading last name...` : `Doe`}
                   required
                 />
@@ -236,7 +240,7 @@ export const BaseEmployeeForm = () => {
                   name="dateOfBirth"
                   placeholder={loadingTeams ? `Loading first name...` : `John`}
                   label="Date of Birth"
-                  className="!h-14 w-full"
+                  className="border-border !h-14 w-full"
                   type="date"
                   required
                 />
@@ -245,7 +249,7 @@ export const BaseEmployeeForm = () => {
                   label="Gender"
                   type="select"
                   placeholder={loadingTeams ? `Loading employee gender...` : `Select employee gender`}
-                  className="bg-background !h-14 w-full"
+                  className="bg-background border-border !h-14 w-full"
                   options={genderOptions}
                   required
                 />
@@ -254,13 +258,13 @@ export const BaseEmployeeForm = () => {
                   label="Work Email"
                   type="email"
                   placeholder={loadingTeams ? `Loading email...` : `Johndoe@gmail.com`}
-                  className="!h-14 w-full"
+                  className="border-border !h-14 w-full"
                   required
                 />
                 <FormField
                   name="phoneNumber"
                   label="Phone Number"
-                  className="!h-14 w-full"
+                  className="border-border !h-14 w-full"
                   type="text"
                   placeholder={loadingTeams ? `Loading phone number...` : `080123456789`}
                   required
@@ -272,10 +276,16 @@ export const BaseEmployeeForm = () => {
             <section>
               <h2 className="mb-4 text-lg font-semibold">Employment Details</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
-                <FormField name="startDate" className="!h-14 w-full" label="Start Date" type="date" required />
+                <FormField
+                  name="startDate"
+                  className="border-border !h-14 w-full"
+                  label="Start Date"
+                  type="date"
+                  required
+                />
                 <FormField
                   name="employmentType"
-                  className="bg-background !h-14 w-full"
+                  className="bg-background border-border !h-14 w-full"
                   label="Employment Type"
                   type="select"
                   placeholder={loadingTeams ? `Loading employee type...` : `Select employment type`}
@@ -287,7 +297,7 @@ export const BaseEmployeeForm = () => {
                   label="Work Mode"
                   type="select"
                   placeholder={loadingTeams ? `Loading employee work mode...` : `Select employee work mode`}
-                  className="bg-background !h-14 w-full"
+                  className="bg-background border-border !h-14 w-full"
                   options={workModeOptions}
                   required
                 />
@@ -296,7 +306,7 @@ export const BaseEmployeeForm = () => {
                   label="Department"
                   type="select"
                   placeholder={loadingTeams ? `Loading department...` : `Select a department`}
-                  className="bg-background !h-14 w-full"
+                  className="bg-background border-border !h-14 w-full"
                   options={teams.map((team) => ({
                     value: team.id,
                     label: team.name,
@@ -308,7 +318,7 @@ export const BaseEmployeeForm = () => {
                   label="Role"
                   type="select"
                   placeholder={`Select a role`}
-                  className="bg-background !h-14 w-full"
+                  className="bg-background border-border !h-14 w-full"
                   options={roles.map((role) => ({
                     value: role.id,
                     label: role.name,
@@ -327,41 +337,41 @@ export const BaseEmployeeForm = () => {
                   name="monthlySalary"
                   label="Monthly Gross Salary"
                   placeholder="₦750,000.00"
-                  className="!h-14 w-full"
+                  className="!h-14 w-full border-border"
                 />
-                <FormField name="pension" label="Pension" placeholder="5% of salary" className="!h-14 w-full" />
+                <FormField name="pension" label="Pension" placeholder="5% of salary" className="!h-14 w-full border-border" />
                 <FormField
                   name="healthInsurance"
                   label="Health Insurance"
                   placeholder="3% of salary"
-                  className="!h-14 w-full"
+                  className="!h-14 w-full border-border"
                 />
                 <FormField
                   name="otherDeductions"
                   label="Other Deductions"
                   placeholder="% of salary"
-                  className="!h-14 w-full"
+                  className="!h-14 w-full border-border"
                 />
                 <FormField
                   name="bankName"
                   label="Bank Name"
                   type="text"
                   placeholder="Wema Bank"
-                  className="!h-14 w-full"
+                  className="!h-14 w-full border-border"
                 />
                 <FormField
                   name="accountName"
                   label="Account Name"
                   type="text"
                   placeholder="John Doe"
-                  className="!h-14 w-full"
+                  className="!h-14 w-full border-border"
                 />
                 <FormField
                   name="accountNumber"
                   label="Account Number"
                   type="text"
                   placeholder="0067514267"
-                  className="!h-14 w-full"
+                  className="!h-14 w-full border-border"
                 />
               </div>
             </section> */}
@@ -376,16 +386,17 @@ export const BaseEmployeeForm = () => {
           </div>
 
           {/* Form Actions */}
-          <div className="mt-6 flex justify-start gap-4">
+          <div className="mt-6 flex w-[50%] justify-start gap-4">
             <MainButton
               type="button"
               variant="outline"
               onClick={() => router.push("/admin/employees")}
               isDisabled={isSubmitting}
+              className="text-destructive border-destructive w-full"
             >
               Cancel
             </MainButton>
-            <MainButton variant={`primary`} type="submit" isDisabled={isSubmitting}>
+            <MainButton variant={`primary`} type="submit" isDisabled={isSubmitting} className="w-full">
               {isSubmitting ? "Saving..." : "Save Employee"}
             </MainButton>
           </div>

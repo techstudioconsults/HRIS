@@ -57,7 +57,7 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
     {
       type = "button",
       variant,
-      size = "xl",
+      size = "lg",
       children,
       isLoading = false,
       isLeftIconVisible = false,
@@ -95,7 +95,7 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
       </>
     );
 
-    const buttonClasses = `transition-all duration-300 ease-in-out rounded-lg shadown-none ${
+    const buttonClasses = `transition-all duration-300 ease-in-out rounded-md ${
       isDisabled ? "opacity-50 cursor-not-allowed" : "hover:shadow-sneob dark:hover:shadow-sneobw focus:shadow-none"
     } ${className}`;
 

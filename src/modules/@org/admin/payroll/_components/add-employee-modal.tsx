@@ -6,8 +6,9 @@ import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState, FilteredEmptyState } from "@/components/shared/empty-state";
-import { AdvancedDataTable, type IColumnDefinition } from "@/components/shared/table/table";
 import { Button } from "@/components/ui/button";
+import { useEmployeeSearchParameters } from "@/lib/nuqs/use-employee-search-parameters";
+import { AdvancedDataTable, type IColumnDefinition } from "@/modules/@org/admin/_components/table/table";
 import { Filter } from "iconsax-reactjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDebounce } from "use-debounce";
@@ -31,81 +32,89 @@ interface AddEmployeeModalProperties {
   onOpenChange: (open: boolean) => void;
 }
 
-// Initial filter values
-const initialFilters: FilterValues = {
-  search: undefined,
-  teamId: undefined,
-  roleId: undefined,
-  status: undefined,
-  sortBy: undefined,
-  limit: undefined,
-  page: "1",
-};
+// Initial filter values - removed as we now use URL state management
 
 export const AddEmployeeModal = ({ open, onOpenChange }: AddEmployeeModalProperties) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearch] = useDebounce(searchQuery, 300);
-  const [filters, setFilters] = useState<FilterValues>(initialFilters);
-  const [debouncedFilters] = useDebounce(filters, 300);
+  const {
+    page,
+    search,
+    teamId,
+    roleId,
+    status,
+    sortBy,
+    limit,
+    setPage,
+    setSearch,
+    setTeamId,
+    setRoleId,
+    setStatus,
+    setSortBy,
+    setLimit,
+    resetFilters,
+    resetToFirstPage,
+    getApiFilters,
+  } = useEmployeeSearchParameters();
+
+  // Local input state (debounced) to throttle URL updates via nuqs
+  const [searchInput, setSearchInput] = useState(search || "");
+  const [debouncedSearch] = useDebounce(searchInput, 300);
 
   const { useGetAllEmployees, useGetAllTeams } = useEmployeeService();
   const { data: teams = [] } = useGetAllTeams();
 
-  // Create stable API filters object - include search in debouncedFilters instead of separate
-  const apiFilters = useMemo(
-    () => ({
-      ...debouncedFilters,
-      // Always include search parameter - empty string means no search filter
-      search: debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : undefined,
-      page: debouncedFilters.page ? Number(debouncedFilters.page) : 1,
-      limit: debouncedFilters.limit ? Number(debouncedFilters.limit) : 10,
-    }),
-    [debouncedFilters, debouncedSearch], // Add debouncedSearch to dependencies
-  );
+  // Apply debounced search to URL (nuqs) and reset page to 1
+  useEffect(() => {
+    setSearch(debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : null);
+    resetToFirstPage();
+  }, [debouncedSearch, setSearch, resetToFirstPage]);
+
+  // Build API filters from URL state (nuqs)
+  const apiFilters = useMemo(() => getApiFilters(), [getApiFilters]);
 
   // Fetch employees with filters - React Query will refetch when apiFilters changes
-  const { data: employeesData, isLoading, refetch } = useGetAllEmployees(apiFilters);
+  const {
+    data: employeesData,
+    isLoading,
+    refetch,
+  } = useGetAllEmployees(apiFilters, {
+    keepPreviousData: false, // Don't keep previous data to ensure fresh results
+    staleTime: 0, // Always consider data stale to ensure fresh API calls
+    cacheTime: 0, // Don't cache data to prevent stale data issues
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnMount: true, // Always refetch when component mounts
+    refetchOnReconnect: true, // Refetch when network reconnects
+    retry: 1, // Only retry once on failure
+    retryDelay: 1000, // Wait 1 second before retry
+  });
 
-  // Stable filter change handler
-  const handleFilterChange = useCallback((newFilters: FilterValues) => {
-    setFilters((previous: FilterValues) => {
-      // Only update if something actually changed
-      if (JSON.stringify(previous) !== JSON.stringify(newFilters)) {
-        return newFilters;
-      }
-      return previous;
-    });
-  }, []);
+  // Apply filter values to URL (nuqs) and reset page
+  const handleFilterChange = useCallback(
+    (newFilters: FilterValues) => {
+      setTeamId(newFilters.teamId ?? null);
+      setRoleId(newFilters.roleId ?? null);
+      setStatus((newFilters.status as "all" | "active" | "inactive" | "pending") ?? null);
+      setSortBy(newFilters.sortBy ?? null);
+      if (newFilters.limit != null) setLimit(Number(newFilters.limit));
+      resetToFirstPage();
+    },
+    [setTeamId, setRoleId, setStatus, setSortBy, setLimit, resetToFirstPage],
+  );
 
   const handlePageChange = useCallback(
-    (page: number) => {
-      setFilters((previous: FilterValues) => ({ ...previous, page: page.toString() }));
-      // Force refetch when page changes to ensure fresh data
-      if (refetch) {
-        refetch();
-      }
+    (newPage: number) => {
+      setPage(newPage);
     },
-    [refetch],
+    [setPage],
   );
 
   const handleSearchChange = useCallback((query: string) => {
-    setSearchQuery(query);
-    // Reset to first page when search changes
-    setFilters((previous: FilterValues) => ({ ...previous, page: "1" }));
+    setSearchInput(query);
   }, []);
 
   const handleResetFilters = useCallback(() => {
-    setSearchQuery("");
-    setFilters({
-      search: undefined,
-      teamId: undefined,
-      roleId: undefined,
-      status: undefined,
-      sortBy: undefined,
-      limit: undefined,
-      page: "1",
-    });
-  }, []);
+    setSearchInput("");
+    resetFilters();
+  }, [resetFilters]);
 
   // Refetch data when modal opens to ensure fresh data
   useEffect(() => {
@@ -175,21 +184,25 @@ export const AddEmployeeModal = ({ open, onOpenChange }: AddEmployeeModalPropert
       trigger={<div />} // Hidden trigger since we're controlling the modal externally
       title="Add Employees to Payroll"
       description="Select employees who are currently excluded or not added to this payroll cycle. Use search or filters to quickly find employees."
-      className="!max-w-4xl p-10"
+      className="!max-w-4xl scale-[0.75] p-10"
       wrapperClassName="text-left"
     >
       <div className="space-y-6">
         {/* Search and Filter Section */}
         <div className="flex items-center gap-4">
           <div className="flex-1">
-            <SearchInput className="h-12 w-full" placeholder="Search employee..." onSearch={handleSearchChange} />
+            <SearchInput
+              className="border-border h-12 w-full rounded-md border"
+              placeholder="Search employee..."
+              onSearch={handleSearchChange}
+            />
           </div>
           <div>
             <GenericDropdown
               contentClassName="bg-background"
               trigger={
                 <Button
-                  className="border-gray-75 bg-background flex h-12 items-center rounded-md border-1 px-3 text-black dark:text-white"
+                  className="border-border bg-background flex h-12 items-center rounded-md border-1 px-3 text-black shadow dark:text-white"
                   size="lg"
                 >
                   <Filter className="size-4" />
@@ -198,7 +211,19 @@ export const AddEmployeeModal = ({ open, onOpenChange }: AddEmployeeModalPropert
               }
             >
               <section className="min-w-sm">
-                <FilterForm initialFilters={filters} onFilterChange={handleFilterChange} teams={teams} />
+                <FilterForm
+                  initialFilters={{
+                    search: search || undefined,
+                    teamId: teamId || undefined,
+                    roleId: roleId || undefined,
+                    status: status || undefined,
+                    sortBy: sortBy || undefined,
+                    limit: limit ? String(limit) : undefined,
+                    page: page ? String(page) : undefined,
+                  }}
+                  onFilterChange={handleFilterChange}
+                  teams={teams}
+                />
               </section>
             </GenericDropdown>
           </div>
@@ -209,7 +234,7 @@ export const AddEmployeeModal = ({ open, onOpenChange }: AddEmployeeModalPropert
           {isLoading ? (
             <Loading text={`Loading employees...`} className={`w-fill h-fit p-20`} />
           ) : (
-            <section>
+            <section className="overflow-y-auto">
               {employeesData?.data?.items.length ? (
                 <AdvancedDataTable
                   data={employeesData.data.items}
@@ -229,7 +254,10 @@ export const AddEmployeeModal = ({ open, onOpenChange }: AddEmployeeModalPropert
                   showColumnCustomization={false}
                 />
               ) : (debouncedSearch && debouncedSearch.trim()) ||
-                Object.values(filters).some((value) => value && value !== "1") ? (
+                teamId ||
+                roleId ||
+                (status && status !== "all") ||
+                sortBy ? (
                 <FilteredEmptyState onReset={handleResetFilters} />
               ) : (
                 <EmptyState

@@ -1,32 +1,56 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import Loading from "@/app/Loading";
 import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import MainButton from "@/components/shared/button";
+import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
+import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState, FilteredEmptyState } from "@/components/shared/empty-state";
-import { AdvancedDataTable } from "@/components/shared/table/table";
+import ExportAction from "@/components/shared/export-action";
+import { Button } from "@/components/ui/button";
+import { useTeamsSearchParameters } from "@/lib/nuqs/use-teams-search-parameters";
+import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import type { Role as FormRole, Team as TeamFormType } from "@/modules/@org/onboarding/_components/forms/schema";
 import { TeamForm } from "@/modules/@org/onboarding/_components/forms/team/team-form";
 import type { Team as ServiceTeam } from "@/modules/@org/onboarding/services/service";
 import { useOnboardingService } from "@/modules/@org/onboarding/services/use-onboarding-service";
 import { useQueryClient } from "@tanstack/react-query";
-import { Add } from "iconsax-reactjs";
-import { useState } from "react";
-import { DateRange } from "react-day-picker";
+import { Add, Filter } from "iconsax-reactjs";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useDebounce } from "use-debounce";
 
 import empty1 from "~/images/empty-state.svg";
 import { AddNewEmployees } from "../../_components/forms/add-new-employees";
 import { RolesAndPermission } from "../../_components/forms/add-new-roles";
+import { FilterForm } from "../../_components/forms/filter-form";
 import { useTeamEditing } from "../../_hooks/use-team-editing";
 import { useEmployeeService } from "../../../employee/services/use-service";
 import { useTeamService } from "../../services/use-service";
 import { teamColumn, useTeamRowActions } from "../table-data";
 
 export const AllTeams = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>();
-  const [status, setStatus] = useState<string>("all");
+  const {
+    page,
+    search,
+    status,
+    sortBy,
+    limit,
+    setPage,
+    setSearch,
+    setStatus,
+    setSortBy,
+    setLimit,
+    resetFilters,
+    resetToFirstPage,
+    getApiFilters,
+  } = useTeamsSearchParameters();
+
+  // Local input state (debounced) to throttle URL updates via nuqs
+  const [searchInput, setSearchInput] = useState(search || "");
+  const [debouncedSearch] = useDebounce(searchInput, 300);
+
   const handleOpenEmployeeDialog = (team: Team) => {
     const formTeam: TeamFormType = {
       id: team.id,
@@ -62,7 +86,6 @@ export const AllTeams = () => {
   } = useTeamEditing();
 
   const { getRowActions, DeleteConfirmationModal } = useTeamRowActions(handleOpenEmployeeDialog, handleOpenEditDialog);
-  const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentTeam, setCurrentTeam] = useState<TeamFormType | null>(null);
   const [currentRole, setCurrentRole] = useState<FormRole | null>(null);
@@ -76,18 +99,65 @@ export const AllTeams = () => {
     setDialogOpen(true);
   };
 
-  const { useGetAllTeams, useGetRoles, useCreateRole, useUpdateRole, useAssignEmployeeToTeam } = useTeamService();
+  const { useGetAllTeams, useGetRoles, useCreateRole, useUpdateRole, useAssignEmployeeToTeam, useDownloadTeams } =
+    useTeamService();
   const { useGetAllEmployees } = useEmployeeService();
+  const { refetch: downloadTeams } = useDownloadTeams();
 
-  // Create filters object
-  const filters: IFilters = {
-    page: currentPage,
-    ...(status !== "all" && { status: status as "published" | "draft" }),
-    ...(searchQuery && { search: searchQuery }),
-  };
+  // Apply debounced search to URL (nuqs) and reset page to 1
+  useEffect(() => {
+    setSearch(debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : null);
+    resetToFirstPage();
+  }, [debouncedSearch, setSearch, resetToFirstPage]);
 
-  // Fetch teams data
-  const { data: teamData, isLoading: isProductsLoading } = useGetAllTeams(filters);
+  // Build API filters from URL state (nuqs)
+  const apiFilters = useMemo(() => getApiFilters(), [getApiFilters]);
+
+  const {
+    data: teamData,
+    isLoading,
+    refetch,
+  } = useGetAllTeams(apiFilters, {
+    keepPreviousData: false, // Don't keep previous data to ensure fresh results
+    staleTime: 0, // Always consider data stale to ensure fresh API calls
+    cacheTime: 0, // Don't cache data to prevent stale data issues
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnMount: true, // Always refetch when component mounts
+    refetchOnReconnect: true, // Refetch when network reconnects
+    retry: 1, // Only retry once on failure
+    retryDelay: 1000, // Wait 1 second before retry
+  });
+
+  // Apply filter values to URL (nuqs) and reset page
+  const handleFilterChange = useCallback(
+    (newFilters: any) => {
+      setStatus(newFilters.status ?? null);
+      setSortBy(newFilters.sortBy ?? null);
+      if (newFilters.limit != null) setLimit(Number(newFilters.limit));
+      resetToFirstPage();
+    },
+    [setStatus, setSortBy, setLimit, resetToFirstPage],
+  );
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      setPage(newPage);
+    },
+    [setPage],
+  );
+
+  const handleSearchChange = useCallback((query: string) => {
+    setSearchInput(query);
+  }, []);
+
+  const handleResetFilters = useCallback(() => {
+    setSearchInput("");
+    resetFilters();
+  }, [resetFilters]);
 
   // Fetch employees data
   const { data: employeesData } = useGetAllEmployees({ page: 1 });
@@ -104,10 +174,6 @@ export const AllTeams = () => {
   const createRoleMutation = useCreateRole();
   const updateRoleMutation = useUpdateRole();
   const assignEmployeeMutation = useAssignEmployeeToTeam();
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
 
   const handleAddTeam = async (name: string) => {
     try {
@@ -187,86 +253,94 @@ export const AllTeams = () => {
 
   return (
     <>
-      <section className={`space-y-10`}>
-        <section className={`space-y-4`}>
-          <section className={`flex flex-col-reverse justify-between gap-4 lg:flex-row lg:items-center`}>
-            <div className="">
-              <h1 className="text-2xl font-bold">Teams</h1>
-              <p>All Teams</p>
-            </div>
-            <div className="">
+      <section className="space-y-10">
+        <section className="space-y-4">
+          <DashboardHeader
+            title="Teams"
+            subtitle="All Teams"
+            actionComponent={
               <div className="flex items-center gap-2">
-                <SearchInput className={`h-12`} placeholder={`Search teams...`} onSearch={setSearchQuery} />
-                {/* <MainButton
-                className="border-gray-75 bg-background border-1 px-3 text-black dark:text-white"
-                variant="outline"
-                isLeftIconVisible
-                size="lg"
-                icon={<Filter />}
-              >
-                Filter
-              </MainButton>
-              <MainButton
-                className="border-gray-75 bg-background border-1 px-3 text-black dark:text-white"
-                variant="outline"
-                size="lg"
-                isLeftIconVisible={true}
-                icon={<Export />}
-              >
-                Export
-              </MainButton> */}
-                <MainButton
-                  variant="primary"
-                  isLeftIconVisible
-                  size="xl"
-                  icon={<Add />}
-                  onClick={() => handleOpenTeamDialog()}
+                <SearchInput
+                  className="border-border h-10 rounded-md border"
+                  placeholder="Search teams..."
+                  onSearch={handleSearchChange}
+                />
+                <GenericDropdown
+                  contentClassName="bg-background"
+                  trigger={
+                    <Button
+                      variant={"ghost"}
+                      className="bg-background text-foreground h-10 rounded-md border px-3 shadow"
+                    >
+                      <Filter className="size-4" />
+                      Filter
+                    </Button>
+                  }
                 >
+                  <section className="min-w-sm">
+                    <FilterForm
+                      initialFilters={{
+                        search: search || undefined,
+                        status: status || undefined,
+                        sortBy: sortBy || undefined,
+                        limit: limit ? String(limit) : undefined,
+                        page: page ? String(page) : undefined,
+                      }}
+                      onFilterChange={handleFilterChange}
+                    />
+                  </section>
+                </GenericDropdown>
+                <ExportAction
+                  downloadMutation={async (filters) => {
+                    const { data } = await downloadTeams(filters);
+                    return data as Blob;
+                  }}
+                  currentPage={undefined}
+                  dateRange={undefined}
+                  status={undefined}
+                  buttonText="Export Teams"
+                  fileName="Teams"
+                  className="border-border bg-background text-foreground h-10 rounded-md border px-3"
+                />
+                <MainButton variant="primary" isLeftIconVisible icon={<Add />} onClick={() => handleOpenTeamDialog()}>
                   Add Team
                 </MainButton>
               </div>
-            </div>
-          </section>
-          {isProductsLoading ? (
+            }
+          />
+
+          {isLoading ? (
             <Loading text={`Loading teams table...`} className={`w-fill h-fit p-20`} />
           ) : (
             <section>
               {teamData?.data?.items.length ? (
-                <section>
-                  <AdvancedDataTable
-                    data={teamData.data.items}
-                    columns={teamColumn}
-                    currentPage={teamData.data.metadata.page}
-                    totalPages={teamData.data.metadata.totalPages}
-                    itemsPerPage={teamData.data.metadata.limit}
-                    hasPreviousPage={teamData.data.metadata.hasPreviousPage}
-                    hasNextPage={teamData.data.metadata.hasNextPage}
-                    onPageChange={handlePageChange}
-                    rowActions={getRowActions}
-                    showPagination={true}
-                    enableDragAndDrop={true}
-                    enableRowSelection={true}
-                    enableColumnVisibility={true}
-                    enableSorting={true}
-                    enableFiltering={true}
-                    mobileCardView={true}
-                    showColumnCustomization={false}
-                  />
-                </section>
-              ) : dateRange?.from || dateRange?.to || status !== "all" ? (
-                <FilteredEmptyState
-                  onReset={() => {
-                    setDateRange(undefined);
-                    setStatus("all");
-                    setCurrentPage(1);
-                  }}
+                <AdvancedDataTable
+                  data={teamData.data.items}
+                  columns={teamColumn}
+                  currentPage={teamData.data.metadata.page}
+                  totalPages={teamData.data.metadata.totalPages}
+                  itemsPerPage={teamData.data.metadata.limit}
+                  hasPreviousPage={teamData.data.metadata.hasPreviousPage}
+                  hasNextPage={teamData.data.metadata.hasNextPage}
+                  onPageChange={handlePageChange}
+                  rowActions={getRowActions}
+                  showPagination={true}
+                  enableDragAndDrop={true}
+                  enableRowSelection={true}
+                  enableColumnVisibility={true}
+                  enableSorting={true}
+                  enableFiltering={true}
+                  mobileCardView={true}
+                  showColumnCustomization={false}
                 />
+              ) : (debouncedSearch && debouncedSearch.trim()) || (status && status !== "all") || sortBy ? (
+                <FilteredEmptyState onReset={handleResetFilters} />
               ) : (
                 <EmptyState
-                  className={`bg-background`}
-                  images={[{ src: empty1.src, alt: "No employees", width: 100, height: 100 }]}
+                  className="bg-background"
+                  images={[{ src: empty1.src, alt: "No teams", width: 100, height: 100 }]}
                   title="No team added yet."
-                  description="Add teams  to better organize your workforce, assign leads, and manage roles across your organization.."
+                  description="Add teams to better organize your workforce, assign leads, and manage roles across your organization."
                   button={{
                     text: "Add New Team",
                     onClick: () => handleOpenTeamDialog(),

@@ -482,7 +482,7 @@ export function AdvancedDataTable<T extends DataItem>({
       {renderHeader()}
 
       {/* Desktop Table View */}
-      <div className="hidden h-full overflow-auto rounded-lg bg-white shadow-md md:block">
+      <div className="bg-background hidden h-full overflow-auto rounded-lg shadow md:block">
         {enableDragAndDrop ? (
           <DndContext
             collisionDetection={closestCenter}

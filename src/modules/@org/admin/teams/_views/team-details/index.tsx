@@ -1,16 +1,17 @@
 "use client";
 
 import Loading from "@/app/Loading";
+import { BreadCrumb } from "@/components/shared/breadcrumb";
 import MainButton from "@/components/shared/button";
+import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState } from "@/components/shared/empty-state";
-import { AdvancedDataTable } from "@/components/shared/table/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { formatDate } from "@/lib/tools/format";
+import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import { More } from "iconsax-reactjs";
 import { Plus } from "lucide-react";
-import Link from "next/link";
 
 import empty1 from "~/images/empty-state.svg";
 import { CardGroup } from "../../../dashboard/_components/card-group";
@@ -31,34 +32,37 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
 
   return (
     <section className="space-y-8">
-      <div className="flex items-center justify-between pb-4">
-        <div className="flex flex-col items-start gap-2 text-center md:text-left">
-          <h1 className="text-2xl font-bold">Team Details</h1>
-          <div className="flex items-center gap-1 text-sm">
-            <Link href="/admin/teams" className="text-primary">
-              All Teams
-            </Link>
-            {/* <p className="text-muted-foreground"> > {teamData?.name}</p> */}
+      <DashboardHeader
+        title="Team Details"
+        subtitle={
+          <BreadCrumb
+            items={[
+              { label: "Teams", href: "/admin/teams" },
+              { label: teamData?.name || "", href: `/admin/teams/${id}` },
+            ]}
+          />
+        }
+        actionComponent={
+          <div className="flex items-center gap-5">
+            <MainButton variant="primary" isLeftIconVisible icon={<Plus />}>
+              Add Sub-team
+            </MainButton>
+            <GenericDropdown
+              align={`end`}
+              trigger={
+                <div
+                  className={`bg-background border-border flex size-10 items-center justify-center rounded-md shadow`}
+                >
+                  <More className="size-5" />
+                </div>
+              }
+            >
+              <DropdownMenuItem>Edit Team&apos;s Name</DropdownMenuItem>
+              <DropdownMenuItem>Delete Team</DropdownMenuItem>
+            </GenericDropdown>
           </div>
-        </div>
-        <div className="flex items-center gap-5">
-          <MainButton variant="primary" size="xl" isLeftIconVisible icon={<Plus />}>
-            Add Sub-team
-          </MainButton>
-          <GenericDropdown
-            align={`end`}
-            trigger={
-              <div className={`bg-background border-border flex size-12 items-center justify-center rounded-md border`}>
-                <More className="size-5" />
-              </div>
-            }
-          >
-            <DropdownMenuItem>Edit Team&apos;s Name</DropdownMenuItem>
-            <DropdownMenuItem>Delete Team</DropdownMenuItem>
-          </GenericDropdown>
-        </div>
-      </div>
-
+        }
+      />
       <CardGroup>
         <DashboardCard
           title="Team Name"

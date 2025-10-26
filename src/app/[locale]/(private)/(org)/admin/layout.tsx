@@ -31,7 +31,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <TopBar
             adminName={session?.user.employee.fullName || ""}
             notificationsCount={12}
-            className="rounded-lg px-6 shadow-md"
+            className="rounded-lg px-6 shadow"
           />
           {children}
         </main>

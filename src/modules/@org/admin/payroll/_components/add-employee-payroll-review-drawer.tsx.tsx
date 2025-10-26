@@ -2,7 +2,7 @@
 
 import { BackButton } from "@/components/shared/back-button";
 import MainButton from "@/components/shared/button";
-import { ConfirmationDialog } from "@/components/shared/dialog/confirmation-dialog";
+import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
@@ -24,9 +24,11 @@ export const AddPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerPr
   const [isChangeDateModalOpen, setIsChangeDateModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [isPayrollRunning, setIsPayrollRunning] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   const handleRunPayroll = async () => {
     setIsPayrollRunning(true);
+    setIsConfirmModalOpen(false);
     try {
       // Add your payroll run logic here
       // Simulate API call
@@ -149,22 +151,14 @@ export const AddPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerPr
           </section>
           <div className="border-t p-6">
             <div className="flex gap-3">
-              <ConfirmationDialog
-                action={{
-                  pending: isPayrollRunning,
-                  onOpenChange: () => {},
-                  title: "Confirm Payroll Run?",
-                  description:
-                    "Once you proceed, payroll will be sent for approval. After all required approvers approve it, the funds will be disbursed to employees' accounts.",
-                  onConfirm: handleRunPayroll,
-                  buttonName: "Yes, Run Payroll",
-                  img: "/images/alert.png",
-                }}
+              <MainButton
+                variant="primary"
+                type="button"
+                className="flex-1"
+                onClick={() => setIsConfirmModalOpen(true)}
               >
-                <MainButton variant="primary" type="button" className="flex-1">
-                  Run Payroll
-                </MainButton>
-              </ConfirmationDialog>
+                Run Payroll
+              </MainButton>
               <MainButton variant="outline" onClick={() => setIsChangeDateModalOpen(true)} className="flex-1">
                 Schedule Payment
               </MainButton>
@@ -185,6 +179,19 @@ export const AddPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerPr
             // Here you can add logic to update the payroll schedule
           }
         }}
+      />
+
+      {/* Confirmation Modal */}
+      <AlertModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={handleRunPayroll}
+        loading={isPayrollRunning}
+        type="warning"
+        title="Confirm Payroll Run?"
+        description="Once you proceed, payroll will be sent for approval. After all required approvers approve it, the funds will be disbursed to employees' accounts."
+        confirmText="Yes, Run Payroll"
+        cancelText="Cancel"
       />
     </>
   );

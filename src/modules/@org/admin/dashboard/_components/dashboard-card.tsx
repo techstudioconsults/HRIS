@@ -37,7 +37,7 @@ export function DashboardCard({
   actionTextColor,
 }: DashboardCardProperties) {
   return (
-    <div className={cn("bg-background rounded-xl p-6 shadow-md transition-all", className)}>
+    <div className={cn("bg-background rounded-xl p-6 shadow transition-all", className)}>
       <h3 className={cn("pb-3 text-sm font-medium", titleColor)}>{title}</h3>
       <div className="flex items-center justify-between">
         <div className={cn("text-3xl font-bold", valueColor)}>{value}</div>

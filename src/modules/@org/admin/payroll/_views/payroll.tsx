@@ -4,168 +4,173 @@
 import Loading from "@/app/Loading";
 import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import MainButton from "@/components/shared/button";
+import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState, FilteredEmptyState } from "@/components/shared/empty-state";
 import ExportAction from "@/components/shared/export-action";
 import { ComboBox } from "@/components/shared/select-dropdown/combo-box";
-import { AdvancedDataTable } from "@/components/shared/table/table";
 import { Button } from "@/components/ui/button";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { updateQueryParamameters } from "@/hooks/use-search-parameters";
+import { usePayrollSearchParameters } from "@/lib/nuqs/use-payroll-search-parameters";
+import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import { Eye, EyeSlash, Filter } from "iconsax-reactjs";
 import { MoreVertical } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDebounce } from "use-debounce";
 
 import empty1 from "~/images/empty-state.svg";
 import { AddEmployeeModal } from "../_components/add-employee-modal";
 import { AddPayrollDrawer } from "../_components/add-employee-payroll-review-drawer.tsx";
+import { PayrollFilterForm } from "../_components/forms/filter-form";
 import { FundWalletFormModal } from "../_components/forms/fund-wallet-form-modal";
 import { PayrollSetupModal } from "../_components/payroll-setup-modal";
 import { SchedulePayrollDrawer } from "../_components/schedule-payroll-drawer";
 import { DashboardCard } from "../../dashboard/_components/dashboard-card";
-import { FilterForm } from "../../employee/_components/forms/filter-form";
 import { useEmployeeService } from "../../employee/services/use-service";
+import { usePayrollService } from "../services/use-service";
 import { payrollColumn, usePayrollRowActions } from "./table-data";
 
 const PayrollView = () => {
   const router = useRouter();
-  const pathname = usePathname();
-  const searchParameters = useSearchParams();
+  const {
+    page,
+    search,
+    teamId,
+    roleId,
+    status,
+    sortBy,
+    limit,
+    setPage,
+    setSearch,
+    setTeamId,
+    setRoleId,
+    setStatus,
+    setSortBy,
+    setLimit,
+    resetFilters,
+    resetToFirstPage,
+    getApiFilters,
+  } = usePayrollSearchParameters();
 
-  // Initialize state from URL params
-  const initialFilters = {
-    search: searchParameters.get("search") || undefined,
-    teamId: searchParameters.get("teamId") || undefined,
-    roleId: searchParameters.get("roleId") || undefined,
-    status: searchParameters.get("status") || undefined,
-    sortBy: searchParameters.get("sortBy") || undefined,
-    limit: searchParameters.get("limit") || undefined,
-    page: searchParameters.get("page") || "1",
-  };
+  // Local input state (debounced) to throttle URL updates via nuqs
+  const [searchInput, setSearchInput] = useState(search || "");
+  const [debouncedSearch] = useDebounce(searchInput, 300);
 
-  const [showSetupModal, setShowSetupModal] = useState(true);
+  const [showSetupModal, setShowSetupModal] = useState(false);
   const [showFundWalletModal, setShowFundWalletModal] = useState(false);
   const [showScheduleDrawer, setShowScheduleDrawer] = useState(false);
   const [showPayrollDrawer, setShowPayrollDrawer] = useState(false);
   const [showAddEmployeeModal, setShowAddEmployeeModal] = useState(false);
   const [isNetPayVisible, setIsNetPayVisible] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(initialFilters.search || "");
-  const [debouncedSearch] = useDebounce(searchQuery, 300);
-  const [filters, setFilters] = useState<any>(initialFilters);
-  const [debouncedFilters] = useDebounce(filters, 300);
 
   const { getRowActions } = usePayrollRowActions();
   const { useGetAllTeams } = useEmployeeService();
+  const { useGetAllPayrolls, useDownloadPayrolls } = usePayrollService();
   const { data: teams = [] } = useGetAllTeams();
+  const { refetch: downloadPayrolls } = useDownloadPayrolls();
 
-  // Create stable API filters object - include search in debouncedFilters instead of separate
-  // Note: This will be used when real payroll API is implemented
-  // const apiFilters = useMemo(
-  //   () => ({
-  //     ...debouncedFilters,
-  //     // Always include search parameter - empty string means no search filter
-  //     search: debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : undefined,
-  //     page: debouncedFilters.page ? Number(debouncedFilters.page) : 1,
-  //   }),
-  //   [debouncedFilters, debouncedSearch],
-  // );
-
-  // TODO: Replace with actual payroll data fetching hook
-  const isLoading = false;
-  const payrollData = {
-    data: { items: [], metadata: { page: 1, totalPages: 1, limit: 10, hasPreviousPage: false, hasNextPage: false } },
-  };
-
-  // Stable filter change handler
-  const handleFilterChange = useCallback((newFilters: any) => {
-    setFilters((previous: any) => {
-      // Only update if something actually changed
-      if (JSON.stringify(previous) !== JSON.stringify(newFilters)) {
-        return newFilters;
-      }
-      return previous;
-    });
-  }, []);
-
-  // Update URL when filters change
+  // Apply debounced search to URL (nuqs) and reset page to 1
   useEffect(() => {
-    const parameters = {
-      // Only include search in URL if it has actual content
-      ...(debouncedSearch && debouncedSearch.trim() && { search: debouncedSearch.trim() }),
-      ...(debouncedFilters.teamId && { teamId: debouncedFilters.teamId }),
-      ...(debouncedFilters.roleId && { roleId: debouncedFilters.roleId }),
-      ...(debouncedFilters.status && { status: debouncedFilters.status }),
-      ...(debouncedFilters.sortBy && { sortBy: debouncedFilters.sortBy }),
-      page: debouncedFilters.page || "1",
-    };
+    setSearch(debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : null);
+    resetToFirstPage();
+  }, [debouncedSearch, setSearch, resetToFirstPage]);
 
-    updateQueryParamameters(router, pathname, searchParameters, parameters);
-  }, [debouncedSearch, debouncedFilters, router, pathname, searchParameters]);
+  // Build API filters from URL state (nuqs)
+  const apiFilters = useMemo(() => getApiFilters(), [getApiFilters]);
 
-  const handlePageChange = useCallback((page: number) => {
-    setFilters((previous: any) => ({ ...previous, page: page.toString() }));
-  }, []);
+  const {
+    data: payrollData,
+    isLoading,
+    refetch,
+  } = useGetAllPayrolls(apiFilters, {
+    keepPreviousData: false, // Don't keep previous data to ensure fresh results
+    staleTime: 0, // Always consider data stale to ensure fresh API calls
+    cacheTime: 0, // Don't cache data to prevent stale data issues
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnMount: true, // Always refetch when component mounts
+    refetchOnReconnect: true, // Refetch when network reconnects
+    retry: 1, // Only retry once on failure
+    retryDelay: 1000, // Wait 1 second before retry
+  });
+
+  // Apply filter values to URL (nuqs) and reset page
+  const handleFilterChange = useCallback(
+    (newFilters: any) => {
+      setTeamId(newFilters.teamId ?? null);
+      setRoleId(newFilters.roleId ?? null);
+      setStatus(newFilters.status ?? null);
+      setSortBy(newFilters.sortBy ?? null);
+      if (newFilters.limit != null) setLimit(Number(newFilters.limit));
+      resetToFirstPage();
+    },
+    [setTeamId, setRoleId, setStatus, setSortBy, setLimit, resetToFirstPage],
+  );
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      setPage(newPage);
+    },
+    [setPage],
+  );
 
   const handleSearchChange = useCallback((query: string) => {
-    setSearchQuery(query);
-    // Reset to first page when search changes
-    setFilters((previous: any) => ({ ...previous, page: "1" }));
+    setSearchInput(query);
   }, []);
 
   const handleResetFilters = useCallback(() => {
-    setSearchQuery("");
-    setFilters({
-      search: undefined,
-      teamId: undefined,
-      roleId: undefined,
-      status: undefined,
-      sortBy: undefined,
-      limit: undefined,
-      page: "1",
-    });
-  }, []);
+    setSearchInput("");
+    resetFilters();
+  }, [resetFilters]);
 
   return (
     <section>
-      <section className="flex flex-col-reverse justify-between gap-4 lg:flex-row lg:items-center">
-        <div>
-          <h1 className="text-2xl font-bold">Payroll Overview</h1>
-          <p className="text-sm text-gray-500">Payroll</p>
-        </div>
-        <div className="flex min-w-[50%] items-center gap-2">
-          <ComboBox options={[]} className="h-12" />
-          <MainButton variant="outline" onClick={() => setShowFundWalletModal(true)}>
-            Fund Wallet
-          </MainButton>
-          {true && (
-            <>
-              <MainButton onClick={() => setShowPayrollDrawer(true)} variant="primary">
-                Generate Payroll
-              </MainButton>
-              <MainButton onClick={() => setShowPayrollDrawer(true)} variant="primary">
-                Run Payroll
-              </MainButton>
-            </>
-          )}
-          <div>
-            <GenericDropdown
-              align={`end`}
-              trigger={
-                <div
-                  className={`bg-background border-border flex size-12 items-center justify-center rounded-md border`}
-                >
-                  <MoreVertical className="size-5" />
-                </div>
-              }
+      <DashboardHeader
+        title="Payroll Overview"
+        subtitle="Payroll"
+        actionComponent={
+          <div className="flex min-w-[50%] items-center gap-2">
+            <ComboBox options={[]} className="border-border text-muted-foreground h-10 border" />
+            <MainButton
+              className="border-primary shadow"
+              variant="outline"
+              onClick={() => setShowFundWalletModal(true)}
             >
-              <DropdownMenuItem onClick={() => setShowScheduleDrawer(true)}>Schedule Payroll</DropdownMenuItem>
-              <DropdownMenuItem>Payroll Settings</DropdownMenuItem>
-            </GenericDropdown>
+              Fund Wallet
+            </MainButton>
+            {true && (
+              <>
+                <MainButton onClick={() => setShowPayrollDrawer(true)} variant="primary">
+                  Generate Payroll
+                </MainButton>
+                <MainButton onClick={() => setShowPayrollDrawer(true)} variant="primary">
+                  Run Payroll
+                </MainButton>
+              </>
+            )}
+            <div>
+              <GenericDropdown
+                align={`end`}
+                trigger={
+                  <div
+                    className={`bg-background border-border flex size-10 items-center justify-center rounded-md border shadow`}
+                  >
+                    <MoreVertical className="size-4" />
+                  </div>
+                }
+              >
+                <DropdownMenuItem onClick={() => setShowScheduleDrawer(true)}>Schedule Payroll</DropdownMenuItem>
+                <DropdownMenuItem>Payroll Settings</DropdownMenuItem>
+              </GenericDropdown>
+            </div>
           </div>
-        </div>
-      </section>
+        }
+      />
+
       {/* Payroll Table Placeholder */}
       <section className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
         <DashboardCard
@@ -200,12 +205,16 @@ const PayrollView = () => {
           titleColor="text-white"
         />
       </section>
-      <section className="mt-8">
-        <section className="flex items-center justify-between">
+      <section className="mt-10">
+        <section className="mb-6 flex items-center justify-between">
           <h1 className="text-xl font-bold">Employee Payroll Summary</h1>
-          <div className="flex w-[50%] items-center gap-2">
-            <SearchInput className="h-12 w-full" placeholder="Search employee..." onSearch={handleSearchChange} />
-            <MainButton variant="primary" isLeftIconVisible size="xl" onClick={() => setShowAddEmployeeModal(true)}>
+          <div className="flex min-w-[50%] items-center gap-2">
+            <SearchInput
+              className="border-border h-10 rounded-md border"
+              placeholder="Search employee..."
+              onSearch={handleSearchChange}
+            />
+            <MainButton variant="primary" isLeftIconVisible onClick={() => setShowAddEmployeeModal(true)}>
               Add Employee
             </MainButton>
             <div>
@@ -213,8 +222,8 @@ const PayrollView = () => {
                 contentClassName="bg-background"
                 trigger={
                   <Button
-                    className="border-gray-75 bg-background flex h-12 items-center rounded-md border-1 px-3 text-black dark:text-white"
-                    size="lg"
+                    className="bg-background border-border flex h-10 items-center rounded-md border px-3 text-black dark:text-white"
+                    variant="ghost"
                   >
                     <Filter className="size-4" />
                     <span>Filter</span>
@@ -222,22 +231,34 @@ const PayrollView = () => {
                 }
               >
                 <section className="min-w-sm">
-                  <FilterForm initialFilters={filters} onFilterChange={handleFilterChange} teams={teams} />
+                  <PayrollFilterForm
+                    initialFilters={{
+                      search: search || undefined,
+                      teamId: teamId || undefined,
+                      roleId: roleId || undefined,
+                      status: status || undefined,
+                      sortBy: sortBy || undefined,
+                      limit: limit ? String(limit) : undefined,
+                      page: page ? String(page) : undefined,
+                    }}
+                    onFilterChange={handleFilterChange}
+                    teams={teams}
+                  />
                 </section>
               </GenericDropdown>
             </div>
             <div>
               <ExportAction
-                downloadMutation={async (parameters) => {
-                  // const { data } = await downloadPayroll(parameters);
-                  return parameters as Blob;
+                downloadMutation={async (filters) => {
+                  const { data } = await downloadPayrolls(filters);
+                  return data as Blob;
                 }}
                 currentPage={undefined}
                 dateRange={undefined}
                 status={undefined}
                 buttonText="Export Payroll"
                 fileName="Payroll"
-                size="xl"
+                className="border-border bg-background text-foreground h-10 rounded-md border px-3 shadow"
               />
             </div>
           </div>
@@ -246,9 +267,9 @@ const PayrollView = () => {
           <Loading text={`Loading payroll table...`} className={`w-fill h-fit p-20`} />
         ) : (
           <section>
-            {payrollData?.data?.items.length ? (
+            {payrollData?.data?.items?.length ? (
               <AdvancedDataTable
-                data={payrollData.data.items}
+                data={payrollData.data.items as any[]}
                 columns={payrollColumn}
                 currentPage={payrollData.data.metadata.page}
                 totalPages={payrollData.data.metadata.totalPages}
@@ -267,7 +288,10 @@ const PayrollView = () => {
                 showColumnCustomization={false}
               />
             ) : (debouncedSearch && debouncedSearch.trim()) ||
-              Object.values(filters).some((value) => value && value !== "1") ? (
+              teamId ||
+              roleId ||
+              (status && status !== "all") ||
+              sortBy ? (
               <FilteredEmptyState onReset={handleResetFilters} />
             ) : (
               <EmptyState

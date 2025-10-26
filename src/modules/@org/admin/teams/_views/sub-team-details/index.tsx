@@ -3,7 +3,6 @@
 import Loading from "@/app/Loading";
 import MainButton from "@/components/shared/button";
 import { EmptyState } from "@/components/shared/empty-state";
-import { AdvancedDataTable } from "@/components/shared/table/table";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -13,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { formatDate } from "@/lib/tools/format";
 import { cn } from "@/lib/utils";
+import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import { More } from "iconsax-reactjs";
 import { Plus } from "lucide-react";
 import Image from "next/image";

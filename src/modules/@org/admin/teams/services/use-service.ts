@@ -21,6 +21,9 @@ export const useTeamService = () => {
   const useGetRoles = (teamId: string, options?: any) =>
     useServiceQuery(["roles", teamId], (service) => service.getRoles(teamId), options);
 
+  const useDownloadTeams = (filters: IFilters = Object.create({ page: 1 }), options?: any) =>
+    useServiceQuery(queryKeys.team.download(filters), (service) => service.downloadTeams(filters), options);
+
   // Mutations
   const useDeleteTeam = () =>
     useServiceMutation((service, id: string) => service.deleteTeam(id), {
@@ -77,6 +80,7 @@ export const useTeamService = () => {
     useGetAllTeams,
     useGetTeamsById,
     useGetRoles,
+    useDownloadTeams,
 
     // Mutations
     useDeleteTeam,

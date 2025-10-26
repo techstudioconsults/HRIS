@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import Loading from "@/app/Loading";
 import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import MainButton from "@/components/shared/button";
+import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState, FilteredEmptyState } from "@/components/shared/empty-state";
 import ExportAction from "@/components/shared/export-action";
-import { AdvancedDataTable } from "@/components/shared/table/table";
 import { Button } from "@/components/ui/button";
 import { useEmployeeSearchParameters } from "@/lib/nuqs/use-employee-search-parameters";
+import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import { Add, Filter } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -17,6 +17,7 @@ import { useDebounce } from "use-debounce";
 
 import empty1 from "~/images/empty-state.svg";
 import { FilterForm } from "../../_components/forms/filter-form";
+import { TableSkeleton } from "../../../_components/table/table-skeleton";
 import { useEmployeeService } from "../../services/use-service";
 import { employeeColumn, useEmployeeRowActions } from "../table-data";
 
@@ -112,70 +113,65 @@ export const AllEmployees = () => {
 
   return (
     <section className="space-y-10">
-      <section className="space-y-4">
-        <section className="flex flex-col-reverse justify-between gap-4 lg:flex-row lg:items-center">
-          <div>
-            <h1 className="text-2xl font-bold">Employee</h1>
-            <p>All Employees</p>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <SearchInput className="h-12" placeholder="Search employee..." onSearch={handleSearchChange} />
-              <GenericDropdown
-                contentClassName="bg-background"
-                trigger={
-                  <Button
-                    className="border-gray-75 bg-background h-12 rounded-md border-1 px-3 text-black dark:text-white"
-                    size="lg"
-                  >
-                    <Filter className="size-5" />
-                    Filter
-                  </Button>
-                }
-              >
-                <section className="min-w-sm">
-                  <FilterForm
-                    initialFilters={{
-                      search: search || undefined,
-                      teamId: teamId || undefined,
-                      roleId: roleId || undefined,
-                      status: status || undefined,
-                      sortBy: sortBy || undefined,
-                      limit: limit ? String(limit) : undefined,
-                      page: page ? String(page) : undefined,
-                    }}
-                    onFilterChange={handleFilterChange}
-                    teams={teams}
-                  />
-                </section>
-              </GenericDropdown>
-              <ExportAction
-                downloadMutation={async (filters) => {
-                  const { data } = await downloadProducts(filters);
-                  return data as Blob;
-                }}
-                currentPage={undefined}
-                dateRange={undefined}
-                status={undefined}
-                buttonText="Export Employees"
-                fileName="Product"
-                size="xl"
-              />
-              <MainButton
-                href="/admin/employees/add-employee"
-                variant="primary"
-                isLeftIconVisible
-                size="xl"
-                icon={<Add />}
-              >
-                Add Employee
-              </MainButton>
+      <section className="space-y-6">
+        <DashboardHeader
+          title="Employee"
+          subtitle="All Employees"
+          actionComponent={
+            <div>
+              <div className="flex items-center gap-2">
+                <SearchInput
+                  className="border-border h-10 rounded-md border"
+                  placeholder="Search employee..."
+                  onSearch={handleSearchChange}
+                />
+                <GenericDropdown
+                  contentClassName="bg-background"
+                  trigger={
+                    <Button className="bg-background text-foreground h-10 rounded-md border px-3" variant="ghost">
+                      <Filter className="size-4" />
+                      Filter
+                    </Button>
+                  }
+                >
+                  <section className="min-w-sm">
+                    <FilterForm
+                      initialFilters={{
+                        search: search || undefined,
+                        teamId: teamId || undefined,
+                        roleId: roleId || undefined,
+                        status: status || undefined,
+                        sortBy: sortBy || undefined,
+                        limit: limit ? String(limit) : undefined,
+                        page: page ? String(page) : undefined,
+                      }}
+                      onFilterChange={handleFilterChange}
+                      teams={teams}
+                    />
+                  </section>
+                </GenericDropdown>
+                <ExportAction
+                  downloadMutation={async (filters) => {
+                    const { data } = await downloadProducts(filters);
+                    return data as Blob;
+                  }}
+                  currentPage={undefined}
+                  dateRange={undefined}
+                  status={undefined}
+                  buttonText="Export Employees"
+                  fileName="Product"
+                  className="border-border bg-background text-foreground h-10 rounded-md border px-3"
+                />
+                <MainButton href="/admin/employees/add-employee" variant="primary" isLeftIconVisible icon={<Add />}>
+                  Add Employee
+                </MainButton>
+              </div>
             </div>
-          </div>
-        </section>
+          }
+        />
 
         {isLoading ? (
-          <Loading text={`Loading employees table...`} className={`w-fill h-fit p-20`} />
+          <TableSkeleton columns={employeeColumn.length} rows={10} />
         ) : (
           <section>
             {employeeData?.data?.items.length ? (

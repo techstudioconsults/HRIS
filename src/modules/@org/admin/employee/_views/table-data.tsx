@@ -1,8 +1,8 @@
 import { AlertModal } from "@/components/shared/dialog/alert-modal";
-import { IColumnDefinition, IRowAction } from "@/components/shared/table/table";
 import { EmailTooltip, NameTooltip } from "@/components/shared/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { IColumnDefinition, IRowAction } from "@/modules/@org/admin/_components/table/table";
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

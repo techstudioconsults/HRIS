@@ -28,6 +28,12 @@ export const queryKeys = {
   team: {
     list: (filters?: IFilters) => ["teams", "list", filters] as const,
     details: (id: string) => ["teams", "detail", id] as const,
+    download: (filters?: IFilters) => ["teams", "download", filters] as const,
+  },
+  payroll: {
+    list: (filters?: IFilters) => ["payrolls", "list", filters] as const,
+    details: (id: string) => ["payrolls", "detail", id] as const,
+    download: (filters?: IFilters) => ["payrolls", "download", filters] as const,
   },
   // Add other domains as needed
 };

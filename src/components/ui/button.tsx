@@ -4,21 +4,21 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { ButtonHTMLAttributes, forwardRef } from "react";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap shadow-none text-sm cursor-pointer font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap shadow text-sm cursor-pointer font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-default text-default-foreground",
+        default: "bg-default text-default-foreground shadow-none",
         primary: "bg-primary text-primary-foreground",
         accent: "bg-accent text-accent-foreground",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive-hover",
         subtle: "bg-subtle text-subtle-foreground hover:bg-subtle-hover",
         loading:
           "bg-loading text-loading-foreground hover:bg-loading-hover opacity-50 hover:opacity-100 transition-opacity duration-500 ease-out",
-        outline: "text-primary border-2 border-primary hover:bg-outline-hover hover:text-black",
+        outline: "text-primary border border-primary hover:bg-primary-75 hover:text-primary shadow-none",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-primary-75 hover:text-primary text-primary",
-        link: "text-link underline-offset-4 hover:underline",
+        link: "text-link underline-offset-4 hover:underline shadow-none",
       },
       size: {
         default: "h-9 px-4 py-2",

@@ -46,6 +46,17 @@ export class TeamService {
     }
   }
 
+  async downloadTeams(filters: IFilters = Object.create({ page: 1 })) {
+    const queryParameters = this.buildQueryParameters(filters);
+    const response = await this.http.get<Blob>(`/teams/export?${queryParameters}`, {
+      responseType: "blob",
+    });
+
+    if (response?.status === 200) {
+      return response.data;
+    }
+  }
+
   async getTeamById(id: string | null) {
     const response = await this.http.get<{ data: Team }>(`/teams/${id}`);
     if (response?.status === 200) {

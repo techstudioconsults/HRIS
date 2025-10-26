@@ -11,21 +11,48 @@ export const teamColumn: IColumnDefinition<Team>[] = [
   {
     header: "Team Name",
     accessorKey: "name",
-    render: (_, team: Team) => <span>{team.name}</span>,
+    render: (_, team: Team) => <span className="font-medium">{team.name}</span>,
   },
   {
     header: "Team Lead",
     accessorKey: "manager",
+    render: (_, team: Team) => (
+      <span className="text-gray-600 dark:text-gray-400">{team.manager || "Not assigned"}</span>
+    ),
   },
   {
     header: "Team Members",
     accessorKey: "members",
-    render: (_, team: Team) => <span>{team.members}</span>,
+    render: (_, team: Team) => (
+      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+        {team.members || 0} members
+      </span>
+    ),
+  },
+  {
+    header: "Status",
+    accessorKey: "status",
+    render: (_, team: Team) => {
+      const status = team.status || "active";
+      const statusColors = {
+        active: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+        inactive: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+      };
+      return (
+        <span
+          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColors[status as keyof typeof statusColors] || statusColors.active}`}
+        >
+          {status.charAt(0).toUpperCase() + status.slice(1)}
+        </span>
+      );
+    },
   },
   {
     header: "Created on",
     accessorKey: "createdAt",
-    render: (_, team: Team) => <span>{formatDate(team.createdAt as string)}</span>,
+    render: (_, team: Team) => (
+      <span className="text-gray-600 dark:text-gray-400">{formatDate(team.createdAt as string)}</span>
+    ),
   },
 ];
 

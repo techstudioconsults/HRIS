@@ -1,4 +1,4 @@
-import { IColumnDefinition, IRowAction } from "@/components/shared/table/table";
+import { IColumnDefinition, IRowAction } from "@/modules/@org/admin/_components/table/table";
 import { useRouter } from "next/navigation";
 
 import { PayrollSummary } from "../types";

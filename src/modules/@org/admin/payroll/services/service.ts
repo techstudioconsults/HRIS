@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpAdapter } from "@/lib/http/http-adapter";
 
 export class PayrollService {
@@ -5,6 +6,54 @@ export class PayrollService {
 
   constructor(httpAdapter: HttpAdapter) {
     this.http = httpAdapter;
+  }
+
+  async getAllPayrolls(filters: IFilters = Object.create({ page: 1 })) {
+    const queryParameters = this.buildQueryParameters(filters);
+    const response = await this.http.get<ApiResponse<PayrollService>>(`/payrolls?${queryParameters}`);
+
+    if (response?.status === 200) {
+      return response.data;
+    }
+  }
+
+  async downloadPayrolls(filters: IFilters = Object.create({ page: 1 })) {
+    const queryParameters = this.buildQueryParameters(filters);
+    const response = await this.http.get<Blob>(`/payrolls/export?${queryParameters}`, {
+      responseType: "blob",
+    });
+
+    if (response?.status === 200) {
+      return response.data;
+    }
+  }
+
+  async getPayrollById(id: string | null) {
+    const response = await this.http.get<{ data: PayrollService }>(`/payrolls/${id}`);
+    if (response?.status === 200) {
+      return response.data.data;
+    }
+  }
+
+  async createPayroll(data: any) {
+    const response = await this.http.post<{ data: PayrollService }>("/payrolls", data);
+    if (response?.status === 201) {
+      return response.data.data;
+    }
+  }
+
+  async updatePayroll(id: string, data: any) {
+    const response = await this.http.patch<{ data: PayrollService }>(`/payrolls/${id}`, data);
+    if (response?.status === 200) {
+      return response.data.data;
+    }
+  }
+
+  async deletePayroll(id: string) {
+    const response = await this.http.delete<{ success: boolean }>(`/payrolls/${id}`);
+    if (response?.status === 200) {
+      return response.data;
+    }
   }
 
   private buildQueryParameters(filters: IFilters): string {

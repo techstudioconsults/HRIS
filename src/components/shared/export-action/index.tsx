@@ -54,8 +54,8 @@ const ExportAction = <T extends object>({
 
   return (
     <MainButton
-      variant="outline"
-      className={cn("border-border bg-background w-full border-1 text-black lg:w-auto", className)}
+      variant="ghost"
+      className={cn("border-border bg-background w-full text-black lg:w-auto", className)}
       size={size as "lg" | "xl"}
       isLeftIconVisible={true}
       icon={<DocumentDownload />}

@@ -22,7 +22,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 import { useDebounce } from "use-debounce";
 
 import empty1 from "~/images/empty-state.svg";
-import { AddEmployeeModal } from "../_components/add-employee-modal";
+import { AddEmployeeDrawer } from "../_components/add-employee-drawer";
 import { PayrollFilterForm } from "../_components/forms/filter-form";
 import { FundWalletFormModal } from "../_components/forms/fund-wallet-form-modal";
 import { GenerateRunPayrollDrawer } from "../_components/generate-run-payroll-drawer";
@@ -168,7 +168,7 @@ const PayrollView = () => {
         subtitle="Payroll"
         actionComponent={
           <div className="flex min-w-[50%] items-center gap-2">
-            <ComboBox options={[]} className="border-border text-muted-foreground h-10 border" />
+            <ComboBox options={[]} className="border-border text-muted-foreground h-10 w-full border" />
             <MainButton
               className="border-primary shadow"
               variant="outline"
@@ -264,7 +264,7 @@ const PayrollView = () => {
           <h1 className="text-xl font-bold">Employee Payroll Summary</h1>
           <div className="flex min-w-[50%] items-center gap-2">
             <SearchInput
-              className="border-border h-10 rounded-md border"
+              className="border-border h-10 w-full rounded-md border"
               placeholder="Search employee..."
               onSearch={handleSearchChange}
             />
@@ -386,7 +386,7 @@ const PayrollView = () => {
       <GenerateRunPayrollDrawer open={showPayrollDrawer} onOpenChange={setShowPayrollDrawer} />
 
       {/* Add Employee Modal */}
-      <AddEmployeeModal open={showAddEmployeeModal} onOpenChange={setShowAddEmployeeModal} />
+      <AddEmployeeDrawer open={showAddEmployeeModal} onOpenChange={setShowAddEmployeeModal} />
     </section>
   );
 };

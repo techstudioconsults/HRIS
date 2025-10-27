@@ -39,7 +39,7 @@ export interface PayrollUIActions {
 }
 
 const initialState: PayrollUIState = {
-  showSetupModal: false,
+  showSetupModal: true,
   showFundWalletModal: false,
   showScheduleDrawer: false,
   showPayrollDrawer: false,

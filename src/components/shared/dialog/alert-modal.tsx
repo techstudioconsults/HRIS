@@ -21,6 +21,46 @@ interface AlertModalProperties {
   showCancelButton?: boolean;
   autoClose?: boolean;
   autoCloseDelay?: number;
+  // Optional className overrides for flexible styling
+  containerClassName?: string;
+  iconContainerClassName?: string;
+  iconClassName?: string;
+  contentClassName?: string;
+  titleClassName?: string;
+  descriptionClassName?: string;
+  actionsClassName?: string;
+  confirmButtonClassName?: string;
+  cancelButtonClassName?: string;
+  /**
+   * Override the confirm button variant. Defaults to a variant based on the `type`.
+   * Available variants: "default" | "primary" | "destructive" | "subtle" | "loading" |
+   * "outline" | "secondary" | "ghost" | "link" | "accent"
+   */
+  confirmVariant?:
+    | "default"
+    | "primary"
+    | "destructive"
+    | "subtle"
+    | "loading"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link"
+    | "accent";
+  /**
+   * Override the cancel button variant. Defaults to "outline".
+   */
+  cancelVariant?:
+    | "default"
+    | "primary"
+    | "destructive"
+    | "subtle"
+    | "loading"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link"
+    | "accent";
 }
 
 const SuccessIcon = () => (
@@ -85,6 +125,17 @@ export const AlertModal: React.FC<AlertModalProperties> = ({
   showCancelButton = true,
   autoClose = false,
   autoCloseDelay = 3000,
+  confirmVariant,
+  cancelVariant,
+  containerClassName,
+  iconContainerClassName,
+  iconClassName,
+  contentClassName,
+  titleClassName,
+  descriptionClassName,
+  actionsClassName,
+  confirmButtonClassName,
+  cancelButtonClassName,
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -107,41 +158,57 @@ export const AlertModal: React.FC<AlertModalProperties> = ({
   }
 
   const config = alertConfig[type];
+  const resolvedConfirmVariant = confirmVariant ?? config.buttonVariant;
+  const resolvedCancelVariant = cancelVariant ?? "outline";
 
   return (
     <Modal title="" description="" isOpen={isOpen} onClose={onClose}>
-      <div className="flex flex-col items-center gap-6 py-8">
+      <div className={`flex flex-col items-center gap-6 py-8 ${containerClassName ?? ""}`}>
         {/* Icon */}
         <div
-          className={`flex h-16 w-16 items-center justify-center rounded-full border-2 ${config.borderColor} ${config.bgColor}`}
+          className={`flex h-16 w-16 items-center justify-center rounded-full border-2 ${config.borderColor} ${config.bgColor} ${iconContainerClassName ?? ""}`}
         >
           {type === "success" || type === "error" ? (
             <config.icon />
           ) : (
-            <config.icon className={`h-8 w-8 ${config.iconColor}`} />
+            <config.icon className={`h-8 w-8 ${config.iconColor} ${iconClassName ?? ""}`} />
           )}
         </div>
 
         {/* Content */}
-        <div className="space-y-2 text-center">
-          <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-          <p className="text-sm text-gray-600">{description}</p>
+        <div className={`space-y-2 text-center ${contentClassName ?? ""}`}>
+          <h3 className={`text-xl font-bold text-gray-900 ${titleClassName ?? ""}`}>{title}</h3>
+          <p className={`text-sm text-gray-600 ${descriptionClassName ?? ""}`}>{description}</p>
         </div>
 
         {/* Buttons */}
-        <div className="flex w-full gap-3">
+        <div className={`flex w-full gap-3 ${actionsClassName ?? ""}`}>
           {showCancelButton && (
-            <MainButton isDisabled={loading} variant="outline" onClick={onClose} className="flex-1">
+            <MainButton
+              isDisabled={loading}
+              variant={resolvedCancelVariant}
+              onClick={onClose}
+              className={`flex-1 ${cancelButtonClassName ?? ""}`}
+            >
               {cancelText}
             </MainButton>
           )}
-          {onConfirm && (
-            <MainButton isDisabled={loading} variant={config.buttonVariant} onClick={onConfirm} className="flex-1">
+          {onConfirm ? (
+            <MainButton
+              isDisabled={loading}
+              variant={resolvedConfirmVariant}
+              onClick={onConfirm}
+              className={`flex-1 ${confirmButtonClassName ?? ""}`}
+            >
               {loading ? "Loading..." : confirmText}
             </MainButton>
-          )}
-          {!onConfirm && (
-            <MainButton isDisabled={loading} variant={config.buttonVariant} onClick={onClose} className="flex-1">
+          ) : (
+            <MainButton
+              isDisabled={loading}
+              variant={resolvedConfirmVariant}
+              onClick={onClose}
+              className={`flex-1 ${confirmButtonClassName ?? ""}`}
+            >
               {confirmText}
             </MainButton>
           )}

@@ -4,6 +4,9 @@ import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { AlertTriangle, Copy } from "lucide-react";
 import { useState } from "react";
+import { useShallow } from "zustand/react/shallow";
+
+import { PayrollActions, usePayrollStore } from "../stores/payroll-store";
 
 interface FundWalletAccountModalProperties {
   open: boolean;
@@ -18,6 +21,13 @@ interface BankAccountDetails {
 
 export function FundWalletAccountModal({ open, onOpenChange, onConfirm }: FundWalletAccountModalProperties) {
   const [copied, setCopied] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const { setTogglePayrollAction } = usePayrollStore(
+    useShallow((s: PayrollActions) => ({
+      setTogglePayrollAction: s.setTogglePayrollAction,
+    })),
+  );
 
   // Bank account details - these would typically come from props or API
   const bankAccountDetails: BankAccountDetails = {
@@ -35,11 +45,21 @@ export function FundWalletAccountModal({ open, onOpenChange, onConfirm }: FundWa
     }
   };
 
-  const handleConfirm = () => {
-    if (onConfirm) {
-      onConfirm();
+  const handleConfirm = async () => {
+    try {
+      setIsProcessing(true);
+      // Allow parent to perform async work (e.g., fund wallet API)
+      if (onConfirm) {
+        await onConfirm();
+      }
+      // After successful processing, toggle payroll action to RUN
+      setTogglePayrollAction("RUN");
+      onOpenChange(false);
+    } catch {
+      // Silently ignore for now; could show a toast in the future
+    } finally {
+      setIsProcessing(false);
     }
-    onOpenChange(false);
   };
 
   return (
@@ -89,8 +109,15 @@ export function FundWalletAccountModal({ open, onOpenChange, onConfirm }: FundWa
 
         {/* Action Button */}
         <div className="pt-4">
-          <MainButton className="w-full" type="button" variant="primary" onClick={handleConfirm}>
-            Okay, Got it
+          <MainButton
+            className="w-full"
+            type="button"
+            variant="primary"
+            onClick={handleConfirm}
+            isDisabled={isProcessing}
+            isLoading={isProcessing}
+          >
+            {isProcessing ? "Processing..." : "Okay, Got it"}
           </MainButton>
         </div>
       </div>

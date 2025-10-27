@@ -12,23 +12,26 @@ import { ComboBox } from "@/components/shared/select-dropdown/combo-box";
 import { Button } from "@/components/ui/button";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { usePayrollSearchParameters } from "@/lib/nuqs/use-payroll-search-parameters";
+import { cn } from "@/lib/utils";
 import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
-import { Eye, EyeSlash, Filter } from "iconsax-reactjs";
+import { CloseCircle, Eye, EyeSlash, Filter } from "iconsax-reactjs";
 import { MoreVertical } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useDebounce } from "use-debounce";
 
 import empty1 from "~/images/empty-state.svg";
 import { AddEmployeeModal } from "../_components/add-employee-modal";
-import { AddPayrollDrawer } from "../_components/add-employee-payroll-review-drawer.tsx";
 import { PayrollFilterForm } from "../_components/forms/filter-form";
 import { FundWalletFormModal } from "../_components/forms/fund-wallet-form-modal";
+import { GenerateRunPayrollDrawer } from "../_components/generate-run-payroll-drawer";
 import { PayrollSetupModal } from "../_components/payroll-setup-modal";
 import { SchedulePayrollDrawer } from "../_components/schedule-payroll-drawer";
 import { DashboardCard } from "../../dashboard/_components/dashboard-card";
 import { useEmployeeService } from "../../employee/services/use-service";
 import { usePayrollService } from "../services/use-service";
+import { usePayrollStore } from "../stores/payroll-store";
 import { payrollColumn, usePayrollRowActions } from "./table-data";
 
 const PayrollView = () => {
@@ -57,18 +60,42 @@ const PayrollView = () => {
   const [searchInput, setSearchInput] = useState(search || "");
   const [debouncedSearch] = useDebounce(searchInput, 300);
 
-  const [showSetupModal, setShowSetupModal] = useState(true);
-  const [showFundWalletModal, setShowFundWalletModal] = useState(false);
-  const [showScheduleDrawer, setShowScheduleDrawer] = useState(false);
-  const [showPayrollDrawer, setShowPayrollDrawer] = useState(false);
-  const [showAddEmployeeModal, setShowAddEmployeeModal] = useState(false);
-  const [isNetPayVisible, setIsNetPayVisible] = useState(false);
+  const {
+    showSetupModal,
+    setShowSetupModal,
+    showFundWalletModal,
+    setShowFundWalletModal,
+    showScheduleDrawer,
+    setShowScheduleDrawer,
+    showPayrollDrawer,
+    setShowPayrollDrawer,
+    showAddEmployeeModal,
+    setShowAddEmployeeModal,
+    isNetPayVisible,
+    toggleNetPayVisibility,
+    togglePayrollAction,
+    hideNotificationBanner,
+    payrollSelectedDate,
+  } = usePayrollStore();
 
   const { getRowActions } = usePayrollRowActions();
   const { useGetAllTeams } = useEmployeeService();
   const { useGetAllPayrolls, useDownloadPayrolls } = usePayrollService();
   const { data: teams = [] } = useGetAllTeams();
   const { refetch: downloadPayrolls } = useDownloadPayrolls();
+
+  const PAYROLL_SCHEDULE_MESSAGE: ReactNode = `Your payroll has been scheduled for ${payrollSelectedDate?.toLocaleString("default", { month: "long", day: "numeric", year: "numeric" })}. You can edit the schedule date or cancel the payroll before the set date here.`;
+
+  const PAYROLL_RUN_MESSAGE: ReactNode = (
+    <>
+      Your payroll for {payrollSelectedDate?.toLocaleString("default", { month: "long" })} is now in progress. It will
+      be disbursed once all designated approvers have reviewed and approved the payment. You can track approval progress{" "}
+      <Link className="underline" href="/">
+        here
+      </Link>
+      .
+    </>
+  );
 
   // Apply debounced search to URL (nuqs) and reset page to 1
   useEffect(() => {
@@ -127,8 +154,15 @@ const PayrollView = () => {
     resetFilters();
   }, [resetFilters]);
 
+  // Cleanup ephemeral UI state on unmount/navigation
+  useEffect(() => {
+    return () => {
+      usePayrollStore.getState().resetUI();
+    };
+  }, []);
+
   return (
-    <section>
+    <section className="space-y-10">
       <DashboardHeader
         title="Payroll Overview"
         subtitle="Payroll"
@@ -142,16 +176,27 @@ const PayrollView = () => {
             >
               Fund Wallet
             </MainButton>
-            {true && (
-              <>
-                <MainButton onClick={() => setShowPayrollDrawer(true)} variant="primary">
-                  Generate Payroll
-                </MainButton>
-                <MainButton onClick={() => setShowPayrollDrawer(true)} variant="primary">
-                  Run Payroll
-                </MainButton>
-              </>
+            {togglePayrollAction === "GENERATE" ? (
+              <MainButton
+                className={cn(!hideNotificationBanner && `hidden`)}
+                onClick={() => setShowPayrollDrawer(true)}
+                variant="primary"
+              >
+                Generate Payroll
+              </MainButton>
+            ) : (
+              <MainButton
+                className={cn(!hideNotificationBanner && `hidden`)}
+                onClick={() => setShowPayrollDrawer(true)}
+                variant="primary"
+              >
+                Run Payroll
+              </MainButton>
             )}
+
+            <MainButton className={cn(hideNotificationBanner && `hidden`)} variant="primary">
+              View Approval Progress
+            </MainButton>
             <div>
               <GenericDropdown
                 align={`end`}
@@ -171,8 +216,17 @@ const PayrollView = () => {
         }
       />
 
+      <section>
+        <div hidden={hideNotificationBanner} className="bg-primary-500 text-background relative rounded-lg p-5">
+          <CloseCircle className="absolute top-2 right-2" />
+          <p className="text-background max-w-4xl text-sm">
+            {togglePayrollAction === "SCHEDULE" ? PAYROLL_SCHEDULE_MESSAGE : PAYROLL_RUN_MESSAGE}
+          </p>
+        </div>
+      </section>
+
       {/* Payroll Table Placeholder */}
-      <section className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <DashboardCard
           title="Estimated Net Pay"
           value={<span className="text-base">{`N7,200,000`}</span>}
@@ -189,7 +243,7 @@ const PayrollView = () => {
             <div className="flex items-center gap-4">
               <p className="text-base text-white">{isNetPayVisible ? `N7,200,000` : `••••••••`}</p>
               <button
-                onClick={() => setIsNetPayVisible(!isNetPayVisible)}
+                onClick={toggleNetPayVisibility}
                 className="text-white transition-colors hover:text-gray-300"
                 aria-label={isNetPayVisible ? "Hide net pay" : "Show net pay"}
               >
@@ -205,7 +259,7 @@ const PayrollView = () => {
           titleColor="text-white"
         />
       </section>
-      <section className="mt-10">
+      <section className="">
         <section className="mb-6 flex items-center justify-between">
           <h1 className="text-xl font-bold">Employee Payroll Summary</h1>
           <div className="flex min-w-[50%] items-center gap-2">
@@ -329,7 +383,7 @@ const PayrollView = () => {
 
       {/* Schedule Payroll Drawer */}
       <SchedulePayrollDrawer open={showScheduleDrawer} onOpenChange={setShowScheduleDrawer} />
-      <AddPayrollDrawer open={showPayrollDrawer} onOpenChange={setShowPayrollDrawer} />
+      <GenerateRunPayrollDrawer open={showPayrollDrawer} onOpenChange={setShowPayrollDrawer} />
 
       {/* Add Employee Modal */}
       <AddEmployeeModal open={showAddEmployeeModal} onOpenChange={setShowAddEmployeeModal} />

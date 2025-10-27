@@ -14,19 +14,21 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { DashboardCard } from "../../dashboard/_components/dashboard-card";
+import { usePayrollStore } from "../stores/payroll-store";
 
 interface SchedulePayrollDrawerProperties {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export const AddPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerProperties) => {
+export const GenerateRunPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerProperties) => {
   const [isNetPayVisible, setIsNetPayVisible] = useState(false);
   const [isChangeDateModalOpen, setIsChangeDateModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [isPayrollRunning, setIsPayrollRunning] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isRunSubmittedAlertOpen, setIsRunSubmittedAlertOpen] = useState(false);
+  const { setHideNotificationBanner, setPayrollSelectedDate, setTogglePayrollAction } = usePayrollStore();
 
   const router = useRouter();
 
@@ -42,12 +44,18 @@ export const AddPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerPr
       // Show success alert after closing the drawer for a smooth transition
       setTimeout(() => {
         setIsRunSubmittedAlertOpen(true);
+        setHideNotificationBanner(false);
+        setPayrollSelectedDate(selectedDate);
       }, 300);
     } catch {
       // Handle error appropriately
     } finally {
       setIsPayrollRunning(false);
     }
+  };
+
+  const handleSchedulePayment = () => {
+    setIsChangeDateModalOpen(true);
   };
 
   return (
@@ -139,7 +147,7 @@ export const AddPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerPr
                       <p className="text-xs text-gray-500">HR Manager</p>
                     </div>
                   </div>
-                  <Badge className="bg-warning-50 text-warning rounded-full px-4 py-2">Pending</Badge>
+                  <Badge className="bg-accent/10 border-accent text-accent rounded-full px-4 py-2">Pending</Badge>
                 </section>
                 <section className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -152,7 +160,7 @@ export const AddPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerPr
                       <p className="text-xs text-gray-500">HR Manager</p>
                     </div>
                   </div>
-                  <Badge className="bg-warning-50 text-warning rounded-full px-4 py-2">Pending</Badge>
+                  <Badge className="bg-accent/10 border-accent text-accent rounded-full px-4 py-2">Pending</Badge>
                 </section>
               </section>
             </section>
@@ -167,7 +175,7 @@ export const AddPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerPr
               >
                 Run Payroll
               </MainButton>
-              <MainButton variant="outline" onClick={() => setIsChangeDateModalOpen(true)} className="flex-1">
+              <MainButton variant="outline" onClick={handleSchedulePayment} className="flex-1">
                 Schedule Payment
               </MainButton>
             </div>
@@ -184,6 +192,11 @@ export const AddPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerPr
         onContinue={(date) => {
           if (date) {
             setSelectedDate(date);
+            setPayrollSelectedDate(date);
+            setIsRunSubmittedAlertOpen(true);
+            setTogglePayrollAction("SCHEDULE");
+            setHideNotificationBanner(false);
+
             // Here you can add logic to update the payroll schedule
           }
         }}
@@ -200,6 +213,8 @@ export const AddPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerPr
         description="Once you proceed, payroll will be sent for approval. After all required approvers approve it, the funds will be disbursed to employees' accounts."
         confirmText="Yes, Run Payroll"
         cancelText="Cancel"
+        confirmVariant="primary"
+        cancelButtonClassName="border-destructive text-destructive"
       />
 
       {/* Run submitted success modal */}

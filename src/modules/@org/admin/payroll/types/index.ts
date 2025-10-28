@@ -34,7 +34,7 @@ export interface PayrollSummary extends Record<string, unknown> {
   netPay: number;
   deduction: number;
   bonus: number;
-  status: number;
+  status: string;
 }
 
 export interface PayrollBonusDeduction {

@@ -13,7 +13,6 @@ import { SessionProvider } from "@/components/core/layout/SessionProvider";
 import { Toast } from "@/components/shared/Toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ReactQueryProvider } from "@/lib/react-query/query-provider";
-import { StoreProvider } from "@/stores/store-provider";
 
 const META_THEME_COLORS = {
   light: "#ffffff",
@@ -57,27 +56,25 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           fontVariables,
         )}
       >
-        <ReactQueryProvider>
-          <SessionProvider>
-            <NextTopLoader showSpinner={false} />
+        <SessionProvider>
+          <NextTopLoader showSpinner={false} />
+          <ReactQueryProvider>
             <NuqsAdapter>
-              <StoreProvider>
-                <TooltipProvider>
-                  {/* <ThemeProvider
+              <TooltipProvider>
+                {/* <ThemeProvider
                     attribute="class"
                     defaultTheme="system"
                     enableSystem
                     disableTransitionOnChange
                     enableColorScheme
                   > */}
-                  <KBarProviderWrapper>{children}</KBarProviderWrapper>
-                  <Toast />
-                  {/* </ThemeProvider> */}
-                </TooltipProvider>
-              </StoreProvider>
+                <KBarProviderWrapper>{children}</KBarProviderWrapper>
+                <Toast />
+                {/* </ThemeProvider> */}
+              </TooltipProvider>
             </NuqsAdapter>
-          </SessionProvider>
-        </ReactQueryProvider>
+          </ReactQueryProvider>
+        </SessionProvider>
       </body>
     </html>
   );

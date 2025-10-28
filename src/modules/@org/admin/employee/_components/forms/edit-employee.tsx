@@ -9,7 +9,7 @@ import { employmentTypeOptions, genderOptions, workModeOptions } from "@/lib/too
 import { EmployeeFormData, employeeSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -22,7 +22,6 @@ export const EditEmployeeForm = () => {
   const employeeId = searchParameters.get("employeeid");
 
   const [files, setFiles] = useState<File[]>([]);
-  const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
 
   // Query hooks
   const { useGetAllTeams, useGetEmployeeById, useUpdateEmployee } = useEmployeeService();
@@ -34,8 +33,54 @@ export const EditEmployeeForm = () => {
 
   const updateEmployeeMutation = useUpdateEmployee();
 
+  // Provide stable default values and drive updates via `values` instead of effects
+  const defaultValues: EmployeeFormData = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    dateOfBirth: "",
+    gender: "male",
+    startDate: "",
+    employmentType: "full time",
+    workMode: "remote",
+    teamId: "",
+    roleId: "",
+  };
+
+  const formValues: EmployeeFormData | undefined = useMemo(() => {
+    if (!employee) return;
+
+    // Ensure all required enum fields have valid values
+    const gender = employee.gender;
+    const employmentType = employee.employmentDetails?.employmentType || "full time";
+    const workMode = employee.employmentDetails?.workMode || "remote";
+
+    return {
+      firstName: employee.firstName ?? "",
+      lastName: employee.lastName ?? "",
+      email: employee.email ?? "",
+      phoneNumber: employee.phoneNumber ?? "",
+      dateOfBirth: employee.dateOfBirth?.split("T")[0] || "",
+      gender: gender,
+      startDate: employee.employmentDetails?.startDate?.split("T")[0] || "",
+      employmentType: employmentType,
+      workMode: workMode,
+      teamId:
+        employee.employmentDetails?.team?.id !== undefined && employee.employmentDetails?.team?.id !== null
+          ? String(employee.employmentDetails.team.id)
+          : "",
+      roleId:
+        employee.employmentDetails?.role?.id !== undefined && employee.employmentDetails?.role?.id !== null
+          ? String(employee.employmentDetails.role.id)
+          : "",
+    };
+  }, [employee]);
+
   const methods = useForm<EmployeeFormData>({
     resolver: zodResolver(employeeSchema),
+    defaultValues,
+    values: formValues,
   });
 
   const {
@@ -46,55 +91,26 @@ export const EditEmployeeForm = () => {
   } = methods;
 
   const selectedTeamId = watch("teamId");
+  const selectedRoleId = watch("roleId");
 
-  // Set employee data when it's loaded
+  // Memoize derived team and roles from teams and selectedTeamId
+  const selectedTeam = useMemo(() => teams.find((team) => String(team.id) === selectedTeamId), [teams, selectedTeamId]);
+  const derivedRoles = useMemo(() => selectedTeam?.roles ?? [], [selectedTeam]);
+
+  // Removed imperatively setting values via effects; form is driven by `values` above
+
+  // Reset roleId when invalid for the selected team
   useEffect(() => {
-    if (employee && employeeId) {
-      // Set all form values
-      setValue("firstName", employee.firstName);
-      setValue("lastName", employee.lastName);
-      setValue("email", employee.email);
-      setValue("phoneNumber", employee.phoneNumber);
-      setValue("dateOfBirth", employee.dateOfBirth?.split("T")[0] || "");
-      setValue("gender", employee.gender);
-      setValue("startDate", employee.employmentDetails?.startDate?.split("T")[0] || "");
-      const employmentType = employee.employmentDetails?.employmentType;
-      if (employmentType) setValue("employmentType", employmentType);
-      const workMode = employee.employmentDetails?.workMode;
-      if (workMode) setValue("workMode", workMode);
-
-      // Set team and role if they exist
-      if (employee.employmentDetails?.team?.id) {
-        setValue("teamId", employee.employmentDetails.team.id);
-        const selectedTeam = teams.find((team) => team.id === employee.employmentDetails?.team?.id);
-        if (selectedTeam) {
-          setRoles(selectedTeam.roles);
-          if (employee.employmentDetails?.role?.id) {
-            setValue("roleId", employee.employmentDetails.role.id);
-          }
-        }
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [employee, employeeId, teams]);
-
-  // Update roles when team changes
-  useEffect(() => {
-    if (!selectedTeamId) {
-      setRoles([]);
+    // If no team selected but a role is set, clear it
+    if (!selectedTeamId && selectedRoleId) {
       setValue("roleId", "");
       return;
     }
-
-    const selectedTeam = teams.find((team) => team.id === selectedTeamId);
-    if (selectedTeam) {
-      setRoles(selectedTeam.roles);
-    } else {
-      setRoles([]);
+    // If role not part of selected team's roles, clear it
+    if (selectedTeamId && selectedRoleId && !derivedRoles.some((r) => String(r.id) === selectedRoleId)) {
       setValue("roleId", "");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTeamId, teams]);
+  }, [selectedTeamId, selectedRoleId, derivedRoles, setValue]);
 
   const handleFilesSelected = (files: File[]) => {
     setFiles(files);
@@ -130,7 +146,8 @@ export const EditEmployeeForm = () => {
 
       // Employment info
       formDataToSend.append("startDate", new Date(formData.startDate).toISOString());
-      formDataToSend.append("employmentType", formData.employmentType || "");
+      formDataToSend.append("employmentType", formData.employmentType);
+      formDataToSend.append("workMode", formData.workMode);
 
       const response = await updateEmployeeMutation.mutateAsync({ id: employeeId, data: formDataToSend });
       if (response) {
@@ -255,7 +272,7 @@ export const EditEmployeeForm = () => {
                   placeholder={loadingTeams ? `Loading department...` : `Select a department`}
                   className="bg-background border-border !h-14 w-full"
                   options={teams.map((team) => ({
-                    value: team.id,
+                    value: String(team.id),
                     label: team.name,
                   }))}
                   required
@@ -266,10 +283,7 @@ export const EditEmployeeForm = () => {
                   type="select"
                   placeholder={`Select a role`}
                   className="bg-background border-border !h-14 w-full"
-                  options={roles.map((role) => ({
-                    value: role.id,
-                    label: role.name,
-                  }))}
+                  options={derivedRoles.map((role) => ({ value: String(role.id), label: role.name }))}
                   disabled={!selectedTeamId}
                   required
                 />

@@ -10,7 +10,7 @@ import { employmentTypeOptions, genderOptions, workModeOptions } from "@/lib/too
 import { EmployeeFormData, employeeSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -21,7 +21,8 @@ export const AddEmployeeForm = () => {
   const router = useRouter();
 
   const [files, setFiles] = useState<File[]>([]);
-  const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
+  // Derive roles from the selected team to avoid repeated state updates
+  const [roles, _setRoles] = useState<{ id: string; name: string }[]>([]);
 
   // Query hooks
   const { useGetAllTeams, useCreateEmployee } = useEmployeeService();
@@ -46,23 +47,34 @@ export const AddEmployeeForm = () => {
 
   const selectedTeamId = watch("teamId");
 
-  // Update roles when team changes
+  // Memoize derived team and roles to prevent re-renders triggering an effect loop
+  const selectedTeam = useMemo(() => teams.find((team) => team.id === selectedTeamId), [teams, selectedTeamId]);
+  const derivedRoles = useMemo(() => selectedTeam?.roles ?? [], [selectedTeam]);
+
+  // Keep local roles state in sync only when it actually changes (prevents infinite loops)
   useEffect(() => {
-    if (!selectedTeamId) {
-      setRoles([]);
+    // Shallow compare by length and ids to avoid unnecessary setState
+    const sameLength = roles.length === derivedRoles.length;
+    const rolesChanged = !sameLength || !roles.every((role, index) => role.id === derivedRoles[index]?.id);
+    if (rolesChanged) {
+      _setRoles(derivedRoles);
+    }
+  }, [derivedRoles, roles]);
+
+  // Reset roleId when team changes and current role is invalid
+  const selectedRoleId = watch("roleId");
+  useEffect(() => {
+    // If no team is selected and a role is set, clear it
+    if (!selectedTeamId && selectedRoleId) {
       setValue("roleId", "");
       return;
     }
 
-    const selectedTeam = teams.find((team) => team.id === selectedTeamId);
-    if (selectedTeam) {
-      setRoles(selectedTeam.roles);
-    } else {
-      setRoles([]);
+    // If team is selected but current role does not exist in that team, clear it
+    if (selectedTeamId && selectedRoleId && !derivedRoles.some((r) => r.id === selectedRoleId)) {
       setValue("roleId", "");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTeamId, teams]);
+  }, [selectedTeamId, selectedRoleId, derivedRoles, setValue]);
 
   const handleFilesSelected = (files: File[]) => {
     setFiles(files);

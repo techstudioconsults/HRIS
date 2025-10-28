@@ -118,17 +118,6 @@ export const employeeSchema = z.object({
     .min(1, "Start date is required")
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Start date must be in YYYY-MM-DD format"),
   employmentType: z.enum(["full time", "part time", "contract"]),
-  // monthlySalary: z.string().min(1, "Salary must be positive"),
-  // pension: z.string().min(1, "Pension must be a positive number"),
-  // healthInsurance: z.string().min(1, "Insurance must be a positive number"),
-  // otherDeductions: z.string().min(1, "Deduction number is required"),
-  // bankName: z.string().min(1, "Bank name is required"),
-  // accountName: z.string().min(1, "Account name is required"),
-  // accountNumber: z
-  //   .string()
-  //   .min(1, "Account number is required")
-  //   .max(11, "Account number must be at most 11 digits")
-  //   .regex(/^\d{1,10}$/, "Account number must be a number with up to 10 digits"),
   workMode: z.enum(["remote", "on site", "hybrid"]),
 });
 

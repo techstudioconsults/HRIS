@@ -323,7 +323,7 @@ const PayrollView = () => {
           <section>
             {payrollData?.data?.items?.length ? (
               <AdvancedDataTable
-                data={payrollData.data.items as any[]}
+                data={payrollData.data.items}
                 columns={payrollColumn}
                 currentPage={payrollData.data.metadata.page}
                 totalPages={payrollData.data.metadata.totalPages}

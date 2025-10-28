@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpAdapter } from "@/lib/http/http-adapter";
+import { RoleApiResponse, TeamApiResponse } from "@/modules/@org/onboarding/services/service";
 
 export interface CreateEmployeeDto {
   firstName: string;
@@ -38,7 +38,7 @@ export class EmployeeService {
   }
 
   async getAllEmployees(filters: Filters = Object.create({ page: 1 })) {
-    const response = await this.http.get<ApiResponse<Employee>>(`/employees`, {
+    const response = await this.http.get<PaginatedApiResponse<Employee>>(`/employees`, {
       ...filters,
     });
     if (response?.status === 200) {
@@ -76,12 +76,12 @@ export class EmployeeService {
 
   // Team CRUD operations
   async getTeams() {
-    const response = await this.http.get<ApiResponse<any>>(`/teams`);
+    const response = await this.http.get<PaginatedApiResponse<TeamApiResponse>>(`/teams`);
 
     if (response?.status === 200) {
       // Get roles for each team
       const teamsWithRoles = await Promise.all(
-        response.data.data.items.map(async (team: any) => {
+        response.data.data.items.map(async (team) => {
           const roles = await this.getRoles(team.id);
           return {
             id: team.id,
@@ -96,10 +96,10 @@ export class EmployeeService {
   }
 
   async getRoles(teamId: string) {
-    const response = await this.http.get<ApiResponse<any>>(`/roles?teamId=${teamId}`);
+    const response = await this.http.get<PaginatedApiResponse<RoleApiResponse>>(`/roles?teamId=${teamId}`);
 
     if (response?.status === 200) {
-      return response.data.data.items.map((role: any) => ({
+      return response.data.data.items.map((role) => ({
         id: role.id,
         name: role.name,
         teamId: role.teamId,

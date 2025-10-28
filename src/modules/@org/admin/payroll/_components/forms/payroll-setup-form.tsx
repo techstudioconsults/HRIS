@@ -4,30 +4,40 @@
 import { BreadCrumb } from "@/components/shared/breadcrumb";
 import MainButton from "@/components/shared/button";
 import { AlertModal } from "@/components/shared/dialog/alert-modal";
-import { FormField } from "@/components/shared/inputs/FormFields";
+import { FormField, MultiSelect } from "@/components/shared/inputs/FormFields";
+import { useEmployeeService } from "@/modules/@org/admin/employee/services/use-service";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 // import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 
-import type { BonusDeduction } from "../../types";
+import { usePayrollService } from "../../services/use-service";
+import type { BonusDeduction, CompanyPayrollPolicy } from "../../types";
 import { BonusDeductionManager } from "../bonus-deduction-manager";
 
 type PayrollSetupFormValues = {
-  payroll_frequency: string;
   payday: string;
+  frequency: string;
   currency: string;
-  employee_approval: string;
+  approvers: string[];
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
 };
 
 export const PayrollSetupForm = () => {
   const methods = useForm<PayrollSetupFormValues>({
     // resolver: zodResolver(schema),
     defaultValues: {
-      payroll_frequency: "",
-      payday: "",
+      payday: "0",
+      frequency: "",
       currency: "",
-      employee_approval: "",
+      approvers: [],
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
     },
   });
 
@@ -35,6 +45,81 @@ export const PayrollSetupForm = () => {
   const [isSubmittedAlertOpen, setIsSubmittedAlertOpen] = useState(false);
   const [bonusItems, setBonusItems] = useState<BonusDeduction[]>([]);
   const [deductionItems, setDeductionItems] = useState<BonusDeduction[]>([]);
+
+  // Fetch employees for approval dropdown
+  const { useGetAllEmployees } = useEmployeeService();
+  const { data: employeesData } = useGetAllEmployees(
+    {},
+    {
+      staleTime: 0,
+      refetchOnMount: true,
+    },
+  );
+
+  // Fetch company payroll policy
+  const { useGetCompanyPayrollPolicy } = usePayrollService();
+  const { data: policyData } = useGetCompanyPayrollPolicy({
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+  });
+
+  // Populate form with existing policy data
+  useEffect(() => {
+    if (policyData?.data) {
+      const policy = policyData.data as CompanyPayrollPolicy;
+
+      methods.reset({
+        payday: policy.payday?.toString() || "0",
+        frequency: policy.frequency || "",
+        currency: policy.currency || "",
+        approvers: policy.approvers || [],
+        firstName: policy.firstName || "",
+        lastName: policy.lastName || "",
+        email: policy.email || "",
+        phoneNumber: policy.phoneNumber || "",
+      });
+
+      // Set bonuses and deductions
+      if (policy.bonuses && policy.bonuses.length > 0) {
+        const formattedBonuses: BonusDeduction[] = policy.bonuses.map((bonus) => ({
+          id: bonus.id,
+          name: bonus.name,
+          value: bonus.amount,
+          valueType: bonus.type,
+          status: bonus.status,
+          type: "bonus" as const,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }));
+        setBonusItems(formattedBonuses);
+      }
+
+      if (policy.deductions && policy.deductions.length > 0) {
+        const formattedDeductions: BonusDeduction[] = policy.deductions.map((deduction) => ({
+          id: deduction.id,
+          name: deduction.name,
+          value: deduction.amount,
+          valueType: deduction.type,
+          status: deduction.status,
+          type: "deduction" as const,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }));
+        setDeductionItems(formattedDeductions);
+      }
+    }
+  }, [policyData, methods]);
+
+  // Transform employees to select options
+  const employeeOptions = useMemo(() => {
+    if (!employeesData?.data?.items || !Array.isArray(employeesData.data.items)) return [];
+
+    return employeesData.data.items.map((employee: Employee) => ({
+      value: employee.id,
+      label: `${employee.firstName} ${employee.lastName}`,
+    }));
+  }, [employeesData]);
 
   const onSubmit = (data: PayrollSetupFormValues) => {
     // Log submitted data for debugging/inspection
@@ -50,9 +135,8 @@ export const PayrollSetupForm = () => {
         // id: undefined,
         // companyId: undefined,
         payday: Number.isNaN(Number(data.payday)) ? 0 : Number(data.payday),
-        frequency: data.payroll_frequency,
+        frequency: data.frequency,
         currency: data.currency,
-        status: "incomplete" as const,
         bonuses: bonusItems.map((item) => ({
           id: item.id,
           name: item.name,
@@ -67,7 +151,11 @@ export const PayrollSetupForm = () => {
           type: item.valueType,
           status: item.status,
         })),
-        approvers: [],
+        approvers: data.approvers,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
         // createdAt can be set by the server; included here if needed
         // createdAt: new Date().toISOString(),
       },
@@ -91,7 +179,7 @@ export const PayrollSetupForm = () => {
               <h2 className="mb-4 text-lg font-semibold">General payroll setup</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
                 <FormField
-                  name="payroll_frequency"
+                  name="frequency"
                   label="Payroll Frequency"
                   placeholder="Select payroll frequency"
                   type="select"
@@ -111,11 +199,45 @@ export const PayrollSetupForm = () => {
                   type="select"
                   className="!h-14 w-full"
                 />
-                <FormField
-                  name="employee_approval"
+                <MultiSelect
+                  name="approvers"
                   label="Approval for payroll disbursement"
-                  placeholder="Select Employee"
-                  type="select"
+                  placeholder="Select Employee(s)"
+                  className="border-border bg-background !h-14 w-full border"
+                  options={employeeOptions}
+                  required
+                />
+              </div>
+            </section>
+            <section className="mt-8">
+              <h2 className="mb-4 text-lg font-semibold">Company Information</h2>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
+                <FormField
+                  name="firstName"
+                  label="First Name"
+                  placeholder="Enter first name"
+                  type="text"
+                  className="!h-14 w-full"
+                />
+                <FormField
+                  name="lastName"
+                  label="Last Name"
+                  placeholder="Enter last name"
+                  type="text"
+                  className="!h-14 w-full"
+                />
+                <FormField
+                  name="email"
+                  label="Email"
+                  placeholder="Enter email address"
+                  type="email"
+                  className="!h-14 w-full"
+                />
+                <FormField
+                  name="phoneNumber"
+                  label="Phone Number"
+                  placeholder="Enter phone number"
+                  type="text"
                   className="!h-14 w-full"
                 />
               </div>

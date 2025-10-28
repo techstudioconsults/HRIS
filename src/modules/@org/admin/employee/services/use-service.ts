@@ -10,7 +10,7 @@ export const useEmployeeService = () => {
   const { useServiceQuery, useServiceMutation } = createServiceHooks<EmployeeService>(dependencies.EMPLOYEE_SERVICE);
 
   // Queries
-  const useGetAllEmployees = (filters: IFilters = {}, options?: any) =>
+  const useGetAllEmployees = (filters: Filters = {}, options?: any) =>
     useServiceQuery(queryKeys.employee.list(filters), (service) => service.getAllEmployees(filters), options);
 
   const useGetEmployeeById = (id: string, options?: any) =>

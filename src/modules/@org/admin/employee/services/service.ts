@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpAdapter } from "@/lib/http/http-adapter";
-import { RoleApiResponse, TeamApiResponse } from "@/modules/@org/onboarding/services/service";
 
 export interface CreateEmployeeDto {
   firstName: string;
@@ -37,9 +37,10 @@ export class EmployeeService {
     }
   }
 
-  async getAllEmployees(filters: IFilters = Object.create({ page: 1 })) {
-    const queryParameters = this.buildQueryParameters(filters);
-    const response = await this.http.get<ApiResponse<Employee>>(`/employees?${queryParameters}`);
+  async getAllEmployees(filters: Filters = Object.create({ page: 1 })) {
+    const response = await this.http.get<ApiResponse<Employee>>(`/employees`, {
+      ...filters,
+    });
     if (response?.status === 200) {
       return response.data;
     }
@@ -75,12 +76,12 @@ export class EmployeeService {
 
   // Team CRUD operations
   async getTeams() {
-    const response = await this.http.get<ApiResponse<TeamApiResponse>>(`/teams`);
+    const response = await this.http.get<ApiResponse<any>>(`/teams`);
 
     if (response?.status === 200) {
       // Get roles for each team
       const teamsWithRoles = await Promise.all(
-        response.data.data.items.map(async (team) => {
+        response.data.data.items.map(async (team: any) => {
           const roles = await this.getRoles(team.id);
           return {
             id: team.id,
@@ -95,10 +96,10 @@ export class EmployeeService {
   }
 
   async getRoles(teamId: string) {
-    const response = await this.http.get<ApiResponse<RoleApiResponse>>(`/roles?teamId=${teamId}`);
+    const response = await this.http.get<ApiResponse<any>>(`/roles?teamId=${teamId}`);
 
     if (response?.status === 200) {
-      return response.data.data.items.map((role) => ({
+      return response.data.data.items.map((role: any) => ({
         id: role.id,
         name: role.name,
         teamId: role.teamId,
@@ -106,15 +107,5 @@ export class EmployeeService {
       }));
     }
     return [];
-  }
-
-  private buildQueryParameters(filters: IFilters): string {
-    const queryParameters = new URLSearchParams();
-    for (const [key, value] of Object.entries(filters)) {
-      if (value !== undefined) {
-        queryParameters.append(key, value.toString());
-      }
-    }
-    return queryParameters.toString();
   }
 }

@@ -11,14 +11,6 @@ declare global {
     hasPreviousPage: boolean;
   }
 
-  interface ApiResponse<T> {
-    success: boolean;
-    data: {
-      items: T[];
-      metadata: Metadata;
-    };
-  }
-
   interface LogoProperties {
     logo: string;
     width?: number;

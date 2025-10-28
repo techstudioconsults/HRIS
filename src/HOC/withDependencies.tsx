@@ -1,14 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/display-name */
 
 import { container } from "@/lib/tools/dependencies";
 import { ComponentProps } from "react";
-
-type DependencyInjector = (Component: React.ElementType, dependencies: { [key: string]: symbol }) => any;
-
-type ResolveDependencies = {
-  [key: string]: object;
-};
 
 export const WithDependency: DependencyInjector = (Component, dependencies) => {
   const resolvedDependencies: ResolveDependencies = {};

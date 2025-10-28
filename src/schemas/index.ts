@@ -53,11 +53,6 @@ export const bankFormSchema = z.object({
   account_number: z.string().min(10, "Account number is required"),
 });
 
-export const reviewSchema = z.object({
-  rating: z.number().min(1, "Rating is required"),
-  comment: z.string().optional(),
-});
-
 export const contactSchema = z.object({
   email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
   subject: z.string().min(1, "Subject is required"),
@@ -70,25 +65,6 @@ export const externalContactSchema = z.object({
   email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
   subject: z.string().min(1, "Subject is required"),
   message: z.string().min(1, "Message is required"),
-});
-
-export const profileSchema = z.object({
-  full_name: z.string().min(2, "Full name must be at least 2 characters"),
-  username: z.string().min(2, "Username must be at least 2 characters"),
-  email: z.string().optional(),
-  phone_number: z.string().min(10, "Phone number is required").max(11, "Phone number is required"),
-  bio: z.string().min(1, "Message is required"),
-  logo: z.any().optional(),
-  twitter_account: z.string().optional(),
-  facebook_account: z.string().optional(),
-  youtube_account: z.string().optional(),
-});
-
-export const emailNotificationSettingSchema = z.object({
-  purchase: z.boolean().optional(),
-  news_updates: z.boolean().optional(),
-  product_creation: z.boolean().optional(),
-  payout: z.boolean().optional(),
 });
 
 export const changePasswordSchema = z
@@ -105,12 +81,6 @@ export const changePasswordSchema = z
 export const changeEmailSchema = z.object({
   email: z.string().optional(),
   alt_email: z.string().email("Please enter a valid email address").optional(),
-});
-
-export const kycSchema = z.object({
-  country: z.string().min(1, "Select a country"),
-  document_type: z.string().min(1, "Document type is required"),
-  document_image: z.any().refine((file) => file !== null, "document image is required"),
 });
 
 export const companyProfileSchema = z.object({
@@ -166,6 +136,7 @@ export const folderSchema = z.object({
   name: z.string().min(1, "Folder name is required"),
   file: z.array(z.instanceof(File)).optional(),
 });
+
 export const fileSchema = z.object({
   folderId: z.string().min(1, "Folder name is required"),
   file: z
@@ -174,6 +145,19 @@ export const fileSchema = z.object({
     .refine((files) => files.every((file) => file.size > 0), "File cannot be empty")
     .refine((files) => files.every((file) => file.size <= 10 * 1024 * 1024), "File size must be less than 10MB"),
 });
+
+// Payroll Policy Setup Form Schema
+export const payrollPolicyFormSchema = z.object({
+  payroll_frequency: z.string().min(1, "Payroll frequency is required"),
+  payday: z.string().min(1, "Payday is required"), // kept as string for select; convert to number on submit
+  currency: z.string().min(1, "Currency is required"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
+  phoneNumber: z.string().min(1, "Phone number is required"),
+  approvers: z.array(z.string()).min(1, "Select at least one approver"),
+});
+
 export type EmployeeFormData = z.infer<typeof employeeSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type LoginFormData = z.infer<typeof loginSchema>;
@@ -183,13 +167,10 @@ export type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordData = z.infer<typeof resetPasswordSchema>;
 export type CompanyProfileFormData = z.infer<typeof companyProfileSchema>;
 export type BankFormData = z.infer<typeof bankFormSchema>;
-export type ReviewFormData = z.infer<typeof reviewSchema>;
 export type ContactFormData = z.infer<typeof contactSchema>;
-export type ProfileFormData = z.infer<typeof profileSchema>;
-export type EmailNotificationSettingFormData = z.infer<typeof emailNotificationSettingSchema>;
 export type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 export type ChangeEmailFormData = z.infer<typeof changeEmailSchema>;
-export type KycFormData = z.infer<typeof kycSchema>;
 export type ExternalContactFormData = z.infer<typeof externalContactSchema>;
 export type FolderFormData = z.infer<typeof folderSchema>;
 export type FileFormData = z.infer<typeof fileSchema>;
+export type PayrollPolicyFormData = z.infer<typeof payrollPolicyFormSchema>;

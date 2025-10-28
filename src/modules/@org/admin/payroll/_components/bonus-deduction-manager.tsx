@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertModal } from "@/components/shared/dialog/alert-modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { BonusDeduction, BonusDeductionFormData } from "../types";
 import { BonusDeductionFormModal } from "./bonus-deduction-form-modal";
@@ -10,13 +10,14 @@ import { BonusDeductionTable } from "./bonus-deduction-table";
 interface BonusDeductionManagerProperties {
   type: "bonus" | "deduction";
   initialItems?: BonusDeduction[];
+  onChange?: (items: BonusDeduction[]) => void;
 }
 
 const generateId = () => {
   return Math.random().toString(36).slice(2, 11);
 };
 
-export function BonusDeductionManager({ type, initialItems = [] }: BonusDeductionManagerProperties) {
+export function BonusDeductionManager({ type, initialItems = [], onChange }: BonusDeductionManagerProperties) {
   const [items, setItems] = useState<BonusDeduction[]>(initialItems);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<BonusDeduction | null>(null);
@@ -114,6 +115,11 @@ export function BonusDeductionManager({ type, initialItems = [] }: BonusDeductio
     setEditingItem(null);
     setIsModalOpen(true);
   };
+
+  // Notify parent on any items change
+  useEffect(() => {
+    onChange?.(items);
+  }, [items, onChange]);
 
   return (
     <>

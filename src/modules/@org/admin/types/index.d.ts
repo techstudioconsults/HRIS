@@ -29,45 +29,6 @@ declare global {
     showPagination?: boolean;
   }
 
-  interface IPaginationLink {
-    url: string | null;
-    label: string;
-    active: boolean;
-  }
-
-  interface IPaginationMeta {
-    current_page: number;
-    from: number;
-    last_page: number;
-    links: IPaginationLink[];
-    path: string;
-    per_page: number;
-    to: number;
-    total: number;
-  }
-
-  interface IPaginationLinks {
-    first: string;
-    last: string;
-    prev: string | null;
-    next: string | null;
-  }
-
-  interface IPaginatedResponse<T> {
-    data: T[];
-    links: IPaginationLinks;
-    meta: IPaginationMeta;
-  }
-
-  interface IFilters {
-    page?: number;
-    limit?: number;
-    search?: string;
-    status?: string;
-    start_date?: string;
-    end_date?: string;
-  }
-
   interface Team extends Record<string, unknown> {
     id: string;
     name: string;

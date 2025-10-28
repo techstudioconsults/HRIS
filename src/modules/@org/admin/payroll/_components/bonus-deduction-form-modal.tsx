@@ -77,7 +77,7 @@ export function BonusDeductionFormModal({
 
   return (
     <ReusableDialog
-      trigger={<></>}
+      trigger={""}
       open={open}
       onOpenChange={onOpenChange}
       title={`${isEditing ? "Edit" : "Add"} ${type}`}

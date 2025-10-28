@@ -10,27 +10,82 @@ import { useState } from "react";
 // import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 
+import type { BonusDeduction } from "../../types";
 import { BonusDeductionManager } from "../bonus-deduction-manager";
 
+type PayrollSetupFormValues = {
+  payroll_frequency: string;
+  payday: string;
+  currency: string;
+  employee_approval: string;
+};
+
 export const PayrollSetupForm = () => {
-  const methods = useForm({
-    // resolver: zodResolver(),
+  const methods = useForm<PayrollSetupFormValues>({
+    // resolver: zodResolver(schema),
+    defaultValues: {
+      payroll_frequency: "",
+      payday: "",
+      currency: "",
+      employee_approval: "",
+    },
   });
 
   const router = useRouter();
   const [isSubmittedAlertOpen, setIsSubmittedAlertOpen] = useState(false);
+  const [bonusItems, setBonusItems] = useState<BonusDeduction[]>([]);
+  const [deductionItems, setDeductionItems] = useState<BonusDeduction[]>([]);
+
+  const onSubmit = (data: PayrollSetupFormValues) => {
+    // Log submitted data for debugging/inspection
+    // You can replace this with an API call later
+    /* eslint-disable no-console */
+    console.log("Payroll Setup Form Submitted (raw):", data);
+
+    const payload = {
+      // Mimic desired request shape
+      success: true,
+      data: {
+        // id and companyId would typically be set server-side or from context
+        // id: undefined,
+        // companyId: undefined,
+        payday: Number.isNaN(Number(data.payday)) ? 0 : Number(data.payday),
+        frequency: data.payroll_frequency,
+        currency: data.currency,
+        status: "incomplete" as const,
+        bonuses: bonusItems.map((item) => ({
+          id: item.id,
+          name: item.name,
+          amount: item.value,
+          type: item.valueType,
+          status: item.status,
+        })),
+        deductions: deductionItems.map((item) => ({
+          id: item.id,
+          name: item.name,
+          amount: item.value,
+          type: item.valueType,
+          status: item.status,
+        })),
+        approvers: [],
+        // createdAt can be set by the server; included here if needed
+        // createdAt: new Date().toISOString(),
+      },
+    };
+
+    console.log("Payroll Setup Payload:", payload);
+    console.table(payload.data.bonuses);
+    console.table(payload.data.deductions);
+    /* eslint-enable no-console */
+    setIsSubmittedAlertOpen(true);
+  };
 
   return (
     <section>
       <h1 className="text-2xl font-bold">Payroll Setup</h1>
       <BreadCrumb items={[{ label: "Payroll", href: "/admin/payroll" }, { label: "Setup Payroll" }]} className="mb-6" />
       <FormProvider {...methods}>
-        <form
-          onSubmit={(event) => {
-            event.preventDefault();
-            setIsSubmittedAlertOpen(true);
-          }}
-        >
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="space-y-10">
             <section className="">
               <h2 className="mb-4 text-lg font-semibold">General payroll setup</h2>
@@ -70,12 +125,12 @@ export const PayrollSetupForm = () => {
 
               {/* Bonuses Section */}
               <div className="mb-8">
-                <BonusDeductionManager type="bonus" />
+                <BonusDeductionManager type="bonus" onChange={setBonusItems} />
               </div>
 
               {/* Deductions Section */}
               <div>
-                <BonusDeductionManager type="deduction" />
+                <BonusDeductionManager type="deduction" onChange={setDeductionItems} />
               </div>
             </section>
           </div>

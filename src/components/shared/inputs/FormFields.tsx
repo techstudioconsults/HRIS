@@ -89,16 +89,9 @@ export function FormField({
                   className={cn(inputClassName, "min-h-[80px] resize-y")}
                 />
               ) : type === "select" ? (
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                  defaultValue={field.value}
-                  disabled={disabled}
-                >
+                <Select onValueChange={field.onChange} value={field.value ?? undefined} disabled={disabled}>
                   <SelectTrigger className={cn(inputClassName, "w-full")}>
-                    <SelectValue placeholder={placeholder || "Select a value"}>
-                      {options.find((opt) => opt.value === field.value)?.label || placeholder}
-                    </SelectValue>
+                    <SelectValue placeholder={placeholder || "Select a value"} />
                   </SelectTrigger>
                   <SelectContent className="bg-background">
                     {options.map((option) => (

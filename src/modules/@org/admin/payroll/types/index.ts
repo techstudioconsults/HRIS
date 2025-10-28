@@ -36,3 +36,28 @@ export interface PayrollSummary extends Record<string, unknown> {
   bonus: number;
   status: number;
 }
+
+export interface PayrollBonusDeduction {
+  id: string;
+  name: string;
+  amount: number;
+  type: "fixed" | "percentage";
+  status: "active" | "inactive";
+}
+
+export interface CompanyPayrollPolicy {
+  id: string;
+  companyId: string;
+  payday: number;
+  frequency: string;
+  currency: string;
+  status: "incomplete" | "complete"; // assuming possible statuses
+  bonuses: PayrollBonusDeduction[];
+  deductions: PayrollBonusDeduction[];
+  approvers: string[]; // assuming array of user IDs or emails
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  createdAt: string; // ISO date string
+}

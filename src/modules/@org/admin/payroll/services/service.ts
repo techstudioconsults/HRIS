@@ -8,20 +8,26 @@ export class PayrollService {
     this.http = httpAdapter;
   }
 
-  async getAllPayrolls(filters: IFilters = Object.create({ page: 1 })) {
-    const queryParameters = this.buildQueryParameters(filters);
-    const response = await this.http.get<ApiResponse<PayrollService>>(`/payrolls?${queryParameters}`);
+  async getAllPayrolls(filters: Filters = Object.create({ page: 1 })) {
+    const response = await this.http.get<ApiResponse<PayrollService>>(`/payrolls`, {
+      ...filters,
+    });
 
     if (response?.status === 200) {
       return response.data;
     }
   }
 
-  async downloadPayrolls(filters: IFilters = Object.create({ page: 1 })) {
-    const queryParameters = this.buildQueryParameters(filters);
-    const response = await this.http.get<Blob>(`/payrolls/export?${queryParameters}`, {
-      responseType: "blob",
-    });
+  async downloadPayrolls(filters: Filters = Object.create({ page: 1 })) {
+    const response = await this.http.get<Blob>(
+      `/payrolls/export`,
+      {
+        ...filters,
+      },
+      {
+        responseType: "blob",
+      },
+    );
 
     if (response?.status === 200) {
       return response.data;
@@ -56,13 +62,11 @@ export class PayrollService {
     }
   }
 
-  private buildQueryParameters(filters: IFilters): string {
-    const queryParameters = new URLSearchParams();
-    for (const [key, value] of Object.entries(filters)) {
-      if (value !== undefined) {
-        queryParameters.append(key, value.toString());
-      }
+  async getCompanyPayrollPolicy() {
+    const response = await this.http.get<ApiResponse<PayrollService>>(`payroll-policy/company`);
+
+    if (response?.status === 200) {
+      return response.data;
     }
-    return queryParameters.toString();
   }
 }

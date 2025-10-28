@@ -57,10 +57,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           fontVariables,
         )}
       >
-        <SessionProvider>
-          <NextTopLoader showSpinner={false} />
-          <NuqsAdapter>
-            <ReactQueryProvider>
+        <ReactQueryProvider>
+          <SessionProvider>
+            <NextTopLoader showSpinner={false} />
+            <NuqsAdapter>
               <StoreProvider>
                 <TooltipProvider>
                   {/* <ThemeProvider
@@ -75,9 +75,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   {/* </ThemeProvider> */}
                 </TooltipProvider>
               </StoreProvider>
-            </ReactQueryProvider>
-          </NuqsAdapter>
-        </SessionProvider>
+            </NuqsAdapter>
+          </SessionProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

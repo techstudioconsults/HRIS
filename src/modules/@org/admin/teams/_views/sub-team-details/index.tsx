@@ -153,7 +153,7 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
               <DropdownMenuItem
                 onClick={(event) => {
                   event.stopPropagation();
-                  router.push(`/admin/employees/add-employee?employeeid=${employee.id}`);
+                  router.push(`/admin/employees/edit-employee?employeeid=${employee.id}`);
                 }}
               >
                 Edit Employee

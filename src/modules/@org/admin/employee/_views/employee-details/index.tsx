@@ -37,7 +37,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
         }
         actionComponent={
           <div className="flex items-center gap-5">
-            <MainButton href={`/admin/employees/add-employee?employeeid=${employeeData?.id}`} variant="primary">
+            <MainButton href={`/admin/employees/edit-employee?employeeid=${employeeData?.id}`} variant="primary">
               Edit Employee
             </MainButton>
             <GenericDropdown
@@ -112,7 +112,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
               </div>
               <div className="w-full">
                 <MainButton
-                  href={`/admin/employees/add-employee?employeeid=${employeeData?.id}`}
+                  href={`/admin/employees/edit-employee?employeeid=${employeeData?.id}`}
                   variant="primary"
                   size="lg"
                   className="w-full"

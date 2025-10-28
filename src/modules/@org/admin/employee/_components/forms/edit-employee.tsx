@@ -5,11 +5,10 @@ import { BreadCrumb } from "@/components/shared/breadcrumb";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { FormField } from "@/components/shared/inputs/FormFields";
-// import { AlertDialog } from "@/components/ui/alert-dialog";
 import { employmentTypeOptions, genderOptions, workModeOptions } from "@/lib/tools/constants";
 import { EmployeeFormData, employeeSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -17,20 +16,23 @@ import { toast } from "sonner";
 import FileUpload from "../../../_components/file-upload/file-upload";
 import { useEmployeeService } from "../../services/use-service";
 
-export const AddEmployeeForm = () => {
+export const EditEmployeeForm = () => {
   const router = useRouter();
+  const searchParameters = useSearchParams();
+  const employeeId = searchParameters.get("employeeid");
 
   const [files, setFiles] = useState<File[]>([]);
   const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
 
   // Query hooks
-  const { useGetAllTeams, useCreateEmployee } = useEmployeeService();
+  const { useGetAllTeams, useGetEmployeeById, useUpdateEmployee } = useEmployeeService();
 
   const { data: teams = [], isLoading: loadingTeams } = useGetAllTeams();
-  const createEmployeeMutation = useCreateEmployee();
-  // const [showAlert, setShowAlert] = useState(false);
-  // const [alertTitle, setAlertTitle] = useState("");
-  // const [alertDescription, setAlertDescription] = useState("");
+  const { data: employee } = useGetEmployeeById(employeeId || "", {
+    enabled: !!employeeId,
+  });
+
+  const updateEmployeeMutation = useUpdateEmployee();
 
   const methods = useForm<EmployeeFormData>({
     resolver: zodResolver(employeeSchema),
@@ -41,10 +43,40 @@ export const AddEmployeeForm = () => {
     formState: { isSubmitting },
     watch,
     setValue,
-    // reset,
   } = methods;
 
   const selectedTeamId = watch("teamId");
+
+  // Set employee data when it's loaded
+  useEffect(() => {
+    if (employee && employeeId) {
+      // Set all form values
+      setValue("firstName", employee.firstName);
+      setValue("lastName", employee.lastName);
+      setValue("email", employee.email);
+      setValue("phoneNumber", employee.phoneNumber);
+      setValue("dateOfBirth", employee.dateOfBirth?.split("T")[0] || "");
+      setValue("gender", employee.gender);
+      setValue("startDate", employee.employmentDetails?.startDate?.split("T")[0] || "");
+      const employmentType = employee.employmentDetails?.employmentType;
+      if (employmentType) setValue("employmentType", employmentType);
+      const workMode = employee.employmentDetails?.workMode;
+      if (workMode) setValue("workMode", workMode);
+
+      // Set team and role if they exist
+      if (employee.employmentDetails?.team?.id) {
+        setValue("teamId", employee.employmentDetails.team.id);
+        const selectedTeam = teams.find((team) => team.id === employee.employmentDetails?.team?.id);
+        if (selectedTeam) {
+          setRoles(selectedTeam.roles);
+          if (employee.employmentDetails?.role?.id) {
+            setValue("roleId", employee.employmentDetails.role.id);
+          }
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [employee, employeeId, teams]);
 
   // Update roles when team changes
   useEffect(() => {
@@ -70,6 +102,11 @@ export const AddEmployeeForm = () => {
 
   const onSubmit = async (formData: EmployeeFormData) => {
     try {
+      if (!employeeId) {
+        toast.error("No employee specified");
+        return router.push("/admin/employees");
+      }
+
       const formDataToSend = new FormData();
 
       // Add all fields from the form
@@ -77,9 +114,6 @@ export const AddEmployeeForm = () => {
       formDataToSend.append("lastName", formData.lastName);
       formDataToSend.append("email", formData.email);
       formDataToSend.append("phoneNumber", formData.phoneNumber);
-
-      // Add password for new employees
-      formDataToSend.append("password", "PleaseSetAdefaultHere1.");
 
       // Team and role
       formDataToSend.append("teamId", formData.teamId);
@@ -98,41 +132,28 @@ export const AddEmployeeForm = () => {
       formDataToSend.append("startDate", new Date(formData.startDate).toISOString());
       formDataToSend.append("employmentType", formData.employmentType || "");
 
-      // Call create employee
-      const response = await createEmployeeMutation.mutateAsync(formDataToSend);
+      const response = await updateEmployeeMutation.mutateAsync({ id: employeeId, data: formDataToSend });
       if (response) {
-        toast.success("Employee Added Successfully");
+        toast.success("Employee Profile Updated");
         router.push("/admin/employees");
       } else {
-        toast.error("Failed to add employee");
+        toast.error("Failed to update employee profile");
       }
-
-      // setShowAlert(true);
     } catch (error) {
       console.error("Error saving employee:", error);
-      // You could also set error state here and show an error alert
     }
   };
-
-  // if (loadingTeams) {
-  //   return <EmployeeFormSkeleton />;
-  // }
-
-  // const handleAlertClose = () => {
-  //   setShowAlert(false);
-  //   router.push("/admin/employees");
-  // };
 
   return (
     <div className="space-y-8">
       {/* Breadcrumb and Title */}
       <DashboardHeader
-        title={"Add Employee"}
+        title={"Edit Employee"}
         subtitle={
           <BreadCrumb
             items={[
               { label: "Employee", href: "/admin/employees" },
-              { label: "Add Employee", href: "" },
+              { label: "Edit Employee", href: "" },
             ]}
             showHome={true}
           />
@@ -255,53 +276,6 @@ export const AddEmployeeForm = () => {
               </div>
             </section>
 
-            {/* Salary Details Section */}
-            {/* <section>
-              <h2 className="mb-4 text-lg font-semibold">Salary Details</h2>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
-                <FormField
-                  name="monthlySalary"
-                  label="Monthly Gross Salary"
-                  placeholder="₦750,000.00"
-                  className="!h-14 w-full border-border"
-                />
-                <FormField name="pension" label="Pension" placeholder="5% of salary" className="!h-14 w-full border-border" />
-                <FormField
-                  name="healthInsurance"
-                  label="Health Insurance"
-                  placeholder="3% of salary"
-                  className="!h-14 w-full border-border"
-                />
-                <FormField
-                  name="otherDeductions"
-                  label="Other Deductions"
-                  placeholder="% of salary"
-                  className="!h-14 w-full border-border"
-                />
-                <FormField
-                  name="bankName"
-                  label="Bank Name"
-                  type="text"
-                  placeholder="Wema Bank"
-                  className="!h-14 w-full border-border"
-                />
-                <FormField
-                  name="accountName"
-                  label="Account Name"
-                  type="text"
-                  placeholder="John Doe"
-                  className="!h-14 w-full border-border"
-                />
-                <FormField
-                  name="accountNumber"
-                  label="Account Number"
-                  type="text"
-                  placeholder="0067514267"
-                  className="!h-14 w-full border-border"
-                />
-              </div>
-            </section> */}
-
             {/* Documents Section */}
             <section>
               <h2 className="mb-4 text-lg font-semibold">Employee Documents</h2>
@@ -323,14 +297,13 @@ export const AddEmployeeForm = () => {
               Cancel
             </MainButton>
             <MainButton variant={`primary`} type="submit" isDisabled={isSubmitting} className="w-full">
-              {isSubmitting ? "Saving..." : "Save Employee"}
+              {isSubmitting ? "Saving..." : "Save Changes"}
             </MainButton>
           </div>
         </form>
       </FormProvider>
-      {/* <AlertDialog open={showAlert} onOpenChange={handleAlertClose} title={alertTitle} description={alertDescription} /> */}
     </div>
   );
 };
 
-export const EmployeeForm = AddEmployeeForm;
+export const EmployeeEditForm = EditEmployeeForm;

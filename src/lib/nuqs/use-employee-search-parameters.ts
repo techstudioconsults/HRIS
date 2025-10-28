@@ -83,8 +83,6 @@ export const useEmployeeSearchParameters = () => {
         filters.sortBy = sortBy;
       }
 
-      // eslint-disable-next-line no-console
-      console.log("getApiFilters called with page:", page, "currentPage:", currentPage, "filters:", filters);
       return filters;
     }, [search, teamId, roleId, status, sortBy, limit, page]),
 

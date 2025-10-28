@@ -53,7 +53,7 @@ export const useEmployeeRowActions = () => {
       {
         label: "Edit Employee",
         onClick: () => {
-          router.push(`/admin/employees/add-employee?employeeid=${employee.id}`);
+          router.push(`/admin/employees/edit-employee?employeeid=${employee.id}`);
         },
         // icon: <Edit className={`text-high-primary`} />,
       },

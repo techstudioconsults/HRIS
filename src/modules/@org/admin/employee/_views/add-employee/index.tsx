@@ -1,9 +1,9 @@
-import { EmployeeForm } from "../../_components/forms/add-employee";
+import { AddEmployeeForm } from "../../_components/forms/add-employee";
 
 export const AddEmployee = () => {
   return (
     <>
-      <EmployeeForm />
+      <AddEmployeeForm />
     </>
   );
 };

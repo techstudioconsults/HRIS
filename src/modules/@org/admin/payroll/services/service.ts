@@ -10,7 +10,8 @@ export class PayrollService {
   }
 
   async getCompanyPayrollPolicy() {
-    const response = await this.http.get<ApiResponse<CompanyPayrollPolicy>>(`payroll-policy/company`);
+    // Ensure leading slash for consistency with other endpoints
+    const response = await this.http.get<ApiResponse<CompanyPayrollPolicy>>(`/payroll-policy/company`);
 
     if (response?.status === 200) {
       return response.data;

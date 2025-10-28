@@ -7,13 +7,21 @@ import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { FormField, MultiSelect } from "@/components/shared/inputs/FormFields";
 import { useEmployeeService } from "@/modules/@org/admin/employee/services/use-service";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 // import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { usePayrollService } from "../../services/use-service";
-import type { BonusDeduction, CompanyPayrollPolicy } from "../../types";
+import type { CompanyPayrollPolicy, PayrollBonusDeduction } from "../../types";
 import { BonusDeductionManager } from "../bonus-deduction-manager";
+
+// Extend API bonus/deduction type to cover backend field variants without using any
+type APIBonusDeduction = PayrollBonusDeduction & {
+  createdAt?: string;
+  updatedAt?: string;
+  amount?: number;
+  value?: number;
+};
 
 type PayrollSetupFormValues = {
   payday: string;
@@ -27,6 +35,18 @@ type PayrollSetupFormValues = {
 };
 
 export const PayrollSetupForm = () => {
+  const router = useRouter();
+  const [isSubmittedAlertOpen, setIsSubmittedAlertOpen] = useState(false);
+
+  // Fetch company payroll policy (needed to set form values directly via useForm)
+  const { useGetCompanyPayrollPolicy } = usePayrollService();
+  const { data: policyData } = useGetCompanyPayrollPolicy({
+    staleTime: 0,
+    refetchOnMount: true,
+  });
+
+  const policy = policyData?.data as CompanyPayrollPolicy | undefined;
+
   const methods = useForm<PayrollSetupFormValues>({
     // resolver: zodResolver(schema),
     defaultValues: {
@@ -39,12 +59,20 @@ export const PayrollSetupForm = () => {
       email: "",
       phoneNumber: "",
     },
+    // Set values directly from API response; RHF will update when `policy` changes
+    values: policy
+      ? {
+          payday: String(policy.payday ?? "0"),
+          frequency: policy.frequency ?? "",
+          currency: policy.currency ?? "",
+          approvers: policy.approvers ?? [],
+          firstName: policy.firstName ?? "",
+          lastName: policy.lastName ?? "",
+          email: policy.email ?? "",
+          phoneNumber: policy.phoneNumber ?? "",
+        }
+      : undefined,
   });
-
-  const router = useRouter();
-  const [isSubmittedAlertOpen, setIsSubmittedAlertOpen] = useState(false);
-  const [bonusItems, setBonusItems] = useState<BonusDeduction[]>([]);
-  const [deductionItems, setDeductionItems] = useState<BonusDeduction[]>([]);
 
   // Fetch employees for approval dropdown
   const { useGetAllEmployees } = useEmployeeService();
@@ -56,60 +84,48 @@ export const PayrollSetupForm = () => {
     },
   );
 
-  // Fetch company payroll policy
-  const { useGetCompanyPayrollPolicy } = usePayrollService();
-  const { data: policyData } = useGetCompanyPayrollPolicy({
-    staleTime: 0,
-    refetchOnMount: true,
-    refetchOnWindowFocus: false,
-  });
-
-  // Populate form with existing policy data
-  useEffect(() => {
-    if (policyData?.data) {
-      const policy = policyData.data as CompanyPayrollPolicy;
-
-      methods.reset({
-        payday: policy.payday?.toString() || "0",
-        frequency: policy.frequency || "",
-        currency: policy.currency || "",
-        approvers: policy.approvers || [],
-        firstName: policy.firstName || "",
-        lastName: policy.lastName || "",
-        email: policy.email || "",
-        phoneNumber: policy.phoneNumber || "",
-      });
-
-      // Set bonuses and deductions
-      if (policy.bonuses && policy.bonuses.length > 0) {
-        const formattedBonuses: BonusDeduction[] = policy.bonuses.map((bonus) => ({
-          id: bonus.id,
-          name: bonus.name,
-          value: bonus.amount,
-          valueType: bonus.type,
-          status: bonus.status,
-          type: "bonus" as const,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }));
-        setBonusItems(formattedBonuses);
-      }
-
-      if (policy.deductions && policy.deductions.length > 0) {
-        const formattedDeductions: BonusDeduction[] = policy.deductions.map((deduction) => ({
-          id: deduction.id,
-          name: deduction.name,
-          value: deduction.amount,
-          valueType: deduction.type,
-          status: deduction.status,
-          type: "deduction" as const,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }));
-        setDeductionItems(formattedDeductions);
-      }
+  // Build select options ensuring the current policy values exist so the value renders
+  const frequencyOptions = useMemo(() => {
+    const base = [
+      { value: "weekly", label: "Weekly" },
+      { value: "bi-weekly", label: "Bi-weekly" },
+      { value: "monthly", label: "Monthly" },
+    ];
+    const current = (policyData?.data as CompanyPayrollPolicy | undefined)?.frequency;
+    if (current && !base.some((o) => o.value === current)) {
+      const titleCased = current
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+      return [{ value: current, label: titleCased }, ...base];
     }
-  }, [policyData, methods]);
+    return base;
+  }, [policyData]);
+
+  const currencyOptions = useMemo(() => {
+    const base = [
+      { value: "USD", label: "USD" },
+      { value: "EUR", label: "EUR" },
+      { value: "NGN", label: "NGN" },
+      { value: "GBP", label: "GBP" },
+    ];
+    const current = (policyData?.data as CompanyPayrollPolicy | undefined)?.currency;
+    if (current && !base.some((o) => o.value === current)) {
+      return [{ value: current, label: current }, ...base];
+    }
+    return base;
+  }, [policyData]);
+
+  const paydayOptions = useMemo(() => {
+    const days = Array.from({ length: 31 }, (_, index) => ({ value: String(index + 1), label: String(index + 1) }));
+    // 0 often represents "End of month" or a special rule; include so current value displays
+    const withZero = [{ value: "0", label: "End of month" }, ...days];
+    const current = String((policyData?.data as CompanyPayrollPolicy | undefined)?.payday ?? "");
+    if (current && !withZero.some((o) => o.value === current)) {
+      return [{ value: current, label: current }, ...withZero];
+    }
+    return withZero;
+  }, [policyData]);
 
   // Transform employees to select options
   const employeeOptions = useMemo(() => {
@@ -122,49 +138,8 @@ export const PayrollSetupForm = () => {
   }, [employeesData]);
 
   const onSubmit = (data: PayrollSetupFormValues) => {
-    // Log submitted data for debugging/inspection
-    // You can replace this with an API call later
-    /* eslint-disable no-console */
-    console.log("Payroll Setup Form Submitted (raw):", data);
-
-    const payload = {
-      // Mimic desired request shape
-      success: true,
-      data: {
-        // id and companyId would typically be set server-side or from context
-        // id: undefined,
-        // companyId: undefined,
-        payday: Number.isNaN(Number(data.payday)) ? 0 : Number(data.payday),
-        frequency: data.frequency,
-        currency: data.currency,
-        bonuses: bonusItems.map((item) => ({
-          id: item.id,
-          name: item.name,
-          amount: item.value,
-          type: item.valueType,
-          status: item.status,
-        })),
-        deductions: deductionItems.map((item) => ({
-          id: item.id,
-          name: item.name,
-          amount: item.value,
-          type: item.valueType,
-          status: item.status,
-        })),
-        approvers: data.approvers,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        phoneNumber: data.phoneNumber,
-        // createdAt can be set by the server; included here if needed
-        // createdAt: new Date().toISOString(),
-      },
-    };
-
-    console.log("Payroll Setup Payload:", payload);
-    console.table(payload.data.bonuses);
-    console.table(payload.data.deductions);
-    /* eslint-enable no-console */
+    return data;
+    // console.log("Payroll Setup Form Submitted (raw):", data);
     setIsSubmittedAlertOpen(true);
   };
 
@@ -184,6 +159,7 @@ export const PayrollSetupForm = () => {
                   placeholder="Select payroll frequency"
                   type="select"
                   className="!h-14 w-full"
+                  options={frequencyOptions}
                 />
                 <FormField
                   name="payday"
@@ -191,6 +167,7 @@ export const PayrollSetupForm = () => {
                   placeholder="Select payday"
                   type="select"
                   className="!h-14 w-full"
+                  options={paydayOptions}
                 />
                 <FormField
                   name="currency"
@@ -198,6 +175,7 @@ export const PayrollSetupForm = () => {
                   placeholder="Select currency"
                   type="select"
                   className="!h-14 w-full"
+                  options={currencyOptions}
                 />
                 <MultiSelect
                   name="approvers"
@@ -247,12 +225,42 @@ export const PayrollSetupForm = () => {
 
               {/* Bonuses Section */}
               <div className="mb-8">
-                <BonusDeductionManager type="bonus" onChange={setBonusItems} />
+                <BonusDeductionManager
+                  key={`bonuses-${(policyData?.data as CompanyPayrollPolicy | undefined)?.bonuses?.length ?? 0}`}
+                  type="bonus"
+                  initialItems={
+                    (policyData?.data as CompanyPayrollPolicy | undefined)?.bonuses?.map((b: APIBonusDeduction) => ({
+                      id: b.id ?? Math.random().toString(36).slice(2, 11),
+                      name: b.name,
+                      valueType: b.type === "percentage" ? "percentage" : "fixed",
+                      value: Number(b.amount ?? b.value ?? 0),
+                      status: b.status,
+                      type: "bonus" as const,
+                      createdAt: b.createdAt ? new Date(b.createdAt) : new Date(),
+                      updatedAt: b.updatedAt ? new Date(b.updatedAt) : new Date(),
+                    })) ?? []
+                  }
+                />
               </div>
 
               {/* Deductions Section */}
               <div>
-                <BonusDeductionManager type="deduction" onChange={setDeductionItems} />
+                <BonusDeductionManager
+                  key={`deductions-${(policyData?.data as CompanyPayrollPolicy | undefined)?.deductions?.length ?? 0}`}
+                  type="deduction"
+                  initialItems={
+                    (policyData?.data as CompanyPayrollPolicy | undefined)?.deductions?.map((d: APIBonusDeduction) => ({
+                      id: d.id ?? Math.random().toString(36).slice(2, 11),
+                      name: d.name,
+                      valueType: d.type === "percentage" ? "percentage" : "fixed",
+                      value: Number(d.amount ?? d.value ?? 0),
+                      status: d.status,
+                      type: "deduction" as const,
+                      createdAt: d.createdAt ? new Date(d.createdAt) : new Date(),
+                      updatedAt: d.updatedAt ? new Date(d.updatedAt) : new Date(),
+                    })) ?? []
+                  }
+                />
               </div>
             </section>
           </div>

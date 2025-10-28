@@ -35,6 +35,8 @@ export const queryKeys = {
     details: (id: string) => ["payrolls", "detail", id] as const,
     download: (filters?: Filters) => ["payrolls", "download", filters] as const,
     policy: () => ["payrolls", "policy"] as const,
+    bonuses: (filters?: Filters) => ["payrolls", "bonuses", filters] as const,
+    deductions: (filters?: Filters) => ["payrolls", "deductions", filters] as const,
   },
   // Add other domains as needed
 };

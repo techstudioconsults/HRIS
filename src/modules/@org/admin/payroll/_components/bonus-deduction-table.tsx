@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { MoreHorizontal, Plus } from "lucide-react";
+import { Loader2, MoreHorizontal, Plus } from "lucide-react";
 
 import { BonusDeductionTableProperties } from "../types";
 
@@ -28,7 +28,8 @@ export function BonusDeductionTable({
   onEdit,
   onDelete,
   onToggleStatus,
-}: BonusDeductionTableProperties) {
+  isLoading = false,
+}: BonusDeductionTableProperties & { isLoading?: boolean }) {
   const getStatusBadge = (status: "active" | "inactive") => {
     return (
       <span
@@ -50,7 +51,7 @@ export function BonusDeductionTable({
 
       <div className="rounded-lg border bg-white">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-muted">
             <TableRow>
               <TableHead className="font-semibold">{type} Name</TableHead>
               <TableHead className="font-semibold">Value Type</TableHead>
@@ -60,7 +61,16 @@ export function BonusDeductionTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {items.length === 0 ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={5} className="py-8 text-center text-gray-500">
+                  <span className="inline-flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Loading {type}s...
+                  </span>
+                </TableCell>
+              </TableRow>
+            ) : items.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="py-8 text-center text-gray-500">
                   No {type}s added yet
@@ -76,7 +86,7 @@ export function BonusDeductionTable({
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
+                        <Button variant="ghost" className="h-8 w-8 p-0" disabled={isLoading}>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -91,13 +101,18 @@ export function BonusDeductionTable({
                               type: item.type,
                             })
                           }
+                          disabled={isLoading}
                         >
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onToggleStatus(item.id)}>
+                        <DropdownMenuItem onClick={() => onToggleStatus(item.id)} disabled={isLoading}>
                           {item.status === "active" ? "Deactivate" : "Activate"}
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onDelete(item.id)} className="text-red-600">
+                        <DropdownMenuItem
+                          onClick={() => onDelete(item.id)}
+                          className="text-red-600"
+                          disabled={isLoading}
+                        >
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -109,7 +124,15 @@ export function BonusDeductionTable({
           </TableBody>
         </Table>
       </div>
-      <MainButton icon={<Plus className="h-4 w-4" />} isLeftIconVisible variant="link" size="sm" onClick={onAdd}>
+      <MainButton
+        icon={<Plus className="h-4 w-4" />}
+        isLeftIconVisible
+        variant="link"
+        size="sm"
+        onClick={onAdd}
+        isDisabled={isLoading}
+        isLoading={isLoading}
+      >
         Add {type}
       </MainButton>
     </div>

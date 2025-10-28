@@ -40,6 +40,10 @@ export class HttpAdapter {
     return this.handleRequest<T>(() => http.patch(url, data, { headers }));
   }
 
+  async put<T>(url: string, data?: unknown, headers?: HttpHeaders): Promise<HttpResponse<T> | undefined> {
+    return this.handleRequest<T>(() => http.put(url, data, { headers }));
+  }
+
   async delete<T>(url: string, data?: unknown, headers?: HttpHeaders): Promise<HttpResponse<T> | undefined> {
     return this.handleRequest<T>(() => http.delete(url, { data, headers }));
   }

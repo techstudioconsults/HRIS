@@ -3,6 +3,7 @@
 import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { useEffect, useState } from "react";
 
+import { usePayrollService } from "../services/use-service";
 import { BonusDeduction, BonusDeductionFormData } from "../types";
 import { BonusDeductionFormModal } from "./bonus-deduction-form-modal";
 import { BonusDeductionTable } from "./bonus-deduction-table";
@@ -11,14 +12,21 @@ interface BonusDeductionManagerProperties {
   type: "bonus" | "deduction";
   initialItems?: BonusDeduction[];
   onChange?: (items: BonusDeduction[]) => void;
+  policyId?: string; // Needed for API calls
 }
 
 const generateId = () => {
   return Math.random().toString(36).slice(2, 11);
 };
 
-export function BonusDeductionManager({ type, initialItems = [], onChange }: BonusDeductionManagerProperties) {
+export function BonusDeductionManager({
+  type,
+  initialItems = [],
+  onChange,
+  policyId,
+}: BonusDeductionManagerProperties) {
   const [items, setItems] = useState<BonusDeduction[]>(initialItems);
+  const [isTableLoading, setIsTableLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<BonusDeduction | null>(null);
 
@@ -27,20 +35,70 @@ export function BonusDeductionManager({ type, initialItems = [], onChange }: Bon
   const [deletedAlertTitle, setDeletedAlertTitle] = useState("");
   const [deletedAlertDescription, setDeletedAlertDescription] = useState("");
 
-  const handleAdd = (formData: BonusDeductionFormData) => {
-    const newItem: BonusDeduction = {
-      id: generateId(),
+  // Service hooks
+  const { useCreateBonus, useUpdateBonus, useDeleteBonus, useCreateDeduction, useUpdateDeduction, useDeleteDeduction } =
+    usePayrollService();
+  const createBonus = useCreateBonus();
+  const updateBonus = useUpdateBonus();
+  const deleteBonus = useDeleteBonus();
+  const createDeduction = useCreateDeduction();
+  const updateDeduction = useUpdateDeduction();
+  const deleteDeduction = useDeleteDeduction();
+
+  const handleAdd = async (formData: BonusDeductionFormData) => {
+    // If no policy, fallback to local-only behavior
+    if (!policyId) {
+      const fallback: BonusDeduction = {
+        id: generateId(),
+        name: formData.name,
+        valueType: formData.valueType,
+        value: formData.value,
+        status: formData.status ? "active" : "inactive",
+        type: formData.type,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      setItems((previous) => [...previous, fallback]);
+      setIsModalOpen(false);
+      return;
+    }
+
+    const payload = {
       name: formData.name,
-      valueType: formData.valueType,
-      value: formData.value,
-      status: formData.status ? "active" : "inactive",
-      type: formData.type,
-      createdAt: new Date(),
+      amount: formData.value,
+      type: formData.valueType,
+      status: (formData.status ? "active" : "inactive") as "active" | "inactive",
+      payrollPolicyId: policyId,
+    };
+
+    setIsTableLoading(true);
+    const response =
+      type === "bonus" ? await createBonus.mutateAsync(payload) : await createDeduction.mutateAsync(payload);
+
+    type APIEntity = {
+      id?: string;
+      name?: string;
+      amount?: number;
+      type?: "fixed" | "percentage";
+      status?: "active" | "inactive";
+      createdAt?: string;
+      updatedAt?: string;
+    };
+    const data = (response as unknown as ApiResponse<APIEntity> | undefined)?.data ?? ({} as APIEntity);
+    const newItem: BonusDeduction = {
+      id: data.id ?? generateId(),
+      name: data.name ?? formData.name,
+      valueType: (data.type ?? formData.valueType) as "percentage" | "fixed",
+      value: Number(data.amount ?? formData.value ?? 0),
+      status: (data.status ?? (formData.status ? "active" : "inactive")) as "active" | "inactive",
+      type,
+      createdAt: data.createdAt ? new Date(data.createdAt) : new Date(),
       updatedAt: new Date(),
     };
 
     setItems((previous) => [...previous, newItem]);
     setIsModalOpen(false);
+    setIsTableLoading(false);
   };
 
   const handleEdit = (id: string, formData: BonusDeductionFormData) => {
@@ -57,8 +115,10 @@ export function BonusDeductionManager({ type, initialItems = [], onChange }: Bon
     setIsModalOpen(true);
   };
 
-  const handleEditSubmit = (formData: BonusDeductionFormData) => {
-    if (editingItem) {
+  const handleEditSubmit = async (formData: BonusDeductionFormData) => {
+    if (!editingItem) return;
+
+    if (!policyId) {
       setItems((previous) =>
         previous.map((item) =>
           item.id === editingItem.id
@@ -75,10 +135,55 @@ export function BonusDeductionManager({ type, initialItems = [], onChange }: Bon
       );
       setEditingItem(null);
       setIsModalOpen(false);
+      return;
     }
+
+    const payload = {
+      name: formData.name,
+      amount: formData.value,
+      type: formData.valueType,
+      status: formData.status ? "active" : "inactive",
+    } as const;
+
+    setIsTableLoading(true);
+    const response =
+      type === "bonus"
+        ? await updateBonus.mutateAsync({ id: editingItem.id, data: payload })
+        : await updateDeduction.mutateAsync({ id: editingItem.id, data: payload });
+
+    type APIEntity = {
+      id?: string;
+      name?: string;
+      amount?: number;
+      type?: "fixed" | "percentage";
+      status?: "active" | "inactive";
+      updatedAt?: string;
+    };
+    const data = (response as unknown as ApiResponse<APIEntity> | undefined)?.data ?? ({} as APIEntity);
+    setItems((previous) =>
+      previous.map((item) =>
+        item.id === editingItem.id
+          ? {
+              ...item,
+              name: data.name ?? formData.name,
+              valueType: (data.type ?? formData.valueType) as "percentage" | "fixed",
+              value: Number(data.amount ?? formData.value ?? 0),
+              status: (data.status ?? (formData.status ? "active" : "inactive")) as "active" | "inactive",
+              updatedAt: data.updatedAt ? new Date(data.updatedAt) : new Date(),
+            }
+          : item,
+      ),
+    );
+    setEditingItem(null);
+    setIsModalOpen(false);
+    setIsTableLoading(false);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
+    if (policyId) {
+      setIsTableLoading(true);
+      await (type === "bonus" ? deleteBonus.mutateAsync(id) : deleteDeduction.mutateAsync(id));
+    }
     setItems((previous) => previous.filter((item) => item.id !== id));
 
     const title = type === "bonus" ? "Bonus Deleted" : "Deduction Deleted";
@@ -88,20 +193,31 @@ export function BonusDeductionManager({ type, initialItems = [], onChange }: Bon
     setDeletedAlertTitle(title);
     setDeletedAlertDescription(description);
     setIsDeletedAlertOpen(true);
+    setIsTableLoading(false);
   };
 
-  const handleToggleStatus = (id: string) => {
+  const handleToggleStatus = async (id: string) => {
+    const current = items.find((item) => item.id === id);
+    const nextStatus = current?.status === "active" ? "inactive" : "active";
+    if (policyId && current) {
+      const payload = { status: nextStatus } as const;
+      setIsTableLoading(true);
+      await (type === "bonus"
+        ? updateBonus.mutateAsync({ id, data: payload })
+        : updateDeduction.mutateAsync({ id, data: payload }));
+    }
     setItems((previous) =>
       previous.map((item) =>
         item.id === id
           ? {
               ...item,
-              status: item.status === "active" ? "inactive" : "active",
+              status: nextStatus || item.status,
               updatedAt: new Date(),
             }
           : item,
       ),
     );
+    setIsTableLoading(false);
   };
 
   const handleModalClose = () => {
@@ -130,6 +246,15 @@ export function BonusDeductionManager({ type, initialItems = [], onChange }: Bon
         onEdit={handleEdit}
         onDelete={handleDelete}
         onToggleStatus={handleToggleStatus}
+        isLoading={
+          isTableLoading ||
+          createBonus.isPending ||
+          updateBonus.isPending ||
+          deleteBonus.isPending ||
+          createDeduction.isPending ||
+          updateDeduction.isPending ||
+          deleteDeduction.isPending
+        }
       />
 
       <BonusDeductionFormModal

@@ -206,6 +206,7 @@ export function MultiSelect({
         control={control}
         render={({ field }) => {
           const selectedValues = field.value || [];
+          const placeholderText = selectedValues.length > 0 ? `${selectedValues.length} selected` : placeholder;
 
           const handleSelect = (value: string) => {
             const newSelectedValues = selectedValues.includes(value)
@@ -218,9 +219,7 @@ export function MultiSelect({
             <>
               <Select>
                 <SelectTrigger className={cn(error && "border-destructive", className)}>
-                  <SelectValue placeholder={placeholder}>
-                    {selectedValues.length > 0 ? `${selectedValues.length} selected` : placeholder}
-                  </SelectValue>
+                  <SelectValue placeholder={placeholderText} />
                 </SelectTrigger>
                 <SelectContent>
                   {options.map((option) => (

@@ -26,12 +26,8 @@ type APIBonusDeduction = PayrollBonusDeduction & {
 type PayrollSetupFormValues = {
   payday: string;
   frequency: string;
-  currency: string;
+  currency?: string;
   approvers: string[];
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
 };
 
 export const PayrollSetupForm = () => {
@@ -39,7 +35,7 @@ export const PayrollSetupForm = () => {
   const [isSubmittedAlertOpen, setIsSubmittedAlertOpen] = useState(false);
 
   // Fetch company payroll policy (needed to set form values directly via useForm)
-  const { useGetCompanyPayrollPolicy } = usePayrollService();
+  const { useGetCompanyPayrollPolicy, useUpdateCompanyPayrollPolicy } = usePayrollService();
   const { data: policyData } = useGetCompanyPayrollPolicy({
     staleTime: 0,
     refetchOnMount: true,
@@ -47,31 +43,28 @@ export const PayrollSetupForm = () => {
 
   const policy = policyData?.data as CompanyPayrollPolicy | undefined;
 
+  // Ensure approvers are always a string[] of employee IDs
+  const normalizeIds = (array: unknown): string[] =>
+    Array.isArray(array)
+      ? array
+          .map((v) =>
+            typeof v === "string"
+              ? v
+              : v && typeof v === "object" && "id" in (v as Record<string, unknown>)
+                ? String((v as Record<string, unknown>).id)
+                : String(v),
+          )
+          .filter((v) => typeof v === "string" && v.length > 0)
+      : [];
+
   const methods = useForm<PayrollSetupFormValues>({
     // resolver: zodResolver(schema),
-    defaultValues: {
-      payday: "0",
-      frequency: "",
-      currency: "",
-      approvers: [],
-      firstName: "",
-      lastName: "",
-      email: "",
-      phoneNumber: "",
+    values: {
+      payday: String(policy?.payday ?? "0"),
+      frequency: policy?.frequency ?? "",
+      currency: policy?.currency ?? "",
+      approvers: normalizeIds(policy?.approvers ?? []),
     },
-    // Set values directly from API response; RHF will update when `policy` changes
-    values: policy
-      ? {
-          payday: String(policy.payday ?? "0"),
-          frequency: policy.frequency ?? "",
-          currency: policy.currency ?? "",
-          approvers: policy.approvers ?? [],
-          firstName: policy.firstName ?? "",
-          lastName: policy.lastName ?? "",
-          email: policy.email ?? "",
-          phoneNumber: policy.phoneNumber ?? "",
-        }
-      : undefined,
   });
 
   // Fetch employees for approval dropdown
@@ -137,9 +130,16 @@ export const PayrollSetupForm = () => {
     }));
   }, [employeesData]);
 
-  const onSubmit = (data: PayrollSetupFormValues) => {
-    return data;
-    // console.log("Payroll Setup Form Submitted (raw):", data);
+  const updatePolicy = useUpdateCompanyPayrollPolicy();
+
+  const onSubmit = async (data: PayrollSetupFormValues) => {
+    const payload = {
+      frequency: data.frequency,
+      payday: Number(data.payday),
+      approvers: normalizeIds(data.approvers),
+    };
+
+    await updatePolicy.mutateAsync(payload);
     setIsSubmittedAlertOpen(true);
   };
 
@@ -187,39 +187,7 @@ export const PayrollSetupForm = () => {
                 />
               </div>
             </section>
-            <section className="mt-8">
-              <h2 className="mb-4 text-lg font-semibold">Company Information</h2>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
-                <FormField
-                  name="firstName"
-                  label="First Name"
-                  placeholder="Enter first name"
-                  type="text"
-                  className="!h-14 w-full"
-                />
-                <FormField
-                  name="lastName"
-                  label="Last Name"
-                  placeholder="Enter last name"
-                  type="text"
-                  className="!h-14 w-full"
-                />
-                <FormField
-                  name="email"
-                  label="Email"
-                  placeholder="Enter email address"
-                  type="email"
-                  className="!h-14 w-full"
-                />
-                <FormField
-                  name="phoneNumber"
-                  label="Phone Number"
-                  placeholder="Enter phone number"
-                  type="text"
-                  className="!h-14 w-full"
-                />
-              </div>
-            </section>
+
             <section>
               <h2 className="mb-6 text-lg font-semibold">Global Bonuses & Deductions</h2>
 
@@ -228,6 +196,7 @@ export const PayrollSetupForm = () => {
                 <BonusDeductionManager
                   key={`bonuses-${(policyData?.data as CompanyPayrollPolicy | undefined)?.bonuses?.length ?? 0}`}
                   type="bonus"
+                  policyId={(policyData?.data as CompanyPayrollPolicy | undefined)?.id}
                   initialItems={
                     (policyData?.data as CompanyPayrollPolicy | undefined)?.bonuses?.map((b: APIBonusDeduction) => ({
                       id: b.id ?? Math.random().toString(36).slice(2, 11),
@@ -248,6 +217,7 @@ export const PayrollSetupForm = () => {
                 <BonusDeductionManager
                   key={`deductions-${(policyData?.data as CompanyPayrollPolicy | undefined)?.deductions?.length ?? 0}`}
                   type="deduction"
+                  policyId={(policyData?.data as CompanyPayrollPolicy | undefined)?.id}
                   initialItems={
                     (policyData?.data as CompanyPayrollPolicy | undefined)?.deductions?.map((d: APIBonusDeduction) => ({
                       id: d.id ?? Math.random().toString(36).slice(2, 11),
@@ -266,10 +236,16 @@ export const PayrollSetupForm = () => {
           </div>
 
           <div className="flex w-full items-center gap-4 pt-4">
-            <MainButton type="button" variant="outline" className="w-50">
+            <MainButton type="button" variant="outline" className="w-50" isDisabled={updatePolicy.isPending}>
               Cancel
             </MainButton>
-            <MainButton type="submit" variant="primary" className="w-50">
+            <MainButton
+              type="submit"
+              variant="primary"
+              className="w-50"
+              isLoading={updatePolicy.isPending}
+              isDisabled={updatePolicy.isPending}
+            >
               Save & Continue
             </MainButton>
           </div>

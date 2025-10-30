@@ -9,7 +9,8 @@ import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { FundWalletAccountModal } from "../fund-wallet-account-modal";
+import { usePayrollService } from "../../services/use-service";
+import { usePayrollStore } from "../../stores/payroll-store";
 
 const fundWalletSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -26,23 +27,18 @@ export interface FundWalletFormData {
 }
 
 interface FundWalletFormModalProperties {
-  open: boolean;
+  open?: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: FundWalletFormData) => void;
   onFundWallet?: () => void;
   initialData?: FundWalletFormData;
 }
 
-export function FundWalletFormModal({
-  open,
-  onOpenChange,
-  onSubmit,
-  onFundWallet,
-  initialData,
-}: FundWalletFormModalProperties) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export function FundWalletFormModal({ open, onOpenChange, initialData }: FundWalletFormModalProperties) {
+  const { setShowFundWalletAccountModal } = usePayrollStore();
+  const { useUpdateCompanyWallet } = usePayrollService();
+  const updateWallet = useUpdateCompanyWallet();
+
   const [isSuccessAlertOpen, setIsSuccessAlertOpen] = useState(false);
-  const [isFundWalletModalOpen, setIsFundWalletModalOpen] = useState(false);
 
   const methods = useForm<FundWalletFormData>({
     resolver: zodResolver(fundWalletSchema),
@@ -56,13 +52,9 @@ export function FundWalletFormModal({
 
   const { handleSubmit } = methods;
 
-  const handleFormSubmit = async (data: FundWalletFormData, event?: React.BaseSyntheticEvent) => {
-    if (event) {
-      event.preventDefault();
-    }
-    setIsSubmitting(true);
+  const handleFormSubmit = async (data: FundWalletFormData) => {
     try {
-      await onSubmit(data);
+      await updateWallet.mutateAsync(data);
       // Close the main modal first
       onOpenChange(false);
       // Add a small delay before showing the success alert modal
@@ -72,8 +64,6 @@ export function FundWalletFormModal({
     } catch {
       // Handle error silently or show toast notification
       // Error handling can be improved with toast notifications
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -91,18 +81,8 @@ export function FundWalletFormModal({
   };
 
   const handleFundWalletClick = () => {
+    setShowFundWalletAccountModal(true);
     setIsSuccessAlertOpen(false);
-    // Add a small delay before showing the fund wallet modal
-    setTimeout(() => {
-      setIsFundWalletModalOpen(true);
-    }, 300);
-  };
-
-  const handleFundWalletSubmit = async () => {
-    if (onFundWallet) {
-      await onFundWallet();
-    }
-    setIsFundWalletModalOpen(false);
   };
 
   return (
@@ -162,12 +142,18 @@ export function FundWalletFormModal({
                 type="button"
                 variant="outline"
                 onClick={handleCancel}
-                isDisabled={isSubmitting}
+                isDisabled={updateWallet.isPending}
               >
                 Cancel
               </MainButton>
-              <MainButton className="w-full" type="submit" variant="primary" isDisabled={isSubmitting}>
-                {isSubmitting ? "Saving..." : "Save & Continue"}
+              <MainButton
+                className="w-full"
+                type="submit"
+                variant="primary"
+                isLoading={updateWallet.isPending}
+                isDisabled={updateWallet.isPending}
+              >
+                {updateWallet.isPending ? "Saving..." : "Save & Continue"}
               </MainButton>
             </div>
           </form>
@@ -185,12 +171,6 @@ export function FundWalletFormModal({
         cancelText="Cancel"
         showCancelButton={true}
         autoClose={false}
-      />
-
-      <FundWalletAccountModal
-        open={isFundWalletModalOpen}
-        onOpenChange={setIsFundWalletModalOpen}
-        onConfirm={handleFundWalletSubmit}
       />
     </>
   );

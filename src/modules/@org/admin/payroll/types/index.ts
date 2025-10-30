@@ -61,3 +61,12 @@ export interface CompanyPayrollPolicy {
   phoneNumber: string;
   createdAt: string; // ISO date string
 }
+
+export interface CompanyWallet {
+  id: string;
+  companyId: string;
+  accountName: string;
+  accountNumber: string;
+  bankName: string;
+  balance: number;
+}

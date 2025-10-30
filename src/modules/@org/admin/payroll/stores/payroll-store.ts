@@ -13,6 +13,7 @@ export interface PayrollUIState {
   togglePayrollAction: "GENERATE" | "RUN" | "SCHEDULE";
   hideNotificationBanner?: boolean;
   payrollSelectedDate?: Date;
+  showFundWalletAccountModal: boolean;
 }
 
 export interface PayrollUIActions {
@@ -24,6 +25,7 @@ export interface PayrollUIActions {
   setTogglePayrollAction: (action: "GENERATE" | "RUN" | "SCHEDULE") => void;
   setHideNotificationBanner: (show: boolean) => void;
   setPayrollSelectedDate: (date: Date | undefined) => void;
+  setShowFundWalletAccountModal: (open: boolean) => void;
 
   toggleNetPayVisibility: () => void;
 
@@ -39,7 +41,7 @@ export interface PayrollUIActions {
 }
 
 const initialState: PayrollUIState = {
-  showSetupModal: true,
+  showSetupModal: false,
   showFundWalletModal: false,
   showScheduleDrawer: false,
   showPayrollDrawer: false,
@@ -50,6 +52,7 @@ const initialState: PayrollUIState = {
   togglePayrollAction: "GENERATE",
   hideNotificationBanner: true,
   payrollSelectedDate: undefined,
+  showFundWalletAccountModal: false,
 };
 
 export const usePayrollStore = create<PayrollUIState & PayrollUIActions>()(
@@ -67,6 +70,7 @@ export const usePayrollStore = create<PayrollUIState & PayrollUIActions>()(
         setTogglePayrollAction: (action) => set({ togglePayrollAction: action }),
         setHideNotificationBanner: (show) => set({ hideNotificationBanner: show }),
         setPayrollSelectedDate: (date) => set({ payrollSelectedDate: date }),
+        setShowFundWalletAccountModal: (open) => set({ showFundWalletAccountModal: open }),
 
         // Net pay visibility
         toggleNetPayVisibility: () => set((s) => ({ isNetPayVisible: !s.isNetPayVisible })),

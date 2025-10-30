@@ -6,10 +6,13 @@ import { dependencies } from "@/lib/tools/dependencies";
 import { PayrollService } from "./service";
 
 export const usePayrollService = () => {
-  const { useServiceQuery } = createServiceHooks<PayrollService>(dependencies.PAYROLL_SERVICE);
-  const { useServiceMutation } = createServiceHooks<PayrollService>(dependencies.PAYROLL_SERVICE);
+  const { useServiceQuery, useServiceMutation } = createServiceHooks<PayrollService>(dependencies.PAYROLL_SERVICE);
 
   // Queries
+
+  const useGetCompanyWallet = (options?: any) =>
+    useServiceQuery(queryKeys.payroll.wallet(), (service) => service.getCompanyWallet(), options);
+
   const useGetCompanyPayrollPolicy = (options?: any) =>
     useServiceQuery(queryKeys.payroll.policy(), (service) => service.getCompanyPayrollPolicy(), options);
 
@@ -18,6 +21,14 @@ export const usePayrollService = () => {
 
   const useDownloadPayrolls = (options?: any) =>
     useServiceQuery(queryKeys.payroll.download({}), (service) => service.downloadPayrolls(), options);
+
+  // Wallet
+  const useUpdateCompanyWallet = (options?: any) =>
+    useServiceMutation(
+      (service, data: { firstName: string; lastName: string; email: string; phoneNumber: string }) =>
+        service.updateCompanyWallet(data),
+      options,
+    );
 
   const useUpdateCompanyPayrollPolicy = (options?: any) =>
     useServiceMutation(
@@ -112,6 +123,7 @@ export const usePayrollService = () => {
     useGetCompanyPayrollPolicy,
     useGetAllPayrolls,
     useDownloadPayrolls,
+    useUpdateCompanyWallet,
     useUpdateCompanyPayrollPolicy,
     useGetBonuses,
     useCreateBonus,
@@ -121,5 +133,6 @@ export const usePayrollService = () => {
     useCreateDeduction,
     useUpdateDeduction,
     useDeleteDeduction,
+    useGetCompanyWallet,
   };
 };

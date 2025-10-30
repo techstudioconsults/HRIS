@@ -7,6 +7,7 @@ interface GenericDropdownProperties {
   align?: "start" | "center" | "end";
   className?: string;
   contentClassName?: string;
+  isDisabled?: boolean;
 }
 
 export function GenericDropdown({
@@ -14,11 +15,12 @@ export function GenericDropdown({
   children,
   align = "start",
   className,
+  isDisabled = false,
   contentClassName = "w-56",
 }: GenericDropdownProperties) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild className={className}>
+      <DropdownMenuTrigger disabled={isDisabled} asChild className={className}>
         {trigger}
       </DropdownMenuTrigger>
       <DropdownMenuContent className={cn(`bg-background`, contentClassName)} align={align}>

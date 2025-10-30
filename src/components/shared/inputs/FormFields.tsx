@@ -22,6 +22,7 @@ interface FormFieldProperties {
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
+  readOnly?: boolean;
   options?: { value: string; label: string }[];
   className?: string;
   containerClassName?: string;
@@ -37,6 +38,7 @@ export function FormField({
   placeholder,
   required = false,
   disabled = false,
+  readOnly = false,
   options = [],
   className = "",
   containerClassName,
@@ -86,11 +88,22 @@ export function FormField({
                   {...field}
                   placeholder={placeholder}
                   disabled={disabled}
+                  readOnly={readOnly}
                   className={cn(inputClassName, "min-h-[80px] resize-y")}
                 />
               ) : type === "select" ? (
-                <Select onValueChange={field.onChange} value={field.value ?? undefined} disabled={disabled}>
-                  <SelectTrigger className={cn(inputClassName, "w-full")}>
+                <Select
+                  onValueChange={readOnly ? undefined : field.onChange}
+                  value={field.value ?? undefined}
+                  disabled={disabled}
+                >
+                  <SelectTrigger
+                    className={cn(
+                      readOnly && "pointer-events-none cursor-not-allowed opacity-100",
+                      inputClassName,
+                      "w-full",
+                    )}
+                  >
                     <SelectValue placeholder={placeholder || "Select a value"} />
                   </SelectTrigger>
                   <SelectContent className="bg-background">
@@ -107,6 +120,7 @@ export function FormField({
                   type="number"
                   placeholder={placeholder}
                   disabled={disabled}
+                  readOnly={readOnly}
                   className={inputClassName}
                   value={field.value || ""}
                   onChange={(event) => field.onChange(event.target.valueAsNumber)}
@@ -118,6 +132,7 @@ export function FormField({
                     type={showPassword ? "text" : "password"}
                     placeholder={placeholder}
                     disabled={disabled}
+                    readOnly={readOnly}
                     className={inputClassName}
                     onChange={(event) => {
                       field.onChange(event);
@@ -138,6 +153,7 @@ export function FormField({
                   type={type}
                   placeholder={placeholder}
                   disabled={disabled}
+                  readOnly={readOnly}
                   className={cn(inputClassName, "cursor-pointer pr-10")}
                   onClick={(event) => {
                     // Prevent the click from being handled by the input itself
@@ -154,6 +170,7 @@ export function FormField({
                   type={type}
                   placeholder={placeholder}
                   disabled={disabled}
+                  readOnly={readOnly}
                   className={inputClassName}
                 />
               )}
@@ -176,6 +193,8 @@ export function MultiSelect({
   options,
   placeholder = "Select options",
   required = false,
+  disabled = false,
+  readOnly = false,
   className = "",
 }: {
   label?: string;
@@ -184,6 +203,7 @@ export function MultiSelect({
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
+  readOnly?: boolean;
   className?: string;
 }) {
   const {
@@ -209,6 +229,7 @@ export function MultiSelect({
           const placeholderText = selectedValues.length > 0 ? `${selectedValues.length} selected` : placeholder;
 
           const handleSelect = (value: string) => {
+            if (disabled || readOnly) return;
             const newSelectedValues = selectedValues.includes(value)
               ? selectedValues.filter((v: string) => v !== value) // Deselect if already selected
               : [...selectedValues, value]; // Select if not already selected
@@ -218,7 +239,7 @@ export function MultiSelect({
           return (
             <>
               <Select>
-                <SelectTrigger className={cn(error && "border-destructive", className)}>
+                <SelectTrigger className={cn(error && "border-destructive", className)} disabled={disabled || readOnly}>
                   <SelectValue placeholder={placeholderText} />
                 </SelectTrigger>
                 <SelectContent>
@@ -244,6 +265,7 @@ export function MultiSelect({
                       <Checkbox
                         checked={selectedValues.includes(option.value)}
                         onCheckedChange={() => handleSelect(option.value)}
+                        disabled={disabled || readOnly}
                       />
                     </section>
                   ))}
@@ -287,6 +309,7 @@ export function SwitchField({
   name,
   required = false,
   disabled = false,
+  readOnly = false,
   description,
   className = "",
   onChange, // Add an onChange prop
@@ -295,6 +318,7 @@ export function SwitchField({
   name: string;
   required?: boolean;
   disabled?: boolean;
+  readOnly?: boolean;
   className?: string;
   description?: string;
   onChange?: (checked: boolean) => void; // Callback function to handle switch toggle
@@ -325,12 +349,13 @@ export function SwitchField({
             <Switch
               checked={field.value}
               onCheckedChange={(checked) => {
+                if (readOnly) return;
                 field.onChange(checked); // Update the form state
                 if (onChange) {
                   onChange(checked); // Trigger the onChange callback
                 }
               }}
-              disabled={disabled}
+              disabled={disabled || readOnly}
               className={cn(error && "border-destructive", "mt-0")}
             />
           )}

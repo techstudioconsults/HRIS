@@ -26,7 +26,6 @@ export function BonusDeductionManager({
   policyId,
 }: BonusDeductionManagerProperties) {
   const [items, setItems] = useState<BonusDeduction[]>(initialItems);
-  const [isTableLoading, setIsTableLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<BonusDeduction | null>(null);
 
@@ -71,7 +70,6 @@ export function BonusDeductionManager({
       payrollPolicyId: policyId,
     };
 
-    setIsTableLoading(true);
     const response =
       type === "bonus" ? await createBonus.mutateAsync(payload) : await createDeduction.mutateAsync(payload);
 
@@ -98,7 +96,6 @@ export function BonusDeductionManager({
 
     setItems((previous) => [...previous, newItem]);
     setIsModalOpen(false);
-    setIsTableLoading(false);
   };
 
   const handleEdit = (id: string, formData: BonusDeductionFormData) => {
@@ -145,7 +142,6 @@ export function BonusDeductionManager({
       status: formData.status ? "active" : "inactive",
     } as const;
 
-    setIsTableLoading(true);
     const response =
       type === "bonus"
         ? await updateBonus.mutateAsync({ id: editingItem.id, data: payload })
@@ -176,12 +172,10 @@ export function BonusDeductionManager({
     );
     setEditingItem(null);
     setIsModalOpen(false);
-    setIsTableLoading(false);
   };
 
   const handleDelete = async (id: string) => {
     if (policyId) {
-      setIsTableLoading(true);
       await (type === "bonus" ? deleteBonus.mutateAsync(id) : deleteDeduction.mutateAsync(id));
     }
     setItems((previous) => previous.filter((item) => item.id !== id));
@@ -193,7 +187,6 @@ export function BonusDeductionManager({
     setDeletedAlertTitle(title);
     setDeletedAlertDescription(description);
     setIsDeletedAlertOpen(true);
-    setIsTableLoading(false);
   };
 
   const handleToggleStatus = async (id: string) => {
@@ -201,7 +194,6 @@ export function BonusDeductionManager({
     const nextStatus = current?.status === "active" ? "inactive" : "active";
     if (policyId && current) {
       const payload = { status: nextStatus } as const;
-      setIsTableLoading(true);
       await (type === "bonus"
         ? updateBonus.mutateAsync({ id, data: payload })
         : updateDeduction.mutateAsync({ id, data: payload }));
@@ -217,7 +209,6 @@ export function BonusDeductionManager({
           : item,
       ),
     );
-    setIsTableLoading(false);
   };
 
   const handleModalClose = () => {
@@ -246,15 +237,6 @@ export function BonusDeductionManager({
         onEdit={handleEdit}
         onDelete={handleDelete}
         onToggleStatus={handleToggleStatus}
-        isLoading={
-          isTableLoading ||
-          createBonus.isPending ||
-          updateBonus.isPending ||
-          deleteBonus.isPending ||
-          createDeduction.isPending ||
-          updateDeduction.isPending ||
-          deleteDeduction.isPending
-        }
       />
 
       <BonusDeductionFormModal

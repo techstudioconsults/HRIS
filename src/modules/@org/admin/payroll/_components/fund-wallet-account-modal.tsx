@@ -4,9 +4,9 @@ import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { AlertTriangle, Copy } from "lucide-react";
 import { useState } from "react";
-import { useShallow } from "zustand/react/shallow";
 
-import { PayrollActions, usePayrollStore } from "../stores/payroll-store";
+import { usePayrollService } from "../services/use-service";
+import { usePayrollStore } from "../stores/payroll-store";
 
 interface FundWalletAccountModalProperties {
   open: boolean;
@@ -22,12 +22,9 @@ interface BankAccountDetails {
 export function FundWalletAccountModal({ open, onOpenChange, onConfirm }: FundWalletAccountModalProperties) {
   const [copied, setCopied] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-
-  const { setTogglePayrollAction } = usePayrollStore(
-    useShallow((s: PayrollActions) => ({
-      setTogglePayrollAction: s.setTogglePayrollAction,
-    })),
-  );
+  const { useGetCompanyWallet } = usePayrollService();
+  const { data: companyWalletData } = useGetCompanyWallet();
+  const { setTogglePayrollAction } = usePayrollStore();
 
   // Bank account details - these would typically come from props or API
   const bankAccountDetails: BankAccountDetails = {
@@ -72,30 +69,44 @@ export function FundWalletAccountModal({ open, onOpenChange, onConfirm }: FundWa
         </p>
 
         {/* Bank Account Details */}
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="mb-1 text-xs text-gray-500">Bank Name</p>
-              <p className="font-semibold text-gray-900">{bankAccountDetails.bankName}</p>
-            </div>
-            <div className="flex flex-col items-end gap-2">
+        {companyWalletData?.data.accountName && companyWalletData?.data.accountNumber ? (
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="mb-1 text-xs text-gray-500">Account Number</p>
-                <div className="flex items-center gap-2">
-                  <p className="font-semibold text-gray-900">{bankAccountDetails.accountNumber}</p>
-                  <button
-                    onClick={handleCopyAccountNumber}
-                    className="text-blue-600 transition-colors hover:text-blue-700"
-                    title="Copy account number"
-                  >
-                    <Copy size={16} />
-                  </button>
+                <p className="mb-1 text-xs text-gray-500">Bank Name</p>
+                <p className="font-semibold text-gray-900">{bankAccountDetails.bankName}</p>
+              </div>
+              <div className="flex flex-col items-end gap-2">
+                <div>
+                  <p className="mb-1 text-xs text-gray-500">Account Number</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold text-gray-900">{bankAccountDetails.accountNumber}</p>
+                    <button
+                      onClick={handleCopyAccountNumber}
+                      className="text-blue-600 transition-colors hover:text-blue-700"
+                      title="Copy account number"
+                    >
+                      <Copy size={16} />
+                    </button>
+                  </div>
+                  {copied && <p className="mt-1 text-xs text-green-600">Copied!</p>}
                 </div>
-                {copied && <p className="mt-1 text-xs text-green-600">Copied!</p>}
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="rounded-lg border border-blue-100 bg-blue-50 p-6">
+            <div className="flex flex-col items-center gap-4 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+              </div>
+              <div className="space-y-1">
+                <p className="font-medium text-gray-900">Setting up your wallet account</p>
+                <p className="text-sm text-gray-600">This will only take a moment...</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Warning Message */}
         <div className="border-accent bg-accent/10 rounded-lg border p-4">

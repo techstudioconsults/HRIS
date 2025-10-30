@@ -37,6 +37,7 @@ export const queryKeys = {
     policy: () => ["payrolls", "policy"] as const,
     bonuses: (filters?: Filters) => ["payrolls", "bonuses", filters] as const,
     deductions: (filters?: Filters) => ["payrolls", "deductions", filters] as const,
+    wallet: () => ["payrolls", "wallet"] as const,
   },
   // Add other domains as needed
 };

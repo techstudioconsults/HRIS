@@ -25,6 +25,7 @@ import empty1 from "~/images/empty-state.svg";
 import { AddEmployeeDrawer } from "../_components/add-employee-drawer";
 import { PayrollFilterForm } from "../_components/forms/filter-form";
 import { FundWalletFormModal } from "../_components/forms/fund-wallet-form-modal";
+import { FundWalletAccountModal } from "../_components/fund-wallet-account-modal";
 import { GenerateRunPayrollDrawer } from "../_components/generate-run-payroll-drawer";
 import { PayrollSetupModal } from "../_components/payroll-setup-modal";
 import { SchedulePayrollDrawer } from "../_components/schedule-payroll-drawer";
@@ -61,8 +62,6 @@ const PayrollView = () => {
   const [debouncedSearch] = useDebounce(searchInput, 300);
 
   const {
-    showSetupModal,
-    setShowSetupModal,
     showFundWalletModal,
     setShowFundWalletModal,
     showScheduleDrawer,
@@ -76,11 +75,13 @@ const PayrollView = () => {
     togglePayrollAction,
     hideNotificationBanner,
     payrollSelectedDate,
+    showFundWalletAccountModal,
+    setShowFundWalletAccountModal,
   } = usePayrollStore();
 
   const { getRowActions } = usePayrollRowActions();
   const { useGetAllTeams } = useEmployeeService();
-  const { useGetAllPayrolls, useDownloadPayrolls } = usePayrollService();
+  const { useGetAllPayrolls, useDownloadPayrolls, useGetCompanyWallet } = usePayrollService();
   const { data: teams = [] } = useGetAllTeams();
   const { refetch: downloadPayrolls } = useDownloadPayrolls();
 
@@ -121,7 +122,10 @@ const PayrollView = () => {
     retryDelay: 1000, // Wait 1 second before retry
   });
 
+  const { data: companyWalletData } = useGetCompanyWallet();
+
   // Apply filter values to URL (nuqs) and reset page
+
   const handleFilterChange = useCallback(
     (newFilters: any) => {
       setTeamId(newFilters.teamId ?? null);
@@ -136,7 +140,7 @@ const PayrollView = () => {
 
   useEffect(() => {
     refetch();
-  }, [refetch]);
+  }, [companyWalletData?.data.accountNumber, refetch, setShowFundWalletModal]);
 
   const handlePageChange = useCallback(
     (newPage: number) => {
@@ -154,12 +158,23 @@ const PayrollView = () => {
     resetFilters();
   }, [resetFilters]);
 
+  const handleShowFundWalletModal = () => {
+    if (companyWalletData?.data.companyId) {
+      setShowFundWalletModal(false);
+      setShowFundWalletAccountModal(true);
+    } else {
+      // Do something with the account number
+      setShowFundWalletModal(true);
+      setShowFundWalletAccountModal(false);
+    }
+  };
+
   // Cleanup ephemeral UI state on unmount/navigation
-  useEffect(() => {
-    return () => {
-      usePayrollStore.getState().resetUI();
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     usePayrollStore.getState().resetUI();
+  //   };
+  // }, []);
 
   return (
     <section className="space-y-10">
@@ -168,12 +183,8 @@ const PayrollView = () => {
         subtitle="Payroll"
         actionComponent={
           <div className="flex min-w-[50%] items-center gap-2">
-            <ComboBox options={[]} className="border-border text-muted-foreground h-10 w-full border" />
-            <MainButton
-              className="border-primary shadow"
-              variant="outline"
-              onClick={() => setShowFundWalletModal(true)}
-            >
+            <ComboBox disabled={true} options={[]} className="border-border text-muted-foreground h-10 w-full border" />
+            <MainButton className="border-primary shadow" variant="outline" onClick={handleShowFundWalletModal}>
               Fund Wallet
             </MainButton>
             {togglePayrollAction === "GENERATE" ? (
@@ -181,6 +192,7 @@ const PayrollView = () => {
                 className={cn(!hideNotificationBanner && `hidden`)}
                 onClick={() => setShowPayrollDrawer(true)}
                 variant="primary"
+                isDisabled={true}
               >
                 Generate Payroll
               </MainButton>
@@ -189,6 +201,7 @@ const PayrollView = () => {
                 className={cn(!hideNotificationBanner && `hidden`)}
                 onClick={() => setShowPayrollDrawer(true)}
                 variant="primary"
+                isDisabled={true}
               >
                 Run Payroll
               </MainButton>
@@ -209,7 +222,9 @@ const PayrollView = () => {
                 }
               >
                 <DropdownMenuItem onClick={() => setShowScheduleDrawer(true)}>Schedule Payroll</DropdownMenuItem>
-                <DropdownMenuItem>Payroll Settings</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/admin/payroll/setup">Payroll Settings</Link>
+                </DropdownMenuItem>
               </GenericDropdown>
             </div>
           </div>
@@ -264,6 +279,7 @@ const PayrollView = () => {
           <h1 className="text-xl font-bold">Employee Payroll Summary</h1>
           <div className="flex min-w-[50%] items-center gap-2">
             <SearchInput
+              isDisabled={false}
               className="border-border h-10 w-full rounded-md border"
               placeholder="Search employee..."
               onSearch={handleSearchChange}
@@ -365,21 +381,11 @@ const PayrollView = () => {
       </section>
 
       {/* Payroll Setup Modal */}
-      <PayrollSetupModal
-        // trigger={<Button className="bg-blue-600 hover:bg-blue-700">Fund</Button>}
-        open={showSetupModal}
-        onOpenChange={setShowSetupModal}
-      />
+      <PayrollSetupModal />
 
       {/* Fund Wallet Modal */}
-      <FundWalletFormModal
-        open={showFundWalletModal}
-        onOpenChange={setShowFundWalletModal}
-        onSubmit={() => {
-          // Handle fund wallet form submission
-          setShowFundWalletModal(false);
-        }}
-      />
+      <FundWalletFormModal open={showFundWalletModal} onOpenChange={setShowFundWalletModal} />
+      <FundWalletAccountModal open={showFundWalletAccountModal} onOpenChange={setShowFundWalletAccountModal} />
 
       {/* Schedule Payroll Drawer */}
       <SchedulePayrollDrawer open={showScheduleDrawer} onOpenChange={setShowScheduleDrawer} />

@@ -5,6 +5,7 @@ import { BreadCrumb } from "@/components/shared/breadcrumb";
 import MainButton from "@/components/shared/button";
 import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { FormField, MultiSelect } from "@/components/shared/inputs/FormFields";
+import { cn } from "@/lib/utils";
 import { useEmployeeService } from "@/modules/@org/admin/employee/services/use-service";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -170,11 +171,12 @@ export const PayrollSetupForm = () => {
                   options={paydayOptions}
                 />
                 <FormField
+                  readOnly
                   name="currency"
                   label="Currency"
                   placeholder="Select currency"
                   type="select"
-                  className="!h-14 w-full"
+                  className={cn("!h-14 w-full")}
                   options={currencyOptions}
                 />
                 <MultiSelect

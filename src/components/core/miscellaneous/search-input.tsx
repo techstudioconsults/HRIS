@@ -12,6 +12,7 @@ interface SearchInputProperties {
   onSearch: (query: string) => void;
   delay?: number; // debounce delay in ms
   className?: string;
+  isDisabled?: boolean;
 }
 
 export const SearchInput = ({
@@ -19,6 +20,7 @@ export const SearchInput = ({
   onSearch,
   delay = 300,
   className = "",
+  isDisabled = false,
 }: SearchInputProperties) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery] = useDebounce(searchQuery, delay);
@@ -31,6 +33,7 @@ export const SearchInput = ({
     <div className={`relative ${className}`}>
       <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
       <Input
+        disabled={isDisabled}
         type="search"
         placeholder={placeholder}
         className="border-border h-full border-none pr-4 pl-10 shadow"

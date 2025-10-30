@@ -2,7 +2,10 @@
 
 import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
-import { useState } from "react";
+import { useEffect } from "react";
+
+import { usePayrollService } from "../services/use-service";
+import { usePayrollStore } from "../stores/payroll-store";
 
 interface PayrollSetupModalProperties {
   open?: boolean;
@@ -10,26 +13,29 @@ interface PayrollSetupModalProperties {
   trigger?: React.ReactNode;
 }
 
-export const PayrollSetupModal = ({ open, onOpenChange, trigger }: PayrollSetupModalProperties) => {
-  const [isOpen, setIsOpen] = useState(open || false);
+export const PayrollSetupModal = ({ trigger }: PayrollSetupModalProperties) => {
+  const { showSetupModal, setShowSetupModal } = usePayrollStore();
+  const { useGetCompanyPayrollPolicy } = usePayrollService();
+  const { data: companyPayrollPolicy } = useGetCompanyPayrollPolicy();
 
-  const handleOpenChange = (newOpen: boolean) => {
-    setIsOpen(newOpen);
-    onOpenChange?.(newOpen);
-  };
+  useEffect(() => {
+    if (companyPayrollPolicy?.data.status === "incomplete") {
+      setShowSetupModal(true);
+    }
+  }, [companyPayrollPolicy, setShowSetupModal]);
 
   const handleRemindLater = () => {
     // TODO: Implement remind later logic
     // eslint-disable-next-line no-console
     console.log("Reminding later...");
-    handleOpenChange(false);
+    setShowSetupModal(false);
   };
 
   return (
     <ReusableDialog
       trigger={trigger}
-      open={isOpen}
-      onOpenChange={handleOpenChange}
+      open={showSetupModal}
+      onOpenChange={() => setShowSetupModal(false)}
       title="Let's Get Payroll Set Up"
       description="To begin processing payroll, you'll need to set your company's pay schedule. This includes how often you pay your team and on what date each cycle runs."
       className="!max-w-lg"

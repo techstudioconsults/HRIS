@@ -1,5 +1,6 @@
 "use client";
 
+import { ModeToggle } from "@/components/core/layout/ThemeToggle/theme-toggle";
 import { GlobalSearchInput } from "@/components/core/miscellaneous/search-input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
@@ -86,6 +87,7 @@ export default function TopBar({ adminName, notificationsCount = 0, className = 
             </div>
           )}
         </div>
+        <ModeToggle />
       </div>
     </header>
   );

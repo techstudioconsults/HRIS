@@ -15,14 +15,15 @@ interface PayrollSetupModalProperties {
 
 export const PayrollSetupModal = ({ trigger }: PayrollSetupModalProperties) => {
   const { showSetupModal, setShowSetupModal } = usePayrollStore();
-  const { useGetCompanyPayrollPolicy } = usePayrollService();
+  const { useGetCompanyPayrollPolicy, useGetCompanyWallet } = usePayrollService();
   const { data: companyPayrollPolicy } = useGetCompanyPayrollPolicy();
+  const { data: companyWalletData } = useGetCompanyWallet();
 
   useEffect(() => {
     if (companyPayrollPolicy?.data.status === "incomplete") {
       setShowSetupModal(true);
     }
-  }, [companyPayrollPolicy, setShowSetupModal]);
+  }, [companyPayrollPolicy, companyWalletData?.data.companyId, setShowSetupModal]);
 
   const handleRemindLater = () => {
     // TODO: Implement remind later logic

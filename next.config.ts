@@ -5,6 +5,7 @@ const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["msw"],
+  compress: false,
   typescript: {
     ignoreBuildErrors: true,
   },

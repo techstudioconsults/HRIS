@@ -185,7 +185,7 @@ export const CompanyProfile = () => {
               Continue
             </MainButton>
             <MainButton
-              href={`/onboarding/step-2`}
+              href={`/admin/dashboard`}
               type="button"
               variant="link"
               className="w-full font-semibold"

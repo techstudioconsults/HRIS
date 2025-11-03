@@ -3,10 +3,9 @@
 import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { AlertTriangle, Copy } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { usePayrollService } from "../services/use-service";
-import { usePayrollStore } from "../stores/payroll-store";
 
 interface FundWalletAccountModalProperties {
   open: boolean;
@@ -14,27 +13,18 @@ interface FundWalletAccountModalProperties {
   onConfirm?: () => void;
 }
 
-interface BankAccountDetails {
-  bankName: string;
-  accountNumber: string;
-}
-
 export function FundWalletAccountModal({ open, onOpenChange, onConfirm }: FundWalletAccountModalProperties) {
   const [copied, setCopied] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const { useGetCompanyWallet } = usePayrollService();
-  const { data: companyWalletData } = useGetCompanyWallet();
-  const { setTogglePayrollAction } = usePayrollStore();
-
-  // Bank account details - these would typically come from props or API
-  const bankAccountDetails: BankAccountDetails = {
-    bankName: "Paystack-Titan",
-    accountNumber: "3198775460",
-  };
+  // get the query object so we can refetch during polling
+  const walletQuery = useGetCompanyWallet();
+  const { data: companyWalletData } = walletQuery || {};
 
   const handleCopyAccountNumber = async () => {
     try {
-      await navigator.clipboard.writeText(bankAccountDetails.accountNumber);
+      const accountNumberToCopy = companyWalletData?.data?.accountNumber || "";
+      await navigator.clipboard.writeText(accountNumberToCopy);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -42,18 +32,28 @@ export function FundWalletAccountModal({ open, onOpenChange, onConfirm }: FundWa
     }
   };
 
+  // Poll every 5s while modal is open and until accountNumber exists
+  useEffect(() => {
+    if (!open) return;
+    if (companyWalletData?.data?.accountNumber) return;
+
+    const id = setInterval(() => {
+      walletQuery?.refetch?.();
+    }, 5000);
+
+    return () => clearInterval(id);
+  }, [open, companyWalletData?.data?.accountNumber, walletQuery]);
+
   const handleConfirm = async () => {
     try {
       setIsProcessing(true);
-      // Allow parent to perform async work (e.g., fund wallet API)
-      if (onConfirm) {
-        await onConfirm();
-      }
-      // After successful processing, toggle payroll action to RUN
-      setTogglePayrollAction("RUN");
+      // Refresh wallet details after user acknowledges
+      await walletQuery?.refetch?.();
+      // Allow parent to perform any side effects
+      if (onConfirm) await onConfirm();
       onOpenChange(false);
     } catch {
-      // Silently ignore for now; could show a toast in the future
+      // no-op
     } finally {
       setIsProcessing(false);
     }
@@ -69,18 +69,18 @@ export function FundWalletAccountModal({ open, onOpenChange, onConfirm }: FundWa
         </p>
 
         {/* Bank Account Details */}
-        {companyWalletData?.data.accountName && companyWalletData?.data.accountNumber ? (
+        {companyWalletData?.data?.accountName && companyWalletData?.data?.accountNumber ? (
           <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="mb-1 text-xs text-gray-500">Bank Name</p>
-                <p className="font-semibold text-gray-900">{bankAccountDetails.bankName}</p>
+                <p className="font-semibold text-gray-900">{companyWalletData?.data?.bankName || "Paystack-Titan"}</p>
               </div>
               <div className="flex flex-col items-end gap-2">
                 <div>
                   <p className="mb-1 text-xs text-gray-500">Account Number</p>
                   <div className="flex items-center gap-2">
-                    <p className="font-semibold text-gray-900">{bankAccountDetails.accountNumber}</p>
+                    <p className="font-semibold text-gray-900">{companyWalletData?.data?.accountNumber}</p>
                     <button
                       onClick={handleCopyAccountNumber}
                       className="text-blue-600 transition-colors hover:text-blue-700"

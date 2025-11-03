@@ -56,7 +56,7 @@ export const Login = () => {
   return (
     <section className="mx-auto max-w-[527px]">
       <div className={`mb-8 space-y-2`}>
-        <h3 className="text-[32px]/[120%] font-[600] tracking-[-2%] text-black">Welcome Back, HR</h3>
+        <h3 className="text-[32px]/[120%] font-[600] tracking-[-2%]">Welcome Back, HR</h3>
         <p className={`text-gray text-lg`}>Login to access your HR dashboard, and simplify operations.</p>
       </div>
 
@@ -105,7 +105,7 @@ export const Login = () => {
             <div className="w-full border-t"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="text-muted-foreground bg-white px-2">OR</span>
+            <span className="text-muted-foreground bg-background px-2">OR</span>
           </div>
         </div>
 

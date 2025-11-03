@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -15,7 +16,8 @@ import { usePayrollSearchParameters } from "@/lib/nuqs/use-payroll-search-parame
 import { cn } from "@/lib/utils";
 import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import { CloseCircle, Eye, EyeSlash, Filter } from "iconsax-reactjs";
-import { MoreVertical } from "lucide-react";
+import { AlertTriangle, MoreVertical } from "lucide-react"; // add AlertTriangle
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
@@ -30,13 +32,20 @@ import { GenerateRunPayrollDrawer } from "../_components/generate-run-payroll-dr
 import { PayrollSetupModal } from "../_components/payroll-setup-modal";
 import { SchedulePayrollDrawer } from "../_components/schedule-payroll-drawer";
 import { DashboardCard } from "../../dashboard/_components/dashboard-card";
+// import { SSEProgressWidget } from "../../dashboard/_components/sse-progress-widget";
 import { useEmployeeService } from "../../employee/services/use-service";
+import { useSSEPayroll } from "../hook/use-payroll-sse";
 import { usePayrollService } from "../services/use-service";
 import { usePayrollStore } from "../stores/payroll-store";
 import { payrollColumn, usePayrollRowActions } from "./table-data";
 
+const formatNaira = (value: number) =>
+  new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(value);
+
 const PayrollView = () => {
+  const { data: session } = useSession();
   const router = useRouter();
+
   const {
     page,
     search,
@@ -81,9 +90,41 @@ const PayrollView = () => {
 
   const { getRowActions } = usePayrollRowActions();
   const { useGetAllTeams } = useEmployeeService();
-  const { useGetAllPayrolls, useDownloadPayrolls, useGetCompanyWallet } = usePayrollService();
+  const { useGetAllPayrolls, useGetCompanyWallet, useGetCompanyPayrollPolicy } = usePayrollService();
+  const { data: companyPayrollPolicy } = useGetCompanyPayrollPolicy();
   const { data: teams = [] } = useGetAllTeams();
-  const { refetch: downloadPayrolls } = useDownloadPayrolls();
+
+  const userId = session?.user?.id || "";
+  const latestEvent = useSSEPayroll(userId);
+  const checkCompanyPayrollSetupStatus = companyPayrollPolicy?.data.status === `incomplete`;
+
+  console.log(latestEvent);
+
+  // useEffect(() => {
+  //   if (!latestEvent) return;
+
+  //   switch (latestEvent.type) {
+  //     case "payroll.approve.request": {
+  //       console.log("🔔 Payroll approval requested", latestEvent.payload);
+  //       break;
+  //     }
+  //     case "payroll.approve.success": {
+  //       console.log("✅ Payroll approved", latestEvent.payload);
+  //       break;
+  //     }
+  //     case "salary.paid": {
+  //       console.log("💰 Salary paid", latestEvent.payload);
+  //       break;
+  //     }
+  //     case "wallet.created.success": {
+  //       console.log("🏦 Wallet created successfully", latestEvent.payload);
+  //       break;
+  //     }
+  //     default: {
+  //       console.log("📡 Generic Event:", latestEvent);
+  //     }
+  //   }
+  // }, [latestEvent]);
 
   const PAYROLL_SCHEDULE_MESSAGE: ReactNode = `Your payroll has been scheduled for ${payrollSelectedDate?.toLocaleString("default", { month: "long", day: "numeric", year: "numeric" })}. You can edit the schedule date or cancel the payroll before the set date here.`;
 
@@ -124,6 +165,80 @@ const PayrollView = () => {
 
   const { data: companyWalletData } = useGetCompanyWallet();
 
+  // --- New: Wallet balance + low-balance state ---
+  const LOW_BALANCE_LIMIT = 5_000_000; // 5M NGN
+  const walletBalance: number = Number(companyWalletData?.data?.balance || 20_000_000);
+  const lowBalance = walletBalance < LOW_BALANCE_LIMIT;
+
+  // Low-balance banner dismissal (resets when balance recovers)
+  const [lowBalanceBannerDismissed, setLowBalanceBannerDismissed] = useState(false);
+  useEffect(() => {
+    if (!lowBalance) setLowBalanceBannerDismissed(false);
+  }, [lowBalance]);
+
+  // --- New: One-time Payroll Setup Modal experience ---
+  const PAYROLL_SETUP_ACK_KEY = "hris.payrollSetupAcknowledged";
+  const [showPayrollSetupModal, setShowPayrollSetupModal] = useState(false);
+
+  const acknowledgePayrollSetup = useCallback(() => {
+    try {
+      localStorage.setItem(PAYROLL_SETUP_ACK_KEY, "1");
+    } catch {
+      // no-op
+    }
+  }, []);
+
+  useEffect(() => {
+    const status = companyPayrollPolicy?.data?.status as "incomplete" | "complete" | undefined;
+    if (!status) return;
+
+    if (status === "complete") {
+      // Once completed, never prompt again
+      acknowledgePayrollSetup();
+      setShowPayrollSetupModal(false);
+      return;
+    }
+
+    // First-time prompt only if not acknowledged and still incomplete
+    let hasAck = false;
+    try {
+      hasAck = localStorage.getItem(PAYROLL_SETUP_ACK_KEY) === "1";
+    } catch {
+      hasAck = false;
+    }
+    setShowPayrollSetupModal(!hasAck);
+  }, [companyPayrollPolicy?.data?.status, acknowledgePayrollSetup]);
+
+  const handlePayrollSetupModalChange = useCallback(
+    (open: boolean) => {
+      setShowPayrollSetupModal(open);
+      if (!open) acknowledgePayrollSetup();
+    },
+    [acknowledgePayrollSetup],
+  );
+
+  // --- Refined Fund Wallet workflow ---
+  const handleShowFundWalletModal = () => {
+    const isPolicyIncomplete = companyPayrollPolicy?.data?.status === "incomplete";
+    const hasAccountNumber = Boolean(companyWalletData?.data?.accountNumber);
+
+    if (isPolicyIncomplete || !hasAccountNumber) {
+      // Guide to create/fund wallet if policy incomplete or wallet not ready
+      setShowFundWalletModal(true);
+      setShowFundWalletAccountModal(false);
+    } else {
+      // Policy complete and wallet available -> show account details modal
+      setShowFundWalletModal(false);
+      setShowFundWalletAccountModal(true);
+    }
+  };
+
+  // Optional: mark acknowledged when user intentionally opens settings
+  const handleOpenPayrollSettings = useCallback(() => {
+    acknowledgePayrollSetup();
+    router.push("/admin/payroll/setup");
+  }, [acknowledgePayrollSetup, router]);
+
   // Apply filter values to URL (nuqs) and reset page
 
   const handleFilterChange = useCallback(
@@ -158,24 +273,6 @@ const PayrollView = () => {
     resetFilters();
   }, [resetFilters]);
 
-  const handleShowFundWalletModal = () => {
-    if (companyWalletData?.data.companyId) {
-      setShowFundWalletModal(false);
-      setShowFundWalletAccountModal(true);
-    } else {
-      // Do something with the account number
-      setShowFundWalletModal(true);
-      setShowFundWalletAccountModal(false);
-    }
-  };
-
-  // Cleanup ephemeral UI state on unmount/navigation
-  // useEffect(() => {
-  //   return () => {
-  //     usePayrollStore.getState().resetUI();
-  //   };
-  // }, []);
-
   return (
     <section className="space-y-10">
       <DashboardHeader
@@ -184,7 +281,11 @@ const PayrollView = () => {
         actionComponent={
           <div className="flex min-w-[50%] items-center gap-2">
             <ComboBox disabled={true} options={[]} className="border-border text-muted-foreground h-10 w-full border" />
-            <MainButton className="border-primary shadow" variant="outline" onClick={handleShowFundWalletModal}>
+            <MainButton
+              className={cn("border-primary shadow")} // remove lowBalance red border animation
+              variant="outline"
+              onClick={handleShowFundWalletModal}
+            >
               Fund Wallet
             </MainButton>
             {togglePayrollAction === "GENERATE" ? (
@@ -192,16 +293,16 @@ const PayrollView = () => {
                 className={cn(!hideNotificationBanner && `hidden`)}
                 onClick={() => setShowPayrollDrawer(true)}
                 variant="primary"
-                isDisabled={true}
+                isDisabled={checkCompanyPayrollSetupStatus || lowBalance}
               >
-                Generate Payroll
+                Generate Payslip
               </MainButton>
             ) : (
               <MainButton
                 className={cn(!hideNotificationBanner && `hidden`)}
                 onClick={() => setShowPayrollDrawer(true)}
                 variant="primary"
-                isDisabled={true}
+                isDisabled={checkCompanyPayrollSetupStatus || lowBalance}
               >
                 Run Payroll
               </MainButton>
@@ -222,14 +323,39 @@ const PayrollView = () => {
                 }
               >
                 <DropdownMenuItem onClick={() => setShowScheduleDrawer(true)}>Schedule Payroll</DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/admin/payroll/setup">Payroll Settings</Link>
-                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleOpenPayrollSettings}>Payroll Settings</DropdownMenuItem>
               </GenericDropdown>
             </div>
           </div>
         }
       />
+
+      {/* Low balance banner */}
+      {lowBalance && !lowBalanceBannerDismissed && (
+        <section className="rounded-lg border border-red-200 bg-red-50 p-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="mt-0.5 text-red-600" size={18} />
+              <p className="text-sm text-red-800">
+                Your wallet balance {formatNaira(walletBalance)} is below the recommended minimum of{" "}
+                {formatNaira(LOW_BALANCE_LIMIT)}. Fund your wallet to generate or run payroll.
+              </p>
+            </div>
+            <div className="flex items-start gap-5">
+              <MainButton variant="outline" onClick={handleShowFundWalletModal}>
+                Fund Wallet
+              </MainButton>
+              <button
+                aria-label="Dismiss low balance banner"
+                className="text-red-700 transition-colors hover:text-red-900"
+                onClick={() => setLowBalanceBannerDismissed(true)}
+              >
+                <CloseCircle size={18} />
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
 
       <section>
         <div hidden={hideNotificationBanner} className="bg-primary-500 text-background relative rounded-lg p-5">
@@ -256,7 +382,7 @@ const PayrollView = () => {
           title="Wallet Balance"
           value={
             <div className="flex items-center gap-4">
-              <p className="text-base text-white">{isNetPayVisible ? `N7,200,000` : `••••••••`}</p>
+              <p className="text-base text-white">{isNetPayVisible ? formatNaira(walletBalance) : `••••••••`}</p>
               <button
                 onClick={toggleNetPayVisibility}
                 className="text-white transition-colors hover:text-gray-300"
@@ -270,7 +396,9 @@ const PayrollView = () => {
               </button>
             </div>
           }
-          className="flex flex-col items-center justify-center gap-4 bg-gradient-to-r from-[#013E94] to-[#00132E] text-center"
+          className={cn(
+            "flex flex-col items-center justify-center gap-4 bg-gradient-to-r from-[#013E94] to-[#00132E] text-center",
+          )} // remove lowBalance red border animation
           titleColor="text-white"
         />
       </section>
@@ -319,16 +447,20 @@ const PayrollView = () => {
             </div>
             <div>
               <ExportAction
-                downloadMutation={async (filters) => {
-                  const { data } = await downloadPayrolls(filters);
-                  return data as Blob;
-                }}
+                // downloadMutation={async (filters) => {
+                //   const { data } = await downloadPayrolls(filters);
+                //   return data as Blob;
+                // }}
                 currentPage={undefined}
                 dateRange={undefined}
                 status={undefined}
                 buttonText="Export Payroll"
                 fileName="Payroll"
                 className="border-border bg-background text-foreground h-10 rounded-md border px-3 shadow"
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars
+                downloadMutation={function (parameters: object): Promise<Blob | File> {
+                  throw new Error("Function not implemented.");
+                }}
               />
             </div>
           </div>
@@ -380,8 +512,10 @@ const PayrollView = () => {
         )}
       </section>
 
-      {/* Payroll Setup Modal */}
-      <PayrollSetupModal />
+      {/* Payroll Setup Modal (controlled, one-time prompt) */}
+      {showPayrollSetupModal && (
+        <PayrollSetupModal open={showPayrollSetupModal} onOpenChange={handlePayrollSetupModalChange} />
+      )}
 
       {/* Fund Wallet Modal */}
       <FundWalletFormModal open={showFundWalletModal} onOpenChange={setShowFundWalletModal} />

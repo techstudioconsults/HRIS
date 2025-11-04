@@ -1,4 +1,3 @@
-// import { zodResolver } from "@hookform/resolvers/zod";
 "use client";
 
 import { BreadCrumb } from "@/components/shared/breadcrumb";
@@ -13,6 +12,7 @@ import { useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { usePayrollService } from "../../services/use-service";
+import { usePayrollStore } from "../../stores/payroll-store";
 import type { CompanyPayrollPolicy, PayrollBonusDeduction } from "../../types";
 import { BonusDeductionManager } from "../bonus-deduction-manager";
 
@@ -34,6 +34,7 @@ type PayrollSetupFormValues = {
 export const PayrollSetupForm = () => {
   const router = useRouter();
   const [isSubmittedAlertOpen, setIsSubmittedAlertOpen] = useState(false);
+  const { setHasCompletedSetupForm } = usePayrollStore();
 
   // Fetch company payroll policy (needed to set form values directly via useForm)
   const { useGetCompanyPayrollPolicy, useUpdateCompanyPayrollPolicy } = usePayrollService();
@@ -258,12 +259,8 @@ export const PayrollSetupForm = () => {
         isOpen={isSubmittedAlertOpen}
         onClose={() => setIsSubmittedAlertOpen(false)}
         onConfirm={() => {
-          try {
-            // Mark payroll setup configured so modal won't auto-show again
-            localStorage.setItem("hris.payrollSetupConfigured", "1");
-          } catch {
-            // no-op
-          }
+          // Mark payroll setup configured so modal won't auto-show again
+          setHasCompletedSetupForm(true);
           setIsSubmittedAlertOpen(false);
           router.push("/admin/payroll");
         }}

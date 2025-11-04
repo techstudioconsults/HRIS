@@ -14,6 +14,9 @@ export interface PayrollUIState {
   hideNotificationBanner?: boolean;
   payrollSelectedDate?: Date;
   showFundWalletAccountModal: boolean;
+  hasCompletedSetupForm: boolean;
+  hasAcknowledgedSetup: boolean;
+  lowBalanceBannerDismissed: boolean;
 }
 
 export interface PayrollUIActions {
@@ -26,6 +29,9 @@ export interface PayrollUIActions {
   setHideNotificationBanner: (show: boolean) => void;
   setPayrollSelectedDate: (date: Date | undefined) => void;
   setShowFundWalletAccountModal: (open: boolean) => void;
+  setHasCompletedSetupForm: (completed: boolean) => void;
+  setHasAcknowledgedSetup: (acknowledged: boolean) => void;
+  setLowBalanceBannerDismissed: (dismissed: boolean) => void;
 
   toggleNetPayVisibility: () => void;
 
@@ -53,6 +59,9 @@ const initialState: PayrollUIState = {
   hideNotificationBanner: true,
   payrollSelectedDate: undefined,
   showFundWalletAccountModal: false,
+  hasCompletedSetupForm: false,
+  hasAcknowledgedSetup: false,
+  lowBalanceBannerDismissed: false,
 };
 
 export const usePayrollStore = create<PayrollUIState & PayrollUIActions>()(
@@ -71,6 +80,9 @@ export const usePayrollStore = create<PayrollUIState & PayrollUIActions>()(
         setHideNotificationBanner: (show) => set({ hideNotificationBanner: show }),
         setPayrollSelectedDate: (date) => set({ payrollSelectedDate: date }),
         setShowFundWalletAccountModal: (open) => set({ showFundWalletAccountModal: open }),
+        setHasCompletedSetupForm: (completed) => set({ hasCompletedSetupForm: completed }),
+        setHasAcknowledgedSetup: (acknowledged) => set({ hasAcknowledgedSetup: acknowledged }),
+        setLowBalanceBannerDismissed: (dismissed) => set({ lowBalanceBannerDismissed: dismissed }),
 
         // Net pay visibility
         toggleNetPayVisibility: () => set((s) => ({ isNetPayVisible: !s.isNetPayVisible })),
@@ -108,6 +120,9 @@ export const usePayrollStore = create<PayrollUIState & PayrollUIActions>()(
         partialize: (s) => ({
           isNetPayVisible: s.isNetPayVisible,
           columnVisibility: s.columnVisibility,
+          hasCompletedSetupForm: s.hasCompletedSetupForm,
+          hasAcknowledgedSetup: s.hasAcknowledgedSetup,
+          lowBalanceBannerDismissed: s.lowBalanceBannerDismissed,
         }),
       },
     ),

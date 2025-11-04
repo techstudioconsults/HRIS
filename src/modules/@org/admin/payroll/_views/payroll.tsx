@@ -59,6 +59,10 @@ const PayrollView = () => {
     payrollSelectedDate,
     showFundWalletAccountModal,
     setShowFundWalletAccountModal,
+    hasCompletedSetupForm,
+    setHasAcknowledgedSetup,
+    lowBalanceBannerDismissed,
+    setLowBalanceBannerDismissed,
   } = usePayrollStore();
 
   const { getRowActions } = usePayrollRowActions();
@@ -98,31 +102,31 @@ const PayrollView = () => {
   const [activePayrollId, setActivePayrollId] = useState<string | null>(null);
 
   // Derive latest payroll id if none selected yet
-  useEffect(() => {
-    if (!activePayrollId) {
-      try {
-        const shaped = payrollData as unknown as {
-          data?:
-            | { items?: Array<{ id: string; paymentDate?: string | Date }> }
-            | Array<{ id: string; paymentDate?: string | Date }>;
-          items?: Array<{ id: string; paymentDate?: string | Date }>;
-        };
-        const list: Array<{ id: string; paymentDate?: string | Date }> = Array.isArray(shaped?.data)
-          ? (shaped?.data as Array<{ id: string; paymentDate?: string | Date }>)
-          : Array.isArray(shaped?.data?.items)
-            ? (shaped?.data?.items as Array<{ id: string; paymentDate?: string | Date }>)
-            : Array.isArray(shaped?.items)
-              ? (shaped?.items as Array<{ id: string; paymentDate?: string | Date }>)
-              : [];
-        const sorted = list
-          .map((p) => ({ id: p.id, ts: p.paymentDate ? new Date(p.paymentDate).getTime() : 0 }))
-          .sort((a, b) => b.ts - a.ts);
-        if (sorted[0]?.id) setActivePayrollId(sorted[0].id);
-      } catch {
-        // ignore
-      }
-    }
-  }, [activePayrollId, payrollData]);
+  // useEffect(() => {
+  //   if (!activePayrollId) {
+  //     try {
+  //       const shaped = payrollData as unknown as {
+  //         data?:
+  //           | { items?: Array<{ id: string; paymentDate?: string | Date }> }
+  //           | Array<{ id: string; paymentDate?: string | Date }>;
+  //         items?: Array<{ id: string; paymentDate?: string | Date }>;
+  //       };
+  //       const list: Array<{ id: string; paymentDate?: string | Date }> = Array.isArray(shaped?.data)
+  //         ? (shaped?.data as Array<{ id: string; paymentDate?: string | Date }>)
+  //         : Array.isArray(shaped?.data?.items)
+  //           ? (shaped?.data?.items as Array<{ id: string; paymentDate?: string | Date }>)
+  //           : Array.isArray(shaped?.items)
+  //             ? (shaped?.items as Array<{ id: string; paymentDate?: string | Date }>)
+  //             : [];
+  //       const sorted = list
+  //         .map((p) => ({ id: p.id, ts: p.paymentDate ? new Date(p.paymentDate).getTime() : 0 }))
+  //         .sort((a, b) => b.ts - a.ts);
+  //       if (sorted[0]?.id) setActivePayrollId(sorted[0].id);
+  //     } catch {
+  //       // ignore
+  //     }
+  //   }
+  // }, [activePayrollId, payrollData]);
 
   // Payslips for active payroll
   const { data: payslipsPage, isLoading: isPayslipLoading } = useGetPayslips(
@@ -186,10 +190,9 @@ const PayrollView = () => {
   const lowBalance = walletFetched ? walletBalance < LOW_BALANCE_LIMIT : false;
 
   // Low-balance banner dismissal (resets when balance recovers)
-  const [lowBalanceBannerDismissed, setLowBalanceBannerDismissed] = useState(false);
   useEffect(() => {
     if (!lowBalance) setLowBalanceBannerDismissed(false);
-  }, [lowBalance]);
+  }, [lowBalance, setLowBalanceBannerDismissed]);
 
   // Mutation: Create/Generate payroll for current cycle
   const { mutateAsync: createPayroll, isPending: isCreatingPayroll } = useCreatePayroll();
@@ -238,24 +241,11 @@ const PayrollView = () => {
   ]);
 
   // --- New: One-time Payroll Setup Modal experience ---
-  const PAYROLL_SETUP_ACK_KEY = "hris.payrollSetupAcknowledged";
-  const PAYROLL_SETUP_CONFIGURED_KEY = "hris.payrollSetupConfigured"; // set after completing setup form
-  const [hasCompletedSetupForm, setHasCompletedSetupForm] = useState(false);
-  useEffect(() => {
-    try {
-      setHasCompletedSetupForm(localStorage.getItem(PAYROLL_SETUP_CONFIGURED_KEY) === "1");
-    } catch {
-      // no-op
-    }
-  }, []);
+  // No need for local state - now managed by Zustand store
 
   const acknowledgePayrollSetup = useCallback(() => {
-    try {
-      localStorage.setItem(PAYROLL_SETUP_ACK_KEY, "1");
-    } catch {
-      // no-op
-    }
-  }, []);
+    setHasAcknowledgedSetup(true);
+  }, [setHasAcknowledgedSetup]);
 
   // --- Refined Fund Wallet workflow ---
   const handleShowFundWalletModal = () => {

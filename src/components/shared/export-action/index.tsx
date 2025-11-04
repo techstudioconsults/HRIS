@@ -10,7 +10,8 @@ import { HtmlHTMLAttributes, useTransition } from "react";
 import MainButton from "../button";
 
 interface ExportActionProperties<T> extends HtmlHTMLAttributes<HTMLButtonElement> {
-  downloadMutation: (parameters: T) => Promise<Blob | File>;
+  isDisabled?: boolean;
+  downloadMutation?: (parameters: T) => Promise<Blob | File>;
   currentPage?: number;
   dateRange?: { from?: Date; to?: Date };
   status?: string;
@@ -22,6 +23,7 @@ interface ExportActionProperties<T> extends HtmlHTMLAttributes<HTMLButtonElement
 }
 
 const ExportAction = <T extends object>({
+  isDisabled = false,
   downloadMutation,
   currentPage = 1,
   dateRange,
@@ -45,8 +47,8 @@ const ExportAction = <T extends object>({
         ...additionalParameters,
       };
 
-      const file = await downloadMutation(parameters);
-      const blob = new Blob([file], { type: "text/csv" });
+      const file = await downloadMutation?.(parameters);
+      const blob = new Blob([file as File], { type: "text/csv" });
       saveAs(blob, `${fileName}.csv`);
       onDownloadComplete?.();
     });
@@ -54,6 +56,7 @@ const ExportAction = <T extends object>({
 
   return (
     <MainButton
+      isDisabled={isDisabled}
       variant="ghost"
       className={cn("border-border bg-background w-full text-black lg:w-auto", className)}
       size={size as "lg" | "xl"}

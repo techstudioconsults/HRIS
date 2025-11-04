@@ -7,12 +7,14 @@ import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { GenericDropdown } from "@/components/shared/drop-down";
+import { EmptyState } from "@/components/shared/empty-state";
 import ExportAction from "@/components/shared/export-action";
 import { ComboBox } from "@/components/shared/select-dropdown/combo-box";
 import { Button } from "@/components/ui/button";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Modal } from "@/components/ui/modal";
 import { formatCurrency } from "@/lib/i18n/utils";
+import { usePayrollSearchParameters } from "@/lib/nuqs/use-payroll-search-parameters";
 import { cn } from "@/lib/utils";
 import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import { useQueryClient } from "@tanstack/react-query";
@@ -23,6 +25,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
+import empty1 from "~/images/empty-state.svg";
 import { AddEmployeeDrawer } from "../_components/add-employee-drawer";
 import { PayrollFilterForm } from "../_components/forms/filter-form";
 import { FundWalletFormModal } from "../_components/forms/fund-wallet-form-modal";
@@ -101,41 +104,57 @@ const PayrollView = () => {
   // Active payroll to view payslips for
   const [activePayrollId, setActivePayrollId] = useState<string | null>(null);
 
-  // Derive latest payroll id if none selected yet
-  // useEffect(() => {
-  //   if (!activePayrollId) {
-  //     try {
-  //       const shaped = payrollData as unknown as {
-  //         data?:
-  //           | { items?: Array<{ id: string; paymentDate?: string | Date }> }
-  //           | Array<{ id: string; paymentDate?: string | Date }>;
-  //         items?: Array<{ id: string; paymentDate?: string | Date }>;
-  //       };
-  //       const list: Array<{ id: string; paymentDate?: string | Date }> = Array.isArray(shaped?.data)
-  //         ? (shaped?.data as Array<{ id: string; paymentDate?: string | Date }>)
-  //         : Array.isArray(shaped?.data?.items)
-  //           ? (shaped?.data?.items as Array<{ id: string; paymentDate?: string | Date }>)
-  //           : Array.isArray(shaped?.items)
-  //             ? (shaped?.items as Array<{ id: string; paymentDate?: string | Date }>)
-  //             : [];
-  //       const sorted = list
-  //         .map((p) => ({ id: p.id, ts: p.paymentDate ? new Date(p.paymentDate).getTime() : 0 }))
-  //         .sort((a, b) => b.ts - a.ts);
-  //       if (sorted[0]?.id) setActivePayrollId(sorted[0].id);
-  //     } catch {
-  //       // ignore
-  //     }
-  //   }
-  // }, [activePayrollId, payrollData]);
+  // Use nuqs hook for URL-based filter state
+  const {
+    page,
+    search,
+    teamId,
+    roleId,
+    status,
+    sortBy,
+    limit,
+    setPage,
+    setSearch,
+    setTeamId,
+    setRoleId,
+    setStatus,
+    setSortBy,
+    setLimit,
+    getApiFilters,
+    resetToFirstPage,
+  } = usePayrollSearchParameters();
 
-  // Payslips for active payroll
-  const { data: payslipsPage, isLoading: isPayslipLoading } = useGetPayslips(
-    activePayrollId ?? "",
-    {},
-    {
-      enabled: Boolean(activePayrollId),
-    },
-  );
+  // Derive latest payroll id if none selected yet
+  useEffect(() => {
+    if (!activePayrollId) {
+      try {
+        const shaped = payrollData as unknown as {
+          data?:
+            | { items?: Array<{ id: string; paymentDate?: string | Date }> }
+            | Array<{ id: string; paymentDate?: string | Date }>;
+          items?: Array<{ id: string; paymentDate?: string | Date }>;
+        };
+        const list: Array<{ id: string; paymentDate?: string | Date }> = Array.isArray(shaped?.data)
+          ? (shaped?.data as Array<{ id: string; paymentDate?: string | Date }>)
+          : Array.isArray(shaped?.data?.items)
+            ? (shaped?.data?.items as Array<{ id: string; paymentDate?: string | Date }>)
+            : Array.isArray(shaped?.items)
+              ? (shaped?.items as Array<{ id: string; paymentDate?: string | Date }>)
+              : [];
+        const sorted = list
+          .map((p) => ({ id: p.id, ts: p.paymentDate ? new Date(p.paymentDate).getTime() : 0 }))
+          .sort((a, b) => b.ts - a.ts);
+        if (sorted[0]?.id) setActivePayrollId(sorted[0].id);
+      } catch {
+        // ignore
+      }
+    }
+  }, [activePayrollId, payrollData]);
+
+  // Payslips for active payroll with filters from URL
+  const { data: payslipsPage, isLoading: isPayslipLoading } = useGetPayslips(activePayrollId ?? "", getApiFilters(), {
+    enabled: Boolean(activePayrollId),
+  });
 
   // When payslips exist for the active payroll, switch CTA to "Run Payroll"
   const hasPayslips = Boolean(payslipsPage?.data?.items?.length);
@@ -268,6 +287,57 @@ const PayrollView = () => {
     acknowledgePayrollSetup();
     router.push("/admin/payroll/setup");
   }, [acknowledgePayrollSetup, router]);
+
+  // Check if table is empty
+  const isTableEmpty = !isPayslipLoading && (!payslipsPage?.data?.items || payslipsPage.data.items.length === 0);
+
+  // Search handler
+  const handleSearch = useCallback(
+    (query: string) => {
+      setSearch(query);
+      resetToFirstPage();
+    },
+    [setSearch, resetToFirstPage],
+  );
+
+  // Filter handler
+  const handleFilterChange = useCallback(
+    (filterValues: { teamId?: string; roleId?: string; status?: string; sortBy?: string; limit?: string }) => {
+      if (filterValues.sortBy) setSortBy(filterValues.sortBy);
+      if (filterValues.limit) setLimit(Number(filterValues.limit));
+      if (filterValues.teamId) setTeamId(filterValues.teamId);
+      if (filterValues.roleId) setRoleId(filterValues.roleId);
+      resetToFirstPage();
+    },
+    [setSortBy, setLimit, setTeamId, setRoleId, resetToFirstPage],
+  );
+
+  // Pagination handler
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      setPage(newPage);
+    },
+    [setPage],
+  );
+
+  // Export handler
+  // const handleExportPayroll = useCallback(async () => {
+  //   try {
+  //     const apiFilters = getApiFilters();
+  //     const queryString = new URLSearchParams(apiFilters).toString();
+  //     const response = await fetch(`/api/payrolls/${activePayrollId}/payslips/export?${queryString}`, {
+  //       method: "GET",
+  //     });
+
+  //     if (!response.ok) throw new Error("Failed to export payroll");
+
+  //     const blob = await response.blob();
+  //     return blob;
+  //   } catch (error) {
+  //     toast.error("Failed to export payroll data");
+  //     throw error;
+  //   }
+  // }, [activePayrollId, getApiFilters]);
 
   return (
     <section className="space-y-10">
@@ -438,12 +508,17 @@ const PayrollView = () => {
           <h1 className="text-xl font-bold">Employee Payroll Summary</h1>
           <div className="flex min-w-[50%] items-center gap-2">
             <SearchInput
-              isDisabled={false}
+              isDisabled={true}
               className="border-border h-10 w-full rounded-md border"
               placeholder="Search employee..."
-              onSearch={() => {}}
+              onSearch={handleSearch}
             />
-            <MainButton variant="primary" isLeftIconVisible onClick={() => setShowAddEmployeeModal(true)}>
+            <MainButton
+              variant="primary"
+              isLeftIconVisible
+              isDisabled={isTableEmpty}
+              onClick={() => setShowAddEmployeeModal(true)}
+            >
               Add Employee
             </MainButton>
             <div>
@@ -451,6 +526,7 @@ const PayrollView = () => {
                 contentClassName="bg-background"
                 trigger={
                   <Button
+                    disabled={true}
                     className="bg-background border-border flex h-10 items-center rounded-md border px-3 text-black dark:text-white"
                     variant="ghost"
                   >
@@ -462,25 +538,31 @@ const PayrollView = () => {
                 <section className="min-w-sm">
                   <PayrollFilterForm
                     teams={teams}
-                    initialFilters={{}}
-                    onFilterChange={function (filters): void {
-                      throw new Error("Function not implemented.");
+                    initialFilters={{
+                      status,
+                      sortBy,
+                      limit: limit?.toString(),
+                      page: page?.toString(),
+                      teamId,
+                      roleId,
                     }}
+                    onFilterChange={handleFilterChange}
                   />
                 </section>
               </GenericDropdown>
             </div>
             <div>
               <ExportAction
-                currentPage={undefined}
+                isDisabled={true}
+                currentPage={page}
                 dateRange={undefined}
-                status={undefined}
+                status={status === "all" ? undefined : status}
                 buttonText="Export Payroll"
                 fileName="Payroll"
-                className="border-border bg-background text-foreground h-10 rounded-md border px-3 shadow"
-                downloadMutation={function (parameters: object): Promise<Blob | File> {
-                  throw new Error("Function not implemented.");
-                }}
+                className={cn(
+                  "border-border bg-background text-foreground h-10 rounded-md border px-3 shadow",
+                  isTableEmpty && "pointer-events-none opacity-50",
+                )}
               />
             </div>
           </div>
@@ -489,26 +571,37 @@ const PayrollView = () => {
           <Loading text={`Loading payroll table...`} className={`w-fill h-fit p-20`} />
         ) : (
           <section>
-            {payslipsPage?.data?.items?.length && (
-              <AdvancedDataTable
-                data={payslipsPage.data.items}
-                columns={payrollColumn}
-                currentPage={payslipsPage.data.metadata.page}
-                totalPages={payslipsPage.data.metadata.totalPages}
-                itemsPerPage={payslipsPage.data.metadata.limit}
-                hasPreviousPage={payslipsPage.data.metadata.hasPreviousPage}
-                hasNextPage={payslipsPage.data.metadata.hasNextPage}
-                onPageChange={() => {}}
-                rowActions={getRowActions}
-                showPagination={true}
-                enableDragAndDrop={true}
-                enableRowSelection={true}
-                enableColumnVisibility={true}
-                enableSorting={true}
-                enableFiltering={true}
-                mobileCardView={true}
-                showColumnCustomization={false}
+            {isTableEmpty ? (
+              <EmptyState
+                images={[{ src: empty1.src, alt: "No payroll data", width: 240, height: 160 }]}
+                title="No Payroll Data Yet"
+                description="Generate payslips for employees to see payroll data here. Click 'Generate Payslip' to get started."
+                className="space-y-4"
+                titleClassName="!text-2xl text-primary font-semibold"
+                descriptionClassName="text-muted-foreground max-w-[500px] font-medium"
               />
+            ) : (
+              payslipsPage?.data?.items?.length && (
+                <AdvancedDataTable
+                  data={payslipsPage.data.items}
+                  columns={payrollColumn}
+                  currentPage={payslipsPage.data.metadata.page}
+                  totalPages={payslipsPage.data.metadata.totalPages}
+                  itemsPerPage={payslipsPage.data.metadata.limit}
+                  hasPreviousPage={payslipsPage.data.metadata.hasPreviousPage}
+                  hasNextPage={payslipsPage.data.metadata.hasNextPage}
+                  onPageChange={handlePageChange}
+                  rowActions={getRowActions}
+                  showPagination={true}
+                  enableDragAndDrop={true}
+                  enableRowSelection={true}
+                  enableColumnVisibility={true}
+                  enableSorting={true}
+                  enableFiltering={true}
+                  mobileCardView={true}
+                  showColumnCustomization={false}
+                />
+              )
             )}
           </section>
         )}

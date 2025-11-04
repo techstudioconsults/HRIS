@@ -117,7 +117,7 @@ export interface PayslipEmployee {
   status: string; // e.g., "active" | "inactive"
 }
 
-export interface Payslip {
+export interface Payslip extends Record<string, unknown> {
   id: string;
   payProfileId: string;
   status: PayslipStatus;

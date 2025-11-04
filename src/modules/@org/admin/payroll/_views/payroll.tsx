@@ -501,16 +501,7 @@ const PayrollView = () => {
           <section>
             {payslipsPage?.data?.items?.length && (
               <AdvancedDataTable
-                data={payslipsPage.data.items.map((p) => ({
-                  id: p.id,
-                  name: p.employee?.name ?? "",
-                  role: p.employee?.role?.name ?? "",
-                  grossPay: p.grossPay,
-                  netPay: p.netPay,
-                  deduction: p.totalDeductions,
-                  bonus: p.totalBonuses,
-                  status: p.status,
-                }))}
+                data={payslipsPage.data.items}
                 columns={payrollColumn}
                 currentPage={payslipsPage.data.metadata.page}
                 totalPages={payslipsPage.data.metadata.totalPages}

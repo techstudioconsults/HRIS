@@ -1,13 +1,14 @@
-import { IColumnDefinition, IRowAction } from "@/modules/@org/admin/_components/table/table";
+import { Badge } from "@/components/ui/badge";
+import { formatCurrency } from "@/lib/i18n/utils";
 import { useRouter } from "next/navigation";
 
-import { PayrollSummary } from "../types";
+import { Payslip } from "../types";
 
 export const usePayrollRowActions = () => {
   const router = useRouter();
 
   const getRowActions = () => {
-    const actions: IRowAction<PayrollSummary>[] = [];
+    const actions: IRowAction<Payslip>[] = [];
     actions.push(
       {
         label: "View payroll",
@@ -49,33 +50,42 @@ export const usePayrollRowActions = () => {
   return { getRowActions };
 };
 
-export const payrollColumn: IColumnDefinition<PayrollSummary>[] = [
+export const payrollColumn: IColumnDefinition<Payslip>[] = [
   {
     header: "Name",
-    accessorKey: "name",
+    accessorKey: "employee",
+    render: (_, payslip: Payslip) => <span>{payslip.employee?.name ?? ""}</span>,
   },
   {
     header: "Role",
-    accessorKey: "role",
+    accessorKey: "employee",
+    render: (_, payslip: Payslip) => <span>{payslip.employee?.role?.name ?? ""}</span>,
   },
   {
     header: "Gross Pay",
     accessorKey: "grossPay",
+    render: (_, payslip: Payslip) => <span>{formatCurrency(payslip.grossPay)}</span>,
   },
   {
     header: "Net Pay",
     accessorKey: "netPay",
+    render: (_, payslip: Payslip) => <span className="text-success">{formatCurrency(payslip.netPay)}</span>,
   },
   {
     header: "Deduction",
-    accessorKey: "deduction",
+    accessorKey: "totalDeductions",
+    render: (_, payslip: Payslip) => <span>{formatCurrency(payslip.totalDeductions)}</span>,
   },
   {
     header: "Bonus",
-    accessorKey: "bonus",
+    accessorKey: "totalBonuses",
+    render: (_, payslip: Payslip) => <span>{formatCurrency(payslip.totalBonuses)}</span>,
   },
   {
     header: "Status",
     accessorKey: "status",
+    render: (_, payslip: Payslip) => (
+      <Badge className="bg-warning-50 text-warning rounded-full px-4 py-2">{payslip.status}</Badge>
+    ),
   },
 ];

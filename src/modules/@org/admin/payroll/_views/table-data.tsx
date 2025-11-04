@@ -53,23 +53,18 @@ export const usePayrollRowActions = () => {
 export const payrollColumn: IColumnDefinition<Payslip>[] = [
   {
     header: "Name",
-    accessorKey: "employee",
+    accessorKey: "id",
     render: (_, payslip: Payslip) => <span>{payslip.employee?.name ?? ""}</span>,
   },
   {
     header: "Role",
-    accessorKey: "employee",
+    accessorKey: "employeeId",
     render: (_, payslip: Payslip) => <span>{payslip.employee?.role?.name ?? ""}</span>,
   },
   {
     header: "Gross Pay",
     accessorKey: "grossPay",
     render: (_, payslip: Payslip) => <span>{formatCurrency(payslip.grossPay)}</span>,
-  },
-  {
-    header: "Net Pay",
-    accessorKey: "netPay",
-    render: (_, payslip: Payslip) => <span className="text-success">{formatCurrency(payslip.netPay)}</span>,
   },
   {
     header: "Deduction",
@@ -80,6 +75,11 @@ export const payrollColumn: IColumnDefinition<Payslip>[] = [
     header: "Bonus",
     accessorKey: "totalBonuses",
     render: (_, payslip: Payslip) => <span>{formatCurrency(payslip.totalBonuses)}</span>,
+  },
+  {
+    header: "Net Pay",
+    accessorKey: "netPay",
+    render: (_, payslip: Payslip) => <span className="text-success">{formatCurrency(payslip.netPay)}</span>,
   },
   {
     header: "Status",

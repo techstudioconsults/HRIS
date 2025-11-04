@@ -593,7 +593,6 @@ const PayrollView = () => {
                   onPageChange={handlePageChange}
                   rowActions={getRowActions}
                   showPagination={true}
-                  enableDragAndDrop={true}
                   enableRowSelection={true}
                   enableColumnVisibility={true}
                   enableSorting={true}

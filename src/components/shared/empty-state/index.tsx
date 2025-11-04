@@ -40,13 +40,10 @@ export const EmptyState = ({
 }: EmptyStateProperties) => {
   return (
     <div
-      className={cn(
-        "mb-4 flex min-h-[400px] w-full flex-col items-center justify-center space-y-8 px-4 text-center",
-        className,
-      )}
+      className={cn("mb-4 flex min-h-[400px] w-full flex-col items-center justify-center px-4 text-center", className)}
     >
       {/* Images container */}
-      <div className="flex flex-wrap items-center justify-center gap-4">
+      <div className="flex flex-wrap items-center justify-center">
         {images.map((image, index) => (
           <div key={index} className="relative">
             <Image

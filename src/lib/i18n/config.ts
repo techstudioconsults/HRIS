@@ -18,10 +18,11 @@ export const localeFlags: Record<Locale, string> = {
 };
 
 export const currencies: Record<Locale, string> = {
-  en: "USD",
-  fr: "EUR",
-  es: "EUR",
-  ar: "SAR",
+  // Set NGN (Nigerian Naira) as the default currency for all locales
+  en: "NGN",
+  fr: "NGN",
+  es: "NGN",
+  ar: "NGN",
 };
 
 export const dateFormats: Record<Locale, Intl.DateTimeFormatOptions> = {

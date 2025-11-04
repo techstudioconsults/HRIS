@@ -20,8 +20,20 @@ export const PayrollSetupModal = ({ trigger }: PayrollSetupModalProperties) => {
   const { data: companyWalletData } = useGetCompanyWallet();
 
   useEffect(() => {
-    if (companyPayrollPolicy?.data.status === "incomplete") {
+    // Only show the setup modal if policy is incomplete AND user hasn't already completed the setup form
+    // The local flag is set after a successful setup form submission
+    const SETUP_FLAG_KEY = "hris.payrollSetupConfigured";
+    let hasCompletedSetup = false;
+    try {
+      hasCompletedSetup = localStorage.getItem(SETUP_FLAG_KEY) === "1";
+    } catch {
+      // no-op
+    }
+
+    if (companyPayrollPolicy?.data.status === "incomplete" && !hasCompletedSetup) {
       setShowSetupModal(true);
+    } else {
+      setShowSetupModal(false);
     }
   }, [companyPayrollPolicy, companyWalletData?.data.companyId, setShowSetupModal]);
 

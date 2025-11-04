@@ -3,13 +3,13 @@ import { queryKeys } from "@/lib/react-query/query-keys";
 import { createServiceHooks } from "@/lib/react-query/use-service-query";
 import { dependencies } from "@/lib/tools/dependencies";
 
+import type { ActiveStatus, ValueType } from "../types";
 import { PayrollService } from "./service";
 
 export const usePayrollService = () => {
   const { useServiceQuery, useServiceMutation } = createServiceHooks<PayrollService>(dependencies.PAYROLL_SERVICE);
 
   // Queries
-
   const useGetCompanyWallet = (options?: any) =>
     useServiceQuery(queryKeys.payroll.wallet(), (service) => service.getCompanyWallet(), options);
 
@@ -21,6 +21,22 @@ export const usePayrollService = () => {
 
   const useDownloadPayrolls = (options?: any) =>
     useServiceQuery(queryKeys.payroll.download({}), (service) => service.downloadPayrolls(), options);
+
+  // Payroll actions
+  const useCreatePayroll = (options?: any) =>
+    useServiceMutation((service, data: { paymentDate: string }) => service.createPayroll(data), options);
+
+  const useRunPayroll = (options?: any) =>
+    useServiceMutation((service, data: { payrollId: string; date: string }) => service.runPayroll(data), options);
+
+  const useRetryPayroll = (options?: any) =>
+    useServiceMutation((service, data: { payslipIds: string[] }) => service.retryPayroll(data), options);
+
+  const useGetApprovedBanks = (options?: any) =>
+    useServiceQuery(queryKeys.payroll.approvedBanks(), (service) => service.getApprovedBanks(), options);
+
+  const useGetPayrollByID = (payrollId: string, options?: any) =>
+    useServiceQuery(queryKeys.payroll.details(payrollId), (service) => service.getPayrollByID(payrollId), options);
 
   // Wallet
   const useUpdateCompanyWallet = (options?: any) =>
@@ -62,8 +78,8 @@ export const usePayrollService = () => {
         data: {
           name: string;
           amount: number;
-          type: "fixed" | "percentage";
-          status: "active" | "inactive";
+          type: ValueType;
+          status: ActiveStatus;
           payrollPolicyId: string;
         },
       ) => service.createBonus(data),
@@ -75,7 +91,7 @@ export const usePayrollService = () => {
         service,
         payload: {
           id: string;
-          data: Partial<{ name: string; amount: number; type: "fixed" | "percentage"; status: "active" | "inactive" }>;
+          data: Partial<{ name: string; amount: number; type: ValueType; status: ActiveStatus }>;
         },
       ) => service.updateBonus(payload.id, payload.data),
       options,
@@ -97,8 +113,8 @@ export const usePayrollService = () => {
         data: {
           name: string;
           amount: number;
-          type: "fixed" | "percentage";
-          status: "active" | "inactive";
+          type: ValueType;
+          status: ActiveStatus;
           payrollPolicyId: string;
         },
       ) => service.createDeduction(data),
@@ -110,7 +126,7 @@ export const usePayrollService = () => {
         service,
         payload: {
           id: string;
-          data: Partial<{ name: string; amount: number; type: "fixed" | "percentage"; status: "active" | "inactive" }>;
+          data: Partial<{ name: string; amount: number; type: ValueType; status: ActiveStatus }>;
         },
       ) => service.updateDeduction(payload.id, payload.data),
       options,
@@ -118,9 +134,50 @@ export const usePayrollService = () => {
   const useDeleteDeduction = (options?: any) =>
     useServiceMutation((service, id: string) => service.deleteDeduction(id), options);
 
+  // Payslips
+  const useGetPayslips = (payrollID: string, filters: Filters = {}, options?: any) =>
+    useServiceQuery(
+      queryKeys.payroll.payslips(payrollID, filters),
+      (service) => service.getPayslips(payrollID, filters),
+      options,
+    );
+
+  const useGetPayslipById = (payslipId: string, options?: any) =>
+    useServiceQuery(
+      queryKeys.payroll.payslipDetails(payslipId),
+      (service) => service.getPayslipById(payslipId),
+      options,
+    );
+
+  const useCreatePayslip = (options?: any) =>
+    useServiceMutation(
+      (
+        service,
+        data: {
+          payrollId: string;
+          employeeId: string;
+          earnings: Array<{ name: string; amount: number }>;
+          deductions?: Array<{ name: string; amount: number }>;
+          bonuses?: Array<{ name: string; amount: number }>;
+          notes?: string;
+          currency?: string;
+          metadata?: Record<string, unknown>;
+        },
+      ) => service.createPayslip(data),
+      options,
+    );
+
+  const useDeletePayslip = (options?: any) =>
+    useServiceMutation((service, payslipId: string) => service.deletePayslip(payslipId), options);
+
   return {
     // Queries
     useGetCompanyPayrollPolicy,
+    useCreatePayroll,
+    useRunPayroll,
+    useRetryPayroll,
+    useGetApprovedBanks,
+    useGetPayrollByID,
     useGetAllPayrolls,
     useDownloadPayrolls,
     useUpdateCompanyWallet,
@@ -134,5 +191,9 @@ export const usePayrollService = () => {
     useUpdateDeduction,
     useDeleteDeduction,
     useGetCompanyWallet,
+    useGetPayslips,
+    useGetPayslipById,
+    useCreatePayslip,
+    useDeletePayslip,
   };
 };

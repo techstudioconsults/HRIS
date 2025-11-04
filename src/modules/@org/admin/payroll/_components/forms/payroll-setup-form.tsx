@@ -258,6 +258,12 @@ export const PayrollSetupForm = () => {
         isOpen={isSubmittedAlertOpen}
         onClose={() => setIsSubmittedAlertOpen(false)}
         onConfirm={() => {
+          try {
+            // Mark payroll setup configured so modal won't auto-show again
+            localStorage.setItem("hris.payrollSetupConfigured", "1");
+          } catch {
+            // no-op
+          }
           setIsSubmittedAlertOpen(false);
           router.push("/admin/payroll");
         }}

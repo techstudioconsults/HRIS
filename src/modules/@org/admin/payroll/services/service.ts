@@ -1,6 +1,6 @@
 import { HttpAdapter } from "@/lib/http/http-adapter";
 
-import type { CompanyPayrollPolicy, CompanyWallet, PayrollSummary } from "../types";
+import type { CompanyPayrollPolicy, CompanyWallet, Payroll, PayrollSummary, Payslip } from "../types";
 
 export class PayrollService {
   private readonly http: HttpAdapter;
@@ -9,10 +9,38 @@ export class PayrollService {
     this.http = httpAdapter;
   }
 
+  // =============================
+  // Payroll Actions
+  // =============================
+
+  // Create payroll (supports immediate or scheduled creation)
+  async createPayroll(data: { paymentDate: string }) {
+    const response = await this.http.post<ApiResponse<Payroll>>(`/payrolls`, data);
+    if (response?.status === 201 || response?.status === 200) return response.data;
+  }
+
+  // Run payroll (process disbursement/approval workflow)
+  async runPayroll(data: { payrollId: string; date: string }) {
+    const response = await this.http.post<ApiResponse<{ success: boolean; payroll: Payroll }>>(`/payrolls/run`, data);
+    if (response?.status === 200) return response.data;
+  }
+
+  // Retry failed payroll (or stuck state)
+  async retryPayroll(data: { payslipIds: string[] }) {
+    const response = await this.http.post<ApiResponse<{ success: boolean; payroll: Payroll }>>(`/payrolls/retry`, data);
+    if (response?.status === 200) return response.data;
+  }
+
+  // Get approved banks (used for payouts)
+  async getApprovedBanks() {
+    const response =
+      await this.http.get<ApiResponse<Array<{ name: string; code: string }>>>(`/payrolls/approved-banks`);
+    if (response?.status === 200) return response.data;
+  }
+
   async getCompanyPayrollPolicy() {
     // Ensure leading slash for consistency with other endpoints
     const response = await this.http.get<ApiResponse<CompanyPayrollPolicy>>(`/payroll-policy/company`);
-
     if (response?.status === 200) {
       return response.data;
     }
@@ -22,7 +50,13 @@ export class PayrollService {
     const response = await this.http.get<PaginatedApiResponse<PayrollSummary>>(`/payrolls`, {
       ...filters,
     });
+    if (response?.status === 200) {
+      return response.data;
+    }
+  }
 
+  async getPayrollByID(payrollId: string) {
+    const response = await this.http.get<ApiResponse<Payroll>>(`/payrolls/${payrollId}`);
     if (response?.status === 200) {
       return response.data;
     }
@@ -32,7 +66,6 @@ export class PayrollService {
     const response = await this.http.get(`/payrolls/download`, {
       ...filters,
     });
-
     if (response?.status === 200) {
       return response.data;
     }
@@ -148,6 +181,41 @@ export class PayrollService {
 
   async deleteDeduction(id: string) {
     const response = await this.http.delete<ApiResponse<{ success: boolean }>>(`/deductions/${id}`);
+    if (response?.status === 200) return response.data;
+  }
+
+  // =============================
+  // Payslips CRUD
+  // =============================
+
+  async getPayslips(payrollID: string, filters: Filters) {
+    const response = await this.http.get<PaginatedApiResponse<Payslip>>(`/payrolls/${payrollID}/payslips`, {
+      ...filters,
+    });
+    if (response?.status === 200) return response.data;
+  }
+
+  async getPayslipById(payslipId: string) {
+    const response = await this.http.get<ApiResponse<Payslip>>(`/payslips/${payslipId}`);
+    if (response?.status === 200) return response.data;
+  }
+
+  async createPayslip(data: {
+    payrollId: string;
+    employeeId: string;
+    earnings: Array<{ name: string; amount: number }>;
+    deductions?: Array<{ name: string; amount: number }>;
+    bonuses?: Array<{ name: string; amount: number }>;
+    notes?: string;
+    currency?: string;
+    metadata?: Record<string, unknown>;
+  }) {
+    const response = await this.http.post<ApiResponse<Payslip>>(`/payslips`, data);
+    if (response?.status === 201 || response?.status === 200) return response.data;
+  }
+
+  async deletePayslip(payslipId: string) {
+    const response = await this.http.delete<ApiResponse<{ success: boolean }>>(`/payslips/${payslipId}`);
     if (response?.status === 200) return response.data;
   }
 }

@@ -2,7 +2,7 @@
 
 import MainButton from "@/components/shared/button";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
+import { format, startOfToday } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -69,6 +69,7 @@ export const CalendarModal = ({
             mode="single"
             selected={date}
             onSelect={handleDateSelect}
+            disabled={(d) => d < startOfToday()}
             className="w-full rounded-md border"
             classNames={{
               months: "flex flex-col",

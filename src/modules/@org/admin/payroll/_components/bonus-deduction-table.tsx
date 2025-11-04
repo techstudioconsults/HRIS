@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { formatCurrency } from "@/lib/i18n/utils";
 import { cn } from "@/lib/utils";
 import { MoreHorizontal, Plus } from "lucide-react";
 
@@ -18,7 +19,7 @@ const formatValue = (value: number, valueType: "percentage" | "fixed") => {
   if (valueType === "percentage") {
     return `${value}%`;
   }
-  return `₦${value.toLocaleString()}`;
+  return formatCurrency(value);
 };
 
 export function BonusDeductionTable({

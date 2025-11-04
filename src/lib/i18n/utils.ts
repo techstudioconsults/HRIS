@@ -4,11 +4,15 @@ import { currencies, dateFormats, Locale, numberFormats } from "./config";
  * Format currency based on locale
  */
 export function formatCurrency(amount: number, locale: Locale = "en", currency?: string): string {
-  const currencyCode = currency || currencies[locale];
+  // Resolve currency; fallback to NGN
+  const currencyCode = currency || currencies[locale] || "NGN";
+  // Prefer region-specific locale for NGN symbol rendering
+  const formatLocale: Intl.LocalesArgument = locale === "en" ? "en-NG" : locale;
 
-  return new Intl.NumberFormat(locale, {
+  return new Intl.NumberFormat(formatLocale, {
     style: "currency",
     currency: currencyCode,
+    currencyDisplay: "symbol",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(amount);

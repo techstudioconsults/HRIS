@@ -195,7 +195,8 @@ export const GenerateRunPayrollDrawer = ({ open, onOpenChange }: SchedulePayroll
             setPayrollSelectedDate(date);
             setIsRunSubmittedAlertOpen(true);
             setTogglePayrollAction("SCHEDULE");
-            setHideNotificationBanner(false);
+            // Intentionally do NOT show the approval progress banner here;
+            // it's displayed only after a successful Run Payroll action.
 
             // Here you can add logic to update the payroll schedule
           }

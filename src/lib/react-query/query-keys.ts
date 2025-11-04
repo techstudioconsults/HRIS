@@ -38,6 +38,9 @@ export const queryKeys = {
     bonuses: (filters?: Filters) => ["payrolls", "bonuses", filters] as const,
     deductions: (filters?: Filters) => ["payrolls", "deductions", filters] as const,
     wallet: () => ["payrolls", "wallet"] as const,
+    approvedBanks: () => ["payrolls", "approved-banks"] as const,
+    payslips: (payrollId: string, filters?: Filters) => ["payrolls", "payslips", payrollId, filters] as const,
+    payslipDetails: (id: string) => ["payrolls", "payslip", id] as const,
   },
   // Add other domains as needed
 };

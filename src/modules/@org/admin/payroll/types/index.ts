@@ -1,25 +1,53 @@
+// Shared aliases
+export type ActiveStatus = "active" | "inactive";
+export type ValueType = "percentage" | "fixed";
+export type BonusDeductionKind = "bonus" | "deduction";
+export type ISODateString = string;
+
+export interface NamedEntity {
+  id: string;
+  name: string;
+}
+
+// Common adjustment item used across payslips and policies
+export interface AdjustmentItem {
+  id: string;
+  name: string;
+  type: ValueType; // amount type
+  amount: number;
+  status: ActiveStatus;
+}
+
+export interface Payroll extends Record<string, unknown> {
+  id: string;
+  policyId: string;
+  netPay: number;
+  employeesInPayroll: number;
+  paymentDate: ISODateString;
+}
+
 export interface BonusDeduction {
   id: string;
   name: string;
-  valueType: "percentage" | "fixed";
+  valueType: ValueType;
   value: number;
-  status: "active" | "inactive";
-  type: "bonus" | "deduction";
+  status: ActiveStatus;
+  type: BonusDeductionKind;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface BonusDeductionFormData {
   name: string;
-  valueType: "percentage" | "fixed";
+  valueType: ValueType;
   value: number;
   status: boolean;
-  type: "bonus" | "deduction";
+  type: BonusDeductionKind;
 }
 
 export interface BonusDeductionTableProperties {
   items: BonusDeduction[];
-  type: "bonus" | "deduction";
+  type: BonusDeductionKind;
   onAdd: (event: React.BaseSyntheticEvent) => void;
   onEdit: (id: string, data: BonusDeductionFormData) => void;
   onDelete: (id: string) => void;
@@ -37,13 +65,8 @@ export interface PayrollSummary extends Record<string, unknown> {
   status: string;
 }
 
-export interface PayrollBonusDeduction {
-  id: string;
-  name: string;
-  amount: number;
-  type: "fixed" | "percentage";
-  status: "active" | "inactive";
-}
+// Reuse the adjustment item for company policy
+export type PayrollBonusDeduction = AdjustmentItem;
 
 export interface CompanyPayrollPolicy {
   id: string;
@@ -59,7 +82,7 @@ export interface CompanyPayrollPolicy {
   lastName: string;
   email: string;
   phoneNumber: string;
-  createdAt: string; // ISO date string
+  createdAt: ISODateString; // ISO date string
 }
 
 export interface CompanyWallet {
@@ -69,4 +92,42 @@ export interface CompanyWallet {
   accountNumber: string;
   bankName: string;
   balance: number;
+}
+
+// Define Payslip domain types based on provided object
+export type PayslipStatus = "pending" | "draft" | "finalized" | "paid" | "cancelled";
+
+// Payslip adjustments reuse the common adjustment item
+export type PayslipBonus = AdjustmentItem;
+
+export type PayslipDeduction = AdjustmentItem;
+
+export type PayslipTeam = NamedEntity;
+
+export type PayslipRole = NamedEntity;
+
+export interface PayslipEmployee {
+  id: string;
+  name: string;
+  avatar: string;
+  team: PayslipTeam;
+  role: PayslipRole;
+  workMode: string; // e.g., "onsite" | "remote" | "hybrid"
+  employmentType: string; // e.g., "full time" | "contract"
+  status: string; // e.g., "active" | "inactive"
+}
+
+export interface Payslip {
+  id: string;
+  payProfileId: string;
+  status: PayslipStatus;
+  paymentDate: ISODateString; // ISO date
+  netPay: number;
+  grossPay: number;
+  baseSalary: number;
+  bonuses: PayslipBonus[];
+  deductions: PayslipDeduction[];
+  totalBonuses: number;
+  totalDeductions: number;
+  employee: PayslipEmployee;
 }

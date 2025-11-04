@@ -22,7 +22,7 @@ import { CloseCircle, Eye, EyeSlash, Filter } from "iconsax-reactjs";
 import { AlertTriangle, MoreVertical } from "lucide-react"; // add AlertTriangle
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
 import empty1 from "~/images/empty-state.svg";
@@ -320,6 +320,35 @@ const PayrollView = () => {
     [setPage],
   );
 
+  // Memoize table data and props to prevent unnecessary re-renders
+  const tableData = useMemo(() => payslipsPage?.data?.items || [], [payslipsPage?.data?.items]);
+
+  const memoizedTable = useMemo(() => {
+    if (!payslipsPage?.data?.items?.length) return null;
+
+    return (
+      <AdvancedDataTable
+        data={tableData}
+        columns={payrollColumn}
+        currentPage={payslipsPage.data.metadata.page}
+        totalPages={payslipsPage.data.metadata.totalPages}
+        itemsPerPage={payslipsPage.data.metadata.limit}
+        hasPreviousPage={payslipsPage.data.metadata.hasPreviousPage}
+        hasNextPage={payslipsPage.data.metadata.hasNextPage}
+        onPageChange={handlePageChange}
+        rowActions={getRowActions}
+        showPagination={true}
+        enableRowSelection={false}
+        enableColumnVisibility={false}
+        enableSorting={false}
+        enableFiltering={false}
+        mobileCardView={true}
+        showColumnCustomization={false}
+      />
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tableData, payslipsPage?.data?.metadata, handlePageChange]);
+
   // Export handler
   // const handleExportPayroll = useCallback(async () => {
   //   try {
@@ -581,26 +610,7 @@ const PayrollView = () => {
                 descriptionClassName="text-muted-foreground max-w-[500px] font-medium"
               />
             ) : (
-              payslipsPage?.data?.items?.length && (
-                <AdvancedDataTable
-                  data={payslipsPage.data.items}
-                  columns={payrollColumn}
-                  currentPage={payslipsPage.data.metadata.page}
-                  totalPages={payslipsPage.data.metadata.totalPages}
-                  itemsPerPage={payslipsPage.data.metadata.limit}
-                  hasPreviousPage={payslipsPage.data.metadata.hasPreviousPage}
-                  hasNextPage={payslipsPage.data.metadata.hasNextPage}
-                  onPageChange={handlePageChange}
-                  rowActions={getRowActions}
-                  showPagination={true}
-                  enableRowSelection={true}
-                  enableColumnVisibility={true}
-                  enableSorting={true}
-                  enableFiltering={true}
-                  mobileCardView={true}
-                  showColumnCustomization={false}
-                />
-              )
+              memoizedTable
             )}
           </section>
         )}

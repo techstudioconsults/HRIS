@@ -2,9 +2,11 @@
 /* eslint-disable unused-imports/no-unused-vars */
 "use client";
 
+import Loading from "@/app/Loading";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { GenericDropdown } from "@/components/shared/drop-down";
+import { EmptyState } from "@/components/shared/empty-state";
 import { ComboBox } from "@/components/shared/select-dropdown/combo-box";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { formatCurrency } from "@/lib/i18n/utils";
@@ -16,12 +18,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 
+import empty1 from "~/images/empty-state.svg";
 import { AddEmployeeDrawer } from "../_components/add-employee-drawer";
 import { FundWalletFormModal } from "../_components/forms/fund-wallet-form-modal";
 import { FundWalletAccountModal } from "../_components/fund-wallet-account-modal";
 import { GenerateRunPayrollDrawer } from "../_components/generate-run-payroll-drawer";
 import { PayrollSetupSettingsModal } from "../_components/payroll-setup-modal";
 import { SchedulePayrollDrawer } from "../_components/schedule-payroll-drawer";
+import { TableSkeleton } from "../../_components/table";
 import { DashboardCard } from "../../dashboard/_components/dashboard-card";
 import { usePayrollService } from "../services/use-service";
 import { usePayrollStore } from "../stores/payroll-store";
@@ -55,7 +59,9 @@ const PayrollView = () => {
     setShowFundWalletAccountModal,
     setShowSchedulePayrollDrawer,
   } = usePayrollStore();
-  const { useGetCompanyPayrollPolicy, useGetAllPayrolls, useCreatePayroll } = usePayrollService();
+  const { useGetCompanyPayrollPolicy, useGetAllPayrolls, useCreatePayroll, useGetPayslips, useGetCompanyWallet } =
+    usePayrollService();
+  const { data: companyWallet } = useGetCompanyWallet();
   const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
   const { data: allPayrolls, isLoading: loadingPayrolls, refetch: refetchPayrolls } = useGetAllPayrolls();
   const { mutateAsync: createPayroll, isPending: isCreatingPayroll } = useCreatePayroll();
@@ -68,7 +74,12 @@ const PayrollView = () => {
     netPay: 0,
     employeesInPayroll: 0,
     paymentDate: "",
-    walletBalance: 70_000_000,
+    walletBalance: companyWallet?.data?.balance || 70_000_000,
+  });
+
+  // Fetch payslips for the current payroll
+  const { data: payslipsData, isLoading: loadingPayslips } = useGetPayslips(payrollData.id, undefined, {
+    enabled: !!payrollData.id, // Only fetch if we have a payroll ID
   });
 
   const payrollPolicyStatus = payrollPolicy?.data?.status === `incomplete`;
@@ -182,6 +193,10 @@ const PayrollView = () => {
       }
     }
   }, [allPayrolls, loadingPayrolls]);
+
+  if (loadingPayrolls) {
+    return <Loading text="Initializing Payroll Interface" />;
+  }
 
   return (
     <section className="space-y-10">
@@ -371,18 +386,29 @@ const PayrollView = () => {
             </MainButton>
           </div>
         </section>
-        <AdvancedDataTable
-          data={[]}
-          columns={payrollColumn}
-          onPageChange={() => {}}
-          showPagination={true}
-          enableRowSelection={false}
-          enableColumnVisibility={false}
-          enableSorting={false}
-          enableFiltering={false}
-          mobileCardView={true}
-          showColumnCustomization={false}
-        />
+        {loadingPayslips ? (
+          <TableSkeleton columns={payrollColumn.length} rows={10} />
+        ) : !payslipsData?.data.items || payslipsData.data.items.length === 0 ? (
+          <EmptyState
+            className="bg-background"
+            images={[{ src: empty1.src, alt: "No teams", width: 50, height: 50 }]}
+            title="No team added yet."
+            description="Add teams to better organize your workforce, assign leads, and manage roles across your organization."
+          />
+        ) : (
+          <AdvancedDataTable
+            data={payslipsData.data.items}
+            columns={payrollColumn}
+            onPageChange={() => {}}
+            showPagination={true}
+            enableRowSelection={false}
+            enableColumnVisibility={false}
+            enableSorting={false}
+            enableFiltering={false}
+            mobileCardView={true}
+            showColumnCustomization={false}
+          />
+        )}
       </section>
 
       {/* Payroll Setup Modal (controlled, one-time prompt) */}

@@ -59,6 +59,7 @@ const PayrollView = () => {
     setShowFundWalletFormModal,
     setShowFundWalletAccountModal,
     setShowSchedulePayrollDrawer,
+    setShowAddEmployeeModal,
   } = usePayrollStore();
   const { useGetCompanyPayrollPolicy, useGetAllPayrolls, useCreatePayroll, useGetPayslips, useGetCompanyWallet } =
     usePayrollService();
@@ -68,6 +69,7 @@ const PayrollView = () => {
   const { mutateAsync: createPayroll, isPending: isCreatingPayroll } = useCreatePayroll();
   const [isWalletBalanceVisible, setIsWalletBalanceVisible] = useState(true);
   const [showNoPayrollBanner, setShowNoPayrollBanner] = useState(false);
+  const [selectedPayrollId, setSelectedPayrollId] = useState<string>("");
   const [payrollData, setPayrollData] = useState({
     id: "",
     status: "",
@@ -82,6 +84,35 @@ const PayrollView = () => {
   const { data: payslipsData, isLoading: loadingPayslips } = useGetPayslips(payrollData.id, undefined, {
     enabled: !!payrollData.id, // Only fetch if we have a payroll ID
   });
+
+  // Map payrolls to ComboBox options
+  const payrollOptions = Array.isArray(allPayrolls?.data)
+    ? allPayrolls.data
+        .sort((a, b) => new Date(a.paymentDate).getTime() - new Date(b.paymentDate).getTime())
+        .map((payroll) => ({
+          label: `${new Date(payroll.paymentDate).toLocaleDateString("en-US", {
+            month: "long",
+            year: "numeric",
+          })} - ${payroll.status || "Pending"}`,
+          value: payroll.id,
+        }))
+    : [];
+
+  const handlePayrollSelection = (value: string) => {
+    setSelectedPayrollId(value);
+    const selectedPayroll = Array.isArray(allPayrolls?.data) ? allPayrolls.data.find((p) => p.id === value) : undefined;
+    if (selectedPayroll) {
+      setPayrollData((previous) => ({
+        ...previous,
+        id: selectedPayroll.id,
+        status: String(selectedPayroll.status || ""),
+        policyId: selectedPayroll.policyId,
+        netPay: selectedPayroll.netPay || 0,
+        employeesInPayroll: selectedPayroll.employeesInPayroll || 0,
+        paymentDate: selectedPayroll.paymentDate,
+      }));
+    }
+  };
 
   const payrollPolicyStatus = payrollPolicy?.data?.status === `incomplete`;
 
@@ -182,6 +213,7 @@ const PayrollView = () => {
           paymentDate: string;
         };
 
+        setSelectedPayrollId(earliestPayroll.id);
         setPayrollData((previous) => ({
           ...previous,
           id: earliestPayroll.id,
@@ -206,7 +238,13 @@ const PayrollView = () => {
         subtitle="Payroll"
         actionComponent={
           <div className="flex items-center gap-2">
-            <ComboBox disabled={true} options={[]} className="border-border text-muted-foreground h-10 w-full border" />
+            <ComboBox
+              options={payrollOptions}
+              value={selectedPayrollId}
+              onValueChange={handlePayrollSelection}
+              placeholder="Select payroll period"
+              className="border-border h-10 w-64 border"
+            />
             <MainButton onClick={handleShowFundWalletForm} className="border-primary" variant="outline">
               Fund Wallet
             </MainButton>
@@ -382,7 +420,7 @@ const PayrollView = () => {
         <section className="mb-6 flex items-center justify-between">
           <h1 className="text-xl font-bold">Employee Payroll Summary</h1>
           <div className="flex items-center gap-2">
-            <MainButton variant="primary" isLeftIconVisible>
+            <MainButton variant="primary" isLeftIconVisible onClick={() => setShowAddEmployeeModal(true)}>
               Add Employee
             </MainButton>
           </div>

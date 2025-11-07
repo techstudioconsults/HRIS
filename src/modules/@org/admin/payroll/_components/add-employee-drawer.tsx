@@ -17,6 +17,7 @@ import { useDebounce } from "use-debounce";
 
 import { FilterForm } from "../../employee/_components/forms/filter-form";
 import { useEmployeeService } from "../../employee/services/use-service";
+import { usePayrollStore } from "../stores/payroll-store";
 
 // Define FilterValues interface to match FilterForm
 interface FilterValues {
@@ -37,6 +38,7 @@ interface AddEmployeeModalProperties {
 // Initial filter values - removed as we now use URL state management
 
 export const AddEmployeeDrawer = ({ open, onOpenChange }: AddEmployeeModalProperties) => {
+  const { showAddEmployeeToPayrollModal, setShowAddEmployeeModal } = usePayrollStore();
   const {
     page,
     search,
@@ -180,7 +182,7 @@ export const AddEmployeeDrawer = ({ open, onOpenChange }: AddEmployeeModalProper
 
   return (
     <>
-      <Drawer open={open} onOpenChange={onOpenChange} direction="right">
+      <Drawer open={showAddEmployeeToPayrollModal} onOpenChange={setShowAddEmployeeModal} direction="right">
         <DrawerContent className="h-full w-full sm:!max-w-3xl">
           <DrawerHeader className="border-b pb-4">
             <div className="flex items-center gap-10">

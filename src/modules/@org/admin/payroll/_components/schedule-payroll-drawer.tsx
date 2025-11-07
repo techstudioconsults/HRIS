@@ -24,19 +24,16 @@ import { useMemo, useState } from "react";
 import empty1 from "~/images/empty-state.svg";
 import { DashboardCard } from "../../dashboard/_components/dashboard-card";
 import { usePayrollService } from "../services/use-service";
+import { usePayrollStore } from "../stores/payroll-store";
 import type { Payroll } from "../types";
 
-interface SchedulePayrollDrawerProperties {
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-}
-
-export const SchedulePayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerProperties) => {
+export const SchedulePayrollDrawer = () => {
   const [isNetPayVisible, setIsNetPayVisible] = useState(false);
   const [isChangeDateModalOpen, setIsChangeDateModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedPayrollId, setSelectedPayrollId] = useState<string | null>(null);
   const locale = useLocale() as Locale;
+  const { showSchedulePayrollDrawer, setShowSchedulePayrollDrawer } = usePayrollStore();
 
   const { useGetAllPayrolls, useCreatePayroll } = usePayrollService();
 
@@ -79,7 +76,7 @@ export const SchedulePayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDra
 
   return (
     <>
-      <Drawer open={open} onOpenChange={onOpenChange} direction="right">
+      <Drawer open={showSchedulePayrollDrawer} onOpenChange={setShowSchedulePayrollDrawer} direction="right">
         <DrawerContent className="h-full w-full sm:!max-w-xl">
           <DrawerHeader className="border-b pb-4">
             <div className="flex items-center gap-10">
@@ -260,7 +257,7 @@ export const SchedulePayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDra
             <div className="flex gap-3">
               <MainButton
                 variant="outline"
-                onClick={() => onOpenChange(false)}
+                // onClick={() => onOpenChange(false)}
                 className="border-destructive text-destructive flex-1"
               >
                 Cancel

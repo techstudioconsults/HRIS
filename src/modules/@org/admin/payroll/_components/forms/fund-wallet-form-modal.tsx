@@ -61,10 +61,10 @@ export function FundWalletFormModal({ initialData }: FundWalletFormModalProperti
     try {
       await updateWallet(data, {
         onSuccess: () => {
-          setHasCompletedPayrollPolicySetupForm(true);
           setShowFundWalletFormModal(false);
           setTimeout(() => {
             setIsSuccessAlertOpen(true);
+            setHasCompletedPayrollPolicySetupForm(false);
           }, 300);
         },
         onError: (error) => {

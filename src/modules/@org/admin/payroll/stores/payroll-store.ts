@@ -35,7 +35,7 @@ const initialState: PayrollUIState = {
   hidePayrollNotificationBanner: true,
   payrollSelectedDate: undefined,
   showFundWalletAccountModal: false,
-  hasCompletedPayrollPolicySetupForm: true,
+  hasCompletedPayrollPolicySetupForm: false,
 };
 
 export const usePayrollStore = create<PayrollUIState & PayrollUIActions>()(

@@ -146,7 +146,7 @@ export const PayrollSetupForm = () => {
         onSuccess: () => {
           setIsSubmittedAlertOpen(true);
           setShowPayrollSettingsSetupModal(false);
-          setHasCompletedPayrollPolicySetupForm(false);
+          setHasCompletedPayrollPolicySetupForm(true);
         },
         onError: (error) => {
           toast.error(`Failed to update payroll policy: ${error.message}`);

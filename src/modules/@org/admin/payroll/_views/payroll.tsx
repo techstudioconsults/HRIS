@@ -29,7 +29,6 @@ import { payrollColumn } from "./table-data";
 
 const LOW_BALANCE_LIMIT = 5_000_000; // 5M NGN
 
-// Helper to format a schedule message for a given date
 const GET_SCHEDULE_MESSAGE = (date: Date | null | undefined): ReactNode => {
   const formatted = date
     ? date.toLocaleString("default", { month: "long", day: "numeric", year: "numeric" })
@@ -49,10 +48,16 @@ const PAYROLL_RUN_MESSAGE: ReactNode = (
 
 const PayrollView = () => {
   const router = useRouter();
-  const { hasCompletedPayrollPolicySetupForm, setHasCompletedPayrollPolicySetupForm, setShowFundWalletFormModal } =
-    usePayrollStore();
-  const { useGetCompanyPayrollPolicy } = usePayrollService();
+  const {
+    hasCompletedPayrollPolicySetupForm,
+    setHasCompletedPayrollPolicySetupForm,
+    setShowFundWalletFormModal,
+    setShowFundWalletAccountModal,
+    setShowSchedulePayrollDrawer,
+  } = usePayrollStore();
+  const { useGetCompanyPayrollPolicy, useGetPayslips } = usePayrollService();
   const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
+  const { data: payslips } = useGetPayslips();
   const [isWalletBalanceVisible, setIsWalletBalanceVisible] = useState(true);
   const [payrollInfo, setPayrollInfo] = useState({
     extimatedNetPay: 0,
@@ -60,19 +65,29 @@ const PayrollView = () => {
     walletBalance: 70_000_000,
   });
 
+  const payrollPolicyStatus = payrollPolicy?.data?.status === `incomplete`;
+
   const toggleWalletBalanceVisibility = () => {
     setIsWalletBalanceVisible(!isWalletBalanceVisible);
   };
 
   const handleShowFundWalletForm = () => {
-    setShowFundWalletFormModal(true);
+    if (payrollPolicyStatus) {
+      setShowFundWalletFormModal(true);
+      setShowFundWalletAccountModal(false);
+    } else {
+      setShowFundWalletAccountModal(true);
+      setShowFundWalletFormModal(false);
+    }
   };
 
+  // const handleGeneratePayslip = () => {};
+
   useEffect(() => {
-    if (payrollPolicy?.data.payday !== 0) {
-      setHasCompletedPayrollPolicySetupForm(false);
+    if (payrollPolicy?.data?.payday && payrollPolicy.data.payday > 0 && payrollPolicyStatus) {
+      setHasCompletedPayrollPolicySetupForm(true);
     }
-  }, [payrollPolicy?.data.payday, setHasCompletedPayrollPolicySetupForm]);
+  }, [payrollPolicy?.data.payday, payrollPolicyStatus, setHasCompletedPayrollPolicySetupForm]);
 
   return (
     <section className="space-y-10">
@@ -88,7 +103,7 @@ const PayrollView = () => {
             <MainButton className="hidden" variant="primary">
               Run Payroll
             </MainButton>
-            <MainButton isDisabled variant="primary">
+            <MainButton onClick={handleGeneratePayslip} isDisabled={payrollPolicyStatus} variant="primary">
               Generate Payslip
             </MainButton>
             <MainButton className="hidden" variant="primary">
@@ -105,8 +120,10 @@ const PayrollView = () => {
                   </div>
                 }
               >
-                <DropdownMenuItem>Schedule Payroll</DropdownMenuItem>
-                <DropdownMenuItem>Payroll Settings</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowSchedulePayrollDrawer(true)}>Schedule Payroll</DropdownMenuItem>
+                <Link href={`/admin/payroll/setup`}>
+                  <DropdownMenuItem>Payroll Settings</DropdownMenuItem>
+                </Link>
               </GenericDropdown>
             </div>
           </div>
@@ -117,7 +134,7 @@ const PayrollView = () => {
       <section
         className={cn(
           "hidden rounded-lg border border-amber-200 bg-amber-50 p-4",
-          !hasCompletedPayrollPolicySetupForm && `block`,
+          hasCompletedPayrollPolicySetupForm && `block`,
         )}
       >
         <div className="flex items-center justify-between gap-4">

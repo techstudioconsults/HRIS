@@ -7,13 +7,7 @@ import { useEffect } from "react";
 import { usePayrollService } from "../services/use-service";
 import { usePayrollStore } from "../stores/payroll-store";
 
-interface PayrollSetupModalProperties {
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  trigger?: React.ReactNode;
-}
-
-export const PayrollSetupSettingsModal = ({ trigger }: PayrollSetupModalProperties) => {
+export const PayrollSetupSettingsModal = () => {
   const { setShowPayrollSettingsSetupModal, showPayrollSettingsSetupModal } = usePayrollStore();
   const { useGetCompanyPayrollPolicy } = usePayrollService();
   const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
@@ -21,8 +15,10 @@ export const PayrollSetupSettingsModal = ({ trigger }: PayrollSetupModalProperti
   useEffect(() => {
     if (payrollPolicy?.data.payday === 0) {
       setShowPayrollSettingsSetupModal(true);
+    } else {
+      setShowPayrollSettingsSetupModal(false);
     }
-  }, [payrollPolicy?.data.payday, setShowPayrollSettingsSetupModal]);
+  }, [payrollPolicy?.data?.payday, setShowPayrollSettingsSetupModal]);
 
   const handleRemindMeLater = () => {
     setShowPayrollSettingsSetupModal(false);
@@ -32,7 +28,7 @@ export const PayrollSetupSettingsModal = ({ trigger }: PayrollSetupModalProperti
     <ReusableDialog
       open={showPayrollSettingsSetupModal}
       onOpenChange={setShowPayrollSettingsSetupModal}
-      trigger={trigger}
+      trigger={""}
       title="Let's Get Payroll Set Up"
       description="To begin processing payroll, you'll need to set your company's pay schedule. This includes how often you pay your team and on what date each cycle runs."
       className="!max-w-lg"

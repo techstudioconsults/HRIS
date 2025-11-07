@@ -6,6 +6,7 @@ import { AlertTriangle, Copy } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { usePayrollService } from "../services/use-service";
+import { usePayrollStore } from "../stores/payroll-store";
 
 interface FundWalletAccountModalProperties {
   open?: boolean;
@@ -13,9 +14,10 @@ interface FundWalletAccountModalProperties {
   onConfirm?: () => void;
 }
 
-export function FundWalletAccountModal({ open, onOpenChange, onConfirm }: FundWalletAccountModalProperties) {
+export function FundWalletAccountModal({ onConfirm }: FundWalletAccountModalProperties) {
   const [copied, setCopied] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const { showFundWalletAccountModal, setShowFundWalletAccountModal } = usePayrollStore();
   const { useGetCompanyWallet } = usePayrollService();
   // get the query object so we can refetch during polling
   const walletQuery = useGetCompanyWallet();
@@ -34,7 +36,7 @@ export function FundWalletAccountModal({ open, onOpenChange, onConfirm }: FundWa
 
   // Poll every 5s while modal is open and until accountNumber exists
   useEffect(() => {
-    if (!open) return;
+    if (!showFundWalletAccountModal) return;
     if (companyWalletData?.data?.accountNumber) return;
 
     const id = setInterval(() => {
@@ -42,7 +44,7 @@ export function FundWalletAccountModal({ open, onOpenChange, onConfirm }: FundWa
     }, 5000);
 
     return () => clearInterval(id);
-  }, [open, companyWalletData?.data?.accountNumber, walletQuery]);
+  }, [showFundWalletAccountModal, companyWalletData?.data?.accountNumber, walletQuery]);
 
   const handleConfirm = async () => {
     try {
@@ -51,7 +53,7 @@ export function FundWalletAccountModal({ open, onOpenChange, onConfirm }: FundWa
       await walletQuery?.refetch?.();
       // Allow parent to perform any side effects
       if (onConfirm) await onConfirm();
-      onOpenChange(false);
+      setShowFundWalletAccountModal(false);
     } catch {
       // no-op
     } finally {
@@ -60,7 +62,13 @@ export function FundWalletAccountModal({ open, onOpenChange, onConfirm }: FundWa
   };
 
   return (
-    <ReusableDialog trigger={""} open={open} onOpenChange={onOpenChange} title="Fund Wallet" className="!max-w-lg">
+    <ReusableDialog
+      trigger={""}
+      open={showFundWalletAccountModal}
+      onOpenChange={setShowFundWalletAccountModal}
+      title="Fund Wallet"
+      className="!max-w-lg"
+    >
       <div className="space-y-6">
         {/* Instructional text */}
         <p className="text-sm text-gray-600">

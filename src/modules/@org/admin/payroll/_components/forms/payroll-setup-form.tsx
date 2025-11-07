@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 // import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { usePayrollService } from "../../services/use-service";
 import { usePayrollStore } from "../../stores/payroll-store";
@@ -34,7 +35,7 @@ type PayrollSetupFormValues = {
 export const PayrollSetupForm = () => {
   const router = useRouter();
   const [isSubmittedAlertOpen, setIsSubmittedAlertOpen] = useState(false);
-  const { setHasCompletedSetupForm } = usePayrollStore();
+  const { setHasCompletedPayrollPolicySetupForm, setShowPayrollSettingsSetupModal } = usePayrollStore();
 
   // Fetch company payroll policy (needed to set form values directly via useForm)
   const { useGetCompanyPayrollPolicy, useUpdateCompanyPayrollPolicy } = usePayrollService();
@@ -132,7 +133,7 @@ export const PayrollSetupForm = () => {
     }));
   }, [employeesData]);
 
-  const updatePolicy = useUpdateCompanyPayrollPolicy();
+  const { mutateAsync: updatePolicy, isPending } = useUpdateCompanyPayrollPolicy();
 
   const onSubmit = async (data: PayrollSetupFormValues) => {
     const payload = {
@@ -140,9 +141,20 @@ export const PayrollSetupForm = () => {
       payday: Number(data.payday),
       approvers: normalizeIds(data.approvers),
     };
-
-    await updatePolicy.mutateAsync(payload);
-    setIsSubmittedAlertOpen(true);
+    try {
+      await updatePolicy(payload, {
+        onSuccess: () => {
+          setIsSubmittedAlertOpen(true);
+          setShowPayrollSettingsSetupModal(false);
+          setHasCompletedPayrollPolicySetupForm(false);
+        },
+        onError: (error) => {
+          toast.error(`Failed to update payroll policy: ${error.message}`);
+        },
+      });
+    } catch {
+      return;
+    }
   };
 
   return (
@@ -239,16 +251,10 @@ export const PayrollSetupForm = () => {
           </div>
 
           <div className="flex w-full items-center gap-4 pt-4">
-            <MainButton type="button" variant="outline" className="w-50" isDisabled={updatePolicy.isPending}>
+            <MainButton type="button" variant="outline" className="w-50" isDisabled={isPending}>
               Cancel
             </MainButton>
-            <MainButton
-              type="submit"
-              variant="primary"
-              className="w-50"
-              isLoading={updatePolicy.isPending}
-              isDisabled={updatePolicy.isPending}
-            >
+            <MainButton type="submit" variant="primary" className="w-50" isLoading={isPending} isDisabled={isPending}>
               Save & Continue
             </MainButton>
           </div>
@@ -259,8 +265,6 @@ export const PayrollSetupForm = () => {
         isOpen={isSubmittedAlertOpen}
         onClose={() => setIsSubmittedAlertOpen(false)}
         onConfirm={() => {
-          // Mark payroll setup configured so modal won't auto-show again
-          setHasCompletedSetupForm(true);
           setIsSubmittedAlertOpen(false);
           router.push("/admin/payroll");
         }}

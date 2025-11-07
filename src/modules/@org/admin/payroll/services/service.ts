@@ -47,7 +47,7 @@ export class PayrollService {
   }
 
   async getAllPayrolls(filters: Filters = {}) {
-    const response = await this.http.get<PaginatedApiResponse<PayrollSummary>>(`/payrolls`, {
+    const response = await this.http.get<ApiResponse<PayrollSummary>>(`/payrolls`, {
       ...filters,
     });
     if (response?.status === 200) {

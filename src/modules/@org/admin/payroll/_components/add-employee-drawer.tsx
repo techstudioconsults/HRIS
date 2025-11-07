@@ -30,8 +30,8 @@ interface FilterValues {
 }
 
 interface AddEmployeeModalProperties {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 // Initial filter values - removed as we now use URL state management

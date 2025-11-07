@@ -17,8 +17,8 @@ import { DashboardCard } from "../../dashboard/_components/dashboard-card";
 import { usePayrollStore } from "../stores/payroll-store";
 
 interface SchedulePayrollDrawerProperties {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export const GenerateRunPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerProperties) => {

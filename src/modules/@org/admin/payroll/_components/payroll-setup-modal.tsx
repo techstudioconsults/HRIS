@@ -13,33 +13,26 @@ interface PayrollSetupModalProperties {
   trigger?: React.ReactNode;
 }
 
-export const PayrollSetupModal = ({ trigger }: PayrollSetupModalProperties) => {
-  const { showSetupModal, setShowSetupModal, hasCompletedSetupForm } = usePayrollStore();
-  const { useGetCompanyPayrollPolicy, useGetCompanyWallet } = usePayrollService();
-  const { data: companyPayrollPolicy } = useGetCompanyPayrollPolicy();
-  const { data: companyWalletData } = useGetCompanyWallet();
+export const PayrollSetupSettingsModal = ({ trigger }: PayrollSetupModalProperties) => {
+  const { setShowPayrollSettingsSetupModal, showPayrollSettingsSetupModal } = usePayrollStore();
+  const { useGetCompanyPayrollPolicy } = usePayrollService();
+  const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
 
   useEffect(() => {
-    // Only show the setup modal if policy is incomplete AND user hasn't already completed the setup form
-    if (companyPayrollPolicy?.data.status === "incomplete" && !hasCompletedSetupForm) {
-      setShowSetupModal(true);
-    } else {
-      setShowSetupModal(false);
+    if (payrollPolicy?.data.payday === 0) {
+      setShowPayrollSettingsSetupModal(true);
     }
-  }, [companyPayrollPolicy, companyWalletData?.data.companyId, setShowSetupModal, hasCompletedSetupForm]);
+  }, [payrollPolicy?.data.payday, setShowPayrollSettingsSetupModal]);
 
-  const handleRemindLater = () => {
-    // TODO: Implement remind later logic
-    // eslint-disable-next-line no-console
-    console.log("Reminding later...");
-    setShowSetupModal(false);
+  const handleRemindMeLater = () => {
+    setShowPayrollSettingsSetupModal(false);
   };
 
   return (
     <ReusableDialog
+      open={showPayrollSettingsSetupModal}
+      onOpenChange={setShowPayrollSettingsSetupModal}
       trigger={trigger}
-      open={showSetupModal}
-      onOpenChange={() => setShowSetupModal(false)}
       title="Let's Get Payroll Set Up"
       description="To begin processing payroll, you'll need to set your company's pay schedule. This includes how often you pay your team and on what date each cycle runs."
       className="!max-w-lg"
@@ -68,7 +61,7 @@ export const PayrollSetupModal = ({ trigger }: PayrollSetupModalProperties) => {
             Set Up Payroll
           </MainButton>
 
-          <button onClick={handleRemindLater} className="text-center text-sm text-gray-600 hover:text-gray-800">
+          <button onClick={handleRemindMeLater} className="text-center text-sm text-gray-600 hover:text-gray-800">
             Remind me later
           </button>
         </div>

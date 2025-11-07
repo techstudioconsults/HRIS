@@ -27,8 +27,8 @@ import { usePayrollService } from "../services/use-service";
 import type { Payroll } from "../types";
 
 interface SchedulePayrollDrawerProperties {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export const SchedulePayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerProperties) => {

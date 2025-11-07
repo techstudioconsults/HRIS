@@ -28,15 +28,20 @@ export interface FundWalletFormData {
 
 interface FundWalletFormModalProperties {
   open?: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChange?: (open: boolean) => void;
   onFundWallet?: () => void;
   initialData?: FundWalletFormData;
 }
 
-export function FundWalletFormModal({ open, onOpenChange, initialData }: FundWalletFormModalProperties) {
-  const { setShowFundWalletAccountModal } = usePayrollStore();
+export function FundWalletFormModal({ initialData }: FundWalletFormModalProperties) {
+  const {
+    setShowFundWalletAccountModal,
+    showFundWalletFormModal,
+    setHasCompletedPayrollPolicySetupForm,
+    setShowFundWalletFormModal,
+  } = usePayrollStore();
   const { useUpdateCompanyWallet } = usePayrollService();
-  const updateWallet = useUpdateCompanyWallet();
+  const { mutateAsync: updateWallet, isPending } = useUpdateCompanyWallet();
 
   const [isSuccessAlertOpen, setIsSuccessAlertOpen] = useState(false);
 
@@ -54,27 +59,29 @@ export function FundWalletFormModal({ open, onOpenChange, initialData }: FundWal
 
   const handleFormSubmit = async (data: FundWalletFormData) => {
     try {
-      await updateWallet.mutateAsync(data);
-      // Close the main modal first
-      onOpenChange(false);
-      // Add a small delay before showing the success alert modal
-      setTimeout(() => {
-        setIsSuccessAlertOpen(true);
-      }, 300); // 300ms delay for smooth transition
+      await updateWallet(data, {
+        onSuccess: () => {
+          setHasCompletedPayrollPolicySetupForm(true);
+          setShowFundWalletFormModal(false);
+          setTimeout(() => {
+            setIsSuccessAlertOpen(true);
+          }, 300);
+        },
+        onError: (error) => {
+          return error;
+        },
+      });
     } catch {
-      // Handle error silently or show toast notification
-      // Error handling can be improved with toast notifications
+      return;
     }
   };
 
   const handleCancel = () => {
     methods.reset();
-    onOpenChange(false);
   };
 
   const handleSuccessAlertClose = () => {
     setIsSuccessAlertOpen(false);
-    // Reset form after a small delay to allow modal close animation
     setTimeout(() => {
       methods.reset();
     }, 200);
@@ -89,8 +96,8 @@ export function FundWalletFormModal({ open, onOpenChange, initialData }: FundWal
     <>
       <ReusableDialog
         trigger={""}
-        open={open}
-        onOpenChange={onOpenChange}
+        open={showFundWalletFormModal}
+        onOpenChange={setShowFundWalletFormModal}
         title="Set up Payroll Wallet"
         className="!max-w-lg"
       >
@@ -142,7 +149,7 @@ export function FundWalletFormModal({ open, onOpenChange, initialData }: FundWal
                 type="button"
                 variant="outline"
                 onClick={handleCancel}
-                isDisabled={updateWallet.isPending}
+                isDisabled={isPending}
               >
                 Cancel
               </MainButton>
@@ -150,10 +157,10 @@ export function FundWalletFormModal({ open, onOpenChange, initialData }: FundWal
                 className="w-full"
                 type="submit"
                 variant="primary"
-                isLoading={updateWallet.isPending}
-                isDisabled={updateWallet.isPending}
+                isLoading={isPending}
+                isDisabled={isPending}
               >
-                {updateWallet.isPending ? "Saving..." : "Save & Continue"}
+                {isPending ? "Saving..." : "Save & Continue"}
               </MainButton>
             </div>
           </form>

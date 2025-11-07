@@ -8,8 +8,8 @@ import { useEffect, useState } from "react";
 import { usePayrollService } from "../services/use-service";
 
 interface FundWalletAccountModalProperties {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   onConfirm?: () => void;
 }
 

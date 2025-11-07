@@ -56,8 +56,8 @@ export const SchedulePayrollDrawer = () => {
     return Array.isArray(data) ? data : [];
   }, [payrollsResponse]);
 
-  // Sort by payment date (default: newest first)
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  // Sort by payment date (default: earliest first)
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const sortedPayrolls = useMemo(() => {
     const array = [...payrolls];
     array.sort((a, b) => {

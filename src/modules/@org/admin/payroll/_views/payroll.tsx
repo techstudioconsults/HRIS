@@ -55,13 +55,19 @@ const PayrollView = () => {
     setShowFundWalletAccountModal,
     setShowSchedulePayrollDrawer,
   } = usePayrollStore();
-  const { useGetCompanyPayrollPolicy, useGetPayslips } = usePayrollService();
+  const { useGetCompanyPayrollPolicy, useGetAllPayrolls, useCreatePayroll } = usePayrollService();
   const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
-  const { data: payslips } = useGetPayslips();
+  const { data: allPayrolls, isLoading: loadingPayrolls, refetch: refetchPayrolls } = useGetAllPayrolls();
+  const { mutateAsync: createPayroll, isPending: isCreatingPayroll } = useCreatePayroll();
   const [isWalletBalanceVisible, setIsWalletBalanceVisible] = useState(true);
-  const [payrollInfo, setPayrollInfo] = useState({
-    extimatedNetPay: 0,
-    numbersOfEmployees: 0,
+  const [showNoPayrollBanner, setShowNoPayrollBanner] = useState(false);
+  const [payrollData, setPayrollData] = useState({
+    id: "",
+    status: "",
+    policyId: "",
+    netPay: 0,
+    employeesInPayroll: 0,
+    paymentDate: "",
     walletBalance: 70_000_000,
   });
 
@@ -81,13 +87,101 @@ const PayrollView = () => {
     }
   };
 
-  // const handleGeneratePayslip = () => {};
+  const handleGeneratePayroll = async () => {
+    try {
+      // Get the current date for payment date
+      const paymentDate = new Date().toISOString();
+
+      const response = await createPayroll(
+        { paymentDate },
+        {
+          onSuccess: (data) => {
+            // Map response to payroll data
+            if (data?.data) {
+              setPayrollData((previous) => ({
+                ...previous,
+                id: data.data.id,
+                status: String(data.data.status || ""),
+                policyId: data.data.policyId,
+                netPay: data.data.netPay,
+                employeesInPayroll: data.data.employeesInPayroll,
+                paymentDate: data.data.paymentDate,
+              }));
+              // Hide the no payroll banner
+              setShowNoPayrollBanner(false);
+              // Refetch payrolls to update the list
+              refetchPayrolls();
+            }
+          },
+        },
+      );
+    } catch {
+      // Error handling is done by the mutation
+    }
+  };
+
+  const handleGeneratePayslip = async () => {
+    try {
+      // Check if there's an available payroll
+      const hasPayrolls = Array.isArray(allPayrolls?.data) && allPayrolls.data.length > 0;
+
+      if (!hasPayrolls) {
+        // No payroll available, create one first
+        await handleGeneratePayroll();
+      }
+
+      // TODO: Implement payslip generation logic after payroll is created/available
+      // This would typically involve navigating to payslip generation page or opening a modal
+    } catch {
+      // Error handling
+    }
+  };
+
+  const handleDismissNoPayrollBanner = () => {
+    setShowNoPayrollBanner(false);
+  };
 
   useEffect(() => {
     if (payrollPolicy?.data?.payday && payrollPolicy.data.payday > 0 && payrollPolicyStatus) {
       setHasCompletedPayrollPolicySetupForm(true);
     }
   }, [payrollPolicy?.data.payday, payrollPolicyStatus, setHasCompletedPayrollPolicySetupForm]);
+
+  // Check if there are any payrolls available and load current payroll
+  useEffect(() => {
+    if (!loadingPayrolls && allPayrolls) {
+      const hasPayrolls = Array.isArray(allPayrolls?.data) && allPayrolls.data.length > 0;
+      setShowNoPayrollBanner(!hasPayrolls);
+
+      // Load the most recent payroll data if available (sorted by earliest month)
+      if (hasPayrolls) {
+        // Sort payrolls by payment date (earliest first)
+        const payrollsArray = Array.isArray(allPayrolls.data) ? allPayrolls.data : [];
+        const sortedPayrolls = [...payrollsArray].sort((a, b) => {
+          return new Date(a.paymentDate).getTime() - new Date(b.paymentDate).getTime();
+        });
+
+        const earliestPayroll = sortedPayrolls[0] as {
+          id: string;
+          status: string;
+          policyId: string;
+          netPay?: number;
+          employeesInPayroll?: number;
+          paymentDate: string;
+        };
+
+        setPayrollData((previous) => ({
+          ...previous,
+          id: earliestPayroll.id,
+          status: earliestPayroll.status,
+          policyId: earliestPayroll.policyId,
+          netPay: earliestPayroll.netPay || 0,
+          employeesInPayroll: earliestPayroll.employeesInPayroll || 0,
+          paymentDate: earliestPayroll.paymentDate,
+        }));
+      }
+    }
+  }, [allPayrolls, loadingPayrolls]);
 
   return (
     <section className="space-y-10">
@@ -103,7 +197,12 @@ const PayrollView = () => {
             <MainButton className="hidden" variant="primary">
               Run Payroll
             </MainButton>
-            <MainButton onClick={handleGeneratePayslip} isDisabled={payrollPolicyStatus} variant="primary">
+            <MainButton
+              onClick={handleGeneratePayslip}
+              isDisabled={payrollPolicyStatus || isCreatingPayroll}
+              isLoading={isCreatingPayroll}
+              variant="primary"
+            >
               Generate Payslip
             </MainButton>
             <MainButton className="hidden" variant="primary">
@@ -151,15 +250,49 @@ const PayrollView = () => {
         </div>
       </section>
 
+      {/* No Payroll Available Banner */}
       <section
-        hidden={LOW_BALANCE_LIMIT <= payrollInfo.walletBalance}
+        className={cn(
+          "hidden rounded-lg border border-blue-200 bg-blue-50 p-4",
+          showNoPayrollBanner && !payrollPolicyStatus && `block`,
+        )}
+      >
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 text-blue-600" size={18} />
+            <p className="text-sm text-blue-800">
+              No payroll found for this month. Generate a payroll to start processing employee payments.
+            </p>
+          </div>
+          <div className="flex items-start gap-5">
+            <MainButton
+              variant="primary"
+              onClick={handleGeneratePayroll}
+              isLoading={isCreatingPayroll}
+              isDisabled={isCreatingPayroll}
+            >
+              Generate Payroll
+            </MainButton>
+            <button
+              onClick={handleDismissNoPayrollBanner}
+              aria-label="Dismiss no payroll banner"
+              className="text-blue-700 transition-colors hover:text-blue-900"
+            >
+              <CloseCircle size={18} />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section
+        hidden={LOW_BALANCE_LIMIT <= payrollData.walletBalance}
         className="rounded-lg border border-red-200 bg-red-50 p-4"
       >
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-0.5 text-red-600" size={18} />
             <p className="text-sm text-red-800">
-              Your wallet balance {formatCurrency(payrollInfo.walletBalance)} is below the recommended minimum of{" "}
+              Your wallet balance {formatCurrency(payrollData.walletBalance)} is below the recommended minimum of{" "}
               {formatCurrency(LOW_BALANCE_LIMIT)}. Fund your wallet to generate or run payroll.
             </p>
           </div>
@@ -195,12 +328,12 @@ const PayrollView = () => {
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <DashboardCard
           title="Estimated Net Pay"
-          value={<span className="text-base">{formatCurrency(payrollInfo.extimatedNetPay)}</span>}
+          value={<span className="text-base">{formatCurrency(payrollData.netPay)}</span>}
           className="flex flex-col items-center justify-center gap-4 text-center"
         />
         <DashboardCard
           title="Employees in Payroll"
-          value={<span className="text-base">{payrollInfo.numbersOfEmployees}</span>}
+          value={<span className="text-base">{payrollData.employeesInPayroll}</span>}
           className="flex flex-col items-center justify-center gap-4 text-center"
         />
         <DashboardCard
@@ -208,7 +341,7 @@ const PayrollView = () => {
           value={
             <div className="flex items-center gap-4">
               <p className="text-base text-white">
-                {isWalletBalanceVisible ? formatCurrency(payrollInfo.walletBalance) : "••••••••"}
+                {isWalletBalanceVisible ? formatCurrency(payrollData.walletBalance) : "••••••••"}
               </p>
               <button
                 onClick={toggleWalletBalanceVisibility}

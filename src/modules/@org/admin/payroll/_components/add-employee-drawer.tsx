@@ -30,14 +30,9 @@ interface FilterValues {
   page?: string;
 }
 
-interface AddEmployeeModalProperties {
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-}
-
 // Initial filter values - removed as we now use URL state management
 
-export const AddEmployeeDrawer = ({ open, onOpenChange }: AddEmployeeModalProperties) => {
+export const AddEmployeeDrawer = () => {
   const { showAddEmployeeToPayrollModal, setShowAddEmployeeModal } = usePayrollStore();
   const {
     page,
@@ -75,11 +70,7 @@ export const AddEmployeeDrawer = ({ open, onOpenChange }: AddEmployeeModalProper
 
   const apiFilters = useMemo(() => getApiFilters(), [getApiFilters]);
 
-  const {
-    data: employeesData,
-    isLoading,
-    refetch,
-  } = useGetAllEmployees(apiFilters, {
+  const { data: employeesData, isLoading } = useGetAllEmployees(apiFilters, {
     keepPreviousData: false,
     staleTime: 0,
     cacheTime: 0,
@@ -118,15 +109,8 @@ export const AddEmployeeDrawer = ({ open, onOpenChange }: AddEmployeeModalProper
     resetFilters();
   }, [resetFilters]);
 
-  useEffect(() => {
-    if (open && refetch) {
-      refetch();
-    }
-  }, [open, refetch]);
-
   const handleAddEmployee = (employee: Employee) => {
     setAddedEmployee(employee);
-    onOpenChange(false);
     setIsSuccessAlertOpen(true);
   };
 

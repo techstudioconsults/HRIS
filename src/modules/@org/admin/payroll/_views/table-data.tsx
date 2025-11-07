@@ -54,32 +54,32 @@ export const payrollColumn: IColumnDefinition<Payslip>[] = [
   {
     header: "Name",
     accessorKey: "id",
-    render: (_, payslip: Payslip) => <span>{payslip.employee?.name ?? ""}</span>,
+    render: (_, payslip: Payslip) => <span className="text-sm">{payslip.employee?.name ?? ""}</span>,
   },
   {
     header: "Role",
     accessorKey: "employeeId",
-    render: (_, payslip: Payslip) => <span>{payslip.employee?.role?.name ?? ""}</span>,
+    render: (_, payslip: Payslip) => <span className="text-sm">{payslip.employee?.role?.name ?? ""}</span>,
   },
   {
     header: "Gross Pay",
     accessorKey: "grossPay",
-    render: (_, payslip: Payslip) => <span>{formatCurrency(payslip.grossPay)}</span>,
+    render: (_, payslip: Payslip) => <span className="text-sm">{formatCurrency(payslip.grossPay)}</span>,
   },
   {
     header: "Deduction",
     accessorKey: "totalDeductions",
-    render: (_, payslip: Payslip) => <span>{formatCurrency(payslip.totalDeductions)}</span>,
+    render: (_, payslip: Payslip) => <span className="text-sm">{formatCurrency(payslip.totalDeductions)}</span>,
   },
   {
     header: "Bonus",
     accessorKey: "totalBonuses",
-    render: (_, payslip: Payslip) => <span>{formatCurrency(payslip.totalBonuses)}</span>,
+    render: (_, payslip: Payslip) => <span className="text-sm">{formatCurrency(payslip.totalBonuses)}</span>,
   },
   {
     header: "Net Pay",
     accessorKey: "netPay",
-    render: (_, payslip: Payslip) => <span className="text-success">{formatCurrency(payslip.netPay)}</span>,
+    render: (_, payslip: Payslip) => <span className="text-success text-sm">{formatCurrency(payslip.netPay)}</span>,
   },
   {
     header: "Status",

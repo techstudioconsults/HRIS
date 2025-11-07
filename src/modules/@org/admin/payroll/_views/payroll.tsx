@@ -61,12 +61,19 @@ const PayrollView = () => {
     setShowSchedulePayrollDrawer,
     setShowAddEmployeeModal,
   } = usePayrollStore();
-  const { useGetCompanyPayrollPolicy, useGetAllPayrolls, useCreatePayroll, useGetPayslips, useGetCompanyWallet } =
-    usePayrollService();
+  const {
+    useGetCompanyPayrollPolicy,
+    useGetAllPayrolls,
+    useCreatePayroll,
+    useGetPayslips,
+    useGetCompanyWallet,
+    useRunPayroll,
+  } = usePayrollService();
   const { data: companyWallet } = useGetCompanyWallet();
   const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
   const { data: allPayrolls, isLoading: loadingPayrolls, refetch: refetchPayrolls } = useGetAllPayrolls();
   const { mutateAsync: createPayroll, isPending: isCreatingPayroll } = useCreatePayroll();
+  const { mutateAsync: runPayroll, isPending: isRunningPayroll } = useRunPayroll();
   const [isWalletBalanceVisible, setIsWalletBalanceVisible] = useState(true);
   const [showNoPayrollBanner, setShowNoPayrollBanner] = useState(false);
   const [selectedPayrollId, setSelectedPayrollId] = useState<string>("");
@@ -84,6 +91,14 @@ const PayrollView = () => {
   const { data: payslipsData, isLoading: loadingPayslips } = useGetPayslips(payrollData.id, undefined, {
     enabled: !!payrollData.id, // Only fetch if we have a payroll ID
   });
+
+  // Determine if payslips exist for the selected payroll
+  const hasPayslipsForSelectedPayroll =
+    payslipsData?.data?.items && Array.isArray(payslipsData.data.items) && payslipsData.data.items.length > 0;
+
+  // Determine which button to show: Generate Payslip or Run Payroll
+  const showRunPayrollButton = !!selectedPayrollId && hasPayslipsForSelectedPayroll;
+  const showGeneratePayslipButton = !!selectedPayrollId && !hasPayslipsForSelectedPayroll;
 
   // Map payrolls to ComboBox options
   const payrollOptions = Array.isArray(allPayrolls?.data)
@@ -152,6 +167,34 @@ const PayrollView = () => {
               }));
               // Hide the no payroll banner
               setShowNoPayrollBanner(false);
+              // Refetch payrolls to update the list
+              refetchPayrolls();
+            }
+          },
+        },
+      );
+    } catch {
+      // Error handling is done by the mutation
+    }
+  };
+
+  const handleRunPayroll = async () => {
+    try {
+      if (!payrollData.id) return;
+
+      await runPayroll(
+        {
+          payrollId: payrollData.id,
+          date: new Date().toISOString(),
+        },
+        {
+          onSuccess: (data) => {
+            // Update payroll status after running
+            if (data?.data?.payroll) {
+              setPayrollData((previous) => ({
+                ...previous,
+                status: String(data.data.payroll.status || ""),
+              }));
               // Refetch payrolls to update the list
               refetchPayrolls();
             }
@@ -248,17 +291,26 @@ const PayrollView = () => {
             <MainButton onClick={handleShowFundWalletForm} className="border-primary" variant="outline">
               Fund Wallet
             </MainButton>
-            <MainButton className="hidden" variant="primary">
-              Run Payroll
-            </MainButton>
-            <MainButton
-              onClick={handleGeneratePayslip}
-              isDisabled={payrollPolicyStatus || isCreatingPayroll}
-              isLoading={isCreatingPayroll}
-              variant="primary"
-            >
-              Generate Payslip
-            </MainButton>
+            {showGeneratePayslipButton && (
+              <MainButton
+                onClick={handleGeneratePayslip}
+                isDisabled={payrollPolicyStatus || isCreatingPayroll}
+                isLoading={isCreatingPayroll}
+                variant="primary"
+              >
+                Generate Payslip
+              </MainButton>
+            )}
+            {showRunPayrollButton && (
+              <MainButton
+                onClick={handleRunPayroll}
+                isDisabled={payrollPolicyStatus || isRunningPayroll}
+                isLoading={isRunningPayroll}
+                variant="primary"
+              >
+                Run Payroll
+              </MainButton>
+            )}
             <MainButton className="hidden" variant="primary">
               View Approval Progress
             </MainButton>

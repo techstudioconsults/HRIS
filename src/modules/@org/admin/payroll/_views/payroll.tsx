@@ -29,7 +29,7 @@ import { TableSkeleton } from "../../_components/table";
 import { DashboardCard } from "../../dashboard/_components/dashboard-card";
 import { usePayrollService } from "../services/use-service";
 import { usePayrollStore } from "../stores/payroll-store";
-import { payrollColumn } from "./table-data";
+import { payrollColumn, usePayrollRowActions } from "./table-data";
 
 const LOW_BALANCE_LIMIT = 5_000_000; // 5M NGN
 
@@ -52,6 +52,7 @@ const PAYROLL_RUN_MESSAGE: ReactNode = (
 
 const PayrollView = () => {
   const router = useRouter();
+  const { getRowActions } = usePayrollRowActions();
   const {
     hasCompletedPayrollPolicySetupForm,
     setHasCompletedPayrollPolicySetupForm,
@@ -399,9 +400,10 @@ const PayrollView = () => {
           <AdvancedDataTable
             data={payslipsData.data.items}
             columns={payrollColumn}
+            rowActions={getRowActions}
             onPageChange={() => {}}
             showPagination={true}
-            enableRowSelection={false}
+            enableRowSelection={true}
             enableColumnVisibility={false}
             enableSorting={false}
             enableFiltering={false}

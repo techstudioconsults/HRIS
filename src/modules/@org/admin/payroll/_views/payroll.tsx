@@ -9,7 +9,7 @@ import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ComboBox } from "@/components/shared/select-dropdown/combo-box";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { formatCurrency } from "@/lib/i18n/utils";
+import { formatCurrency, formatDate } from "@/lib/i18n/utils";
 import { cn } from "@/lib/utils";
 import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import { CloseCircle, Eye, EyeSlash } from "iconsax-reactjs";
@@ -32,12 +32,8 @@ import { usePayrollStore } from "../stores/payroll-store";
 import { payrollColumn, usePayrollRowActions } from "./table-data";
 
 const LOW_BALANCE_LIMIT = 5_000_000; // 5M NGN
-
-const GET_SCHEDULE_MESSAGE = (date: Date | null | undefined): ReactNode => {
-  const formatted = date
-    ? date.toLocaleString("default", { month: "long", day: "numeric", year: "numeric" })
-    : "a future date";
-  return `Your next payroll has been scheduled for ${formatted}. You can edit the schedule date or cancel the payroll before the set date here.`;
+const GET_SCHEDULE_MESSAGE = (date: string | Date): ReactNode => {
+  return `Your next payroll has been scheduled for ${date}. You can edit the schedule date or cancel the payroll before the set date here.`;
 };
 
 const PAYROLL_RUN_MESSAGE: ReactNode = (
@@ -60,6 +56,7 @@ const PayrollView = () => {
     setShowFundWalletAccountModal,
     setShowSchedulePayrollDrawer,
     setShowAddEmployeeModal,
+    setShowPayrollDrawer,
   } = usePayrollStore();
   const {
     useGetCompanyPayrollPolicy,
@@ -77,6 +74,7 @@ const PayrollView = () => {
   const [isWalletBalanceVisible, setIsWalletBalanceVisible] = useState(true);
   const [showNoPayrollBanner, setShowNoPayrollBanner] = useState(false);
   const [selectedPayrollId, setSelectedPayrollId] = useState<string>("");
+  const [shouldFetchPayslips, setShouldFetchPayslips] = useState(false);
   const [payrollData, setPayrollData] = useState({
     id: "",
     status: "",
@@ -87,9 +85,9 @@ const PayrollView = () => {
     walletBalance: companyWallet?.data?.balance || 70_000_000,
   });
 
-  // Fetch payslips for the current payroll
-  const { data: payslipsData, isLoading: loadingPayslips } = useGetPayslips(payrollData.id, undefined, {
-    enabled: !!payrollData.id, // Only fetch if we have a payroll ID
+  // Fetch payslips only when explicitly requested (when Generate Payslip is clicked)
+  const { data: payslipsData, isLoading: loadingPayslips } = useGetPayslips(selectedPayrollId, undefined, {
+    enabled: shouldFetchPayslips && !!selectedPayrollId, // Only fetch when button is clicked
   });
 
   // Determine if payslips exist for the selected payroll
@@ -97,15 +95,15 @@ const PayrollView = () => {
     payslipsData?.data?.items && Array.isArray(payslipsData.data.items) && payslipsData.data.items.length > 0;
 
   // Determine which button to show: Generate Payslip or Run Payroll
-  const showRunPayrollButton = !!selectedPayrollId && hasPayslipsForSelectedPayroll;
-  const showGeneratePayslipButton = !!selectedPayrollId && !hasPayslipsForSelectedPayroll;
+  const showRunPayrollButton = !!selectedPayrollId && shouldFetchPayslips && hasPayslipsForSelectedPayroll;
+  const showGeneratePayslipButton = !!selectedPayrollId;
 
   // Map payrolls to ComboBox options
   const payrollOptions = Array.isArray(allPayrolls?.data)
     ? allPayrolls.data
         .sort((a, b) => new Date(a.paymentDate).getTime() - new Date(b.paymentDate).getTime())
         .map((payroll) => ({
-          label: `${new Date(payroll.paymentDate).toLocaleDateString("en-US", {
+          label: `${formatDate(payroll.paymentDate, "en", {
             month: "long",
             year: "numeric",
           })} - ${payroll.status || "Pending"}`,
@@ -115,6 +113,7 @@ const PayrollView = () => {
 
   const handlePayrollSelection = (value: string) => {
     setSelectedPayrollId(value);
+    setShouldFetchPayslips(false); // Reset payslip fetch when changing selection
     const selectedPayroll = Array.isArray(allPayrolls?.data) ? allPayrolls.data.find((p) => p.id === value) : undefined;
     if (selectedPayroll) {
       setPayrollData((previous) => ({
@@ -124,7 +123,7 @@ const PayrollView = () => {
         policyId: selectedPayroll.policyId,
         netPay: selectedPayroll.netPay || 0,
         employeesInPayroll: selectedPayroll.employeesInPayroll || 0,
-        paymentDate: selectedPayroll.paymentDate,
+        paymentDate: formatDate(selectedPayroll.paymentDate),
       }));
     }
   };
@@ -154,8 +153,9 @@ const PayrollView = () => {
         { paymentDate },
         {
           onSuccess: (data) => {
-            // Map response to payroll data
+            // Map response to payroll data (only affects dashboard cards)
             if (data?.data) {
+              setSelectedPayrollId(data.data.id);
               setPayrollData((previous) => ({
                 ...previous,
                 id: data.data.id,
@@ -163,7 +163,7 @@ const PayrollView = () => {
                 policyId: data.data.policyId,
                 netPay: data.data.netPay,
                 employeesInPayroll: data.data.employeesInPayroll,
-                paymentDate: data.data.paymentDate,
+                paymentDate: formatDate(data.data.paymentDate),
               }));
               // Hide the no payroll banner
               setShowNoPayrollBanner(false);
@@ -208,16 +208,10 @@ const PayrollView = () => {
 
   const handleGeneratePayslip = async () => {
     try {
-      // Check if there's an available payroll
-      const hasPayrolls = Array.isArray(allPayrolls?.data) && allPayrolls.data.length > 0;
-
-      if (!hasPayrolls) {
-        // No payroll available, create one first
-        await handleGeneratePayroll();
+      // Enable fetching payslips for the selected payroll ID
+      if (selectedPayrollId) {
+        setShouldFetchPayslips(true);
       }
-
-      // TODO: Implement payslip generation logic after payroll is created/available
-      // This would typically involve navigating to payslip generation page or opening a modal
     } catch {
       // Error handling
     }
@@ -233,13 +227,14 @@ const PayrollView = () => {
     }
   }, [payrollPolicy?.data.payday, payrollPolicyStatus, setHasCompletedPayrollPolicySetupForm]);
 
-  // Check if there are any payrolls available and load current payroll
+  // Check if there are any payrolls available and load current payroll (only affects dashboard cards)
   useEffect(() => {
     if (!loadingPayrolls && allPayrolls) {
       const hasPayrolls = Array.isArray(allPayrolls?.data) && allPayrolls.data.length > 0;
       setShowNoPayrollBanner(!hasPayrolls);
 
       // Load the most recent payroll data if available (sorted by earliest month)
+      // This only affects dashboard cards, not the table
       if (hasPayrolls) {
         // Sort payrolls by payment date (earliest first)
         const payrollsArray = Array.isArray(allPayrolls.data) ? allPayrolls.data : [];
@@ -264,7 +259,7 @@ const PayrollView = () => {
           policyId: earliestPayroll.policyId,
           netPay: earliestPayroll.netPay || 0,
           employeesInPayroll: earliestPayroll.employeesInPayroll || 0,
-          paymentDate: earliestPayroll.paymentDate,
+          paymentDate: formatDate(earliestPayroll.paymentDate),
         }));
       }
     }
@@ -288,20 +283,15 @@ const PayrollView = () => {
               placeholder="Select payroll period"
               className="border-border h-10 w-64 border"
             />
-            <MainButton onClick={handleShowFundWalletForm} className="border-primary" variant="outline">
+            <MainButton
+              onClick={handleShowFundWalletForm}
+              className="border-primary"
+              variant="outline"
+              isDisabled={!selectedPayrollId}
+            >
               Fund Wallet
             </MainButton>
-            {showGeneratePayslipButton && (
-              <MainButton
-                onClick={handleGeneratePayslip}
-                isDisabled={payrollPolicyStatus || isCreatingPayroll}
-                isLoading={isCreatingPayroll}
-                variant="primary"
-              >
-                Generate Payslip
-              </MainButton>
-            )}
-            {showRunPayrollButton && (
+            {showRunPayrollButton ? (
               <MainButton
                 onClick={handleRunPayroll}
                 isDisabled={payrollPolicyStatus || isRunningPayroll}
@@ -310,7 +300,16 @@ const PayrollView = () => {
               >
                 Run Payroll
               </MainButton>
-            )}
+            ) : showGeneratePayslipButton ? (
+              <MainButton
+                onClick={handleGeneratePayslip}
+                isDisabled={payrollPolicyStatus || isCreatingPayroll}
+                isLoading={isCreatingPayroll}
+                variant="primary"
+              >
+                Generate Payslip
+              </MainButton>
+            ) : null}
             <MainButton className="hidden" variant="primary">
               View Approval Progress
             </MainButton>
@@ -414,7 +413,7 @@ const PayrollView = () => {
         </div>
       </section>
 
-      <section hidden>
+      <section className={cn("rounded-lg", payrollData.paymentDate ? `block` : `hidden`)}>
         <div className="bg-primary-500 text-background relative rounded-lg p-5">
           <button
             type="button"
@@ -423,10 +422,7 @@ const PayrollView = () => {
           >
             <CloseCircle />
           </button>
-          <p className="text-background max-w-4xl text-sm">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Odio, tenetur blanditiis nobis soluta asperiores a
-            cupiditate labore commodi doloremque culpa animi eius eos harum iusto quod excepturi incidunt iure eaque!
-          </p>
+          <p className="text-background max-w-4xl text-sm">{GET_SCHEDULE_MESSAGE(payrollData.paymentDate)}</p>
         </div>
       </section>
 
@@ -472,19 +468,24 @@ const PayrollView = () => {
         <section className="mb-6 flex items-center justify-between">
           <h1 className="text-xl font-bold">Employee Payroll Summary</h1>
           <div className="flex items-center gap-2">
-            <MainButton variant="primary" isLeftIconVisible onClick={() => setShowAddEmployeeModal(true)}>
+            <MainButton
+              variant="primary"
+              isLeftIconVisible
+              onClick={() => setShowAddEmployeeModal(true)}
+              isDisabled={!shouldFetchPayslips || !payslipsData?.data.items || payslipsData.data.items.length === 0}
+            >
               Add Employee
             </MainButton>
           </div>
         </section>
-        {loadingPayslips ? (
+        {loadingPayslips && shouldFetchPayslips ? (
           <TableSkeleton columns={payrollColumn.length} rows={10} />
-        ) : !payslipsData?.data.items || payslipsData.data.items.length === 0 ? (
+        ) : !shouldFetchPayslips || !payslipsData?.data.items || payslipsData.data.items.length === 0 ? (
           <EmptyState
-            className="bg-background"
-            images={[{ src: empty1.src, alt: "No teams", width: 50, height: 50 }]}
-            title="No team added yet."
-            description="Add teams to better organize your workforce, assign leads, and manage roles across your organization."
+            className="bg-background shadow"
+            images={[{ src: empty1.src, alt: "No payslips", width: 50, height: 50 }]}
+            title="No payslips generated yet."
+            description="Select a payroll from the dropdown above and click 'Generate Payslip' to view employee payroll details."
           />
         ) : (
           <AdvancedDataTable

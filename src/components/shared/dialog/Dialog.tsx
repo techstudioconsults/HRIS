@@ -41,31 +41,24 @@ export function ReusableDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      {/* Add backdrop filter to the portal container */}
-      <div className={cn("fixed inset-0 z-50", open ? "bg-black/50 backdrop-blur-sm" : "pointer-events-none")}>
-        <DialogContent
-          hideClose={hideClose}
-          className={cn("border-default h-full items-center sm:max-w-[425px] md:h-fit", className)}
-        >
-          {/* {wrapperClassName ?? */}
-          {/* (img && ( */}
-          <DialogHeader className={cn("h-fit", wrapperClassName)}>
-            {img &&
-              (img.startsWith("http") || img.startsWith("/") ? (
-                <Image width={100} height={100} src={img} alt="icon" className="h-[100px] w-[100px]" />
-              ) : (
-                <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full bg-orange-100 text-6xl">
-                  {img}
-                </div>
-              ))}
-            <DialogTitle className={cn("text-2xl", headerClassName)}>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
-          </DialogHeader>
-          {/* )) */}
-          {/* } */}
-          {children}
-        </DialogContent>
-      </div>
+      <DialogContent
+        hideClose={hideClose}
+        className={cn("border-default h-full items-center sm:max-w-[425px] md:h-fit", className)}
+      >
+        <DialogHeader className={cn("h-fit", wrapperClassName)}>
+          {img &&
+            (img.startsWith("http") || img.startsWith("/") ? (
+              <Image width={100} height={100} src={img} alt="icon" className="h-[100px] w-[100px]" />
+            ) : (
+              <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full bg-orange-100 text-6xl">
+                {img}
+              </div>
+            ))}
+          <DialogTitle className={cn("text-2xl", headerClassName)}>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
+        {children}
+      </DialogContent>
     </Dialog>
   );
 }

@@ -13,13 +13,14 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import { Locale } from "@/lib/i18n/config";
 import { formatCurrency, formatDate } from "@/lib/i18n/utils";
 import { CalendarModal } from "@/modules/@org/admin/payroll/_components/calendar-modal";
+import { AxiosError } from "axios";
 import { Eye, EyeSlash } from "iconsax-reactjs";
 import { CalendarIcon, Info } from "lucide-react";
-import { useLocale } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import empty1 from "~/images/empty-state.svg";
 import { DashboardCard } from "../../dashboard/_components/dashboard-card";
@@ -28,11 +29,11 @@ import { usePayrollStore } from "../stores/payroll-store";
 import type { Payroll } from "../types";
 
 export const SchedulePayrollDrawer = () => {
+  const router = useRouter();
   const [isNetPayVisible, setIsNetPayVisible] = useState(false);
   const [isChangeDateModalOpen, setIsChangeDateModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedPayrollId, setSelectedPayrollId] = useState<string | null>(null);
-  const locale = useLocale() as Locale;
   const { showSchedulePayrollDrawer, setShowSchedulePayrollDrawer } = usePayrollStore();
 
   const { useGetAllPayrolls, useCreatePayroll } = usePayrollService();
@@ -73,6 +74,33 @@ export const SchedulePayrollDrawer = () => {
   }, [payrolls, selectedPayrollId]);
 
   const { mutateAsync: createPayroll } = useCreatePayroll();
+
+  const handleDateSelection = async (date: Date) => {
+    if (date) {
+      setSelectedDate(date);
+      await createPayroll(
+        { paymentDate: date.toISOString() },
+        {
+          onSuccess: () => {
+            setIsChangeDateModalOpen(false);
+            refetchPayrolls();
+          },
+          onError: (error) => {
+            const axiosError = error as AxiosError<{ message: string }>;
+            toast.error(axiosError.response?.data.message, {
+              description: "Complete your payroll settings to schedule payroll.",
+              action: {
+                label: "Payroll Settings",
+                onClick: () => {
+                  router.push("/admin/payroll/setup");
+                },
+              },
+            });
+          },
+        },
+      );
+    }
+  };
 
   return (
     <>
@@ -137,9 +165,9 @@ export const SchedulePayrollDrawer = () => {
                                 className="hover:bg-muted/50 cursor-pointer"
                                 onClick={() => setSelectedPayrollId(p.id)}
                               >
-                                <td className="border px-4 py-2">{formatDate(p.paymentDate, locale)}</td>
+                                <td className="border px-4 py-2">{formatDate(p.paymentDate)}</td>
                                 <td className="border px-4 py-2">{p.employeesInPayroll ?? 0}</td>
-                                <td className="border px-4 py-2">{formatCurrency(p.netPay ?? 0, locale)}</td>
+                                <td className="border px-4 py-2">{formatCurrency(p.netPay ?? 0)}</td>
                                 {/* <td className="px-4 py-2">{p.policyId}</td>
                                 <td className="px-4 py-2">{p.id}</td> */}
                                 <td className="border px-4 py-2">
@@ -170,7 +198,7 @@ export const SchedulePayrollDrawer = () => {
                   <Info size={16} />
                   <p>
                     Payroll is scheduled for
-                    {` ${formatDate(selectedPayroll.paymentDate, locale)}`}.
+                    {` ${formatDate(selectedPayroll.paymentDate)}`}.
                   </p>
                 </div>
                 <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -204,19 +232,19 @@ export const SchedulePayrollDrawer = () => {
                 <section className="rounded-lg p-4 shadow-md">
                   <div className="flex items-center justify-between">
                     <p>Gross Pay</p>
-                    <p>{formatCurrency(selectedPayroll?.grossPay ?? 0, locale)}</p>
+                    <p>{formatCurrency(selectedPayroll?.grossPay ?? 0)}</p>
                   </div>
                   <div className="flex items-center justify-between">
                     <p>Total Bonuses</p>
-                    <p>{formatCurrency(selectedPayroll?.bonus ?? 0, locale)}</p>
+                    <p>{formatCurrency(selectedPayroll?.bonus ?? 0)}</p>
                   </div>
                   <div className="flex items-center justify-between">
                     <p>Total Deductions</p>
-                    <p>{formatCurrency(selectedPayroll?.deduction ?? 0, locale)}</p>
+                    <p>{formatCurrency(selectedPayroll?.deduction ?? 0)}</p>
                   </div>
                   <div className="flex items-center justify-between font-bold">
                     <p>Net Pay</p>
-                    <p>{formatCurrency(selectedPayroll?.netPay ?? 0, locale)}</p>
+                    <p>{formatCurrency(selectedPayroll?.netPay ?? 0)}</p>
                   </div>
                 </section>
                 <section>
@@ -281,15 +309,7 @@ export const SchedulePayrollDrawer = () => {
         onOpenChange={setIsChangeDateModalOpen}
         selectedDate={selectedDate}
         onDateSelect={setSelectedDate}
-        onContinue={async (date) => {
-          if (date) {
-            setSelectedDate(date);
-            await createPayroll({ paymentDate: date.toISOString() });
-            setIsChangeDateModalOpen(false);
-            // refresh the list to reflect newly scheduled payroll
-            refetchPayrolls();
-          }
-        }}
+        onContinue={() => handleDateSelection(selectedDate!)}
       />
     </>
   );

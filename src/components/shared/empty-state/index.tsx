@@ -1,7 +1,9 @@
 "use client";
 
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { ReactNode } from "react";
 
 import empty1 from "~/images/empty-state.svg";
 import SkiButton from "../button";
@@ -13,79 +15,239 @@ interface ImageConfig {
   height?: number;
 }
 
+type EmptyStateVariant = "default" | "icon" | "image";
+
 interface EmptyStateProperties {
-  images: ImageConfig[];
+  // Visual
+  variant?: EmptyStateVariant;
+  icon?: ReactNode;
+  image?: ImageConfig;
+  images?: ImageConfig[]; // Legacy support
+
+  // Content
   title?: string;
-  description: string;
+  description: string | ReactNode;
+
+  // Actions
+  primaryAction?: {
+    text: string;
+    onClick: () => void;
+    icon?: ReactNode;
+    variant?: "primary" | "outline" | "ghost";
+    disabled?: boolean;
+    loading?: boolean;
+  };
+  secondaryAction?: {
+    text: string;
+    onClick: () => void;
+    icon?: ReactNode;
+    variant?: "primary" | "outline" | "ghost";
+    disabled?: boolean;
+  };
+  customActions?: ReactNode;
+
+  // Styling
+  className?: string;
+  headerClassName?: string;
+  titleClassName?: string;
+  descriptionClassName?: string;
+  contentClassName?: string;
+
+  // Legacy support
   button?: {
     text: string;
     onClick: () => void;
-    icon?: React.ReactNode;
+    icon?: ReactNode;
   };
-  className?: string;
-  descriptionClassName?: string;
-  titleClassName?: string;
-  actionButton?: React.ReactNode;
+  actionButton?: ReactNode;
 }
 
 export const EmptyState = ({
-  images,
+  variant = "image",
+  icon,
+  image,
+  images, // Legacy
   title,
   description,
-  button,
-  actionButton,
-  className = "",
-  descriptionClassName = "",
-  titleClassName = "",
+  primaryAction,
+  secondaryAction,
+  customActions,
+  className,
+  headerClassName,
+  titleClassName,
+  descriptionClassName,
+  contentClassName,
+  button, // Legacy
+  actionButton, // Legacy
 }: EmptyStateProperties) => {
-  return (
-    <div
-      className={cn("mb-4 flex min-h-[400px] w-full flex-col items-center justify-center px-4 text-center", className)}
-    >
-      {/* Images container */}
-      <div className="flex flex-wrap items-center justify-center">
-        {images.map((image, index) => (
-          <div key={index} className="relative">
-            <Image
-              src={image.src}
-              alt={image.alt}
-              width={image.width || 240}
-              height={image.height || 160}
-              className="object-contain"
-              priority
-            />
-          </div>
-        ))}
-      </div>
+  // Handle legacy props
+  const finalPrimaryAction = primaryAction || (button ? { ...button, variant: "primary" as const } : undefined);
+  const finalCustomActions = customActions || actionButton;
 
-      {/* Content container */}
-      <div className="flex flex-col items-center">
-        {title && <h3 className={cn(`text-h5 text-primary font-semibold`, titleClassName)}>{title}</h3>}
-        <p className={cn("text-muted-foreground font-medium", descriptionClassName)}>{description}</p>
-        {button ? (
-          <SkiButton onClick={button.onClick} variant="primary" size="xl" className="mt-6">
-            {button.icon && <span className="mr-2">{button.icon}</span>}
-            {button.text}
-          </SkiButton>
-        ) : (
-          actionButton
+  return (
+    <Empty className={cn("border-none", className)}>
+      <EmptyHeader className={headerClassName}>
+        {/* Media rendering based on variant */}
+        {variant === "icon" && icon && <EmptyMedia variant="icon">{icon}</EmptyMedia>}
+
+        {variant === "image" && (image || images) && (
+          <EmptyMedia variant="default">
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {image ? (
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  width={image.width || 200}
+                  height={image.height || 200}
+                  className="object-contain"
+                  priority
+                />
+              ) : (
+                images?.map((img, index) => (
+                  <Image
+                    key={index}
+                    src={img.src}
+                    alt={img.alt}
+                    width={img.width || 200}
+                    height={img.height || 200}
+                    className="object-contain"
+                    priority
+                  />
+                ))
+              )}
+            </div>
+          </EmptyMedia>
         )}
-      </div>
-    </div>
+
+        {/* Title and Description */}
+        {title && <EmptyTitle className={titleClassName}>{title}</EmptyTitle>}
+        <EmptyDescription className={descriptionClassName}>{description}</EmptyDescription>
+      </EmptyHeader>
+
+      {/* Actions */}
+      {(finalPrimaryAction || secondaryAction || finalCustomActions) && (
+        <EmptyContent className={contentClassName}>
+          {finalCustomActions || (
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {finalPrimaryAction && (
+                <SkiButton
+                  onClick={finalPrimaryAction.onClick}
+                  variant={finalPrimaryAction.variant || "primary"}
+                  isDisabled={finalPrimaryAction.disabled}
+                  isLoading={finalPrimaryAction.loading}
+                  isLeftIconVisible={!!finalPrimaryAction.icon}
+                  className="min-w-[140px]"
+                >
+                  {finalPrimaryAction.icon && <span className="mr-2">{finalPrimaryAction.icon}</span>}
+                  {finalPrimaryAction.text}
+                </SkiButton>
+              )}
+              {secondaryAction && (
+                <SkiButton
+                  onClick={secondaryAction.onClick}
+                  variant={secondaryAction.variant || "outline"}
+                  isDisabled={secondaryAction.disabled}
+                  isLeftIconVisible={!!secondaryAction.icon}
+                  className="min-w-[140px]"
+                >
+                  {secondaryAction.icon && <span className="mr-2">{secondaryAction.icon}</span>}
+                  {secondaryAction.text}
+                </SkiButton>
+              )}
+            </div>
+          )}
+        </EmptyContent>
+      )}
+    </Empty>
   );
 };
 
+// Preset variants for common use cases
 export const FilteredEmptyState = ({ onReset }: { onReset: () => void }) => (
   <EmptyState
-    images={[{ src: empty1.src, alt: "No filtered results", width: 50, height: 50 }]}
+    variant="image"
+    image={{ src: empty1.src, alt: "No filtered results", width: 180, height: 180 }}
     title="No matching results found"
-    description="Try adjusting your date range or status filter to find what you're looking for."
-    className={`space-y-0`}
-    titleClassName={`!text-2xl text-primary font-semibold`}
-    descriptionClassName={`text-muted-foreground max-w-[500px] font-medium`}
-    button={{
+    description="Try adjusting your filters to find what you're looking for."
+    primaryAction={{
       text: "Reset Filters",
       onClick: onReset,
+      variant: "primary",
+    }}
+  />
+);
+
+export const NoDataEmptyState = ({
+  title = "No data available",
+  description,
+  onAction,
+  actionText = "Add New",
+  actionIcon,
+}: {
+  title?: string;
+  description: string;
+  onAction?: () => void;
+  actionText?: string;
+  actionIcon?: ReactNode;
+}) => (
+  <EmptyState
+    variant="image"
+    image={{ src: empty1.src, alt: "No data", width: 180, height: 180 }}
+    title={title}
+    description={description}
+    primaryAction={
+      onAction
+        ? {
+            text: actionText,
+            onClick: onAction,
+            icon: actionIcon,
+            variant: "primary",
+          }
+        : undefined
+    }
+  />
+);
+
+export const ErrorEmptyState = ({
+  title = "Something went wrong",
+  description = "We encountered an error while loading your data. Please try again.",
+  onRetry,
+}: {
+  title?: string;
+  description?: string;
+  onRetry: () => void;
+}) => (
+  <EmptyState
+    variant="image"
+    image={{ src: empty1.src, alt: "Error", width: 180, height: 180 }}
+    title={title}
+    description={description}
+    primaryAction={{
+      text: "Try Again",
+      onClick: onRetry,
+      variant: "primary",
+    }}
+  />
+);
+
+export const SearchEmptyState = ({ searchTerm, onClear }: { searchTerm?: string; onClear: () => void }) => (
+  <EmptyState
+    variant="image"
+    image={{ src: empty1.src, alt: "No search results", width: 180, height: 180 }}
+    title="No results found"
+    description={
+      searchTerm ? (
+        <>
+          No results found for <strong>&ldquo;{searchTerm}&rdquo;</strong>. Try searching with different keywords.
+        </>
+      ) : (
+        "Try searching with different keywords."
+      )
+    }
+    primaryAction={{
+      text: "Clear Search",
+      onClick: onClear,
+      variant: "outline",
     }}
   />
 );

@@ -291,6 +291,7 @@ export const AllTeams = () => {
                   </section>
                 </GenericDropdown>
                 <ExportAction
+                  isDisabled
                   downloadMutation={async (filters) => {
                     const { data } = await downloadTeams(filters);
                     return data as Blob;

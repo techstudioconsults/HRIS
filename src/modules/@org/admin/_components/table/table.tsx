@@ -80,6 +80,7 @@ export interface IRowAction<T extends DataItem> {
   kbd?: string; // keyboard shortcut hint (display only)
   type?: "action" | "separator"; // separator renders a visual divider
   variant?: "destructive" | "default"; // styling hint
+  ariaLabel?: string; // accessible label for assistive tech
 }
 
 // Generic types for the refactored table
@@ -297,6 +298,7 @@ function DraggableRow<T extends DataItem>({
                       event.stopPropagation();
                       action.onClick?.(row.original);
                     }}
+                    aria-label={action.ariaLabel || action.label}
                     className={cn(action.variant === "destructive" && "text-destructive focus:text-destructive")}
                   >
                     {action.icon && <span className="mr-2">{action.icon}</span>}

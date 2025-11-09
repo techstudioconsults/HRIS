@@ -13,6 +13,10 @@ declare global {
     label: string;
     icon?: ReactNode;
     onClick: (row: T) => void;
+    kbd?: string;
+    type?: "action" | "separator";
+    variant?: "destructive" | "default";
+    ariaLabel?: string;
   }
 
   interface IDashboardTableProperties<T extends DataItem> {

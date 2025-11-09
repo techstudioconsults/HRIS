@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Eye, Pencil, Trash } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { useEmployeeShortcuts } from "../../employee/hooks/use-employee-shortcuts";
@@ -20,58 +20,72 @@ export const useEmployeeRowActions = () => {
   const { mutateAsync: deleteEmployee, isPending } = useDeleteEmployee();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
   const { entity: activeEmployee, set: setActiveEmployee } = useActiveTarget<Employee>();
 
   useEmployeeShortcuts();
 
-  const resetModalState = () => {
+  const resetModalState = useCallback(() => {
     setIsDeleteModalOpen(false);
     setEmployeeToDelete(null);
-    setIsDeleting(false);
-  };
+    // Clear active target after delete/cancel to avoid stale reference
+    setActiveEmployee(null);
+  }, [setActiveEmployee]);
 
-  const handleDeleteEmployee = async () => {
-    if (!employeeToDelete || isDeleting) return;
-    setIsDeleting(true);
-    await deleteEmployee(employeeToDelete.id);
-    await queryClient.invalidateQueries({ queryKey: ["employee", "list"] });
-    toast.success(`Employee ${employeeToDelete.firstName} ${employeeToDelete.lastName} deleted successfully!`);
-    resetModalState();
-  };
+  const handleDeleteEmployee = useCallback(async () => {
+    if (!employeeToDelete || isPending) return;
+    try {
+      await deleteEmployee(employeeToDelete.id);
+      await queryClient.invalidateQueries({ queryKey: ["employee", "list"] });
+      toast.success(`Employee ${employeeToDelete.firstName} ${employeeToDelete.lastName} deleted successfully!`);
+      resetModalState();
+    } catch (error) {
+      const message = (error as { message?: string })?.message || "Failed to delete employee. Please try again.";
+      toast.error(message);
+      // Optional: send to monitoring service instead of console
+    }
+  }, [employeeToDelete, isPending, deleteEmployee, queryClient, resetModalState]);
 
-  const getRowActions = (employee: Employee): IRowAction<Employee>[] => [
-    {
-      label: "View employee",
-      kbd: "Ctrl+V",
-      icon: <Eye className="h-4 w-4" aria-hidden="true" />,
-      onClick: () => {
-        setActiveEmployee(employee);
-        router.push(`/admin/employees/${employee.id}`);
-      },
+  const getRowActions = useCallback(
+    (employee: Employee): IRowAction<Employee>[] => {
+      return [
+        {
+          label: "View employee",
+          kbd: "Ctrl+V",
+          icon: <Eye className="h-4 w-4" aria-hidden="true" />,
+          onClick: () => {
+            setActiveEmployee(employee);
+            router.push(`/admin/employees/${employee.id}`);
+          },
+          // Accessibility improvement: assistive label for action
+          ariaLabel: `View ${employee.firstName} ${employee.lastName}`,
+        },
+        {
+          label: "Edit employee",
+          kbd: "Ctrl+E",
+          icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
+          onClick: () => {
+            setActiveEmployee(employee);
+            router.push(`/admin/employees/edit-employee?employeeid=${employee.id}`);
+          },
+          ariaLabel: `Edit ${employee.firstName} ${employee.lastName}`,
+        },
+        { type: "separator" },
+        {
+          label: "Delete employee",
+          kbd: "Ctrl+Del",
+          variant: "destructive",
+          icon: <Trash className="text-destructive h-4 w-4" aria-hidden="true" />,
+          onClick: () => {
+            setActiveEmployee(employee);
+            setEmployeeToDelete(employee);
+            setIsDeleteModalOpen(true);
+          },
+          ariaLabel: `Delete ${employee.firstName} ${employee.lastName}`,
+        },
+      ];
     },
-    {
-      label: "Edit employee",
-      kbd: "Ctrl+E",
-      icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
-      onClick: () => {
-        setActiveEmployee(employee);
-        router.push(`/admin/employees/edit-employee?employeeid=${employee.id}`);
-      },
-    },
-    { type: "separator" },
-    {
-      label: "Delete employee",
-      kbd: "Ctrl+Del",
-      variant: "destructive",
-      icon: <Trash className="text-destructive h-4 w-4" aria-hidden="true" />,
-      onClick: () => {
-        setActiveEmployee(employee);
-        setEmployeeToDelete(employee);
-        setIsDeleteModalOpen(true);
-      },
-    },
-  ];
+    [router, setActiveEmployee],
+  );
 
   useEffect(() => {
     const onDeleteRequest = () => {
@@ -87,16 +101,16 @@ export const useEmployeeRowActions = () => {
     <AlertModal
       isOpen={isDeleteModalOpen}
       onClose={() => {
-        if (!isDeleting && !isPending) {
+        if (!isPending) {
           resetModalState();
         }
       }}
       onConfirm={handleDeleteEmployee}
-      loading={isDeleting || isPending}
+      loading={isPending}
       type="warning"
       title="Delete Employee"
       description={`Are you sure you want to delete "${employeeToDelete?.firstName} ${employeeToDelete?.lastName}"? This action cannot be undone.`}
-      confirmText="Delete Employee"
+      confirmText={isPending ? "Deleting..." : "Delete Employee"}
       cancelText="Cancel"
     />
   );

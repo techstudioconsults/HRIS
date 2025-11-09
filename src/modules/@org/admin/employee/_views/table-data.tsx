@@ -110,7 +110,7 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
         />
         <div className="flex flex-col space-y-2">
           <NameTooltip name={`${employee.firstName} ${employee.lastName}`}>
-            <span className="text-sm font-medium lg:text-[16px]">{`${employee.firstName} ${employee.lastName}`}</span>
+            <span className="text-sm font-medium">{`${employee.firstName} ${employee.lastName}`}</span>
           </NameTooltip>
         </div>
       </div>
@@ -121,19 +121,19 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
     accessorKey: "email",
     render: (_, employee: Employee) => (
       <EmailTooltip email={employee?.email}>
-        <span className="truncate">{employee?.email.slice(0, 10)}...</span>
+        <span className="truncate text-sm">{employee?.email.slice(0, 20)}...</span>
       </EmailTooltip>
     ),
   },
   {
     header: "Role",
     accessorKey: "role",
-    render: (_, employee: Employee) => <span>{employee?.employmentDetails?.role?.name}</span>,
+    render: (_, employee: Employee) => <span className="text-sm">{employee?.employmentDetails?.role?.name}</span>,
   },
   {
     header: "Department",
     accessorKey: "department",
-    render: (_, employee: Employee) => <span>{employee?.employmentDetails?.team?.name}</span>,
+    render: (_, employee: Employee) => <span className="text-sm">{employee?.employmentDetails?.team?.name}</span>,
   },
   {
     header: "Status",

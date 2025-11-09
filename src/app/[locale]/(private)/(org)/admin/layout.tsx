@@ -27,7 +27,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         ]}
       />
       <SidebarInset className="dark:bg-background bg-[#F7F9FC]">
-        <main className="flex flex-1 flex-col gap-4 p-4">
+        <main className="flex flex-1 flex-col gap-10 p-4">
           <TopBar
             adminName={session?.user.employee.fullName || ""}
             notificationsCount={12}

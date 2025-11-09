@@ -327,7 +327,7 @@ export const AddEmployeeForm = () => {
           <div className="mt-6 flex w-[50%] justify-start gap-4">
             <MainButton
               type="button"
-              variant="outline"
+              variant="destructiveOutline"
               onClick={() => router.push("/admin/employees")}
               isDisabled={isSubmitting}
               className="text-destructive border-destructive w-full"

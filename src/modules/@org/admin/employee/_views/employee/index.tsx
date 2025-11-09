@@ -128,10 +128,7 @@ export const AllEmployees = () => {
                 <GenericDropdown
                   contentClassName="bg-background"
                   trigger={
-                    <Button
-                      className="bg-background text-foreground h-10 rounded-md border px-3 shadow-none"
-                      variant="ghost"
-                    >
+                    <Button className="h-10 rounded-md border px-3" variant="primaryOutline">
                       <Filter className="size-4" />
                       Filter
                     </Button>
@@ -163,7 +160,6 @@ export const AllEmployees = () => {
                   status={undefined}
                   buttonText="Export Employees"
                   fileName="Product"
-                  className="border-border bg-background text-foreground h-10 rounded-md border px-3 shadow-none"
                 />
                 <MainButton href="/admin/employees/add-employee" variant="primary" isLeftIconVisible icon={<Add />}>
                   Add Employee
@@ -189,7 +185,6 @@ export const AllEmployees = () => {
                 onPageChange={handlePageChange}
                 rowActions={getRowActions}
                 showPagination={true}
-                enableDragAndDrop={true}
                 enableRowSelection={true}
                 enableColumnVisibility={true}
                 enableSorting={true}

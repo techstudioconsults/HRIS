@@ -70,7 +70,7 @@ export const BreadCrumb = ({
           {showHome && (
             <>
               <BreadcrumbItem>
-                <BreadcrumbLink href="/" className="flex items-center gap-1">
+                <BreadcrumbLink href="/" className="hover:text-primary flex items-center gap-1">
                   {homeIcon}
                   <span>{homeLabel}</span>
                 </BreadcrumbLink>
@@ -87,12 +87,12 @@ export const BreadCrumb = ({
               <div key={index} className="flex items-center">
                 <BreadcrumbItem>
                   {isLast ? (
-                    <BreadcrumbPage className="flex items-center gap-1 capitalize">
+                    <BreadcrumbPage className="flex items-center gap-1 font-medium capitalize">
                       {item.icon}
                       <span>{item.label}</span>
                     </BreadcrumbPage>
                   ) : (
-                    <BreadcrumbLink href={item.href || "#"} className="flex items-center gap-1">
+                    <BreadcrumbLink href={item.href || "#"} className="hover:text-primary flex items-center gap-1">
                       {item.icon}
                       <span>{item.label}</span>
                     </BreadcrumbLink>

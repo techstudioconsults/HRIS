@@ -9,14 +9,17 @@ import { cloneElement, forwardRef, MouseEventHandler, ReactElement, ReactNode, u
 type Variant =
   | "default"
   | "primary"
+  | "primaryOutline"
   | "destructive"
+  | "destructiveOutline"
   | "subtle"
   | "loading"
   | "outline"
   | "secondary"
   | "ghost"
   | "link"
-  | "accent";
+  | "accent"
+  | "accentOutline";
 type Size = "default" | "sm" | "lg" | "xl" | "2xl" | "link" | "icon" | "circle";
 
 interface ButtonProperties {

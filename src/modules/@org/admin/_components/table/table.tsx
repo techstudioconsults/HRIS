@@ -31,6 +31,9 @@ import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
+  IconArrowDown,
+  IconArrowsSort,
+  IconArrowUp,
   IconChevronDown,
   IconChevronLeft,
   IconChevronRight,
@@ -155,6 +158,7 @@ function convertColumnsToTanStackFormat<T extends DataItem>(
   columns: IColumnDefinition<T>[],
   enableDragAndDrop: boolean,
   enableRowSelection: boolean,
+  enableSorting: boolean,
 ): ColumnDef<T>[] {
   const columnDefs: ColumnDef<T>[] = [];
 
@@ -165,6 +169,7 @@ function convertColumnsToTanStackFormat<T extends DataItem>(
       header: () => null,
       cell: ({ row }) => <DragHandle id={((row.original as Record<string, unknown>).id as number) || 0} />,
       size: 40,
+      enableSorting: false,
     });
   }
 
@@ -202,11 +207,32 @@ function convertColumnsToTanStackFormat<T extends DataItem>(
   for (const column of columns) {
     columnDefs.push({
       accessorKey: column.accessorKey as string,
-      header: column.header,
+      header: ({ column: tanstackColumn }) => {
+        if (!enableSorting) {
+          return <div>{column.header}</div>;
+        }
+
+        return (
+          <p
+            onClick={() => tanstackColumn.toggleSorting(tanstackColumn.getIsSorted() === "asc")}
+            className="flex h-8 cursor-pointer items-center font-semibold hover:bg-transparent"
+          >
+            <span>{column.header}</span>
+            {tanstackColumn.getIsSorted() === "asc" ? (
+              <IconArrowUp className="ml-2 h-4 w-4" />
+            ) : tanstackColumn.getIsSorted() === "desc" ? (
+              <IconArrowDown className="ml-2 h-4 w-4" />
+            ) : (
+              <IconArrowsSort className="ml-2 h-4 w-4 opacity-50" />
+            )}
+          </p>
+        );
+      },
       cell: ({ row }) => {
         const value = row.original[column.accessorKey];
         return column.render ? column.render(value, row.original) : (value ?? "N/A");
       },
+      enableSorting: enableSorting,
     });
   }
 
@@ -297,7 +323,7 @@ export function AdvancedDataTable<T extends DataItem>({
   addButtonText = "Add Item",
   onAddClick,
   tabs,
-  defaultTab = "outline",
+  defaultTab = "primaryOutline",
   onTabChange,
   mobileCardView = true,
   customRowRenderer: _customRowRenderer, // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -331,8 +357,8 @@ export function AdvancedDataTable<T extends DataItem>({
   }, [itemsPerPage]);
   // Convert IColumnDefinition to TanStack ColumnDef
   const columns = React.useMemo(
-    () => convertColumnsToTanStackFormat(inputColumns, enableDragAndDrop, enableRowSelection),
-    [inputColumns, enableDragAndDrop, enableRowSelection],
+    () => convertColumnsToTanStackFormat(inputColumns, enableDragAndDrop, enableRowSelection, enableSorting),
+    [inputColumns, enableDragAndDrop, enableRowSelection, enableSorting],
   );
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
@@ -440,7 +466,7 @@ export function AdvancedDataTable<T extends DataItem>({
           {showColumnCustomization && enableColumnVisibility && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button variant="primaryOutline" size="sm">
                   <IconLayoutColumns />
                   <span className="hidden lg:inline">Customize Columns</span>
                   <span className="lg:hidden">Columns</span>
@@ -467,7 +493,7 @@ export function AdvancedDataTable<T extends DataItem>({
             </DropdownMenu>
           )}
           {showAddButton && onAddClick && (
-            <Button variant="outline" size="sm" onClick={onAddClick}>
+            <Button variant="primaryOutline" size="sm" onClick={onAddClick}>
               <IconPlus />
               <span className="hidden lg:inline">{addButtonText}</span>
             </Button>
@@ -674,7 +700,7 @@ export function AdvancedDataTable<T extends DataItem>({
           </div>
           <div className="flex items-center gap-2">
             <MainButton
-              variant="outline"
+              variant="primaryOutline"
               isLeftIconVisible
               size="lg"
               icon={<ChevronLeftIcon />}
@@ -685,7 +711,7 @@ export function AdvancedDataTable<T extends DataItem>({
               Previous
             </MainButton>
             <MainButton
-              variant="outline"
+              variant="primaryOutline"
               isRightIconVisible
               size="lg"
               icon={<ChevronRightIcon />}
@@ -740,7 +766,7 @@ export function AdvancedDataTable<T extends DataItem>({
             </div>
             <div className="ml-auto flex items-center gap-2 lg:ml-0">
               <Button
-                variant="outline"
+                variant="primaryOutline"
                 className="hidden h-8 w-8 p-0 lg:flex"
                 onClick={() => table.setPageIndex(0)}
                 disabled={!table.getCanPreviousPage()}
@@ -749,7 +775,7 @@ export function AdvancedDataTable<T extends DataItem>({
                 <IconChevronsLeft />
               </Button>
               <Button
-                variant="outline"
+                variant="primaryOutline"
                 className="size-8"
                 size="icon"
                 onClick={() => table.previousPage()}
@@ -759,7 +785,7 @@ export function AdvancedDataTable<T extends DataItem>({
                 <IconChevronLeft />
               </Button>
               <Button
-                variant="outline"
+                variant="primaryOutline"
                 className="size-8"
                 size="icon"
                 onClick={() => table.nextPage()}
@@ -769,7 +795,7 @@ export function AdvancedDataTable<T extends DataItem>({
                 <IconChevronRight />
               </Button>
               <Button
-                variant="outline"
+                variant="primaryOutline"
                 className="hidden size-8 lg:flex"
                 size="icon"
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
@@ -815,12 +841,12 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof schema>[
       showAddButton={true}
       addButtonText="Add Section"
       tabs={[
-        { value: "outline", label: "Outline" },
+        { value: "primaryOutline", label: "primaryOutline" },
         { value: "past-performance", label: "Past Performance", badge: "3" },
         { value: "key-personnel", label: "Key Personnel", badge: "2" },
         { value: "focus-documents", label: "Focus Documents" },
       ]}
-      defaultTab="outline"
+      defaultTab="primaryOutline"
       mobileCardView={true}
     />
   );

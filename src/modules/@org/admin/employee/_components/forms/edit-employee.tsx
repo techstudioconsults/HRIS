@@ -56,6 +56,23 @@ export const EditEmployeeForm = () => {
     const employmentType = employee.employmentDetails?.employmentType || "full time";
     const workMode = employee.employmentDetails?.workMode || "remote";
 
+    const teamId =
+      employee.employmentDetails?.team?.id !== undefined && employee.employmentDetails?.team?.id !== null
+        ? String(employee.employmentDetails.team.id)
+        : "";
+
+    const roleId =
+      employee.employmentDetails?.role?.id !== undefined && employee.employmentDetails?.role?.id !== null
+        ? String(employee.employmentDetails.role.id)
+        : "";
+
+    console.log("Setting form values:", {
+      teamId,
+      roleId,
+      teamObject: employee.employmentDetails?.team,
+      roleObject: employee.employmentDetails?.role,
+    });
+
     return {
       firstName: employee.firstName ?? "",
       lastName: employee.lastName ?? "",
@@ -66,14 +83,8 @@ export const EditEmployeeForm = () => {
       startDate: employee.employmentDetails?.startDate?.split("T")[0] || "",
       employmentType: employmentType,
       workMode: workMode,
-      teamId:
-        employee.employmentDetails?.team?.id !== undefined && employee.employmentDetails?.team?.id !== null
-          ? String(employee.employmentDetails.team.id)
-          : "",
-      roleId:
-        employee.employmentDetails?.role?.id !== undefined && employee.employmentDetails?.role?.id !== null
-          ? String(employee.employmentDetails.role.id)
-          : "",
+      teamId,
+      roleId,
     };
   }, [employee]);
 
@@ -96,6 +107,22 @@ export const EditEmployeeForm = () => {
   // Memoize derived team and roles from teams and selectedTeamId
   const selectedTeam = useMemo(() => teams.find((team) => String(team.id) === selectedTeamId), [teams, selectedTeamId]);
   const derivedRoles = useMemo(() => selectedTeam?.roles ?? [], [selectedTeam]);
+
+  // Debug logging
+  useEffect(() => {
+    if (teams.length > 0) {
+      console.log(
+        "Available teams:",
+        teams.map((t) => ({ id: String(t.id), name: t.name })),
+      );
+      console.log("Selected teamId:", selectedTeamId);
+      console.log("Selected roleId:", selectedRoleId);
+      console.log(
+        "Derived roles:",
+        derivedRoles.map((r) => ({ id: String(r.id), name: r.name })),
+      );
+    }
+  }, [teams, selectedTeamId, selectedRoleId, derivedRoles]);
 
   // Removed imperatively setting values via effects; form is driven by `values` above
 
@@ -275,16 +302,17 @@ export const EditEmployeeForm = () => {
                     value: String(team.id),
                     label: team.name,
                   }))}
+                  disabled={loadingTeams}
                   required
                 />
                 <FormField
                   name="roleId"
                   label="Role"
                   type="select"
-                  placeholder={`Select a role`}
+                  placeholder={loadingTeams || !selectedTeamId ? `Select a role` : `Select a role`}
                   className="bg-background border-border !h-14 w-full"
                   options={derivedRoles.map((role) => ({ value: String(role.id), label: role.name }))}
-                  disabled={!selectedTeamId}
+                  disabled={!selectedTeamId || loadingTeams}
                   required
                 />
               </div>

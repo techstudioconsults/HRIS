@@ -44,7 +44,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
               align={`end`}
               trigger={
                 <div
-                  className={`bg-background border-border flex size-10 items-center justify-center rounded-md border shadow`}
+                  className={`bg-background border-border flex size-10 items-center justify-center rounded-md shadow`}
                 >
                   <More className="size-5" />
                 </div>

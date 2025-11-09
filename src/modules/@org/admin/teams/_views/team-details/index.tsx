@@ -103,7 +103,6 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
             columns={subTeamColumn}
             rowActions={getRowActions}
             showPagination={false}
-            enableDragAndDrop={true}
             enableRowSelection={true}
             enableColumnVisibility={true}
             enableSorting={true}

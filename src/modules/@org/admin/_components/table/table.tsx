@@ -74,9 +74,12 @@ export interface IColumnDefinition<T extends DataItem> {
 
 // Row action interface
 export interface IRowAction<T extends DataItem> {
-  label: string;
-  onClick: (row: T) => void;
+  label?: string;
+  onClick?: (row: T) => void;
   icon?: React.ReactNode;
+  kbd?: string; // keyboard shortcut hint (display only)
+  type?: "action" | "separator"; // separator renders a visual divider
+  variant?: "destructive" | "default"; // styling hint
 }
 
 // Generic types for the refactored table
@@ -279,18 +282,29 @@ function DraggableRow<T extends DataItem>({
               <MoreVertical className="h-4 w-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-white" align="end">
-              {rowActions(row.original).map((action, actionIndex) => (
-                <DropdownMenuItem
-                  key={actionIndex}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    action.onClick(row.original);
-                  }}
-                >
-                  {action.icon && <span className="mr-2">{action.icon}</span>}
-                  {action.label}
-                </DropdownMenuItem>
-              ))}
+              {rowActions(row.original).map((action, actionIndex) => {
+                if (action.type === "separator") {
+                  return (
+                    <DropdownMenuItem key={actionIndex} disabled className="pointer-events-none" data-type="separator">
+                      <div className="bg-border mx-1 h-px w-full" />
+                    </DropdownMenuItem>
+                  );
+                }
+                return (
+                  <DropdownMenuItem
+                    key={actionIndex}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      action.onClick?.(row.original);
+                    }}
+                    className={cn(action.variant === "destructive" && "text-destructive focus:text-destructive")}
+                  >
+                    {action.icon && <span className="mr-2">{action.icon}</span>}
+                    {action.label}
+                    {action.kbd && <span className="ml-auto font-mono text-[10px] opacity-60">{action.kbd}</span>}
+                  </DropdownMenuItem>
+                );
+              })}
             </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>
@@ -586,22 +600,42 @@ export function AdvancedDataTable<T extends DataItem>({
                     {rowActions && (
                       <TableCell>
                         <DropdownMenu>
-                          <DropdownMenuTrigger className="p-2">
+                          <DropdownMenuTrigger className="cursor-pointer p-2">
                             <MoreVertical className="h-4 w-4" />
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent className="bg-white" align="end">
-                            {rowActions(row.original).map((action, actionIndex) => (
-                              <DropdownMenuItem
-                                key={actionIndex}
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  action.onClick(row.original);
-                                }}
-                              >
-                                {action.icon && <span className="mr-2">{action.icon}</span>}
-                                {action.label}
-                              </DropdownMenuItem>
-                            ))}
+                          <DropdownMenuContent className="bg-background shadow-none" align="end">
+                            {rowActions(row.original).map((action, actionIndex) => {
+                              if (action.type === "separator") {
+                                return (
+                                  <DropdownMenuItem
+                                    key={actionIndex}
+                                    disabled
+                                    className="pointer-events-none"
+                                    data-type="separator"
+                                  >
+                                    <div className="bg-border mx-1 h-px w-full" />
+                                  </DropdownMenuItem>
+                                );
+                              }
+                              return (
+                                <DropdownMenuItem
+                                  key={actionIndex}
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    action.onClick?.(row.original);
+                                  }}
+                                  className={cn(
+                                    action.variant === "destructive" && "text-destructive focus:text-destructive",
+                                  )}
+                                >
+                                  {action.icon && <span className="mr-2">{action.icon}</span>}
+                                  {action.label}
+                                  {action.kbd && (
+                                    <span className="ml-auto font-mono text-[10px] opacity-60">{action.kbd}</span>
+                                  )}
+                                </DropdownMenuItem>
+                              );
+                            })}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -649,19 +683,39 @@ export function AdvancedDataTable<T extends DataItem>({
                       <span className="sr-only">Open menu</span>
                       <MoreHorizontal className="h-4 w-4" />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      {rowActions(item).map((action, actionIndex) => (
-                        <DropdownMenuItem
-                          key={actionIndex}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            action.onClick(item);
-                          }}
-                        >
-                          {action.icon && <span className="mr-2">{action.icon}</span>}
-                          {action.label}
-                        </DropdownMenuItem>
-                      ))}
+                    <DropdownMenuContent className="shadow-none" align="end">
+                      {rowActions(item).map((action, actionIndex) => {
+                        if (action.type === "separator") {
+                          return (
+                            <DropdownMenuItem
+                              key={actionIndex}
+                              disabled
+                              className="pointer-events-none"
+                              data-type="separator"
+                            >
+                              <div className="bg-border mx-1 h-px w-full" />
+                            </DropdownMenuItem>
+                          );
+                        }
+                        return (
+                          <DropdownMenuItem
+                            key={actionIndex}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              action.onClick?.(item);
+                            }}
+                            className={cn(
+                              action.variant === "destructive" && "text-destructive focus:text-destructive",
+                            )}
+                          >
+                            {action.icon && <span className="mr-2">{action.icon}</span>}
+                            {action.label}
+                            {action.kbd && (
+                              <span className="ml-auto font-mono text-[10px] opacity-60">{action.kbd}</span>
+                            )}
+                          </DropdownMenuItem>
+                        );
+                      })}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}

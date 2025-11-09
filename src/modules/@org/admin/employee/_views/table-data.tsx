@@ -1,13 +1,16 @@
 import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { EmailTooltip, NameTooltip } from "@/components/shared/tooltip";
 import { Badge } from "@/components/ui/badge";
+import { useActiveTarget } from "@/context/active-target";
 import { IColumnDefinition, IRowAction } from "@/modules/@org/admin/_components/table/table";
 import { useQueryClient } from "@tanstack/react-query";
+import { Eye, Pencil, Trash } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { useEmployeeShortcuts } from "../../employee/hooks/use-employee-shortcuts";
 import { useEmployeeService } from "../services/use-service";
 
 export const useEmployeeRowActions = () => {
@@ -18,6 +21,9 @@ export const useEmployeeRowActions = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const { entity: activeEmployee, set: setActiveEmployee } = useActiveTarget<Employee>();
+
+  useEmployeeShortcuts();
 
   const resetModalState = () => {
     setIsDeleteModalOpen(false);
@@ -27,52 +33,60 @@ export const useEmployeeRowActions = () => {
 
   const handleDeleteEmployee = async () => {
     if (!employeeToDelete || isDeleting) return;
-
     setIsDeleting(true);
-
     await deleteEmployee(employeeToDelete.id);
-    // Manually invalidate the employees cache to ensure table refreshes
     await queryClient.invalidateQueries({ queryKey: ["employee", "list"] });
     toast.success(`Employee ${employeeToDelete.firstName} ${employeeToDelete.lastName} deleted successfully!`);
-
-    // Close modal after successful deletion
     resetModalState();
   };
 
-  const getRowActions = (employee: Employee) => {
-    const actions: IRowAction<Employee>[] = [];
-    actions.push(
-      {
-        label: "View employee",
-        onClick: async () => {
-          router.push(`/admin/employees/${employee.id}`);
-        },
-        // icon: <MinusCircle className={`text-high-warning`} />,
+  const getRowActions = (employee: Employee): IRowAction<Employee>[] => [
+    {
+      label: "View employee",
+      kbd: "Ctrl+V",
+      icon: <Eye className="h-4 w-4" aria-hidden="true" />,
+      onClick: () => {
+        setActiveEmployee(employee);
+        router.push(`/admin/employees/${employee.id}`);
       },
-      {
-        label: "Edit Employee",
-        onClick: () => {
-          router.push(`/admin/employees/edit-employee?employeeid=${employee.id}`);
-        },
-        // icon: <Edit className={`text-high-primary`} />,
+    },
+    {
+      label: "Edit employee",
+      kbd: "Ctrl+E",
+      icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
+      onClick: () => {
+        setActiveEmployee(employee);
+        router.push(`/admin/employees/edit-employee?employeeid=${employee.id}`);
       },
-      {
-        label: "Delete Employee",
-        onClick: () => {
-          setEmployeeToDelete(employee);
-          setIsDeleteModalOpen(true);
-        },
-        // icon: <Trash className={`text-high-error`} />,
+    },
+    { type: "separator" },
+    {
+      label: "Delete employee",
+      kbd: "Ctrl+Del",
+      variant: "destructive",
+      icon: <Trash className="text-destructive h-4 w-4" aria-hidden="true" />,
+      onClick: () => {
+        setActiveEmployee(employee);
+        setEmployeeToDelete(employee);
+        setIsDeleteModalOpen(true);
       },
-    );
-    return actions;
-  };
+    },
+  ];
+
+  useEffect(() => {
+    const onDeleteRequest = () => {
+      if (!activeEmployee) return;
+      setEmployeeToDelete(activeEmployee);
+      setIsDeleteModalOpen(true);
+    };
+    window.addEventListener("employee:request-delete", onDeleteRequest);
+    return () => window.removeEventListener("employee:request-delete", onDeleteRequest);
+  }, [activeEmployee]);
 
   const DeleteConfirmationModal = () => (
     <AlertModal
       isOpen={isDeleteModalOpen}
       onClose={() => {
-        // Only allow closing if not currently deleting
         if (!isDeleting && !isPending) {
           resetModalState();
         }
@@ -87,7 +101,7 @@ export const useEmployeeRowActions = () => {
     />
   );
 
-  return { getRowActions, DeleteConfirmationModal };
+  return { getRowActions, DeleteConfirmationModal, setActiveEmployee };
 };
 
 export const employeeColumn: IColumnDefinition<Employee>[] = [
@@ -95,7 +109,7 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
     header: "Name",
     accessorKey: "firstName",
     render: (_, employee: Employee) => (
-      <div className={`flex w-fit items-center gap-2`}>
+      <div className="group hover:bg-muted/60 flex w-fit cursor-pointer items-center gap-2 rounded-md px-1 py-0.5 transition-colors">
         <Image
           src={
             typeof employee.avatar === "string" && employee.avatar.length > 0
@@ -105,12 +119,13 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
           alt={employee.firstName}
           width={100}
           height={100}
-          className={`bg-low-grey-III h-8 w-8 rounded-full object-cover`}
+          className="bg-muted ring-border group-hover:ring-primary/40 h-8 w-8 rounded-full object-cover ring-1"
         />
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col space-y-1">
           <NameTooltip name={`${employee.firstName} ${employee.lastName}`}>
-            <span className="text-sm font-medium capitalize">{`${employee.firstName} ${employee.lastName}`}</span>
+            <span className="text-sm font-medium tracking-wide capitalize">{`${employee.firstName} ${employee.lastName}`}</span>
           </NameTooltip>
+          <span className="muted-foreground text-[10px] uppercase">ID: {employee.id.slice(0, 8)}</span>
         </div>
       </div>
     ),
@@ -128,7 +143,7 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
     header: "Role",
     accessorKey: "role",
     render: (_, employee: Employee) => (
-      <Badge className="capitalize" variant={`primary`}>
+      <Badge className="capitalize" variant="primary">
         {employee?.employmentDetails?.role?.name}
       </Badge>
     ),
@@ -137,7 +152,7 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
     header: "Department",
     accessorKey: "department",
     render: (_, employee: Employee) => (
-      <Badge className="capitalize" variant={`primary`}>
+      <Badge className="capitalize" variant="primary">
         {employee?.employmentDetails?.team?.name}
       </Badge>
     ),

@@ -1,12 +1,16 @@
 import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { Badge } from "@/components/ui/badge";
+import { useActiveTarget } from "@/context/active-target";
 import { formatDate } from "@/lib/i18n/utils";
-import { useTeamService } from "@/modules/@org/admin/teams/services/use-service";
-// import { Edit, Eye, MinusCircle, Trash } from "lucide-react";
+import { IColumnDefinition, IRowAction } from "@/modules/@org/admin/_components/table/table";
 import { useQueryClient } from "@tanstack/react-query";
+import { Eye, Pencil, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+
+import { useTeamShortcuts } from "../hooks/use-team-shortcuts";
+import { useTeamService } from "../services/use-service";
 
 export const teamColumn: IColumnDefinition<Team>[] = [
   {
@@ -55,6 +59,10 @@ export const useTeamRowActions = (onAddEmployees?: (team: Team) => void, onEditT
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [teamToDelete, setTeamToDelete] = useState<Team | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const { entity: activeTeam, set: setActiveTeam } = useActiveTarget<Team>();
+
+  // Bind global shortcuts for teams
+  useTeamShortcuts();
 
   const resetModalState = () => {
     setIsDeleteModalOpen(false);
@@ -77,50 +85,67 @@ export const useTeamRowActions = (onAddEmployees?: (team: Team) => void, onEditT
   };
 
   const getRowActions = (team: Team) => {
-    const actions: IRowAction<Team>[] = [];
-    actions.push(
+    const baseActions: IRowAction<Team>[] = [
       {
         label: "View team",
+        kbd: "Ctrl+V",
+        icon: <Eye className="h-4 w-4" aria-hidden="true" />,
         onClick: async () => {
+          setActiveTeam(team);
           router.push(`/admin/teams/${team.id}`);
         },
-        // icon: <MinusCircle className={`text-high-warning`} />,
       },
       {
         label: "Edit team",
+        kbd: "Ctrl+E",
+        icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
         onClick: () => {
+          setActiveTeam(team);
           if (onEditTeam) {
             onEditTeam(team);
           } else {
             router.push(`/admin/teams/${team.id}/edit`);
           }
         },
-        // icon: <Edit className={`text-high-primary`} />,
       },
-    );
-
-    // Add "Add Employees" action if callback is provided
-    if (onAddEmployees) {
-      actions.push({
-        label: "Add Employees",
+      ...(onAddEmployees
+        ? [
+            {
+              label: "Add Employees",
+              onClick: () => {
+                setActiveTeam(team);
+                onAddEmployees(team);
+              },
+            } as IRowAction<Team>,
+          ]
+        : []),
+      { type: "separator" },
+      {
+        label: "Delete team",
+        kbd: "Ctrl+Del",
+        variant: "destructive",
+        icon: <Trash className="text-destructive h-4 w-4" aria-hidden="true" />,
         onClick: () => {
-          onAddEmployees(team);
+          setActiveTeam(team);
+          setTeamToDelete(team);
+          setIsDeleteModalOpen(true);
         },
-        // icon: <UserPlus className={`text-high-primary`} />,
-      });
-    }
-
-    actions.push({
-      label: "Delete team",
-      onClick: () => {
-        setTeamToDelete(team);
-        setIsDeleteModalOpen(true);
       },
-      // icon: <Eye className={`text-high-primary`} />,
-    });
+    ];
 
-    return actions;
+    return baseActions;
   };
+
+  // Listen to global delete requests dispatched by useTeamShortcuts
+  useEffect(() => {
+    const onDeleteRequest = () => {
+      if (!activeTeam) return;
+      setTeamToDelete(activeTeam);
+      setIsDeleteModalOpen(true);
+    };
+    window.addEventListener("team:request-delete", onDeleteRequest);
+    return () => window.removeEventListener("team:request-delete", onDeleteRequest);
+  }, [activeTeam]);
 
   const DeleteConfirmationModal = () => (
     <AlertModal
@@ -141,7 +166,7 @@ export const useTeamRowActions = (onAddEmployees?: (team: Team) => void, onEditT
     />
   );
 
-  return { getRowActions, DeleteConfirmationModal };
+  return { getRowActions, DeleteConfirmationModal, setActiveTeam };
 };
 
 export const subTeamColumn: IColumnDefinition<Team>[] = [
@@ -157,43 +182,108 @@ export const subTeamColumn: IColumnDefinition<Team>[] = [
   {
     header: "Team Members",
     accessorKey: "members",
-    render: (_, team: Team) => <span>{team.members}</span>,
+    render: (_, team: Team) => <Badge variant={`primary`}>{team.members}</Badge>,
   },
   {
     header: "Created on",
     accessorKey: "createdAt",
+    render: (_, team: Team) => <span>{formatDate(team.createdAt as string)}</span>,
   },
 ];
 
 export const useSubTeamRowActions = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const { useDeleteTeam } = useTeamService();
+  const { mutateAsync: deleteTeam, isPending } = useDeleteTeam();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [teamToDelete, setTeamToDelete] = useState<Team | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { entity: activeTeam, set: setActiveTeam } = useActiveTarget<Team>();
+
+  // Global shortcuts apply here as well
+  useTeamShortcuts();
+
+  const resetModalState = () => {
+    setIsDeleteModalOpen(false);
+    setTeamToDelete(null);
+    setIsDeleting(false);
+  };
+
+  const handleDeleteTeam = async () => {
+    if (!teamToDelete || isDeleting) return;
+    setIsDeleting(true);
+    await deleteTeam(teamToDelete.id);
+    await queryClient.invalidateQueries({ queryKey: ["teams", "list"] });
+    toast.success(`Team ${teamToDelete.name} deleted successfully!`);
+    resetModalState();
+  };
 
   const getRowActions = (team: Team) => {
-    const actions: IRowAction<Team>[] = [];
-    actions.push(
+    const actions: IRowAction<Team>[] = [
       {
         label: "View team",
+        kbd: "Ctrl+V",
+        icon: <Eye className="h-4 w-4" aria-hidden="true" />,
         onClick: async () => {
+          setActiveTeam(team);
           router.push(`/admin/teams/sub-team/${team.id}`);
         },
-        // icon: <MinusCircle className={`text-high-warning`} />,
       },
       {
         label: "Edit team",
+        kbd: "Ctrl+E",
+        icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
         onClick: () => {
+          setActiveTeam(team);
+          // TODO: Update to actual edit route for sub-teams when available
           router.push(`/`);
         },
-        // icon: <Eye className={`text-high-primary`} />,
       },
+      { type: "separator" },
       {
         label: "Delete team",
+        kbd: "Ctrl+Del",
+        variant: "destructive",
+        icon: <Trash className="text-destructive h-4 w-4" aria-hidden="true" />,
         onClick: () => {
-          router.push(`/`);
+          setActiveTeam(team);
+          setTeamToDelete(team);
+          setIsDeleteModalOpen(true);
         },
-        // icon: <Eye className={`text-high-primary`} />,
       },
-    );
+    ];
     return actions;
   };
-  return { getRowActions };
+
+  // Listen to global delete requests dispatched by team shortcuts
+  useEffect(() => {
+    const onDeleteRequest = () => {
+      if (!activeTeam) return;
+      setTeamToDelete(activeTeam);
+      setIsDeleteModalOpen(true);
+    };
+    window.addEventListener("team:request-delete", onDeleteRequest);
+    return () => window.removeEventListener("team:request-delete", onDeleteRequest);
+  }, [activeTeam]);
+
+  const DeleteConfirmationModal = () => (
+    <AlertModal
+      isOpen={isDeleteModalOpen}
+      onClose={() => {
+        if (!isDeleting && !isPending) {
+          resetModalState();
+        }
+      }}
+      onConfirm={handleDeleteTeam}
+      loading={isDeleting || isPending}
+      type="warning"
+      title="Delete Sub-team"
+      description={`Are you sure you want to delete "${teamToDelete?.name}"? This action cannot be undone.`}
+      confirmText="Delete Sub-team"
+      cancelText="Cancel"
+    />
+  );
+
+  return { getRowActions, DeleteConfirmationModal };
 };

@@ -269,8 +269,8 @@ export const AllTeams = () => {
                   contentClassName="bg-background"
                   trigger={
                     <Button
-                      variant={"ghost"}
-                      className="bg-background text-foreground h-10 rounded-md border px-3 shadow"
+                      variant={"primaryOutline"}
+                      className="data-[state=open]:border-border data-[state=open]:text-gray h-10 rounded-md border px-3 shadow-none"
                     >
                       <Filter className="size-4" />
                       Filter
@@ -300,7 +300,7 @@ export const AllTeams = () => {
                   status={undefined}
                   buttonText="Export Teams"
                   fileName="Teams"
-                  className="border-border bg-background text-foreground h-10 rounded-md border px-3"
+                  className="h-10 rounded-md border px-3"
                 />
                 <MainButton variant="primary" isLeftIconVisible icon={<Add />} onClick={() => handleOpenTeamDialog()}>
                   Add Team
@@ -313,19 +313,18 @@ export const AllTeams = () => {
             <Loading text={`Loading teams table...`} className={`w-fill h-fit p-20`} />
           ) : (
             <section>
-              {teamData?.data?.items.length ? (
+              {Array.isArray(teamData?.data?.items) && teamData?.data?.items.length ? (
                 <AdvancedDataTable
                   data={teamData.data.items}
                   columns={teamColumn}
-                  currentPage={teamData.data.metadata.page}
-                  totalPages={teamData.data.metadata.totalPages}
-                  itemsPerPage={teamData.data.metadata.limit}
-                  hasPreviousPage={teamData.data.metadata.hasPreviousPage}
-                  hasNextPage={teamData.data.metadata.hasNextPage}
+                  currentPage={(teamData.data as any).metadata.page}
+                  totalPages={(teamData.data as any).metadata.totalPages}
+                  itemsPerPage={(teamData.data as any).metadata.limit}
+                  hasPreviousPage={(teamData.data as any).metadata.hasPreviousPage}
+                  hasNextPage={(teamData.data as any).metadata.hasNextPage}
                   onPageChange={handlePageChange}
                   rowActions={getRowActions}
                   showPagination={true}
-                  enableDragAndDrop={true}
                   enableRowSelection={true}
                   enableColumnVisibility={true}
                   enableSorting={true}
@@ -412,7 +411,7 @@ export const AllTeams = () => {
             }}
             isSubmitting={isSubmitting}
             availableRoles={
-              rolesData?.map((role) => ({
+              rolesData?.map((role: { id: any; name: any; permissions: string | any[] }) => ({
                 id: role.id,
                 name: role.name,
                 description: `Role with ${role.permissions.length} permissions`,

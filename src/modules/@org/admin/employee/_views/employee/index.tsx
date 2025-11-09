@@ -128,7 +128,10 @@ export const AllEmployees = () => {
                 <GenericDropdown
                   contentClassName="bg-background"
                   trigger={
-                    <Button className="h-10 rounded-md border px-3" variant="primaryOutline">
+                    <Button
+                      className="data-[state=open]:border-border data-[state=open]:text-gray h-10 rounded-md border px-3"
+                      variant="primaryOutline"
+                    >
                       <Filter className="size-4" />
                       Filter
                     </Button>

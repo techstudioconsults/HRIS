@@ -4,25 +4,19 @@ import Loading from "@/app/Loading";
 import MainButton from "@/components/shared/button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { formatDate } from "@/lib/tools/format";
 import { cn } from "@/lib/utils";
-import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
-import { More } from "iconsax-reactjs";
+import { AdvancedDataTable, type IColumnDefinition } from "@/modules/@org/admin/_components/table/table";
+// Removed inline dropdown; using table rowActions instead
 import { Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 import empty1 from "~/images/empty-state.svg";
 import { CardGroup } from "../../../dashboard/_components/card-group";
 import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
+import { useEmployeeRowActions } from "../../../employee/_views/table-data";
 import { useEmployeeService } from "../../../employee/services/use-service";
 import { useTeamService } from "../../services/use-service";
 
@@ -42,7 +36,7 @@ function hasDataItems(value: unknown): value is { data: { items: unknown[] } } {
 
 const SubTeamDetails = ({ params }: { params: { id: string } }) => {
   const { id } = params;
-  const router = useRouter();
+  // Employee row actions manage routing internally; no local router required
 
   const { useGetTeamsById } = useTeamService();
   const { data: teamData, isLoading: isTeamLoading } = useGetTeamsById(id, { enabled: !!id });
@@ -71,13 +65,19 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
 
   const isLoading = isTeamLoading || isEmployeesLoading;
 
+  const { getRowActions, DeleteConfirmationModal, setActiveEmployee } = useEmployeeRowActions();
   const columns = useMemo<IColumnDefinition<Employee>[]>(
     () => [
       {
         header: "Team Member",
         accessorKey: "firstName",
         render: (_, employee: Employee) => (
-          <div className={`flex w-fit items-center gap-2`}>
+          <div
+            className={"flex w-fit items-center gap-2"}
+            onMouseEnter={() => setActiveEmployee(employee)}
+            onFocus={() => setActiveEmployee(employee)}
+            tabIndex={0}
+          >
             <Image
               src={
                 typeof employee.avatar === "string" && employee.avatar.length > 0
@@ -122,48 +122,8 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
           </Badge>
         ),
       },
-      {
-        header: "Action",
-        accessorKey: "id",
-        render: (_, employee: Employee) => (
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              className={`p-2`}
-              onClick={(event) => {
-                event.stopPropagation();
-              }}
-            >
-              <More className="h-4 w-4" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              className={`bg-white`}
-              align="end"
-              onClick={(event) => {
-                event.stopPropagation();
-              }}
-            >
-              <DropdownMenuItem
-                onClick={(event) => {
-                  event.stopPropagation();
-                  router.push(`/admin/employees/${employee.id}`);
-                }}
-              >
-                View employee
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={(event) => {
-                  event.stopPropagation();
-                  router.push(`/admin/employees/edit-employee?employeeid=${employee.id}`);
-                }}
-              >
-                Edit Employee
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ),
-      },
     ],
-    [router],
+    [setActiveEmployee],
   );
 
   return (
@@ -211,18 +171,22 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
         {isLoading ? (
           <Loading text={`Loading team members...`} className={`w-fill h-fit p-20`} />
         ) : members.length > 0 ? (
-          <AdvancedDataTable
-            data={members}
-            columns={columns}
-            showPagination={false}
-            enableDragAndDrop={true}
-            enableRowSelection={true}
-            enableColumnVisibility={true}
-            enableSorting={true}
-            enableFiltering={true}
-            mobileCardView={true}
-            showColumnCustomization={false}
-          />
+          <>
+            <AdvancedDataTable
+              data={members}
+              columns={columns}
+              rowActions={getRowActions}
+              showPagination={false}
+              enableDragAndDrop={true}
+              enableRowSelection={true}
+              enableColumnVisibility={true}
+              enableSorting={true}
+              enableFiltering={true}
+              mobileCardView={true}
+              showColumnCustomization={false}
+            />
+            <DeleteConfirmationModal />
+          </>
         ) : (
           <EmptyState
             className="bg-background"

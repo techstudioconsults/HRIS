@@ -4,6 +4,7 @@ import { AppSidebar } from "@/components/shared/dashboard/sidebar/app-sidebar";
 import { Logo } from "@/components/shared/logo";
 import TopBar from "@/components/shared/top-bar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { ActiveTargetProvider } from "@/context/active-target";
 import { adminNavItems } from "@/lib/tools/constants";
 import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
@@ -26,14 +27,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         ]}
       />
       <SidebarInset className="dark:bg-background bg-[#F7F9FC]">
-        <main className="flex flex-1 flex-col gap-10 p-4">
-          <TopBar
-            adminName={session?.user.employee.fullName || ""}
-            notificationsCount={12}
-            className="rounded-lg px-6 shadow"
-          />
-          {children}
-        </main>
+        <ActiveTargetProvider>
+          <main className="flex flex-1 flex-col gap-10 p-4">
+            <TopBar
+              adminName={session?.user.employee.fullName || ""}
+              notificationsCount={12}
+              className="rounded-lg px-6 shadow"
+            />
+            {children}
+          </main>
+        </ActiveTargetProvider>
       </SidebarInset>
     </SidebarProvider>
   );

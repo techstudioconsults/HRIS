@@ -103,8 +103,13 @@ export const employeeSchema = z.object({
   phoneNumber: z
     .string()
     .min(1, "Phone number is required")
-    .max(11, "Phone number must be at most 11 digits")
-    .regex(/^\d{1,11}$/, "Phone number must be a number with up to 11 digits"),
+    .refine(
+      (value) => {
+        // Accept E.164 format (starts with +) or plain numbers
+        return /^\+?[1-9]\d{1,14}$/.test(value);
+      },
+      { message: "Please enter a valid phone number" },
+    ),
   teamId: z.string().min(1, "Teams selection is required"),
   roleId: z.string().min(1, "Role is required"),
   // documents: z.array(z.any()),
@@ -143,7 +148,16 @@ export const payrollPolicyFormSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
-  phoneNumber: z.string().min(1, "Phone number is required"),
+  phoneNumber: z
+    .string()
+    .min(1, "Phone number is required")
+    .refine(
+      (value) => {
+        // Accept E.164 format (starts with +) or plain numbers
+        return /^\+?[1-9]\d{1,14}$/.test(value);
+      },
+      { message: "Please enter a valid phone number" },
+    ),
   approvers: z.array(z.string()).min(1, "Select at least one approver"),
 });
 

@@ -1,17 +1,18 @@
-/* eslint-disable no-console */
 "use client";
 
 import { BreadCrumb } from "@/components/shared/breadcrumb";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { FormField } from "@/components/shared/inputs/FormFields";
+import { PhoneInput } from "@/components/shared/inputs/phone-input";
+import { Label } from "@/components/ui/label";
 // import { AlertDialog } from "@/components/ui/alert-dialog";
 import { employmentTypeOptions, genderOptions, workModeOptions } from "@/lib/tools/constants";
 import { EmployeeFormData, employeeSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import FileUpload from "../../../_components/file-upload/file-upload";
@@ -48,18 +49,22 @@ export const AddEmployeeForm = () => {
   const selectedTeamId = watch("teamId");
 
   // Memoize derived team and roles to prevent re-renders triggering an effect loop
-  const selectedTeam = useMemo(() => teams.find((team) => team.id === selectedTeamId), [teams, selectedTeamId]);
-  const derivedRoles = useMemo(() => selectedTeam?.roles ?? [], [selectedTeam]);
+  const selectedTeam = useMemo(() => teams.find((team) => String(team.id) === selectedTeamId), [teams, selectedTeamId]);
+  type RoleLite = { id: string | number; name: string };
+  const normalizedDerivedRoles = useMemo(
+    () => (selectedTeam?.roles ?? []).map((r: RoleLite) => ({ id: String(r.id), name: r.name })),
+    [selectedTeam],
+  );
 
   // Keep local roles state in sync only when it actually changes (prevents infinite loops)
   useEffect(() => {
     // Shallow compare by length and ids to avoid unnecessary setState
-    const sameLength = roles.length === derivedRoles.length;
-    const rolesChanged = !sameLength || !roles.every((role, index) => role.id === derivedRoles[index]?.id);
+    const sameLength = roles.length === normalizedDerivedRoles.length;
+    const rolesChanged = !sameLength || !roles.every((role, index) => role.id === normalizedDerivedRoles[index]?.id);
     if (rolesChanged) {
-      _setRoles(derivedRoles);
+      _setRoles(normalizedDerivedRoles);
     }
-  }, [derivedRoles, roles]);
+  }, [normalizedDerivedRoles, roles]);
 
   // Reset roleId when team changes and current role is invalid
   const selectedRoleId = watch("roleId");
@@ -71,10 +76,10 @@ export const AddEmployeeForm = () => {
     }
 
     // If team is selected but current role does not exist in that team, clear it
-    if (selectedTeamId && selectedRoleId && !derivedRoles.some((r) => r.id === selectedRoleId)) {
+    if (selectedTeamId && selectedRoleId && !normalizedDerivedRoles.some((r) => r.id === selectedRoleId)) {
       setValue("roleId", "");
     }
-  }, [selectedTeamId, selectedRoleId, derivedRoles, setValue]);
+  }, [selectedTeamId, selectedRoleId, normalizedDerivedRoles, setValue]);
 
   const handleFilesSelected = (files: File[]) => {
     setFiles(files);
@@ -120,8 +125,8 @@ export const AddEmployeeForm = () => {
       }
 
       // setShowAlert(true);
-    } catch (error) {
-      console.error("Error saving employee:", error);
+    } catch {
+      toast.error("An unexpected error occurred while saving. Please try again.");
       // You could also set error state here and show an error alert
     }
   };
@@ -199,14 +204,32 @@ export const AddEmployeeForm = () => {
                   className="border-border !h-14 w-full"
                   required
                 />
-                <FormField
-                  name="phoneNumber"
-                  label="Phone Number"
-                  className="border-border !h-14 w-full"
-                  type="text"
-                  placeholder={loadingTeams ? `Loading phone number...` : `080123456789`}
-                  required
-                />
+                <div className="space-y-2">
+                  <Label className="text-[16px] font-medium">
+                    Phone Number<span className="text-destructive -ml-1">*</span>
+                  </Label>
+                  <Controller
+                    name="phoneNumber"
+                    control={methods.control}
+                    render={({ field: { value, onChange }, fieldState }) => (
+                      <>
+                        <PhoneInput
+                          value={value || undefined}
+                          onChange={(value_) => {
+                            onChange(value_ || "");
+                          }}
+                          defaultCountry="US"
+                          placeholder={loadingTeams ? "Loading phone number..." : "Enter phone number"}
+                          inputClassName="border-border !h-14"
+                          buttonClassName="border-border !h-14"
+                          aria-invalid={!!fieldState.error}
+                          disabled={loadingTeams || isSubmitting}
+                        />
+                        {fieldState.error && <p className="text-destructive text-sm">{fieldState.error.message}</p>}
+                      </>
+                    )}
+                  />
+                </div>
               </div>
             </section>
 
@@ -246,7 +269,7 @@ export const AddEmployeeForm = () => {
                   placeholder={loadingTeams ? `Loading department...` : `Select a department`}
                   className="bg-background border-border !h-14 w-full"
                   options={teams.map((team) => ({
-                    value: team.id,
+                    value: String(team.id),
                     label: team.name,
                   }))}
                   required

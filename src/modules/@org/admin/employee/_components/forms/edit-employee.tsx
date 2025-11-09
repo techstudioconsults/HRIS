@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 "use client";
 
 import { BreadCrumb } from "@/components/shared/breadcrumb";
@@ -11,7 +10,7 @@ import { employmentTypeOptions, genderOptions, workModeOptions } from "@/lib/too
 import { EmployeeFormData, employeeSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -24,12 +23,13 @@ export const EditEmployeeForm = () => {
   const employeeId = searchParameters.get("employeeid");
 
   const [files, setFiles] = useState<File[]>([]);
+  const hasReset = useRef(false);
 
   // Query hooks
   const { useGetAllTeams, useGetEmployeeById, useUpdateEmployee } = useEmployeeService();
 
   const { data: teams = [], isLoading: loadingTeams } = useGetAllTeams();
-  const { data: employee } = useGetEmployeeById(employeeId || "", {
+  const { data: employee, isLoading: loadingEmployee } = useGetEmployeeById(employeeId || "", {
     enabled: !!employeeId,
   });
 
@@ -68,18 +68,23 @@ export const EditEmployeeForm = () => {
         ? String(employee.employmentDetails.role.id)
         : "";
 
-    console.log("Setting form values:", {
-      teamId,
-      roleId,
-      teamObject: employee.employmentDetails?.team,
-      roleObject: employee.employmentDetails?.role,
-    });
+    // Normalize phone number - remove non-digit characters and format for E.164
+    const normalizePhoneNumber = (phone: string | undefined | null): string => {
+      if (!phone) return "";
+      // Remove all non-digit characters except +
+      const cleaned = phone.replaceAll(/[^\d+]/g, "");
+      // If it doesn't start with +, assume US number and add +1
+      if (cleaned && !cleaned.startsWith("+")) {
+        return `+1${cleaned}`;
+      }
+      return cleaned || "";
+    };
 
     return {
       firstName: employee.firstName ?? "",
       lastName: employee.lastName ?? "",
       email: employee.email ?? "",
-      phoneNumber: employee.phoneNumber ?? "",
+      phoneNumber: normalizePhoneNumber(employee.phoneNumber),
       dateOfBirth: employee.dateOfBirth?.split("T")[0] || "",
       gender: gender,
       startDate: employee.employmentDetails?.startDate?.split("T")[0] || "",
@@ -93,87 +98,61 @@ export const EditEmployeeForm = () => {
   const methods = useForm<EmployeeFormData>({
     resolver: zodResolver(employeeSchema),
     defaultValues,
-    values: formValues,
   });
 
   const {
     handleSubmit,
     formState: { isSubmitting },
     watch,
+    reset,
   } = methods;
+
+  // Combined hydration state for UX control
+  const isHydrating = loadingEmployee || loadingTeams || !employeeId;
+
+  // Reset form when employee data is loaded - ONLY ONCE
+  useEffect(() => {
+    // Defer reset until both employee and teams are loaded to preserve select labels
+    if (formValues && !hasReset.current && !loadingEmployee && !loadingTeams) {
+      reset(formValues);
+      hasReset.current = true;
+    }
+  }, [formValues, reset, loadingEmployee, loadingTeams]);
+
+  // Reset the hasReset flag when employeeId changes (navigating to different employee)
+  useEffect(() => {
+    hasReset.current = false;
+  }, [employeeId]);
 
   const selectedTeamId = watch("teamId");
   const selectedRoleId = watch("roleId");
 
-  // Log form state for debugging
-  useEffect(() => {
-    console.log("Form state:", {
-      teamId: selectedTeamId,
-      roleId: selectedRoleId,
-      allFormValues: methods.getValues(),
-    });
-  }, [selectedTeamId, selectedRoleId, methods]);
+  // Removed excessive logging that causes re-renders
 
   // Memoize derived team and roles from teams and selectedTeamId
   const selectedTeam = useMemo(() => teams.find((team) => String(team.id) === selectedTeamId), [teams, selectedTeamId]);
   const derivedRoles = useMemo(() => selectedTeam?.roles ?? [], [selectedTeam]);
 
-  // Debug logging
-  useEffect(() => {
-    if (teams.length > 0) {
-      console.log("=== DEBUG INFO ===");
-      console.log(
-        "Available teams:",
-        teams.map((t) => ({ id: String(t.id), name: t.name })),
-      );
-      console.log("Selected teamId:", selectedTeamId);
-      console.log("Selected roleId:", selectedRoleId);
-      console.log("Selected team object:", selectedTeam);
-      console.log(
-        "Derived roles:",
-        derivedRoles.map((r) => ({ id: String(r.id), name: r.name })),
-      );
+  // Removed debug logging effects
 
-      // Check if roleId exists in derivedRoles
-      const roleExists = derivedRoles.some((r) => String(r.id) === selectedRoleId);
-      console.log("Role exists in derived roles?", roleExists);
-      console.log("=================");
+  // Stable, memoized options for selects with fallbacks to preserve current values
+  const teamOptions = useMemo(() => {
+    const base = teams.map((team) => ({ value: String(team.id), label: team.name }));
+    const currentTeamId = formValues?.teamId || selectedTeamId;
+    if (currentTeamId && !base.some((opt) => opt.value === currentTeamId)) {
+      base.push({ value: currentTeamId, label: employee?.employmentDetails?.team?.name || "Current team" });
     }
-  }, [teams, selectedTeamId, selectedRoleId, derivedRoles, selectedTeam]);
+    return base;
+  }, [teams, formValues?.teamId, selectedTeamId, employee?.employmentDetails?.team?.name]);
 
-  // Removed imperatively setting values via effects; form is driven by `values` above
-
-  // Reset roleId when invalid for the selected team - TEMPORARILY DISABLED FOR DEBUGGING
-  // useEffect(() => {
-  //   // Skip this logic if we're still loading initial data or teams
-  //   if (!formValues || loadingTeams || teams.length === 0) {
-  //     console.log("Skipping role validation - not ready yet", {
-  //       hasFormValues: !!formValues,
-  //       loadingTeams,
-  //       teamsCount: teams.length,
-  //     });
-  //     return;
-  //   }
-
-  //   // If no team selected but a role is set, clear it
-  //   if (!selectedTeamId && selectedRoleId) {
-  //     console.log("Clearing role because no team is selected");
-  //     setValue("roleId", "");
-  //     return;
-  //   }
-
-  //   // Only validate role against derived roles if we have a selected team and derived roles
-  //   if (selectedTeamId && selectedRoleId && derivedRoles.length > 0) {
-  //     const roleExists = derivedRoles.some((r) => String(r.id) === selectedRoleId);
-  //     if (!roleExists) {
-  //       console.log("Clearing role because it's not in the derived roles", {
-  //         selectedRoleId,
-  //         derivedRoles: derivedRoles.map((r) => String(r.id)),
-  //       });
-  //       setValue("roleId", "");
-  //     }
-  //   }
-  // }, [selectedTeamId, selectedRoleId, derivedRoles, setValue, formValues, loadingTeams, teams.length]);
+  const roleOptions = useMemo(() => {
+    const base = (derivedRoles ?? []).map((role) => ({ value: String(role.id), label: role.name }));
+    const currentRoleId = formValues?.roleId || selectedRoleId;
+    if (currentRoleId && !base.some((opt) => opt.value === currentRoleId)) {
+      base.push({ value: currentRoleId, label: employee?.employmentDetails?.role?.name || "Current role" });
+    }
+    return base;
+  }, [derivedRoles, formValues?.roleId, selectedRoleId, employee?.employmentDetails?.role?.name]);
 
   const handleFilesSelected = (files: File[]) => {
     setFiles(files);
@@ -219,8 +198,8 @@ export const EditEmployeeForm = () => {
       } else {
         toast.error("Failed to update employee profile");
       }
-    } catch (error) {
-      console.error("Error saving employee:", error);
+    } catch {
+      toast.error("An unexpected error occurred while saving. Please try again.");
     }
   };
 
@@ -251,8 +230,9 @@ export const EditEmployeeForm = () => {
                   name="firstName"
                   label="First Name"
                   type="text"
-                  placeholder={loadingTeams ? `Loading first name...` : `John`}
+                  placeholder={loadingEmployee ? `Loading first name...` : `John`}
                   className="border-border !h-14 w-full"
+                  disabled={isHydrating || isSubmitting}
                   required
                 />
                 <FormField
@@ -260,32 +240,36 @@ export const EditEmployeeForm = () => {
                   label="Last Name"
                   type="text"
                   className="border-border !h-14 w-full"
-                  placeholder={loadingTeams ? `Loading last name...` : `Doe`}
+                  placeholder={loadingEmployee ? `Loading last name...` : `Doe`}
+                  disabled={isHydrating || isSubmitting}
                   required
                 />
                 <FormField
                   name="dateOfBirth"
-                  placeholder={loadingTeams ? `Loading date of birth...` : ``}
+                  placeholder={loadingEmployee ? `Loading date of birth...` : ``}
                   label="Date of Birth"
                   className="border-border !h-14 w-full"
                   type="date"
+                  disabled={isHydrating || isSubmitting}
                   required
                 />
                 <FormField
                   name="gender"
                   label="Gender"
                   type="select"
-                  placeholder={loadingTeams ? `Loading employee gender...` : `Select employee gender`}
+                  placeholder={isHydrating ? `Loading employee gender...` : `Select employee gender`}
                   className="bg-background border-border !h-14 w-full"
                   options={genderOptions}
+                  disabled={isHydrating || isSubmitting}
                   required
                 />
                 <FormField
                   name="email"
                   label="Work Email"
                   type="email"
-                  placeholder={loadingTeams ? `Loading email...` : `Johndoe@gmail.com`}
+                  placeholder={loadingEmployee ? `Loading email...` : `Johndoe@gmail.com`}
                   className="border-border !h-14 w-full"
+                  disabled={isHydrating || isSubmitting}
                   required
                 />
                 <div className="space-y-2">
@@ -295,14 +279,19 @@ export const EditEmployeeForm = () => {
                   <Controller
                     name="phoneNumber"
                     control={methods.control}
-                    render={({ field, fieldState }) => (
+                    render={({ field: { value, onChange }, fieldState }) => (
                       <>
                         <PhoneInput
-                          {...field}
+                          value={value || undefined}
+                          onChange={(value_) => {
+                            onChange(value_ || "");
+                          }}
                           defaultCountry="US"
-                          placeholder={loadingTeams ? `Loading phone number...` : `Enter phone number`}
+                          placeholder="Enter phone number"
                           inputClassName="border-border !h-14"
                           buttonClassName="border-border !h-14"
+                          aria-invalid={!!fieldState.error}
+                          disabled={isHydrating || isSubmitting}
                         />
                         {fieldState.error && <p className="text-destructive text-sm">{fieldState.error.message}</p>}
                       </>
@@ -321,6 +310,7 @@ export const EditEmployeeForm = () => {
                   className="border-border !h-14 w-full"
                   label="Start Date"
                   type="date"
+                  disabled={isHydrating || isSubmitting}
                   required
                 />
                 <FormField
@@ -328,40 +318,39 @@ export const EditEmployeeForm = () => {
                   className="bg-background border-border !h-14 w-full"
                   label="Employment Type"
                   type="select"
-                  placeholder={loadingTeams ? `Loading employee type...` : `Select employment type`}
+                  placeholder={isHydrating ? `Loading employee type...` : `Select employment type`}
                   options={employmentTypeOptions}
+                  disabled={isHydrating || isSubmitting}
                   required
                 />
                 <FormField
                   name="workMode"
                   label="Work Mode"
                   type="select"
-                  placeholder={loadingTeams ? `Loading employee work mode...` : `Select employee work mode`}
+                  placeholder={isHydrating ? `Loading employee work mode...` : `Select employee work mode`}
                   className="bg-background border-border !h-14 w-full"
                   options={workModeOptions}
+                  disabled={isHydrating || isSubmitting}
                   required
                 />
                 <FormField
                   name="teamId"
                   label="Department"
                   type="select"
-                  placeholder={loadingTeams ? `Loading department...` : `Select a department`}
+                  placeholder={isHydrating ? `Loading department...` : `Select a department`}
                   className="bg-background border-border !h-14 w-full"
-                  options={teams.map((team) => ({
-                    value: String(team.id),
-                    label: team.name,
-                  }))}
-                  disabled={loadingTeams}
+                  options={teamOptions}
+                  disabled={isHydrating || isSubmitting}
                   required
                 />
                 <FormField
                   name="roleId"
                   label="Role"
                   type="select"
-                  placeholder={loadingTeams || !selectedTeamId ? `Select a role` : `Select a role`}
+                  placeholder={isHydrating || !selectedTeamId ? `Select a role` : `Select a role`}
                   className="bg-background border-border !h-14 w-full"
-                  options={derivedRoles.map((role) => ({ value: String(role.id), label: role.name }))}
-                  disabled={!selectedTeamId || loadingTeams}
+                  options={roleOptions}
+                  disabled={!selectedTeamId || isHydrating || isSubmitting}
                   required
                 />
               </div>

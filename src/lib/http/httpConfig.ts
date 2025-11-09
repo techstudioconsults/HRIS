@@ -1,5 +1,6 @@
 import axios from "axios";
-import { getSession } from "next-auth/react";
+
+import { tokenManager } from "./token-manager";
 
 // import Cookies from "js-cookie";
 
@@ -35,25 +36,32 @@ const http = axios.create(config);
 //   }
 // };
 
-// Add request interceptor to add auth token and ensure CSRF is initialized
+// Add request interceptor to add auth token
 http.interceptors.request.use(
   async (config) => {
-    // await initializeCsrf();
-    // const xsrfToken = getCsrfToken();
-    const session = await getSession();
+    // Get cached or fresh access token
+    const accessToken = await tokenManager.getAccessToken();
 
-    if (session?.tokens.accessToken) {
-      config.headers.Authorization = `Bearer ${session.tokens.accessToken}`;
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
-
-    // if (xsrfToken) {
-    //   config.headers["X-XSRF-TOKEN"] = decodeURIComponent(xsrfToken);
-    // }
 
     return config;
   },
   (error) => {
     return Promise.reject(error);
+  },
+);
+
+// Add response interceptor to handle 401 errors
+http.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    // If we get a 401, invalidate the token cache
+    if (error.response?.status === 401) {
+      tokenManager.invalidate();
+    }
+    throw error;
   },
 );
 

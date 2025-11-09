@@ -12,6 +12,7 @@ import ExportAction from "@/components/shared/export-action";
 import { Button } from "@/components/ui/button";
 import { useTeamsSearchParameters } from "@/lib/nuqs/use-teams-search-parameters";
 import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
+import { useTeamWorkflowStore } from "@/modules/@org/admin/teams/store/team-store";
 import type { Role as FormRole, Team as TeamFormType } from "@/modules/@org/onboarding/_components/forms/schema";
 import { TeamForm } from "@/modules/@org/onboarding/_components/forms/team/team-form";
 import type { Team as ServiceTeam } from "@/modules/@org/onboarding/services/service";
@@ -59,8 +60,7 @@ export const AllTeams = () => {
     };
     setCurrentTeam(formTeam);
     setCurrentRole(null);
-    setDialogType("employee");
-    setDialogOpen(true);
+    openEmployeeDialog(formTeam);
 
     // Force refetch roles for this team
     queryClient.invalidateQueries({ queryKey: ["roles", team.id] });
@@ -86,23 +86,28 @@ export const AllTeams = () => {
   } = useTeamEditing();
 
   const { getRowActions, DeleteConfirmationModal } = useTeamRowActions(handleOpenEmployeeDialog, handleOpenEditDialog);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [currentTeam, setCurrentTeam] = useState<TeamFormType | null>(null);
-  const [currentRole, setCurrentRole] = useState<FormRole | null>(null);
-  const [dialogType, setDialogType] = useState<"team" | "role" | "employee">("team");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    dialog,
+    currentTeam,
+    currentRole,
+    isSubmitting,
+    openTeamDialog,
+    openRoleDialog,
+    openEmployeeDialog,
+    closeDialog,
+    setCurrentTeam,
+    setCurrentRole,
+    setSubmitting,
+  } = useTeamWorkflowStore();
 
   const handleOpenTeamDialog = (team?: TeamFormType) => {
-    setCurrentTeam(team || null);
-    setCurrentRole(null);
-    setDialogType("team");
-    setDialogOpen(true);
+    openTeamDialog(team || null);
   };
 
   const { useGetAllTeams, useGetRoles, useCreateRole, useUpdateRole, useAssignEmployeeToTeam, useDownloadTeams } =
     useTeamService();
   const { useGetAllEmployees } = useEmployeeService();
-  const { refetch: downloadTeams } = useDownloadTeams();
+  const { refetch: downloadTeams } = useDownloadTeams({}, { enabled: false });
 
   // Apply debounced search to URL (nuqs) and reset page to 1
   useEffect(() => {
@@ -113,11 +118,7 @@ export const AllTeams = () => {
   // Build API filters from URL state (nuqs)
   const apiFilters = useMemo(() => getApiFilters(), [getApiFilters]);
 
-  const {
-    data: teamData,
-    isLoading,
-    refetch,
-  } = useGetAllTeams(apiFilters, {
+  const { data: teamData, isLoading } = useGetAllTeams(apiFilters, {
     keepPreviousData: false, // Don't keep previous data to ensure fresh results
     staleTime: 0, // Always consider data stale to ensure fresh API calls
     cacheTime: 0, // Don't cache data to prevent stale data issues
@@ -138,10 +139,6 @@ export const AllTeams = () => {
     },
     [setStatus, setSortBy, setLimit, resetToFirstPage],
   );
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
 
   const handlePageChange = useCallback(
     (newPage: number) => {
@@ -164,7 +161,7 @@ export const AllTeams = () => {
 
   // Fetch roles for current team - only when employee dialog is open
   const { data: rolesData } = useGetRoles(currentTeam?.id || "", {
-    enabled: !!currentTeam?.id && dialogType === "employee",
+    enabled: !!currentTeam?.id && dialog === "employee",
   });
 
   const queryClient = useQueryClient();
@@ -177,10 +174,10 @@ export const AllTeams = () => {
 
   const handleAddTeam = async (name: string) => {
     try {
-      setIsSubmitting(true);
+      setSubmitting(true);
       const newTeam = await createTeamMutation.mutateAsync(name);
       // Close team dialog and guide user to create a role for the new team
-      setDialogOpen(false);
+      closeDialog();
       const formTeam: TeamFormType = {
         id: (newTeam as ServiceTeam)?.id,
         name: (newTeam as ServiceTeam)?.name,
@@ -189,11 +186,10 @@ export const AllTeams = () => {
       setCurrentTeam(formTeam);
       await queryClient.invalidateQueries({ queryKey: ["teams"] });
       // Continue workflow to Role creation
-      setDialogType("role");
       setCurrentRole(null);
-      setDialogOpen(true);
+      openRoleDialog(formTeam, null);
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
 
@@ -209,23 +205,22 @@ export const AllTeams = () => {
 
   const handleRoleCreationComplete = () => {
     // After roles are created, automatically open employee assignment dialog
-    setDialogType("employee");
-    setDialogOpen(true);
+    if (currentTeam) openEmployeeDialog(currentTeam);
   };
 
   const handleUpdateRole = async (roleId: string, data: FormRole) => {
     try {
-      setIsSubmitting(true);
+      setSubmitting(true);
       await updateRoleMutation.mutateAsync({
         roleId,
         name: data.name,
         permissions: data.permissions,
       });
-      setDialogOpen(false);
+      closeDialog();
       setCurrentRole(null);
       await queryClient.invalidateQueries({ queryKey: ["teams"] });
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
 
@@ -353,8 +348,10 @@ export const AllTeams = () => {
       </section>
 
       <ReusableDialog
-        open={dialogOpen && dialogType === "team"}
-        onOpenChange={setDialogOpen}
+        open={dialog === "team"}
+        onOpenChange={(open) => {
+          if (!open) closeDialog();
+        }}
         title={currentTeam ? "Edit Team" : "Add New Team"}
         description={currentTeam ? "Modify the team details" : "Create a new team for your organization"}
         trigger={<span />}
@@ -364,14 +361,16 @@ export const AllTeams = () => {
           onSubmit={async (data) => {
             return currentTeam ? handleUpdateTeam({ name: data.name }) : handleAddTeam(data.name);
           }}
-          onCancel={() => setDialogOpen(false)}
+          onCancel={() => closeDialog()}
           isSubmitting={isSubmitting}
         />
       </ReusableDialog>
 
       <ReusableDialog
-        open={dialogOpen && dialogType === "role"}
-        onOpenChange={setDialogOpen}
+        open={dialog === "role"}
+        onOpenChange={(open) => {
+          if (!open) closeDialog();
+        }}
         title={currentRole ? "Edit Role" : "Create Roles"}
         description={currentRole ? "Modify the role details" : "Create new roles for this team"}
         className={`!max-w-2xl`}
@@ -386,7 +385,7 @@ export const AllTeams = () => {
             onCancel={(event) => {
               // prevent dialog bubbling issues and close
               event?.preventDefault?.();
-              setDialogOpen(false);
+              closeDialog();
             }}
             onComplete={handleRoleCreationComplete}
             isSubmitting={isSubmitting}
@@ -395,8 +394,10 @@ export const AllTeams = () => {
       </ReusableDialog>
 
       <ReusableDialog
-        open={dialogOpen && dialogType === "employee"}
-        onOpenChange={setDialogOpen}
+        open={dialog === "employee"}
+        onOpenChange={(open) => {
+          if (!open) closeDialog();
+        }}
         title="Add Employee"
         description="Assign employees to this team and customize their roles"
         className={`!max-w-2xl`}
@@ -408,7 +409,7 @@ export const AllTeams = () => {
             onCancel={(event) => {
               // prevent dialog bubbling issues and close
               event?.preventDefault?.();
-              setDialogOpen(false);
+              closeDialog();
             }}
             isSubmitting={isSubmitting}
             availableRoles={

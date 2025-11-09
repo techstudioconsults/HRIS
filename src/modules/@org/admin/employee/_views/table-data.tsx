@@ -1,7 +1,6 @@
 import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { EmailTooltip, NameTooltip } from "@/components/shared/tooltip";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import { IColumnDefinition, IRowAction } from "@/modules/@org/admin/_components/table/table";
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
@@ -110,7 +109,7 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
         />
         <div className="flex flex-col space-y-2">
           <NameTooltip name={`${employee.firstName} ${employee.lastName}`}>
-            <span className="text-sm font-medium">{`${employee.firstName} ${employee.lastName}`}</span>
+            <span className="text-sm font-medium capitalize">{`${employee.firstName} ${employee.lastName}`}</span>
           </NameTooltip>
         </div>
       </div>
@@ -128,25 +127,27 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
   {
     header: "Role",
     accessorKey: "role",
-    render: (_, employee: Employee) => <span className="text-sm">{employee?.employmentDetails?.role?.name}</span>,
+    render: (_, employee: Employee) => (
+      <Badge className="capitalize" variant={`primary`}>
+        {employee?.employmentDetails?.role?.name}
+      </Badge>
+    ),
   },
   {
     header: "Department",
     accessorKey: "department",
-    render: (_, employee: Employee) => <span className="text-sm">{employee?.employmentDetails?.team?.name}</span>,
+    render: (_, employee: Employee) => (
+      <Badge className="capitalize" variant={`primary`}>
+        {employee?.employmentDetails?.team?.name}
+      </Badge>
+    ),
   },
   {
     header: "Status",
     accessorKey: "status",
     render: (_, employee: Employee) => (
-      <Badge
-        className={cn(
-          employee.id.includes(`7`) ? "bg-warning-50 text-warning" : "bg-success-50 text-success",
-          "rounded-full px-4 py-2",
-        )}
-      >
-        {/* {employee.status || "Active"} */}
-        {employee.id.includes(`7`) ? "On Leave" : "Active"}
+      <Badge className="min-w-fit capitalize" variant={employee.status === "active" ? "success" : "warning"}>
+        {employee.status}
       </Badge>
     ),
   },

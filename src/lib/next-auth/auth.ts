@@ -4,7 +4,6 @@ import Credentials from "next-auth/providers/credentials";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
-  // debug: process.env.NODE_ENV === "development",
   providers: [
     // conventional credentials
     Credentials({
@@ -48,12 +47,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    authorized({ request, auth }) {
-      const { pathname } = request.nextUrl;
-      if (pathname === "/middleware-example") return !!auth;
-      return true;
-    },
-
     async jwt({ token, user, trigger, session }) {
       // Initial sign in
       if (user) {
@@ -77,9 +70,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token;
     },
 
-    session({ session, token }): Promise<Session> {
-      // Ensure we have the correct structure
-      const sessionData = {
+    session({ session, token }) {
+      return {
         ...session,
         user: {
           ...session.user,
@@ -89,9 +81,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         },
         tokens: token.tokens,
         expires: session.expires,
-      };
-
-      return Promise.resolve(sessionData);
+      } as Session;
     },
   },
   session: {

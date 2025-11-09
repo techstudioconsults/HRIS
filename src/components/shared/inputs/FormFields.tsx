@@ -75,7 +75,7 @@ export function FormField({
         control={control}
         render={({ field }) => {
           const inputClassName = cn(
-            "flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+            "flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-gray-200 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:cursor-not-allowed disabled:opacity-50 transition-all shadow-none",
             error && "border-destructive",
             className,
           );
@@ -101,12 +101,12 @@ export function FormField({
                     className={cn(
                       readOnly && "pointer-events-none cursor-not-allowed opacity-100",
                       inputClassName,
-                      "w-full",
+                      "w-full shadow-none",
                     )}
                   >
                     <SelectValue placeholder={placeholder || "Select a value"} />
                   </SelectTrigger>
-                  <SelectContent className="bg-background">
+                  <SelectContent className="bg-background shadow-none">
                     {options.map((option) => (
                       <SelectItem key={option.value} value={option.value} className="hover:bg-gray-50">
                         {option.label}
@@ -142,7 +142,7 @@ export function FormField({
                   <button
                     type="button"
                     onClick={togglePasswordVisibility}
-                    className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2"
+                    className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 hover:cursor-pointer"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>

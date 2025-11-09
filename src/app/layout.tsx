@@ -6,8 +6,8 @@ import { cookies } from "next/headers";
 import NextTopLoader from "nextjs-toploader";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
-import "../styles/theme.css";
 import "../styles/global.css";
+import "../styles/theme.css";
 
 import { SessionProvider } from "@/components/core/layout/SessionProvider";
 import ThemeProvider from "@/components/core/layout/ThemeToggle/theme-provider";

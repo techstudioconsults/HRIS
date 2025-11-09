@@ -7,6 +7,7 @@ import { cityOptions, countries, industryOptions, sizeOptions, stateOptions } fr
 import { cn } from "@/lib/utils";
 import { CompanyProfileFormData, companyProfileSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
@@ -72,7 +73,7 @@ export const CompanyProfile = () => {
     <section className="rounded-[10px] p-7 shadow-xl">
       <div className={`mb-8 space-y-2`}>
         <h3 className="text-2xl/[120%] font-[600] tracking-[-2%]">Set up your company profile</h3>
-        <p className="text-gray-500">Complete your company information to get started</p>
+        <p className="text-gray-200">Complete your company information to get started</p>
       </div>
 
       <FormProvider {...methods}>
@@ -138,7 +139,7 @@ export const CompanyProfile = () => {
                     onValueChange={field.onChange}
                     placeholder={isPending ? `Getting company's profile` : `Select your country`}
                     disabled={isPending}
-                    className={cn(fieldState.error && "border-destructive")}
+                    className={cn(`h-14`, fieldState.error && "border-destructive")}
                   />
                 )}
               />
@@ -184,15 +185,11 @@ export const CompanyProfile = () => {
             >
               Continue
             </MainButton>
-            <MainButton
-              href={`/admin/dashboard`}
-              type="button"
-              variant="link"
-              className="w-full font-semibold"
-              size="2xl"
-            >
-              Skip for Later
-            </MainButton>
+            <div className="flex w-full items-center justify-center py-5">
+              <Link href={`/admin/dashboard`} className="text-primary font-semibold hover:underline">
+                Skip for Later
+              </Link>
+            </div>
           </div>
         </form>
       </FormProvider>

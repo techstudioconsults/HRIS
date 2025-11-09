@@ -59,19 +59,15 @@ export function GlobalSearchInput({
     <div
       onClick={() => query.toggle()}
       className={cn(
-        "bg-background border-border flex h-10 min-w-[350px] cursor-pointer items-center gap-2 rounded-md border p-1 text-sm text-gray-500 transition-colors hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus-visible:ring-gray-600",
+        "bg-background border-border flex h-10 min-w-[350px] cursor-pointer items-center gap-2 rounded-md border p-1 text-sm text-gray-500 transition-colors hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
     >
       <Search className="h-4" />
       <span className="flex-1 text-left">{placeholder}</span>
       <div className="flex h-full items-center gap-1">
-        <kbd className="bg-border flex h-full items-center justify-center rounded px-2 text-xs font-medium dark:bg-gray-700">
-          ⌘
-        </kbd>
-        <kbd className="bg-border flex h-full items-center justify-center rounded px-2 text-xs font-medium dark:bg-gray-700">
-          K
-        </kbd>
+        <kbd className="bg-border flex h-full items-center justify-center rounded px-2 text-xs font-medium">⌘</kbd>
+        <kbd className="bg-border flex h-full items-center justify-center rounded px-2 text-xs font-medium">K</kbd>
       </div>
     </div>
   );

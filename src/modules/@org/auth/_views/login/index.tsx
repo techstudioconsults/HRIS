@@ -57,7 +57,7 @@ export const Login = () => {
     <section className="mx-auto max-w-[527px]">
       <div className={`mb-8 space-y-2`}>
         <h3 className="text-[32px]/[120%] font-[600] tracking-[-2%]">Welcome Back, HR</h3>
-        <p className={`text-gray text-lg`}>Login to access your HR dashboard, and simplify operations.</p>
+        <p className={`text-lg text-gray-200`}>Login to access your HR dashboard, and simplify operations.</p>
       </div>
 
       <FormProvider {...methods}>
@@ -80,7 +80,7 @@ export const Login = () => {
                 required
               />
               <div className="flex justify-end">
-                <Link href="/forgot-password" className="text-primary font-medium hover:underline">
+                <Link href="/forgot-password" className="text-primary text-sm font-medium hover:underline">
                   Forgot Password?
                 </Link>
               </div>

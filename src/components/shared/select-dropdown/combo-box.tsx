@@ -71,15 +71,17 @@ export function ComboBox({
           aria-expanded={open}
           disabled={disabled}
           className={cn(
-            `bg-background ring-offset-background text-mid-grey-II placeholder:text-muted-foreground focus-visible:ring-ring flex h-12 w-full rounded-md border border-gray-200 px-3 py-2 text-sm shadow file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50`,
+            `bg-background ring-offset-background focus-visible:ring-ring border-border hover:bg-background flex h-12 w-full rounded-md border px-3 py-2 text-sm shadow-none file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-200 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50`,
             width,
             "justify-between",
             triggerClassName,
             className,
           )}
         >
-          {selectedOption ? selectedOption.label : placeholder}
-          <FaChevronDown className="ml-2 size-3 shrink-0 opacity-30" />
+          <span className={cn(!selectedOption && "text-gray-200")}>
+            {selectedOption ? selectedOption.label : placeholder}
+          </span>
+          <FaChevronDown className="ml-2 size-3 shrink-0 text-gray-500 opacity-30" />
         </Button>
       </PopoverTrigger>
       <PopoverContent

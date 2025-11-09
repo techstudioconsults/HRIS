@@ -2,7 +2,7 @@
 
 import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils";
-// import { AuthCarousel } from "@/modules/@org/auth";
+import { AuthCarousel } from "@/modules/@org/auth";
 import { usePathname } from "next/navigation";
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
@@ -31,7 +31,11 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
           {children}
         </section>
         {/* Carousel Section (Right on desktop, hidden on mobile and specific routes) */}
-        {!shouldHideCarousel && <div className="hidden max-h-[100dvh] md:block">{/* <AuthCarousel /> */}</div>}
+        {!shouldHideCarousel && (
+          <div className="hidden max-h-[100dvh] md:block">
+            <AuthCarousel />
+          </div>
+        )}
       </section>
     </main>
   );

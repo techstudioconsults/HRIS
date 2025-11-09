@@ -1,7 +1,7 @@
 "use client";
 
 import { FormField } from "@/components/shared/inputs/FormFields";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useDebounce } from "use-debounce";
 
@@ -39,6 +39,8 @@ export const FilterForm = ({
     defaultValues: initialFilters,
   });
   const [debouncedFilters] = useDebounce(methods.watch(), 300);
+  // Skip the next debounced effect when we trigger an immediate refresh
+  const skipNextDebouncedEffect = useRef(false);
 
   // Get roles for the selected team
   const selectedTeamId = methods.watch("teamId");
@@ -50,14 +52,41 @@ export const FilterForm = ({
   }, [initialFilters, methods]);
 
   useEffect(() => {
-    onFilterChange(debouncedFilters);
+    if (skipNextDebouncedEffect.current) {
+      skipNextDebouncedEffect.current = false;
+      return; // avoid duplicate refresh after immediate change
+    }
+    // Normalize: drop keys with undefined, empty string, or sentinel 'all'
+    const normalized: FilterValues = {};
+    for (const [key, value] of Object.entries(debouncedFilters)) {
+      if (value === undefined || value === "" || value === "all") continue;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (normalized as any)[key] = value;
+    }
+    onFilterChange(normalized);
   }, [debouncedFilters, onFilterChange]);
 
   const handleTeamChange = (value: string) => {
-    const actualValue = value === "all" ? undefined : value;
-    methods.setValue("teamId", actualValue);
-    methods.setValue("roleId", undefined); // Reset role when team changes
-    methods.setValue("page", "1"); // Reset to first page on filter change
+    const isAll = value === "all"; // 'all' sentinel from select options
+    // If "All Departments" selected, reset to initial state and omit teamId entirely
+    if (isAll) {
+      skipNextDebouncedEffect.current = true;
+      const resetFilters: FilterValues = {
+        ...initialFilters,
+        teamId: undefined,
+        roleId: undefined,
+        page: "1",
+      };
+      methods.reset(resetFilters);
+      const nextFilters = { ...resetFilters } as Record<string, unknown>;
+      delete nextFilters.teamId; // omit teamId entirely
+      onFilterChange(nextFilters as FilterValues);
+      return;
+    }
+    // Otherwise, apply team normally and clear role
+    methods.setValue("teamId", value);
+    methods.setValue("roleId", undefined);
+    methods.setValue("page", "1");
   };
 
   const handleFilterChange = (name: keyof FilterValues, value: string) => {

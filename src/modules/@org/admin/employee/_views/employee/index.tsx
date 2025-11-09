@@ -48,8 +48,8 @@ export const AllEmployees = () => {
   const [debouncedSearch] = useDebounce(searchInput, 300);
 
   const { getRowActions, DeleteConfirmationModal } = useEmployeeRowActions();
-  const { useGetAllEmployees, useGetAllTeams, useDownloadEmployees } = useEmployeeService();
-  const { refetch: downloadProducts } = useDownloadEmployees();
+  const { useGetAllEmployees, useGetAllTeams } = useEmployeeService();
+  // const { refetch: downloadProducts } = useDownloadEmployees();
   const { data: teams = [] } = useGetAllTeams();
 
   // Apply debounced search to URL (nuqs) and reset page to 1
@@ -154,15 +154,16 @@ export const AllEmployees = () => {
                   </section>
                 </GenericDropdown>
                 <ExportAction
-                  downloadMutation={async (filters) => {
-                    const { data } = await downloadProducts(filters);
-                    return data as Blob;
-                  }}
+                  // downloadMutation={async (filters) => {
+                  //   const { data } = await downloadProducts(filters);
+                  //   return data as Blob;
+                  // }}
                   currentPage={undefined}
                   dateRange={undefined}
                   status={undefined}
                   buttonText="Export Employees"
                   fileName="Product"
+                  isDisabled
                 />
                 <MainButton href="/admin/employees/add-employee" variant="primary" isLeftIconVisible icon={<Add />}>
                   Add Employee

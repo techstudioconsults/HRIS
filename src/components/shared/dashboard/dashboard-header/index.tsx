@@ -21,7 +21,7 @@ export const DashboardHeader = ({
     <>
       <section className="flex items-center justify-between">
         <div>
-          <h4 className={cn("flex items-center gap-2", titleClassName)}>
+          <h4 className={cn("text-foreground flex items-center gap-2", titleClassName)}>
             {icon}
             {title}
           </h4>

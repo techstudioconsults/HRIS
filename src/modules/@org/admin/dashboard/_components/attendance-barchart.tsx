@@ -78,7 +78,7 @@ export function AttendanceBarChart() {
   }
 
   return (
-    <Card className="bg-background w-full shadow-md">
+    <Card className="bg-background w-full">
       <CardHeader>
         <CardTitle>Attendance Overview</CardTitle>
         <p className="text-muted-foreground text-sm">This year</p>

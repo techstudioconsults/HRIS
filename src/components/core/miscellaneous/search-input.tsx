@@ -36,7 +36,7 @@ export const SearchInput = ({
         disabled={isDisabled}
         type="search"
         placeholder={placeholder}
-        className="border-border h-full border-none pr-4 pl-10 shadow"
+        className="border-border h-full border-none pr-4 pl-10 shadow-none"
         value={searchQuery}
         onChange={(event) => setSearchQuery(event.target.value)}
       />

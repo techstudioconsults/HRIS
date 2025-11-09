@@ -124,13 +124,6 @@
   --outline-hover: oklch(0.85 0 0);
   --outline-foreground: oklch(0.45 0 0);
 
-  /* Shadows */
-  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.03);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
-
   --text-xs: clamp(0.7rem, 0.85vw + 0.4rem, 0.8rem);
   --text-sm: clamp(0.8rem, 0.9vw + 0.5rem, 0.9rem);
   --text-base: clamp(1rem, 1vw + 0.6rem, 1.1rem);
@@ -275,13 +268,6 @@
   --outline-hover: oklch(0.85 0 0);
   --outline-foreground: oklch(0.45 0 0);
 
-  /* Shadows */
-  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.03);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
-
   --text-xs: clamp(0.7rem, 0.85vw + 0.4rem, 0.8rem);
   --text-sm: clamp(0.8rem, 0.9vw + 0.5rem, 0.9rem);
   --text-base: clamp(1rem, 1vw + 0.6rem, 1.1rem);
@@ -405,6 +391,13 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  /* Shadows */
+  --box-shadow: var(--shadow);
+  --box-shadow-sm: var(--shadow-sm);
+  --box-shadow-md: var(--shadow-md);
+  --box-shadow-lg: var(--shadow-lg);
+  --box-shadow-xl: var(--shadow-xl);
 }
 
 @layer utilities {

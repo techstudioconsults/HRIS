@@ -13,7 +13,7 @@ export const DashboardBanner = ({ img, title, desc }: DashboardBannerProperties)
   return (
     <div
       className={cn(
-        "bg-primary flex flex-col items-center gap-4 rounded-[9px] md:items-center md:justify-between 2xl:flex-row",
+        "bg-primary flex flex-col items-center gap-4 rounded-[9px] shadow md:items-center md:justify-between 2xl:flex-row",
         "bg-cover bg-right bg-no-repeat p-3",
         "sm:p-8",
         `bg-[url(/images/lines.svg)]`,

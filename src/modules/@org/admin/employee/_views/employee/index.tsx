@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import Loading from "@/app/Loading";
 import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
@@ -17,7 +18,6 @@ import { useDebounce } from "use-debounce";
 
 import empty1 from "~/images/empty-state.svg";
 import { FilterForm } from "../../_components/forms/filter-form";
-import { TableSkeleton } from "../../../_components/table/table-skeleton";
 import { useEmployeeService } from "../../services/use-service";
 import { employeeColumn, useEmployeeRowActions } from "../table-data";
 
@@ -128,7 +128,10 @@ export const AllEmployees = () => {
                 <GenericDropdown
                   contentClassName="bg-background"
                   trigger={
-                    <Button className="bg-background text-foreground h-10 rounded-md border px-3" variant="ghost">
+                    <Button
+                      className="bg-background text-foreground h-10 rounded-md border px-3 shadow-none"
+                      variant="ghost"
+                    >
                       <Filter className="size-4" />
                       Filter
                     </Button>
@@ -160,7 +163,7 @@ export const AllEmployees = () => {
                   status={undefined}
                   buttonText="Export Employees"
                   fileName="Product"
-                  className="border-border bg-background text-foreground h-10 rounded-md border px-3"
+                  className="border-border bg-background text-foreground h-10 rounded-md border px-3 shadow-none"
                 />
                 <MainButton href="/admin/employees/add-employee" variant="primary" isLeftIconVisible icon={<Add />}>
                   Add Employee
@@ -171,7 +174,7 @@ export const AllEmployees = () => {
         />
 
         {isLoading ? (
-          <TableSkeleton columns={employeeColumn.length} rows={10} />
+          <Loading className="!h-[70dvh]" text="Loading employee table." />
         ) : (
           <section>
             {employeeData?.data?.items.length ? (

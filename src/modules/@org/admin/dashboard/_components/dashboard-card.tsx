@@ -1,6 +1,6 @@
-import MainButton from "@/components/shared/button";
 import { cn } from "@/lib/utils";
 import { Diagram } from "iconsax-reactjs";
+import Link from "next/link";
 
 interface DashboardCardProperties {
   title: string;
@@ -40,7 +40,9 @@ export function DashboardCard({
     <div className={cn("bg-background rounded-xl p-6 shadow transition-all", className)}>
       <h3 className={cn("pb-3 text-sm font-medium", titleColor)}>{title}</h3>
       <div className="flex items-center justify-between">
-        <div className={cn("text-3xl font-bold", valueColor)}>{value}</div>
+        <div className={cn("text-3xl font-bold", valueColor)}>
+          <p className="text-foreground">{value}</p>
+        </div>
         {icon && (
           <div
             className={cn("flex h-10 w-10 items-center justify-center rounded-full", {
@@ -82,14 +84,13 @@ export function DashboardCard({
               </div>
               {actionText && (
                 <div style={actionTextColor ? { color: actionTextColor } : undefined}>
-                  <MainButton
-                    variant="link"
-                    size="sm"
+                  <Link
+                    href="#"
                     onClick={onAction}
                     className={cn("p-0 text-sm font-medium hover:underline", !actionTextColor && "text-primary")}
                   >
                     {actionText}
-                  </MainButton>
+                  </Link>
                 </div>
               )}
             </div>

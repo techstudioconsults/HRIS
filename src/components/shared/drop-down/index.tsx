@@ -23,7 +23,7 @@ export function GenericDropdown({
       <DropdownMenuTrigger disabled={isDisabled} asChild className={className}>
         {trigger}
       </DropdownMenuTrigger>
-      <DropdownMenuContent className={cn(`bg-background`, contentClassName)} align={align}>
+      <DropdownMenuContent className={cn(`bg-background shadow-none`, contentClassName)} align={align}>
         {children}
       </DropdownMenuContent>
     </DropdownMenu>

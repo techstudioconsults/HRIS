@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { WithDependency } from "@/HOC/withDependencies";
 import { dependencies } from "@/lib/tools/dependencies";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -119,7 +120,7 @@ const BaseTeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) => {
     <section className="rounded-[10px] p-7 shadow-xl">
       <div className="mb-8 space-y-2">
         <h3 className="text-2xl/[120%] font-[600] tracking-[-2%]">Set up your team</h3>
-        <p className="text-gray-500">Configure teams and roles with specific permissions for your organization</p>
+        <p className="text-gray-200">Configure teams and roles with specific permissions for your organization</p>
       </div>
 
       <FormProvider {...methods}>
@@ -138,15 +139,11 @@ const BaseTeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) => {
               Continue
             </MainButton>
 
-            <MainButton
-              href={`/admin/dashboard`}
-              type="button"
-              variant="link"
-              className="w-full font-semibold"
-              size="xl"
-            >
-              Skip for Later
-            </MainButton>
+            <div className="flex w-full items-center justify-center py-5">
+              <Link href={`/admin/dashboard`} className="text-primary font-semibold hover:underline">
+                Skip for Later
+              </Link>
+            </div>
           </div>
         </form>
       </FormProvider>

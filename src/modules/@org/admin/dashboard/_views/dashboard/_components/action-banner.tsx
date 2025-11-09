@@ -38,7 +38,13 @@ export const ActionBanner = ({
   };
 
   return (
-    <div className={cn("flex items-center rounded-[9px] p-6", "border-low-grey-III border", className)}>
+    <div
+      className={cn(
+        "bg-background flex items-center rounded-[9px] p-6 shadow",
+        // "border-low-grey-III border",
+        className,
+      )}
+    >
       <div className="flex w-full items-center justify-between gap-4">
         <div className="flex items-start gap-4">
           <Checkbox
@@ -48,7 +54,7 @@ export const ActionBanner = ({
 
           <div className="flex flex-col gap-4">
             <div className="flex flex-col">
-              <p className="font-semibold">{title}</p>
+              <p className="text-foreground font-semibold">{title}</p>
               {!isCompleted && <p className="text-sm">{description}</p>}
             </div>
           </div>

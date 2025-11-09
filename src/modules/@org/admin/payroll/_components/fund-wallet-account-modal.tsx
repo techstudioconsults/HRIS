@@ -12,16 +12,18 @@ interface FundWalletAccountModalProperties {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   onConfirm?: () => void;
+  onCheckPayrollAvailability?: () => void;
 }
 
-export function FundWalletAccountModal({ onConfirm }: FundWalletAccountModalProperties) {
+export function FundWalletAccountModal({ onConfirm, onCheckPayrollAvailability }: FundWalletAccountModalProperties) {
   const [copied, setCopied] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const { showFundWalletAccountModal, setShowFundWalletAccountModal } = usePayrollStore();
-  const { useGetCompanyWallet } = usePayrollService();
+  const { useGetCompanyWallet, useGetAllPayrolls } = usePayrollService();
   // get the query object so we can refetch during polling
   const walletQuery = useGetCompanyWallet();
   const { data: companyWalletData } = walletQuery || {};
+  const { refetch: refetchPayrolls } = useGetAllPayrolls();
 
   const handleCopyAccountNumber = async () => {
     try {
@@ -51,6 +53,16 @@ export function FundWalletAccountModal({ onConfirm }: FundWalletAccountModalProp
       setIsProcessing(true);
       // Refresh wallet details after user acknowledges
       await walletQuery?.refetch?.();
+
+      // Refetch payrolls to check availability
+      const payrollsResult = await refetchPayrolls();
+      const hasPayrolls = Array.isArray(payrollsResult?.data?.data) && payrollsResult.data.data.length > 0;
+
+      // If no payrolls available, trigger the banner check in parent
+      if (!hasPayrolls && onCheckPayrollAvailability) {
+        onCheckPayrollAvailability();
+      }
+
       // Allow parent to perform any side effects
       if (onConfirm) await onConfirm();
       setShowFundWalletAccountModal(false);

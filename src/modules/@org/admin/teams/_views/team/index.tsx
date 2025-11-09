@@ -20,6 +20,7 @@ import { useOnboardingService } from "@/modules/@org/onboarding/services/use-onb
 import { useQueryClient } from "@tanstack/react-query";
 import { Add, Filter } from "iconsax-reactjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
 
 import empty1 from "~/images/empty-state.svg";
@@ -75,6 +76,20 @@ export const AllTeams = () => {
     openEditDialog(formTeam);
   };
 
+  const handleOpenRoleDialog = (team: Team) => {
+    const formTeam: TeamFormType = {
+      id: team.id,
+      name: team.name,
+      roles: [],
+    };
+    setCurrentTeam(formTeam);
+    setCurrentRole(null);
+    openRoleDialog(formTeam, null);
+
+    // Force refetch roles for this team
+    queryClient.invalidateQueries({ queryKey: ["roles", team.id] });
+  };
+
   // Team editing hook
   const {
     isEditing,
@@ -85,12 +100,18 @@ export const AllTeams = () => {
     isSubmitting: isEditSubmitting,
   } = useTeamEditing();
 
-  const { getRowActions, DeleteConfirmationModal } = useTeamRowActions(handleOpenEmployeeDialog, handleOpenEditDialog);
+  const { getRowActions, DeleteConfirmationModal } = useTeamRowActions(
+    handleOpenEmployeeDialog,
+    handleOpenEditDialog,
+    handleOpenRoleDialog,
+  );
   const {
     dialog,
     currentTeam,
     currentRole,
     isSubmitting,
+    workflowMode,
+    skipToNextStep,
     openTeamDialog,
     openRoleDialog,
     openEmployeeDialog,
@@ -98,10 +119,11 @@ export const AllTeams = () => {
     setCurrentTeam,
     setCurrentRole,
     setSubmitting,
+    setSkipToNextStep,
   } = useTeamWorkflowStore();
 
   const handleOpenTeamDialog = (team?: TeamFormType) => {
-    openTeamDialog(team || null);
+    openTeamDialog(team || null, team ? "edit" : "create");
   };
 
   const { useGetAllTeams, useGetRoles, useCreateRole, useUpdateRole, useAssignEmployeeToTeam, useDownloadTeams } =
@@ -176,36 +198,62 @@ export const AllTeams = () => {
     try {
       setSubmitting(true);
       const newTeam = await createTeamMutation.mutateAsync(name);
-      // Close team dialog and guide user to create a role for the new team
-      closeDialog();
+
       const formTeam: TeamFormType = {
         id: (newTeam as ServiceTeam)?.id,
         name: (newTeam as ServiceTeam)?.name,
         roles: [],
       };
-      setCurrentTeam(formTeam);
+
       await queryClient.invalidateQueries({ queryKey: ["teams"] });
-      // Continue workflow to Role creation
-      setCurrentRole(null);
-      openRoleDialog(formTeam, null);
+      toast.success(`Team "${name}" created successfully!`);
+
+      // Close team dialog
+      closeDialog();
+
+      // Set current team for potential next steps
+      setCurrentTeam(formTeam);
+
+      // Ask user if they want to continue with role creation
+      setSkipToNextStep(true);
+
+      // Auto-open role dialog after brief delay for better UX
+      setTimeout(() => {
+        openRoleDialog(formTeam, null);
+      }, 500);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to create team. Please try again.";
+      toast.error(errorMessage);
+      throw error;
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleAddRole = async (teamId: string, data: FormRole) => {
-    await createRoleMutation.mutateAsync({
-      name: data.name,
-      teamId,
-      permissions: data.permissions || [],
-    });
-    // Don't close dialog here - let the form handle completion
-    await queryClient.invalidateQueries({ queryKey: ["teams"] });
+    try {
+      await createRoleMutation.mutateAsync({
+        name: data.name,
+        teamId,
+        permissions: data.permissions || [],
+      });
+      await queryClient.invalidateQueries({ queryKey: ["teams"] });
+      toast.success(`Role "${data.name}" created successfully!`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to create role. Please try again.";
+      toast.error(errorMessage);
+      throw error;
+    }
   };
 
   const handleRoleCreationComplete = () => {
-    // After roles are created, automatically open employee assignment dialog
-    if (currentTeam) openEmployeeDialog(currentTeam);
+    // After roles are created, ask if user wants to assign employees
+    if (currentTeam && skipToNextStep) {
+      // Auto-open employee dialog after brief delay
+      setTimeout(() => {
+        openEmployeeDialog(currentTeam);
+      }, 500);
+    }
   };
 
   const handleUpdateRole = async (roleId: string, data: FormRole) => {
@@ -216,9 +264,14 @@ export const AllTeams = () => {
         name: data.name,
         permissions: data.permissions,
       });
+      await queryClient.invalidateQueries({ queryKey: ["teams"] });
+      toast.success(`Role "${data.name}" updated successfully!`);
       closeDialog();
       setCurrentRole(null);
-      await queryClient.invalidateQueries({ queryKey: ["teams"] });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to update role. Please try again.";
+      toast.error(errorMessage);
+      throw error;
     } finally {
       setSubmitting(false);
     }
@@ -226,6 +279,7 @@ export const AllTeams = () => {
 
   const handleAssignEmployee = async (data: { employeeId: string; roleId: string; customPermissions?: string[] }) => {
     if (!currentTeam?.id) {
+      toast.error("No team selected. Please try again.");
       throw new Error("No team selected");
     }
 
@@ -240,9 +294,12 @@ export const AllTeams = () => {
       // Invalidate queries to refresh the UI
       await queryClient.invalidateQueries({ queryKey: ["teams"] });
       await queryClient.invalidateQueries({ queryKey: ["employee", "list"] });
-    } catch {
-      // Handle error silently or show toast notification
-      throw new Error("Failed to assign employee");
+
+      toast.success("Employee assigned successfully!");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to assign employee. Please try again.";
+      toast.error(errorMessage);
+      throw error;
     }
   };
 
@@ -350,18 +407,28 @@ export const AllTeams = () => {
       <ReusableDialog
         open={dialog === "team"}
         onOpenChange={(open) => {
-          if (!open) closeDialog();
+          if (!open) {
+            closeDialog();
+            setSkipToNextStep(false);
+          }
         }}
-        title={currentTeam ? "Edit Team" : "Add New Team"}
-        description={currentTeam ? "Modify the team details" : "Create a new team for your organization"}
+        title={workflowMode === "edit" ? "Edit Team" : "Add New Team"}
+        description={
+          workflowMode === "edit"
+            ? "Modify the team details"
+            : "Create a new team for your organization. You can add roles and employees later."
+        }
         trigger={<span />}
       >
         <TeamForm
           initialData={currentTeam}
           onSubmit={async (data) => {
-            return currentTeam ? handleUpdateTeam({ name: data.name }) : handleAddTeam(data.name);
+            return workflowMode === "edit" ? handleUpdateTeam({ name: data.name }) : handleAddTeam(data.name);
           }}
-          onCancel={() => closeDialog()}
+          onCancel={() => {
+            closeDialog();
+            setSkipToNextStep(false);
+          }}
           isSubmitting={isSubmitting}
         />
       </ReusableDialog>
@@ -369,10 +436,19 @@ export const AllTeams = () => {
       <ReusableDialog
         open={dialog === "role"}
         onOpenChange={(open) => {
-          if (!open) closeDialog();
+          if (!open) {
+            closeDialog();
+            setSkipToNextStep(false);
+          }
         }}
         title={currentRole ? "Edit Role" : "Create Roles"}
-        description={currentRole ? "Modify the role details" : "Create new roles for this team"}
+        description={
+          currentRole
+            ? "Modify the role details"
+            : skipToNextStep
+              ? `Add roles to "${currentTeam?.name}" to define permissions. You can skip this and add roles later.`
+              : "Create new roles for this team"
+        }
         className={`!max-w-2xl`}
         trigger={<span />}
       >
@@ -383,9 +459,13 @@ export const AllTeams = () => {
               return currentRole ? handleUpdateRole(currentRole.id!, data) : handleAddRole(currentTeam.id!, data);
             }}
             onCancel={(event) => {
-              // prevent dialog bubbling issues and close
               event?.preventDefault?.();
+              if (skipToNextStep) {
+                // User is in workflow, show option to skip
+                toast.info("Role creation skipped. You can add roles later from the team details page.");
+              }
               closeDialog();
+              setSkipToNextStep(false);
             }}
             onComplete={handleRoleCreationComplete}
             isSubmitting={isSubmitting}
@@ -396,10 +476,17 @@ export const AllTeams = () => {
       <ReusableDialog
         open={dialog === "employee"}
         onOpenChange={(open) => {
-          if (!open) closeDialog();
+          if (!open) {
+            closeDialog();
+            setSkipToNextStep(false);
+          }
         }}
-        title="Add Employee"
-        description="Assign employees to this team and customize their roles"
+        title="Add Employees"
+        description={
+          skipToNextStep
+            ? `Assign employees to "${currentTeam?.name}". You can skip this and add employees later.`
+            : "Assign employees to this team and customize their roles"
+        }
         className={`!max-w-2xl`}
         trigger={<span />}
       >
@@ -407,9 +494,12 @@ export const AllTeams = () => {
           <AddNewEmployees
             onSubmit={handleAssignEmployee}
             onCancel={(event) => {
-              // prevent dialog bubbling issues and close
               event?.preventDefault?.();
+              if (skipToNextStep) {
+                toast.info("Employee assignment skipped. Your team has been created successfully!");
+              }
               closeDialog();
+              setSkipToNextStep(false);
             }}
             isSubmitting={isSubmitting}
             availableRoles={

@@ -1,8 +1,11 @@
+/* eslint-disable unused-imports/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { Modal } from "@/components/ui/modal";
 import { AlertTriangle, Info } from "lucide-react";
-import { useEffect, useState } from "react";
+
+// import { useEffect, useState } from "react";
 
 import MainButton from "../button";
 
@@ -137,25 +140,25 @@ export const AlertModal: React.FC<AlertModalProperties> = ({
   confirmButtonClassName,
   cancelButtonClassName,
 }) => {
-  const [isMounted, setIsMounted] = useState(false);
+  // const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  // useEffect(() => {
+  //   setIsMounted(true);
+  // }, []);
 
-  useEffect(() => {
-    if (isOpen && autoClose && !loading) {
-      const timer = setTimeout(() => {
-        onClose();
-      }, autoCloseDelay);
+  // useEffect(() => {
+  //   if (isOpen && autoClose && !loading) {
+  //     const timer = setTimeout(() => {
+  //       onClose();
+  //     }, autoCloseDelay);
 
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen, autoClose, autoCloseDelay, loading, onClose]);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [isOpen, autoClose, autoCloseDelay, loading, onClose]);
 
-  if (!isMounted) {
-    return null;
-  }
+  // if (!isMounted) {
+  //   return null;
+  // }
 
   const config = alertConfig[type];
   const resolvedConfirmVariant = confirmVariant ?? config.buttonVariant;
@@ -193,25 +196,15 @@ export const AlertModal: React.FC<AlertModalProperties> = ({
               {cancelText}
             </MainButton>
           )}
-          {onConfirm ? (
-            <MainButton
-              isDisabled={loading}
-              variant={resolvedConfirmVariant}
-              onClick={onConfirm}
-              className={`flex-1 ${confirmButtonClassName ?? ""}`}
-            >
-              {loading ? "Loading..." : confirmText}
-            </MainButton>
-          ) : (
-            <MainButton
-              isDisabled={loading}
-              variant={resolvedConfirmVariant}
-              onClick={onClose}
-              className={`flex-1 ${confirmButtonClassName ?? ""}`}
-            >
-              {confirmText}
-            </MainButton>
-          )}
+          <MainButton
+            isDisabled={loading}
+            variant={resolvedConfirmVariant}
+            onClick={onConfirm ?? onClose}
+            className={`flex-1 ${confirmButtonClassName ?? ""}`}
+            isLoading={loading}
+          >
+            {confirmText}
+          </MainButton>
         </div>
       </div>
     </Modal>

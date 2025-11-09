@@ -196,8 +196,8 @@ export const AddNewEmployees = ({
           }}
           className="space-y-4"
         >
-          {/* Progress Bar - Fixed at top */}
-          {!isSubmittingEmployees && (
+          {/* Progress Bar - Shows during submission */}
+          {isSubmittingEmployees && (
             <div className="bg-primary/5 border-primary/20 space-y-3 rounded-lg border p-4">
               <div className="flex items-center justify-between">
                 <span className="text-primary text-sm font-medium">Assigning Employees</span>
@@ -206,10 +206,10 @@ export const AddNewEmployees = ({
                 </span>
               </div>
               <div className="space-y-2">
-                <Progress value={submissionProgress} className="h-1" />
+                <Progress value={submissionProgress} className="h-2" />
                 <div className="text-muted-foreground flex justify-between text-xs">
                   <span>Progress: {Math.round(submissionProgress)}%</span>
-                  <span>{submissionStatus}</span>
+                  <span className="font-medium">{submissionStatus}</span>
                 </div>
               </div>
             </div>

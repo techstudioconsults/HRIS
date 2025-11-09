@@ -5,12 +5,14 @@ import { BreadCrumb } from "@/components/shared/breadcrumb";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { FormField } from "@/components/shared/inputs/FormFields";
+import { PhoneInput } from "@/components/shared/inputs/phone-input";
+import { Label } from "@/components/ui/label";
 import { employmentTypeOptions, genderOptions, workModeOptions } from "@/lib/tools/constants";
 import { EmployeeFormData, employeeSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import FileUpload from "../../../_components/file-upload/file-upload";
@@ -98,11 +100,19 @@ export const EditEmployeeForm = () => {
     handleSubmit,
     formState: { isSubmitting },
     watch,
-    setValue,
   } = methods;
 
   const selectedTeamId = watch("teamId");
   const selectedRoleId = watch("roleId");
+
+  // Log form state for debugging
+  useEffect(() => {
+    console.log("Form state:", {
+      teamId: selectedTeamId,
+      roleId: selectedRoleId,
+      allFormValues: methods.getValues(),
+    });
+  }, [selectedTeamId, selectedRoleId, methods]);
 
   // Memoize derived team and roles from teams and selectedTeamId
   const selectedTeam = useMemo(() => teams.find((team) => String(team.id) === selectedTeamId), [teams, selectedTeamId]);
@@ -111,33 +121,59 @@ export const EditEmployeeForm = () => {
   // Debug logging
   useEffect(() => {
     if (teams.length > 0) {
+      console.log("=== DEBUG INFO ===");
       console.log(
         "Available teams:",
         teams.map((t) => ({ id: String(t.id), name: t.name })),
       );
       console.log("Selected teamId:", selectedTeamId);
       console.log("Selected roleId:", selectedRoleId);
+      console.log("Selected team object:", selectedTeam);
       console.log(
         "Derived roles:",
         derivedRoles.map((r) => ({ id: String(r.id), name: r.name })),
       );
+
+      // Check if roleId exists in derivedRoles
+      const roleExists = derivedRoles.some((r) => String(r.id) === selectedRoleId);
+      console.log("Role exists in derived roles?", roleExists);
+      console.log("=================");
     }
-  }, [teams, selectedTeamId, selectedRoleId, derivedRoles]);
+  }, [teams, selectedTeamId, selectedRoleId, derivedRoles, selectedTeam]);
 
   // Removed imperatively setting values via effects; form is driven by `values` above
 
-  // Reset roleId when invalid for the selected team
-  useEffect(() => {
-    // If no team selected but a role is set, clear it
-    if (!selectedTeamId && selectedRoleId) {
-      setValue("roleId", "");
-      return;
-    }
-    // If role not part of selected team's roles, clear it
-    if (selectedTeamId && selectedRoleId && !derivedRoles.some((r) => String(r.id) === selectedRoleId)) {
-      setValue("roleId", "");
-    }
-  }, [selectedTeamId, selectedRoleId, derivedRoles, setValue]);
+  // Reset roleId when invalid for the selected team - TEMPORARILY DISABLED FOR DEBUGGING
+  // useEffect(() => {
+  //   // Skip this logic if we're still loading initial data or teams
+  //   if (!formValues || loadingTeams || teams.length === 0) {
+  //     console.log("Skipping role validation - not ready yet", {
+  //       hasFormValues: !!formValues,
+  //       loadingTeams,
+  //       teamsCount: teams.length,
+  //     });
+  //     return;
+  //   }
+
+  //   // If no team selected but a role is set, clear it
+  //   if (!selectedTeamId && selectedRoleId) {
+  //     console.log("Clearing role because no team is selected");
+  //     setValue("roleId", "");
+  //     return;
+  //   }
+
+  //   // Only validate role against derived roles if we have a selected team and derived roles
+  //   if (selectedTeamId && selectedRoleId && derivedRoles.length > 0) {
+  //     const roleExists = derivedRoles.some((r) => String(r.id) === selectedRoleId);
+  //     if (!roleExists) {
+  //       console.log("Clearing role because it's not in the derived roles", {
+  //         selectedRoleId,
+  //         derivedRoles: derivedRoles.map((r) => String(r.id)),
+  //       });
+  //       setValue("roleId", "");
+  //     }
+  //   }
+  // }, [selectedTeamId, selectedRoleId, derivedRoles, setValue, formValues, loadingTeams, teams.length]);
 
   const handleFilesSelected = (files: File[]) => {
     setFiles(files);
@@ -252,14 +288,27 @@ export const EditEmployeeForm = () => {
                   className="border-border !h-14 w-full"
                   required
                 />
-                <FormField
-                  name="phoneNumber"
-                  label="Phone Number"
-                  className="border-border !h-14 w-full"
-                  type="text"
-                  placeholder={loadingTeams ? `Loading phone number...` : `080123456789`}
-                  required
-                />
+                <div className="space-y-2">
+                  <Label className="text-[16px] font-medium">
+                    Phone Number<span className="text-destructive -ml-1">*</span>
+                  </Label>
+                  <Controller
+                    name="phoneNumber"
+                    control={methods.control}
+                    render={({ field, fieldState }) => (
+                      <>
+                        <PhoneInput
+                          {...field}
+                          defaultCountry="US"
+                          placeholder={loadingTeams ? `Loading phone number...` : `Enter phone number`}
+                          inputClassName="border-border !h-14"
+                          buttonClassName="border-border !h-14"
+                        />
+                        {fieldState.error && <p className="text-destructive text-sm">{fieldState.error.message}</p>}
+                      </>
+                    )}
+                  />
+                </div>
               </div>
             </section>
 

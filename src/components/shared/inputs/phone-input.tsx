@@ -23,12 +23,14 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProperties> = React.
   return (
     <RPNInput.default
       ref={reference}
-      className={cn("flex", className)}
+      className={cn("flex shadow-none", className)}
       flagComponent={FlagComponent}
       countrySelectComponent={(countrySelectProperties) => (
         <CountrySelect {...countrySelectProperties} buttonClassName={buttonClassName} />
       )}
-      inputComponent={(inputProperties) => <InputComponent {...inputProperties} inputClassName={inputClassName} />}
+      inputComponent={(inputProperties) => (
+        <InputComponent {...inputProperties} inputClassName={cn(`shadow-none`, inputClassName)} />
+      )}
       smartCaret={false}
       value={value || undefined}
       /**
@@ -95,7 +97,7 @@ const CountrySelect = ({
           <ChevronsUpDown className={cn("-mr-2 size-4 opacity-50", disabled ? "hidden" : "opacity-100")} />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0">
+      <PopoverContent className="w-[300px] p-0 shadow-none">
         <Command>
           <CommandInput
             value={searchValue}

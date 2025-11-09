@@ -96,7 +96,6 @@ export function FormField({
                   onValueChange={readOnly ? undefined : field.onChange}
                   value={field.value ?? undefined}
                   disabled={disabled}
-                  key={`${name}-${field.value}`}
                 >
                   <SelectTrigger
                     className={cn(

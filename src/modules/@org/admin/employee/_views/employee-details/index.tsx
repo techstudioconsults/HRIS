@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { formatDate } from "@/lib/tools/format";
 import { Call, More, Sms } from "iconsax-reactjs";
+import { Edit } from "lucide-react";
 import Image from "next/image";
 
 import { useEmployeeService } from "../../services/use-service";
@@ -37,7 +38,12 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
         }
         actionComponent={
           <div className="flex items-center gap-5">
-            <MainButton href={`/admin/employees/edit-employee?employeeid=${employeeData?.id}`} variant="primary">
+            <MainButton
+              isLeftIconVisible
+              icon={<Edit />}
+              href={`/admin/employees/edit-employee?employeeid=${employeeData?.id}`}
+              variant="primary"
+            >
               Edit Employee
             </MainButton>
             <GenericDropdown
@@ -116,6 +122,8 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
                   variant="primary"
                   size="lg"
                   className="w-full"
+                  isLeftIconVisible
+                  icon={<Edit />}
                 >
                   Edit Employee
                 </MainButton>

@@ -48,8 +48,8 @@ export const AllEmployees = () => {
   const [debouncedSearch] = useDebounce(searchInput, 300);
 
   const { getRowActions, DeleteConfirmationModal } = useEmployeeRowActions();
-  const { useGetAllEmployees, useGetAllTeams } = useEmployeeService();
-  // const { refetch: downloadProducts } = useDownloadEmployees();
+  const { useGetAllEmployees, useGetAllTeams, useDownloadEmployees } = useEmployeeService();
+  const { mutateAsync: downloadEmployees } = useDownloadEmployees();
   const { data: teams = [] } = useGetAllTeams();
 
   // Apply debounced search to URL (nuqs) and reset page to 1
@@ -154,16 +154,16 @@ export const AllEmployees = () => {
                   </section>
                 </GenericDropdown>
                 <ExportAction
-                  // downloadMutation={async (filters) => {
-                  //   const { data } = await downloadProducts(filters);
-                  //   return data as Blob;
-                  // }}
-                  currentPage={undefined}
-                  dateRange={undefined}
-                  status={undefined}
+                  isDisabled={!employeeData?.data?.items?.length}
+                  downloadMutation={async () => {
+                    // Use current apiFilters to ensure exported data matches table view
+                    const fileData = await downloadEmployees(apiFilters);
+                    // If backend returns string CSV, wrap in Blob in ExportAction
+                    return fileData as unknown as Blob;
+                  }}
+                  currentPage={employeeData?.data?.metadata.page}
                   buttonText="Export Employees"
-                  fileName="Product"
-                  isDisabled
+                  fileName="employees"
                 />
                 <MainButton href="/admin/employees/add-employee" variant="primary" isLeftIconVisible icon={<Add />}>
                   Add Employee

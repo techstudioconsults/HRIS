@@ -67,8 +67,10 @@ export class EmployeeService {
     }
   }
 
-  async downloadEmployees() {
-    const response = await this.http.get(`/employees/download`);
+  async downloadEmployees(filters: Filters) {
+    const response = await this.http.get(`/employees/download`, {
+      ...filters,
+    });
     if (response?.status === 200) {
       return response.data;
     }

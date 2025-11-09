@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { useActiveTarget } from "@/context/active-target";
 import { IColumnDefinition, IRowAction } from "@/modules/@org/admin/_components/table/table";
 import { useQueryClient } from "@tanstack/react-query";
-import { Eye, Pencil, Trash } from "lucide-react";
+import { Edit, Eye } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -62,7 +62,7 @@ export const useEmployeeRowActions = () => {
         {
           label: "Edit employee",
           kbd: "Ctrl+E",
-          icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
+          icon: <Edit className="h-4 w-4" aria-hidden="true" />,
           onClick: () => {
             setActiveEmployee(employee);
             router.push(`/admin/employees/edit-employee?employeeid=${employee.id}`);
@@ -70,18 +70,18 @@ export const useEmployeeRowActions = () => {
           ariaLabel: `Edit ${employee.firstName} ${employee.lastName}`,
         },
         { type: "separator" },
-        {
-          label: "Delete employee",
-          kbd: "Ctrl+Del",
-          variant: "destructive",
-          icon: <Trash className="text-destructive h-4 w-4" aria-hidden="true" />,
-          onClick: () => {
-            setActiveEmployee(employee);
-            setEmployeeToDelete(employee);
-            setIsDeleteModalOpen(true);
-          },
-          ariaLabel: `Delete ${employee.firstName} ${employee.lastName}`,
-        },
+        // {
+        //   label: "Delete employee",
+        //   kbd: "Ctrl+Del",
+        //   variant: "destructive",
+        //   icon: <Trash className="text-destructive h-4 w-4" aria-hidden="true" />,
+        //   onClick: () => {
+        //     setActiveEmployee(employee);
+        //     setEmployeeToDelete(employee);
+        //     setIsDeleteModalOpen(true);
+        //   },
+        //   ariaLabel: `Delete ${employee.firstName} ${employee.lastName}`,
+        // },
       ];
     },
     [router, setActiveEmployee],

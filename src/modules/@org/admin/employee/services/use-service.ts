@@ -19,8 +19,9 @@ export const useEmployeeService = () => {
   const useGetAllTeams = (options?: any) =>
     useServiceQuery(queryKeys.employee.teams(), (service) => service.getTeams(), options);
 
-  const useDownloadEmployees = (options?: any) =>
-    useServiceQuery(queryKeys.employee.download(), (service) => service.downloadEmployees(), options);
+  // Use mutation for on-demand filtered downloads
+  const useDownloadEmployees = () =>
+    useServiceMutation((service, filters: Filters) => service.downloadEmployees(filters));
 
   // Mutations with proper cache invalidation
   const useCreateEmployee = () =>

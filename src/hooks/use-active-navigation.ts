@@ -5,12 +5,12 @@ import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 
 export interface NavigationItem {
-  title: string;
+  name: string;
   url: string;
   icon?: any;
   isActive?: boolean;
   subItems?: {
-    title: string;
+    name: string;
     url: string;
   }[];
 }

@@ -28,12 +28,12 @@ export type DashboardTeam = {
 };
 
 export type DashboardNavItem = {
-  title: string;
+  name: string;
   url: string;
   icon?: any;
   isActive?: boolean;
   items?: {
-    title: string;
+    name: string;
     url: string;
   }[];
 };
@@ -83,46 +83,46 @@ const defaultData: {
   ],
   navMain: [
     {
-      title: "Playground",
+      name: "Playground",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
-        { title: "History", url: "#" },
-        { title: "Starred", url: "#" },
-        { title: "Settings", url: "#" },
+        { name: "History", url: "#" },
+        { name: "Starred", url: "#" },
+        { name: "Settings", url: "#" },
       ],
     },
     {
-      title: "Models",
+      name: "Models",
       url: "#",
       icon: Bot,
       items: [
-        { title: "Genesis", url: "#" },
-        { title: "Explorer", url: "#" },
-        { title: "Quantum", url: "#" },
+        { name: "Genesis", url: "#" },
+        { name: "Explorer", url: "#" },
+        { name: "Quantum", url: "#" },
       ],
     },
     {
-      title: "Documentation",
+      name: "Documentation",
       url: "#",
       icon: BookOpen,
       items: [
-        { title: "Introduction", url: "#" },
-        { title: "Get Started", url: "#" },
-        { title: "Tutorials", url: "#" },
-        { title: "Changelog", url: "#" },
+        { name: "Introduction", url: "#" },
+        { name: "Get Started", url: "#" },
+        { name: "Tutorials", url: "#" },
+        { name: "Changelog", url: "#" },
       ],
     },
     {
-      title: "Settings",
+      name: "Settings",
       url: "#",
       icon: Settings2,
       items: [
-        { title: "General", url: "#" },
-        { title: "Team", url: "#" },
-        { title: "Billing", url: "#" },
-        { title: "Limits", url: "#" },
+        { name: "General", url: "#" },
+        { name: "Team", url: "#" },
+        { name: "Billing", url: "#" },
+        { name: "Limits", url: "#" },
       ],
     },
   ],
@@ -147,12 +147,13 @@ export function AppSidebar({
     teams: teams ?? defaultData.teams,
     navMain: navMain ?? defaultData.navMain,
     projects: navSecondary ?? defaultData.projects,
-    mainTitle: navMainTitle ?? `Platform`,
-    secondaryTitle: secondaryTitle ?? `project`,
+    mainTitle: navMainTitle,
+    secondaryTitle: secondaryTitle,
   };
 
   // Use active navigation hook to determine active states
   const activeNavItems = useActiveNavigation(resolved.navMain);
+  const projectNavItems = useActiveNavigation(resolved.projects);
 
   return (
     <Sidebar collapsible="icon" {...properties}>
@@ -160,8 +161,12 @@ export function AppSidebar({
         <TeamSwitcher teams={resolved.teams} />
       </SidebarHeader>
       <SidebarContent>
-        {navMainTitle && <NavMain title={resolved.mainTitle} items={activeNavItems} />}
-        {secondaryTitle && <NavProjects title={resolved.secondaryTitle} projects={resolved.projects} />}
+        {navMainTitle ? <NavMain title={resolved.mainTitle} items={activeNavItems} /> : null}
+        {secondaryTitle ? (
+          <NavProjects title={resolved.secondaryTitle} projects={projectNavItems} />
+        ) : (
+          <NavProjects projects={projectNavItems} />
+        )}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={resolved.user} />

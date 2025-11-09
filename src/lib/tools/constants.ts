@@ -224,209 +224,38 @@ export const NAV_LINKS: NavLink[] = [
 
 export const adminNavItems = [
   {
-    title: "Dashboard",
+    name: "Dashboard",
     url: "/admin/dashboard",
     icon: Element3,
   },
   {
-    title: "Employees",
+    name: "Employees",
     url: "/admin/employees",
     icon: Profile2User,
-    // subItems: [
-    //   { title: "All Employees", url: "/admin/employees" },
-    //   { title: "Add Employee", url: "/admin/employees/add" },
-    //   { title: "Employee Records", url: "/admin/employees/records" },
-    // ],
   },
   {
     id: "teams",
-    title: "Teams",
+    name: "Teams",
     url: "/admin/teams",
     icon: People,
   },
   {
     id: "resources",
-    title: "Resources",
+    name: "Resources",
     url: "/admin/resources",
     icon: People,
   },
   {
     id: "payroll",
-    title: "Payroll",
+    name: "Payroll",
     url: "/admin/payroll",
     icon: CardReceive,
   },
   {
     id: "attendance",
-    title: "Attendance",
+    name: "Attendance",
     url: "/admin/attendance",
     icon: Clock,
-  },
-];
-
-// Admin navigation items
-export const adminSideItems = [
-  {
-    route: "Dashboard",
-    link: "/admin/home",
-    // icon: MdDashboard,
-    id: "home",
-  },
-  {
-    route: "Users",
-    link: "/admin/users",
-    // icon: PiUsersThreeLight,
-    id: "users",
-  },
-  {
-    route: "Orders",
-    link: "/admin/orders",
-    // icon: RiShoppingCartLine,
-    id: "orders",
-  },
-  {
-    route: "Payouts",
-    link: "/admin/payouts",
-    // icon: MdOutlineAddCard,
-    id: "payouts",
-  },
-  {
-    route: "Skicom Products",
-    link: "/admin/products",
-    // icon: TbShoppingBag,
-    id: "skicom-products",
-  },
-  {
-    route: "Revenues",
-    link: "/admin/revenues",
-    // icon: GiWallet,
-    id: "revenues",
-  },
-  {
-    route: "Subscriptions",
-    link: "/admin/subscriptions",
-    // icon: IoRibbonOutline,
-    id: "subscriptions",
-  },
-  {
-    route: "Promotions & ads",
-    link: "/admin/promotions",
-    // icon: RiAdvertisementLine,
-    id: "promotions",
-  },
-  {
-    route: "Play 2 win",
-    link: "/admin/promotions",
-    // icon: FaGamepad,
-    id: "play-to-win",
-  },
-  {
-    route: "Settings",
-    link: "/admin/settings",
-    // icon: TbSettings2,
-    id: "settings",
-  },
-];
-
-// Vendor navigation items
-export const vendorSideItems = [
-  {
-    route: "Dashboard",
-    link: "/dashboard/home",
-    // icon: MdDashboard,
-    id: "home",
-  },
-  {
-    route: "Products",
-    link: "/dashboard/products",
-    // icon: TbShoppingBag,
-    id: "products",
-  },
-  {
-    route: "Orders",
-    link: "/dashboard/orders",
-    // icon: RiShoppingCartLine,
-    id: "orders",
-  },
-  {
-    route: "Users",
-    link: "/dashboard/users",
-    // icon: PiUsersThreeLight,
-    id: "users",
-  },
-  {
-    route: "Downloads",
-    link: "/dashboard/downloads",
-    // icon: MdOutlineAddCard,
-    id: "downloads",
-  },
-  {
-    route: "Settings",
-    link: "/dashboard/settings",
-    // icon: TbSettings2,
-    id: "settings",
-  },
-];
-
-// Super Admin navigation items (includes all admin items plus super admin specific ones)
-export const superAdminSideItems = [
-  ...adminSideItems,
-  {
-    route: "Super Admin",
-    link: "/super-admin/dashboard",
-    // icon: MdDashboard,
-    id: "super-admin",
-  },
-  {
-    route: "Admin Management",
-    link: "/super-admin/admin-management",
-    // icon: PiUsersThreeLight,
-    id: "admin-management",
-  },
-  {
-    route: "System Settings",
-    link: "/super-admin/system-settings",
-    // icon: TbSettings2,
-    id: "system-settings",
-  },
-  {
-    route: "Audit Logs",
-    link: "/super-admin/audit-logs",
-    // icon: RiAdvertisementLine,
-    id: "audit-logs",
-  },
-];
-
-// Legacy export for backward compatibility
-export const sideItems = adminSideItems;
-
-export const testimonials = [
-  {
-    id: 1,
-    image: "/images/auth/register-img.svg",
-    name: "John Doe",
-    position: "Designer",
-    message:
-      "“TechstudioHR has completely transformed how we manage payroll and employee records. What used to take hours now happens in minutes.”",
-    rating: 5,
-  },
-  {
-    id: 2,
-    image: "/images/auth/login-img.svg",
-    name: "Jane Doe",
-    position: "Developer",
-    message:
-      "“TechstudioHR has completely transformed how we manage payroll and employee records. What used to take hours now happens in minutes.”",
-    rating: 2,
-  },
-  {
-    id: 3,
-    image: "/images/auth/register-img.svg",
-    name: "James Doe",
-    position: "Customer Service",
-    message:
-      "“TechstudioHR has completely transformed how we manage payroll and employee records. What used to take hours now happens in minutes.”",
-    rating: 4,
   },
 ];
 

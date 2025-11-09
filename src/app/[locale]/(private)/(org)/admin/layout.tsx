@@ -14,10 +14,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <SidebarProvider>
       <AppSidebar
-        className={cn("bg-[#00132E] text-white shadow-2xl")}
-        navSecondary={[]}
-        navMain={adminNavItems}
-        navMainTitle="Dashboard"
+        className={cn("bg-[#1F2666] text-white shadow-2xl")}
+        navMain={[]}
+        navSecondary={adminNavItems}
         teams={[
           {
             name: "Tech Studio Academy",

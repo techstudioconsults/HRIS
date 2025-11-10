@@ -1,3 +1,6 @@
+import { CardReceive, Element3, People, Profile2User } from "iconsax-reactjs";
+import { Clock } from "lucide-react";
+
 export const countries = [
   { value: "afghanistan", label: "🇦🇫 Afghanistan" },
   { value: "albania", label: "🇦🇱 Albania" },
@@ -221,64 +224,38 @@ export const NAV_LINKS: NavLink[] = [
 
 export const adminNavItems = [
   {
-    id: "dashboard",
-    route: "Dashboard",
-    link: "/admin/dashboard",
-    icon: "Element3",
+    name: "Dashboard",
+    url: "/admin/dashboard",
+    icon: Element3,
   },
   {
-    id: "employees",
-    route: "Employees",
-    link: "/admin/employees",
-    icon: "Profile2User",
+    name: "Employees",
+    url: "/admin/employees",
+    icon: Profile2User,
   },
   {
     id: "teams",
-    route: "Teams",
-    link: "/admin/teams",
-    icon: "People",
+    name: "Teams",
+    url: "/admin/teams",
+    icon: People,
+  },
+  {
+    id: "resources",
+    name: "Resources",
+    url: "/admin/resources",
+    icon: People,
   },
   {
     id: "payroll",
-    route: "Payroll",
-    link: "/admin/payroll",
-    icon: "CardReceive",
+    name: "Payroll",
+    url: "/admin/payroll",
+    icon: CardReceive,
   },
   {
     id: "attendance",
-    route: "Attendance",
-    link: "/admin/attendance",
-    icon: "Clock",
-  },
-];
-
-export const testimonials = [
-  {
-    id: 1,
-    image: "/images/auth/register-img.svg",
-    name: "John Doe",
-    position: "Designer",
-    message:
-      "“TechstudioHR has completely transformed how we manage payroll and employee records. What used to take hours now happens in minutes.”",
-    rating: 5,
-  },
-  {
-    id: 2,
-    image: "/images/auth/login-img.svg",
-    name: "Jane Doe",
-    position: "Developer",
-    message:
-      "“TechstudioHR has completely transformed how we manage payroll and employee records. What used to take hours now happens in minutes.”",
-    rating: 2,
-  },
-  {
-    id: 3,
-    image: "/images/auth/register-img.svg",
-    name: "James Doe",
-    position: "Customer Service",
-    message:
-      "“TechstudioHR has completely transformed how we manage payroll and employee records. What used to take hours now happens in minutes.”",
-    rating: 4,
+    name: "Attendance",
+    url: "/admin/attendance",
+    icon: Clock,
   },
 ];
 
@@ -297,12 +274,6 @@ export const sizeOptions = [
   { value: "enterprise", label: "Enterprise (1000+)" },
 ];
 
-// const countryOptions = [
-//   { value: "united kingdom", label: "United Kingdom" },
-//   { value: "united states", label: "United States" },
-//   { value: "canada", label: "Canada" },
-// ];
-
 export const stateOptions = [
   { value: "london", label: "London" },
   { value: "new york", label: "New York" },
@@ -310,7 +281,7 @@ export const stateOptions = [
 ];
 
 export const cityOptions = [
-  { value: "barking", label: "Barking" },
+  { value: "Barking", label: "Barking" },
   { value: "manhattan", label: "Manhattan" },
   { value: "toronto", label: "Toronto" },
 ];
@@ -322,15 +293,15 @@ export const genderOptions = [
 ];
 
 export const employmentTypeOptions = [
-  { value: "full-time", label: "Full-time" },
-  { value: "part-time", label: "Part-time" },
+  { value: "full time", label: "Full time" },
+  { value: "part time", label: "Part time" },
   { value: "contract", label: "Contract" },
-  { value: "internship", label: "Internship" },
+  // { value: "internship", label: "Internship" },
 ];
 
 export const workModeOptions = [
   { value: "remote", label: "Remote" },
-  { value: "onsite", label: "Onsite" },
+  { value: "on site", label: "On site" },
   { value: "hybrid", label: "Hybrid" },
 ];
 

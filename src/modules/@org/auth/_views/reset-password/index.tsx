@@ -1,10 +1,8 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
-import { FormField } from "@/components/shared/FormFields";
-import { WithDependency } from "@/HOC/withDependencies";
+import { FormField } from "@/components/shared/inputs/FormFields";
 import { useSearchParameters } from "@/hooks/use-search-parameters";
-import { dependencies } from "@/lib/tools/dependencies";
 import { ResetPasswordData, resetPasswordSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "iconsax-reactjs";
@@ -13,27 +11,24 @@ import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { AuthService } from "../../services/auth.service";
+import { useAuthService } from "../../services/use-auth-service";
 
-// import { toast } from "sonner";
-
-export const BaseResetPassword = ({ authService }: { authService: AuthService }) => {
+export const ResetPassword = () => {
   const token = useSearchParameters("token");
   const router = useRouter();
+  const { useResetPassword } = useAuthService();
+  const { mutateAsync: resetPassword, isPending } = useResetPassword();
   const methods = useForm<ResetPasswordData>({
     resolver: zodResolver(resetPasswordSchema),
-    // defaultValues: {
-    //   full_name: "",
-    //   email: "",
-    //   password: "",
-    //   password_confirmation: "",
-    // },
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
   });
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
-    // watch,
+    formState: { isValid },
   } = methods;
 
   const handleSubmitForm = async (data: ResetPasswordData) => {
@@ -45,15 +40,19 @@ export const BaseResetPassword = ({ authService }: { authService: AuthService })
       ...data,
       ...(token ? { token } : {}),
     };
-    const response = await authService.resetPassword(tokenizedData);
-
-    if (response?.success) {
-      toast.success(`Message Sent`, {
-        description: response.data,
+    try {
+      const response = await resetPassword(tokenizedData);
+      toast.success(`Password Reset Successful`, {
+        description: response?.data,
       });
       router.push(`/login`);
+    } catch (error) {
+      toast.error("Password Reset Failed", {
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+      });
     }
   };
+
   return (
     <section className="mx-auto max-w-[589px] rounded-xl bg-white p-8 shadow-2xl shadow-gray-100">
       <div className={`mb-8 space-y-2`}>
@@ -83,8 +82,8 @@ export const BaseResetPassword = ({ authService }: { authService: AuthService })
             <MainButton
               type="submit"
               variant="primary"
-              isDisabled={isSubmitting}
-              isLoading={isSubmitting}
+              isDisabled={isPending || !isValid}
+              isLoading={isPending}
               className="w-full"
               size="2xl"
             >
@@ -93,9 +92,9 @@ export const BaseResetPassword = ({ authService }: { authService: AuthService })
           </div>
         </form>
 
-        <span className="text-grey-500 mt-4 flex items-center justify-center gap-2 text-center text-sm">
+        <span className="text-grey-500 text-primary mt-4 flex items-center justify-center gap-2 text-center text-sm">
           <ArrowLeft />
-          <Link href="/register" className="text-primary font-medium hover:underline">
+          <Link href="/register" className="font-medium hover:underline">
             Back to Sign In
           </Link>
         </span>
@@ -103,7 +102,3 @@ export const BaseResetPassword = ({ authService }: { authService: AuthService })
     </section>
   );
 };
-
-export const ResetPassword = WithDependency(BaseResetPassword, {
-  authService: dependencies.AUTH_SERVICE,
-});

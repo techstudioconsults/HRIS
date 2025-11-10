@@ -5,7 +5,6 @@ import FileUpload from "@/components/shared/file-upload/file-upload";
 import { FormField } from "@/components/shared/inputs/FormFields";
 import { FolderFormData, folderSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-// import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -13,30 +12,40 @@ import { toast } from "sonner";
 import { useResourceService } from "../../services/use-service";
 
 interface CreateFolderFormProperties {
-  onClose?: () => void; // Function to close the modal
+  onClose?: () => void;
 }
 
 export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
-  const [, setSelectedFiles] = useState<File[]>([]);
-
-  // Query Hooks
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const { useCreateFolder } = useResourceService();
-  const createFolderMutation = useCreateFolder();
 
   const methods = useForm<FolderFormData>({
     resolver: zodResolver(folderSchema),
     defaultValues: {
       name: "",
-      file: [], // Add this empty array as default
+      file: [],
     },
   });
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
     reset,
     setValue,
   } = methods;
+
+  const createFolderMutation = useCreateFolder({
+    onSuccess: (data: unknown) => {
+      const folderData = data as { name?: string };
+      toast.success(`Folder "${folderData?.name || "created"}" successfully!`);
+      reset();
+      setSelectedFiles([]);
+      onClose?.();
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to create folder. Please try again.");
+    },
+  });
 
   const handleFilesSelected = (files: File[]) => {
     setSelectedFiles(files);
@@ -44,7 +53,6 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
   };
 
   const handleCancel = () => {
-    // Reset form and close modal
     reset();
     setSelectedFiles([]);
     onClose?.();
@@ -52,21 +60,12 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
 
   const onSubmit = async (data: FolderFormData) => {
     try {
-      // console.log(data);
-
       await createFolderMutation.mutateAsync({
         name: data.name,
         file: data.file || [],
       });
-
-      // Success handling
-      toast.success(`Folder "${data.name}" created successfully!`);
-      window.location.reload();
-      reset();
-      setSelectedFiles([]);
-      onClose?.();
-    } catch (error) {
-      toast.error(`Failed to create folder. Please try again. ${error}`);
+    } catch {
+      // Error is already handled by onError callback
     }
   };
 
@@ -82,10 +81,21 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
             type="text"
             required
           />
+          {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
         </div>
 
         <div className="flex w-full flex-col gap-4 pt-4">
-          <FileUpload onFileChange={handleFilesSelected} acceptedFileTypes=".pdf,.doc,.docx" maxFiles={3} />
+          <label className="text-sm font-medium">Files (Optional)</label>
+          <FileUpload
+            onFileChange={handleFilesSelected}
+            acceptedFileTypes=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+            maxFiles={10}
+          />
+          {selectedFiles.length > 0 && (
+            <p className="text-sm text-gray-600">
+              {selectedFiles.length} file{selectedFiles.length > 1 ? "s" : ""} selected
+            </p>
+          )}
         </div>
 
         <div className="flex w-full items-center justify-between gap-4 pt-4">

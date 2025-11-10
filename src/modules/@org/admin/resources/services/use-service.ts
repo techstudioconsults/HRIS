@@ -1,9 +1,13 @@
 import { queryKeys } from "@/lib/react-query/query-keys";
 import { createServiceHooks } from "@/lib/react-query/use-service-query";
 import { dependencies } from "@/lib/tools/dependencies";
+import { UseMutationOptions, UseQueryOptions } from "@tanstack/react-query";
 
-import { FileQueryParameters, FolderQueryParameters, ResourceService } from "./service";
+import type { FileQueryParameters, FolderQueryParameters, ResourceService } from "./service";
 
+/**
+ * Merge user filters with default pagination settings
+ */
 const mergeWithDefaultFilters = (filters?: FileQueryParameters): FileQueryParameters => {
   return {
     page: 1,
@@ -12,19 +16,32 @@ const mergeWithDefaultFilters = (filters?: FileQueryParameters): FileQueryParame
   };
 };
 
+/**
+ * Custom hooks for Resource Service operations
+ * Provides React Query hooks for folders and files management
+ */
 export const useResourceService = () => {
   const { useServiceQuery, useServiceMutation } = createServiceHooks<ResourceService>(dependencies.RESOURCE_SERVICE);
 
-  // Queries
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const useGetAllFolders = (filters: FolderQueryParameters = {}, options?: any) =>
-    useServiceQuery(queryKeys.folder.list(filters), (service) => service.getAllFolders(filters), options);
+  // ===================
+  // QUERY HOOKS
+  // ===================
 
-  // const useGetAllFiles = (filters: FileQueryParameters = { page: 1, limit: 10 }, options?: any) =>
-  //   useServiceQuery(queryKeys.file.list(filters), (service) => service.getAllFiles(filters), options);
+  /**
+   * Fetch all folders with optional filters
+   */
+  const useGetAllFolders = <TError = Error>(
+    filters: FolderQueryParameters = {},
+    options?: Omit<UseQueryOptions<unknown, TError>, "queryKey" | "queryFn">,
+  ) => useServiceQuery(queryKeys.folder.list(filters), (service) => service.getAllFolders(filters), options);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const useGetAllFiles = (filters?: FileQueryParameters, options?: any) => {
+  /**
+   * Fetch all files with optional filters
+   */
+  const useGetAllFiles = <TError = Error>(
+    filters?: FileQueryParameters,
+    options?: Omit<UseQueryOptions<unknown, TError>, "queryKey" | "queryFn">,
+  ) => {
     const mergedFilters = mergeWithDefaultFilters(filters);
 
     return useServiceQuery(
@@ -34,83 +51,126 @@ export const useResourceService = () => {
     );
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const useGetFolderById = (id: string, options?: any) =>
-    useServiceQuery(queryKeys.folder.details(id), (service) => service.getFolderById(id), options);
+  /**
+   * Fetch a single folder by ID
+   */
+  const useGetFolderById = <TError = Error>(
+    id: string,
+    options?: Omit<UseQueryOptions<unknown, TError>, "queryKey" | "queryFn">,
+  ) => useServiceQuery(queryKeys.folder.details(id), (service) => service.getFolderById(id), options);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const useDownloadFolder = (id: string, options?: any) =>
+  /**
+   * Download folder as zip (query-based for manual triggering)
+   */
+  const useDownloadFolder = <TError = Error>(
+    id: string,
+    options?: Omit<UseQueryOptions<unknown, TError>, "queryKey" | "queryFn">,
+  ) =>
     useServiceQuery(queryKeys.folder.download(id), (service) => service.downloadFolder(id), {
       ...options,
-      // Typically download queries shouldn't be cached
-      cacheTime: 0,
+      enabled: false, // Manual trigger only
+      gcTime: 0,
       staleTime: 0,
     });
 
-  // Mutations with proper cache invalidation
-  const useCreateFolder = () =>
+  // ===================
+  // MUTATION HOOKS
+  // ===================
+
+  /**
+   * Create a new folder with optional files
+   */
+  const useCreateFolder = <TError = Error>(
+    options?: Omit<UseMutationOptions<unknown, TError, { name: string; file: File[] }>, "mutationFn">,
+  ) =>
     useServiceMutation((service, data: { name: string; file: File[] }) => service.createFolder(data.name, data.file), {
-      onSuccess: () => {
-        // Invalidate all folder list queries
+      ...options,
+      onSuccess: (responseData, variables, context) => {
+        options?.onSuccess?.(responseData, variables, context);
+        // Return query keys to invalidate - React Query will auto-refresh these
         return [queryKeys.folder.list()];
       },
     });
 
-  const useUpdateFolder = () =>
+  /**
+   * Update an existing folder (rename and/or add files)
+   */
+  const useUpdateFolder = <TError = Error>(
+    options?: Omit<
+      UseMutationOptions<unknown, TError, { id: string; data: { name?: string; file?: File[] } }>,
+      "mutationFn"
+    >,
+  ) =>
     useServiceMutation(
       (service, { id, data }: { id: string; data: { name?: string; file?: File[] } }) => service.updateFolder(id, data),
       {
-        onSuccess: (_, { id }) => {
-          // Invalidate folder list and specific folder details
-          return [queryKeys.folder.list(), queryKeys.folder.details(id)];
+        ...options,
+        onSuccess: (data, variables, context) => {
+          options?.onSuccess?.(data, variables, context);
+          // Invalidate both list and detail views
+          return [queryKeys.folder.list(), queryKeys.folder.details(variables.id)];
         },
       },
     );
 
-  const useDeleteFolder = () =>
+  /**
+   * Delete a folder and all its contents
+   */
+  const useDeleteFolder = <TError = Error>(options?: Omit<UseMutationOptions<unknown, TError, string>, "mutationFn">) =>
     useServiceMutation((service, id: string) => service.deleteFolder(id), {
-      onSuccess: () => {
-        // Invalidate all folder list queries
+      ...options,
+      onSuccess: (responseData, variables, context) => {
+        options?.onSuccess?.(responseData, variables, context);
+        // Invalidate folder list to reflect deletion
         return [queryKeys.folder.list()];
       },
     });
 
-  const useAddFilesToFolder = () =>
+  /**
+   * Add files to an existing folder
+   */
+  const useAddFilesToFolder = <TError = Error>(
+    options?: Omit<UseMutationOptions<unknown, TError, { folderId: string; files: File[] }>, "mutationFn">,
+  ) =>
     useServiceMutation(
       (service, { folderId, files }: { folderId: string; files: File[] }) => service.addFilesToFolder(folderId, files),
       {
-        onSuccess: (data, { folderId }) => {
-          // console.log("Files added successfully:", data);
-          // Invalidate folder list and specific folder details
-          return [queryKeys.folder.list(), queryKeys.folder.details(folderId)];
-        },
-        onError: (error) => {
-          // console.error("Failed to add files:", error);
-          throw error; // Rethrow the error for further handling if needed
+        ...options,
+        onSuccess: (data, variables, context) => {
+          options?.onSuccess?.(data, variables, context);
+          // Refresh both folder details and lists
+          return [queryKeys.folder.list(), queryKeys.folder.details(variables.folderId), queryKeys.file.list()];
         },
       },
     );
 
-  const useRemoveFileFromFolder = () =>
+  /**
+   * Remove a file from a folder
+   */
+  const useRemoveFileFromFolder = <TError = Error>(
+    options?: Omit<UseMutationOptions<unknown, TError, { folderId: string; fileId: string }>, "mutationFn">,
+  ) =>
     useServiceMutation(
       (service, { folderId, fileId }: { folderId: string; fileId: string }) =>
         service.removeFileFromFolder(folderId, fileId),
       {
-        onSuccess: (_, { folderId }) => {
-          // Invalidate folder list and specific folder details when files are removed
-          return [queryKeys.folder.list(), queryKeys.folder.details(folderId)];
+        ...options,
+        onSuccess: (data, variables, context) => {
+          options?.onSuccess?.(data, variables, context);
+          // Refresh folder and file lists
+          return [queryKeys.folder.list(), queryKeys.folder.details(variables.folderId), queryKeys.file.list()];
         },
       },
     );
 
   return {
-    // Queries
+    // Query Hooks
     useGetAllFolders,
     useGetFolderById,
     useDownloadFolder,
     useGetAllFiles,
 
-    // Mutations
+    // Mutation Hooks
     useCreateFolder,
     useUpdateFolder,
     useDeleteFolder,

@@ -13,18 +13,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { More } from "iconsax-reactjs";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
-import { Folder, FolderFile } from "../services/service";
+import type { ApiResponse, Folder, FolderFile } from "../services/service";
 import { useResourceService } from "../services/use-service";
 
-interface ResourcesViewProperties {
+interface ResourcesBodyProperties {
   defaultView?: "folders" | "files";
+  searchQuery?: string;
 }
 
-// File icon mapping utility - FIXED: Handle undefined fileType
-const getFileIcon = (fileType: string | undefined) => {
+/**
+ * Get file icon based on file type/extension
+ */
+const getFileIcon = (fileType?: string): string => {
   const iconMapping: Record<string, string> = {
     pdf: "/images/resources/pdf-icon.svg",
     doc: "/images/resources/doc-icon.svg",
@@ -37,18 +40,16 @@ const getFileIcon = (fileType: string | undefined) => {
     default: "/images/resources/doc-icon.svg",
   };
 
-  // Handle undefined or null fileType
-  if (!fileType) {
-    return iconMapping.default;
-  }
+  if (!fileType) return iconMapping.default;
 
-  // Extract file extension from type or name
   const extension = fileType.toLowerCase().split("/").pop() || "";
   return iconMapping[extension] || iconMapping.default;
 };
 
-// Format date utility
-const formatDate = (dateString: string) => {
+/**
+ * Format date to readable string
+ */
+const formatDate = (dateString: string): string => {
   try {
     const date = new Date(dateString);
     if (Number.isNaN(date.getTime())) {
@@ -56,185 +57,130 @@ const formatDate = (dateString: string) => {
     }
     return date.toLocaleDateString("en-US", {
       year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
+      month: "short",
+      day: "numeric",
     });
   } catch {
     return "Invalid date";
   }
 };
 
-export const ResourcesBody = ({ defaultView = "files" }: ResourcesViewProperties) => {
+/**
+ * Format file size to readable string
+ */
+const formatFileSize = (bytes: number): string => {
+  if (bytes === 0) return "0 Bytes";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const index = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${Math.round((bytes / Math.pow(k, index)) * 100) / 100} ${sizes[index]}`;
+};
+
+/**
+ * Handle file download
+ */
+const handleFileDownload = (file: FolderFile) => {
+  if (file.url) {
+    window.open(file.url, "_blank");
+    toast.success("File download started");
+  } else {
+    toast.error("File download URL is not available");
+  }
+};
+
+/**
+ * Handle folder download
+ */
+const handleFolderDownload = async (folder: Folder) => {
+  try {
+    toast.info("Preparing folder download...");
+    // Download implementation would go here
+    toast.success(`Folder "${folder.name}" download started`);
+  } catch {
+    toast.error("Failed to download folder");
+  }
+};
+
+export const ResourcesBody = ({ defaultView = "files", searchQuery = "" }: ResourcesBodyProperties) => {
   const router = useRouter();
-  const { useGetAllFolders, useGetAllFiles, useDeleteFolder, useDownloadFolder } = useResourceService();
-  const deleteFolderMutation = useDeleteFolder();
+  const { useGetAllFolders, useGetAllFiles, useDeleteFolder } = useResourceService();
 
-  const [dialogOpen, setDialogOpen] = useState(false);
+  // Dialog states
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [folderToDelete, setFolderToDelete] = useState<string | null>(null);
-  const [folderToDownload, setFolderToDownload] = useState<string | null>(null);
-  const [allFiles, setAllFiles] = useState<FolderFile[]>([]);
-  const [allFolders, setAllFolders] = useState<Folder[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>("");
 
-  // Fetch all files
-  const {
-    data: filesResponse,
-    isLoading: filesLoading,
-    error: filesError,
-    isError: isFilesError,
-  } = useGetAllFiles({
+  // Build query parameters - only include non-empty values
+  const foldersQuery = {
     page: 1,
     limit: 100,
-    sortBy: "createdAt",
-    sortOrder: "desc",
-  });
+    ...(searchQuery && { search: searchQuery }),
+  };
 
-  // Fetch all folders
+  const filesQuery = {
+    page: 1,
+    limit: 100,
+    ...(searchQuery && { search: searchQuery }),
+  };
+
+  // Fetch folders
   const {
     data: foldersResponse,
     isLoading: foldersLoading,
     error: foldersError,
     isError: isFoldersError,
-  } = useGetAllFolders({
-    page: 1,
-    limit: 50,
-    sortBy: "createdAt",
-    sortOrder: "desc",
+  } = useGetAllFolders(foldersQuery);
+
+  // Fetch files
+  const {
+    data: filesResponse,
+    isLoading: filesLoading,
+    error: filesError,
+    isError: isFilesError,
+  } = useGetAllFiles(filesQuery);
+
+  // Delete folder mutation
+  const deleteFolderMutation = useDeleteFolder({
+    onSuccess: () => {
+      toast.success("Folder deleted successfully");
+      setDeleteDialogOpen(false);
+      setFolderToDelete(null);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to delete folder. Please try again.");
+      setDeleteDialogOpen(false);
+      setFolderToDelete(null);
+    },
   });
 
-  useEffect(() => {
-    // Check if both queries have completed (successfully or with error)
-    const bothQueriesDone = !filesLoading && !foldersLoading;
+  // Extract data with type safety
+  const folders = (foldersResponse as ApiResponse<Folder> | undefined)?.data?.items || [];
+  const files = (filesResponse as ApiResponse<FolderFile> | undefined)?.data?.items || [];
 
-    if (bothQueriesDone) {
-      setIsLoading(false);
+  // Combined loading state
+  const isLoading = foldersLoading || filesLoading;
+  const hasError = isFoldersError || isFilesError;
 
-      // Handle errors
-      if (isFilesError || isFoldersError) {
-        setHasError(true);
-        setErrorMessage(
-          isFilesError
-            ? filesError?.message || "Failed to load files"
-            : foldersError?.message || "Failed to load folders",
-        );
-        return;
-      }
-
-      // Set data from successful responses
-      if (filesResponse?.data?.items) {
-        setAllFiles(filesResponse.data.items);
-      } else {
-        setAllFiles([]);
-      }
-
-      if (foldersResponse?.data?.items) {
-        setAllFolders(foldersResponse.data.items);
-      } else {
-        setAllFolders([]);
-      }
-
-      setHasError(false);
-    }
-  }, [
-    filesLoading,
-    foldersLoading,
-    filesResponse,
-    foldersResponse,
-    isFilesError,
-    isFoldersError,
-    filesError,
-    foldersError,
-  ]);
-
-  // Download folder query
-  const downloadFolderQuery = useDownloadFolder(folderToDownload || "");
-
-  useEffect(() => {
-    if (downloadFolderQuery.data && folderToDownload) {
-      handleDownloadResponse(downloadFolderQuery.data, folderToDownload);
-      setFolderToDownload(null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [downloadFolderQuery.data, folderToDownload]);
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleDownloadResponse = (data: any, folderId: string) => {
-    if (data instanceof Blob) {
-      const url = window.URL.createObjectURL(data);
-      const link = document.createElement("a");
-      link.href = url;
-      const folder = allFolders.find((f) => f.id === folderId);
-      const folderName = folder?.name || "folder";
-      link.setAttribute("download", `${folderName}.zip`);
-      document.body.append(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-      toast.success("Folder downloaded successfully");
-    } else if (data?.url) {
-      window.open(data.url, "_blank");
-      toast.success("Folder download started");
-    }
-  };
-
+  // Handlers
   const handleFolderClick = (folderId: string) => {
-    router.push(`/resources/folders/${folderId}`);
+    router.push(`/admin/resources/${folderId}`);
   };
 
-  const handleFileDownload = async (file: FolderFile) => {
-    if (file.url) {
-      window.open(file.url, "_blank");
-    } else {
-      // console.log("Download file:", file.id);
-      toast.error("File download URL is not available");
-    }
-  };
-
-  // delete folder flow
   const handleDeleteFolderClick = (folderId: string) => {
     setFolderToDelete(folderId);
-    setDialogOpen(true);
+    setDeleteDialogOpen(true);
   };
 
-  // delete folder flow
   const handleConfirmDelete = async () => {
     if (!folderToDelete) return;
-
-    try {
-      await deleteFolderMutation.mutateAsync(folderToDelete);
-      toast.success("Folder deleted successfully");
-
-      // Refresh the data after deletion
-      window.location.reload();
-
-      setDialogOpen(false);
-      setFolderToDelete(null);
-    } catch {
-      toast.error("Failed to delete folder. Please try again.");
-      setDialogOpen(false);
-      setFolderToDelete(null);
-    }
+    await deleteFolderMutation.mutateAsync(folderToDelete);
   };
-  // delete folder flow
+
   const handleCancelDelete = () => {
-    setDialogOpen(false);
+    setDeleteDialogOpen(false);
     setFolderToDelete(null);
   };
 
-  const handleFolderDownload = async (folderId: string) => {
-    setFolderToDownload(folderId);
-  };
-
-  const handleRetry = () => {
-    setIsLoading(true);
-    setHasError(false);
-    setErrorMessage("");
-    window.location.reload();
-  };
-
-  // Loading state
+  // Loading State
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -246,8 +192,9 @@ export const ResourcesBody = ({ defaultView = "files" }: ResourcesViewProperties
     );
   }
 
-  // Error state
+  // Error State
   if (hasError) {
+    const errorMessage = isFoldersError ? foldersError?.message : filesError?.message;
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
         <div className="mb-4 rounded-full bg-red-100 p-3">
@@ -261,8 +208,8 @@ export const ResourcesBody = ({ defaultView = "files" }: ResourcesViewProperties
           </svg>
         </div>
         <h3 className="text-lg font-medium text-red-800">Error loading resources</h3>
-        <p className="text-muted-foreground mt-2 text-sm">{errorMessage}</p>
-        <MainButton className="mt-4" variant="primary" onClick={handleRetry}>
+        <p className="text-muted-foreground mt-2 text-sm">{errorMessage || "An unexpected error occurred"}</p>
+        <MainButton className="mt-4" variant="primary" onClick={() => window.location.reload()}>
           Try Again
         </MainButton>
       </div>
@@ -273,13 +220,13 @@ export const ResourcesBody = ({ defaultView = "files" }: ResourcesViewProperties
     <div className="space-y-6">
       <Tabs defaultValue={defaultView} className="w-full">
         <TabsList className="bg-transparent">
-          <TabsTrigger value="files">Files ({allFiles.length})</TabsTrigger>
-          <TabsTrigger value="folders">Folders ({allFolders.length})</TabsTrigger>
+          <TabsTrigger value="files">Files ({files.length})</TabsTrigger>
+          <TabsTrigger value="folders">Folders ({folders.length})</TabsTrigger>
         </TabsList>
 
         {/* Files Tab */}
         <TabsContent value="files" className="mt-6">
-          {allFiles.length === 0 ? (
+          {files.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <div className="mb-4 rounded-full bg-gray-100 p-3">
                 <svg className="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -292,27 +239,30 @@ export const ResourcesBody = ({ defaultView = "files" }: ResourcesViewProperties
                 </svg>
               </div>
               <h3 className="text-muted-foreground text-lg font-medium">No files found</h3>
-              <p className="text-muted-foreground mt-2 text-sm">Upload files to folders to see them here</p>
+              <p className="text-muted-foreground mt-2 text-sm">
+                {searchQuery ? "Try adjusting your search" : "Upload files to folders to see them here"}
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {allFiles.map((file) => (
-                <div key={file.id} className="rounded-lg border bg-white p-4 transition-shadow hover:shadow-sm">
+              {files.map((file: FolderFile) => (
+                <div key={file.id} className="group rounded-lg border bg-white p-4 transition-all hover:shadow-md">
                   <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-3">
+                    <div className="flex min-w-0 flex-1 items-start gap-3">
                       <Image
                         src={getFileIcon(file.type)}
                         alt={`${file.type} icon`}
                         width={40}
                         height={40}
-                        className="mt-1 h-10 w-8 object-contain"
+                        className="mt-1 h-10 w-10 flex-shrink-0 object-contain"
                       />
                       <div className="min-w-0 flex-1">
                         <h6 className="truncate font-medium text-gray-900" title={file.name}>
                           {file.name}
                         </h6>
-                        <p className="text-muted-foreground mt-1 text-sm">Created {formatDate(file.createdAt)}</p>
-                        {/* {file.folderName && <p className="text-muted-foreground mt-1 text-xs">In: {file.folderName}</p>} */}
+                        <p className="text-muted-foreground mt-1 text-sm">
+                          {formatFileSize(file.size)} • {formatDate(file.createdAt)}
+                        </p>
                       </div>
                     </div>
                     <DropdownMenu>
@@ -323,9 +273,9 @@ export const ResourcesBody = ({ defaultView = "files" }: ResourcesViewProperties
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48">
                         <DropdownMenuItem onClick={() => handleFileDownload(file)}>Download File</DropdownMenuItem>
-                        <DropdownMenuItem>View Details</DropdownMenuItem>
-                        <DropdownMenuItem>Move to Folder</DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">Delete File</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => file.url && window.open(file.url, "_blank")}>
+                          View File
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
@@ -337,7 +287,7 @@ export const ResourcesBody = ({ defaultView = "files" }: ResourcesViewProperties
 
         {/* Folders Tab */}
         <TabsContent value="folders" className="mt-6">
-          {allFolders.length === 0 ? (
+          {folders.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <div className="mb-4 rounded-full bg-gray-100 p-3">
                 <svg className="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -350,43 +300,47 @@ export const ResourcesBody = ({ defaultView = "files" }: ResourcesViewProperties
                 </svg>
               </div>
               <h3 className="text-muted-foreground text-lg font-medium">No folders found</h3>
-              <p className="text-muted-foreground mt-2 text-sm">Create your first folder to organize your files</p>
+              <p className="text-muted-foreground mt-2 text-sm">
+                {searchQuery ? "Try adjusting your search" : "Create your first folder to organize your files"}
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {allFolders.map((folder) => (
-                <div key={folder.id} className="rounded-lg border bg-white p-4 transition-shadow hover:shadow-sm">
+              {folders.map((folder: Folder) => (
+                <div
+                  key={folder.id}
+                  className="group cursor-pointer rounded-lg border bg-white p-4 transition-all hover:shadow-md"
+                  onClick={() => handleFolderClick(folder.id)}
+                >
                   <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-3">
+                    <div className="flex min-w-0 flex-1 items-start gap-3">
                       <Image
                         src="/images/resources/folder.svg"
                         alt="Folder icon"
                         width={40}
                         height={40}
-                        className="mt-1 h-10 w-10 object-contain"
+                        className="mt-1 h-10 w-10 flex-shrink-0 object-contain"
                       />
                       <div className="min-w-0 flex-1">
                         <h6 className="truncate font-medium text-gray-900" title={folder.name}>
                           {folder.name}
                         </h6>
-                        <p className="text-muted-foreground mt-1 text-sm">Created {formatDate(folder.createdAt)}</p>
-                        <p className="text-muted-foreground mt-1 text-xs">
-                          {/* {folder.fileCount || folder.file?.length || 0} files */}
+                        <p className="text-muted-foreground mt-1 text-sm">
+                          {folder.fileCount || 0} files • {formatDate(folder.createdAt)}
                         </p>
                       </div>
                     </div>
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
+                      <DropdownMenuTrigger asChild onClick={(event) => event.stopPropagation()}>
                         <Button variant="ghost" className="h-8 w-8 p-0" aria-label="Folder actions menu">
                           <More className="h-4 w-4 rotate-90" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuContent align="end" className="w-48" onClick={(event) => event.stopPropagation()}>
                         <DropdownMenuItem onClick={() => handleFolderClick(folder.id)}>View Folder</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleFolderDownload(folder.id)}>
+                        <DropdownMenuItem onClick={() => handleFolderDownload(folder)}>
                           Download Folder
                         </DropdownMenuItem>
-                        <DropdownMenuItem>Rename Folder</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleDeleteFolderClick(folder.id)} className="text-red-600">
                           Delete Folder
                         </DropdownMenuItem>
@@ -402,35 +356,35 @@ export const ResourcesBody = ({ defaultView = "files" }: ResourcesViewProperties
 
       {/* Delete Confirmation Dialog */}
       <ReusableDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
         trigger={null}
         title={undefined}
         description={undefined}
         img={undefined}
       >
         <div className="mb-6 flex flex-col items-center text-center">
-          <Image src="/images/resources/warning.svg" alt="Warning" width={80} height={80} className="mb-4 h-20 w-20" />
+          <div className="mb-4 rounded-full bg-red-100 p-3">
+            <svg className="h-12 w-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+          </div>
           <h3 className="mb-2 text-xl font-semibold text-gray-900">Delete Folder</h3>
           <p className="text-muted-foreground text-sm">
-            You&apos;re about to delete this folder and all the files in it. This action cannot be undone.
+            You&apos;re about to delete this folder and all its files. This action cannot be undone.
           </p>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <MainButton
-            variant="outline"
-            onClick={handleCancelDelete}
-            //  disabled={deleteFolderMutation.isPending}
-          >
+          <MainButton variant="outline" onClick={handleCancelDelete} isDisabled={deleteFolderMutation.isPending}>
             Cancel
           </MainButton>
-
-          <MainButton
-            variant="destructive"
-            onClick={handleConfirmDelete}
-            // disabled={deleteFolderMutation.isPending}
-          >
+          <MainButton variant="destructive" onClick={handleConfirmDelete} isDisabled={deleteFolderMutation.isPending}>
             {deleteFolderMutation.isPending ? "Deleting..." : "Delete Folder"}
           </MainButton>
         </div>

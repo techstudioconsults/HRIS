@@ -1,70 +1,45 @@
 import { HttpAdapter } from "@/lib/http/http-adapter";
 
-export interface CreateFolderDto {
-  name: string;
-  file?: File[];
-}
+import type {
+  ApiResponse,
+  DeleteResponse,
+  DownloadResponse,
+  FileQueryParameters,
+  Folder,
+  FolderFile,
+  FolderQueryParameters,
+  UpdateFolderDto,
+} from "./types";
 
-export interface UpdateFolderDto {
-  name?: string;
-  file?: File[];
-}
-
-export interface FolderQueryParameters {
-  page?: number;
-  limit?: number;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-}
-
-export interface FileQueryParameters {
-  page?: number;
-  limit?: number;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-  folderId?: string;
-  search?: string;
-}
-
-export interface Folder {
-  id: string;
-  name: string;
-  fileCount?: number;
-  createdAt: string;
-  updatedAt: string;
-  file?: FolderFile[];
-}
-
-export interface FolderFile {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  url?: string;
-  createdAt: string;
-}
-
-export interface ApiResponse<T> {
-  data: {
-    items: T[];
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-  success: boolean;
-  message?: string;
-}
-
+/**
+ * Resource Service Class
+ * Handles all API operations for folders and files in the resources module
+ */
 export class ResourceService {
   private readonly http: HttpAdapter;
+
+  // Default pagination filters
+  private readonly DEFAULT_FOLDER_FILTERS: FolderQueryParameters = {
+    page: 1,
+    limit: 10,
+  };
+
+  private readonly DEFAULT_FILE_FILTERS: FileQueryParameters = {
+    page: 1,
+    limit: 10,
+  };
 
   constructor(httpAdapter: HttpAdapter) {
     this.http = httpAdapter;
   }
 
-  async createFolder(name: string, file: File[] = []) {
+  /**
+   * Create a new folder with optional files
+   * @param name - Folder name
+   * @param file - Optional array of files to upload with the folder
+   * @returns Promise<Folder>
+   */
+  async createFolder(name: string, file: File[] = []): Promise<Folder> {
     const headers = { "Content-Type": "multipart/form-data" };
     const formData = new FormData();
     formData.append("name", name);
@@ -74,52 +49,54 @@ export class ResourceService {
     }
 
     const response = await this.http.post<{ data: Folder }>("/folders", formData, headers);
-    if (response?.status === 201) {
+
+    if (response?.status === 201 && response.data.data) {
       return response.data.data;
     }
+
+    throw new Error("Failed to create folder");
   }
 
-  // Define default filters as a constant
-  DEFAULT_FOLDER_FILTERS: FolderQueryParameters = {
-    page: 1,
-    limit: 10,
-  };
-
-  async getAllFolders(filters?: FolderQueryParameters) {
-    // Merge provided filters with defaults
-    const mergedFilters: FolderQueryParameters = {
+  /**
+   * Get all folders with optional filters
+   * @param filters - Optional query parameters for filtering, sorting, and pagination
+   * @returns Promise<ApiResponse<Folder>>
+   */
+  async getAllFolders(filters?: FolderQueryParameters): Promise<ApiResponse<Folder>> {
+    const response = await this.http.get<ApiResponse<Folder>>("/folders", {
       ...this.DEFAULT_FOLDER_FILTERS,
       ...filters,
-    };
+    });
 
-    const queryParameters = this.buildQueryParameters(mergedFilters);
-    const response = await this.http.get<ApiResponse<Folder>>(`/folders?${queryParameters}`);
-
-    if (response?.status === 200) {
+    if (response?.status === 200 && response.data) {
       return response.data;
     }
 
-    return {
-      data: {
-        items: [],
-        total: 0,
-        page: mergedFilters.page,
-        limit: mergedFilters.limit,
-        totalPages: 0,
-      },
-      success: false,
-      message: "Failed to fetch folders",
-    };
+    throw new Error("Failed to fetch folders");
   }
 
-  async getFolderById(id: string) {
+  /**
+   * Get a single folder by ID
+   * @param id - Folder ID
+   * @returns Promise<Folder>
+   */
+  async getFolderById(id: string): Promise<Folder> {
     const response = await this.http.get<{ data: Folder }>(`/folders/${id}`);
-    if (response?.status === 200) {
+
+    if (response?.status === 200 && response.data.data) {
       return response.data.data;
     }
+
+    throw new Error("Failed to fetch folder");
   }
 
-  async updateFolder(id: string, data: { name?: string; file?: File[] }) {
+  /**
+   * Update a folder's name and/or add files to it
+   * @param id - Folder ID
+   * @param data - Update data containing name and/or files
+   * @returns Promise<Folder>
+   */
+  async updateFolder(id: string, data: UpdateFolderDto): Promise<Folder> {
     const headers = { "Content-Type": "multipart/form-data" };
     const formData = new FormData();
 
@@ -127,26 +104,43 @@ export class ResourceService {
       formData.append("name", data.name);
     }
 
-    if (data.file) {
+    if (data.file && data.file.length > 0) {
       for (const singleFile of data.file) {
         formData.append("file", singleFile);
       }
     }
 
     const response = await this.http.patch<{ data: Folder }>(`/folders/${id}`, formData, headers);
-    if (response?.status === 200) {
+
+    if (response?.status === 200 && response.data.data) {
       return response.data.data;
     }
+
+    throw new Error("Failed to update folder");
   }
 
-  async deleteFolder(id: string) {
-    const response = await this.http.delete<{ success: boolean; message?: string }>(`/folders/${id}`);
-    if (response?.status === 200) {
+  /**
+   * Delete a folder and all its contents
+   * @param id - Folder ID
+   * @returns Promise<DeleteResponse>
+   */
+  async deleteFolder(id: string): Promise<DeleteResponse> {
+    const response = await this.http.delete<DeleteResponse>(`/folders/${id}`);
+
+    if (response?.status === 200 && response.data) {
       return response.data;
     }
+
+    throw new Error("Failed to delete folder");
   }
 
-  async addFilesToFolder(folderId: string, files: File[]) {
+  /**
+   * Add files to an existing folder
+   * @param folderId - Folder ID to add files to
+   * @param files - Array of files to upload
+   * @returns Promise<Folder>
+   */
+  async addFilesToFolder(folderId: string, files: File[]): Promise<Folder> {
     const headers = { "Content-Type": "multipart/form-data" };
     const formData = new FormData();
 
@@ -156,82 +150,92 @@ export class ResourceService {
 
     formData.append("folderId", folderId);
 
-    const response = await this.http.post<{ data: Folder }>(`/files`, formData, headers);
-    if (response?.status === 201) {
+    const response = await this.http.post<{ data: Folder }>("/files", formData, headers);
+
+    if (response?.status === 201 && response.data.data) {
       return response.data.data;
     }
+
+    throw new Error("Failed to add files to folder");
   }
 
-  // Define default file filters
-  DEFAULT_FILE_FILTERS: FileQueryParameters = {
-    page: 1,
-    limit: 10,
-  };
-
-  async getAllFiles(filters?: FileQueryParameters) {
-    // Merge provided filters with defaults
-    const mergedFilters: FileQueryParameters = {
+  /**
+   * Get all files with optional filters
+   * @param filters - Optional query parameters for filtering, sorting, and pagination
+   * @returns Promise<ApiResponse<FolderFile>>
+   */
+  async getAllFiles(filters?: FileQueryParameters): Promise<ApiResponse<FolderFile>> {
+    const response = await this.http.get<ApiResponse<FolderFile>>("/files", {
       ...this.DEFAULT_FILE_FILTERS,
       ...filters,
-    };
-
-    const queryParameters = this.buildQueryParameters(mergedFilters);
-    const response = await this.http.get<ApiResponse<FolderFile>>(`/files?${queryParameters}`);
-
-    if (response?.status === 200) {
-      return response.data;
-    }
-
-    return {
-      data: {
-        items: [],
-        total: 0,
-        page: mergedFilters.page,
-        limit: mergedFilters.limit,
-        totalPages: 0,
-      },
-      success: false,
-      message: "Failed to fetch files",
-    };
-  }
-  async removeFileFromFolder(folderId: string, fileId: string) {
-    const response = await this.http.delete<{ success: boolean; message?: string }>(
-      `/folders/${folderId}/files/${fileId}`,
-    );
-    if (response?.status === 200) {
-      return response.data;
-    }
-  }
-
-  async downloadFile(id: string) {
-    const response = await this.http.get(`/file/${id}/download`, {
-      responseType: "blob", // Important for file downloads
     });
 
-    if (response?.status === 200) {
+    if (response?.status === 200 && response.data) {
       return response.data;
     }
+
+    throw new Error("Failed to fetch files");
   }
 
-  async downloadFolder(id: string) {
-    const response = await this.http.get(`/folders/${id}/download`, {
-      responseType: "blob", // Important for file downloads
+  /**
+   * Remove a file from a folder
+   * @param folderId - Folder ID
+   * @param fileId - File ID to remove
+   * @returns Promise<DeleteResponse>
+   */
+  async removeFileFromFolder(folderId: string, fileId: string): Promise<DeleteResponse> {
+    const response = await this.http.delete<DeleteResponse>(`/folders/${folderId}/files/${fileId}`);
+
+    if (response?.status === 200 && response.data) {
+      return response.data;
+    }
+
+    throw new Error("Failed to remove file from folder");
+  }
+
+  /**
+   * Download a single file
+   * @param id - File ID
+   * @returns Promise<DownloadResponse>
+   */
+  async downloadFile(id: string): Promise<DownloadResponse> {
+    const response = await this.http.get<Blob>(`/file/${id}/download`, {
+      responseType: "blob",
     });
 
-    if (response?.status === 200) {
-      return response.data;
+    if (response?.status === 200 && response.data) {
+      return response.data as DownloadResponse;
     }
+
+    throw new Error("Failed to download file");
   }
 
-  private buildQueryParameters(filters: FolderQueryParameters): string {
-    const queryParameters = new URLSearchParams();
+  /**
+   * Download a folder as a zip file
+   * @param id - Folder ID
+   * @returns Promise<DownloadResponse>
+   */
+  async downloadFolder(id: string): Promise<DownloadResponse> {
+    const response = await this.http.get<Blob>(`/folders/${id}/download`, {
+      responseType: "blob",
+    });
 
-    for (const [key, value] of Object.entries(filters)) {
-      if (value !== undefined && value !== null && value !== "") {
-        queryParameters.append(key, value.toString());
-      }
+    if (response?.status === 200 && response.data) {
+      return response.data as DownloadResponse;
     }
 
-    return queryParameters.toString();
+    throw new Error("Failed to download folder");
   }
 }
+
+// Re-export types for convenience
+export type {
+  ApiResponse,
+  CreateFolderDto,
+  DeleteResponse,
+  FileQueryParameters,
+  Folder,
+  FolderFile,
+  FolderQueryParameters,
+  UpdateFolderDto,
+} from "./types";

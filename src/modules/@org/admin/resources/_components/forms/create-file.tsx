@@ -9,13 +9,14 @@ import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import type { ApiResponse, Folder } from "../../services/service";
 import { useResourceService } from "../../services/use-service";
 
-interface CreateFolderFormProperties {
+interface CreateFileFormProperties {
   onClose?: () => void;
 }
 
-export const CreateFileForm = ({ onClose }: CreateFolderFormProperties) => {
+export const CreateFileForm = ({ onClose }: CreateFileFormProperties) => {
   const { useGetAllFolders, useAddFilesToFolder } = useResourceService();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [folderOptions, setFolderOptions] = useState<{ value: string; label: string }[]>([]);
@@ -30,42 +31,57 @@ export const CreateFileForm = ({ onClose }: CreateFolderFormProperties) => {
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
     reset,
     watch,
     setValue,
   } = methods;
 
+  // Fetch folders - no search parameter needed
   const {
     data: foldersData,
     isLoading: foldersLoading,
     error: foldersError,
   } = useGetAllFolders({
     page: 1,
-    limit: 50,
-    sortBy: "createdAt",
-    sortOrder: "desc",
+    limit: 100,
   });
 
-  // Use useEffect to handle the folder data and update options
+  // Transform folder data to options
   useEffect(() => {
-    if (foldersData?.data?.items) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const options = foldersData.data.items.map((folder: any) => ({
+    const typedFoldersData = foldersData as ApiResponse<Folder> | undefined;
+    if (typedFoldersData?.data?.items) {
+      const options = typedFoldersData.data.items.map((folder: Folder) => ({
         value: folder.id,
         label: folder.name,
       }));
       setFolderOptions(options);
 
-      // Optional: Auto-select the first folder if none is selected
+      // Auto-select first folder if none selected
       if (options.length > 0 && !watch("folderId")) {
         setValue("folderId", options[0].value);
       }
     }
   }, [foldersData, setValue, watch]);
 
-  // Get the selected folder ID from the form
   const selectedFolderId = watch("folderId");
+
+  const addFilesMutation = useAddFilesToFolder({
+    onSuccess: () => {
+      toast.success("Files uploaded successfully!");
+      reset();
+      setSelectedFiles([]);
+      onClose?.();
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to upload files. Please try again.");
+    },
+  });
+
+  const handleFilesSelected = (files: File[]) => {
+    setSelectedFiles(files);
+    setValue("file", files);
+  };
 
   const handleCancel = () => {
     reset();
@@ -73,26 +89,24 @@ export const CreateFileForm = ({ onClose }: CreateFolderFormProperties) => {
     onClose?.();
   };
 
-  const handleFilesSelected = (files: File[]) => {
-    setSelectedFiles(files);
-    methods.setValue("file", files);
-  };
-
-  const addFilesMutation = useAddFilesToFolder();
-
   const onSubmit = async (data: FileFormData) => {
+    if (!data.folderId) {
+      toast.error("Please select a folder");
+      return;
+    }
+
+    if (!data.file || data.file.length === 0) {
+      toast.error("Please select at least one file");
+      return;
+    }
+
     try {
       await addFilesMutation.mutateAsync({
         folderId: data.folderId,
         files: data.file,
       });
-
-      toast.success("Files uploaded successfully!");
-      window.location.reload();
-      reset();
-      onClose?.();
     } catch {
-      toast.error("Failed to upload files");
+      // Error is already handled by onError callback
     }
   };
 
@@ -102,24 +116,35 @@ export const CreateFileForm = ({ onClose }: CreateFolderFormProperties) => {
         <div className="grid w-full gap-2">
           <FormField
             name="folderId"
-            placeholder="Select folder name"
+            placeholder="Select folder"
             className="!h-14 w-full"
-            label="Folder Name"
+            label="Folder"
             type="select"
             required
             options={folderOptions}
             disabled={foldersLoading || folderOptions.length === 0}
-            // loading={foldersLoading}
           />
           {foldersLoading && <p className="text-sm text-gray-500">Loading folders...</p>}
-          {foldersError && <p className="text-sm text-red-500">Error loading folders: {foldersError.message}</p>}
+          {foldersError && <p className="text-sm text-red-600">Error: {foldersError.message}</p>}
           {!foldersLoading && folderOptions.length === 0 && !foldersError && (
-            <p className="text-sm text-gray-500">No folders available. Please create a folder first.</p>
+            <p className="text-sm text-amber-600">No folders available. Please create a folder first.</p>
           )}
+          {errors.folderId && <p className="text-sm text-red-600">{errors.folderId.message}</p>}
         </div>
 
         <div className="flex w-full flex-col gap-4 pt-4">
-          <FileUpload onFileChange={handleFilesSelected} acceptedFileTypes=".pdf,.doc,.docx" maxFiles={3} />
+          <label className="text-sm font-medium">Files</label>
+          <FileUpload
+            onFileChange={handleFilesSelected}
+            acceptedFileTypes=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+            maxFiles={10}
+          />
+          {selectedFiles.length > 0 && (
+            <p className="text-sm text-gray-600">
+              {selectedFiles.length} file{selectedFiles.length > 1 ? "s" : ""} selected
+            </p>
+          )}
+          {errors.file && <p className="text-sm text-red-600">{errors.file.message}</p>}
         </div>
 
         <div className="flex w-full items-center justify-between gap-4 pt-4">
@@ -127,7 +152,7 @@ export const CreateFileForm = ({ onClose }: CreateFolderFormProperties) => {
             className="w-full"
             type="button"
             variant="outline"
-            isDisabled={isSubmitting}
+            isDisabled={isSubmitting || addFilesMutation.isPending}
             onClick={handleCancel}
           >
             Cancel
@@ -136,9 +161,9 @@ export const CreateFileForm = ({ onClose }: CreateFolderFormProperties) => {
             className="w-full"
             variant="primary"
             type="submit"
-            isDisabled={isSubmitting || !selectedFolderId || selectedFiles.length === 0}
+            isDisabled={isSubmitting || addFilesMutation.isPending || !selectedFolderId || selectedFiles.length === 0}
           >
-            {isSubmitting ? "Uploading..." : "Upload File"}
+            {isSubmitting || addFilesMutation.isPending ? "Uploading..." : "Upload Files"}
           </MainButton>
         </div>
       </form>

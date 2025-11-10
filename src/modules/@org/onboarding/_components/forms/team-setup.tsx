@@ -4,7 +4,10 @@
 
 import MainButton from "@/components/shared/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { WithDependency } from "@/HOC/withDependencies";
+import { dependencies } from "@/lib/tools/dependencies";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -18,7 +21,7 @@ interface TeamSetupFormProperties {
   onBoardingService: OnboardingService;
 }
 
-export const TeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) => {
+const BaseTeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [, setInitialTeams] = useState<Team[]>([]);
@@ -70,22 +73,39 @@ export const TeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) =>
           await onBoardingService.updateTeam(team.id, team.name);
           // Handle role updates
           for (const role of team.roles) {
-            await (role.id
-              ? onBoardingService.updateRole(role.id, role)
-              : onBoardingService.createRole({ ...role, teamId: team.id }));
+            if (role.id) {
+              const updateData: { name?: string; permissions?: string[] } = {};
+              if (role.name !== undefined) updateData.name = role.name;
+              if (role.permissions !== undefined) updateData.permissions = role.permissions;
+              await onBoardingService.updateRole(role.id, updateData);
+            } else {
+              await onBoardingService.createRole({
+                name: role.name,
+                teamId: team.id!,
+                permissions: role.permissions,
+              });
+            }
           }
         } else {
           // Create new team
           const createdTeam = await onBoardingService.createTeam(team.name);
           // Create roles for new team
-          await Promise.all(
-            team.roles.map((role) => onBoardingService.createRole({ ...role, teamId: createdTeam?.id })),
-          );
+          if (createdTeam?.id) {
+            await Promise.all(
+              team.roles.map((role) =>
+                onBoardingService.createRole({
+                  name: role.name,
+                  teamId: createdTeam.id,
+                  permissions: role.permissions,
+                }),
+              ),
+            );
+          }
         }
       }
 
       toast.success("Team setup saved successfully");
-      router.push("/next-step");
+      router.push("/onboarding/step-3");
     } catch (error) {
       toast.error("Failed to save team setup");
       console.error("Error saving team setup:", error);
@@ -100,7 +120,7 @@ export const TeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) =>
     <section className="rounded-[10px] p-7 shadow-xl">
       <div className="mb-8 space-y-2">
         <h3 className="text-2xl/[120%] font-[600] tracking-[-2%]">Set up your team</h3>
-        <p className="text-gray-500">Configure teams and roles with specific permissions for your organization</p>
+        <p className="text-gray-200">Configure teams and roles with specific permissions for your organization</p>
       </div>
 
       <FormProvider {...methods}>
@@ -111,17 +131,19 @@ export const TeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) =>
           }}
         >
           <section className="hide-scrollbar max-h-[500px] space-y-4 overflow-auto">
-            <TeamConfig teams={teams} onTeamsChange={handleTeamsChange} onBoardingService={onBoardingService} />
+            <TeamConfig teams={teams} onTeamsChange={handleTeamsChange} />
           </section>
 
           <div className="mt-8 space-y-4">
-            <MainButton href={`/onboarding?step=3`} type="button" variant="primary" className="w-full" size="xl">
+            <MainButton href={`/onboarding/step-3`} type="button" variant="primary" className="w-full" size="xl">
               Continue
             </MainButton>
 
-            <MainButton href={`/dashboard`} type="button" variant="link" className="w-full font-semibold" size="xl">
-              Skip for Later
-            </MainButton>
+            <div className="flex w-full items-center justify-center py-5">
+              <Link href={`/admin/dashboard`} className="text-primary font-semibold hover:underline">
+                Skip for Later
+              </Link>
+            </div>
           </div>
         </form>
       </FormProvider>
@@ -180,3 +202,7 @@ const FormLoadingSkeleton = () => {
     </section>
   );
 };
+
+export const TeamSetupForm = WithDependency(BaseTeamSetupForm, {
+  onBoardingService: dependencies.ONBOARDING_SERVICE,
+});

@@ -1,9 +1,7 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
-import { FormField } from "@/components/shared/FormFields";
-import { WithDependency } from "@/HOC/withDependencies";
-import { dependencies } from "@/lib/tools/dependencies";
+import { FormField } from "@/components/shared/inputs/FormFields";
 import { LoginOTPFFormData, loginOTPFormSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -11,10 +9,12 @@ import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { AuthService } from "../../services/auth.service";
+import { useAuthService } from "../../services/use-auth-service";
 
-export const BaseOTPLogin = ({ authService }: { authService: AuthService }) => {
+export const OTPLogin = () => {
   const router = useRouter();
+  const { useRequestOTP } = useAuthService();
+  const { mutateAsync: requestOTP, isPending } = useRequestOTP();
   const methods = useForm<LoginOTPFFormData>({
     resolver: zodResolver(loginOTPFormSchema),
     defaultValues: {
@@ -24,19 +24,25 @@ export const BaseOTPLogin = ({ authService }: { authService: AuthService }) => {
 
   const {
     handleSubmit,
-    formState: { isSubmitting, isValid },
+    formState: { isValid },
   } = methods;
 
   const handleSubmitForm = async (data: LoginOTPFFormData) => {
-    const response = await authService.loginWithOTP(data);
-    if (response?.success) {
-      router.push(`/login/otp?email=${data.email}`);
-      toast.success("Sent", {
-        description: response.data,
-        position: "bottom-left",
-        richColors: true,
-      });
-    }
+    requestOTP(data, {
+      onSuccess: (response) => {
+        if (response?.success) {
+          toast.success(`Request Sent Successfully`, {
+            description: `Please check you mail for OTP`,
+          });
+          router.push(`/login/otp-verify?email=${data.email}`);
+        }
+      },
+      onError: (error) => {
+        toast.error("Registration Failed", {
+          description: error instanceof Error ? error.message : "An unknown error occurred",
+        });
+      },
+    });
   };
 
   return (
@@ -65,8 +71,8 @@ export const BaseOTPLogin = ({ authService }: { authService: AuthService }) => {
             <MainButton
               type="submit"
               variant="primary"
-              isDisabled={isSubmitting || !isValid}
-              isLoading={isSubmitting}
+              isDisabled={isPending || !isValid}
+              isLoading={isPending}
               className="w-full"
               size="2xl"
             >
@@ -98,7 +104,3 @@ export const BaseOTPLogin = ({ authService }: { authService: AuthService }) => {
     </section>
   );
 };
-
-export const OTPLogin = WithDependency(BaseOTPLogin, {
-  authService: dependencies.AUTH_SERVICE,
-});

@@ -1,4 +1,5 @@
 import {
+  ArrowLeft,
   ArrowRight2 as ArrowRight,
   TickCircle as Check,
   ArrowLeft2 as ChevronLeft,
@@ -56,6 +57,7 @@ export const Icons = {
   warning: Warning,
   user: User,
   arrowRight: ArrowRight,
+  arrowLeft: ArrowLeft,
   help: HelpCircle,
   sun: Sun,
   moon: Moon,

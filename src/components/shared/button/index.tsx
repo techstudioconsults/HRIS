@@ -1,19 +1,25 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { LucideLoader, LucidePlus } from "lucide-react";
 import Link from "next/link";
-import { cloneElement, forwardRef, MouseEventHandler, ReactElement, ReactNode } from "react";
+import { cloneElement, forwardRef, MouseEventHandler, ReactElement, ReactNode, useState } from "react";
 
 type Variant =
   | "default"
   | "primary"
+  | "primaryOutline"
   | "destructive"
+  | "destructiveOutline"
   | "subtle"
   | "loading"
   | "outline"
   | "secondary"
   | "ghost"
   | "link"
-  | "accent";
+  | "accent"
+  | "accentOutline";
 type Size = "default" | "sm" | "lg" | "xl" | "2xl" | "link" | "icon" | "circle";
 
 interface ButtonProperties {
@@ -57,7 +63,7 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
     {
       type = "button",
       variant,
-      size = "xl",
+      size = "lg",
       children,
       isLoading = false,
       isLeftIconVisible = false,
@@ -72,6 +78,8 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
     },
     reference,
   ) => {
+    const [isPressed, setIsPressed] = useState(false);
+
     const modifiedIcon = icon ? (
       cloneElement(
         icon as ReactElement,
@@ -95,9 +103,23 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
       </>
     );
 
-    const buttonClasses = `transition-all duration-300 ease-in-out rounded-lg shadown-none ${
-      isDisabled ? "opacity-50 cursor-not-allowed" : "hover:shadow-sneob dark:hover:shadow-sneobw focus:shadow-none"
-    } ${className}`;
+    const buttonClasses = cn(
+      "transition-all duration-300 ease-in-out rounded-md",
+      isDisabled
+        ? "opacity-50 cursor-not-allowed"
+        : isPressed
+          ? "shadow-none hover:cursor-pointer"
+          : "hover:shadow-xl hover:cursor-pointer",
+      className,
+    );
+
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (!isDisabled) {
+        setIsPressed(true);
+        setTimeout(() => setIsPressed(false), 200);
+      }
+      onClick?.(event);
+    };
 
     if (href) {
       const isExternal = /^https?:\/\//.test(href);
@@ -112,7 +134,7 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
               disabled={isDisabled}
               aria-label={ariaLabel}
               className={buttonClasses}
-              onClick={onClick}
+              onClick={handleClick}
               role="button"
               ref={reference}
             >
@@ -130,7 +152,7 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
             disabled={isDisabled}
             aria-label={ariaLabel}
             className={buttonClasses}
-            onClick={onClick}
+            onClick={handleClick}
             role="button"
             ref={reference}
           >
@@ -147,7 +169,7 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
         disabled={isDisabled}
         aria-label={ariaLabel}
         className={buttonClasses}
-        onClick={onClick}
+        onClick={handleClick}
         role="button"
         ref={reference}
       >

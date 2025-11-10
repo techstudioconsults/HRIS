@@ -1,12 +1,10 @@
-/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
-import { FormField } from "@/components/shared/FormFields";
-import { Label } from "@/components/ui/label";
+import { FormField } from "@/components/shared/inputs/FormFields";
 import { ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -37,13 +35,18 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
   const employee = useWatch({ control, name: `employees.${index}` });
   const selectedTeamId = useWatch({ control, name: `employees.${index}.teamId` });
   const selectedRoleId = useWatch({ control, name: `employees.${index}.roleId` });
+  // const { data: session } = useSession();
+  // console.log(session);
 
   const [departments, setDepartments] = useState<Department[]>([]);
   const [roles, setRoles] = useState<Role[]>([]);
   const [loadingDepartments, setLoadingDepartments] = useState(false);
   const [loadingRoles, setLoadingRoles] = useState(false);
   const [permissionsDialogOpen, setPermissionsDialogOpen] = useState(false);
-  const [currentPermissions, setCurrentPermissions] = useState<any[]>([]);
+  const [currentPermissions, setCurrentPermissions] = useState<{
+    name: string;
+    permissions: any[];
+  } | null>(null);
 
   // Fetch departments on component mount
   useEffect(() => {
@@ -56,9 +59,10 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
           name: team.name,
         }));
         setDepartments(departmentOptions);
-      } catch (error) {
-        console.error("Failed to fetch departments:", error);
-        toast.error("Failed to load departments");
+      } catch (error: any) {
+        toast.error("Failed to load department", {
+          description: error.response.data.message,
+        });
       } finally {
         setLoadingDepartments(false);
       }
@@ -85,9 +89,10 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
           permissions: role.permissions || [],
         }));
         setRoles(roleOptions);
-      } catch (error) {
-        console.error("Failed to fetch roles:", error);
-        toast.error("Failed to load roles");
+      } catch (error: any) {
+        toast.error("Failed to load roles", {
+          description: error.response.data.message,
+        });
       } finally {
         setLoadingRoles(false);
       }
@@ -98,11 +103,32 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
 
   // Load permissions when role changes or when opening dialog
   useEffect(() => {
-    if (selectedRoleId) {
-      const selectedRole = roles.find((role) => role.id === selectedRoleId);
-      setCurrentPermissions(selectedRole?.permissions || []);
-    }
-  }, [selectedRoleId, roles]);
+    const fetchRolePermissions = async () => {
+      if (selectedRoleId) {
+        try {
+          const roleData = await onBoardingService.getRole(selectedRoleId);
+
+          if (roleData) {
+            setCurrentPermissions({
+              name: roleData.name,
+              permissions: roleData.permissions || [],
+            });
+          } else {
+            setCurrentPermissions({ name: "", permissions: [] });
+          }
+        } catch (error: any) {
+          toast.error("Failed to load permission", {
+            description: error.response.data.message,
+          });
+          setCurrentPermissions(null);
+        }
+      } else {
+        setCurrentPermissions(null);
+      }
+    };
+
+    fetchRolePermissions();
+  }, [selectedRoleId, onBoardingService]);
 
   const handleOpenPermissionsDialog = () => {
     if (!selectedRoleId) {
@@ -112,12 +138,20 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
     setPermissionsDialogOpen(true);
   };
 
-  // const handleSavePermissions = (permissions: any[]) => {
-  //   setCurrentPermissions(permissions);
-  //   setValue(`employees.${index}.permissions`, permissions);
-  //   setPermissionsDialogOpen(false);
-  //   toast.success("Permissions updated successfully");
-  // };
+  const handleSavePermissions = async (permissions: { name: string; permissions: any[] }) => {
+    try {
+      const updatedRole = await onBoardingService.updateRole(selectedRoleId, permissions);
+      if (updatedRole) {
+        toast.success("Permissions updated successfully");
+        setCurrentPermissions(permissions);
+        setPermissionsDialogOpen(false);
+      }
+    } catch (error: any) {
+      toast.error("Failed to update permissions", {
+        description: error.response.data.message,
+      });
+    }
+  };
 
   return (
     <section className="w-full">
@@ -180,7 +214,7 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
         />
         <input type="hidden" name={`employees.${index}.permissions`} value={JSON.stringify(currentPermissions)} />
         <div>
-          <Label className={`mb-2 text-[16px]`}>Customize Permissions</Label>
+          <label className={`mb-2 block text-[16px] font-medium`}>Customize Permissions</label>
           <div
             className={`flex h-14 cursor-pointer items-center justify-between rounded-lg border px-4`}
             onClick={handleOpenPermissionsDialog}
@@ -200,13 +234,17 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
         title="Customize Permissions"
         description="Select the permissions for this employee"
         className="!max-w-2xl"
+        trigger={""}
       >
         <RolesAndPermission
-          // initialPermissions={currentPermissions}
-          // onSubmit={handleSavePermissions}
-          onCancel={() => setPermissionsDialogOpen(false)}
-          onSubmit={function (): Promise<void> {
-            throw new Error("Function not implemented.");
+          isEdit
+          initialData={currentPermissions}
+          onSubmit={async (data) => {
+            handleSavePermissions(data);
+          }}
+          onCancel={(event: FormEvent) => {
+            event.preventDefault();
+            setPermissionsDialogOpen(false);
           }}
         />
       </ReusableDialog>

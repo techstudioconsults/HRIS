@@ -15,6 +15,7 @@ export const CardSection = () => {
           trend="up"
           icon={<People size={20} />}
           iconVariant="success"
+          titleColor=""
         />
 
         <DashboardCard

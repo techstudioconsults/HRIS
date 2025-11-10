@@ -18,7 +18,7 @@ export function ModeToggle() {
       isIconOnly
       icon={<Sun />}
       size="icon"
-      className="group/toggle fixed top-5 right-2 size-8"
+      className="group/toggle size-8"
       onClick={toggleTheme}
     />
   );

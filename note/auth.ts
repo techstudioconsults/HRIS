@@ -1,96 +1,40 @@
-/* eslint-disable no-console */
-import NextAuth from "next-auth";
+// middleware.ts
+import { auth } from "@/modules/@org/auth";
+import { NextResponse } from "next/server";
 
-import "next-auth/jwt";
+export default auth((request) => {
+  const { nextUrl } = request;
+  const isLoggedIn = !!request.auth;
 
-import Credentials from "next-auth/providers/credentials";
+  // Define protected routes
+  const protectedRoutes = ["/onboarding", "/admin"];
 
-// const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL as string;
+  // Check if the current path is protected
+  const isProtectedRoute = protectedRoutes.some((route) => nextUrl.pathname.startsWith(route));
 
-declare module "next-auth" {
-  interface Session {
-    accessToken: string;
-    refreshToken: string;
+  // Redirect logic
+  if (isProtectedRoute && !isLoggedIn) {
+    // Get absolute URL for /login
+    const loginUrl = new URL("/login", nextUrl.origin);
+    // Add redirect parameter to return to current page after login
+    loginUrl.searchParams.set("callbackUrl", nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
   }
-}
 
-declare module "next-auth/jwt" {
-  interface JWT {
-    accessToken?: string;
-    refreshToken?: string;
-  }
-}
-
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  debug: process.env.NODE_ENV === "development",
-  providers: [
-    Credentials({
-      credentials: {
-        email: { label: "Email", type: "email", placeholder: "jsmith@example.com" },
-        password: { label: "Password", type: "password" },
-      },
-      authorize: async (credentials) => {
-        try {
-          const response = await fetch(`${`https://hrdev.techstudioacademy.com/api/v1`}/auth/login/password`, {
-            method: "POST",
-            body: JSON.stringify(credentials),
-            headers: { "Content-Type": "application/json" },
-          });
-
-          if (!response.ok) {
-            console.error("Login failed:", response.status, response.statusText);
-            return null;
-          }
-
-          const data = await response.json();
-
-          if (data.success) {
-            return {
-              id: data.data.employee.id,
-              name: data.data.employee.fullName,
-              email: data.data.employee.email,
-              role: data.data.employee.role,
-              accessToken: data.data.tokens.accessToken,
-              refreshToken: data.data.tokens.refreshToken,
-            };
-          }
-          return null;
-        } catch (error) {
-          console.error("Login error:", error);
-          return null;
-        }
-      },
-    }),
-  ],
-  callbacks: {
-    authorized({ request, auth }) {
-      const { pathname } = request.nextUrl;
-      if (pathname === "/middleware-example") return !!auth;
-      return true;
-    },
-    jwt({ token, trigger, session }) {
-      if (trigger === "update") token.name = session.user.name;
-      if (session) {
-        token.accessToken = session.accessToken;
-        token.refreshToken = session.refreshToken;
-      }
-      return token;
-    },
-    session({ session, token }) {
-      session.accessToken = token.accessToken ?? "";
-      session.refreshToken = token.refreshToken ?? "";
-      return session;
-    },
-  },
-  session: {
-    strategy: "jwt",
-    maxAge: 24 * 60 * 60,
-    updateAge: 60 * 60,
-  },
-  pages: {
-    signIn: "/login",
-    error: "/not-found", // Redirect to login on errors
-  },
-  // skipCSRFCheck: "true",
-  secret: process.env.AUTH_SECRET,
+  return NextResponse.next();
 });
+
+// Optionally, don't invoke Middleware on some paths
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for:
+     * - api/trpc routes
+     * - static files (._next/static)
+     * - public folder
+     * - auth callbacks
+     * - login page
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico|login).*)",
+  ],
+};

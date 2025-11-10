@@ -1,7 +1,14 @@
 "use client";
 
-import { ArrowDown2, Notification, SearchNormal1 } from "iconsax-reactjs";
+import { ModeToggle } from "@/components/core/layout/ThemeToggle/theme-toggle";
+import { GlobalSearchInput } from "@/components/core/miscellaneous/search-input";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
+import { ArrowDown2, Notification } from "iconsax-reactjs";
+import { signOut } from "next-auth/react";
+import { useLocale } from "next-intl";
 import { useState } from "react";
+import { toast } from "sonner";
 
 type TopBarProperties = {
   adminName: string;
@@ -12,25 +19,30 @@ type TopBarProperties = {
 
 // onSearch,
 export default function TopBar({ adminName, notificationsCount = 0, className = "" }: TopBarProperties) {
+  const locale = useLocale();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const handleLogout = async () => {
+    try {
+      await signOut({
+        redirect: true,
+        callbackUrl: `/${locale}/login`,
+      });
+    } catch {
+      toast.error(`Something went wrong`);
+    }
+  };
+
   return (
-    <header className={`bg-background flex h-16 items-center justify-between px-4 ${className}`}>
+    <header className={cn("bg-background grid h-16 grid-cols-2 items-center gap-4 px-0 lg:px-4", className)}>
       {/* Search Input */}
-      <div className="relative hidden w-full max-w-[240px] md:block">
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-          <SearchNormal1 size="15" className="text-gray-400" variant="Outline" />
-        </div>
-        <input
-          type="text"
-          placeholder="Search..."
-          className="focus:ring-primary-500 block w-full rounded border-0 py-2 pr-4 pl-10 text-gray-900 ring-1 ring-gray-200 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6"
-          // onChange={(e) => onSearch(e.target.value)}
-        />
+      <div className="relative hidden w-full max-w-[240px] items-center gap-4 md:flex">
+        <SidebarTrigger className="-ml-1" />
+        <GlobalSearchInput />
       </div>
 
       {/* Right Section */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-end gap-2 md:gap-4">
         {/* Notification Bell */}
         <button
           type="button"
@@ -69,12 +81,13 @@ export default function TopBar({ adminName, notificationsCount = 0, className = 
               <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                 Account Settings
               </a>
-              <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+              <span onClick={handleLogout} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                 Logout
-              </a>
+              </span>
             </div>
           )}
         </div>
+        <ModeToggle />
       </div>
     </header>
   );

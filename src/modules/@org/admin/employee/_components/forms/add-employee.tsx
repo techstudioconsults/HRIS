@@ -1,65 +1,160 @@
 "use client";
 
-import { FormField } from "@/components/shared/FormFields";
-// import { Button } from "@/components/ui/button";
-import {
-  departmentOptions,
-  employmentTypeOptions,
-  genderOptions,
-  roleOptions,
-  workModeOptions,
-} from "@/lib/tools/constants";
-import { employeeSchema } from "@/schemas"; // You'll need to create this schema
+import { BreadCrumb } from "@/components/shared/breadcrumb";
+import MainButton from "@/components/shared/button";
+import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
+import { FormField } from "@/components/shared/inputs/FormFields";
+import { PhoneInput } from "@/components/shared/inputs/phone-input";
+import { Label } from "@/components/ui/label";
+// import { AlertDialog } from "@/components/ui/alert-dialog";
+import { employmentTypeOptions, genderOptions, workModeOptions } from "@/lib/tools/constants";
+import { EmployeeFormData, employeeSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormProvider, useForm } from "react-hook-form";
+import { useEffect, useMemo, useState } from "react";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-export const EmployeeForm = () => {
+import FileUpload from "../../../_components/file-upload/file-upload";
+import { useEmployeeService } from "../../services/use-service";
+
+export const AddEmployeeForm = () => {
   const router = useRouter();
-  const methods = useForm({
-    resolver: zodResolver(employeeSchema), // Make sure to create this schema
-    defaultValues: {
-      firstName: "Adura",
-      lastName: "Shobowale",
-      dob: "2005-08-07", // YYYY-MM-DD format for date inputs
-      gender: "male",
-      email: "adurashobzz@techstudio.com",
-      phone: "08156893421",
-      startDate: "2024-02-28",
-      employmentType: "full-time",
-    },
+
+  const [files, setFiles] = useState<File[]>([]);
+  // Derive roles from the selected team to avoid repeated state updates
+  const [roles, _setRoles] = useState<{ id: string; name: string }[]>([]);
+
+  // Query hooks
+  const { useGetAllTeams, useCreateEmployee } = useEmployeeService();
+
+  const { data: teams = [], isLoading: loadingTeams } = useGetAllTeams();
+  const createEmployeeMutation = useCreateEmployee();
+  // const [showAlert, setShowAlert] = useState(false);
+  // const [alertTitle, setAlertTitle] = useState("");
+  // const [alertDescription, setAlertDescription] = useState("");
+
+  const methods = useForm<EmployeeFormData>({
+    resolver: zodResolver(employeeSchema),
   });
 
   const {
     handleSubmit,
-    // formState: { isSubmitting, isValid },
+    formState: { isSubmitting },
+    watch,
+    setValue,
+    // reset,
   } = methods;
 
-  const onSubmit = async () => {
+  const selectedTeamId = watch("teamId");
+
+  // Memoize derived team and roles to prevent re-renders triggering an effect loop
+  const selectedTeam = useMemo(() => teams.find((team) => String(team.id) === selectedTeamId), [teams, selectedTeamId]);
+  type RoleLite = { id: string | number; name: string };
+  const normalizedDerivedRoles = useMemo(
+    () => (selectedTeam?.roles ?? []).map((r: RoleLite) => ({ id: String(r.id), name: r.name })),
+    [selectedTeam],
+  );
+
+  // Keep local roles state in sync only when it actually changes (prevents infinite loops)
+  useEffect(() => {
+    // Shallow compare by length and ids to avoid unnecessary setState
+    const sameLength = roles.length === normalizedDerivedRoles.length;
+    const rolesChanged = !sameLength || !roles.every((role, index) => role.id === normalizedDerivedRoles[index]?.id);
+    if (rolesChanged) {
+      _setRoles(normalizedDerivedRoles);
+    }
+  }, [normalizedDerivedRoles, roles]);
+
+  // Reset roleId when team changes and current role is invalid
+  const selectedRoleId = watch("roleId");
+  useEffect(() => {
+    // If no team is selected and a role is set, clear it
+    if (!selectedTeamId && selectedRoleId) {
+      setValue("roleId", "");
+      return;
+    }
+
+    // If team is selected but current role does not exist in that team, clear it
+    if (selectedTeamId && selectedRoleId && !normalizedDerivedRoles.some((r) => r.id === selectedRoleId)) {
+      setValue("roleId", "");
+    }
+  }, [selectedTeamId, selectedRoleId, normalizedDerivedRoles, setValue]);
+
+  const handleFilesSelected = (files: File[]) => {
+    setFiles(files);
+  };
+
+  const onSubmit = async (formData: EmployeeFormData) => {
     try {
-      // Add your API call here
-      // const response = await employeeService.create(data);
-      toast.success("Employee created successfully");
-      router.push("/admin/employees");
+      const formDataToSend = new FormData();
+
+      // Add all fields from the form
+      formDataToSend.append("firstName", formData.firstName);
+      formDataToSend.append("lastName", formData.lastName);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("phoneNumber", formData.phoneNumber);
+
+      // Add password for new employees
+      formDataToSend.append("password", "PleaseSetAdefaultHere1.");
+
+      // Team and role
+      formDataToSend.append("teamId", formData.teamId);
+      formDataToSend.append("roleId", formData.roleId);
+
+      // Add document if uploaded
+      if (files.length > 0) {
+        formDataToSend.append("document", files[0]);
+      }
+
+      // Personal info
+      formDataToSend.append("dateOfBirth", new Date(formData.dateOfBirth).toISOString());
+      formDataToSend.append("gender", formData.gender);
+
+      // Employment info
+      formDataToSend.append("startDate", new Date(formData.startDate).toISOString());
+      formDataToSend.append("employmentType", formData.employmentType || "");
+
+      // Call create employee
+      const response = await createEmployeeMutation.mutateAsync(formDataToSend);
+      if (response) {
+        toast.success("Employee Added Successfully");
+        router.push("/admin/employees");
+      } else {
+        toast.error("Failed to add employee");
+      }
+
+      // setShowAlert(true);
     } catch {
-      toast.error("Failed to create employee");
+      toast.error("An unexpected error occurred while saving. Please try again.");
+      // You could also set error state here and show an error alert
     }
   };
+
+  // if (loadingTeams) {
+  //   return <EmployeeFormSkeleton />;
+  // }
+
+  // const handleAlertClose = () => {
+  //   setShowAlert(false);
+  //   router.push("/admin/employees");
+  // };
 
   return (
     <div className="space-y-8">
       {/* Breadcrumb and Title */}
-      <div className="flex flex-col items-start gap-2">
-        <h1 className="text-2xl font-bold">Add Employee</h1>
-        <div className="flex items-center gap-1 text-sm">
-          <Link href="/admin/employees" className="text-primary">
-            All Employee
-          </Link>
-          <p className="text-muted-foreground">&gt; Add New Employee</p>
-        </div>
-      </div>
+      <DashboardHeader
+        title={"Add Employee"}
+        subtitle={
+          <BreadCrumb
+            items={[
+              { label: "Employee", href: "/admin/employees" },
+              { label: "Add Employee", href: "" },
+            ]}
+            showHome={true}
+          />
+        }
+      />
 
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -72,24 +167,32 @@ export const EmployeeForm = () => {
                   name="firstName"
                   label="First Name"
                   type="text"
-                  placeholder="Adura"
-                  className="!h-14 w-full"
+                  placeholder={loadingTeams ? `Loading first name...` : `John`}
+                  className="border-border !h-14 w-full"
                   required
                 />
                 <FormField
                   name="lastName"
                   label="Last Name"
                   type="text"
-                  className="!h-14 w-full"
-                  placeholder="Shobowale"
+                  className="border-border !h-14 w-full"
+                  placeholder={loadingTeams ? `Loading last name...` : `Doe`}
                   required
                 />
-                <FormField name="dob" label="Date of Birth" className="!h-14 w-full" type="date" required />
+                <FormField
+                  name="dateOfBirth"
+                  placeholder={loadingTeams ? `Loading date of birth...` : ``}
+                  label="Date of Birth"
+                  className="border-border !h-14 w-full"
+                  type="date"
+                  required
+                />
                 <FormField
                   name="gender"
                   label="Gender"
                   type="select"
-                  className="bg-background !h-14 w-full"
+                  placeholder={loadingTeams ? `Loading employee gender...` : `Select employee gender`}
+                  className="bg-background border-border !h-14 w-full"
                   options={genderOptions}
                   required
                 />
@@ -97,18 +200,36 @@ export const EmployeeForm = () => {
                   name="email"
                   label="Work Email"
                   type="email"
-                  placeholder="adurashobzz@techstudio.com"
-                  className="!h-14 w-full"
+                  placeholder={loadingTeams ? `Loading email...` : `Johndoe@gmail.com`}
+                  className="border-border !h-14 w-full"
                   required
                 />
-                <FormField
-                  name="phone"
-                  label="Phone Number"
-                  className="!h-14 w-full"
-                  type="text"
-                  placeholder="08156893421"
-                  required
-                />
+                <div className="space-y-2">
+                  <Label className="text-[16px] font-medium">
+                    Phone Number<span className="text-destructive -ml-1">*</span>
+                  </Label>
+                  <Controller
+                    name="phoneNumber"
+                    control={methods.control}
+                    render={({ field: { value, onChange }, fieldState }) => (
+                      <>
+                        <PhoneInput
+                          value={value || undefined}
+                          onChange={(value_) => {
+                            onChange(value_ || "");
+                          }}
+                          defaultCountry="US"
+                          placeholder={loadingTeams ? "Loading phone number..." : "Enter phone number"}
+                          inputClassName="border-border !h-14"
+                          buttonClassName="border-border !h-14"
+                          aria-invalid={!!fieldState.error}
+                          disabled={loadingTeams || isSubmitting}
+                        />
+                        {fieldState.error && <p className="text-destructive text-sm">{fieldState.error.message}</p>}
+                      </>
+                    )}
+                  />
+                </div>
               </div>
             </section>
 
@@ -116,127 +237,135 @@ export const EmployeeForm = () => {
             <section>
               <h2 className="mb-4 text-lg font-semibold">Employment Details</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
-                <FormField name="startDate" className="!h-14 w-full" label="Start Date" type="date" required />
+                <FormField
+                  name="startDate"
+                  className="border-border !h-14 w-full"
+                  label="Start Date"
+                  type="date"
+                  required
+                />
                 <FormField
                   name="employmentType"
-                  className="bg-background !h-14 w-full"
+                  className="bg-background border-border !h-14 w-full"
                   label="Employment Type"
                   type="select"
+                  placeholder={loadingTeams ? `Loading employee type...` : `Select employment type`}
                   options={employmentTypeOptions}
+                  required
                 />
                 <FormField
                   name="workMode"
                   label="Work Mode"
                   type="select"
-                  className="bg-background !h-14 w-full"
+                  placeholder={loadingTeams ? `Loading employee work mode...` : `Select employee work mode`}
+                  className="bg-background border-border !h-14 w-full"
                   options={workModeOptions}
                   required
                 />
                 <FormField
-                  name="department"
+                  name="teamId"
                   label="Department"
                   type="select"
-                  className="bg-background !h-14 w-full"
-                  options={departmentOptions}
+                  placeholder={loadingTeams ? `Loading department...` : `Select a department`}
+                  className="bg-background border-border !h-14 w-full"
+                  options={teams.map((team) => ({
+                    value: String(team.id),
+                    label: team.name,
+                  }))}
                   required
                 />
                 <FormField
-                  name="role"
+                  name="roleId"
                   label="Role"
                   type="select"
-                  className="bg-background !h-14 w-full"
-                  options={roleOptions}
+                  placeholder={`Select a role`}
+                  className="bg-background border-border !h-14 w-full"
+                  options={roles.map((role) => ({
+                    value: role.id,
+                    label: role.name,
+                  }))}
+                  disabled={!selectedTeamId}
                   required
                 />
               </div>
             </section>
-            <section>
+
+            {/* Salary Details Section */}
+            {/* <section>
               <h2 className="mb-4 text-lg font-semibold">Salary Details</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
                 <FormField
-                  name="monthlyGrossSalary"
+                  name="monthlySalary"
                   label="Monthly Gross Salary"
-                  type="text"
                   placeholder="₦750,000.00"
-                  className="!h-14 w-full"
-                  required
+                  className="!h-14 w-full border-border"
                 />
-                <FormField
-                  name="tax"
-                  label="Tax"
-                  type="text"
-                  placeholder="10% of salary"
-                  className="!h-14 w-full"
-                  required
-                />
-                <FormField
-                  name="pension"
-                  label="Pension"
-                  type="text"
-                  placeholder="5% of salary"
-                  className="!h-14 w-full"
-                  required
-                />
+                <FormField name="pension" label="Pension" placeholder="5% of salary" className="!h-14 w-full border-border" />
                 <FormField
                   name="healthInsurance"
                   label="Health Insurance"
-                  type="text"
                   placeholder="3% of salary"
-                  className="!h-14 w-full"
-                  required
+                  className="!h-14 w-full border-border"
                 />
-
                 <FormField
                   name="otherDeductions"
                   label="Other Deductions"
-                  type="text"
                   placeholder="% of salary"
-                  className="!h-14 w-full"
-                  required
+                  className="!h-14 w-full border-border"
                 />
                 <FormField
                   name="bankName"
                   label="Bank Name"
                   type="text"
                   placeholder="Wema Bank"
-                  className="!h-14 w-full"
-                  required
+                  className="!h-14 w-full border-border"
                 />
                 <FormField
                   name="accountName"
                   label="Account Name"
                   type="text"
-                  placeholder="Adura Shobowale"
-                  className="!h-14 w-full"
-                  required
+                  placeholder="John Doe"
+                  className="!h-14 w-full border-border"
                 />
                 <FormField
                   name="accountNumber"
                   label="Account Number"
                   type="text"
                   placeholder="0067514267"
-                  className="!h-14 w-full"
-                  required
+                  className="!h-14 w-full border-border"
                 />
               </div>
-            </section>
+            </section> */}
+
+            {/* Documents Section */}
             <section>
               <h2 className="mb-4 text-lg font-semibold">Employee Documents</h2>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8"></div>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
+                <FileUpload onFileChange={handleFilesSelected} acceptedFileTypes=".pdf,.doc,.docx" maxFiles={3} />
+              </div>
             </section>
           </div>
 
           {/* Form Actions */}
-          {/* <div className="mt-6 flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={() => router.push("/admin/employees")}>
+          <div className="mt-6 flex w-[50%] justify-start gap-4">
+            <MainButton
+              type="button"
+              variant="destructiveOutline"
+              onClick={() => router.push("/admin/employees")}
+              isDisabled={isSubmitting}
+              className="text-destructive border-destructive w-full"
+            >
               Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting || !isValid}>
+            </MainButton>
+            <MainButton variant={`primary`} type="submit" isDisabled={isSubmitting} className="w-full">
               {isSubmitting ? "Saving..." : "Save Employee"}
-            </Button>
-          </div> */}
+            </MainButton>
+          </div>
         </form>
       </FormProvider>
+      {/* <AlertDialog open={showAlert} onOpenChange={handleAlertClose} title={alertTitle} description={alertDescription} /> */}
     </div>
   );
 };
+
+export const EmployeeForm = AddEmployeeForm;

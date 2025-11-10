@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import MainButton from "@/components/shared/button";
 import { WithDependency } from "@/HOC/withDependencies";
 import { dependencies } from "@/lib/tools/dependencies";
 import { z } from "zod";
@@ -52,6 +53,11 @@ export const StepThree = ({ onBoardingService }: { onBoardingService: Onboarding
             Start with suggested departments and tailor them to fit your organization. Add custom roles under each
             department and control what they can access.
           </p>
+        </div>
+        <div className="flex gap-4">
+          <MainButton href="/onboarding/step-2" variant="outline">
+            Back
+          </MainButton>
         </div>
       </section>
       <section className={`flex-1`}>

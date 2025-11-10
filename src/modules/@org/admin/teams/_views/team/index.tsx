@@ -126,10 +126,12 @@ export const AllTeams = () => {
     openTeamDialog(team || null, team ? "edit" : "create");
   };
 
-  const { useGetAllTeams, useGetRoles, useCreateRole, useUpdateRole, useAssignEmployeeToTeam, useDownloadTeams } =
-    useTeamService();
+  const { useGetAllTeams, useGetRoles, useCreateRole, useUpdateRole, useDownloadTeams } = useTeamService();
   const { useGetAllEmployees } = useEmployeeService();
+  const { useOnboardEmployees } = useOnboardingService();
   const { refetch: downloadTeams } = useDownloadTeams({}, { enabled: false });
+
+  const onboardEmployeesMutation = useOnboardEmployees();
 
   // Apply debounced search to URL (nuqs) and reset page to 1
   useEffect(() => {
@@ -192,7 +194,6 @@ export const AllTeams = () => {
   const createTeamMutation = useCreateTeam();
   const createRoleMutation = useCreateRole();
   const updateRoleMutation = useUpdateRole();
-  const assignEmployeeMutation = useAssignEmployeeToTeam();
 
   const handleAddTeam = async (name: string) => {
     try {
@@ -232,17 +233,22 @@ export const AllTeams = () => {
 
   const handleAddRole = async (teamId: string, data: FormRole) => {
     try {
+      setSubmitting(true);
       await createRoleMutation.mutateAsync({
         name: data.name,
         teamId,
         permissions: data.permissions || [],
       });
+
+      // Invalidate queries to refresh data
       await queryClient.invalidateQueries({ queryKey: ["teams"] });
-      toast.success(`Role "${data.name}" created successfully!`);
+      await queryClient.invalidateQueries({ queryKey: ["roles", teamId] });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to create role. Please try again.";
       toast.error(errorMessage);
       throw error;
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -284,12 +290,31 @@ export const AllTeams = () => {
     }
 
     try {
-      await assignEmployeeMutation.mutateAsync({
-        employeeId: data.employeeId,
-        teamId: currentTeam.id,
-        roleId: data.roleId,
-        customPermissions: data.customPermissions,
-      });
+      // Find the full employee data from the available employees
+      const selectedEmployee = employeesData?.data?.items?.find((emp) => emp.id === data.employeeId);
+
+      if (!selectedEmployee) {
+        toast.error("Employee not found. Please try again.");
+        throw new Error("Employee not found");
+      }
+
+      // Transform the data to match the onboarding API format
+      const onboardingData = {
+        employees: [
+          {
+            firstName: selectedEmployee.firstName,
+            lastName: selectedEmployee.lastName,
+            email: selectedEmployee.email,
+            phoneNumber: selectedEmployee.phoneNumber || "",
+            password: "DefaultPassword123!", // Default password for existing employees
+            teamId: currentTeam.id,
+            roleId: data.roleId,
+            permissions: data.customPermissions || [],
+          },
+        ],
+      };
+
+      await onboardEmployeesMutation.mutateAsync(onboardingData);
 
       // Invalidate queries to refresh the UI
       await queryClient.invalidateQueries({ queryKey: ["teams"] });

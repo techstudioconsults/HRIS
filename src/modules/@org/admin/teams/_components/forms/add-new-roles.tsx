@@ -11,6 +11,7 @@ import { InfoCircle, Trash } from "iconsax-reactjs";
 import { Plus } from "lucide-react";
 import { FormEvent, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 interface FormRole {
   name: string;
@@ -141,38 +142,99 @@ export const RolesAndPermission = ({
     setIsSubmittingRoles(true);
     setSubmissionProgress(0);
     setCurrentSubmittingRole(0);
-    setSubmissionStatus("Starting role creation...");
+    setSubmissionStatus("Preparing to create roles...");
+
+    const validRoles = roles.filter((role) => role.name.trim() && role.permissions.length > 0);
+    const totalRoles = validRoles.length;
+
+    if (totalRoles === 0) {
+      toast.error("Please add at least one valid role with permissions");
+      setIsSubmittingRoles(false);
+      return;
+    }
+
+    let successCount = 0;
+    const failedRoles: string[] = [];
 
     try {
-      const validRoles = roles.filter((role) => role.name.trim());
-      const totalRoles = validRoles.length;
-
       for (const [index, role] of validRoles.entries()) {
-        setCurrentSubmittingRole(index + 1);
-        setSubmissionStatus(`Creating role ${index + 1} of ${totalRoles}: ${role.name}`);
+        const currentRoleNumber = index + 1;
+        setCurrentSubmittingRole(currentRoleNumber);
+        setSubmissionStatus(`Creating role: ${role.name}`);
 
-        // Submit the role
-        await onSubmit(role as Role);
+        try {
+          // Submit the role
+          await onSubmit(role as Role);
+          successCount++;
 
-        // Update progress
-        const progress = ((index + 1) / totalRoles) * 100;
-        setSubmissionProgress(progress);
+          // Update progress smoothly
+          const progress = (currentRoleNumber / totalRoles) * 100;
+          setSubmissionProgress(progress);
+
+          // Show success for individual role if multiple roles
+          if (totalRoles > 1) {
+            toast.success(`Role "${role.name}" created successfully`, {
+              duration: 2000,
+            });
+          }
+
+          // Small delay for better UX and to prevent rate limiting
+          if (index < validRoles.length - 1) {
+            await new Promise((resolve) => setTimeout(resolve, 300));
+          }
+        } catch (error) {
+          failedRoles.push(role.name);
+          const errorMessage = error instanceof Error ? error.message : "Unknown error";
+          toast.error(`Failed to create role "${role.name}": ${errorMessage}`);
+        }
       }
 
-      setSubmissionStatus("All roles created successfully!");
+      // Show final summary
+      if (successCount === totalRoles) {
+        setSubmissionStatus("All roles created successfully!");
+        const message =
+          totalRoles === 1
+            ? `Role "${validRoles[0].name}" created successfully!`
+            : `Successfully created ${successCount} role${successCount > 1 ? "s" : ""}!`;
+        toast.success(message, { duration: 3000 });
 
-      // Call completion handler after successful role creation
-      setTimeout(() => {
-        if (onComplete) {
-          onComplete();
-        } else {
-          onCancel(new Event("submit") as any);
-        }
-      }, 1500); // Give user time to see success message
-    } catch {
-      setSubmissionStatus("Error creating roles. Please try again.");
+        // Close modal and trigger completion after showing success
+        setTimeout(() => {
+          if (onComplete) {
+            onComplete();
+          } else {
+            onCancel(new Event("submit") as any);
+          }
+        }, 1000);
+      } else if (successCount > 0) {
+        setSubmissionStatus(`Completed with ${failedRoles.length} error(s)`);
+        toast.warning(`Created ${successCount} of ${totalRoles} roles. Failed: ${failedRoles.join(", ")}`, {
+          duration: 5000,
+        });
+
+        // Still close modal after partial success
+        setTimeout(() => {
+          if (onComplete) {
+            onComplete();
+          } else {
+            onCancel(new Event("submit") as any);
+          }
+        }, 2000);
+      } else {
+        setSubmissionStatus("Failed to create roles");
+        toast.error("Failed to create any roles. Please try again.", { duration: 4000 });
+      }
+    } catch (error) {
+      setSubmissionStatus("An unexpected error occurred");
+      const errorMessage = error instanceof Error ? error.message : "Failed to create roles";
+      toast.error(errorMessage, { duration: 4000 });
     } finally {
-      setIsSubmittingRoles(false);
+      // Reset submission state after a delay
+      setTimeout(() => {
+        setIsSubmittingRoles(false);
+        setSubmissionProgress(0);
+        setCurrentSubmittingRole(0);
+      }, 1500);
     }
   };
 
@@ -203,18 +265,23 @@ export const RolesAndPermission = ({
         >
           {/* Progress Bar - Shows during submission */}
           {isSubmittingRoles && (
-            <div className="bg-primary/5 border-primary/20 space-y-3 rounded-lg border p-4">
+            <div className="bg-primary/5 border-primary/20 animate-in fade-in-50 space-y-3 rounded-lg border p-5 shadow-sm">
               <div className="flex items-center justify-between">
-                <span className="text-primary text-sm font-medium">Creating Roles</span>
-                <span className="text-muted-foreground text-sm">
-                  {currentSubmittingRole} of {roles.filter((role) => role.name.trim()).length}
+                <div className="flex items-center gap-2">
+                  <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
+                    <span className="text-primary text-sm font-semibold">{currentSubmittingRole}</span>
+                  </div>
+                  <span className="text-primary text-sm font-semibold">Creating Roles</span>
+                </div>
+                <span className="text-muted-foreground text-sm font-medium">
+                  {currentSubmittingRole} / {roles.filter((role) => role.name.trim()).length}
                 </span>
               </div>
               <div className="space-y-2">
-                <Progress value={submissionProgress} className="h-2" />
-                <div className="text-muted-foreground flex justify-between text-xs">
-                  <span>Progress: {Math.round(submissionProgress)}%</span>
-                  <span className="font-medium">{submissionStatus}</span>
+                <Progress value={submissionProgress} className="h-2.5" />
+                <div className="text-muted-foreground flex items-center justify-between text-xs">
+                  <span className="font-medium">{Math.round(submissionProgress)}%</span>
+                  <span className="max-w-[60%] truncate text-right font-medium">{submissionStatus}</span>
                 </div>
               </div>
             </div>

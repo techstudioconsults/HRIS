@@ -2,12 +2,8 @@
 
 import { Wrapper } from "@/components/core/layout/wrapper";
 import { Logo } from "@/components/shared/logo";
-import { useSession } from "next-auth/react";
 
 function OnboardingLayout({ children }: { children: React.ReactNode }) {
-  const { data: session } = useSession();
-  // eslint-disable-next-line no-console
-  console.log(session);
   return (
     <main className={``}>
       <section className={`bg-background sticky top-0 z-10 flex items-center border-b py-8`}>

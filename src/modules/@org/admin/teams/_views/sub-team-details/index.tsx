@@ -5,7 +5,6 @@ import MainButton from "@/components/shared/button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/tools/format";
-import { cn } from "@/lib/utils";
 import { AdvancedDataTable, type IColumnDefinition } from "@/modules/@org/admin/_components/table/table";
 // Removed inline dropdown; using table rowActions instead
 import { Plus } from "lucide-react";
@@ -90,35 +89,36 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
               className={`bg-low-grey-III h-8 w-8 rounded-full object-cover`}
             />
             <div className="flex flex-col space-y-2">
-              <span className="text-sm font-medium lg:text-[16px]">{`${employee.firstName} ${employee.lastName}`}</span>
+              <span className="text-sm font-medium">{`${employee.firstName} ${employee.lastName}`}</span>
             </div>
           </div>
         ),
       },
-      { header: "Email", accessorKey: "email" },
+      {
+        header: "Email",
+        accessorKey: "email",
+        render: (_, employee: Employee) => <span className="text-sm">{employee?.email || "N/A"}</span>,
+      },
       {
         header: "Role",
         accessorKey: "email",
-        render: (_, employee: Employee) => <span>{employee?.employmentDetails?.role?.name || "—"}</span>,
+        render: (_, employee: Employee) => (
+          <span className="text-sm">{employee?.employmentDetails?.role?.name || "N/A"}</span>
+        ),
       },
       {
         header: "Work Mode",
         accessorKey: "email",
         render: (_, employee: Employee) => (
-          <span className="capitalize">{employee?.employmentDetails?.workMode || "—"}</span>
+          <span className="text-sm capitalize">{employee?.employmentDetails?.workMode || "N/A"}</span>
         ),
       },
       {
         header: "Status",
         accessorKey: "status",
         render: (_, employee: Employee) => (
-          <Badge
-            className={cn(
-              employee.id.includes(`7`) ? "bg-warning-50 text-warning" : "bg-success-50 text-success",
-              "rounded-full px-4 py-2",
-            )}
-          >
-            {employee.id.includes(`7`) ? "On Leave" : "Active"}
+          <Badge className="min-w-fit" variant={employee.status === `active` ? `success` : `warning`}>
+            {employee.status === `active` ? "Active" : "On Leave"}
           </Badge>
         ),
       },
@@ -130,7 +130,7 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
     <section className="space-y-8">
       <div className="flex items-center justify-between pb-4">
         <div className="flex flex-col items-start gap-2 text-center md:text-left">
-          <h1 className="text-2xl font-bold">Team Details</h1>
+          <h1 className="text-2xl font-bold">Sub-Team Details</h1>
           <div className="flex items-center gap-1 text-sm">
             <Link href="/admin/teams" className="text-primary">
               All Teams

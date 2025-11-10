@@ -94,7 +94,7 @@ const useTeamRowActionsBase = (
       const baseActions: IRowAction<Team>[] = [
         {
           label: "View team",
-          kbd: teamType === "sub-team" ? "Ctrl+V" : "",
+          kbd: "Ctrl+V",
           icon: <Eye className="h-4 w-4" aria-hidden="true" />,
           onClick: async () => {
             setActiveTeam(team);
@@ -103,7 +103,7 @@ const useTeamRowActionsBase = (
         },
         {
           label: "Edit team",
-          kbd: teamType === "sub-team" ? "Ctrl+E" : "",
+          kbd: "Ctrl+E",
           icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
           onClick: () => {
             setActiveTeam(team);
@@ -139,7 +139,7 @@ const useTeamRowActionsBase = (
         { type: "separator" },
         {
           label: "Delete team",
-          kbd: teamType === "sub-team" ? "Ctrl+Del" : "",
+          kbd: "Ctrl+Del",
           variant: "destructive",
           icon: <Trash className="text-destructive h-4 w-4" aria-hidden="true" />,
           onClick: () => {
@@ -203,11 +203,12 @@ export const subTeamColumn: IColumnDefinition<Team>[] = [
   {
     header: "Sub-team Name",
     accessorKey: "name",
-    render: (_, team: Team) => <span>{team.name}</span>,
+    render: (_, team: Team) => <span className="text-sm">{team.name}</span>,
   },
   {
     header: "Team Lead",
     accessorKey: "manager",
+    render: (_, team: Team) => <span className="text-sm">{team.manager || `N/A`}</span>,
   },
   {
     header: "Team Members",
@@ -217,7 +218,7 @@ export const subTeamColumn: IColumnDefinition<Team>[] = [
   {
     header: "Created on",
     accessorKey: "createdAt",
-    render: (_, team: Team) => <span>{formatDate(team.createdAt as string)}</span>,
+    render: (_, team: Team) => <span className="text-sm">{formatDate(team.createdAt as string)}</span>,
   },
 ];
 

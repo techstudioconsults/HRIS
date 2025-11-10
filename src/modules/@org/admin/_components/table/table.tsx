@@ -605,7 +605,7 @@ export function AdvancedDataTable<T extends DataItem>({
                           <DropdownMenuTrigger className="cursor-pointer p-2">
                             <MoreVertical className="h-4 w-4" />
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent className="bg-background shadow-none" align="end">
+                          <DropdownMenuContent className="bg-background min-w-[15rem] shadow-none" align="end">
                             {rowActions(row.original).map((action, actionIndex) => {
                               if (action.type === "separator") {
                                 return (

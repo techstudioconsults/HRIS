@@ -21,6 +21,7 @@ export const queryKeys = {
     list: (filters?: Filters) => ["file", "list", filters] as const,
     details: (id: string) => ["file", "details", id] as const,
     download: (id: string) => ["file", "download", id] as const,
+    byFolder: (folderId: string, filters?: Filters) => ["file", "byFolder", folderId, filters] as const,
     // Additional file-specific query keys if needed:
     recent: (limit?: number) => ["file", "recent", limit] as const,
     byType: (fileType: string, filters?: Filters) => ["file", "byType", fileType, filters] as const,

@@ -3,6 +3,35 @@
 ## Overview
 Complete refactoring of the resources module to follow best practices, improve code quality, and enhance user experience with proper error handling and feedback mechanisms.
 
+## Latest Updates (Query Invalidation Fix)
+
+### React Query Cache Invalidation
+**Issue**: Changes were not reflected in the UI after successful operations despite mutations completing successfully.
+
+**Fix**:
+- Updated [`use-service-query.ts`](src/lib/react-query/use-service-query.ts:1) to properly handle query invalidation
+- Added `queryClient.invalidateQueries()` in mutation success handler
+- Mutations now automatically invalidate and refetch related queries
+- Added new endpoint `getFilesByFolderId` for viewing files in a specific folder
+
+**Changes Made**:
+1. **Service Layer** - [`service.ts`](src/modules/@org/admin/resources/services/service.ts:167):
+   - Added `getFilesByFolderId()` method to fetch files by folder ID
+   - Endpoint: `GET /files?folderId={folderId}`
+
+2. **Hooks** - [`use-service.ts`](src/modules/@org/admin/resources/services/use-service.ts:60):
+   - Added `useGetFilesByFolderId` hook for folder-specific file queries
+
+3. **Query Keys** - [`query-keys.ts`](src/lib/react-query/query-keys.ts:23):
+   - Added `file.byFolder(folderId, filters)` query key
+
+4. **Core Query Hook** - [`use-service-query.ts`](src/lib/react-query/use-service-query.ts:33):
+   - Enhanced `useServiceMutation` to automatically invalidate queries
+   - Returns query keys from `onSuccess` callback are now properly invalidated
+   - Uses `queryClient.invalidateQueries()` for real-time updates
+
+**Result**: All CRUD operations now trigger automatic UI updates without page refresh!
+
 ## Bug Fixes (Post-Refactoring)
 
 ### Query Parameter Issue

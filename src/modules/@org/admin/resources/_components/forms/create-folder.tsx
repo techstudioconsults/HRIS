@@ -7,7 +7,6 @@ import { FolderFormData, folderSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 import { useResourceService } from "../../services/use-service";
 
@@ -34,18 +33,7 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
     setValue,
   } = methods;
 
-  const createFolderMutation = useCreateFolder({
-    onSuccess: (data: unknown) => {
-      const folderData = data as { name?: string };
-      toast.success(`Folder "${folderData?.name || "created"}" successfully!`);
-      reset();
-      setSelectedFiles([]);
-      onClose?.();
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to create folder. Please try again.");
-    },
-  });
+  const createFolderMutation = useCreateFolder();
 
   const handleFilesSelected = (files: File[]) => {
     setSelectedFiles(files);

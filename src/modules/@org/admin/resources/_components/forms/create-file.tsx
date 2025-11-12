@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import type { ApiResponse, Folder } from "../../services/service";
 import { useResourceService } from "../../services/use-service";
 
 interface CreateFileFormProperties {
@@ -68,7 +67,8 @@ export const CreateFileForm = ({ onClose }: CreateFileFormProperties) => {
 
   const addFilesMutation = useAddFilesToFolder({
     onSuccess: () => {
-      toast.success("Files uploaded successfully!");
+      const fileCount = selectedFiles.length;
+      toast.success(`${fileCount} file${fileCount > 1 ? "s" : ""} uploaded successfully`);
       reset();
       setSelectedFiles([]);
       onClose?.();

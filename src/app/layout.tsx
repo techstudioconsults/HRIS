@@ -70,10 +70,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   disableTransitionOnChange
                   enableColorScheme
                 >
-                  {/* <SSEProvider channels={["global"]}> */}
                   <KBarProviderWrapper>{children}</KBarProviderWrapper>
                   <Toast />
-                  {/* </SSEProvider> */}
                 </ThemeProvider>
               </TooltipProvider>
             </NuqsAdapter>

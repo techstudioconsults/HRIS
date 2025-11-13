@@ -112,7 +112,8 @@ export function BonusDeductionManager({
     setIsModalOpen(true);
   };
 
-  const handleEditSubmit = async (formData: BonusDeductionFormData) => {
+  const handleEditSubmit = async (formData: BonusDeductionFormData, event?: React.BaseSyntheticEvent) => {
+    event?.stopPropagation();
     if (!editingItem) return;
 
     if (!policyId) {

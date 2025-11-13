@@ -7,18 +7,9 @@ import { FolderCard } from "../ui/FolderCard";
 interface FoldersTabProperties {
   folders: Folder[];
   searchQuery: string;
-  onFolderClick: (folderId: string) => void;
-  onRenameFolder: (folder: Folder) => void;
-  onDeleteFolder: (folderId: string) => void;
 }
 
-export const FoldersTab = ({
-  folders,
-  searchQuery,
-  onFolderClick,
-  onRenameFolder,
-  onDeleteFolder,
-}: FoldersTabProperties) => {
+export const FoldersTab = ({ folders, searchQuery }: FoldersTabProperties) => {
   if (folders.length === 0) {
     return (
       <EmptyState
@@ -33,13 +24,7 @@ export const FoldersTab = ({
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {folders.map((folder) => (
-        <FolderCard
-          key={folder.id}
-          folder={folder}
-          onClick={onFolderClick}
-          onRename={onRenameFolder}
-          onDelete={onDeleteFolder}
-        />
+        <FolderCard key={folder.id} folder={folder} />
       ))}
     </div>
   );

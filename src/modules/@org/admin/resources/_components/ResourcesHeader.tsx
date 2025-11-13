@@ -69,6 +69,7 @@ export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
         onOpenChange={setDialogOpen}
         title="Create New Folder"
         description="Add a new folder to organize your resources"
+        className="min-w-xl"
         trigger={null}
       >
         <CreateFolderForm onClose={handleCloseDialog} />
@@ -80,6 +81,7 @@ export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
         onOpenChange={setDialogOpen}
         title="Upload File"
         description="Upload a file to an existing folder"
+        className="min-w-xl"
         trigger={null}
       >
         <CreateFileForm onClose={handleCloseDialog} />

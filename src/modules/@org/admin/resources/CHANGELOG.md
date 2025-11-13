@@ -3,7 +3,70 @@
 ## Overview
 Complete refactoring of the resources module to follow best practices, improve code quality, and enhance user experience with proper error handling and feedback mechanisms.
 
-## Latest Updates (Query Invalidation Fix)
+## Latest Updates (Architecture Refactoring - Prop Drilling Removal)
+
+### Architecture Improvements
+**Issue**: Excessive prop drilling and dialog state management in parent components.
+
+**Fix**:
+- Created reusable [`ConfirmDialog`](src/components/shared/dialog/confirm-dialog.tsx:1) component
+- Refactored [`FolderCard`](src/modules/@org/admin/resources/_components/ui/FolderCard.tsx:1) to be self-contained
+- Refactored [`FileCard`](src/modules/@org/admin/resources/_components/ui/FileCard.tsx:1) to be self-contained
+- Simplified [`FoldersTab`](src/modules/@org/admin/resources/_components/tabs/FoldersTab.tsx:1) by removing callback props
+- Simplified [`FilesTab`](src/modules/@org/admin/resources/_components/tabs/FilesTab.tsx:1) by removing callback props
+- Dramatically simplified [`ResourcesBody`](src/modules/@org/admin/resources/_components/ResourcesBody.tsx:1) (59% code reduction)
+
+**Changes Made**:
+1. **New Component** - [`confirm-dialog.tsx`](src/components/shared/dialog/confirm-dialog.tsx:1):
+   - Reusable confirmation dialog wrapping AlertModal
+   - Supports variants: `destructive`, `default`, `warning`
+   - Consistent API across the application
+
+2. **FolderCard Refactoring** - [`FolderCard.tsx`](src/modules/@org/admin/resources/_components/ui/FolderCard.tsx:1):
+   - Now manages its own delete and rename dialogs
+   - Uses `useRouter` for navigation internally
+   - Uses `useResourceService` for mutations
+   - Reduced from 5 props to 1 prop (`folder`)
+   - Eliminated 3 callback props: `onClick`, `onRename`, `onDelete`
+
+3. **FileCard Refactoring** - [`FileCard.tsx`](src/modules/@org/admin/resources/_components/ui/FileCard.tsx:1):
+   - Now manages its own delete dialog
+   - Uses `useResourceService` for mutations
+   - Reduced from 2 props to 1 prop (`file`)
+   - Eliminated 1 callback prop: `onDelete`
+
+4. **FoldersTab Simplification** - [`FoldersTab.tsx`](src/modules/@org/admin/resources/_components/tabs/FoldersTab.tsx:1):
+   - Removed 3 callback props
+   - Now only receives data props: `folders` and `searchQuery`
+   - Cleaner component interface
+
+5. **FilesTab Simplification** - [`FilesTab.tsx`](src/modules/@org/admin/resources/_components/tabs/FilesTab.tsx:1):
+   - Removed 1 callback prop
+   - Now only receives data props: `files` and `searchQuery`
+   - Cleaner component interface
+
+6. **ResourcesBody Simplification** - [`ResourcesBody.tsx`](src/modules/@org/admin/resources/_components/ResourcesBody.tsx:1):
+   - Removed all dialog state management (6 state variables)
+   - Removed all mutation handlers (4 functions)
+   - Removed all dialog components from this level
+   - Reduced from 188 lines to 77 lines (59% reduction)
+   - Now focuses solely on data fetching and layout
+
+**Benefits**:
+- ✅ **Reduced Prop Drilling**: Eliminated 7 callback props across the component tree
+- ✅ **Better Encapsulation**: Each card owns its business logic and UI state
+- ✅ **Improved Testability**: Cards can be tested independently
+- ✅ **Consistent Patterns**: Follows the same pattern as the employee module
+- ✅ **Easier Maintenance**: Changes to card behavior don't affect parent components
+- ✅ **Better Code Organization**: Dialog state colocated with usage
+
+**Result**: Cleaner, more maintainable architecture with better separation of concerns!
+
+See [`REFACTORING.md`](src/modules/@org/admin/resources/REFACTORING.md:1) for detailed documentation.
+
+---
+
+## Previous Updates (Query Invalidation Fix)
 
 ### React Query Cache Invalidation
 **Issue**: Changes were not reflected in the UI after successful operations despite mutations completing successfully.

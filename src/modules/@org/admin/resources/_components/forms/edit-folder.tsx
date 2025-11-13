@@ -37,18 +37,7 @@ export const EditFolderForm = ({ folderId, currentName, onClose }: EditFolderFor
     reset,
   } = methods;
 
-  const updateFolderMutation = useUpdateFolder({
-    onSuccess: (data: unknown) => {
-      const folderData = data as { name?: string };
-      const folderName = folderData?.name || "Folder";
-      toast.success(`Folder renamed to "${folderName}" successfully`);
-      reset();
-      onClose?.();
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to rename folder. Please try again.");
-    },
-  });
+  const { mutateAsync: updateFolderMutation, isPending } = useUpdateFolder();
 
   const handleCancel = () => {
     reset();
@@ -56,14 +45,18 @@ export const EditFolderForm = ({ folderId, currentName, onClose }: EditFolderFor
   };
 
   const onSubmit = async (data: RenameFolderFormData) => {
-    try {
-      await updateFolderMutation.mutateAsync({
+    await updateFolderMutation(
+      {
         id: folderId,
         data: { name: data.name },
-      });
-    } catch {
-      // Error is already handled by onError callback
-    }
+      },
+      {
+        onSuccess: () => {
+          toast.success(`Folder renamed to "${data.name}" successfully.`);
+          handleCancel();
+        },
+      },
+    );
   };
 
   return (
@@ -86,18 +79,13 @@ export const EditFolderForm = ({ folderId, currentName, onClose }: EditFolderFor
             className="w-full"
             type="button"
             variant="outline"
-            isDisabled={isSubmitting || updateFolderMutation.isPending}
+            isDisabled={isSubmitting || isPending}
             onClick={handleCancel}
           >
             Cancel
           </MainButton>
-          <MainButton
-            className="w-full"
-            variant="primary"
-            type="submit"
-            isDisabled={isSubmitting || updateFolderMutation.isPending}
-          >
-            {isSubmitting || updateFolderMutation.isPending ? "Renaming..." : "Rename Folder"}
+          <MainButton className="w-full" variant="primary" type="submit" isDisabled={isSubmitting || isPending}>
+            {isSubmitting || isPending ? "Renaming..." : "Rename Folder"}
           </MainButton>
         </div>
       </form>

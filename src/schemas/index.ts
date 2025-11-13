@@ -132,7 +132,7 @@ export const folderSchema = z.object({
 });
 
 export const fileSchema = z.object({
-  folderId: z.string().min(1, "Folder name is required"),
+  folderId: z.string().min(1, "Folder name is required").optional(),
   file: z
     .array(z.instanceof(File))
     .min(1, "Please select at least one file")

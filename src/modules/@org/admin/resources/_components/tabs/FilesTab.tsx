@@ -7,10 +7,9 @@ import { FileCard } from "../ui/FileCard";
 interface FilesTabProperties {
   files: FolderFile[];
   searchQuery: string;
-  onDeleteFile: (file: FolderFile) => void;
 }
 
-export const FilesTab = ({ files, searchQuery, onDeleteFile }: FilesTabProperties) => {
+export const FilesTab = ({ files, searchQuery }: FilesTabProperties) => {
   if (files.length === 0) {
     return (
       <EmptyState
@@ -25,7 +24,7 @@ export const FilesTab = ({ files, searchQuery, onDeleteFile }: FilesTabPropertie
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       {files.map((file) => (
-        <FileCard key={file.id} file={file} onDelete={onDeleteFile} />
+        <FileCard key={file.id} file={file} />
       ))}
     </div>
   );

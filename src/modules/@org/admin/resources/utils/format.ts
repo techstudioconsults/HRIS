@@ -53,12 +53,3 @@ export const formatFileSize = (bytes: number): string => {
   const index = Math.floor(Math.log(bytes) / Math.log(k));
   return `${Math.round((bytes / Math.pow(k, index)) * 100) / 100} ${sizes[index]}`;
 };
-
-/**
- * Handle file download
- */
-export const downloadFile = (url?: string) => {
-  if (url) {
-    window.open(url, "_blank");
-  }
-};

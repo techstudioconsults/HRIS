@@ -22,7 +22,7 @@ export class ResourceService {
   // File Operations
   // =============================
 
-  async addFilesToFolder(folderId: string, files: File[]) {
+  async addFilesToFolder(folderId: string | undefined, files: File[]) {
     const headers = { "Content-Type": "multipart/form-data" };
     const formData = new FormData();
 
@@ -30,7 +30,9 @@ export class ResourceService {
       formData.append("file", file);
     }
 
-    formData.append("folderId", folderId);
+    if (folderId) {
+      formData.append("folderId", folderId);
+    }
 
     const response = await this.http.post<{ data: Folder }>("/files", formData, headers);
     if (response?.status === 201) {
@@ -57,12 +59,12 @@ export class ResourceService {
     }
   }
 
-  async removeFileFromFolder(folderId: string, fileId: string) {
-    const response = await this.http.delete<DeleteResponse>(`/folders/${folderId}/files/${fileId}`);
-    if (response?.status === 200) {
-      return response.data;
-    }
-  }
+  // async removeFileFromFolder(folderId: string, fileId: string) {
+  //   const response = await this.http.delete<DeleteResponse>(`/folders/${folderId}/files/${fileId}`);
+  //   if (response?.status === 200) {
+  //     return response.data;
+  //   }
+  // }
 
   async removeFileByID(fileId: string) {
     const response = await this.http.delete<DeleteResponse>(`/files/${fileId}`);
@@ -72,9 +74,7 @@ export class ResourceService {
   }
 
   async downloadFile(id: string) {
-    const response = await this.http.get<Blob>(`/file/${id}/download`, {
-      responseType: "blob",
-    });
+    const response = await this.http.get<Blob>(`/files/${id}/download`);
     if (response?.status === 200) {
       return response.data as DownloadResponse;
     }

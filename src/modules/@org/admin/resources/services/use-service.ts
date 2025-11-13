@@ -16,8 +16,6 @@ export const useResourceService = () => {
   const useGetFolderById = (id: string, options?: any) =>
     useServiceQuery(queryKeys.folder.details(id), (service) => service.getFolderById(id), options);
 
-  const useDownloadFolder = () => useServiceMutation((service, id: string) => service.downloadFolder(id));
-
   // Queries - Files
   const useGetAllFiles = (filters: FileQueryParameters = {}, options?: any) =>
     useServiceQuery(queryKeys.file.list(filters), (service) => service.getAllFiles(filters), options);
@@ -30,9 +28,14 @@ export const useResourceService = () => {
     );
 
   // Mutations - Folders
+  const useDownloadFolder = () => useServiceMutation((service, id: string) => service.downloadFolder(id));
+
   const useCreateFolder = () =>
     useServiceMutation((service, data: { name: string; file: File[] }) => service.createFolder(data.name, data.file), {
-      invalidateQueries: () => [["folder", "list"]],
+      invalidateQueries: () => [
+        ["folder", "list"],
+        ["file", "list"],
+      ],
     });
 
   const useUpdateFolder = () =>
@@ -49,30 +52,32 @@ export const useResourceService = () => {
     });
 
   // Mutations - Files
+  const useDownloadFile = () => useServiceMutation((service, id: string) => service.downloadFile(id));
+
   const useAddFilesToFolder = () =>
     useServiceMutation(
-      (service, { folderId, files }: { folderId: string; files: File[] }) => service.addFilesToFolder(folderId, files),
+      (service, { folderId, files }: { folderId?: string; files: File[] }) => service.addFilesToFolder(folderId, files),
       {
         invalidateQueries: (_, { folderId }) => [
           ["folder", "list"],
-          queryKeys.folder.details(folderId),
+          ...(folderId ? [queryKeys.folder.details(folderId)] : []),
           ["file", "list"],
         ],
       },
     );
 
-  const useRemoveFileFromFolder = () =>
-    useServiceMutation(
-      (service, { folderId, fileId }: { folderId: string; fileId: string }) =>
-        service.removeFileFromFolder(folderId, fileId),
-      {
-        invalidateQueries: (_, { folderId }) => [
-          ["folder", "list"],
-          queryKeys.folder.details(folderId),
-          ["file", "list"],
-        ],
-      },
-    );
+  // const useRemoveFileFromFolder = () =>
+  //   useServiceMutation(
+  //     (service, { folderId, fileId }: { folderId: string; fileId: string }) =>
+  //       service.removeFileFromFolder(folderId, fileId),
+  //     {
+  //       invalidateQueries: (_, { folderId }) => [
+  //         ["folder", "list"],
+  //         queryKeys.folder.details(folderId),
+  //         ["file", "list"],
+  //       ],
+  //     },
+  //   );
 
   const useRemoveFileById = () =>
     useServiceMutation((service, fileId: string) => service.removeFileByID(fileId), {
@@ -90,13 +95,14 @@ export const useResourceService = () => {
     // Queries - Files
     useGetAllFiles,
     useGetFilesByFolderId,
+    useDownloadFile,
     // Mutations - Folders
     useCreateFolder,
     useUpdateFolder,
     useDeleteFolder,
     // Mutations - Files
     useAddFilesToFolder,
-    useRemoveFileFromFolder,
+    // useRemoveFileFromFolder,
     useRemoveFileById,
   };
 };

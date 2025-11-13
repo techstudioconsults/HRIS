@@ -1,3 +1,7 @@
+"use client";
+
+import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
+import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -6,57 +10,151 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { More } from "iconsax-reactjs";
-import Image from "next/image";
+import { useState } from "react";
+import { FcFolder, FcOpenedFolder } from "react-icons/fc";
 
-import type { Folder } from "../../services/types";
+import type { Folder, FolderFile } from "../../services/types";
+import { useResourceService } from "../../services/use-service";
 import { formatDate } from "../../utils/format";
+import { EditFolderForm } from "../forms/edit-folder";
+import { FileCard } from "./FileCard";
 
 interface FolderCardProperties {
   folder: Folder;
-  onClick: (folderId: string) => void;
-  onRename: (folder: Folder) => void;
-  onDelete: (folderId: string) => void;
 }
 
-export const FolderCard = ({ folder, onClick, onRename, onDelete }: FolderCardProperties) => {
+export const FolderCard = ({ folder }: FolderCardProperties) => {
+  const { useDeleteFolder, useGetFilesByFolderId } = useResourceService();
+  const { mutateAsync: deleteFolderMutation, isPending: isDeleting } = useDeleteFolder();
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [renameFolderDialog, setRenameFolderDialog] = useState(false);
+  const [viewFolderDialog, setViewFolderDialog] = useState(false);
+
+  const {
+    data: folderFilesResponse,
+    refetch: refetchFolderFiles,
+    isFetching: isFetchingFolderFiles,
+  } = useGetFilesByFolderId(folder.id, {}, { enabled: false, onSuccess: () => setViewFolderDialog(true) });
+
+  const handleFolderClick = () => {
+    setViewFolderDialog(true); // open modal immediately
+    refetchFolderFiles(); // fetch files; onSuccess keeps modal open
+  };
+
+  const handleDeleteClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    setDeleteDialogOpen(true);
+  };
+
+  const handleRenameClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    setRenameFolderDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    await deleteFolderMutation(folder.id);
+    setDeleteDialogOpen(false);
+  };
+
+  const handleCloseRename = () => {
+    setRenameFolderDialog(false);
+  };
+
+  // Add: treat modal as loading until we receive the first response
+  const isLoadingFiles = isFetchingFolderFiles || (viewFolderDialog && !folderFilesResponse);
+
+  // Normalize response -> files array (supports { data: { items: [...] } } shape)
+  const files: FolderFile[] = (() => {
+    const response = folderFilesResponse;
+    if (Array.isArray(response?.data?.items)) return response.data.items; // primary expected shape
+    return [];
+  })();
+
   return (
-    <div
-      className="group cursor-pointer rounded-lg border bg-white p-4 transition-all hover:shadow-md"
-      onClick={() => onClick(folder.id)}
-    >
-      <div className="flex items-start justify-between">
-        <div className="flex min-w-0 flex-1 items-start gap-3">
-          <Image
-            src="/images/resources/folder.svg"
-            alt="Folder icon"
-            width={40}
-            height={40}
-            className="mt-1 h-10 w-10 flex-shrink-0 object-contain"
-          />
-          <div className="min-w-0 flex-1">
-            <h6 className="truncate font-medium text-gray-900" title={folder.name}>
-              {folder.name}
-            </h6>
-            <p className="text-muted-foreground mt-1 text-sm">
-              {folder.fileCount || 0} files • {formatDate(folder.createdAt)}
-            </p>
+    <>
+      <div
+        className="group bg-background cursor-pointer rounded-lg p-4 shadow transition-all"
+        onClick={handleFolderClick}
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex min-w-0 flex-1 items-start gap-3">
+            <span>
+              <FcFolder size={48} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <h6 className="truncate font-medium text-gray-900" title={folder.name}>
+                {folder.name}
+              </h6>
+              <p className="text-muted-foreground mt-1 text-sm">
+                {folder.fileCount || 0} files • {formatDate(folder.createdAt)}
+              </p>
+            </div>
           </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild onClick={(event) => event.stopPropagation()}>
+              <Button variant="ghost" className="h-8 w-8 p-0" aria-label="Folder actions menu">
+                <More className="h-4 w-4 rotate-90" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48" onClick={(event) => event.stopPropagation()}>
+              <DropdownMenuItem onClick={handleFolderClick}>
+                {isFetchingFolderFiles ? "Loading..." : "View Folder"}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleRenameClick}>Rename Folder</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleDeleteClick} className="text-red-600">
+                Delete Folder
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild onClick={(event) => event.stopPropagation()}>
-            <Button variant="ghost" className="h-8 w-8 p-0" aria-label="Folder actions menu">
-              <More className="h-4 w-4 rotate-90" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48" onClick={(event) => event.stopPropagation()}>
-            <DropdownMenuItem onClick={() => onClick(folder.id)}>View Folder</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onRename(folder)}>Rename Folder</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onDelete(folder.id)} className="text-red-600">
-              Delete Folder
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
-    </div>
+
+      {/* Delete Folder Dialog */}
+      <ConfirmDialog
+        isOpen={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={handleConfirmDelete}
+        loading={isDeleting}
+        title="Delete Folder"
+        description={`You're about to delete "${folder.name}" and all its files. This action cannot be undone.`}
+        confirmText="Delete Folder"
+        variant="destructive"
+      />
+
+      {/* View Folder Files Dialog */}
+      <ReusableDialog
+        open={viewFolderDialog}
+        onOpenChange={setViewFolderDialog}
+        title={`${folder.name} Files`}
+        description={isLoadingFiles ? "Loading files..." : undefined}
+        trigger={null}
+        icon={<FcOpenedFolder size={32} />}
+        className="min-w-5xl"
+      >
+        {isLoadingFiles ? (
+          <div className="text-muted-foreground py-6 text-sm">Loading files...</div>
+        ) : files.length === 0 ? (
+          <div className="text-muted-foreground py-6 text-sm">No files in this folder.</div>
+        ) : (
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            {files.map((f) => (
+              <FileCard key={f.id} file={f} />
+            ))}
+          </div>
+        )}
+      </ReusableDialog>
+
+      {/* Rename Folder Dialog */}
+      <ReusableDialog
+        open={renameFolderDialog}
+        onOpenChange={setRenameFolderDialog}
+        title="Rename Folder"
+        description="Enter a new name for this folder"
+        trigger={null}
+      >
+        <EditFolderForm folderId={folder.id} currentName={folder.name} onClose={handleCloseRename} />
+      </ReusableDialog>
+    </>
   );
 };

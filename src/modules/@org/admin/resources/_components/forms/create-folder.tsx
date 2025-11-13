@@ -7,6 +7,7 @@ import { FolderFormData, folderSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { useResourceService } from "../../services/use-service";
 
@@ -33,7 +34,7 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
     setValue,
   } = methods;
 
-  const createFolderMutation = useCreateFolder();
+  const { mutateAsync: createFolderMutation, isPending } = useCreateFolder();
 
   const handleFilesSelected = (files: File[]) => {
     setSelectedFiles(files);
@@ -47,14 +48,18 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
   };
 
   const onSubmit = async (data: FolderFormData) => {
-    try {
-      await createFolderMutation.mutateAsync({
+    await createFolderMutation(
+      {
         name: data.name,
         file: data.file || [],
-      });
-    } catch {
-      // Error is already handled by onError callback
-    }
+      },
+      {
+        onSuccess: () => {
+          toast.success(`Folder "${data.name}" has been created.`);
+          handleCancel();
+        },
+      },
+    );
   };
 
   return (
@@ -91,18 +96,13 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
             className="w-full"
             type="button"
             variant="outline"
-            isDisabled={isSubmitting || createFolderMutation.isPending}
+            isDisabled={isSubmitting || isPending}
             onClick={handleCancel}
           >
             Cancel
           </MainButton>
-          <MainButton
-            className="w-full"
-            variant="primary"
-            type="submit"
-            isDisabled={isSubmitting || createFolderMutation.isPending}
-          >
-            {isSubmitting || createFolderMutation.isPending ? "Creating..." : "Create Folder"}
+          <MainButton className="w-full" variant="primary" type="submit" isDisabled={isSubmitting || isPending}>
+            {isSubmitting || isPending ? "Creating..." : "Create Folder"}
           </MainButton>
         </div>
       </form>

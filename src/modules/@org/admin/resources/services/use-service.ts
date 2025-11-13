@@ -48,7 +48,10 @@ export const useResourceService = () => {
 
   const useDeleteFolder = () =>
     useServiceMutation((service, id: string) => service.deleteFolder(id), {
-      invalidateQueries: () => [["folder", "list"]],
+      invalidateQueries: () => [
+        ["folder", "list"],
+        ["file", "list"],
+      ],
     });
 
   // Mutations - Files

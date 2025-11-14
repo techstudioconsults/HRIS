@@ -14,6 +14,8 @@ interface CalendarModalProperties {
   selectedDate?: Date;
   onDateSelect?: (date: Date | undefined) => void;
   onContinue?: (date: Date | undefined) => void;
+  /** Indicates if the schedule action is currently submitting */
+  isSubmitting?: boolean;
 }
 
 export const CalendarModal = ({
@@ -22,6 +24,7 @@ export const CalendarModal = ({
   selectedDate,
   onDateSelect,
   onContinue,
+  isSubmitting,
 }: CalendarModalProperties) => {
   const [date, setDate] = useState<Date | undefined>(selectedDate);
 
@@ -32,7 +35,6 @@ export const CalendarModal = ({
 
   const handleContinue = () => {
     onContinue?.(date);
-    onOpenChange(false);
   };
 
   const handleCancel = () => {
@@ -98,10 +100,21 @@ export const CalendarModal = ({
 
         {/* Action Buttons */}
         <div className="flex gap-3">
-          <MainButton variant="outline" onClick={handleCancel} className="text-destructive border-destructive flex-1">
+          <MainButton
+            variant="outline"
+            onClick={handleCancel}
+            className="text-destructive border-destructive flex-1"
+            isDisabled={isSubmitting}
+          >
             Cancel
           </MainButton>
-          <MainButton variant="primary" onClick={handleContinue} className="flex-1">
+          <MainButton
+            variant="primary"
+            onClick={handleContinue}
+            className="flex-1"
+            isLoading={isSubmitting}
+            isDisabled={!date || isSubmitting}
+          >
             Continue
           </MainButton>
         </div>

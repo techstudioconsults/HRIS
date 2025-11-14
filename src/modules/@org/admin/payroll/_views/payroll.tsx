@@ -36,7 +36,7 @@ import { usePayrollService } from "../services/use-service";
 import { usePayrollStore } from "../stores/payroll-store";
 import { payrollColumn, usePayrollRowActions } from "./table-data";
 
-const LOW_BALANCE_LIMIT = 1_000_000; // 5M NGN
+const LOW_BALANCE_LIMIT = 500_000; // 5M NGN
 const GET_SCHEDULE_MESSAGE = (date: string | Date): ReactNode => {
   return `Your next payroll has been scheduled for ${date}. You can edit the schedule date or cancel the payroll before the set date here.`;
 };
@@ -238,6 +238,7 @@ const PayrollView = () => {
   useEffect(() => {
     const offTopup = on(EventRegistry.WALLET_TOP_SUCCESS, () => {
       toast.success("Company wallet funded successfully.");
+      setShowFundWalletAccountModal(false);
       const hasPayrolls = Array.isArray(allPayrolls?.data) && allPayrolls.data.length > 0;
       if (!hasPayrolls) {
         setShowNoPayrollBanner(true);
@@ -364,7 +365,7 @@ const PayrollView = () => {
                 isLoading={loadingPayslips}
                 variant="primary"
               >
-                {loadingPayslips ? "Generating Payslips..." : "Generate Payslip"}
+                {loadingPayslips ? "Generating Payroll..." : "Generate Payroll"}
               </MainButton>
             ) : null}
             <MainButton className="hidden" variant="primary">
@@ -395,7 +396,7 @@ const PayrollView = () => {
       <section
         className={cn(
           "border-warning/50 bg-warning-50 hidden rounded-lg border p-4",
-          hasCompletedPayrollPolicySetupForm && `block`,
+          hasCompletedPayrollPolicySetupForm && payrollPolicyStatus && `block`,
         )}
       >
         <div className="flex items-center justify-between gap-4">

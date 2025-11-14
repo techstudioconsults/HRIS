@@ -73,32 +73,41 @@ export const SchedulePayrollDrawer = () => {
     return payrolls.find((p) => p.id === selectedPayrollId) ?? null;
   }, [payrolls, selectedPayrollId]);
 
-  const { mutateAsync: createPayroll } = useCreatePayroll();
+  const { mutateAsync: createPayroll, isPending: isCreatingPayroll } = useCreatePayroll();
 
-  const handleDateSelection = async (date: Date) => {
-    if (date) {
-      setSelectedDate(date);
-      await createPayroll(
-        { paymentDate: date.toISOString() },
-        {
-          onSuccess: () => {
-            setIsChangeDateModalOpen(false);
-            refetchPayrolls();
-          },
-          onError: (error) => {
-            const axiosError = error as AxiosError<{ message: string }>;
-            toast.error(axiosError.response?.data.message, {
-              description: "Complete your payroll settings to schedule payroll.",
-              action: {
-                label: "Payroll Settings",
-                onClick: () => {
-                  router.push("/admin/payroll/setup");
-                },
+  const handleDateSelection = async (date: Date | undefined) => {
+    if (!date) {
+      toast.error("Please select a date to continue.");
+      return;
+    }
+
+    setSelectedDate(date);
+
+    try {
+      await createPayroll({ paymentDate: date.toISOString() });
+
+      toast.success("Payroll scheduled successfully.", {
+        description: `Payroll has been scheduled for ${formatDate(date.toISOString())}.`,
+      });
+
+      setIsChangeDateModalOpen(false);
+      refetchPayrolls();
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+      const message = axiosError.response?.data?.message ?? "Failed to schedule payroll.";
+
+      toast.error(message, {
+        description:
+          axiosError.response?.data?.message ?? "Something went wrong while scheduling payroll. Please try again.",
+        action: axiosError.response?.data?.message
+          ? {
+              label: "Payroll Settings",
+              onClick: () => {
+                router.push("/admin/payroll/setup");
               },
-            });
-          },
-        },
-      );
+            }
+          : undefined,
+      });
     }
   };
 
@@ -309,7 +318,8 @@ export const SchedulePayrollDrawer = () => {
         onOpenChange={setIsChangeDateModalOpen}
         selectedDate={selectedDate}
         onDateSelect={setSelectedDate}
-        onContinue={() => handleDateSelection(selectedDate!)}
+        onContinue={handleDateSelection}
+        isSubmitting={isCreatingPayroll}
       />
     </>
   );

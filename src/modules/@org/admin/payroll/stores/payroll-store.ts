@@ -11,6 +11,13 @@ export interface PayrollUIState {
   hidePayrollNotificationBanner?: boolean;
   payrollSelectedDate?: Date;
   showFundWalletAccountModal: boolean;
+  /**
+   * Indicates that the company wallet setup has just been completed
+   * via the FundWalletFormModal flow.
+   * Used as a one-shot signal to update other UI (e.g. enabling Fund Wallet button,
+   * showing the "No payroll" banner) before the backend status catches up.
+   */
+  walletSetupCompleted: boolean;
 }
 
 export interface PayrollUIActions {
@@ -23,6 +30,7 @@ export interface PayrollUIActions {
   setPayrollSelectedDate: (date: Date | undefined) => void;
   setShowFundWalletAccountModal: (open: boolean) => void;
   setHasCompletedPayrollPolicySetupForm: (status: boolean) => void;
+  setWalletSetupCompleted: (status: boolean) => void;
   resetUI: () => void;
 }
 
@@ -36,6 +44,7 @@ const initialState: PayrollUIState = {
   payrollSelectedDate: undefined,
   showFundWalletAccountModal: false,
   hasCompletedPayrollPolicySetupForm: false,
+  walletSetupCompleted: false,
 };
 
 export const usePayrollStore = create<PayrollUIState & PayrollUIActions>()(
@@ -51,6 +60,7 @@ export const usePayrollStore = create<PayrollUIState & PayrollUIActions>()(
       setPayrollSelectedDate: (date) => set({ payrollSelectedDate: date }),
       setShowFundWalletAccountModal: (open) => set({ showFundWalletAccountModal: open }),
       setHasCompletedPayrollPolicySetupForm: (status) => set({ hasCompletedPayrollPolicySetupForm: status }),
+      setWalletSetupCompleted: (status) => set({ walletSetupCompleted: status }),
 
       resetUI: () => set(initialState),
     }),

@@ -39,6 +39,7 @@ export function FundWalletFormModal({ initialData }: FundWalletFormModalProperti
     showFundWalletFormModal,
     setHasCompletedPayrollPolicySetupForm,
     setShowFundWalletFormModal,
+    setWalletSetupCompleted,
   } = usePayrollStore();
   const { useUpdateCompanyWallet } = usePayrollService();
   const { mutateAsync: updateWallet, isPending } = useUpdateCompanyWallet();
@@ -65,6 +66,8 @@ export function FundWalletFormModal({ initialData }: FundWalletFormModalProperti
           setTimeout(() => {
             setIsSuccessAlertOpen(true);
             setHasCompletedPayrollPolicySetupForm(false);
+            // Signal to the payroll view that wallet setup has just completed
+            setWalletSetupCompleted(true);
           }, 300);
         },
         onError: (error) => {

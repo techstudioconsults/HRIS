@@ -8,22 +8,20 @@ import { useEffect, useState } from "react";
 import { usePayrollService } from "../services/use-service";
 import { usePayrollStore } from "../stores/payroll-store";
 
-interface FundWalletAccountModalProperties {
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  onConfirm?: () => void;
-  onCheckPayrollAvailability?: () => void;
-}
+// interface FundWalletAccountModalProperties {
+//   open?: boolean;
+//   onOpenChange?: (open: boolean) => void;
+//   onConfirm?: () => void;
+//   onCheckPayrollAvailability?: () => void;
+// }
 
-export function FundWalletAccountModal({ onConfirm, onCheckPayrollAvailability }: FundWalletAccountModalProperties) {
+export function FundWalletAccountModal() {
   const [copied, setCopied] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
   const { showFundWalletAccountModal, setShowFundWalletAccountModal } = usePayrollStore();
-  const { useGetCompanyWallet, useGetAllPayrolls } = usePayrollService();
+  const { useGetCompanyWallet } = usePayrollService();
   // get the query object so we can refetch during polling
   const walletQuery = useGetCompanyWallet();
   const { data: companyWalletData } = walletQuery || {};
-  const { refetch: refetchPayrolls } = useGetAllPayrolls();
 
   const handleCopyAccountNumber = async () => {
     try {
@@ -49,28 +47,7 @@ export function FundWalletAccountModal({ onConfirm, onCheckPayrollAvailability }
   }, [showFundWalletAccountModal, companyWalletData?.data?.accountNumber, walletQuery]);
 
   const handleConfirm = async () => {
-    try {
-      setIsProcessing(true);
-      // Refresh wallet details after user acknowledges
-      await walletQuery?.refetch?.();
-
-      // Refetch payrolls to check availability
-      const payrollsResult = await refetchPayrolls();
-      const hasPayrolls = Array.isArray(payrollsResult?.data?.data) && payrollsResult.data.data.length > 0;
-
-      // If no payrolls available, trigger the banner check in parent
-      if (!hasPayrolls && onCheckPayrollAvailability) {
-        onCheckPayrollAvailability();
-      }
-
-      // Allow parent to perform any side effects
-      if (onConfirm) await onConfirm();
-      setShowFundWalletAccountModal(false);
-    } catch {
-      // no-op
-    } finally {
-      setIsProcessing(false);
-    }
+    setShowFundWalletAccountModal(false);
   };
 
   return (
@@ -140,15 +117,8 @@ export function FundWalletAccountModal({ onConfirm, onCheckPayrollAvailability }
 
         {/* Action Button */}
         <div className="pt-4">
-          <MainButton
-            className="w-full"
-            type="button"
-            variant="primary"
-            onClick={handleConfirm}
-            isDisabled={isProcessing}
-            isLoading={isProcessing}
-          >
-            {isProcessing ? "Processing..." : "Okay, Got it"}
+          <MainButton className="w-full" type="button" variant="primary" onClick={handleConfirm}>
+            Okay, Got it
           </MainButton>
         </div>
       </div>

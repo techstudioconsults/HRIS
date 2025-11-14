@@ -62,6 +62,7 @@ const PayrollView = () => {
     setShowFundWalletAccountModal,
     setShowSchedulePayrollDrawer,
     setShowAddEmployeeModal,
+    walletSetupCompleted,
   } = usePayrollStore();
   const {
     useGetCompanyPayrollPolicy,
@@ -71,7 +72,7 @@ const PayrollView = () => {
     useGetCompanyWallet,
     useRunPayroll,
   } = usePayrollService();
-  const { data: companyWallet, refetch: refetchCompanyWallet } = useGetCompanyWallet();
+  const { data: companyWallet, refetch: refetchCompanyWallet, isError: isCompanyWalletError } = useGetCompanyWallet();
   const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
   const { data: allPayrolls, isLoading: loadingPayrolls, refetch: refetchPayrolls } = useGetAllPayrolls();
   const { mutateAsync: createPayroll, isPending: isCreatingPayroll } = useCreatePayroll();
@@ -135,19 +136,20 @@ const PayrollView = () => {
   };
 
   const payrollPolicyStatus = payrollPolicy?.data?.status === `incomplete`;
+  const isFundWalletDisabled = payrollPolicyStatus && !walletSetupCompleted;
 
   const toggleWalletBalanceVisibility = () => {
     setIsWalletBalanceVisible(!isWalletBalanceVisible);
   };
 
-  const handleShowFundWalletForm = () => {
-    if (payrollPolicyStatus) {
-      setShowFundWalletFormModal(true);
-      setShowFundWalletAccountModal(false);
-    } else {
-      setShowFundWalletAccountModal(true);
-      setShowFundWalletFormModal(false);
-    }
+  const handleSetupWallet = () => {
+    setShowFundWalletFormModal(true);
+    setShowFundWalletAccountModal(false);
+  };
+
+  const handleFundWallet = () => {
+    setShowFundWalletAccountModal(true);
+    setShowFundWalletFormModal(false);
   };
 
   const handleGeneratePayroll = async () => {
@@ -261,6 +263,17 @@ const PayrollView = () => {
     setShowNoPayrollBanner,
   ]);
 
+  // When wallet setup has just completed (success alert shown),
+  // ensure the "No payroll" banner becomes visible if there are no payrolls yet.
+  useEffect(() => {
+    if (!walletSetupCompleted) return;
+
+    const hasPayrolls = Array.isArray(allPayrolls?.data) && allPayrolls.data.length > 0;
+    if (!hasPayrolls) {
+      setShowNoPayrollBanner(true);
+    }
+  }, [walletSetupCompleted, allPayrolls]);
+
   // Keep local walletBalance in sync with server data
   useEffect(() => {
     const latestBalance = companyWallet?.data?.balance;
@@ -328,10 +341,10 @@ const PayrollView = () => {
               className="border-border h-10 w-64 border"
             />
             <MainButton
-              onClick={handleShowFundWalletForm}
+              isDisabled={isFundWalletDisabled}
+              onClick={handleFundWallet}
               className="border-primary"
-              variant="outline"
-              // isDisabled={!selectedPayrollId}
+              variant="primaryOutline"
             >
               Fund Wallet
             </MainButton>
@@ -394,7 +407,7 @@ const PayrollView = () => {
             </p>
           </div>
           <div className="flex items-start gap-5">
-            <MainButton onClick={handleShowFundWalletForm} variant="primary">
+            <MainButton onClick={handleSetupWallet} variant="primary">
               Set up Wallet
             </MainButton>
           </div>
@@ -405,7 +418,7 @@ const PayrollView = () => {
       <section
         className={cn(
           "hidden rounded-lg border border-blue-200 bg-blue-50 p-4",
-          showNoPayrollBanner && !payrollPolicyStatus && `block`,
+          showNoPayrollBanner && (!payrollPolicyStatus || walletSetupCompleted) && `block`,
         )}
       >
         <div className="flex items-center justify-between gap-4">
@@ -448,7 +461,11 @@ const PayrollView = () => {
             </p>
           </div>
           <div className="flex items-start gap-5">
-            <MainButton variant="outline">Fund Wallet</MainButton>
+            {!payrollPolicyStatus && (
+              <MainButton variant="outline" onClick={handleFundWallet}>
+                Fund Wallet
+              </MainButton>
+            )}
             <button
               aria-label="Dismiss low balance banner"
               className="text-red-700 transition-colors hover:text-red-900"
@@ -555,7 +572,7 @@ const PayrollView = () => {
 
       {/* Fund Wallet Modal */}
       <FundWalletFormModal />
-      <FundWalletAccountModal onCheckPayrollAvailability={handleCheckPayrollAvailability} />
+      <FundWalletAccountModal />
 
       {/* Schedule Payroll Drawer */}
       <SchedulePayrollDrawer />

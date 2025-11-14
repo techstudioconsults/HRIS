@@ -5,18 +5,23 @@
 import Loading from "@/app/Loading";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
+import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
 import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ComboBox } from "@/components/shared/select-dropdown/combo-box";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { useSSE } from "@/context/sse-provider";
 import { formatCurrency, formatDate } from "@/lib/i18n/utils";
+import { EventRegistry } from "@/lib/sse/use-notifications";
 import { cn } from "@/lib/utils";
 import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import { CloseCircle, Eye, EyeSlash } from "iconsax-reactjs";
 import { AlertTriangle, MoreVertical } from "lucide-react"; // add AlertTriangle
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
+import { toast } from "sonner";
 
 import empty1 from "~/images/empty-state.svg";
 import { AddEmployeeDrawer } from "../_components/add-employee-drawer";
@@ -31,7 +36,7 @@ import { usePayrollService } from "../services/use-service";
 import { usePayrollStore } from "../stores/payroll-store";
 import { payrollColumn, usePayrollRowActions } from "./table-data";
 
-const LOW_BALANCE_LIMIT = 5_000_000; // 5M NGN
+const LOW_BALANCE_LIMIT = 1_000_000; // 5M NGN
 const GET_SCHEDULE_MESSAGE = (date: string | Date): ReactNode => {
   return `Your next payroll has been scheduled for ${date}. You can edit the schedule date or cancel the payroll before the set date here.`;
 };
@@ -47,6 +52,7 @@ const PAYROLL_RUN_MESSAGE: ReactNode = (
 );
 
 const PayrollView = () => {
+  const { on } = useSSE();
   const router = useRouter();
   const { getRowActions } = usePayrollRowActions();
   const {
@@ -56,7 +62,6 @@ const PayrollView = () => {
     setShowFundWalletAccountModal,
     setShowSchedulePayrollDrawer,
     setShowAddEmployeeModal,
-    setShowPayrollDrawer,
   } = usePayrollStore();
   const {
     useGetCompanyPayrollPolicy,
@@ -66,13 +71,14 @@ const PayrollView = () => {
     useGetCompanyWallet,
     useRunPayroll,
   } = usePayrollService();
-  const { data: companyWallet } = useGetCompanyWallet();
+  const { data: companyWallet, refetch: refetchCompanyWallet } = useGetCompanyWallet();
   const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
   const { data: allPayrolls, isLoading: loadingPayrolls, refetch: refetchPayrolls } = useGetAllPayrolls();
   const { mutateAsync: createPayroll, isPending: isCreatingPayroll } = useCreatePayroll();
   const { mutateAsync: runPayroll, isPending: isRunningPayroll } = useRunPayroll();
   const [isWalletBalanceVisible, setIsWalletBalanceVisible] = useState(true);
   const [showNoPayrollBanner, setShowNoPayrollBanner] = useState(false);
+  const [isTopupPromptOpen, setIsTopupPromptOpen] = useState(false);
   const [selectedPayrollId, setSelectedPayrollId] = useState<string>("");
   const [payrollData, setPayrollData] = useState({
     id: "",
@@ -81,7 +87,7 @@ const PayrollView = () => {
     netPay: 0,
     employeesInPayroll: 0,
     paymentDate: "",
-    walletBalance: companyWallet?.data?.balance || 70_000_000,
+    walletBalance: companyWallet?.data?.balance || 0,
   });
 
   // Fetch payslips automatically when a payroll is selected
@@ -123,6 +129,7 @@ const PayrollView = () => {
         netPay: selectedPayroll.netPay || 0,
         employeesInPayroll: selectedPayroll.employeesInPayroll || 0,
         paymentDate: formatDate(selectedPayroll.paymentDate),
+        walletBalance: companyWallet?.data?.balance || 0,
       }));
     }
   };
@@ -147,8 +154,7 @@ const PayrollView = () => {
     try {
       // Get the current date for payment date
       const paymentDate = new Date().toISOString();
-
-      const response = await createPayroll(
+      await createPayroll(
         { paymentDate },
         {
           onSuccess: async (data) => {
@@ -164,6 +170,7 @@ const PayrollView = () => {
                 netPay: data.data.netPay,
                 employeesInPayroll: data.data.employeesInPayroll,
                 paymentDate: formatDate(data.data.paymentDate),
+                walletBalance: companyWallet?.data?.balance || 0,
               }));
               // Hide the no payroll banner
               setShowNoPayrollBanner(false);
@@ -225,6 +232,43 @@ const PayrollView = () => {
     }
   }, [payrollPolicy?.data.payday, payrollPolicyStatus, setHasCompletedPayrollPolicySetupForm]);
 
+  // Wallet notifications: topup and created
+  useEffect(() => {
+    const offTopup = on(EventRegistry.WALLET_TOP_SUCCESS, () => {
+      toast.success("Company wallet funded successfully.");
+      const hasPayrolls = Array.isArray(allPayrolls?.data) && allPayrolls.data.length > 0;
+      if (!hasPayrolls) {
+        setShowNoPayrollBanner(true);
+      }
+      setIsTopupPromptOpen(true);
+      void refetchCompanyWallet();
+    });
+    const offCreated = on(EventRegistry.WALLET_CREATED_SUCCESS, () => {
+      toast.success("Company wallet setup completed successfully.");
+      void refetchCompanyWallet();
+    });
+    return () => {
+      offTopup();
+      offCreated();
+    };
+  }, [
+    on,
+    refetchCompanyWallet,
+    setShowFundWalletAccountModal,
+    setShowFundWalletFormModal,
+    setIsTopupPromptOpen,
+    allPayrolls,
+    setShowNoPayrollBanner,
+  ]);
+
+  // Keep local walletBalance in sync with server data
+  useEffect(() => {
+    const latestBalance = companyWallet?.data?.balance;
+    if (typeof latestBalance === "number") {
+      setPayrollData((previous) => ({ ...previous, walletBalance: latestBalance }));
+    }
+  }, [companyWallet?.data?.balance]);
+
   // Check if there are any payrolls available and load current payroll (only affects dashboard cards)
   useEffect(() => {
     if (!loadingPayrolls && allPayrolls) {
@@ -258,10 +302,11 @@ const PayrollView = () => {
           netPay: earliestPayroll.netPay || 0,
           employeesInPayroll: earliestPayroll.employeesInPayroll || 0,
           paymentDate: formatDate(earliestPayroll.paymentDate),
+          walletBalance: companyWallet?.data?.balance || 0,
         }));
       }
     }
-  }, [allPayrolls, loadingPayrolls]);
+  }, [allPayrolls, companyWallet?.data?.balance, loadingPayrolls]);
 
   if (loadingPayrolls) {
     return <Loading text="Initializing Payroll Interface" />;
@@ -269,6 +314,7 @@ const PayrollView = () => {
 
   return (
     <section className="space-y-10">
+      {/* Notifications via SSEProvider/useSSE */}
       <DashboardHeader
         title="Payroll Overview"
         subtitle="Payroll"
@@ -335,14 +381,14 @@ const PayrollView = () => {
       {/* Setup almost complete banner (policy done but wallet not yet set up) */}
       <section
         className={cn(
-          "hidden rounded-lg border border-amber-200 bg-amber-50 p-4",
+          "border-warning/50 bg-warning-50 hidden rounded-lg border p-4",
           hasCompletedPayrollPolicySetupForm && `block`,
         )}
       >
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 text-amber-600" size={18} />
-            <p className="text-sm text-amber-800">
+            <AlertTriangle className="text-warning mt-0.5" size={18} />
+            <p className="text-warning text-sm">
               Payroll setup almost complete. Create and fund your company wallet to finish setup and enable payroll
               generation.
             </p>
@@ -514,6 +560,21 @@ const PayrollView = () => {
       {/* Schedule Payroll Drawer */}
       <SchedulePayrollDrawer />
       <GenerateRunPayrollDrawer />
+
+      <ConfirmDialog
+        isOpen={isTopupPromptOpen}
+        onClose={() => setIsTopupPromptOpen(false)}
+        onConfirm={() => {
+          setIsTopupPromptOpen(false);
+          void handleGeneratePayroll();
+        }}
+        loading={isCreatingPayroll}
+        title="Generate Payroll?"
+        description="you have just top up your wallet, do you want to generate a new payroll?"
+        confirmText="Generate Payroll"
+        cancelText="Not now"
+        variant="default"
+      />
 
       {/* Add Employee Modal */}
       <AddEmployeeDrawer />

@@ -1,7 +1,7 @@
 "use client";
 
 import { UniversalSwiper } from "@/components/shared/carousel";
-// import { testimonials } from "@/lib/tools/constants";
+import { testimonials } from "@/lib/tools/constants";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
@@ -9,7 +9,7 @@ export const AuthCarousel = () => {
   return (
     <UniversalSwiper
       className="overflow-hidden"
-      items={[]}
+      items={testimonials}
       renderItem={(testimonial: AuthCarouselProperties) => (
         <section className="relative flex h-[100dvh] items-end justify-center p-9">
           <Image

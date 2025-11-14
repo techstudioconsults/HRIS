@@ -34,7 +34,7 @@ export const PayrollSetupSettingsModal = () => {
       className="!max-w-lg"
     >
       <div className="space-y-6">
-        <div className="bg-muted rounded-lg p-5">
+        <div className="bg-primary/10 border-primary-75 rounded-lg border p-5">
           <h6 className="mb-3 font-semibold text-gray-900">What you&apos;ll do:</h6>
           <ul className="ml-4 space-y-2 text-sm text-gray-700">
             <li className="flex items-center">

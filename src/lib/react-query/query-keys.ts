@@ -42,6 +42,7 @@ export const queryKeys = {
     approvedBanks: () => ["payrolls", "approved-banks"] as const,
     payslips: (payrollId: string, filters?: Filters) => ["payrolls", "payslips", payrollId, filters] as const,
     payslipDetails: (id: string) => ["payrolls", "payslip", id] as const,
+    approvals: (payrollId: string) => ["payrolls", "approvals", payrollId] as const,
   },
   // Add other domains as needed
 };

@@ -131,3 +131,14 @@ export interface Payslip extends Record<string, unknown> {
   totalDeductions: number;
   employee: PayslipEmployee;
 }
+
+export interface PayrollApproval extends Record<string, unknown> {
+  status: string;
+  payrollId: string;
+  employee: {
+    id: string;
+    name: string;
+    avatar: string | null;
+  };
+  approvedAt: string;
+}

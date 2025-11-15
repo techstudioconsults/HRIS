@@ -38,6 +38,13 @@ export const usePayrollService = () => {
   const useGetPayrollByID = (payrollId: string, options?: any) =>
     useServiceQuery(queryKeys.payroll.details(payrollId), (service) => service.getPayrollByID(payrollId), options);
 
+  const useGetPayrollApprovals = (payrollId: string, options?: any) =>
+    useServiceQuery(
+      queryKeys.payroll.approvals(payrollId),
+      (service) => service.getPayrollApprovals(payrollId),
+      options,
+    );
+
   // Wallet
   const useUpdateCompanyWallet = (options?: any) =>
     useServiceMutation(
@@ -178,6 +185,7 @@ export const usePayrollService = () => {
     useRetryPayroll,
     useGetApprovedBanks,
     useGetPayrollByID,
+    useGetPayrollApprovals,
     useGetAllPayrolls,
     useDownloadPayrolls,
     useUpdateCompanyWallet,

@@ -72,7 +72,7 @@ const PayrollView = () => {
     useGetCompanyWallet,
     useRunPayroll,
   } = usePayrollService();
-  const { data: companyWallet, refetch: refetchCompanyWallet, isError: isCompanyWalletError } = useGetCompanyWallet();
+  const { data: companyWallet, refetch: refetchCompanyWallet } = useGetCompanyWallet();
   const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
   const { data: allPayrolls, isLoading: loadingPayrolls, refetch: refetchPayrolls } = useGetAllPayrolls();
   const { mutateAsync: createPayroll, isPending: isCreatingPayroll } = useCreatePayroll();

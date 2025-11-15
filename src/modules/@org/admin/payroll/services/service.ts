@@ -1,6 +1,6 @@
 import { HttpAdapter } from "@/lib/http/http-adapter";
 
-import type { CompanyPayrollPolicy, CompanyWallet, Payroll, PayrollSummary, Payslip } from "../types";
+import type { CompanyPayrollPolicy, CompanyWallet, Payroll, PayrollApproval, PayrollSummary, Payslip } from "../types";
 
 export class PayrollService {
   private readonly http: HttpAdapter;
@@ -57,6 +57,14 @@ export class PayrollService {
 
   async getPayrollByID(payrollId: string) {
     const response = await this.http.get<ApiResponse<Payroll>>(`/payrolls/${payrollId}`);
+    if (response?.status === 200) {
+      return response.data;
+    }
+  }
+
+  // Get approvals for a specific payroll
+  async getPayrollApprovals(payrollId: string) {
+    const response = await this.http.get<ApiResponse<PayrollApproval[]>>(`/payrolls/${payrollId}/approvals`);
     if (response?.status === 200) {
       return response.data;
     }

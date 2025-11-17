@@ -1,29 +1,33 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
-import FileUpload from "@/components/shared/file-upload/file-upload";
 import { FormField } from "@/components/shared/inputs/FormFields";
-import { FolderFormData, folderSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
 
 import { useResourceService } from "../../services/use-service";
 
-interface CreateFolderFormProperties {
+const renameFolderSchema = z.object({
+  name: z.string().min(1, "Folder name is required"),
+});
+
+type RenameFolderFormData = z.infer<typeof renameFolderSchema>;
+
+interface EditFolderFormProperties {
+  folderId: string;
+  currentName: string;
   onClose?: () => void;
 }
 
-export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const { useCreateFolder } = useResourceService();
+export const EditFolderForm = ({ folderId, currentName, onClose }: EditFolderFormProperties) => {
+  const { useUpdateFolder } = useResourceService();
 
-  const methods = useForm<FolderFormData>({
-    resolver: zodResolver(folderSchema),
+  const methods = useForm<RenameFolderFormData>({
+    resolver: zodResolver(renameFolderSchema),
     defaultValues: {
-      name: "",
-      file: [],
+      name: currentName,
     },
   });
 
@@ -31,31 +35,24 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
     handleSubmit,
     formState: { isSubmitting, errors },
     reset,
-    setValue,
   } = methods;
 
-  const { mutateAsync: createFolderMutation, isPending } = useCreateFolder();
-
-  const handleFilesSelected = (files: File[]) => {
-    setSelectedFiles(files);
-    setValue("file", files);
-  };
+  const { mutateAsync: updateFolderMutation, isPending } = useUpdateFolder();
 
   const handleCancel = () => {
     reset();
-    setSelectedFiles([]);
     onClose?.();
   };
 
-  const onSubmit = async (data: FolderFormData) => {
-    await createFolderMutation(
+  const onSubmit = async (data: RenameFolderFormData) => {
+    await updateFolderMutation(
       {
-        name: data.name,
-        file: data.file || [],
+        id: folderId,
+        data: { name: data.name },
       },
       {
         onSuccess: () => {
-          toast.success(`Folder "${data.name}" has been created.`);
+          toast.success(`Folder renamed to "${data.name}" successfully.`);
           handleCancel();
         },
       },
@@ -68,27 +65,13 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
         <div className="grid w-full gap-2">
           <FormField
             name="name"
-            placeholder="Enter folder name"
+            placeholder="Enter new folder name"
             className="!h-14 w-full"
             label="Folder Name"
             type="text"
             required
           />
           {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
-        </div>
-
-        <div className="flex w-full flex-col gap-4 pt-4">
-          <label className="text-sm font-medium">Files (Optional)</label>
-          <FileUpload
-            onFileChange={handleFilesSelected}
-            acceptedFileTypes=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
-            maxFiles={10}
-          />
-          {selectedFiles.length > 0 && (
-            <p className="text-sm text-gray-600">
-              {selectedFiles.length} file{selectedFiles.length > 1 ? "s" : ""} selected
-            </p>
-          )}
         </div>
 
         <div className="flex w-full items-center justify-between gap-4 pt-4">
@@ -102,7 +85,7 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
             Cancel
           </MainButton>
           <MainButton className="w-full" variant="primary" type="submit" isDisabled={isSubmitting || isPending}>
-            {isSubmitting || isPending ? "Creating..." : "Create Folder"}
+            {isSubmitting || isPending ? "Renaming..." : "Rename Folder"}
           </MainButton>
         </div>
       </form>

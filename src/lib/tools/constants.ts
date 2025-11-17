@@ -320,3 +320,33 @@ export const roleOptions = [
   { value: "analyst", label: "Analyst" },
   { value: "administrator", label: "Administrator" },
 ];
+
+export const testimonials = [
+  {
+    id: 1,
+    image: "/images/auth/register-img.svg",
+    name: "John Doe",
+    position: "Designer",
+    message:
+      "“TechstudioHR has completely transformed how we manage payroll and employee records. What used to take hours now happens in minutes.”",
+    rating: 5,
+  },
+  {
+    id: 2,
+    image: "/images/auth/login-img.svg",
+    name: "Jane Doe",
+    position: "Developer",
+    message:
+      "“TechstudioHR has completely transformed how we manage payroll and employee records. What used to take hours now happens in minutes.”",
+    rating: 2,
+  },
+  {
+    id: 3,
+    image: "/images/auth/register-img.svg",
+    name: "James Doe",
+    position: "Customer Service",
+    message:
+      "“TechstudioHR has completely transformed how we manage payroll and employee records. What used to take hours now happens in minutes.”",
+    rating: 4,
+  },
+];

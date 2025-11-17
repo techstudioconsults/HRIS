@@ -37,7 +37,7 @@ export class TeamService {
     }
   }
 
-  async getAllTeams(filters: IFilters = Object.create({ page: 1 })) {
+  async getAllTeams(filters: Filters = Object.create({ page: 1 })) {
     const queryParameters = this.buildQueryParameters(filters);
     const response = await this.http.get<ApiResponse<Team>>(`/teams?${queryParameters}`);
 
@@ -46,7 +46,7 @@ export class TeamService {
     }
   }
 
-  async downloadTeams(filters: IFilters = Object.create({ page: 1 })) {
+  async downloadTeams(filters: Filters = Object.create({ page: 1 })) {
     const queryParameters = this.buildQueryParameters(filters);
     const response = await this.http.get<Blob>(`/teams/export?${queryParameters}`, {
       responseType: "blob",
@@ -152,7 +152,7 @@ export class TeamService {
     throw new Error("Failed to assign employee to team");
   }
 
-  private buildQueryParameters(filters: IFilters): string {
+  private buildQueryParameters(filters: Filters): string {
     const queryParameters = new URLSearchParams();
     for (const [key, value] of Object.entries(filters)) {
       if (value !== undefined) {

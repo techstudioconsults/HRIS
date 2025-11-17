@@ -9,6 +9,8 @@ export const queryKeys = {
     details: (id: string) => ["employee", "details", id] as const,
     teams: () => ["employee", "teams"] as const,
     download: (filters?: Filters) => ["employee", "download", filters] as const,
+    suspendedByPayroll: (payrollId: string, filters?: Filters) =>
+      ["employee", "suspendedByPayroll", payrollId, filters] as const,
   },
 
   folder: {
@@ -21,6 +23,7 @@ export const queryKeys = {
     list: (filters?: Filters) => ["file", "list", filters] as const,
     details: (id: string) => ["file", "details", id] as const,
     download: (id: string) => ["file", "download", id] as const,
+    byFolder: (folderId: string, filters?: Filters) => ["file", "byFolder", folderId, filters] as const,
     // Additional file-specific query keys if needed:
     recent: (limit?: number) => ["file", "recent", limit] as const,
     byType: (fileType: string, filters?: Filters) => ["file", "byType", fileType, filters] as const,
@@ -41,6 +44,7 @@ export const queryKeys = {
     approvedBanks: () => ["payrolls", "approved-banks"] as const,
     payslips: (payrollId: string, filters?: Filters) => ["payrolls", "payslips", payrollId, filters] as const,
     payslipDetails: (id: string) => ["payrolls", "payslip", id] as const,
+    approvals: (payrollId: string) => ["payrolls", "approvals", payrollId] as const,
   },
   // Add other domains as needed
 };

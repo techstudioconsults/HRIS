@@ -12,7 +12,7 @@ export const useTeamService = () => {
   const { useServiceQuery, useServiceMutation } = createServiceHooks<TeamService>(dependencies.TEAM_SERVICE);
 
   // Queries
-  const useGetAllTeams = (filters: IFilters = Object.create({ page: 1 }), options?: any) =>
+  const useGetAllTeams = (filters: Filters = Object.create({ page: 1 }), options?: any) =>
     useServiceQuery(queryKeys.team.list(filters), (service) => service.getAllTeams(filters), options);
 
   const useGetTeamsById = (id: string, options?: any) =>
@@ -21,7 +21,7 @@ export const useTeamService = () => {
   const useGetRoles = (teamId: string, options?: any) =>
     useServiceQuery(["roles", teamId], (service) => service.getRoles(teamId), options);
 
-  const useDownloadTeams = (filters: IFilters = Object.create({ page: 1 }), options?: any) =>
+  const useDownloadTeams = (filters: Filters = Object.create({ page: 1 }), options?: any) =>
     useServiceQuery(queryKeys.team.download(filters), (service) => service.downloadTeams(filters), options);
 
   // Mutations

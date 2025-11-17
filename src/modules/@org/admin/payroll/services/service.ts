@@ -1,6 +1,6 @@
 import { HttpAdapter } from "@/lib/http/http-adapter";
 
-import type { CompanyPayrollPolicy, CompanyWallet, Payroll, PayrollSummary, Payslip } from "../types";
+import type { CompanyPayrollPolicy, CompanyWallet, Payroll, PayrollApproval, PayrollSummary, Payslip } from "../types";
 
 export class PayrollService {
   private readonly http: HttpAdapter;
@@ -21,8 +21,13 @@ export class PayrollService {
 
   // Run payroll (process disbursement/approval workflow)
   async runPayroll(data: { payrollId: string; date: string }) {
-    const response = await this.http.post<ApiResponse<{ success: boolean; payroll: Payroll }>>(`/payrolls/run`, data);
-    if (response?.status === 200) return response.data;
+    const response = await this.http.post<ApiResponse<{ success: boolean; payroll: Payroll }>>(
+      `/payrolls/${data.payrollId}/run`,
+      {
+        date: data.date,
+      },
+    );
+    if (response?.status === 201) return response.data;
   }
 
   // Retry failed payroll (or stuck state)
@@ -57,6 +62,14 @@ export class PayrollService {
 
   async getPayrollByID(payrollId: string) {
     const response = await this.http.get<ApiResponse<Payroll>>(`/payrolls/${payrollId}`);
+    if (response?.status === 200) {
+      return response.data;
+    }
+  }
+
+  // Get approvals for a specific payroll
+  async getPayrollApprovals(payrollId: string) {
+    const response = await this.http.get<ApiResponse<PayrollApproval[]>>(`/payrolls/${payrollId}/approvals`);
     if (response?.status === 200) {
       return response.data;
     }
@@ -195,27 +208,22 @@ export class PayrollService {
     if (response?.status === 200) return response.data;
   }
 
-  async getPayslipById(payslipId: string) {
-    const response = await this.http.get<ApiResponse<Payslip>>(`/payslips/${payslipId}`);
+  async getPayslipById(payrollId: string, payslipId: string) {
+    const response = await this.http.get<ApiResponse<Payslip>>(`/payrolls/${payrollId}/payslips/${payslipId}`);
     if (response?.status === 200) return response.data;
   }
 
-  async createPayslip(data: {
-    payrollId: string;
-    employeeId: string;
-    earnings: Array<{ name: string; amount: number }>;
-    deductions?: Array<{ name: string; amount: number }>;
-    bonuses?: Array<{ name: string; amount: number }>;
-    notes?: string;
-    currency?: string;
-    metadata?: Record<string, unknown>;
-  }) {
-    const response = await this.http.post<ApiResponse<Payslip>>(`/payslips`, data);
+  async createPayslip(data: { payrollId: string; employeeId: string }) {
+    const response = await this.http.post<ApiResponse<Payslip>>(`/payrolls/${data.payrollId}/payslips`, {
+      employeeId: data.employeeId,
+    });
     if (response?.status === 201 || response?.status === 200) return response.data;
   }
 
-  async deletePayslip(payslipId: string) {
-    const response = await this.http.delete<ApiResponse<{ success: boolean }>>(`/payslips/${payslipId}`);
+  async deletePayslip(payrollId: string, payslipId: string) {
+    const response = await this.http.delete<ApiResponse<{ success: boolean }>>(
+      `/payrolls/${payrollId}/payslips/${payslipId}`,
+    );
     if (response?.status === 200) return response.data;
   }
 }

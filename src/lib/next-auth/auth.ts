@@ -3,6 +3,7 @@ import NextAuth, { CredentialsSignin, Session, User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   secret: process.env.AUTH_SECRET,
   providers: [
     // conventional credentials

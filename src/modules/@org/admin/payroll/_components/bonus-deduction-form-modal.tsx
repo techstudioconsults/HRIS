@@ -5,7 +5,7 @@ import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { FormField } from "@/components/shared/inputs/FormFields";
 import { Switch } from "@/components/ui/switch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -53,24 +53,38 @@ export function BonusDeductionFormModal({
   const valueType = watch("valueType");
   const status = watch("status");
 
-  const handleFormSubmit = async (data: BonusDeductionFormData, event?: React.BaseSyntheticEvent) => {
-    if (event) {
-      event.preventDefault();
+  // Reset form values whenever modal opens or initialData/type changes
+  // This ensures the edit form populates inputs with the original values
+  useEffect(() => {
+    if (open) {
+      methods.reset(
+        initialData || {
+          name: "",
+          valueType: "percentage",
+          value: 0,
+          status: true,
+          type,
+        },
+      );
     }
+  }, [open, initialData, type, methods]);
+
+  const handleFormSubmit = async (data: BonusDeductionFormData) => {
     setIsSubmitting(true);
     try {
-      await onSubmit(data);
+      onSubmit(data);
       methods.reset();
       onOpenChange(false);
     } catch {
-      // Handle error silently or show toast notification
-      // Error handling can be improved with toast notifications
+      return;
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleCancel = () => {
+  const handleCancel = (event: React.BaseSyntheticEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
     methods.reset();
     onOpenChange(false);
   };
@@ -87,6 +101,7 @@ export function BonusDeductionFormModal({
         <form
           onSubmit={(event) => {
             event.preventDefault();
+            event.stopPropagation();
             handleSubmit(handleFormSubmit)(event);
           }}
           className="space-y-6"
@@ -141,7 +156,17 @@ export function BonusDeductionFormModal({
             >
               Cancel
             </MainButton>
-            <MainButton className="w-full" type="submit" variant="primary" isDisabled={isSubmitting}>
+            <MainButton
+              className="w-full"
+              type="button"
+              variant="primary"
+              isDisabled={isSubmitting}
+              onClick={(event: React.BaseSyntheticEvent) => {
+                event.preventDefault();
+                event.stopPropagation();
+                handleSubmit(handleFormSubmit)();
+              }}
+            >
               {isSubmitting ? "Saving..." : "Continue"}
             </MainButton>
           </div>

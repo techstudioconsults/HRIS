@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { useEmployeeService } from "@/modules/@org/admin/employee/services/use-service";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import type React from "react";
 // import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -251,8 +252,17 @@ export const PayrollSetupForm = () => {
           </div>
 
           <div className="flex w-full items-center gap-4 pt-4">
-            <MainButton type="button" variant="outline" className="w-50" isDisabled={isPending}>
-              Cancel
+            <MainButton
+              onClick={(event: React.BaseSyntheticEvent) => {
+                event.preventDefault();
+                router.back();
+              }}
+              type="button"
+              variant="outline"
+              className="w-50"
+              isDisabled={isPending}
+            >
+              Back
             </MainButton>
             <MainButton type="submit" variant="primary" className="w-50" isLoading={isPending} isDisabled={isPending}>
               Save & Continue

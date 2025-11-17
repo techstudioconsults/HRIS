@@ -14,29 +14,30 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { formatCurrency, formatDate } from "@/lib/i18n/utils";
+import { cn } from "@/lib/utils";
 import { CalendarModal } from "@/modules/@org/admin/payroll/_components/calendar-modal";
 import { AxiosError } from "axios";
 import { Eye, EyeSlash } from "iconsax-reactjs";
 import { CalendarIcon, Info } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import empty1 from "~/images/empty-state.svg";
-import { DashboardCard } from "../../dashboard/_components/dashboard-card";
-import { usePayrollService } from "../services/use-service";
-import { usePayrollStore } from "../stores/payroll-store";
-import type { Payroll } from "../types";
+import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
+import { usePayrollService } from "../../services/use-service";
+import { usePayrollStore } from "../../stores/payroll-store";
+import type { Payroll, PayrollApproval } from "../../types";
 
 export const SchedulePayrollDrawer = () => {
   const router = useRouter();
+  const { useGetCompanyWallet, useGetAllPayrolls, useCreatePayroll, useGetPayrollApprovals } = usePayrollService();
+  const { data: companyWallet } = useGetCompanyWallet();
   const [isNetPayVisible, setIsNetPayVisible] = useState(false);
   const [isChangeDateModalOpen, setIsChangeDateModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedPayrollId, setSelectedPayrollId] = useState<string | null>(null);
   const { showSchedulePayrollDrawer, setShowSchedulePayrollDrawer } = usePayrollStore();
-
-  const { useGetAllPayrolls, useCreatePayroll } = usePayrollService();
 
   // Load available generated payrolls when drawer is open
   const { data: payrollsResponse, isLoading: isPayrollsLoading, refetch: refetchPayrolls } = useGetAllPayrolls();
@@ -73,32 +74,47 @@ export const SchedulePayrollDrawer = () => {
     return payrolls.find((p) => p.id === selectedPayrollId) ?? null;
   }, [payrolls, selectedPayrollId]);
 
-  const { mutateAsync: createPayroll } = useCreatePayroll();
+  const payrollIdForApprovals = selectedPayroll?.id ?? "";
+  const { data: approvalsResponse, isLoading: isApprovalsLoading } = useGetPayrollApprovals(payrollIdForApprovals, {
+    enabled: !!payrollIdForApprovals,
+  });
+  const approvals = (approvalsResponse?.data ?? []) as PayrollApproval[];
 
-  const handleDateSelection = async (date: Date) => {
-    if (date) {
-      setSelectedDate(date);
-      await createPayroll(
-        { paymentDate: date.toISOString() },
-        {
-          onSuccess: () => {
-            setIsChangeDateModalOpen(false);
-            refetchPayrolls();
-          },
-          onError: (error) => {
-            const axiosError = error as AxiosError<{ message: string }>;
-            toast.error(axiosError.response?.data.message, {
-              description: "Complete your payroll settings to schedule payroll.",
-              action: {
-                label: "Payroll Settings",
-                onClick: () => {
-                  router.push("/admin/payroll/setup");
-                },
+  const { mutateAsync: createPayroll, isPending: isCreatingPayroll } = useCreatePayroll();
+
+  const handleDateSelection = async (date: Date | undefined) => {
+    if (!date) {
+      toast.error("Please select a date to continue.");
+      return;
+    }
+
+    setSelectedDate(date);
+
+    try {
+      await createPayroll({ paymentDate: date.toISOString() });
+
+      toast.success("Payroll scheduled successfully.", {
+        description: `Payroll has been scheduled for ${formatDate(date.toISOString())}.`,
+      });
+
+      setIsChangeDateModalOpen(false);
+      refetchPayrolls();
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+      const message = axiosError.response?.data?.message ?? "Failed to schedule payroll.";
+
+      toast.error(message, {
+        description:
+          axiosError.response?.data?.message ?? "Something went wrong while scheduling payroll. Please try again.",
+        action: axiosError.response?.data?.message
+          ? {
+              label: "Payroll Settings",
+              onClick: () => {
+                router.push("/admin/payroll/setup");
               },
-            });
-          },
-        },
-      );
+            }
+          : undefined,
+      });
     }
   };
 
@@ -205,13 +221,15 @@ export const SchedulePayrollDrawer = () => {
                   <DashboardCard
                     title="Total Employees"
                     value={<p className="text-base">{selectedPayroll?.employeesInPayroll ?? 0}</p>}
-                    className="flex flex-col items-center justify-center gap-4 text-center"
+                    className="border-border flex flex-col items-center justify-center gap-4 border text-center shadow-none"
                   />
                   <DashboardCard
                     title="Wallet Balance"
                     value={
                       <div className="flex items-center gap-4">
-                        <p className="text-base text-white">{isNetPayVisible ? `N7,200,000` : `••••••••`}</p>
+                        <p className="text-base text-white">
+                          {isNetPayVisible ? formatCurrency(companyWallet?.data?.balance || 0) : `••••••••`}
+                        </p>
                         <button
                           onClick={() => setIsNetPayVisible(!isNetPayVisible)}
                           className="text-white transition-colors hover:text-gray-300"
@@ -229,7 +247,7 @@ export const SchedulePayrollDrawer = () => {
                     titleColor="text-white"
                   />
                 </section>
-                <section className="rounded-lg p-4 shadow-md">
+                <section className="border-border space-y-2 rounded-lg border p-4">
                   <div className="flex items-center justify-between">
                     <p>Gross Pay</p>
                     <p>{formatCurrency(selectedPayroll?.grossPay ?? 0)}</p>
@@ -242,40 +260,63 @@ export const SchedulePayrollDrawer = () => {
                     <p>Total Deductions</p>
                     <p>{formatCurrency(selectedPayroll?.deduction ?? 0)}</p>
                   </div>
-                  <div className="flex items-center justify-between font-bold">
+                  <div className="flex items-center justify-between pt-4 font-bold">
                     <p>Net Pay</p>
                     <p>{formatCurrency(selectedPayroll?.netPay ?? 0)}</p>
                   </div>
                 </section>
                 <section>
                   <h1 className="text-xl font-bold">Approvers</h1>
-                  <section className="space-y-8 rounded-lg p-4 shadow-md">
-                    <section className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Avatar>
-                          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                          <AvatarFallback>CN</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="text-foreground">Ifijeh Kingsley</p>
-                          <p className="text-xs text-gray-500">HR Manager</p>
-                        </div>
-                      </div>
-                      <Badge className="bg-warning-50 text-warning rounded-full px-4 py-2">Pending</Badge>
-                    </section>
-                    <section className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Avatar>
-                          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                          <AvatarFallback>CN</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="text-foreground">Ifijeh Kingsley</p>
-                          <p className="text-xs text-gray-500">HR Manager</p>
-                        </div>
-                      </div>
-                      <Badge className="bg-warning-50 text-warning rounded-full px-4 py-2">Pending</Badge>
-                    </section>
+                  <section className="border-border space-y-4 rounded-lg border p-4">
+                    {isApprovalsLoading ? (
+                      <div className="text-muted-foreground text-sm">Loading approvers...</div>
+                    ) : approvals.length === 0 ? (
+                      <div className="text-muted-foreground text-sm">No approvers configured for this payroll.</div>
+                    ) : (
+                      approvals.map((approval) => {
+                        const name = approval.employee.name ?? "Approver";
+                        const role = (approval.approverRole as ReactNode) ?? <></>;
+                        const initials =
+                          name
+                            .split(" ")
+                            .map((part) => part.charAt(0))
+                            .join("")
+                            .toUpperCase()
+                            .slice(0, 2) || "AP";
+                        const statusLabel =
+                          approval.status && approval.status.length > 0
+                            ? approval.status.charAt(0).toUpperCase() + approval.status.slice(1)
+                            : "Pending";
+
+                        return (
+                          <section key={approval.payrollId} className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Avatar>
+                                <AvatarImage
+                                  src={approval.employee.avatar ?? "https://github.com/shadcn.png"}
+                                  alt={name}
+                                />
+                                <AvatarFallback>{initials}</AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <p className="text-foreground">{name}</p>
+                                {role ? <p className="text-xs text-gray-500">{role}</p> : null}
+                              </div>
+                            </div>
+                            <Badge
+                              className={cn(
+                                `rounded-full px-4 py-2`,
+                                statusLabel === "Pending" && "bg-warning-50 text-warning",
+                                statusLabel === "Approved" && "bg-success-50 text-success",
+                                statusLabel === "Declined" && "bg-destructive-50 text-destructive",
+                              )}
+                            >
+                              {statusLabel}
+                            </Badge>
+                          </section>
+                        );
+                      })
+                    )}
                   </section>
                 </section>
               </>
@@ -309,7 +350,8 @@ export const SchedulePayrollDrawer = () => {
         onOpenChange={setIsChangeDateModalOpen}
         selectedDate={selectedDate}
         onDateSelect={setSelectedDate}
-        onContinue={() => handleDateSelection(selectedDate!)}
+        onContinue={handleDateSelection}
+        isSubmitting={isCreatingPayroll}
       />
     </>
   );

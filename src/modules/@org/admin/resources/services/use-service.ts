@@ -1,120 +1,111 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { queryKeys } from "@/lib/react-query/query-keys";
 import { createServiceHooks } from "@/lib/react-query/use-service-query";
 import { dependencies } from "@/lib/tools/dependencies";
 
-import { FileQueryParameters, FolderQueryParameters, ResourceService } from "./service";
-
-const mergeWithDefaultFilters = (filters?: FileQueryParameters): FileQueryParameters => {
-  return {
-    page: 1,
-    limit: 10,
-    ...filters,
-  };
-};
+import { ResourceService } from "./service";
+import type { FileQueryParameters, FolderQueryParameters } from "./types";
 
 export const useResourceService = () => {
   const { useServiceQuery, useServiceMutation } = createServiceHooks<ResourceService>(dependencies.RESOURCE_SERVICE);
 
-  // Queries
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // Queries - Folders
   const useGetAllFolders = (filters: FolderQueryParameters = {}, options?: any) =>
     useServiceQuery(queryKeys.folder.list(filters), (service) => service.getAllFolders(filters), options);
 
-  // const useGetAllFiles = (filters: FileQueryParameters = { page: 1, limit: 10 }, options?: any) =>
-  //   useServiceQuery(queryKeys.file.list(filters), (service) => service.getAllFiles(filters), options);
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const useGetAllFiles = (filters?: FileQueryParameters, options?: any) => {
-    const mergedFilters = mergeWithDefaultFilters(filters);
-
-    return useServiceQuery(
-      queryKeys.file.list(mergedFilters),
-      (service) => service.getAllFiles(mergedFilters),
-      options,
-    );
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const useGetFolderById = (id: string, options?: any) =>
     useServiceQuery(queryKeys.folder.details(id), (service) => service.getFolderById(id), options);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const useDownloadFolder = (id: string, options?: any) =>
-    useServiceQuery(queryKeys.folder.download(id), (service) => service.downloadFolder(id), {
-      ...options,
-      // Typically download queries shouldn't be cached
-      cacheTime: 0,
-      staleTime: 0,
-    });
+  // Queries - Files
+  const useGetAllFiles = (filters: FileQueryParameters = {}, options?: any) =>
+    useServiceQuery(queryKeys.file.list(filters), (service) => service.getAllFiles(filters), options);
 
-  // Mutations with proper cache invalidation
+  const useGetFilesByFolderId = (folderId: string, filters: FileQueryParameters = {}, options?: any) =>
+    useServiceQuery(
+      queryKeys.file.byFolder(folderId, filters),
+      (service) => service.getFilesByFolderId(folderId, filters),
+      options,
+    );
+
+  // Mutations - Folders
+  const useDownloadFolder = () => useServiceMutation((service, id: string) => service.downloadFolder(id));
+
   const useCreateFolder = () =>
     useServiceMutation((service, data: { name: string; file: File[] }) => service.createFolder(data.name, data.file), {
-      onSuccess: () => {
-        // Invalidate all folder list queries
-        return [queryKeys.folder.list()];
-      },
+      invalidateQueries: () => [
+        ["folder", "list"],
+        ["file", "list"],
+      ],
     });
 
   const useUpdateFolder = () =>
     useServiceMutation(
       (service, { id, data }: { id: string; data: { name?: string; file?: File[] } }) => service.updateFolder(id, data),
       {
-        onSuccess: (_, { id }) => {
-          // Invalidate folder list and specific folder details
-          return [queryKeys.folder.list(), queryKeys.folder.details(id)];
-        },
+        invalidateQueries: (_, { id }) => [["folder", "list"], queryKeys.folder.details(id)],
       },
     );
 
   const useDeleteFolder = () =>
     useServiceMutation((service, id: string) => service.deleteFolder(id), {
-      onSuccess: () => {
-        // Invalidate all folder list queries
-        return [queryKeys.folder.list()];
-      },
+      invalidateQueries: () => [
+        ["folder", "list"],
+        ["file", "list"],
+      ],
     });
+
+  // Mutations - Files
+  const useDownloadFile = () => useServiceMutation((service, id: string) => service.downloadFile(id));
 
   const useAddFilesToFolder = () =>
     useServiceMutation(
-      (service, { folderId, files }: { folderId: string; files: File[] }) => service.addFilesToFolder(folderId, files),
+      (service, { folderId, files }: { folderId?: string; files: File[] }) => service.addFilesToFolder(folderId, files),
       {
-        onSuccess: (data, { folderId }) => {
-          // console.log("Files added successfully:", data);
-          // Invalidate folder list and specific folder details
-          return [queryKeys.folder.list(), queryKeys.folder.details(folderId)];
-        },
-        onError: (error) => {
-          // console.error("Failed to add files:", error);
-          throw error; // Rethrow the error for further handling if needed
-        },
+        invalidateQueries: (_, { folderId }) => [
+          ["folder", "list"],
+          ...(folderId ? [queryKeys.folder.details(folderId)] : []),
+          ["file", "list"],
+        ],
       },
     );
 
-  const useRemoveFileFromFolder = () =>
-    useServiceMutation(
-      (service, { folderId, fileId }: { folderId: string; fileId: string }) =>
-        service.removeFileFromFolder(folderId, fileId),
-      {
-        onSuccess: (_, { folderId }) => {
-          // Invalidate folder list and specific folder details when files are removed
-          return [queryKeys.folder.list(), queryKeys.folder.details(folderId)];
-        },
-      },
-    );
+  // const useRemoveFileFromFolder = () =>
+  //   useServiceMutation(
+  //     (service, { folderId, fileId }: { folderId: string; fileId: string }) =>
+  //       service.removeFileFromFolder(folderId, fileId),
+  //     {
+  //       invalidateQueries: (_, { folderId }) => [
+  //         ["folder", "list"],
+  //         queryKeys.folder.details(folderId),
+  //         ["file", "list"],
+  //       ],
+  //     },
+  //   );
+
+  const useRemoveFileById = () =>
+    useServiceMutation((service, fileId: string) => service.removeFileByID(fileId), {
+      invalidateQueries: () => [
+        ["file", "list"],
+        ["folder", "list"],
+      ],
+    });
 
   return {
-    // Queries
+    // Queries - Folders
     useGetAllFolders,
     useGetFolderById,
     useDownloadFolder,
+    // Queries - Files
     useGetAllFiles,
-
-    // Mutations
+    useGetFilesByFolderId,
+    useDownloadFile,
+    // Mutations - Folders
     useCreateFolder,
     useUpdateFolder,
     useDeleteFolder,
+    // Mutations - Files
     useAddFilesToFolder,
-    useRemoveFileFromFolder,
+    // useRemoveFileFromFolder,
+    useRemoveFileById,
   };
 };

@@ -38,6 +38,13 @@ export const usePayrollService = () => {
   const useGetPayrollByID = (payrollId: string, options?: any) =>
     useServiceQuery(queryKeys.payroll.details(payrollId), (service) => service.getPayrollByID(payrollId), options);
 
+  const useGetPayrollApprovals = (payrollId: string, options?: any) =>
+    useServiceQuery(
+      queryKeys.payroll.approvals(payrollId),
+      (service) => service.getPayrollApprovals(payrollId),
+      options,
+    );
+
   // Wallet
   const useUpdateCompanyWallet = (options?: any) =>
     useServiceMutation(
@@ -83,7 +90,25 @@ export const usePayrollService = () => {
           payrollPolicyId: string;
         },
       ) => service.createBonus(data),
-      options,
+      {
+        ...options,
+        invalidateQueries: (result: any, variables: any, context: unknown) => {
+          const keys: ReadonlyArray<readonly unknown[]> = [
+            ["payrolls", "bonuses"] as const,
+            // Invalidate all payslip list queries
+            ["payrolls", "payslips"] as const,
+            // Invalidate all individual payslip detail queries so salary details refresh
+            ["payrolls", "payslip"] as const,
+          ];
+
+          const extra = options?.invalidateQueries?.(result, variables, context);
+          if (extra && Array.isArray(extra) && extra.length > 0) {
+            return [...keys, ...extra] as ReadonlyArray<readonly unknown[]>;
+          }
+
+          return keys;
+        },
+      },
     );
   const useUpdateBonus = (options?: any) =>
     useServiceMutation(
@@ -94,10 +119,42 @@ export const usePayrollService = () => {
           data: Partial<{ name: string; amount: number; type: ValueType; status: ActiveStatus }>;
         },
       ) => service.updateBonus(payload.id, payload.data),
-      options,
+      {
+        ...options,
+        invalidateQueries: (result: any, variables: any, context: unknown) => {
+          const keys: ReadonlyArray<readonly unknown[]> = [
+            ["payrolls", "bonuses"] as const,
+            ["payrolls", "payslips"] as const,
+            ["payrolls", "payslip"] as const,
+          ];
+
+          const extra = options?.invalidateQueries?.(result, variables, context);
+          if (extra && Array.isArray(extra) && extra.length > 0) {
+            return [...keys, ...extra] as ReadonlyArray<readonly unknown[]>;
+          }
+
+          return keys;
+        },
+      },
     );
   const useDeleteBonus = (options?: any) =>
-    useServiceMutation((service, id: string) => service.deleteBonus(id), options);
+    useServiceMutation((service, id: string) => service.deleteBonus(id), {
+      ...options,
+      invalidateQueries: (result: any, variables: any, context: unknown) => {
+        const keys: ReadonlyArray<readonly unknown[]> = [
+          ["payrolls", "bonuses"] as const,
+          ["payrolls", "payslips"] as const,
+          ["payrolls", "payslip"] as const,
+        ];
+
+        const extra = options?.invalidateQueries?.(result, variables, context);
+        if (extra && Array.isArray(extra) && extra.length > 0) {
+          return [...keys, ...extra] as ReadonlyArray<readonly unknown[]>;
+        }
+
+        return keys;
+      },
+    });
 
   // Deductions
   const useGetDeductions = (filters: { payrollPolicyId?: string; payProfileId?: string } = {}, options?: any) =>
@@ -118,7 +175,23 @@ export const usePayrollService = () => {
           payrollPolicyId: string;
         },
       ) => service.createDeduction(data),
-      options,
+      {
+        ...options,
+        invalidateQueries: (result: any, variables: any, context: unknown) => {
+          const keys: ReadonlyArray<readonly unknown[]> = [
+            ["payrolls", "deductions"] as const,
+            ["payrolls", "payslips"] as const,
+            ["payrolls", "payslip"] as const,
+          ];
+
+          const extra = options?.invalidateQueries?.(result, variables, context);
+          if (extra && Array.isArray(extra) && extra.length > 0) {
+            return [...keys, ...extra] as ReadonlyArray<readonly unknown[]>;
+          }
+
+          return keys;
+        },
+      },
     );
   const useUpdateDeduction = (options?: any) =>
     useServiceMutation(
@@ -129,10 +202,42 @@ export const usePayrollService = () => {
           data: Partial<{ name: string; amount: number; type: ValueType; status: ActiveStatus }>;
         },
       ) => service.updateDeduction(payload.id, payload.data),
-      options,
+      {
+        ...options,
+        invalidateQueries: (result: any, variables: any, context: unknown) => {
+          const keys: ReadonlyArray<readonly unknown[]> = [
+            ["payrolls", "deductions"] as const,
+            ["payrolls", "payslips"] as const,
+            ["payrolls", "payslip"] as const,
+          ];
+
+          const extra = options?.invalidateQueries?.(result, variables, context);
+          if (extra && Array.isArray(extra) && extra.length > 0) {
+            return [...keys, ...extra] as ReadonlyArray<readonly unknown[]>;
+          }
+
+          return keys;
+        },
+      },
     );
   const useDeleteDeduction = (options?: any) =>
-    useServiceMutation((service, id: string) => service.deleteDeduction(id), options);
+    useServiceMutation((service, id: string) => service.deleteDeduction(id), {
+      ...options,
+      invalidateQueries: (result: any, variables: any, context: unknown) => {
+        const keys: ReadonlyArray<readonly unknown[]> = [
+          ["payrolls", "deductions"] as const,
+          ["payrolls", "payslips"] as const,
+          ["payrolls", "payslip"] as const,
+        ];
+
+        const extra = options?.invalidateQueries?.(result, variables, context);
+        if (extra && Array.isArray(extra) && extra.length > 0) {
+          return [...keys, ...extra] as ReadonlyArray<readonly unknown[]>;
+        }
+
+        return keys;
+      },
+    });
 
   // Payslips
   const useGetPayslips = (payrollID: string, filters: Filters = {}, options?: any) =>
@@ -142,10 +247,10 @@ export const usePayrollService = () => {
       options,
     );
 
-  const useGetPayslipById = (payslipId: string, options?: any) =>
+  const useGetPayslipById = (payrollId: string, payslipId: string, options?: any) =>
     useServiceQuery(
       queryKeys.payroll.payslipDetails(payslipId),
-      (service) => service.getPayslipById(payslipId),
+      (service) => service.getPayslipById(payrollId, payslipId),
       options,
     );
 
@@ -156,19 +261,17 @@ export const usePayrollService = () => {
         data: {
           payrollId: string;
           employeeId: string;
-          earnings: Array<{ name: string; amount: number }>;
-          deductions?: Array<{ name: string; amount: number }>;
-          bonuses?: Array<{ name: string; amount: number }>;
-          notes?: string;
-          currency?: string;
-          metadata?: Record<string, unknown>;
         },
       ) => service.createPayslip(data),
       options,
     );
 
   const useDeletePayslip = (options?: any) =>
-    useServiceMutation((service, payslipId: string) => service.deletePayslip(payslipId), options);
+    useServiceMutation(
+      (service, payload: { payrollId: string; payslipId: string }) =>
+        service.deletePayslip(payload.payrollId, payload.payslipId),
+      options,
+    );
 
   return {
     // Queries
@@ -178,6 +281,7 @@ export const usePayrollService = () => {
     useRetryPayroll,
     useGetApprovedBanks,
     useGetPayrollByID,
+    useGetPayrollApprovals,
     useGetAllPayrolls,
     useDownloadPayrolls,
     useUpdateCompanyWallet,

@@ -21,6 +21,7 @@ interface ReusableDialogProperties extends HTMLAttributes<HTMLDivElement> {
   headerClassName?: string;
   wrapperClassName?: string;
   open?: boolean;
+  icon?: ReactNode;
   hideClose?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
@@ -36,6 +37,7 @@ export function ReusableDialog({
   className,
   open,
   img,
+  icon,
   onOpenChange,
 }: ReusableDialogProperties) {
   return (
@@ -54,7 +56,10 @@ export function ReusableDialog({
                 {img}
               </div>
             ))}
-          <DialogTitle className={cn("text-2xl", headerClassName)}>{title}</DialogTitle>
+          <DialogTitle className={cn("flex items-center gap-2 text-2xl", headerClassName)}>
+            <span>{icon}</span>
+            {title}
+          </DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         {children}

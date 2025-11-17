@@ -1,5 +1,6 @@
 "use client";
 
+import { Wrapper } from "@/components/core/layout/wrapper";
 import { AppSidebar } from "@/components/shared/dashboard/sidebar/app-sidebar";
 import { Logo } from "@/components/shared/logo";
 import TopBar from "@/components/shared/top-bar";
@@ -26,7 +27,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           },
         ]}
       />
-      <SidebarInset className="dark:bg-background bg-[#F7F9FC]">
+      <SidebarInset className="dark:bg-background bg-[#F8F8F9]">
         <ActiveTargetProvider>
           <main className="flex flex-1 flex-col gap-10 p-4">
             <TopBar
@@ -34,7 +35,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               notificationsCount={12}
               className="rounded-lg px-6 shadow"
             />
-            {children}
+            <Wrapper className="max-w-[1440px] px-0">{children}</Wrapper>
           </main>
         </ActiveTargetProvider>
       </SidebarInset>

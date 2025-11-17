@@ -4,6 +4,7 @@ import MainButton from "@/components/shared/button";
 import { FormField } from "@/components/shared/inputs/FormFields";
 import { RegisterFormData, registerSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Info } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
@@ -88,8 +89,9 @@ export const Register = () => {
                 name={"domain"}
                 required
               />
-              <p className={`text-primary text-sm italic`}>
-                Used to identify your organization and help verify employee emails (e.g., @techstudio.com).
+              <p className={`text-primary-200 flex items-start text-[11.5px] italic`}>
+                <Info size={14} className="mt-1 mr-1 inline" /> Used to identify your organization and help verify
+                employee emails (e.g., @techstudio.com).
               </p>
             </div>
             <FormField

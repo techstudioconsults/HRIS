@@ -90,7 +90,7 @@ export const OTPLogin = () => {
           </div>
         </div>
 
-        <MainButton href={`/login`} type="button" variant="outline" className="w-full" size={`2xl`}>
+        <MainButton href={`/login`} type="button" variant="primaryOutline" className="w-full" size={`2xl`}>
           Log in with Password instead
         </MainButton>
 

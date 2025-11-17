@@ -13,8 +13,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { DashboardCard } from "../../dashboard/_components/dashboard-card";
-import { usePayrollStore } from "../stores/payroll-store";
+import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
+import { usePayrollStore } from "../../stores/payroll-store";
 
 interface SchedulePayrollDrawerProperties {
   open?: boolean;

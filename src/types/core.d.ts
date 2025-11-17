@@ -131,6 +131,11 @@ declare global {
     role?: string;
     buyerId?: string;
     productId?: string;
+    /**
+     * Optional employee identifier filter, used by payroll/payslip services
+     * to scope results to a specific employee.
+     */
+    employeeId?: string;
   }
 }
 

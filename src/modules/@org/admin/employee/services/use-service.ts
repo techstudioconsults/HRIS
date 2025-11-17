@@ -13,6 +13,13 @@ export const useEmployeeService = () => {
   const useGetAllEmployees = (filters: Filters = {}, options?: any) =>
     useServiceQuery(queryKeys.employee.list(filters), (service) => service.getAllEmployees(filters), options);
 
+  const useGetSuspendedEmployeesByPayroll = (payrollId: string, filters: Filters = {}, options?: any) =>
+    useServiceQuery(
+      queryKeys.employee.suspendedByPayroll(payrollId, filters),
+      (service) => service.getSuspendedEmployeesByPayroll(payrollId, filters),
+      options,
+    );
+
   const useGetEmployeeById = (id: string, options?: any) =>
     useServiceQuery(queryKeys.employee.details(id), (service) => service.getEmployeeById(id), options);
 
@@ -51,6 +58,7 @@ export const useEmployeeService = () => {
   return {
     // Queries
     useGetAllEmployees,
+    useGetSuspendedEmployeesByPayroll,
     useGetEmployeeById,
     useGetAllTeams,
     useDownloadEmployees,

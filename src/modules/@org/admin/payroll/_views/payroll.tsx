@@ -24,12 +24,13 @@ import { useEffect, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
 import empty1 from "~/images/empty-state.svg";
-import { AddEmployeeDrawer } from "../_components/add-employee-drawer";
+import { AddEmployeeDrawer } from "../_components/drawers/add-employee-drawer";
+import { EmployeeInformationDrawer } from "../_components/drawers/employee-infomation-drawer";
+import { GenerateRunPayrollDrawer } from "../_components/drawers/generate-run-payroll-drawer";
+import { SchedulePayrollDrawer } from "../_components/drawers/schedule-payroll-drawer";
 import { FundWalletFormModal } from "../_components/forms/fund-wallet-form-modal";
 import { FundWalletAccountModal } from "../_components/fund-wallet-account-modal";
-import { GenerateRunPayrollDrawer } from "../_components/generate-run-payroll-drawer";
 import { PayrollSetupSettingsModal } from "../_components/payroll-setup-modal";
-import { SchedulePayrollDrawer } from "../_components/schedule-payroll-drawer";
 import { TableSkeleton } from "../../_components/table";
 import { DashboardCard } from "../../dashboard/_components/dashboard-card";
 import { usePayrollService } from "../services/use-service";
@@ -54,7 +55,7 @@ const PAYROLL_RUN_MESSAGE: ReactNode = (
 const PayrollView = () => {
   const { on } = useSSE();
   const router = useRouter();
-  const { getRowActions } = usePayrollRowActions();
+  const { getRowActions, DeleteConfirmationModal } = usePayrollRowActions();
   const {
     hasCompletedPayrollPolicySetupForm,
     setHasCompletedPayrollPolicySetupForm,
@@ -595,7 +596,11 @@ const PayrollView = () => {
       />
 
       {/* Add Employee Modal */}
-      <AddEmployeeDrawer />
+      <AddEmployeeDrawer payrollId={selectedPayrollId || null} />
+      <EmployeeInformationDrawer payrollId={selectedPayrollId || null} />
+
+      {/* Remove employee from payroll confirmation */}
+      <DeleteConfirmationModal />
     </section>
   );
 };

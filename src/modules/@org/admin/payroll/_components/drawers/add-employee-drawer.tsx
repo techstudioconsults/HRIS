@@ -10,14 +10,16 @@ import { EmptyState, FilteredEmptyState } from "@/components/shared/empty-state"
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { useEmployeeSearchParameters } from "@/lib/nuqs/use-employee-search-parameters";
+import { queryKeys } from "@/lib/react-query/query-keys";
 import { AdvancedDataTable, type IColumnDefinition } from "@/modules/@org/admin/_components/table/table";
 import { Filter } from "iconsax-reactjs";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 
-import { FilterForm } from "../../employee/_components/forms/filter-form";
-import { useEmployeeService } from "../../employee/services/use-service";
-import { usePayrollStore } from "../stores/payroll-store";
+import { FilterForm } from "../../../employee/_components/forms/filter-form";
+import { useEmployeeService } from "../../../employee/services/use-service";
+import { usePayrollService } from "../../services/use-service";
+import { usePayrollStore } from "../../stores/payroll-store";
 
 // Define FilterValues interface to match FilterForm
 interface FilterValues {
@@ -32,7 +34,11 @@ interface FilterValues {
 
 // Initial filter values - removed as we now use URL state management
 
-export const AddEmployeeDrawer = () => {
+interface AddEmployeeDrawerProperties {
+  payrollId: string | null;
+}
+
+export const AddEmployeeDrawer = ({ payrollId }: AddEmployeeDrawerProperties) => {
   const { showAddEmployeeToPayrollModal, setShowAddEmployeeModal } = usePayrollStore();
   const {
     page,
@@ -51,7 +57,7 @@ export const AddEmployeeDrawer = () => {
     setLimit,
     resetFilters,
     resetToFirstPage,
-    getApiFilters,
+    // getApiFilters,
   } = useEmployeeSearchParameters();
 
   const [searchInput, setSearchInput] = useState(search || "");
@@ -60,7 +66,25 @@ export const AddEmployeeDrawer = () => {
   const [isSuccessAlertOpen, setIsSuccessAlertOpen] = useState(false);
   const [addedEmployee, setAddedEmployee] = useState<Employee | null>(null);
 
-  const { useGetAllEmployees, useGetAllTeams } = useEmployeeService();
+  const { useCreatePayslip } = usePayrollService();
+  const { mutateAsync: createPayslip } = useCreatePayslip({
+    // When an employee is re-included (payslip created), refresh:
+    // - payslips for this payroll (main table)
+    // - suspended employees for this payroll (this drawer list)
+    invalidateQueries: (_result: unknown, variables: { payrollId: string }) => {
+      const targetPayrollId = variables?.payrollId;
+
+      if (!targetPayrollId) {
+        return;
+      }
+
+      return [
+        queryKeys.payroll.payslips(targetPayrollId, {}),
+        queryKeys.employee.suspendedByPayroll(targetPayrollId, {}),
+      ];
+    },
+  });
+  const { useGetSuspendedEmployeesByPayroll, useGetAllTeams } = useEmployeeService();
   const { data: teams = [] } = useGetAllTeams();
 
   useEffect(() => {
@@ -68,18 +92,9 @@ export const AddEmployeeDrawer = () => {
     resetToFirstPage();
   }, [debouncedSearch, setSearch, resetToFirstPage]);
 
-  const apiFilters = useMemo(() => getApiFilters(), [getApiFilters]);
+  // const apiFilters = useMemo(() => getApiFilters(), [getApiFilters]);
 
-  const { data: employeesData, isLoading } = useGetAllEmployees(apiFilters, {
-    keepPreviousData: false,
-    staleTime: 0,
-    cacheTime: 0,
-    refetchOnWindowFocus: false,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
-    retry: 1,
-    retryDelay: 1000,
-  });
+  const { data: employeesData, isLoading } = useGetSuspendedEmployeesByPayroll(payrollId || "");
 
   const handleFilterChange = useCallback(
     (newFilters: FilterValues) => {
@@ -111,7 +126,14 @@ export const AddEmployeeDrawer = () => {
 
   const handleAddEmployee = (employee: Employee) => {
     setAddedEmployee(employee);
-    setIsSuccessAlertOpen(true);
+    createPayslip(
+      { payrollId: payrollId || "", employeeId: employee.id },
+      {
+        onSuccess: () => {
+          setIsSuccessAlertOpen(true);
+        },
+      },
+    );
   };
 
   const handleSuccessAlertClose = () => {
@@ -151,14 +173,14 @@ export const AddEmployeeDrawer = () => {
       header: "Action",
       render: (_value, row) => (
         <MainButton
-          variant="outline"
+          variant="primaryOutline"
           size="sm"
           onClick={(event) => {
             event.stopPropagation();
             handleAddEmployee(row);
           }}
         >
-          Add
+          Re-include
         </MainButton>
       ),
     },
@@ -167,15 +189,15 @@ export const AddEmployeeDrawer = () => {
   return (
     <>
       <Drawer open={showAddEmployeeToPayrollModal} onOpenChange={setShowAddEmployeeModal} direction="right">
-        <DrawerContent className="h-full w-full sm:!max-w-3xl">
+        <DrawerContent className="h-full w-full p-4 sm:!max-w-3xl">
           <DrawerHeader className="border-b pb-4">
             <div className="flex items-center gap-10">
               <BackButton />
               <div>
-                <DrawerTitle className="text-lg font-semibold">Add Employees to Payroll</DrawerTitle>
+                <DrawerTitle className="text-xl font-semibold">Excluded Employees - Performance Bonus</DrawerTitle>
                 <DrawerDescription>
-                  Select employees who are currently excluded or not added to this payroll cycle. Use search or filters
-                  to quickly find employees.
+                  These employees are currently excluded from receiving the Performance Bonus. You can re-include them
+                  anytime.
                 </DrawerDescription>
               </div>
             </div>

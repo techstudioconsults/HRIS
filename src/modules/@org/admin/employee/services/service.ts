@@ -46,6 +46,20 @@ export class EmployeeService {
     }
   }
 
+  /**
+   * Get employees who are currently suspended/absent from a specific payroll.
+   * Backs: GET /employees/payrolls/{payrollId}/absent
+   */
+  async getSuspendedEmployeesByPayroll(payrollId: string, filters: Filters = Object.create({ page: 1 })) {
+    const response = await this.http.get<PaginatedApiResponse<Employee>>(`/employees/payrolls/${payrollId}/absent`, {
+      ...filters,
+    });
+
+    if (response?.status === 200) {
+      return response.data;
+    }
+  }
+
   async getEmployeeById(id: string | null) {
     const response = await this.http.get<{ data: Employee }>(`/employees/${id}`);
     if (response?.status === 200) {

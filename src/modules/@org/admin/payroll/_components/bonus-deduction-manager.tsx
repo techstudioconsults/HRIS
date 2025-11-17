@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { LoadingSpinner } from "@/components/core/miscellaneous/loading-spinner";
 import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { useEffect, useState } from "react";
+import type React from "react";
 
 import { usePayrollService } from "../services/use-service";
 import { BonusDeduction, BonusDeductionFormData } from "../types";
@@ -12,7 +15,13 @@ interface BonusDeductionManagerProperties {
   type: "bonus" | "deduction";
   initialItems?: BonusDeduction[];
   onChange?: (items: BonusDeduction[]) => void;
-  policyId?: string; // Needed for API calls
+  policyId?: string;
+  profileId?: string; // NEW: employee-level (payProfileId)
+}
+
+// Local generic response type to satisfy references
+interface ApiResponse<T> {
+  data: T;
 }
 
 const generateId = () => {
@@ -24,6 +33,7 @@ export function BonusDeductionManager({
   initialItems = [],
   onChange,
   policyId,
+  profileId,
 }: BonusDeductionManagerProperties) {
   const [items, setItems] = useState<BonusDeduction[]>(initialItems);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -45,8 +55,9 @@ export function BonusDeductionManager({
   const deleteDeduction = useDeleteDeduction();
 
   const handleAdd = async (formData: BonusDeductionFormData) => {
-    // If no policy, fallback to local-only behavior
-    if (!policyId) {
+    const hasRemote = !!policyId || !!profileId;
+    if (!hasRemote) {
+      // If no policy, fallback to local-only behavior
       const fallback: BonusDeduction = {
         id: generateId(),
         name: formData.name,
@@ -61,17 +72,19 @@ export function BonusDeductionManager({
       setIsModalOpen(false);
       return;
     }
-
     const payload = {
       name: formData.name,
       amount: formData.value,
       type: formData.valueType,
       status: (formData.status ? "active" : "inactive") as "active" | "inactive",
-      payrollPolicyId: policyId,
+      ...(policyId ? { payrollPolicyId: policyId } : {}),
+      ...(profileId ? { payProfileId: profileId } : {}),
     };
 
     const response =
-      type === "bonus" ? await createBonus.mutateAsync(payload) : await createDeduction.mutateAsync(payload);
+      type === "bonus"
+        ? await createBonus.mutateAsync(payload as any)
+        : await createDeduction.mutateAsync(payload as any);
 
     type APIEntity = {
       id?: string;
@@ -116,7 +129,8 @@ export function BonusDeductionManager({
     event?.stopPropagation();
     if (!editingItem) return;
 
-    if (!policyId) {
+    const hasRemote = !!policyId || !!profileId;
+    if (!hasRemote) {
       setItems((previous) =>
         previous.map((item) =>
           item.id === editingItem.id
@@ -135,7 +149,6 @@ export function BonusDeductionManager({
       setIsModalOpen(false);
       return;
     }
-
     const payload = {
       name: formData.name,
       amount: formData.value,
@@ -176,7 +189,8 @@ export function BonusDeductionManager({
   };
 
   const handleDelete = async (id: string) => {
-    if (policyId) {
+    const hasRemote = !!policyId || !!profileId;
+    if (hasRemote) {
       await (type === "bonus" ? deleteBonus.mutateAsync(id) : deleteDeduction.mutateAsync(id));
     }
     setItems((previous) => previous.filter((item) => item.id !== id));
@@ -193,7 +207,8 @@ export function BonusDeductionManager({
   const handleToggleStatus = async (id: string) => {
     const current = items.find((item) => item.id === id);
     const nextStatus = current?.status === "active" ? "inactive" : "active";
-    if (policyId && current) {
+    const hasRemote = !!policyId || !!profileId;
+    if (hasRemote && current) {
       const payload = { status: nextStatus } as const;
       await (type === "bonus"
         ? updateBonus.mutateAsync({ id, data: payload })
@@ -229,8 +244,24 @@ export function BonusDeductionManager({
     onChange?.(items);
   }, [items, onChange]);
 
+  const isRemoteContext = !!policyId || !!profileId;
+  const isPayslipUpdating =
+    isRemoteContext &&
+    (createBonus.isPending ||
+      updateBonus.isPending ||
+      deleteBonus.isPending ||
+      createDeduction.isPending ||
+      updateDeduction.isPending ||
+      deleteDeduction.isPending);
+
   return (
     <>
+      {isPayslipUpdating && (
+        <div className="text-muted-foreground mb-2 flex items-center gap-2 text-xs">
+          <LoadingSpinner size={16} />
+          <span>Updating payslip...</span>
+        </div>
+      )}
       <BonusDeductionTable
         items={items}
         type={type}
@@ -249,7 +280,7 @@ export function BonusDeductionManager({
           editingItem
             ? {
                 name: editingItem.name,
-                valueType: editingItem.valueType,
+                valueType: editingItem.valueType ?? "fixed",
                 value: editingItem.value,
                 status: editingItem.status === "active",
                 type: editingItem.type,

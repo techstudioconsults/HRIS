@@ -11,6 +11,8 @@ export interface PayrollUIState {
   hidePayrollNotificationBanner?: boolean;
   payrollSelectedDate?: Date;
   showFundWalletAccountModal: boolean;
+  showEmployeeInformationDrawer: boolean;
+  selectedPayslipId: string | null;
   /**
    * Indicates that the company wallet setup has just been completed
    * via the FundWalletFormModal flow.
@@ -31,6 +33,8 @@ export interface PayrollUIActions {
   setShowFundWalletAccountModal: (open: boolean) => void;
   setHasCompletedPayrollPolicySetupForm: (status: boolean) => void;
   setWalletSetupCompleted: (status: boolean) => void;
+  setShowEmployeeInformationDrawer: (open: boolean) => void;
+  setSelectedPayslipId: (id: string | null) => void;
   resetUI: () => void;
 }
 
@@ -45,6 +49,8 @@ const initialState: PayrollUIState = {
   showFundWalletAccountModal: false,
   hasCompletedPayrollPolicySetupForm: false,
   walletSetupCompleted: false,
+  showEmployeeInformationDrawer: false,
+  selectedPayslipId: null,
 };
 
 export const usePayrollStore = create<PayrollUIState & PayrollUIActions>()(
@@ -61,6 +67,8 @@ export const usePayrollStore = create<PayrollUIState & PayrollUIActions>()(
       setShowFundWalletAccountModal: (open) => set({ showFundWalletAccountModal: open }),
       setHasCompletedPayrollPolicySetupForm: (status) => set({ hasCompletedPayrollPolicySetupForm: status }),
       setWalletSetupCompleted: (status) => set({ walletSetupCompleted: status }),
+      setShowEmployeeInformationDrawer: (open) => set({ showEmployeeInformationDrawer: open }),
+      setSelectedPayslipId: (id) => set({ selectedPayslipId: id }),
 
       resetUI: () => set(initialState),
     }),

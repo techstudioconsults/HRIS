@@ -10,7 +10,7 @@ declare global {
   }
 
   interface IRowAction<T> {
-    label: string;
+    label: string | ReactNode;
     icon?: ReactNode;
     onClick: (row: T) => void;
     kbd?: string;

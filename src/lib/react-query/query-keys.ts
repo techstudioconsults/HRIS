@@ -9,6 +9,8 @@ export const queryKeys = {
     details: (id: string) => ["employee", "details", id] as const,
     teams: () => ["employee", "teams"] as const,
     download: (filters?: Filters) => ["employee", "download", filters] as const,
+    suspendedByPayroll: (payrollId: string, filters?: Filters) =>
+      ["employee", "suspendedByPayroll", payrollId, filters] as const,
   },
 
   folder: {

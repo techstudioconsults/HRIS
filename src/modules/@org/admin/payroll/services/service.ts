@@ -203,27 +203,22 @@ export class PayrollService {
     if (response?.status === 200) return response.data;
   }
 
-  async getPayslipById(payslipId: string) {
-    const response = await this.http.get<ApiResponse<Payslip>>(`/payslips/${payslipId}`);
+  async getPayslipById(payrollId: string, payslipId: string) {
+    const response = await this.http.get<ApiResponse<Payslip>>(`/payrolls/${payrollId}/payslips/${payslipId}`);
     if (response?.status === 200) return response.data;
   }
 
-  async createPayslip(data: {
-    payrollId: string;
-    employeeId: string;
-    earnings: Array<{ name: string; amount: number }>;
-    deductions?: Array<{ name: string; amount: number }>;
-    bonuses?: Array<{ name: string; amount: number }>;
-    notes?: string;
-    currency?: string;
-    metadata?: Record<string, unknown>;
-  }) {
-    const response = await this.http.post<ApiResponse<Payslip>>(`/payslips`, data);
+  async createPayslip(data: { payrollId: string; employeeId: string }) {
+    const response = await this.http.post<ApiResponse<Payslip>>(`/payrolls/${data.payrollId}/payslips`, {
+      employeeId: data.employeeId,
+    });
     if (response?.status === 201 || response?.status === 200) return response.data;
   }
 
-  async deletePayslip(payslipId: string) {
-    const response = await this.http.delete<ApiResponse<{ success: boolean }>>(`/payslips/${payslipId}`);
+  async deletePayslip(payrollId: string, payslipId: string) {
+    const response = await this.http.delete<ApiResponse<{ success: boolean }>>(
+      `/payrolls/${payrollId}/payslips/${payslipId}`,
+    );
     if (response?.status === 200) return response.data;
   }
 }

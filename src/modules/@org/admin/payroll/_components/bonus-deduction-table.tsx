@@ -72,7 +72,7 @@ export function BonusDeductionTable({
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.name}</TableCell>
                   <TableCell className="capitalize">{item.valueType}</TableCell>
-                  <TableCell>{formatValue(item.value, item.valueType)}</TableCell>
+                  <TableCell>{formatValue(item.value, item.valueType ?? "fixed")}</TableCell>
                   <TableCell>{getStatusBadge(item.status)}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
@@ -86,7 +86,7 @@ export function BonusDeductionTable({
                           onClick={() =>
                             onEdit(item.id, {
                               name: item.name,
-                              valueType: item.valueType,
+                              valueType: item.valueType ?? "fixed",
                               value: item.value,
                               status: item.status === "active",
                               type: item.type,

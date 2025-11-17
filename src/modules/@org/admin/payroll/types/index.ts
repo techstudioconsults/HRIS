@@ -29,7 +29,7 @@ export interface Payroll extends Record<string, unknown> {
 export interface BonusDeduction {
   id: string;
   name: string;
-  valueType: ValueType;
+  valueType?: ValueType;
   value: number;
   status: ActiveStatus;
   type: BonusDeductionKind;

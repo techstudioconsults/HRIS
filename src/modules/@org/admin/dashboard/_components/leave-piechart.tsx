@@ -32,12 +32,12 @@ const teamData = [
 
 export function LeaveDistributionPieChart() {
   return (
-    <Card className="bg-background w-full">
+    <Card className="bg-background w-full shadow">
       <CardHeader>
         <CardTitle className="text-lg font-semibold text-gray-800">Leave Distribution by Teams</CardTitle>
         {/* <p className="text-sm text-gray-500">This month</p> */}
       </CardHeader>
-      <CardContent className="flex flex-col items-center gap-4 px-0">
+      <CardContent className="flex flex-col items-center gap-4 px-3">
         <div className="h-[250px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -74,9 +74,9 @@ export function LeaveDistributionPieChart() {
           </ResponsiveContainer>
         </div>
 
-        <div className="grid w-full grid-cols-2 items-start justify-between md:grid-cols-3 md:items-center md:px-3 lg:grid-cols-4">
+        <div className="grid w-full grid-cols-2 items-center justify-between gap-2 md:grid-cols-3 md:px-4 lg:grid-cols-4">
           {teamData.map((team) => (
-            <div key={team.name} className="flex items-center justify-start gap-2">
+            <div key={team.name} className="flex w-full items-center justify-center gap-2 md:justify-start">
               <div className="h-3 w-3 rounded-full" style={{ backgroundColor: team.fill }} />
               <span className="text-sm font-medium">{team.name}</span>
             </div>

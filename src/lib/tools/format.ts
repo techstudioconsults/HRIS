@@ -12,3 +12,11 @@ export function formatDate(date: Date | string | number | undefined, options: In
     return "";
   }
 }
+
+export const formatTime = (date: string) => {
+  return new Date(date).toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+};

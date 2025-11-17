@@ -1,5 +1,3 @@
-export * from "./lib/next-auth";
-
 export { Register } from "./_views/register";
 export { Login } from "./_views/login";
 export { OTPLogin } from "./_views/login/otp-login";

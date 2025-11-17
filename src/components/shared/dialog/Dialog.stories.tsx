@@ -41,7 +41,7 @@ export const WithImage: Story = {
     trigger: <Button>Open Dialog with Image</Button>,
     title: "Warning",
     description: "This action cannot be undone",
-    img: "/images/logo.svg",
+    img: "/images/skicom.svg",
     children: (
       <div className="space-x-2 pt-4">
         <Button variant="subtle">Cancel</Button>

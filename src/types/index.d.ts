@@ -2,6 +2,15 @@
 import { ChangeEventHandler, FocusEventHandler, HTMLAttributes, MouseEventHandler } from "react";
 
 declare global {
+  interface Metadata {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  }
+
   interface LogoProperties {
     logo: string;
     width?: number;
@@ -66,113 +75,6 @@ declare global {
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   }
 
-  interface IPaginationLink {
-    url: string | null;
-    label: string;
-    active: boolean;
-  }
-
-  interface IPaginationMeta {
-    current_page: number;
-    from: number;
-    last_page: number;
-    links: IPaginationLink[];
-    path: string;
-    per_page: number;
-    to: number;
-    total: number;
-  }
-
-  interface IPaginationLinks {
-    first: string;
-    last: string;
-    prev: string | null;
-    next: string | null;
-  }
-
-  interface IPaginatedResponse<T> {
-    data: T[];
-    links: IPaginationLinks;
-    meta: IPaginationMeta;
-  }
-
-  interface IFilters {
-    page?: number;
-    status?: string;
-    start_date?: string;
-    end_date?: string;
-  }
-
-  interface IColumnDefinition<T extends DataItem> {
-    header: string;
-    accessorKey: keyof T;
-    render?: (value: T[keyof T], row: T) => ReactNode;
-  }
-
-  interface IRowAction<T> {
-    label: string;
-    icon?: ReactNode;
-    onClick: (row: T) => void;
-  }
-
-  interface IDashboardTableProperties<T extends DataItem> {
-    data: T[];
-    columns: IColumnDefinition<T>[];
-    currentPage?: number;
-    onPageChange?: (page: number) => void;
-    totalPages?: number;
-    itemsPerPage?: number;
-    rowActions?: (row: T) => IRowAction<T>[];
-    onRowClick?: (row: T) => void;
-    showPagination?: boolean;
-  }
-
-  interface Review {
-    rating: number;
-    comment: string;
-    date: string;
-    reviewerName: string;
-    reviewerEmail: string;
-  }
-
-  interface Dimensions {
-    width: number;
-    height: number;
-    depth: number;
-  }
-
-  interface ProductMeta {
-    createdAt: string;
-    updatedAt: string;
-    barcode: string;
-    qrCode: string;
-  }
-
-  interface Product {
-    id: number;
-    title: string;
-    description: string;
-    category: string;
-    price: number;
-    discountPercentage: number;
-    rating: number;
-    stock: number;
-    tags: string[];
-    brand: string;
-    sku: string;
-    weight: number;
-    dimensions: Dimensions;
-    warrantyInformation: string;
-    shippingInformation: string;
-    availabilityStatus: string;
-    reviews: Review[];
-    returnPolicy: string;
-    minimumOrderQuantity: number;
-    meta: ProductMeta;
-    images: string[];
-    thumbnail: string;
-  }
-
   interface UniversalSwiperProperties {
     items: any[];
     renderItem: (item: any, index: number) => React.ReactNode;
@@ -199,6 +101,34 @@ declare global {
     position: string;
     message: string;
     rating: number;
+  }
+
+  interface Role {
+    id: string;
+    name: string;
+  }
+
+  interface Employee {
+    id: string;
+    fullName: string;
+    email: string;
+    role: Role;
+  }
+
+  interface Tokens {
+    accessToken: string;
+    refreshToken: string;
+  }
+
+  interface AuthResponseData {
+    employee: Employee;
+    tokens: Tokens;
+    permissions: string[];
+  }
+
+  interface AuthResponse {
+    success: boolean;
+    data: AuthResponseData;
   }
 }
 export {};

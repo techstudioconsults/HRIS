@@ -1,15 +1,16 @@
 import { handleError } from "./errorHandler";
 
-const tryCatchWrapper = async <T>(request: () => Promise<T>): Promise<T> => {
+// tryCatchWrapper.ts
+export const tryCatchWrapper = async <T>(
+  request: () => Promise<T>,
+  customErrorHandler?: (error: unknown) => Error | void,
+) => {
   try {
     return await request();
   } catch (error: unknown) {
-    // This will handle 401/403 and throw all other errors
-    handleError(error);
-
-    // If we get here, it's a 401/403 that was handled
-    throw error; // Still throw so component knows request failed
+    // Transform error if handler provided
+    const transformedError = customErrorHandler?.(error) || error;
+    // Handle the error (shows toast)
+    handleError(transformedError);
   }
 };
-
-export default tryCatchWrapper;

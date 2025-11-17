@@ -1,3 +1,6 @@
+import { CardReceive, Element3, People, Profile2User } from "iconsax-reactjs";
+import { Clock } from "lucide-react";
+
 export const countries = [
   { value: "afghanistan", label: "🇦🇫 Afghanistan" },
   { value: "albania", label: "🇦🇱 Albania" },
@@ -221,35 +224,101 @@ export const NAV_LINKS: NavLink[] = [
 
 export const adminNavItems = [
   {
-    id: "dashboard",
-    route: "Dashboard",
-    link: "/admin/dashboard",
-    icon: "Element3",
+    name: "Dashboard",
+    url: "/admin/dashboard",
+    icon: Element3,
   },
   {
-    id: "employees",
-    route: "Employees",
-    link: "/admin/employees",
-    icon: "Profile2User",
+    name: "Employees",
+    url: "/admin/employees",
+    icon: Profile2User,
   },
   {
     id: "teams",
-    route: "Teams",
-    link: "/admin/teams",
-    icon: "People",
+    name: "Teams",
+    url: "/admin/teams",
+    icon: People,
+  },
+  {
+    id: "resources",
+    name: "Resources",
+    url: "/admin/resources",
+    icon: People,
   },
   {
     id: "payroll",
-    route: "Payroll",
-    link: "/admin/payroll",
-    icon: "CardReceive",
+    name: "Payroll",
+    url: "/admin/payroll",
+    icon: CardReceive,
   },
   {
     id: "attendance",
-    route: "Attendance",
-    link: "/admin/attendance",
-    icon: "Clock",
+    name: "Attendance",
+    url: "/admin/attendance",
+    icon: Clock,
   },
+];
+
+// Mock options for select fields
+export const industryOptions = [
+  { value: "Tech Education", label: "Tech Education" },
+  { value: "Finance", label: "Finance" },
+  { value: "Healthcare", label: "Healthcare" },
+  { value: "Retail", label: "Retail" },
+];
+
+export const sizeOptions = [
+  { value: "small", label: "Small (1-50)" },
+  { value: "medium", label: "Medium (51-200)" },
+  { value: "large", label: "Large (201-1000)" },
+  { value: "enterprise", label: "Enterprise (1000+)" },
+];
+
+export const stateOptions = [
+  { value: "london", label: "London" },
+  { value: "new york", label: "New York" },
+  { value: "ontario", label: "Ontario" },
+];
+
+export const cityOptions = [
+  { value: "Barking", label: "Barking" },
+  { value: "manhattan", label: "Manhattan" },
+  { value: "toronto", label: "Toronto" },
+];
+
+export const genderOptions = [
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+  { value: "other", label: "Other" },
+];
+
+export const employmentTypeOptions = [
+  { value: "full time", label: "Full time" },
+  { value: "part time", label: "Part time" },
+  { value: "contract", label: "Contract" },
+  // { value: "internship", label: "Internship" },
+];
+
+export const workModeOptions = [
+  { value: "remote", label: "Remote" },
+  { value: "on site", label: "On site" },
+  { value: "hybrid", label: "Hybrid" },
+];
+
+export const departmentOptions = [
+  { value: "engineering", label: "Engineering" },
+  { value: "marketing", label: "Marketing" },
+  { value: "sales", label: "Sales" },
+  { value: "hr", label: "Human Resources" },
+  { value: "finance", label: "Finance" },
+];
+
+export const roleOptions = [
+  { value: "developer", label: "Developer" },
+  { value: "designer", label: "Designer" },
+  { value: "manager", label: "Manager" },
+  { value: "analyst", label: "Analyst" },
+  { value: "administrator", label: "Administrator" },
 ];
 
 export const testimonials = [
@@ -280,72 +349,4 @@ export const testimonials = [
       "“TechstudioHR has completely transformed how we manage payroll and employee records. What used to take hours now happens in minutes.”",
     rating: 4,
   },
-];
-
-// Mock options for select fields
-export const industryOptions = [
-  { value: "Tech Education", label: "Tech Education" },
-  { value: "Finance", label: "Finance" },
-  { value: "Healthcare", label: "Healthcare" },
-  { value: "Retail", label: "Retail" },
-];
-
-export const sizeOptions = [
-  { value: "small", label: "Small (1-50)" },
-  { value: "medium", label: "Medium (51-200)" },
-  { value: "large", label: "Large (201-1000)" },
-  { value: "enterprise", label: "Enterprise (1000+)" },
-];
-
-// const countryOptions = [
-//   { value: "united kingdom", label: "United Kingdom" },
-//   { value: "united states", label: "United States" },
-//   { value: "canada", label: "Canada" },
-// ];
-
-export const stateOptions = [
-  { value: "london", label: "London" },
-  { value: "new york", label: "New York" },
-  { value: "ontario", label: "Ontario" },
-];
-
-export const cityOptions = [
-  { value: "barking", label: "Barking" },
-  { value: "manhattan", label: "Manhattan" },
-  { value: "toronto", label: "Toronto" },
-];
-
-export const genderOptions = [
-  { value: "male", label: "Male" },
-  { value: "female", label: "Female" },
-  { value: "other", label: "Other" },
-];
-
-export const employmentTypeOptions = [
-  { value: "full-time", label: "Full-time" },
-  { value: "part-time", label: "Part-time" },
-  { value: "contract", label: "Contract" },
-  { value: "internship", label: "Internship" },
-];
-
-export const workModeOptions = [
-  { value: "remote", label: "Remote" },
-  { value: "onsite", label: "Onsite" },
-  { value: "hybrid", label: "Hybrid" },
-];
-
-export const departmentOptions = [
-  { value: "engineering", label: "Engineering" },
-  { value: "marketing", label: "Marketing" },
-  { value: "sales", label: "Sales" },
-  { value: "hr", label: "Human Resources" },
-  { value: "finance", label: "Finance" },
-];
-
-export const roleOptions = [
-  { value: "developer", label: "Developer" },
-  { value: "designer", label: "Designer" },
-  { value: "manager", label: "Manager" },
-  { value: "analyst", label: "Analyst" },
-  { value: "administrator", label: "Administrator" },
 ];

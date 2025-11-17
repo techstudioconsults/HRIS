@@ -6,9 +6,12 @@ import Loading from "@/app/Loading";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
+import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ComboBox } from "@/components/shared/select-dropdown/combo-box";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useSSE } from "@/context/sse-provider";
 import { formatCurrency, formatDate } from "@/lib/i18n/utils";
@@ -35,20 +38,23 @@ import { TableSkeleton } from "../../_components/table";
 import { DashboardCard } from "../../dashboard/_components/dashboard-card";
 import { usePayrollService } from "../services/use-service";
 import { usePayrollStore } from "../stores/payroll-store";
+import type { PayrollApproval } from "../types";
 import { payrollColumn, usePayrollRowActions } from "./table-data";
 
 const LOW_BALANCE_LIMIT = 0; // 0M NGN
+
 const GET_SCHEDULE_MESSAGE = (date: string | Date): ReactNode => {
   return `Your next payroll has been scheduled for ${date}. You can edit the schedule date or cancel the payroll before the set date here.`;
 };
 
-const PAYROLL_RUN_MESSAGE: ReactNode = (
+const PAYROLL_RUN_MESSAGE = (dateLabel: string, onOpenApprovalProgress: () => void): ReactNode => (
   <>
-    Your payroll for is now in progress. It will be disbursed once all designated approvers have reviewed and approved
-    the payment. You can track approval progress{" "}
-    <Link className="underline" href="/">
+    Your payroll for {dateLabel} is now in progress. It will be disbursed once all designated approvers have reviewed
+    and approved the payment. You can track approval progress{" "}
+    <button type="button" className="underline" onClick={onOpenApprovalProgress}>
       here
-    </Link>
+    </button>
+    .
   </>
 );
 
@@ -66,9 +72,18 @@ const PayrollView = () => {
     walletSetupCompleted,
     showRunPayrollDrawer,
     setShowPayrollDrawer,
+    hidePayrollNotificationBanner,
+    payrollSelectedDate,
+    setHideNotificationBanner,
   } = usePayrollStore();
-  const { useGetCompanyPayrollPolicy, useGetAllPayrolls, useCreatePayroll, useGetPayslips, useGetCompanyWallet } =
-    usePayrollService();
+  const {
+    useGetCompanyPayrollPolicy,
+    useGetAllPayrolls,
+    useCreatePayroll,
+    useGetPayslips,
+    useGetCompanyWallet,
+    useGetPayrollApprovals,
+  } = usePayrollService();
   const { data: companyWallet, refetch: refetchCompanyWallet } = useGetCompanyWallet();
   const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
   const { data: allPayrolls, isLoading: loadingPayrolls, refetch: refetchPayrolls } = useGetAllPayrolls();
@@ -77,6 +92,7 @@ const PayrollView = () => {
   const [showNoPayrollBanner, setShowNoPayrollBanner] = useState(false);
   const [isTopupPromptOpen, setIsTopupPromptOpen] = useState(false);
   const [selectedPayrollId, setSelectedPayrollId] = useState<string>("");
+  const [isApprovalProgressOpen, setIsApprovalProgressOpen] = useState(false);
   const [payrollData, setPayrollData] = useState({
     id: "",
     status: "",
@@ -98,6 +114,13 @@ const PayrollView = () => {
     Array.isArray(payslipsData.data.items) &&
     payslipsData.data.items.length > 0
   );
+
+  // Approval progress data for the selected payroll
+  const payrollIdForApprovals = selectedPayrollId || "";
+  const { data: approvalsResponse, isLoading: isApprovalsLoading } = useGetPayrollApprovals(payrollIdForApprovals, {
+    enabled: !!payrollIdForApprovals && isApprovalProgressOpen,
+  });
+  const approvals = (approvalsResponse?.data ?? []) as PayrollApproval[];
 
   // Show Run Payroll button when payslips are available, Generate Payslip otherwise
   const showRunPayrollButton = !!selectedPayrollId && hasPayslipsForSelectedPayroll;
@@ -121,6 +144,23 @@ const PayrollView = () => {
   })();
 
   const canRunSelectedPayroll = !isSelectedPayrollInFuture;
+
+  // Robust awaiting detection (captures "awaiting", "awaiting approval", etc.)
+  const normalizedStatus = (selectedPayrollRecord?.status ?? "").toString().toLowerCase();
+  const isAwaitingApproval = normalizedStatus.includes("await");
+
+  // Show the banner if status is awaiting (ignore hide flag in this state),
+  // otherwise show only when a run is in progress and the banner isn't hidden
+  const shouldShowApprovalProgressBanner =
+    isAwaitingApproval || (!!payrollSelectedDate && !hidePayrollNotificationBanner);
+
+  // Show the button if payroll run is in progress or status is awaiting (do not tie to hide flag)
+  const shouldShowApprovalProgressButton = !!payrollSelectedDate || isAwaitingApproval;
+
+  const approvalBannerDateLabel =
+    payrollSelectedDate && shouldShowApprovalProgressBanner
+      ? formatDate(payrollSelectedDate, "en", { month: "long", year: "numeric" })
+      : payrollData.paymentDate;
 
   // Map payrolls to ComboBox options
   const payrollOptions = Array.isArray(allPayrolls?.data)
@@ -424,7 +464,11 @@ const PayrollView = () => {
                 {loadingPayslips ? "Generating Payroll..." : "Generate Payroll"}
               </MainButton>
             ) : null}
-            <MainButton className="hidden" variant="primary">
+            <MainButton
+              className={cn(shouldShowApprovalProgressButton ? "" : "hidden")}
+              variant="primary"
+              onClick={() => setIsApprovalProgressOpen(true)}
+            >
               View Approval Progress
             </MainButton>
             <div>
@@ -458,7 +502,7 @@ const PayrollView = () => {
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-start gap-3">
             <AlertTriangle className="text-warning mt-0.5" size={18} />
-            <p className="text-warning text-sm">
+            <p className="text-muted-foreground text-sm">
               Payroll setup almost complete. Create and fund your company wallet to finish setup and enable payroll
               generation.
             </p>
@@ -533,16 +577,28 @@ const PayrollView = () => {
         </div>
       </section>
 
-      <section className={cn("rounded-lg", payrollData.paymentDate ? `block` : `hidden`)}>
+      <section
+        className={cn("rounded-lg", payrollData.paymentDate || shouldShowApprovalProgressBanner ? `block` : `hidden`)}
+      >
         <div className="bg-primary-500 text-background relative rounded-lg p-5">
           <button
             type="button"
             aria-label="Hide banner"
             className="text-background/80 hover:text-background absolute top-2 right-2"
+            onClick={() => {
+              // Do not allow hiding while awaiting approval; ensure run banner stays visible
+              if (!isAwaitingApproval && shouldShowApprovalProgressBanner) {
+                setHideNotificationBanner(true);
+              }
+            }}
           >
             <CloseCircle />
           </button>
-          <p className="text-background max-w-4xl text-sm">{GET_SCHEDULE_MESSAGE(payrollData.paymentDate)}</p>
+          <p className="text-background max-w-4xl text-sm">
+            {shouldShowApprovalProgressBanner
+              ? PAYROLL_RUN_MESSAGE(approvalBannerDateLabel ?? "", () => setIsApprovalProgressOpen(true))
+              : GET_SCHEDULE_MESSAGE(payrollData.paymentDate)}
+          </p>
         </div>
       </section>
 
@@ -640,6 +696,69 @@ const PayrollView = () => {
         summary={payrollData}
         canRunNow={canRunSelectedPayroll}
       />
+
+      {/* Approval Progress Modal */}
+      <ReusableDialog
+        open={isApprovalProgressOpen}
+        onOpenChange={setIsApprovalProgressOpen}
+        title="Track Approvers Progress"
+        className="min-w-2xl"
+        headerClassName="text-xl"
+        trigger={<div />}
+      >
+        <section className="space-y-4">
+          {selectedPayrollId ? (
+            isApprovalsLoading ? (
+              <p className="text-muted-foreground text-sm">Loading approvers...</p>
+            ) : approvals.length === 0 ? (
+              <p className="text-muted-foreground text-sm">No approvers configured for this payroll.</p>
+            ) : (
+              approvals.map((approval) => {
+                const name = approval.employee.name ?? "Approver";
+                const role = (approval.approverRole as ReactNode) ?? <></>;
+                const initials =
+                  name
+                    .split(" ")
+                    .map((part) => part.charAt(0))
+                    .join("")
+                    .toUpperCase()
+                    .slice(0, 2) || "AP";
+                const statusLabel =
+                  approval.status && approval.status.length > 0
+                    ? approval.status.charAt(0).toUpperCase() + approval.status.slice(1)
+                    : "Pending";
+
+                return (
+                  <section key={approval.payrollId} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Avatar>
+                        <AvatarImage src={approval.employee.avatar ?? "https://github.com/shadcn.png"} alt={name} />
+                        <AvatarFallback>{initials}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="text-foreground">{name}</p>
+                        {role ? <p className="text-xs text-gray-500">{role}</p> : null}
+                      </div>
+                    </div>
+                    <Badge
+                      className={cn(
+                        "rounded-full px-4 py-2",
+                        statusLabel === "Pending" && "bg-warning-50 text-warning",
+                        statusLabel === "Approved" && "bg-success-50 text-success",
+                        statusLabel === "Declined" && "bg-destructive-50 text-destructive",
+                      )}
+                    >
+                      {statusLabel}
+                    </Badge>
+                  </section>
+                );
+              })
+            )
+          ) : (
+            <p className="text-muted-foreground text-sm">Select a payroll to view approvers.</p>
+          )}
+        </section>
+      </ReusableDialog>
 
       <ConfirmDialog
         isOpen={isTopupPromptOpen}

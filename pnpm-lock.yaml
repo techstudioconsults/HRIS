@@ -417,6 +417,9 @@ importers:
       eslint-config-prettier:
         specifier: ^9.1.2
         version: 9.1.2(eslint@8.57.1)
+      eslint-plugin-align-assignments:
+        specifier: ^1.1.2
+        version: 1.1.2(eslint@8.57.1)
       eslint-plugin-prettier:
         specifier: ^5.5.3
         version: 5.5.3(@types/eslint@9.6.1)(eslint-config-prettier@9.1.2(eslint@8.57.1))(eslint@8.57.1)(prettier@3.4.2)
@@ -4589,6 +4592,11 @@ packages:
         optional: true
       eslint-import-resolver-webpack:
         optional: true
+
+  eslint-plugin-align-assignments@1.1.2:
+    resolution: {integrity: sha512-I1ZJgk9EjHfGVU9M2Ex8UkVkkjLL5Y9BS6VNnQHq79eHj2H4/Cgxf36lQSUTLgm2ntB03A2NtF+zg9fyi5vChg==}
+    peerDependencies:
+      eslint: '>=0.8.0'
 
   eslint-plugin-import@2.32.0:
     resolution: {integrity: sha512-whOE1HFo/qJDyX4SnXzP4N6zOWn79WhnCUY/iDR0mPfQZO8wcYE4JClzI2oZrhBnnMUCBCHZhO6VQyoBU95mZA==}
@@ -12340,6 +12348,10 @@ snapshots:
       eslint-import-resolver-node: 0.3.9
     transitivePeerDependencies:
       - supports-color
+
+  eslint-plugin-align-assignments@1.1.2(eslint@8.57.1):
+    dependencies:
+      eslint: 8.57.1
 
   eslint-plugin-import@2.32.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.7.2))(eslint@8.57.1):
     dependencies:

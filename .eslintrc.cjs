@@ -28,13 +28,22 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
     "plugin:react-hooks/recommended",
     "plugin:unicorn/recommended",
-    "plugin:prettier/recommended",
     "plugin:testing-library/react",
+    "prettier", // Must be last - disables conflicting ESLint rules
   ],
   ignorePatterns: ["dist", "node_modules"],
   parser: "@typescript-eslint/parser",
-  plugins: ["@typescript-eslint", "react", "unicorn", "unused-imports", "vitest", "testing-library"],
+  plugins: [
+    "@typescript-eslint",
+    "react",
+    "unicorn",
+    "unused-imports",
+    "vitest",
+    "testing-library",
+    "align-assignments",
+  ],
   rules: {
+    "align-assignments/align-assignments": ["warn", { requiresOnly: false }], // Warns when assignments are not aligned
     "no-console": "error",
     "react/prop-types": "off",
     "unused-imports/no-unused-imports": "error",

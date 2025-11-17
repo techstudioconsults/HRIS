@@ -20,6 +20,7 @@ export interface PayrollUIState {
    * showing the "No payroll" banner) before the backend status catches up.
    */
   walletSetupCompleted: boolean;
+  employeeInformationActiveTab: "employee-information" | "salary-details" | "payroll-history";
 }
 
 export interface PayrollUIActions {
@@ -35,6 +36,7 @@ export interface PayrollUIActions {
   setWalletSetupCompleted: (status: boolean) => void;
   setShowEmployeeInformationDrawer: (open: boolean) => void;
   setSelectedPayslipId: (id: string | null) => void;
+  setEmployeeInformationActiveTab: (tab: "employee-information" | "salary-details" | "payroll-history") => void;
   resetUI: () => void;
 }
 
@@ -51,6 +53,7 @@ const initialState: PayrollUIState = {
   walletSetupCompleted: false,
   showEmployeeInformationDrawer: false,
   selectedPayslipId: null,
+  employeeInformationActiveTab: "employee-information",
 };
 
 export const usePayrollStore = create<PayrollUIState & PayrollUIActions>()(
@@ -69,7 +72,7 @@ export const usePayrollStore = create<PayrollUIState & PayrollUIActions>()(
       setWalletSetupCompleted: (status) => set({ walletSetupCompleted: status }),
       setShowEmployeeInformationDrawer: (open) => set({ showEmployeeInformationDrawer: open }),
       setSelectedPayslipId: (id) => set({ selectedPayslipId: id }),
-
+      setEmployeeInformationActiveTab: (tab) => set({ employeeInformationActiveTab: tab }),
       resetUI: () => set(initialState),
     }),
     { name: "payroll-ui" },

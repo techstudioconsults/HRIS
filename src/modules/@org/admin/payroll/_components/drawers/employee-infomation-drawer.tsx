@@ -32,7 +32,13 @@ interface EmployeeInformationDrawerProperties {
 }
 
 export const EmployeeInformationDrawer = ({ payrollId }: EmployeeInformationDrawerProperties) => {
-  const { showEmployeeInformationDrawer, setShowEmployeeInformationDrawer, selectedPayslipId } = usePayrollStore();
+  const {
+    showEmployeeInformationDrawer,
+    setShowEmployeeInformationDrawer,
+    selectedPayslipId,
+    employeeInformationActiveTab,
+    setEmployeeInformationActiveTab,
+  } = usePayrollStore();
   const { useGetPayslipById } = usePayrollService();
 
   const { data: payslipResponse, isLoading } = useGetPayslipById(payrollId ?? "", selectedPayslipId || "", {
@@ -70,7 +76,15 @@ export const EmployeeInformationDrawer = ({ payrollId }: EmployeeInformationDraw
 
           <section className="flex-1 space-y-6 overflow-y-auto p-10">
             <div className="space-y-6">
-              <Tabs defaultValue={"employee-information"} className="w-full">
+              <Tabs
+                value={employeeInformationActiveTab}
+                onValueChange={(value) =>
+                  setEmployeeInformationActiveTab(
+                    value as "employee-information" | "salary-details" | "payroll-history",
+                  )
+                }
+                className="w-full"
+              >
                 <TabsList className="w-full bg-transparent">
                   <TabsTrigger value="employee-information">Employee Infomation</TabsTrigger>
                   <TabsTrigger value="salary-details">Salary Details</TabsTrigger>

@@ -13,7 +13,7 @@ import { usePayrollStore } from "../stores/payroll-store";
 import { Payslip } from "../types";
 
 export const usePayrollRowActions = () => {
-  const { setShowEmployeeInformationDrawer, setSelectedPayslipId } = usePayrollStore();
+  const { setShowEmployeeInformationDrawer, setSelectedPayslipId, setEmployeeInformationActiveTab } = usePayrollStore();
   const { useDeletePayslip } = usePayrollService();
   const { mutateAsync: deletePayslip, isPending: isDeleting } = useDeletePayslip({
     // When an employee is removed from a payroll, also refresh the suspended-employees list
@@ -62,6 +62,7 @@ export const usePayrollRowActions = () => {
         // Use employeeId so the drawer can fetch via
         // GET /payrolls/{{payrollId}}/payslips?employeeId={{employeeId}}
         setSelectedPayslipId(payslip.id ?? null);
+        setEmployeeInformationActiveTab("employee-information");
         setShowEmployeeInformationDrawer(true);
       },
       icon: <MinusCircle className="text-high-warning" />,
@@ -69,7 +70,8 @@ export const usePayrollRowActions = () => {
     {
       label: "Edit employee payroll",
       onClick: () => {
-        setSelectedPayslipId(payslip.employee?.id ?? null);
+        setSelectedPayslipId(payslip?.id ?? null);
+        setEmployeeInformationActiveTab("salary-details");
         setShowEmployeeInformationDrawer(true);
       },
       icon: <Edit className="text-high-primary" />,

@@ -39,6 +39,12 @@ export function BonusDeductionManager({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<BonusDeduction | null>(null);
 
+  // Keep local items in sync when initialItems (from payslip/policy) change,
+  // so that freshly loaded bonuses/deductions show up immediately.
+  useEffect(() => {
+    setItems(initialItems);
+  }, [initialItems]);
+
   // Success alert state for delete actions
   const [isDeletedAlertOpen, setIsDeletedAlertOpen] = useState(false);
   const [deletedAlertTitle, setDeletedAlertTitle] = useState("");

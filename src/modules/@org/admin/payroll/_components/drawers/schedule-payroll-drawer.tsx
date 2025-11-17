@@ -221,7 +221,7 @@ export const SchedulePayrollDrawer = () => {
                   <DashboardCard
                     title="Total Employees"
                     value={<p className="text-base">{selectedPayroll?.employeesInPayroll ?? 0}</p>}
-                    className="flex flex-col items-center justify-center gap-4 text-center"
+                    className="border-border flex flex-col items-center justify-center gap-4 border text-center shadow-none"
                   />
                   <DashboardCard
                     title="Wallet Balance"
@@ -247,7 +247,7 @@ export const SchedulePayrollDrawer = () => {
                     titleColor="text-white"
                   />
                 </section>
-                <section className="rounded-lg p-4 shadow-md">
+                <section className="border-border space-y-2 rounded-lg border p-4">
                   <div className="flex items-center justify-between">
                     <p>Gross Pay</p>
                     <p>{formatCurrency(selectedPayroll?.grossPay ?? 0)}</p>
@@ -260,14 +260,14 @@ export const SchedulePayrollDrawer = () => {
                     <p>Total Deductions</p>
                     <p>{formatCurrency(selectedPayroll?.deduction ?? 0)}</p>
                   </div>
-                  <div className="flex items-center justify-between font-bold">
+                  <div className="flex items-center justify-between pt-4 font-bold">
                     <p>Net Pay</p>
                     <p>{formatCurrency(selectedPayroll?.netPay ?? 0)}</p>
                   </div>
                 </section>
                 <section>
                   <h1 className="text-xl font-bold">Approvers</h1>
-                  <section className="space-y-4 rounded-lg p-4 shadow-md">
+                  <section className="border-border space-y-4 rounded-lg border p-4">
                     {isApprovalsLoading ? (
                       <div className="text-muted-foreground text-sm">Loading approvers...</div>
                     ) : approvals.length === 0 ? (

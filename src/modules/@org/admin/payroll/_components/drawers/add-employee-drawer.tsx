@@ -36,9 +36,14 @@ interface FilterValues {
 
 interface AddEmployeeDrawerProperties {
   payrollId: string | null;
+  /**
+   * Indicates that payslips have been generated for the selected payroll.
+   * Used to avoid calling the "absent" endpoint before payslips exist.
+   */
+  hasPayslips: boolean;
 }
 
-export const AddEmployeeDrawer = ({ payrollId }: AddEmployeeDrawerProperties) => {
+export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerProperties) => {
   const { showAddEmployeeToPayrollModal, setShowAddEmployeeModal } = usePayrollStore();
   const {
     page,
@@ -65,6 +70,7 @@ export const AddEmployeeDrawer = ({ payrollId }: AddEmployeeDrawerProperties) =>
 
   const [isSuccessAlertOpen, setIsSuccessAlertOpen] = useState(false);
   const [addedEmployee, setAddedEmployee] = useState<Employee | null>(null);
+  const [loadingEmployeeId, setLoadingEmployeeId] = useState<string | null>(null);
 
   const { useCreatePayslip } = usePayrollService();
   const { mutateAsync: createPayslip } = useCreatePayslip({
@@ -94,7 +100,14 @@ export const AddEmployeeDrawer = ({ payrollId }: AddEmployeeDrawerProperties) =>
 
   // const apiFilters = useMemo(() => getApiFilters(), [getApiFilters]);
 
-  const { data: employeesData, isLoading } = useGetSuspendedEmployeesByPayroll(payrollId || "");
+  const { data: employeesData, isLoading } = useGetSuspendedEmployeesByPayroll(
+    payrollId || "",
+    {},
+    {
+      // Ensure payslips are generated before calling the "absent" endpoint
+      enabled: !!payrollId && hasPayslips,
+    },
+  );
 
   const handleFilterChange = useCallback(
     (newFilters: FilterValues) => {
@@ -126,11 +139,16 @@ export const AddEmployeeDrawer = ({ payrollId }: AddEmployeeDrawerProperties) =>
 
   const handleAddEmployee = (employee: Employee) => {
     setAddedEmployee(employee);
+    setLoadingEmployeeId(employee.id);
     createPayslip(
       { payrollId: payrollId || "", employeeId: employee.id },
       {
         onSuccess: () => {
           setIsSuccessAlertOpen(true);
+          setLoadingEmployeeId(null);
+        },
+        onError: () => {
+          setLoadingEmployeeId(null);
         },
       },
     );
@@ -162,12 +180,6 @@ export const AddEmployeeDrawer = ({ payrollId }: AddEmployeeDrawerProperties) =>
       ),
     },
     // {
-    //   accessorKey: "employmentDetails",
-    //   header: "Department",
-    //   render: (_, employee: Employee) => (
-    //     <div className="text-gray-600">{employee.employmentDetails?.team?.name || "N/A"}</div>
-    //   ),
-    // },
     {
       accessorKey: "id",
       header: "Action",
@@ -175,6 +187,7 @@ export const AddEmployeeDrawer = ({ payrollId }: AddEmployeeDrawerProperties) =>
         <MainButton
           variant="primaryOutline"
           size="sm"
+          isLoading={loadingEmployeeId === row.id}
           onClick={(event) => {
             event.stopPropagation();
             handleAddEmployee(row);

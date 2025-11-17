@@ -6,52 +6,107 @@ import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { formatCurrency } from "@/lib/i18n/utils";
+import { cn } from "@/lib/utils";
 import { CalendarModal } from "@/modules/@org/admin/payroll/_components/calendar-modal";
 import { Eye, EyeSlash } from "iconsax-reactjs";
 import { CalendarIcon, Info } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
+import { toast } from "sonner";
 
 import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
+import { usePayrollService } from "../../services/use-service";
 import { usePayrollStore } from "../../stores/payroll-store";
+import type { PayrollApproval } from "../../types";
 
 interface SchedulePayrollDrawerProperties {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** The currently selected payroll ID that will be run. */
+  payrollId: string | null;
+  /**
+   * Summary information for the currently selected payroll period.
+   * Mapped from the PayrollView (net pay, employees, wallet balance, payment date).
+   */
+  summary?: {
+    netPay: number;
+    employeesInPayroll: number;
+    walletBalance: number;
+    paymentDate: string;
+  } | null;
+  /**
+   * Whether this payroll can be run now (false when payroll is for a future month).
+   */
+  canRunNow?: boolean;
 }
 
-export const GenerateRunPayrollDrawer = ({ open, onOpenChange }: SchedulePayrollDrawerProperties) => {
+export const GenerateRunPayrollDrawer = ({
+  open,
+  onOpenChange,
+  payrollId,
+  summary,
+  canRunNow = true,
+}: SchedulePayrollDrawerProperties) => {
   const [isNetPayVisible, setIsNetPayVisible] = useState(false);
   const [isChangeDateModalOpen, setIsChangeDateModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [isPayrollRunning, setIsPayrollRunning] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isRunSubmittedAlertOpen, setIsRunSubmittedAlertOpen] = useState(false);
-  const { setHideNotificationBanner, setPayrollSelectedDate, setTogglePayrollAction } = usePayrollStore();
+  const { setHideNotificationBanner, setPayrollSelectedDate } = usePayrollStore();
+
+  const { useRunPayroll, useGetPayrollApprovals } = usePayrollService();
+  const { mutateAsync: runPayroll, isPending: isRunningPayroll } = useRunPayroll();
+
+  const payrollIdForApprovals = payrollId ?? "";
+  const { data: approvalsResponse, isLoading: isApprovalsLoading } = useGetPayrollApprovals(payrollIdForApprovals, {
+    enabled: !!payrollIdForApprovals,
+  });
+  const approvals = (approvalsResponse?.data ?? []) as PayrollApproval[];
+
+  const totalEmployees = summary?.employeesInPayroll ?? 0;
+  const totalPayroll = summary?.netPay ?? 0;
+  const walletBalance = summary?.walletBalance ?? 0;
+  const paymentDateLabel = summary?.paymentDate ?? "";
+  const processingCharges = 0;
+  const totalAmount = totalPayroll + processingCharges;
 
   const router = useRouter();
 
   const handleRunPayroll = async () => {
-    setIsPayrollRunning(true);
-    setIsConfirmModalOpen(false);
-    try {
-      // Add your payroll run logic here
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      // Close the drawer after successful payroll run
-      onOpenChange(false);
-      // Show success alert after closing the drawer for a smooth transition
-      setTimeout(() => {
-        setIsRunSubmittedAlertOpen(true);
-        setHideNotificationBanner(false);
-        setPayrollSelectedDate(selectedDate);
-      }, 300);
-    } catch {
-      // Handle error appropriately
-    } finally {
-      setIsPayrollRunning(false);
+    if (!payrollId) {
+      toast.error("No payroll selected to run.");
+      return;
     }
+
+    await runPayroll(
+      {
+        payrollId,
+        date: (selectedDate ?? new Date()).toISOString(),
+      },
+      {
+        onSuccess: () => {
+          setIsConfirmModalOpen(false);
+          // Close the drawer after successful payroll run
+          onOpenChange?.(false);
+
+          // Show success alert after closing the drawer for a smooth transition
+          setTimeout(() => {
+            setIsRunSubmittedAlertOpen(true);
+            setHideNotificationBanner(false);
+            setPayrollSelectedDate(selectedDate);
+          }, 300);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onError: (error: any) => {
+          const message = error?.response?.data?.message ?? "Failed to run payroll. Please try again.";
+          toast.error("Something went wrong. ", {
+            description: message,
+          });
+        },
+      },
+    );
   };
 
   const handleSchedulePayment = () => {
@@ -70,7 +125,9 @@ export const GenerateRunPayrollDrawer = ({ open, onOpenChange }: SchedulePayroll
                   <CalendarIcon className="size-5 text-blue-600" />
                 </div>
                 <div>
-                  <DrawerTitle className="text-lg font-semibold">Payroll Review(July Cycle)</DrawerTitle>
+                  <DrawerTitle className="text-lg font-semibold">
+                    Payroll Review{paymentDateLabel ? ` (${paymentDateLabel})` : ""}
+                  </DrawerTitle>
                   {/* <DrawerDescription>Set up automated payroll processing</DrawerDescription> */}
                 </div>
               </div>
@@ -82,14 +139,16 @@ export const GenerateRunPayrollDrawer = ({ open, onOpenChange }: SchedulePayroll
             <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <DashboardCard
                 title="Total Employees"
-                value={<p className="text-base">{98}</p>}
-                className="flex flex-col items-center justify-center gap-4 text-center"
+                value={<p className="text-base">{totalEmployees}</p>}
+                className="border-border flex flex-col items-center justify-center gap-4 border text-center shadow-none"
               />
               <DashboardCard
                 title="Wallet Balance"
                 value={
                   <div className="flex items-center gap-4">
-                    <p className="text-base text-white">{isNetPayVisible ? `N7,200,000` : `••••••••`}</p>
+                    <p className="text-base text-white">
+                      {isNetPayVisible ? formatCurrency(walletBalance) : "••••••••"}
+                    </p>
                     <button
                       onClick={() => setIsNetPayVisible(!isNetPayVisible)}
                       className="text-white transition-colors hover:text-gray-300"
@@ -107,21 +166,26 @@ export const GenerateRunPayrollDrawer = ({ open, onOpenChange }: SchedulePayroll
                 titleColor="text-white"
               />
             </section>
-            <section className="space-y-4 rounded-lg p-4 shadow-md">
+            <section className="border-border space-y-4 rounded-lg border p-4">
               <div className="flex items-center justify-between">
                 <p>Total Payroll</p>
-                <p>N10000</p>
+                <p>{formatCurrency(totalPayroll)}</p>
               </div>
               <div className="flex items-center justify-between">
                 <p>Processing Charges</p>
-                <p>N10000</p>
+                <p>{formatCurrency(processingCharges)}</p>
               </div>
               <div className="flex items-center justify-between font-bold">
                 <p>Total Amount</p>
-                <p>N10000</p>
+                <p>{formatCurrency(totalAmount)}</p>
               </div>
             </section>
-            <div className="bg-accent/10 border-accent item-center flex gap-4 rounded-lg border p-4 text-sm text-gray-500">
+            <div
+              className={cn(
+                "bg-accent/10 border-accent item-center flex gap-4 rounded-lg border p-4 text-sm text-gray-500",
+                walletBalance >= totalAmount ? "hidden" : "",
+              )}
+            >
               <div className="size-8">
                 <Info size={20} />
               </div>
@@ -135,33 +199,60 @@ export const GenerateRunPayrollDrawer = ({ open, onOpenChange }: SchedulePayroll
             </div>
             <section>
               <h1 className="text-xl font-bold">Approvers</h1>
-              <section className="space-y-8 rounded-lg p-4 shadow-md">
-                <section className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Avatar>
-                      <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                      <AvatarFallback>CN</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-foreground">Ifijeh Kingsley</p>
-                      <p className="text-xs text-gray-500">HR Manager</p>
-                    </div>
-                  </div>
-                  <Badge className="bg-accent/10 border-accent text-accent rounded-full px-4 py-2">Pending</Badge>
-                </section>
-                <section className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Avatar>
-                      <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                      <AvatarFallback>CN</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-foreground">Ifijeh Kingsley</p>
-                      <p className="text-xs text-gray-500">HR Manager</p>
-                    </div>
-                  </div>
-                  <Badge className="bg-accent/10 border-accent text-accent rounded-full px-4 py-2">Pending</Badge>
-                </section>
+              <section className="border-border space-y-4 rounded-lg border p-4">
+                {payrollId ? (
+                  isApprovalsLoading ? (
+                    <div className="text-muted-foreground text-sm">Loading approvers...</div>
+                  ) : approvals.length === 0 ? (
+                    <div className="text-muted-foreground text-sm">No approvers configured for this payroll.</div>
+                  ) : (
+                    approvals.map((approval) => {
+                      const name = approval.employee.name ?? "Approver";
+                      const role = (approval.approverRole as ReactNode) ?? <></>;
+                      const initials =
+                        name
+                          .split(" ")
+                          .map((part) => part.charAt(0))
+                          .join("")
+                          .toUpperCase()
+                          .slice(0, 2) || "AP";
+                      const statusLabel =
+                        approval.status && approval.status.length > 0
+                          ? approval.status.charAt(0).toUpperCase() + approval.status.slice(1)
+                          : "Pending";
+
+                      return (
+                        <section key={approval.payrollId} className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Avatar>
+                              <AvatarImage
+                                src={approval.employee.avatar ?? "https://github.com/shadcn.png"}
+                                alt={name}
+                              />
+                              <AvatarFallback>{initials}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="text-foreground">{name}</p>
+                              {role ? <p className="text-xs text-gray-500">{role}</p> : null}
+                            </div>
+                          </div>
+                          <Badge
+                            className={cn(
+                              `rounded-full px-4 py-2`,
+                              statusLabel === "Pending" && "bg-warning-50 text-warning",
+                              statusLabel === "Approved" && "bg-success-50 text-success",
+                              statusLabel === "Declined" && "bg-destructive-50 text-destructive",
+                            )}
+                          >
+                            {statusLabel}
+                          </Badge>
+                        </section>
+                      );
+                    })
+                  )
+                ) : (
+                  <div className="text-muted-foreground text-sm">Select a payroll to view approvers.</div>
+                )}
               </section>
             </section>
           </section>
@@ -172,6 +263,7 @@ export const GenerateRunPayrollDrawer = ({ open, onOpenChange }: SchedulePayroll
                 type="button"
                 className="flex-1"
                 onClick={() => setIsConfirmModalOpen(true)}
+                isDisabled={!canRunNow}
               >
                 Run Payroll
               </MainButton>
@@ -194,7 +286,6 @@ export const GenerateRunPayrollDrawer = ({ open, onOpenChange }: SchedulePayroll
             setSelectedDate(date);
             setPayrollSelectedDate(date);
             setIsRunSubmittedAlertOpen(true);
-            setTogglePayrollAction("SCHEDULE");
             // Intentionally do NOT show the approval progress banner here;
             // it's displayed only after a successful Run Payroll action.
 
@@ -208,7 +299,7 @@ export const GenerateRunPayrollDrawer = ({ open, onOpenChange }: SchedulePayroll
         isOpen={isConfirmModalOpen}
         onClose={() => setIsConfirmModalOpen(false)}
         onConfirm={handleRunPayroll}
-        loading={isPayrollRunning}
+        loading={isRunningPayroll}
         type="warning"
         title="Confirm Payroll Run?"
         description="Once you proceed, payroll will be sent for approval. After all required approvers approve it, the funds will be disbursed to employees' accounts."

@@ -21,8 +21,13 @@ export class PayrollService {
 
   // Run payroll (process disbursement/approval workflow)
   async runPayroll(data: { payrollId: string; date: string }) {
-    const response = await this.http.post<ApiResponse<{ success: boolean; payroll: Payroll }>>(`/payrolls/run`, data);
-    if (response?.status === 200) return response.data;
+    const response = await this.http.post<ApiResponse<{ success: boolean; payroll: Payroll }>>(
+      `/payrolls/${data.payrollId}/run`,
+      {
+        date: data.date,
+      },
+    );
+    if (response?.status === 201) return response.data;
   }
 
   // Retry failed payroll (or stuck state)

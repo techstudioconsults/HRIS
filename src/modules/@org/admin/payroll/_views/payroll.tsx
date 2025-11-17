@@ -37,7 +37,7 @@ import { usePayrollService } from "../services/use-service";
 import { usePayrollStore } from "../stores/payroll-store";
 import { payrollColumn, usePayrollRowActions } from "./table-data";
 
-const LOW_BALANCE_LIMIT = 500_000; // 5M NGN
+const LOW_BALANCE_LIMIT = 0; // 0M NGN
 const GET_SCHEDULE_MESSAGE = (date: string | Date): ReactNode => {
   return `Your next payroll has been scheduled for ${date}. You can edit the schedule date or cancel the payroll before the set date here.`;
 };
@@ -64,20 +64,15 @@ const PayrollView = () => {
     setShowSchedulePayrollDrawer,
     setShowAddEmployeeModal,
     walletSetupCompleted,
+    showRunPayrollDrawer,
+    setShowPayrollDrawer,
   } = usePayrollStore();
-  const {
-    useGetCompanyPayrollPolicy,
-    useGetAllPayrolls,
-    useCreatePayroll,
-    useGetPayslips,
-    useGetCompanyWallet,
-    useRunPayroll,
-  } = usePayrollService();
+  const { useGetCompanyPayrollPolicy, useGetAllPayrolls, useCreatePayroll, useGetPayslips, useGetCompanyWallet } =
+    usePayrollService();
   const { data: companyWallet, refetch: refetchCompanyWallet } = useGetCompanyWallet();
   const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
   const { data: allPayrolls, isLoading: loadingPayrolls, refetch: refetchPayrolls } = useGetAllPayrolls();
   const { mutateAsync: createPayroll, isPending: isCreatingPayroll } = useCreatePayroll();
-  const { mutateAsync: runPayroll, isPending: isRunningPayroll } = useRunPayroll();
   const [isWalletBalanceVisible, setIsWalletBalanceVisible] = useState(true);
   const [showNoPayrollBanner, setShowNoPayrollBanner] = useState(false);
   const [isTopupPromptOpen, setIsTopupPromptOpen] = useState(false);
@@ -98,12 +93,34 @@ const PayrollView = () => {
   });
 
   // Determine if payslips exist for the selected payroll
-  const hasPayslipsForSelectedPayroll =
-    payslipsData?.data?.items && Array.isArray(payslipsData.data.items) && payslipsData.data.items.length > 0;
+  const hasPayslipsForSelectedPayroll = !!(
+    payslipsData?.data?.items &&
+    Array.isArray(payslipsData.data.items) &&
+    payslipsData.data.items.length > 0
+  );
 
   // Show Run Payroll button when payslips are available, Generate Payslip otherwise
   const showRunPayrollButton = !!selectedPayrollId && hasPayslipsForSelectedPayroll;
   const showGeneratePayslipButton = !!selectedPayrollId && !hasPayslipsForSelectedPayroll;
+
+  // Find the full record for the currently selected payroll
+  const selectedPayrollRecord =
+    Array.isArray(allPayrolls?.data) && selectedPayrollId
+      ? allPayrolls.data.find((p) => p.id === selectedPayrollId)
+      : undefined;
+
+  // Disable running payroll for future months (e.g., December while still in November)
+  const isSelectedPayrollInFuture = (() => {
+    if (!selectedPayrollRecord?.paymentDate) return false;
+    const payrollDate = new Date(selectedPayrollRecord.paymentDate);
+    const now = new Date();
+    return (
+      payrollDate.getFullYear() > now.getFullYear() ||
+      (payrollDate.getFullYear() === now.getFullYear() && payrollDate.getMonth() > now.getMonth())
+    );
+  })();
+
+  const canRunSelectedPayroll = !isSelectedPayrollInFuture;
 
   // Map payrolls to ComboBox options
   const payrollOptions = Array.isArray(allPayrolls?.data)
@@ -189,32 +206,13 @@ const PayrollView = () => {
     }
   };
 
-  const handleRunPayroll = async () => {
-    try {
-      if (!payrollData.id) return;
-
-      await runPayroll(
-        {
-          payrollId: payrollData.id,
-          date: new Date().toISOString(),
-        },
-        {
-          onSuccess: (data) => {
-            // Update payroll status after running
-            if (data?.data?.payroll) {
-              setPayrollData((previous) => ({
-                ...previous,
-                status: String(data.data.payroll.status || ""),
-              }));
-              // Refetch payrolls to update the list
-              refetchPayrolls();
-            }
-          },
-        },
-      );
-    } catch {
-      // Error handling is done by the mutation
+  const handleRunPayroll = () => {
+    if (!selectedPayrollId) {
+      toast.error("Please select a payroll period before running payroll.");
+      return;
     }
+
+    setShowPayrollDrawer(true);
   };
 
   const handleDismissNoPayrollBanner = () => {
@@ -235,8 +233,9 @@ const PayrollView = () => {
     }
   }, [payrollPolicy?.data.payday, payrollPolicyStatus, setHasCompletedPayrollPolicySetupForm]);
 
-  // Wallet notifications: topup and created
+  // Wallet + payroll notifications via SSE
   useEffect(() => {
+    // Wallet top-up success
     const offTopup = on(EventRegistry.WALLET_TOP_SUCCESS, () => {
       toast.success("Company wallet funded successfully.");
       setShowFundWalletAccountModal(false);
@@ -247,17 +246,74 @@ const PayrollView = () => {
       setIsTopupPromptOpen(true);
       void refetchCompanyWallet();
     });
+
+    // Wallet created / setup completed
     const offCreated = on(EventRegistry.WALLET_CREATED_SUCCESS, () => {
       toast.success("Company wallet setup completed successfully.");
       void refetchCompanyWallet();
     });
+
+    // Payroll approval requested
+    const offPayrollApproveRequest = on(EventRegistry.PAYROLL_APPROVE_REQUEST, (payload) => {
+      const { title, body } = payload?.data ?? {};
+      const message = title && body ? `${title} - ${body}` : title || body || "New payroll approval request received.";
+      toast(message);
+    });
+
+    // Payroll approved
+    const offPayrollApproved = on(EventRegistry.PAYROLL_APPROVED, (payload) => {
+      const { title, body } = payload?.data ?? {};
+      const message = title && body ? `${title} - ${body}` : title || body || "Payroll approved successfully.";
+      toast.success(message);
+      void refetchPayrolls();
+    });
+
+    // Payroll rejected
+    const offPayrollRejected = on(EventRegistry.PAYROLL_REJECTED, (payload) => {
+      const { title, body } = payload?.data ?? {};
+      const message = title && body ? `${title} - ${body}` : title || body || "Payroll approval was rejected.";
+      toast.error(message);
+      void refetchPayrolls();
+    });
+
+    // Payroll completed (fully processed)
+    const offPayrollCompleted = on(EventRegistry.PAYROLL_COMPLETED, (payload) => {
+      const { title, body } = payload?.data ?? {};
+      const message = title && body ? `${title} - ${body}` : title || body || "Payroll run completed.";
+      toast.success(message);
+      void refetchPayrolls();
+      void refetchCompanyWallet();
+    });
+
+    // Generic payroll status updates
+    const offPayrollStatus = on(EventRegistry.PAYROLL_STATUS, (payload) => {
+      const { title, body } = payload?.data ?? {};
+      const message = title && body ? `${title} - ${body}` : title || body || "Payroll status updated.";
+      toast(message);
+    });
+
+    // Salary paid / disbursement notifications
+    const offSalaryPaid = on(EventRegistry.SALARY_PAID, (payload) => {
+      const { title, body } = payload?.data ?? {};
+      const message = title && body ? `${title} - ${body}` : title || body || "Employee salaries have been paid.";
+      toast.success(message);
+      void refetchCompanyWallet();
+    });
+
     return () => {
       offTopup();
       offCreated();
+      offPayrollApproveRequest();
+      offPayrollApproved();
+      offPayrollRejected();
+      offPayrollCompleted();
+      offPayrollStatus();
+      offSalaryPaid();
     };
   }, [
     on,
     refetchCompanyWallet,
+    refetchPayrolls,
     setShowFundWalletAccountModal,
     setShowFundWalletFormModal,
     setIsTopupPromptOpen,
@@ -353,8 +409,7 @@ const PayrollView = () => {
             {showRunPayrollButton ? (
               <MainButton
                 onClick={handleRunPayroll}
-                isDisabled={payrollPolicyStatus || isRunningPayroll}
-                isLoading={isRunningPayroll}
+                isDisabled={payrollPolicyStatus || !canRunSelectedPayroll}
                 variant="primary"
               >
                 Run Payroll
@@ -578,7 +633,13 @@ const PayrollView = () => {
 
       {/* Schedule Payroll Drawer */}
       <SchedulePayrollDrawer />
-      <GenerateRunPayrollDrawer />
+      <GenerateRunPayrollDrawer
+        open={showRunPayrollDrawer}
+        onOpenChange={setShowPayrollDrawer}
+        payrollId={selectedPayrollId || null}
+        summary={payrollData}
+        canRunNow={canRunSelectedPayroll}
+      />
 
       <ConfirmDialog
         isOpen={isTopupPromptOpen}
@@ -596,7 +657,7 @@ const PayrollView = () => {
       />
 
       {/* Add Employee Modal */}
-      <AddEmployeeDrawer payrollId={selectedPayrollId || null} />
+      <AddEmployeeDrawer payrollId={selectedPayrollId || null} hasPayslips={hasPayslipsForSelectedPayroll} />
       <EmployeeInformationDrawer payrollId={selectedPayrollId || null} />
 
       {/* Remove employee from payroll confirmation */}

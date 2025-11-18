@@ -1,6 +1,7 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
+import { FormHeader } from "@/components/shared/form-header";
 import { FormField } from "@/components/shared/inputs/FormFields";
 import { PageSection, PageWrapper } from "@/lib/animation";
 import { RegisterFormData, registerSchema } from "@/schemas";
@@ -11,7 +12,6 @@ import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { AuthHeader } from "../../_components/auth-header";
 import { useAuthService } from "../../services/use-auth-service";
 
 export const Register = () => {
@@ -55,7 +55,7 @@ export const Register = () => {
   return (
     <PageWrapper className="mx-auto max-w-[527px]">
       <PageSection index={0}>
-        <AuthHeader
+        <FormHeader
           title="Your HR, simplified and smarter."
           subTitle="Sign up to start managing everything HR, all in one place."
         />

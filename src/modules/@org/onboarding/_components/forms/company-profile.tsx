@@ -1,12 +1,14 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
+import { FormHeader } from "@/components/shared/form-header";
 import { FormField } from "@/components/shared/inputs/FormFields";
 import { ComboBox } from "@/components/shared/select-dropdown/combo-box";
 import { cityOptions, countries, industryOptions, sizeOptions, stateOptions } from "@/lib/tools/constants";
 import { cn } from "@/lib/utils";
 import { CompanyProfileFormData, companyProfileSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Building2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -70,10 +72,13 @@ export const CompanyProfile = () => {
   }, [companyProfile, reset]);
 
   return (
-    <section className="rounded-[10px] p-7 shadow-xl">
+    <section className="border-border rounded-[10px] border p-7">
       <div className={`mb-8 space-y-2`}>
-        <h3 className="text-2xl/[120%] font-[600] tracking-[-2%]">Set up your company profile</h3>
-        <p className="text-gray-200">Complete your company information to get started</p>
+        <FormHeader
+          icon={<Building2 />}
+          title="Set up your company profile"
+          subTitle="Complete your company information to get started"
+        />
       </div>
 
       <FormProvider {...methods}>
@@ -90,7 +95,7 @@ export const CompanyProfile = () => {
             <FormField
               type="select"
               placeholder={isPending ? `Getting company's profile` : `Select industry`}
-              className="!h-14 w-full"
+              className="!h-12 w-full"
               label="Industry"
               name="industry"
               options={industryOptions}
@@ -100,7 +105,7 @@ export const CompanyProfile = () => {
             <FormField
               type="select"
               placeholder={isPending ? `Getting company's profile` : `Select size`}
-              className="!h-14 w-full"
+              className="!h-12 w-full"
               label="Company Size"
               name="size"
               options={sizeOptions}
@@ -109,7 +114,7 @@ export const CompanyProfile = () => {
 
             <FormField
               placeholder={isPending ? `Getting company's profile` : `Enter address line 1`}
-              className="h-14 w-full"
+              className="h-12 w-full"
               label="Address Line 1"
               name="addressLine1"
               required
@@ -117,7 +122,7 @@ export const CompanyProfile = () => {
 
             <FormField
               placeholder={isPending ? `Getting company's profile` : `Enter address line 2 (optional)`}
-              className="h-14 w-full"
+              className="h-12 w-full"
               label="Address Line 2"
               name="addressLine2"
             />
@@ -139,7 +144,7 @@ export const CompanyProfile = () => {
                     onValueChange={field.onChange}
                     placeholder={isPending ? `Getting company's profile` : `Select your country`}
                     disabled={isPending}
-                    className={cn(`h-14`, fieldState.error && "border-destructive")}
+                    className={cn(`h-12`, fieldState.error && "border-destructive")}
                   />
                 )}
               />
@@ -148,7 +153,7 @@ export const CompanyProfile = () => {
             <FormField
               type="select"
               placeholder={isPending ? `Getting company's profile` : `"Select state"`}
-              className="!h-14 w-full"
+              className="!h-12 w-full"
               label="State"
               name="state"
               options={stateOptions}
@@ -158,7 +163,7 @@ export const CompanyProfile = () => {
             <FormField
               type="select"
               placeholder={isPending ? `Getting company's profile` : `Select city`}
-              className="!h-14 w-full"
+              className="!h-12 w-full"
               label="City"
               name="city"
               options={cityOptions}
@@ -167,7 +172,7 @@ export const CompanyProfile = () => {
 
             <FormField
               placeholder={isPending ? `Getting company's profile` : `Enter postal code`}
-              className="!h-14 w-full"
+              className="!h-12 w-full"
               label="Postal Code"
               name="postcode"
               required
@@ -181,12 +186,12 @@ export const CompanyProfile = () => {
               isDisabled={isUpdatePending || !isValid}
               isLoading={isUpdatePending}
               className="w-full"
-              size="2xl"
+              size="xl"
             >
               Continue
             </MainButton>
             <div className="flex w-full items-center justify-center py-5">
-              <Link href={`/admin/dashboard`} className="text-primary font-semibold hover:underline">
+              <Link href={`/admin/dashboard`} className="text-primary font-medium hover:underline">
                 Skip for Later
               </Link>
             </div>

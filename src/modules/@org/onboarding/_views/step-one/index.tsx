@@ -17,19 +17,19 @@ export const StepOne = () => {
           </div>
         </div>
         <div className={`space-y-[24px]`}>
-          <h1 className={`text-4xl/[100%] font-semibold`}>Tell us a bit about your company to get started</h1>
-          <p className={`text-xl/[120%]`}>
+          <h1 className={`text-4xl font-semibold`}>Tell us a bit about your company to get started</h1>
+          <p className={`text-lg`}>
             Let&apos;s set the stage for your HR setup. Just a few quick details about your company and you&apos;ll be
             ready to manage your team with ease.
           </p>
         </div>
         <div className="flex gap-4">
-          <MainButton href="/onboarding/welcome" variant="outline">
+          <MainButton href="/onboarding/welcome" variant="primaryOutline">
             Back
           </MainButton>
         </div>
       </section>
-      <section className={`flex-1`}>
+      <section className={`flex-1 md:scale-85`}>
         <CompanyProfile />
       </section>
     </section>

@@ -115,7 +115,7 @@ export function FormField({
                   </SelectContent>
                 </Select>
               ) : type === "number" ? (
-                <input
+                <Input
                   {...field}
                   type="number"
                   placeholder={placeholder}

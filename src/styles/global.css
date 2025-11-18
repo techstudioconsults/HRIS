@@ -424,6 +424,7 @@
     font-family: var(--font-heading);
     font-weight: 700;
     line-height: var(--leading-tight);
+    color: var(--foreground);
   }
 
   h1 {
@@ -446,7 +447,7 @@
   }
 
   p {
-    color: #393e46;
+    color: var(--muted-foreground);
     /* font-weight: 500; */
   }
 

@@ -4,6 +4,7 @@ import { BlurImage } from "@/components/core/miscellaneous/blur-image";
 import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { updateQueryParamameters } from "@/hooks/use-search-parameters";
+import { PageSection, PageWrapper } from "@/lib/animation";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -28,24 +29,24 @@ export const Welcome = () => {
   };
 
   return (
-    <>
+    <PageWrapper>
       <section className={`flex flex-col-reverse items-center justify-between gap-8 lg:flex-row`}>
         <section className={`max-w-[646px]`}>
-          <div className={`space-y-[24px]`}>
-            <h1 className={`text-4xl/[100%] font-semibold`}>Welcome to TechstudioHR,</h1>
-            <p className={`text-xl/[120%]`}>
+          <PageSection index={1} className={`space-y-[24px]`}>
+            <h1 className={`text-foreground text-4xl font-semibold`}>Welcome to TechstudioHR,</h1>
+            <p className={`text-muted-foreground text-lg`}>
               Let&apos;s help you get started. You can take a quick tour to understand how Techstudio HR works or you
               can jump straight in and begin set up.
             </p>
-          </div>
-          <div className={`mt-[36px] flex flex-col gap-[28px] lg:flex-row`}>
+          </PageSection>
+          <PageSection index={1} className={`mt-[36px] flex flex-col gap-[28px] lg:flex-row`}>
             <MainButton onClick={handleOpenTeamDialog} className={`w-full lg:w-fit`} variant={`primary`}>
               Take a Quick Tour
             </MainButton>
-            <MainButton href={`/onboarding/step-1`} className={`w-full lg:w-fit`} variant={`outline`}>
+            <MainButton href={`/onboarding/step-1`} className={`w-full lg:w-fit`} variant={`primaryOutline`}>
               Skip Tour & Continue
             </MainButton>
-          </div>
+          </PageSection>
         </section>
 
         <BlurImage
@@ -53,10 +54,11 @@ export const Welcome = () => {
           height={561}
           src={"/images/onboarding/deal.svg"}
           alt={"onboarding"}
-          className={`max-h-[561px] w-[500px] rounded-2xl bg-gray-50 object-cover shadow-xl`}
+          className={`max-h-[561px] w-[500px] rounded-2xl bg-gray-50 object-cover shadow`}
         />
       </section>
       <ReusableDialog
+        trigger={null}
         open={dialogOpen}
         className={`!max-w-3xl`}
         onOpenChange={(open) => {
@@ -76,6 +78,6 @@ export const Welcome = () => {
           Your browser does not support the video tag.
         </video>
       </ReusableDialog>
-    </>
+    </PageWrapper>
   );
 };

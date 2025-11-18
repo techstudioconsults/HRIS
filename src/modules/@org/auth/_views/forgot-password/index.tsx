@@ -1,6 +1,7 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
+import { FormHeader } from "@/components/shared/form-header";
 import { FormField } from "@/components/shared/inputs/FormFields";
 import { PageSection, PageWrapper } from "@/lib/animation";
 import { ForgotPasswordData, forgotPasswordSchema } from "@/schemas";
@@ -11,7 +12,6 @@ import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { AuthHeader } from "../../_components/auth-header";
 import { useAuthService } from "../../services/use-auth-service";
 
 export const ForgotPassword = () => {
@@ -53,13 +53,13 @@ export const ForgotPassword = () => {
             isIconOnly
             icon={<ArrowLeft />}
             size={`icon`}
-            className={`hover:bg-primary size-10 bg-gray-50 hover:text-white mb-2`}
+            className={`hover:bg-primary mb-2 size-10 bg-gray-50 hover:text-white`}
             variant={`default`}
             onClick={() => {
               router.back();
             }}
           />
-          <AuthHeader title="Forgot Password" subTitle="Enter your email address to reset your password" />
+          <FormHeader title="Forgot Password" subTitle="Enter your email address to reset your password" />
         </div>
 
         <FormProvider {...methods}>

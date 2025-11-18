@@ -2,6 +2,7 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
+import { FormHeader } from "@/components/shared/form-header";
 import { FormField } from "@/components/shared/inputs/FormFields";
 import { PageSection, PageWrapper } from "@/lib/animation";
 import { LoginFormData, loginSchema } from "@/schemas";
@@ -11,8 +12,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-import { AuthHeader } from "../../_components/auth-header";
 
 export const Login = () => {
   const router = useRouter();
@@ -59,7 +58,7 @@ export const Login = () => {
   return (
     <PageWrapper className="mx-auto max-w-[527px]">
       <PageSection index={0}>
-        <AuthHeader title="Welcome Back, HR" subTitle="Login to access your HR dashboard, and simplify operations." />
+        <FormHeader title="Welcome Back, HR" subTitle="Login to access your HR dashboard, and simplify operations." />
       </PageSection>
 
       <FormProvider {...methods}>

@@ -142,7 +142,7 @@ export function FormField({
                   <button
                     type="button"
                     onClick={togglePasswordVisibility}
-                    className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 hover:cursor-pointer"
+                    className="text-primary hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 hover:cursor-pointer"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>

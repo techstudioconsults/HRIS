@@ -40,10 +40,10 @@ module.exports = {
     "unused-imports",
     "vitest",
     "testing-library",
-    "align-assignments",
+    // "align-assignments",
   ],
   rules: {
-    "align-assignments/align-assignments": ["warn", { requiresOnly: false }], // Warns when assignments are not aligned
+    // "align-assignments/align-assignments": ["warn", { requiresOnly: false }], // Warns when assignments are not aligned
     "no-console": "error",
     "react/prop-types": "off",
     "unused-imports/no-unused-imports": "error",

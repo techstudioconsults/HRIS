@@ -16,12 +16,13 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
         {/* Content Section (Left on desktop, top on mobile) */}
         <section
           style={
-            shouldHideCarousel
-              ? {
-                  background: "url(images/auth/bg-img.svg) no-repeat",
+            // shouldHideCarousel
+              // ? 
+              {
+                  background: "url(/images/auth/bg-img.svg) no-repeat",
                   backgroundSize: "cover",
                 }
-              : {}
+              // : {}
           }
           className="hide-scrollbar max-h-[100dvh] overflow-y-auto px-4 py-12"
         >

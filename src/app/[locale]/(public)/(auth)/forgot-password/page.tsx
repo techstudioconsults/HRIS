@@ -11,7 +11,7 @@ const Page = () => {
     return <ForgotPassword />;
   };
 
-  return <section>{getCurrentView()}</section>;
+  return <main className="flex h-[calc(35rem)] items-center justify-center">{getCurrentView()}</main>;
 };
 
 export default Page;

@@ -48,6 +48,12 @@ export const EditEmployeeForm = () => {
     workMode: "remote",
     teamId: "",
     roleId: "",
+    baseSalary: "",
+    bankName: "",
+    accountName: "",
+    accountNumber: "",
+    // bankCode      : "",
+    permissions: [],
   };
 
   const formValues: EmployeeFormData | undefined = useMemo(() => {
@@ -56,7 +62,10 @@ export const EditEmployeeForm = () => {
     // Ensure all required enum fields have valid values
     const gender = employee.gender;
     const employmentType = employee.employmentDetails?.employmentType || "full time";
-    const workMode = employee.employmentDetails?.workMode || "remote";
+    // Map "on site" to "onsite" to match the schema
+    const rawWorkMode = employee.employmentDetails?.workMode || "remote";
+    const workMode: "remote" | "onsite" | "hybrid" =
+      rawWorkMode === "on site" ? "onsite" : (rawWorkMode as "remote" | "onsite" | "hybrid");
 
     const teamId =
       employee.employmentDetails?.team?.id !== undefined && employee.employmentDetails?.team?.id !== null
@@ -80,6 +89,10 @@ export const EditEmployeeForm = () => {
       return cleaned || "";
     };
 
+    // Use type assertion to access potentially non-typed properties
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const employeeData = employee as any;
+
     return {
       firstName: employee.firstName ?? "",
       lastName: employee.lastName ?? "",
@@ -89,9 +102,19 @@ export const EditEmployeeForm = () => {
       gender: gender,
       startDate: employee.employmentDetails?.startDate?.split("T")[0] || "",
       employmentType: employmentType,
-      workMode: workMode,
+      workMode: workMode as "remote" | "onsite" | "hybrid",
       teamId,
       roleId,
+      baseSalary: employeeData.salaryDetails?.baseSalary
+        ? String(employeeData.salaryDetails.baseSalary)
+        : employeeData.baseSalary
+          ? String(employeeData.baseSalary)
+          : "",
+      bankName: employeeData.salaryDetails?.bankName ?? employeeData.bankName ?? "",
+      accountName: employeeData.salaryDetails?.accountName ?? employeeData.accountName ?? "",
+      accountNumber: employeeData.salaryDetails?.accountNumber ?? employeeData.accountNumber ?? "",
+      // bankCode: employeeData.salaryDetails?.bankCode ?? employeeData.bankCode ?? "",
+      permissions: employeeData.permissions ?? [],
     };
   }, [employee]);
 
@@ -190,6 +213,20 @@ export const EditEmployeeForm = () => {
       formDataToSend.append("startDate", new Date(formData.startDate).toISOString());
       formDataToSend.append("employmentType", formData.employmentType);
       formDataToSend.append("workMode", formData.workMode);
+
+      // Salary details
+      formDataToSend.append("baseSalary", formData.baseSalary);
+      formDataToSend.append("bankName", formData.bankName);
+      formDataToSend.append("accountName", formData.accountName);
+      formDataToSend.append("accountNumber", formData.accountNumber);
+      // formDataToSend.append("bankCode", formData.bankCode);
+
+      // Optional permissions
+      if (formData.permissions && formData.permissions.length > 0) {
+        for (const [index, permission] of formData.permissions.entries()) {
+          formDataToSend.append(`permissions[${index}]`, permission);
+        }
+      }
 
       const response = await updateEmployeeMutation.mutateAsync({ id: employeeId, data: formDataToSend });
       if (response) {
@@ -353,6 +390,58 @@ export const EditEmployeeForm = () => {
                   disabled={!selectedTeamId || isHydrating || isSubmitting}
                   required
                 />
+              </div>
+            </section>
+
+            {/* Salary Details Section */}
+            <section>
+              <h2 className="mb-4 text-lg font-semibold">Salary Details</h2>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
+                <FormField
+                  name="baseSalary"
+                  label="Base Salary"
+                  type="text"
+                  placeholder={isHydrating ? `Loading base salary...` : `800000`}
+                  className="border-border !h-14 w-full"
+                  disabled={isHydrating || isSubmitting}
+                  required
+                />
+                <FormField
+                  name="bankName"
+                  label="Bank Name"
+                  type="text"
+                  placeholder={isHydrating ? `Loading bank name...` : `Wema Bank`}
+                  className="border-border !h-14 w-full"
+                  disabled={isHydrating || isSubmitting}
+                  required
+                />
+                <FormField
+                  name="accountName"
+                  label="Account Name"
+                  type="text"
+                  placeholder={isHydrating ? `Loading account name...` : `John Doe`}
+                  className="border-border !h-14 w-full"
+                  disabled={isHydrating || isSubmitting}
+                  required
+                />
+                <FormField
+                  name="accountNumber"
+                  label="Account Number"
+                  type="text"
+                  placeholder={isHydrating ? `Loading account number...` : `0323904127`}
+                  className="border-border !h-14 w-full"
+                  disabled={isHydrating || isSubmitting}
+                  required
+                />
+                {/* <FormField
+                  name="bankCode"
+                  label="Bank Code"
+                  type="text"
+                  placeholder={isHydrating ? `Loading bank code...` : `035`}
+                  className="border-border !h-14 w-full"
+                  disabled={isHydrating || isSubmitting}
+                  required
+                /> */}
               </div>
             </section>
 

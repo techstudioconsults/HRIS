@@ -114,6 +114,21 @@ export const AddEmployeeForm = () => {
       // Employment info
       formDataToSend.append("startDate", new Date(formData.startDate).toISOString());
       formDataToSend.append("employmentType", formData.employmentType || "");
+      formDataToSend.append("workMode", formData.workMode || "");
+
+      // Salary details
+      formDataToSend.append("baseSalary", formData.baseSalary);
+      formDataToSend.append("bankName", formData.bankName);
+      formDataToSend.append("accountName", formData.accountName);
+      formDataToSend.append("accountNumber", formData.accountNumber);
+      // formDataToSend.append("bankCode", formData.bankCode);
+
+      // Optional permissions
+      if (formData.permissions && formData.permissions.length > 0) {
+        for (const [index, permission] of formData.permissions.entries()) {
+          formDataToSend.append(`permissions[${index}]`, permission);
+        }
+      }
 
       // Call create employee
       const response = await createEmployeeMutation.mutateAsync(formDataToSend);
@@ -291,51 +306,51 @@ export const AddEmployeeForm = () => {
             </section>
 
             {/* Salary Details Section */}
-            {/* <section>
+            <section>
               <h2 className="mb-4 text-lg font-semibold">Salary Details</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
                 <FormField
-                  name="monthlySalary"
-                  label="Monthly Gross Salary"
-                  placeholder="₦750,000.00"
-                  className="!h-14 w-full border-border"
-                />
-                <FormField name="pension" label="Pension" placeholder="5% of salary" className="!h-14 w-full border-border" />
-                <FormField
-                  name="healthInsurance"
-                  label="Health Insurance"
-                  placeholder="3% of salary"
-                  className="!h-14 w-full border-border"
-                />
-                <FormField
-                  name="otherDeductions"
-                  label="Other Deductions"
-                  placeholder="% of salary"
-                  className="!h-14 w-full border-border"
+                  name="baseSalary"
+                  label="Base Salary"
+                  type="text"
+                  placeholder="800000"
+                  className="border-border !h-14 w-full"
+                  required
                 />
                 <FormField
                   name="bankName"
                   label="Bank Name"
                   type="text"
                   placeholder="Wema Bank"
-                  className="!h-14 w-full border-border"
+                  className="border-border !h-14 w-full"
+                  required
                 />
                 <FormField
                   name="accountName"
                   label="Account Name"
                   type="text"
                   placeholder="John Doe"
-                  className="!h-14 w-full border-border"
+                  className="border-border !h-14 w-full"
+                  required
                 />
                 <FormField
                   name="accountNumber"
                   label="Account Number"
                   type="text"
-                  placeholder="0067514267"
-                  className="!h-14 w-full border-border"
+                  placeholder="0323904127"
+                  className="border-border !h-14 w-full"
+                  required
+                />
+                <FormField
+                  name="bankCode"
+                  label="Bank Code"
+                  type="text"
+                  placeholder="035"
+                  className="border-border !h-14 w-full"
+                  required
                 />
               </div>
-            </section> */}
+            </section>
 
             {/* Documents Section */}
             <section>

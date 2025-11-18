@@ -12,10 +12,10 @@ import { toast } from "sonner";
 import { useAuthService } from "../../services/use-auth-service";
 
 export const OTPLogin = () => {
-  const router = useRouter();
-  const { useRequestOTP } = useAuthService();
+  const router                                 = useRouter();
+  const { useRequestOTP }                      = useAuthService();
   const { mutateAsync: requestOTP, isPending } = useRequestOTP();
-  const methods = useForm<LoginOTPFFormData>({
+  const methods                                = useForm<LoginOTPFFormData>({
     resolver: zodResolver(loginOTPFormSchema),
     defaultValues: {
       email: "",

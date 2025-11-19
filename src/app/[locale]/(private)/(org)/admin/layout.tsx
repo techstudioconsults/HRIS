@@ -31,7 +31,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <ActiveTargetProvider>
           <TopBar
             adminName={session?.user.employee.fullName || ""}
-            notificationsCount={12}
+            adminRole={session?.user.employee.role?.name || ""}
+            adminEmail={session?.user.employee.email || ""}
+            notifications={[]}
             className="sticky top-0 z-[999] px-6 shadow"
           />
           <Wrapper className="max-w-[1440px] py-10">{children}</Wrapper>

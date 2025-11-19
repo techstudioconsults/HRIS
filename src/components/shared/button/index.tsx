@@ -78,7 +78,7 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
     },
     reference,
   ) => {
-    const [isPressed, setIsPressed] = useState(false);
+    const [, setIsPressed] = useState(false);
 
     const modifiedIcon = icon ? (
       cloneElement(
@@ -105,13 +105,22 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
 
     const buttonClasses = cn(
       "transition-all duration-300 ease-in-out rounded-md",
-      isDisabled
-        ? "opacity-50 cursor-not-allowed"
-        : isPressed
-          ? "shadow-none hover:cursor-pointer"
-          : "hover:shadow-xl hover:cursor-pointer",
+      // isDisabled
+      //   ? "opacity-50 cursor-not-allowed"
+      //   : isPressed
+      //     ? "shadow-none hover:cursor-pointer"
+      //     : "hover:shadow-xl hover:cursor-pointer",
       className,
     );
+    //  const buttonClasses = cn(
+    //   "transition-all duration-300 ease-in-out rounded-md",
+    //   isDisabled
+    //     ? "opacity-50 cursor-not-allowed"
+    //     : isPressed
+    //       ? "shadow-none hover:cursor-pointer"
+    //       : "hover:shadow-xl hover:cursor-pointer",
+    //   className,
+    // );
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
       if (!isDisabled) {

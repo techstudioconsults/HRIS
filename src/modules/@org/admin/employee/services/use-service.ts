@@ -33,25 +33,25 @@ export const useEmployeeService = () => {
   // Mutations with proper cache invalidation
   const useCreateEmployee = () =>
     useServiceMutation((service, data: FormData) => service.createEmployee(data), {
-      onSuccess: () => {
-        // Invalidate all employee list queries
-        return [queryKeys.employee.list()];
+      invalidateQueries: () => {
+        // Invalidate all employee list queries (with any filters)
+        return [["employee", "list"]];
       },
     });
 
   const useUpdateEmployee = () =>
     useServiceMutation((service, { id, data }: { id: string; data: FormData }) => service.updateEmployee(id, data), {
-      onSuccess: (_, { id }) => {
-        // Invalidate employee list and specific employee details
-        return [queryKeys.employee.list(), queryKeys.employee.details(id)];
+      invalidateQueries: (_, { id }) => {
+        // Invalidate all employee list queries (with any filters) and specific employee details
+        return [["employee", "list"], queryKeys.employee.details(id)];
       },
     });
 
   const useDeleteEmployee = () =>
     useServiceMutation((service, id: string) => service.deleteEmployee(id), {
-      onSuccess: () => {
-        // Invalidate all employee list queries
-        return [queryKeys.employee.list()];
+      invalidateQueries: () => {
+        // Invalidate all employee list queries (with any filters)
+        return [["employee", "list"]];
       },
     });
 

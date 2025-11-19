@@ -22,6 +22,7 @@ export interface ComboBoxProperties {
   searchPlaceholder?: string;
   emptyMessage?: string;
   disabled?: boolean;
+  readOnly?: boolean;
   className?: string;
   width?: string;
   triggerClassName?: string;
@@ -37,6 +38,7 @@ export function ComboBox({
   searchPlaceholder = "Search...",
   emptyMessage = "No options found.",
   disabled = false,
+  readOnly = false,
   className,
   width = "w-full",
   triggerClassName,
@@ -63,7 +65,7 @@ export function ComboBox({
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={readOnly ? undefined : setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -74,6 +76,7 @@ export function ComboBox({
             `bg-background ring-offset-background focus-visible:ring-ring border-border hover:bg-background flex h-12 w-full rounded-md border px-3 py-2 text-sm shadow-none file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-200 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50`,
             width,
             "justify-between",
+            readOnly && "pointer-events-none cursor-default",
             triggerClassName,
             className,
           )}
@@ -100,7 +103,7 @@ export function ComboBox({
                   value={option.label} // Use label for search instead of value
                   disabled={option.disabled}
                   onSelect={() => handleSelect(option.value)}
-                  className="cursor-pointer"
+                  className="data-[selected=true]:bg-primary-50 cursor-pointer"
                 >
                   <CheckIcon
                     className={cn("mr-2 h-4 w-4", currentValue === option.value ? "opacity-100" : "opacity-0")}

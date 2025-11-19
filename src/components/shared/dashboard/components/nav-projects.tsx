@@ -7,6 +7,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -23,14 +24,14 @@ export function NavProjects({
     isActive?: boolean;
   }[];
 }) {
-  // const { isMobile } = useSidebar();
+  const { state } = useSidebar();
 
   return (
     <SidebarGroup className="">
       <SidebarGroupLabel>{title}</SidebarGroupLabel>
       <SidebarMenu className="gap-5">
         {projects.map((item) => (
-          <SidebarMenuItem key={item.name}>
+          <SidebarMenuItem className={cn(state === "collapsed" && "flex items-center justify-center")} key={item.name}>
             <Link href={item.url}>
               <SidebarMenuButton
                 className={cn(
@@ -40,7 +41,7 @@ export function NavProjects({
                 )}
               >
                 <div>{item.icon && <item.icon className={cn("-ml-1 !size-5")} />}</div>
-                <span>{item.name}</span>
+                <span className="group-data-[collapsible=icon]:hidden">{item.name}</span>
               </SidebarMenuButton>
             </Link>
           </SidebarMenuItem>

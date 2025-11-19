@@ -44,7 +44,7 @@ export function NavMain({
 
           return (
             <Collapsible key={item.name} asChild defaultOpen={shouldBeOpen} className="group/collapsible">
-              <SidebarMenuItem className="">
+              <SidebarMenuItem className="flex items-center justify-center">
                 <CollapsibleTrigger asChild>
                   <Link href={item.url}>
                     <SidebarMenuButton

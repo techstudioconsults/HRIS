@@ -156,8 +156,8 @@ export const TeamConfig = ({ teams, onTeamsChange }: TeamConfigProperties) => {
     <>
       <Accordion type="multiple" className="w-full space-y-4">
         {teams.map((team) => (
-          <AccordionItem key={team.id} value={team.id!} className="rounded-lg border">
-            <AccordionTrigger className="flex-row-reverse p-4 text-left text-sm md:text-[16px]">
+          <AccordionItem key={team.id} value={team.id!}>
+            <AccordionTrigger className="flex-row-reverse border p-4 text-left text-sm md:text-[16px]">
               <div className="flex w-full items-center justify-between">
                 <p>{team.name}</p>
                 <div className="flex items-center gap-1 space-x-2 text-sm">
@@ -178,7 +178,7 @@ export const TeamConfig = ({ teams, onTeamsChange }: TeamConfigProperties) => {
                 </div>
               </div>
             </AccordionTrigger>
-            <AccordionContent className="space-y-4 border-t p-4 font-medium">
+            <AccordionContent className="mt-0.5 space-y-4 rounded-md border border-t p-4 font-medium">
               {team?.roles?.length > 0 ? (
                 team.roles.map((role) => (
                   <div key={role.id} className="flex w-full items-center justify-between">

@@ -33,7 +33,7 @@ export function TeamSwitcher({
 
   return (
     <SidebarMenu>
-      <SidebarMenuItem>
+      <SidebarMenuItem className="flex items-center justify-center">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton

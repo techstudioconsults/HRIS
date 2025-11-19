@@ -17,13 +17,13 @@ export const useEmployeeSearchParameters = () => {
 
   return {
     // Current values
-    page: page ?? 1,
-    search: (search as string) ?? "",
-    teamId: (teamId as string) ?? "",
-    roleId: (roleId as string) ?? "",
-    status: (status as string) ?? "all",
-    sortBy: (sortBy as string) ?? "",
-    limit: (limit as number) ?? 10,
+    page,
+    search,
+    teamId,
+    roleId,
+    status,
+    sortBy,
+    limit,
 
     // Setters
     setPage,
@@ -85,32 +85,5 @@ export const useEmployeeSearchParameters = () => {
 
       return filters;
     }, [search, teamId, roleId, status, sortBy, limit, page]),
-
-    // Get URL parameters (excludes page=1 from URL but includes in API)
-    getUrlParameters: useCallback(() => {
-      const parameters: Record<string, string> = {};
-
-      if (search && search.trim()) {
-        parameters.search = search.trim();
-      }
-      if (teamId) {
-        parameters.teamId = teamId;
-      }
-      if (roleId) {
-        parameters.roleId = roleId;
-      }
-      if (status && status !== "all") {
-        parameters.status = status;
-      }
-      if (sortBy) {
-        parameters.sortBy = sortBy;
-      }
-      // Only include page in URL if it's not 1
-      if (page && page !== 1) {
-        parameters.page = page.toString();
-      }
-
-      return parameters;
-    }, [search, teamId, roleId, status, sortBy, page]),
   };
 };

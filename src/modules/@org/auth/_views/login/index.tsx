@@ -2,7 +2,9 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
+import { FormHeader } from "@/components/shared/form-header";
 import { FormField } from "@/components/shared/inputs/FormFields";
+import { PageSection, PageWrapper } from "@/lib/animation";
 import { LoginFormData, loginSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
@@ -54,72 +56,77 @@ export const Login = () => {
   };
 
   return (
-    <section className="mx-auto max-w-[527px]">
-      <div className={`mb-8 space-y-2`}>
-        <h3 className="text-[32px]/[120%] font-[600] tracking-[-2%]">Welcome Back, HR</h3>
-        <p className={`text-lg text-gray-200`}>Login to access your HR dashboard, and simplify operations.</p>
-      </div>
+    <PageWrapper className="mx-auto max-w-[527px]">
+      <PageSection index={0}>
+        <FormHeader title="Welcome Back, HR" subTitle="Login to access your HR dashboard, and simplify operations." />
+      </PageSection>
 
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(handleSubmitForm)} className="">
-          <section className={`space-y-4`}>
-            <FormField
-              placeholder={`Enter email address`}
-              className={`h-14 w-full`}
-              label={`Email Address`}
-              name={"email"}
-              required
-            />
-            <div className="space-y-2">
+        <PageSection index={1}>
+          <form onSubmit={handleSubmit(handleSubmitForm)} className="">
+            <section className={`space-y-4`}>
               <FormField
-                type={`password`}
-                placeholder={`Enter password`}
+                placeholder={`Enter email address`}
                 className={`h-14 w-full`}
-                label={`Password`}
-                name={"password"}
+                label={`Email Address`}
+                name={"email"}
                 required
               />
-              <div className="flex justify-end">
-                <Link href="/forgot-password" className="text-primary text-sm font-medium hover:underline">
-                  Forgot Password?
-                </Link>
+              <div className="space-y-2">
+                <FormField
+                  type={`password`}
+                  placeholder={`Enter password`}
+                  className={`h-14 w-full`}
+                  label={`Password`}
+                  name={"password"}
+                  required
+                />
+                <div className="flex justify-end">
+                  <Link href="/forgot-password" className="text-primary text-sm font-medium hover:underline">
+                    Forgot Password?
+                  </Link>
+                </div>
               </div>
+            </section>
+            <div className="pt-8">
+              <MainButton
+                type="submit"
+                variant="primary"
+                isDisabled={isSubmitting || !isValid}
+                isLoading={isSubmitting}
+                className="w-full"
+                size="2xl"
+              >
+                Log In
+              </MainButton>
             </div>
-          </section>
-          <div className="pt-8">
-            <MainButton
-              type="submit"
-              variant="primary"
-              isDisabled={isSubmitting || !isValid}
-              isLoading={isSubmitting}
-              className="w-full"
-              size="2xl"
-            >
-              Log In
-            </MainButton>
-          </div>
-        </form>
+          </form>
+        </PageSection>
 
-        <div className="relative my-6">
+        <PageSection index={2} className="relative my-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t"></div>
           </div>
           <div className="relative flex justify-center text-sm">
             <span className="text-muted-foreground bg-background px-2">OR</span>
           </div>
-        </div>
+        </PageSection>
 
-        <MainButton href={`/login/otp`} variant="outline" className="w-full" size={`2xl`}>
-          Log in with OTP instead
-        </MainButton>
+        <PageSection index={3}>
+          <MainButton href={`/login/otp`} variant="primaryOutline" className="w-full" size={`2xl`}>
+            Log in with OTP instead
+          </MainButton>
+        </PageSection>
 
-        <p className="text-grey-500 mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-primary hover:underline">
-            Sign Up
-          </Link>
-        </p>
+        <PageSection index={4}>
+          <p className="text-grey-500 mt-4 text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link href="/register" className="text-primary hover:underline">
+              Sign Up
+            </Link>
+          </p>
+        </PageSection>
       </FormProvider>
-    </section>
+    </PageWrapper>
   );
 };

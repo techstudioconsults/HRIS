@@ -100,7 +100,7 @@ export function ComboBox({
                   value={option.label} // Use label for search instead of value
                   disabled={option.disabled}
                   onSelect={() => handleSelect(option.value)}
-                  className="cursor-pointer"
+                  className="data-[selected=true]:bg-primary-50 cursor-pointer"
                 >
                   <CheckIcon
                     className={cn("mr-2 h-4 w-4", currentValue === option.value ? "opacity-100" : "opacity-0")}

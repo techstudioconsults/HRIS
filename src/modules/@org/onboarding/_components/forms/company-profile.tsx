@@ -4,7 +4,8 @@ import MainButton from "@/components/shared/button";
 import { FormHeader } from "@/components/shared/form-header";
 import { FormField } from "@/components/shared/inputs/FormFields";
 import { ComboBox } from "@/components/shared/select-dropdown/combo-box";
-import { cityOptions, countries, industryOptions, sizeOptions, stateOptions } from "@/lib/tools/constants";
+import { useLocationData } from "@/hooks/use-location";
+import { industryOptions, sizeOptions } from "@/lib/tools/constants";
 import { cn } from "@/lib/utils";
 import { CompanyProfileFormData, companyProfileSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +23,19 @@ export const CompanyProfile = () => {
   const { data: companyProfile, isPending } = useGetCompanyProfile();
   const { mutateAsync: updateCompanyProfile, isPending: isUpdatePending } = useUpdateCompanyProfile();
   const router = useRouter();
+
+  const {
+    countries,
+    states,
+    cities,
+    selectedCountry,
+    selectedState,
+    countriesLoading,
+    statesLoading,
+    citiesLoading,
+    handleCountryChange,
+    handleStateChange,
+  } = useLocationData();
 
   const methods = useForm<CompanyProfileFormData>({
     resolver: zodResolver(companyProfileSchema),
@@ -42,7 +56,23 @@ export const CompanyProfile = () => {
     handleSubmit,
     formState: { isValid },
     reset,
+    watch,
   } = methods;
+
+  const countryValue = watch("country");
+  const stateValue = watch("state");
+
+  useEffect(() => {
+    if (countryValue !== selectedCountry) {
+      handleCountryChange(countryValue || null);
+    }
+  }, [countryValue, selectedCountry, handleCountryChange]);
+
+  useEffect(() => {
+    if (stateValue !== selectedState) {
+      handleStateChange(stateValue || null);
+    }
+  }, [stateValue, selectedState, handleStateChange]);
 
   const handleSubmitForm = async (data: CompanyProfileFormData) => {
     await updateCompanyProfile(data, {
@@ -142,33 +172,81 @@ export const CompanyProfile = () => {
                     options={countries}
                     value={field.value}
                     onValueChange={field.onChange}
-                    placeholder={isPending ? `Getting company's profile` : `Select your country`}
-                    disabled={isPending}
+                    placeholder={
+                      countriesLoading
+                        ? "Loading countries..."
+                        : isPending
+                          ? `Getting company's profile`
+                          : `Select your country`
+                    }
+                    disabled={isPending || countriesLoading}
                     className={cn(`h-12`, fieldState.error && "border-destructive")}
                   />
                 )}
               />
             </div>
 
-            <FormField
-              type="select"
-              placeholder={isPending ? `Getting company's profile` : `"Select state"`}
-              className="!h-12 w-full"
-              label="State"
-              name="state"
-              options={stateOptions}
-              required
-            />
+            <div className="space-y-2">
+              <div>
+                <label className="text-[16px] font-medium">
+                  State
+                  <span className="text-destructive -ml-1">*</span>
+                </label>
+              </div>
+              <Controller
+                name="state"
+                control={methods.control}
+                render={({ field, fieldState }) => (
+                  <ComboBox
+                    options={states}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    placeholder={
+                      statesLoading
+                        ? "Loading states..."
+                        : countryValue
+                          ? isPending
+                            ? `Getting company's profile`
+                            : `Select state`
+                          : "Select a country first"
+                    }
+                    disabled={isPending || statesLoading || !countryValue}
+                    className={cn(`h-12`, fieldState.error && "border-destructive")}
+                  />
+                )}
+              />
+            </div>
 
-            <FormField
-              type="select"
-              placeholder={isPending ? `Getting company's profile` : `Select city`}
-              className="!h-12 w-full"
-              label="City"
-              name="city"
-              options={cityOptions}
-              required
-            />
+            <div className="space-y-2">
+              <div>
+                <label className="text-[16px] font-medium">
+                  City
+                  <span className="text-destructive -ml-1">*</span>
+                </label>
+              </div>
+              <Controller
+                name="city"
+                control={methods.control}
+                render={({ field, fieldState }) => (
+                  <ComboBox
+                    options={cities}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    placeholder={
+                      citiesLoading
+                        ? "Loading cities..."
+                        : countryValue
+                          ? isPending
+                            ? `Getting company's profile`
+                            : `Select city`
+                          : "Select a country first"
+                    }
+                    disabled={isPending || citiesLoading || !countryValue}
+                    className={cn(`h-12`, fieldState.error && "border-destructive")}
+                  />
+                )}
+              />
+            </div>
 
             <FormField
               placeholder={isPending ? `Getting company's profile` : `Enter postal code`}

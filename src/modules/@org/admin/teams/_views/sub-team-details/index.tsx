@@ -4,6 +4,7 @@ import Loading from "@/app/Loading";
 import MainButton from "@/components/shared/button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
+import { PageSection, PageWrapper } from "@/lib/animation";
 import { formatDate } from "@/lib/tools/format";
 import { AdvancedDataTable, type IColumnDefinition } from "@/modules/@org/admin/_components/table/table";
 // Removed inline dropdown; using table rowActions instead
@@ -127,47 +128,51 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
   );
 
   return (
-    <section className="space-y-8">
-      <div className="flex items-center justify-between pb-4">
-        <div className="flex flex-col items-start gap-2 text-center md:text-left">
-          <h1 className="text-2xl font-bold">Sub-Team Details</h1>
-          <div className="flex items-center gap-1 text-sm">
-            <Link href="/admin/teams" className="text-primary">
-              All Teams
-            </Link>
+    <PageWrapper className="space-y-8">
+      <PageSection index={0}>
+        <div className="flex items-center justify-between pb-4">
+          <div className="flex flex-col items-start gap-2 text-center md:text-left">
+            <h1 className="text-2xl font-bold">Sub-Team Details</h1>
+            <div className="flex items-center gap-1 text-sm">
+              <Link href="/admin/teams" className="text-primary">
+                All Teams
+              </Link>
+            </div>
+          </div>
+          <div className="flex items-center gap-5">
+            <MainButton variant="primary" size="lg" isLeftIconVisible icon={<Plus />}>
+              Add Member
+            </MainButton>
           </div>
         </div>
-        <div className="flex items-center gap-5">
-          <MainButton variant="primary" size="lg" isLeftIconVisible icon={<Plus />}>
-            Add Member
-          </MainButton>
-        </div>
-      </div>
+      </PageSection>
 
-      <CardGroup>
-        <DashboardCard
-          title="Team Name"
-          value={<p className="text-base">{teamData?.name}</p>}
-          className="flex flex-col items-center justify-center gap-4 text-center"
-        />
-        <DashboardCard
-          title="Team Manager"
-          value={<p className="text-base">{teamData?.manager || `Ifijeh Kingsley`}</p>}
-          className="flex flex-col items-center justify-center gap-4 text-center"
-        />
-        <DashboardCard
-          title="Team Members"
-          value={<p className="text-base">{members.length}</p>}
-          className="flex flex-col items-center justify-center gap-4 text-center"
-        />
-        <DashboardCard
-          title="Created On"
-          value={<p className="text-base">{formatDate(teamData?.createdAt)}</p>}
-          className="flex flex-col items-center justify-center gap-4 text-center"
-        />
-      </CardGroup>
+      <PageSection index={1}>
+        <CardGroup>
+          <DashboardCard
+            title="Team Name"
+            value={<p className="text-base">{teamData?.name}</p>}
+            className="flex flex-col items-center justify-center gap-4 text-center"
+          />
+          <DashboardCard
+            title="Team Manager"
+            value={<p className="text-base">{teamData?.manager || `Ifijeh Kingsley`}</p>}
+            className="flex flex-col items-center justify-center gap-4 text-center"
+          />
+          <DashboardCard
+            title="Team Members"
+            value={<p className="text-base">{members.length}</p>}
+            className="flex flex-col items-center justify-center gap-4 text-center"
+          />
+          <DashboardCard
+            title="Created On"
+            value={<p className="text-base">{formatDate(teamData?.createdAt)}</p>}
+            className="flex flex-col items-center justify-center gap-4 text-center"
+          />
+        </CardGroup>
+      </PageSection>
 
-      <section className="space-y-4">
+      <PageSection index={2} className="space-y-4">
         {isLoading ? (
           <Loading text={`Loading team members...`} className={`w-fill h-fit p-20`} />
         ) : members.length > 0 ? (
@@ -201,8 +206,8 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
             }}
           />
         )}
-      </section>
-    </section>
+      </PageSection>
+    </PageWrapper>
   );
 };
 

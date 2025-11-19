@@ -1,7 +1,9 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
+import { FormHeader } from "@/components/shared/form-header";
 import { FormField } from "@/components/shared/inputs/FormFields";
+import { PageSection, PageWrapper } from "@/lib/animation";
 import { LoginOTPFFormData, loginOTPFormSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -46,61 +48,64 @@ export const OTPLogin = () => {
   };
 
   return (
-    <section className="mx-auto max-w-[527px]">
-      <div className={`mb-8 space-y-2`}>
-        <h3 className="text-[32px]/[120%] font-[600] tracking-[-2%] text-black">Welcome Back, HR</h3>
-        <p className={`text-gray text-lg`}>
-          Sign in with your work email to continue. We&apos;ll send a one-time passcode to your email to verify
-          it&apos;s you.
-        </p>
-      </div>
+    <PageWrapper className="mx-auto max-w-[527px]">
+      <PageSection index={0}>
+        <FormHeader
+          title="Welcome Back, HR"
+          subTitle=" Sign in with your work email to continue. We'll send a one-time passcode to your email to verify
+          it's you."
+        />
+      </PageSection>
 
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(handleSubmitForm)} className="">
-          <section className={`space-y-4`}>
-            <FormField
-              type={`email`}
-              placeholder={`Enter email address`}
-              className={`h-14 w-full`}
-              label={`Email Address`}
-              name={"email"}
-              required
-            />
-          </section>
-          <div className="pt-8">
-            <MainButton
-              type="submit"
-              variant="primary"
-              isDisabled={isPending || !isValid}
-              isLoading={isPending}
-              className="w-full"
-              size="2xl"
-            >
-              Send OTP
-            </MainButton>
-          </div>
-        </form>
+        <PageSection index={1}>
+          <form onSubmit={handleSubmit(handleSubmitForm)} className="">
+            <section className={`space-y-4`}>
+              <FormField
+                type={`email`}
+                placeholder={`Enter email address`}
+                className={`h-14 w-full`}
+                label={`Email Address`}
+                name={"email"}
+                required
+              />
+            </section>
+            <div className="pt-8">
+              <MainButton
+                type="submit"
+                variant="primary"
+                isDisabled={isPending || !isValid}
+                isLoading={isPending}
+                className="w-full"
+                size="2xl"
+              >
+                Send OTP
+              </MainButton>
+            </div>
+          </form>
+        </PageSection>
 
-        <div className="relative my-6">
+        <PageSection index={2} className="relative my-6">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="text-muted-foreground bg-white px-2">OR</span>
+            <span className="text-muted-foreground bg-background px-2">OR</span>
           </div>
-        </div>
+        </PageSection>
 
-        <MainButton href={`/login`} type="button" variant="outline" className="w-full" size={`2xl`}>
-          Log in with Password instead
-        </MainButton>
-
-        <p className="text-grey-500 mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-primary hover:underline">
-            Sign Up
-          </Link>
-        </p>
+        <PageSection index={3}>
+          <MainButton href={`/login`} type="button" variant="primaryOutline" className="w-full" size={`2xl`}>
+            Log in with Password instead
+          </MainButton>
+          <p className="text-grey-500 mt-4 text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link href="/register" className="text-primary hover:underline">
+              Sign Up
+            </Link>
+          </p>
+        </PageSection>
       </FormProvider>
-    </section>
+    </PageWrapper>
   );
 };

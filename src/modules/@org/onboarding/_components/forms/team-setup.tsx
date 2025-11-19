@@ -3,10 +3,12 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
+import { FormHeader } from "@/components/shared/form-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { WithDependency } from "@/HOC/withDependencies";
 import { dependencies } from "@/lib/tools/dependencies";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { People } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
@@ -117,10 +119,13 @@ const BaseTeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) => {
   }
 
   return (
-    <section className="rounded-[10px] p-7 shadow-xl">
-      <div className="mb-8 space-y-2">
-        <h3 className="text-2xl/[120%] font-[600] tracking-[-2%]">Set up your team</h3>
-        <p className="text-gray-200">Configure teams and roles with specific permissions for your organization</p>
+    <section className="rounded-[10px] border p-7">
+      <div className="">
+        <FormHeader
+          icon={<People />}
+          title="Set up your team"
+          subTitle="Configure teams and roles with specific permissions for your organization"
+        />
       </div>
 
       <FormProvider {...methods}>
@@ -140,7 +145,7 @@ const BaseTeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) => {
             </MainButton>
 
             <div className="flex w-full items-center justify-center py-5">
-              <Link href={`/admin/dashboard`} className="text-primary font-semibold hover:underline">
+              <Link href={`/admin/dashboard`} className="text-primary text-sm font-medium hover:underline">
                 Skip for Later
               </Link>
             </div>

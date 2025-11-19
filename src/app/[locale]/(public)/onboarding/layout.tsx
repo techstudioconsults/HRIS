@@ -11,11 +11,9 @@ function OnboardingLayout({ children }: { children: React.ReactNode }) {
           <Logo width={214} />
         </Wrapper>
       </section>
-      <section className="grid grid-cols-[1rem_minmax(0,1240px)_1rem] justify-center md:-mx-4 lg:mx-0">
-        <span />
+      <Wrapper className="flex h-[calc(100vh-111.80px)] max-w-[1272px] items-center justify-center">
         <section className="my-[28px]">{children}</section>
-        <span />
-      </section>
+      </Wrapper>
     </main>
   );
 }

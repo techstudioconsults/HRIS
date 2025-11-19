@@ -1,5 +1,7 @@
 "use client";
 
+import { PageSection, PageWrapper } from "@/lib/animation";
+
 import onboardingImage from "~/images/dashboard/banner_illustration.svg";
 import { ActionBanner } from "../../_components/action-banner";
 import { DashboardBanner } from "../../_components/home-banner";
@@ -17,14 +19,14 @@ export const NewUser = ({ steps, completedSteps }: NewUserProperties) => {
   const nextStep = steps.find((step) => !step.isCompleted);
 
   return (
-    <section className="space-y-10">
-      <div className="step-1 flex flex-col gap-4 lg:flex-row">
+    <PageWrapper className="space-y-10">
+      <PageSection index={4} className="step-1 flex flex-col gap-4 lg:flex-row">
         <DashboardBanner
           img={onboardingImage.src}
           title="Welcome, Tosin"
           desc="Complete your company profile to unlock the full experience and get started with your HR setup."
         />
-        <div className="flex flex-col justify-between space-y-6">
+        <div className="flex flex-col justify-center gap-4">
           <OnboardingHeader completedSteps={completedSteps} totalSteps={steps.length} />
           {nextStep && (
             <ActionBanner
@@ -39,14 +41,19 @@ export const NewUser = ({ steps, completedSteps }: NewUserProperties) => {
             />
           )}
         </div>
-      </div>
-      <div className="step-2 space-y-4">
-        <section>
+      </PageSection>
+
+      <section>
+        <PageSection index={2}>
           <CardSection />
+        </PageSection>
+        <PageSection index={2}>
           <LeaveAndPayroll />
+        </PageSection>
+        <PageSection index={1}>
           <AttendanceAndRecentActivities />
-        </section>
-      </div>
-    </section>
+        </PageSection>
+      </section>
+    </PageWrapper>
   );
 };

@@ -1,1 +1,1 @@
-git pull origin staging && pnpm run build
+git pull origin main && pnpm run build

@@ -5,10 +5,13 @@ import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { FormField } from "@/components/shared/inputs/FormFields";
 import { PhoneInput } from "@/components/shared/inputs/phone-input";
+import { ComboBox } from "@/components/shared/select-dropdown/combo-box";
 import { Label } from "@/components/ui/label";
 import { employmentTypeOptions, genderOptions, workModeOptions } from "@/lib/tools/constants";
+import { usePayrollService } from "@/modules/@org/admin/payroll/services/use-service";
 import { EmployeeFormData, employeeSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
@@ -27,13 +30,16 @@ export const EditEmployeeForm = () => {
 
   // Query hooks
   const { useGetAllTeams, useGetEmployeeById, useUpdateEmployee } = useEmployeeService();
+  const { useGetApprovedBanks } = usePayrollService();
 
   const { data: teams = [], isLoading: loadingTeams } = useGetAllTeams();
   const { data: employee, isLoading: loadingEmployee } = useGetEmployeeById(employeeId || "", {
     enabled: !!employeeId,
   });
+  const { data: banksResponse, isLoading: loadingBanks } = useGetApprovedBanks();
+  const banks = useMemo(() => banksResponse?.data ?? [], [banksResponse]);
 
-  const updateEmployeeMutation = useUpdateEmployee();
+  const { mutateAsync: updateEmployeeMutation } = useUpdateEmployee();
 
   // Provide stable default values and drive updates via `values` instead of effects
   const defaultValues: EmployeeFormData = {
@@ -52,7 +58,7 @@ export const EditEmployeeForm = () => {
     bankName: "",
     accountName: "",
     accountNumber: "",
-    // bankCode      : "",
+    bankCode: "",
     permissions: [],
   };
 
@@ -89,10 +95,6 @@ export const EditEmployeeForm = () => {
       return cleaned || "";
     };
 
-    // Use type assertion to access potentially non-typed properties
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const employeeData = employee as any;
-
     return {
       firstName: employee.firstName ?? "",
       lastName: employee.lastName ?? "",
@@ -105,16 +107,12 @@ export const EditEmployeeForm = () => {
       workMode: workMode as "remote" | "onsite" | "hybrid",
       teamId,
       roleId,
-      baseSalary: employeeData.salaryDetails?.baseSalary
-        ? String(employeeData.salaryDetails.baseSalary)
-        : employeeData.baseSalary
-          ? String(employeeData.baseSalary)
-          : "",
-      bankName: employeeData.salaryDetails?.bankName ?? employeeData.bankName ?? "",
-      accountName: employeeData.salaryDetails?.accountName ?? employeeData.accountName ?? "",
-      accountNumber: employeeData.salaryDetails?.accountNumber ?? employeeData.accountNumber ?? "",
-      // bankCode: employeeData.salaryDetails?.bankCode ?? employeeData.bankCode ?? "",
-      permissions: employeeData.permissions ?? [],
+      baseSalary: employee.payProfile.baseSalary ? String(employee.payProfile.baseSalary) : "",
+      bankName: employee.payProfile.bankName ?? employee.bankName ?? "",
+      accountName: employee.payProfile.accountName ?? employee.accountName ?? "",
+      accountNumber: employee.payProfile.accountNumber ?? employee.accountNumber ?? "",
+      bankCode: "",
+      // permissions: employee.employmentDetails.role.permissions ?? [],
     };
   }, [employee]);
 
@@ -128,6 +126,7 @@ export const EditEmployeeForm = () => {
     formState: { isSubmitting },
     watch,
     reset,
+    setValue,
   } = methods;
 
   // Combined hydration state for UX control
@@ -149,6 +148,17 @@ export const EditEmployeeForm = () => {
 
   const selectedTeamId = watch("teamId");
   const selectedRoleId = watch("roleId");
+  const selectedBankName = watch("bankName");
+
+  // Auto-set bank code when bank name is selected
+  useEffect(() => {
+    if (selectedBankName) {
+      const selectedBank = banks.find((bank) => bank.name === selectedBankName);
+      if (selectedBank) {
+        setValue("bankCode", selectedBank.code);
+      }
+    }
+  }, [selectedBankName, banks, setValue]);
 
   // Removed excessive logging that causes re-renders
 
@@ -182,62 +192,66 @@ export const EditEmployeeForm = () => {
   };
 
   const onSubmit = async (formData: EmployeeFormData) => {
-    try {
-      if (!employeeId) {
-        toast.error("No employee specified");
-        return router.push("/admin/employees");
-      }
-
-      const formDataToSend = new FormData();
-
-      // Add all fields from the form
-      formDataToSend.append("firstName", formData.firstName);
-      formDataToSend.append("lastName", formData.lastName);
-      formDataToSend.append("email", formData.email);
-      formDataToSend.append("phoneNumber", formData.phoneNumber);
-
-      // Team and role
-      formDataToSend.append("teamId", formData.teamId);
-      formDataToSend.append("roleId", formData.roleId);
-
-      // Add document if uploaded
-      if (files.length > 0) {
-        formDataToSend.append("document", files[0]);
-      }
-
-      // Personal info
-      formDataToSend.append("dateOfBirth", new Date(formData.dateOfBirth).toISOString());
-      formDataToSend.append("gender", formData.gender);
-
-      // Employment info
-      formDataToSend.append("startDate", new Date(formData.startDate).toISOString());
-      formDataToSend.append("employmentType", formData.employmentType);
-      formDataToSend.append("workMode", formData.workMode);
-
-      // Salary details
-      formDataToSend.append("baseSalary", formData.baseSalary);
-      formDataToSend.append("bankName", formData.bankName);
-      formDataToSend.append("accountName", formData.accountName);
-      formDataToSend.append("accountNumber", formData.accountNumber);
-      // formDataToSend.append("bankCode", formData.bankCode);
-
-      // Optional permissions
-      if (formData.permissions && formData.permissions.length > 0) {
-        for (const [index, permission] of formData.permissions.entries()) {
-          formDataToSend.append(`permissions[${index}]`, permission);
-        }
-      }
-
-      const response = await updateEmployeeMutation.mutateAsync({ id: employeeId, data: formDataToSend });
-      if (response) {
-        toast.success("Employee Profile Updated");
-        router.push("/admin/employees");
-      } else {
-        toast.error("Failed to update employee profile");
-      }
-    } catch {
-      toast.error("An unexpected error occurred while saving. Please try again.");
+    if (!employeeId) {
+      toast.error("No employee specified");
+      return router.push("/admin/employees");
     }
+
+    const formDataToSend = new FormData();
+
+    // Add all fields from the form
+    formDataToSend.append("firstName", formData.firstName);
+    formDataToSend.append("lastName", formData.lastName);
+    formDataToSend.append("email", formData.email);
+    formDataToSend.append("phoneNumber", formData.phoneNumber);
+
+    // Team and role
+    formDataToSend.append("teamId", formData.teamId);
+    formDataToSend.append("roleId", formData.roleId);
+
+    // Add document if uploaded
+    if (files.length > 0) {
+      formDataToSend.append("document", files[0]);
+    }
+
+    // Personal info
+    formDataToSend.append("dateOfBirth", new Date(formData.dateOfBirth).toISOString());
+    formDataToSend.append("gender", formData.gender);
+
+    // Employment info
+    formDataToSend.append("startDate", new Date(formData.startDate).toISOString());
+    formDataToSend.append("employmentType", formData.employmentType);
+    formDataToSend.append("workMode", formData.workMode);
+
+    // Salary details
+    formDataToSend.append("baseSalary", formData.baseSalary);
+    formDataToSend.append("bankName", formData.bankName);
+    formDataToSend.append("accountName", formData.accountName);
+    formDataToSend.append("accountNumber", formData.accountNumber);
+    formDataToSend.append("bankCode", formData.bankCode);
+
+    // Optional permissions
+    if (formData.permissions && formData.permissions.length > 0) {
+      for (const [index, permission] of formData.permissions.entries()) {
+        formDataToSend.append(`permissions[${index}]`, permission);
+      }
+    }
+
+    await updateEmployeeMutation(
+      { id: employeeId, data: formDataToSend },
+      {
+        onSuccess: async () => {
+          toast.success("Employee Profile Updated");
+          router.push(`/admin/employees/${employeeId}`);
+        },
+        onError: (error) => {
+          const errorMessage = error instanceof AxiosError ? error.response?.data.message : "Failed to update employee";
+          toast.error(`Oops, Something went wrong!`, {
+            description: errorMessage,
+          });
+        },
+      },
+    );
   };
 
   return (
@@ -406,16 +420,36 @@ export const EditEmployeeForm = () => {
                   disabled={isHydrating || isSubmitting}
                   required
                 />
+                <div className="space-y-2">
+                  <Label className="text-[16px] font-medium">
+                    Bank Name<span className="text-destructive -ml-1">*</span>
+                  </Label>
+                  <Controller
+                    name="bankName"
+                    control={methods.control}
+                    render={({ field: { value, onChange }, fieldState }) => (
+                      <>
+                        <ComboBox
+                          readOnly
+                          value={value || ""}
+                          onValueChange={onChange}
+                          options={banks.map((bank) => ({
+                            value: bank.name,
+                            label: bank.name,
+                          }))}
+                          placeholder={loadingBanks ? "Loading banks..." : isHydrating ? "Loading..." : "Select a bank"}
+                          searchPlaceholder="Search banks..."
+                          emptyMessage="No bank found."
+                          disabled={loadingBanks || isHydrating || isSubmitting}
+                          className="h-14 w-full"
+                        />
+                        {fieldState.error && <p className="text-destructive text-sm">{fieldState.error.message}</p>}
+                      </>
+                    )}
+                  />
+                </div>
                 <FormField
-                  name="bankName"
-                  label="Bank Name"
-                  type="text"
-                  placeholder={isHydrating ? `Loading bank name...` : `Wema Bank`}
-                  className="border-border !h-14 w-full"
-                  disabled={isHydrating || isSubmitting}
-                  required
-                />
-                <FormField
+                  readOnly
                   name="accountName"
                   label="Account Name"
                   type="text"
@@ -425,6 +459,7 @@ export const EditEmployeeForm = () => {
                   required
                 />
                 <FormField
+                  readOnly
                   name="accountNumber"
                   label="Account Number"
                   type="text"
@@ -433,15 +468,6 @@ export const EditEmployeeForm = () => {
                   disabled={isHydrating || isSubmitting}
                   required
                 />
-                {/* <FormField
-                  name="bankCode"
-                  label="Bank Code"
-                  type="text"
-                  placeholder={isHydrating ? `Loading bank code...` : `035`}
-                  className="border-border !h-14 w-full"
-                  disabled={isHydrating || isSubmitting}
-                  required
-                /> */}
               </div>
             </section>
 

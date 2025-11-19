@@ -50,7 +50,7 @@ export const useEmployeeRowActions = () => {
       return [
         {
           label: "View employee",
-          kbd: "Ctrl+V",
+          // kbd: "Ctrl+V",
           icon: <Eye className="h-4 w-4" aria-hidden="true" />,
           onClick: () => {
             setActiveEmployee(employee);
@@ -61,11 +61,11 @@ export const useEmployeeRowActions = () => {
         },
         {
           label: "Edit employee",
-          kbd: "Ctrl+E",
+          // kbd: "Ctrl+E",
           icon: <Edit className="h-4 w-4" aria-hidden="true" />,
           onClick: () => {
             setActiveEmployee(employee);
-            router.push(`/admin/employees/edit-employee?employeeid=${employee.id}`);
+            window.location.href = `/admin/employees/edit-employee?employeeid=${employee.id}`;
           },
           ariaLabel: `Edit ${employee.firstName} ${employee.lastName}`,
         },

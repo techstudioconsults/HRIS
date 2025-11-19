@@ -43,7 +43,9 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
               <MainButton
                 isLeftIconVisible
                 icon={<Edit />}
-                href={`/admin/employees/edit-employee?employeeid=${employeeData?.id}`}
+                onClick={() => {
+                  window.location.href = `/admin/employees/edit-employee?employeeid=${employeeData?.id}`;
+                }}
                 variant="primary"
               >
                 Edit Employee
@@ -140,7 +142,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
                   <div>
                     <p className="text-muted-foreground">Full Name</p>
-                    <p className="font-medium">{employeeData?.firstName}</p>
+                    <p className="font-medium">{`${employeeData?.firstName} ${employeeData?.lastName}`}</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground">Date of Birth</p>

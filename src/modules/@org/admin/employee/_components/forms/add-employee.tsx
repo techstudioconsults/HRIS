@@ -5,9 +5,11 @@ import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { FormField } from "@/components/shared/inputs/FormFields";
 import { PhoneInput } from "@/components/shared/inputs/phone-input";
+import { ComboBox } from "@/components/shared/select-dropdown/combo-box";
 import { Label } from "@/components/ui/label";
 // import { AlertDialog } from "@/components/ui/alert-dialog";
 import { employmentTypeOptions, genderOptions, workModeOptions } from "@/lib/tools/constants";
+import { usePayrollService } from "@/modules/@org/admin/payroll/services/use-service";
 import { EmployeeFormData, employeeSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -27,8 +29,11 @@ export const AddEmployeeForm = () => {
 
   // Query hooks
   const { useGetAllTeams, useCreateEmployee } = useEmployeeService();
+  const { useGetApprovedBanks } = usePayrollService();
 
   const { data: teams = [], isLoading: loadingTeams } = useGetAllTeams();
+  const { data: banksResponse, isLoading: loadingBanks } = useGetApprovedBanks();
+  const banks = useMemo(() => banksResponse?.data ?? [], [banksResponse]);
   const createEmployeeMutation = useCreateEmployee();
   // const [showAlert, setShowAlert] = useState(false);
   // const [alertTitle, setAlertTitle] = useState("");
@@ -47,6 +52,7 @@ export const AddEmployeeForm = () => {
   } = methods;
 
   const selectedTeamId = watch("teamId");
+  const selectedBankName = watch("bankName");
 
   // Memoize derived team and roles to prevent re-renders triggering an effect loop
   const selectedTeam = useMemo(() => teams.find((team) => String(team.id) === selectedTeamId), [teams, selectedTeamId]);
@@ -80,6 +86,16 @@ export const AddEmployeeForm = () => {
       setValue("roleId", "");
     }
   }, [selectedTeamId, selectedRoleId, normalizedDerivedRoles, setValue]);
+
+  // Auto-set bank code when bank name is selected
+  useEffect(() => {
+    if (selectedBankName) {
+      const selectedBank = banks.find((bank) => bank.name === selectedBankName);
+      if (selectedBank) {
+        setValue("bankCode", selectedBank.code);
+      }
+    }
+  }, [selectedBankName, banks, setValue]);
 
   const handleFilesSelected = (files: File[]) => {
     setFiles(files);
@@ -121,7 +137,7 @@ export const AddEmployeeForm = () => {
       formDataToSend.append("bankName", formData.bankName);
       formDataToSend.append("accountName", formData.accountName);
       formDataToSend.append("accountNumber", formData.accountNumber);
-      // formDataToSend.append("bankCode", formData.bankCode);
+      formDataToSend.append("bankCode", formData.bankCode);
 
       // Optional permissions
       if (formData.permissions && formData.permissions.length > 0) {
@@ -317,14 +333,35 @@ export const AddEmployeeForm = () => {
                   className="border-border !h-14 w-full"
                   required
                 />
-                <FormField
-                  name="bankName"
-                  label="Bank Name"
-                  type="text"
-                  placeholder="Wema Bank"
-                  className="border-border !h-14 w-full"
-                  required
-                />
+                <div className="space-y-2">
+                  <Label className="text-[16px] font-medium">
+                    Bank Name<span className="text-destructive -ml-1">*</span>
+                  </Label>
+                  <Controller
+                    name="bankName"
+                    control={methods.control}
+                    render={({ field: { value, onChange }, fieldState }) => (
+                      <>
+                        <ComboBox
+                          value={value || ""}
+                          onValueChange={onChange}
+                          options={banks.map((bank) => ({
+                            value: bank.name,
+                            label: bank.name,
+                          }))}
+                          placeholder={
+                            loadingBanks ? "Loading banks..." : loadingTeams ? "Loading..." : "Select a bank"
+                          }
+                          searchPlaceholder="Search banks..."
+                          emptyMessage="No bank found."
+                          disabled={loadingBanks || loadingTeams || isSubmitting}
+                          className="w-full"
+                        />
+                        {fieldState.error && <p className="text-destructive text-sm">{fieldState.error.message}</p>}
+                      </>
+                    )}
+                  />
+                </div>
                 <FormField
                   name="accountName"
                   label="Account Name"
@@ -338,14 +375,6 @@ export const AddEmployeeForm = () => {
                   label="Account Number"
                   type="text"
                   placeholder="0323904127"
-                  className="border-border !h-14 w-full"
-                  required
-                />
-                <FormField
-                  name="bankCode"
-                  label="Bank Code"
-                  type="text"
-                  placeholder="035"
                   className="border-border !h-14 w-full"
                   required
                 />

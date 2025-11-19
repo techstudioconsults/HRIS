@@ -129,7 +129,7 @@ export const employeeSchema = z.object({
   bankName: z.string().min(1, "Bank name is required"),
   accountName: z.string().min(1, "Account name is required"),
   accountNumber: z.string().min(1, "Account number is required"),
-  // bankCode: z.string().min(1, "Bank code is required"),
+  bankCode: z.string().min(1, "Bank code is required"),
   // Optional permissions
   permissions: z.array(z.string()).optional(),
 });

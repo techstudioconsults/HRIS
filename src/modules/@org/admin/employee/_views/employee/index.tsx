@@ -10,8 +10,8 @@ import { EmptyState, FilteredEmptyState } from "@/components/shared/empty-state"
 import ExportAction from "@/components/shared/export-action";
 import { Button } from "@/components/ui/button";
 import { PageSection, PageWrapper } from "@/lib/animation";
-import { useEmployeeSearchParameters } from "@/lib/nuqs/use-employee-search-parameters";
 import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
+import { useEmployeeSearchParameters } from "@/modules/@org/admin/employee/hooks/use-employee-search-parameters";
 import { Add, Filter } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -21,8 +21,6 @@ import empty1 from "~/images/empty-state.svg";
 import { FilterForm } from "../../_components/forms/filter-form";
 import { useEmployeeService } from "../../services/use-service";
 import { employeeColumn, useEmployeeRowActions } from "../table-data";
-
-// import { Users } from "lucide-react";
 
 export const AllEmployees = () => {
   const router = useRouter();
@@ -64,20 +62,7 @@ export const AllEmployees = () => {
   // Build API filters from URL state (nuqs)
   const apiFilters = useMemo(() => getApiFilters(), [getApiFilters]);
 
-  const {
-    data: employeeData,
-    isLoading,
-    refetch,
-  } = useGetAllEmployees(apiFilters, {
-    keepPreviousData: false, // Don't keep previous data to ensure fresh results
-    staleTime: 0, // Always consider data stale to ensure fresh API calls
-    cacheTime: 0, // Don't cache data to prevent stale data issues
-    refetchOnWindowFocus: false, // Don't refetch on window focus
-    refetchOnMount: true, // Always refetch when component mounts
-    refetchOnReconnect: true, // Refetch when network reconnects
-    retry: 1, // Only retry once on failure
-    retryDelay: 1000, // Wait 1 second before retry
-  });
+  const { data: employeeData, isLoading } = useGetAllEmployees(apiFilters);
 
   // Apply filter values to URL (nuqs) and reset page
   const handleFilterChange = useCallback(
@@ -91,12 +76,6 @@ export const AllEmployees = () => {
     },
     [setTeamId, setRoleId, setStatus, setSortBy, setLimit, resetToFirstPage],
   );
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
-
-  // URL synchronization is handled by nuqs useQueryState. No manual updates needed here.
 
   const handlePageChange = useCallback(
     (newPage: number) => {

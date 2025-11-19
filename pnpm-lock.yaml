@@ -185,9 +185,6 @@ importers:
       eventsource:
         specifier: ^4.0.0
         version: 4.0.0
-      eventsource-polyfill:
-        specifier: ^0.9.6
-        version: 0.9.6
       file-saver:
         specifier: ^2.0.5
         version: 2.0.5
@@ -4763,9 +4760,6 @@ packages:
   eventsource-parser@3.0.6:
     resolution: {integrity: sha512-Vo1ab+QXPzZ4tCa8SwIHJFaSzy4R6SHf7BY79rFBDf0idraZWAkYrDjDj8uWaSm3S2TK+hJ7/t1CEmZ7jXw+pg==}
     engines: {node: '>=18.0.0'}
-
-  eventsource-polyfill@0.9.6:
-    resolution: {integrity: sha512-LyMFp2oPDGhum2lMvkjqKZEwWd2/AoXyt8aoyftTBMWwPHNgU+2tdxhTHPluDxoz+z4gNj0uHAPR9nqevATMbg==}
 
   eventsource@4.0.0:
     resolution: {integrity: sha512-fvIkb9qZzdMxgZrEQDyll+9oJsyaVvY92I2Re+qK0qEJ+w5s0X3dtz+M0VAPOjP1gtU3iqWyjQ0G3nvd5CLZ2g==}
@@ -12597,8 +12591,6 @@ snapshots:
   events@3.3.0: {}
 
   eventsource-parser@3.0.6: {}
-
-  eventsource-polyfill@0.9.6: {}
 
   eventsource@4.0.0:
     dependencies:

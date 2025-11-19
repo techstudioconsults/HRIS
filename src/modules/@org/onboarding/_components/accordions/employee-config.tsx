@@ -31,10 +31,10 @@ export const EmployeeConfig = ({ onBoardingService }: { onBoardingService: Onboa
   };
 
   return (
-    <Accordion type="multiple" className="w-full space-y-4">
+    <Accordion type="multiple" className="w-full space-y-8">
       {fields.map((field, index) => (
         <AccordionItem key={field.id} value={`member-${field.id}`} className="relative">
-          <AccordionTrigger className="p-4 text-left text-sm lg:text-xl/[120%]">
+          <AccordionTrigger className="p-4 text-left text-sm lg:text-lg">
             <div className="flex w-full items-center justify-between">
               <p className="font-semibold">
                 {field.firstName ? `${field.firstName} ${field.lastName}` : `Team Member ${index + 1}`}
@@ -52,7 +52,7 @@ export const EmployeeConfig = ({ onBoardingService }: { onBoardingService: Onboa
               )}
             </div>
           </AccordionTrigger>
-          <AccordionContent className="space-y-4 border-t py-4 font-medium">
+          <AccordionContent className="space-y-4 border-t px-0.5 py-4 font-medium">
             <SingleEmployeeForm index={index} onBoardingService={onBoardingService} />
           </AccordionContent>
         </AccordionItem>

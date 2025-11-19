@@ -21,13 +21,23 @@ const META_THEME_COLORS = {
   dark: "#09090b",
 };
 
-export const metadata: Metadata = {
+export const METADATA: Metadata = {
   title: "HRIS",
   description: "A New HR System by Techstudio Academy",
 };
 
-export const viewport: Viewport = {
+export const VIEWPORT: Viewport = {
   themeColor: META_THEME_COLORS.light,
+};
+
+const INNER_HTML = {
+  __html: `
+              try {
+                if (localStorage.theme === 'dark' || ((!('theme' in localStorage) || localStorage.theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                  document.querySelector('meta[name="theme-color"]').setAttribute('content', '${META_THEME_COLORS.dark}')
+                }
+              } catch (_) {}
+            `,
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -38,17 +48,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                if (localStorage.theme === 'dark' || ((!('theme' in localStorage) || localStorage.theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                  document.querySelector('meta[name="theme-color"]').setAttribute('content', '${META_THEME_COLORS.dark}')
-                }
-              } catch (_) {}
-            `,
-          }}
-        />
+        <script dangerouslySetInnerHTML={INNER_HTML} />
       </head>
       <body
         className={cn(

@@ -9,6 +9,7 @@ import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { PageSection, PageWrapper } from "@/lib/animation";
 import { formatDate } from "@/lib/tools/format";
 import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import type { Team as TeamFormType } from "@/modules/@org/onboarding/_components/forms/schema";
@@ -98,75 +99,79 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
   };
 
   return (
-    <section className="space-y-8">
-      <DashboardHeader
-        title="Team Details"
-        subtitle={
-          <BreadCrumb
-            items={[
-              { label: "Teams", href: "/admin/teams" },
-              { label: teamData?.name || "", href: `/admin/teams/${id}` },
-            ]}
-          />
-        }
-        actionComponent={
-          <div className="flex items-center gap-5">
-            <MainButton
-              variant="primary"
-              isLeftIconVisible
-              icon={<Plus />}
-              onClick={() => setIsAddSubTeamDialogOpen(true)}
-            >
-              Add Sub-team
-            </MainButton>
-            <GenericDropdown
-              align="end"
-              trigger={
-                <div className="bg-background border-border flex size-10 items-center justify-center rounded-md shadow">
-                  <More className="size-5" />
-                </div>
-              }
-            >
-              <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>Edit Team&apos;s Name</DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={handleDeleteTeam}>
-                Delete Team
-              </DropdownMenuItem>
-            </GenericDropdown>
-          </div>
-        }
-      />
-      <CardGroup>
-        <DashboardCard
-          title="Team Name"
-          value={<span className="text-base">{teamData?.name}</span>}
-          className="flex flex-col items-center justify-center text-center"
-        />
-        <DashboardCard
-          title="Team Manager"
-          value={
-            <div className="flex items-center gap-4">
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-              <span className="text-base">{teamData?.manager || `Ifijeh Kingsley`}</span>
+    <PageWrapper className="space-y-8">
+      <PageSection index={0}>
+        <DashboardHeader
+          title="Team Details"
+          subtitle={
+            <BreadCrumb
+              items={[
+                { label: "Teams", href: "/admin/teams" },
+                { label: teamData?.name || "", href: `/admin/teams/${id}` },
+              ]}
+            />
+          }
+          actionComponent={
+            <div className="flex items-center gap-5">
+              <MainButton
+                variant="primary"
+                isLeftIconVisible
+                icon={<Plus />}
+                onClick={() => setIsAddSubTeamDialogOpen(true)}
+              >
+                Add Sub-team
+              </MainButton>
+              <GenericDropdown
+                align="end"
+                trigger={
+                  <div className="bg-background border-border flex size-10 items-center justify-center rounded-md shadow">
+                    <More className="size-5" />
+                  </div>
+                }
+              >
+                <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>Edit Team&apos;s Name</DropdownMenuItem>
+                <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={handleDeleteTeam}>
+                  Delete Team
+                </DropdownMenuItem>
+              </GenericDropdown>
             </div>
           }
-          className="flex flex-col items-center justify-center gap-4 text-center"
         />
-        <DashboardCard
-          title="Sub teams"
-          value={<span className="text-base">{teamData?.subteams?.length}</span>}
-          className="flex flex-col items-center justify-center text-center"
-        />
-        <DashboardCard
-          title="Created On"
-          value={<span className="text-base">{formatDate(teamData?.createdAt)}</span>}
-          className="flex flex-col items-center justify-center text-center"
-        />
-      </CardGroup>
+      </PageSection>
+      <PageSection index={1}>
+        <CardGroup>
+          <DashboardCard
+            title="Team Name"
+            value={<span className="text-base">{teamData?.name}</span>}
+            className="flex flex-col items-center justify-center text-center"
+          />
+          <DashboardCard
+            title="Team Manager"
+            value={
+              <div className="flex items-center gap-4">
+                <Avatar>
+                  <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <span className="text-base">{teamData?.manager || `Ifijeh Kingsley`}</span>
+              </div>
+            }
+            className="flex flex-col items-center justify-center gap-4 text-center"
+          />
+          <DashboardCard
+            title="Sub teams"
+            value={<span className="text-base">{teamData?.subteams?.length}</span>}
+            className="flex flex-col items-center justify-center text-center"
+          />
+          <DashboardCard
+            title="Created On"
+            value={<span className="text-base">{formatDate(teamData?.createdAt)}</span>}
+            className="flex flex-col items-center justify-center text-center"
+          />
+        </CardGroup>
+      </PageSection>
 
-      <section className="space-y-4">
+      <PageSection index={2} className="space-y-4">
         {isLoading ? (
           <Loading text={`Loading sub-teams...`} className={`w-fill h-fit p-20`} />
         ) : subTeams.length > 0 ? (
@@ -196,7 +201,7 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
             }}
           />
         )}
-      </section>
+      </PageSection>
 
       {/* Edit Team Name Dialog */}
       <ReusableDialog
@@ -239,7 +244,7 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
 
       {/* Delete Confirmation Modal for Sub-teams */}
       <DeleteConfirmationModal />
-    </section>
+    </PageWrapper>
   );
 };
 

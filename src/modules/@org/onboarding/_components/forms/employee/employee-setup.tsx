@@ -2,7 +2,9 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
+import { FormHeader } from "@/components/shared/form-header";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { User } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { FormEvent } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -64,9 +66,9 @@ export const EmployeeSetupForm = ({ onBoardingService }: EmployeeSetupFormProper
   };
 
   return (
-    <section className="rounded-[10px] p-7 shadow-xl">
+    <section className="rounded-[10px] border p-7">
       <div className={`mb-8 space-y-2`}>
-        <h3 className="text-2xl/[120%] font-[600] tracking-[-2%]">Onboard Employees</h3>
+        <FormHeader icon={<User />} title="Onboard Employees" subTitle="Add your team members to get started" />
       </div>
 
       <FormProvider {...methods}>
@@ -87,17 +89,11 @@ export const EmployeeSetupForm = ({ onBoardingService }: EmployeeSetupFormProper
               isDisabled={isSubmitting}
               isLoading={isSubmitting}
               className="w-full"
-              size="2xl"
+              size="xl"
             >
               Proceed to Dashboard
             </MainButton>
-            <MainButton
-              href={`/admin/dashboard`}
-              type="button"
-              variant="link"
-              className="w-full font-semibold"
-              size="2xl"
-            >
+            <MainButton href={`/admin/dashboard`} type="button" variant="link" className="w-full font-medium" size="xl">
               Skip for Later
             </MainButton>
           </div>

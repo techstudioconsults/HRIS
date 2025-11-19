@@ -31,13 +31,13 @@ export class EmployeeService {
 
   async createEmployee(data: FormData) {
     const headers = { "Content-Type": "multipart/form-data" };
-    const response = await this.http.post<{ data: Employee }>("/employees", data, headers);
+    const response = await this.http.post<ApiResponse<Employee>>("/employees", data, headers);
     if (response?.status === 201) {
       return response.data.data;
     }
   }
 
-  async getAllEmployees(filters: Filters = Object.create({ page: 1 })) {
+  async getAllEmployees(filters: Filters) {
     const response = await this.http.get<PaginatedApiResponse<Employee>>(`/employees`, {
       ...filters,
     });
@@ -46,11 +46,7 @@ export class EmployeeService {
     }
   }
 
-  /**
-   * Get employees who are currently suspended/absent from a specific payroll.
-   * Backs: GET /employees/payrolls/{payrollId}/absent
-   */
-  async getSuspendedEmployeesByPayroll(payrollId: string, filters: Filters = Object.create({ page: 1 })) {
+  async getSuspendedEmployeesByPayroll(payrollId: string, filters: Filters) {
     const response = await this.http.get<PaginatedApiResponse<Employee>>(`/employees/payrolls/${payrollId}/absent`, {
       ...filters,
     });
@@ -61,14 +57,14 @@ export class EmployeeService {
   }
 
   async getEmployeeById(id: string | null) {
-    const response = await this.http.get<{ data: Employee }>(`/employees/${id}`);
+    const response = await this.http.get<ApiResponse<Employee>>(`/employees/${id}`);
     if (response?.status === 200) {
       return response.data.data;
     }
   }
 
   async updateEmployee(id: string, data: FormData) {
-    const response = await this.http.patch<{ data: Employee }>(`/employees/${id}`, data);
+    const response = await this.http.patch<ApiResponse<Employee>>(`/employees/${id}`, data);
     if (response?.status === 200) {
       return response.data.data;
     }

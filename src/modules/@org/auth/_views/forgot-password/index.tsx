@@ -1,7 +1,9 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
+import { FormHeader } from "@/components/shared/form-header";
 import { FormField } from "@/components/shared/inputs/FormFields";
+import { PageSection, PageWrapper } from "@/lib/animation";
 import { ForgotPasswordData, forgotPasswordSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";
@@ -44,54 +46,55 @@ export const ForgotPassword = () => {
   };
 
   return (
-    <section className="mx-auto max-w-[589px] rounded-xl bg-white p-8 shadow-2xl shadow-gray-100">
-      <div className={`mb-8 space-y-2`}>
-        <MainButton
-          isIconOnly
-          icon={<ArrowLeft />}
-          size={`icon`}
-          className={`hover:bg-primary size-10 bg-gray-50 hover:text-white`}
-          variant={`default`}
-          onClick={() => {
-            router.back();
-          }}
-        />
-        <h3 className="text-[32px]/[120%] font-[600] tracking-[-2%] text-black">Forgot Password</h3>
-        <p className={`text-gray text-lg`}>Enter your email address to reset your password</p>
-      </div>
+    <PageWrapper>
+      <PageSection index={0} className="bg-background mx-auto max-w-[589px] rounded-xl p-8 shadow">
+        <div>
+          <MainButton
+            isIconOnly
+            icon={<ArrowLeft />}
+            size={`icon`}
+            className={`hover:bg-primary mb-2 size-10 bg-gray-50 hover:text-white`}
+            variant={`default`}
+            onClick={() => {
+              router.back();
+            }}
+          />
+          <FormHeader title="Forgot Password" subTitle="Enter your email address to reset your password" />
+        </div>
 
-      <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(handleSubmitForm)} className="">
-          <section className={`space-y-4`}>
-            <FormField
-              placeholder={`Enter email address`}
-              className={`h-14 w-full`}
-              label={`Email Address`}
-              name={"email"}
-              type={`email`}
-            />
-          </section>
-          <div className="pt-8">
-            <MainButton
-              type="submit"
-              variant="primary"
-              isDisabled={isPending || !isValid}
-              isLoading={isPending}
-              className="w-full"
-              size="2xl"
-            >
-              Continue
-            </MainButton>
-          </div>
-        </form>
+        <FormProvider {...methods}>
+          <form onSubmit={handleSubmit(handleSubmitForm)} className="">
+            <section className={`space-y-4`}>
+              <FormField
+                placeholder={`Enter email address`}
+                className={`h-14 w-full`}
+                label={`Email Address`}
+                name={"email"}
+                type={`email`}
+              />
+            </section>
+            <div className="pt-8">
+              <MainButton
+                type="submit"
+                variant="primary"
+                isDisabled={isPending || !isValid}
+                isLoading={isPending}
+                className="w-full"
+                size="2xl"
+              >
+                Continue
+              </MainButton>
+            </div>
+          </form>
 
-        <p className="text-grey-500 mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-primary hover:underline">
-            Sign Up
-          </Link>
-        </p>
-      </FormProvider>
-    </section>
+          <p className="text-grey-500 mt-4 text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link href="/register" className="text-primary hover:underline">
+              Sign Up
+            </Link>
+          </p>
+        </FormProvider>
+      </PageSection>
+    </PageWrapper>
   );
 };

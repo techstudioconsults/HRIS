@@ -301,7 +301,7 @@ export const employmentTypeOptions = [
 
 export const workModeOptions = [
   { value: "remote", label: "Remote" },
-  { value: "on site", label: "On site" },
+  { value: "onsite", label: "On site" },
   { value: "hybrid", label: "Hybrid" },
 ];
 

@@ -202,14 +202,14 @@ export class PayrollService {
   // =============================
 
   async getPayslips(payrollID: string, filters: Filters) {
-    const response = await this.http.get<PaginatedApiResponse<Payslip>>(`/payrolls/${payrollID}/payslips`, {
+    const response = await this.http.get<PaginatedApiResponse<Payslip>>(`/payslips`, {
       ...filters,
     });
     if (response?.status === 200) return response.data;
   }
 
   async getPayslipById(payrollId: string, payslipId: string) {
-    const response = await this.http.get<ApiResponse<Payslip>>(`/payrolls/${payrollId}/payslips/${payslipId}`);
+    const response = await this.http.get<ApiResponse<Payslip>>(`/payslips/${payslipId}`);
     if (response?.status === 200) return response.data;
   }
 

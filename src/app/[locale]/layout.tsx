@@ -11,7 +11,7 @@ interface LocaleLayoutProperties {
 
 export default async function LocaleLayout({ children, params }: LocaleLayoutProperties) {
   const { locale } = await params;
-  const messages = await getMessages({ locale });
+  const messages   = await getMessages({ locale });
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>

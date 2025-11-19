@@ -11,14 +11,14 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, VariantProps } from "class-variance-authority";
-import { PanelLeftIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import * as React from "react";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "16rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
-const SIDEBAR_WIDTH_ICON = "3rem";
+const SIDEBAR_WIDTH_ICON = "4rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
 type SidebarContextProperties = {
@@ -234,7 +234,7 @@ function Sidebar({
 }
 
 function SidebarTrigger({ className, onClick, ...properties }: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar, open } = useSidebar();
 
   return (
     <Button
@@ -242,14 +242,14 @@ function SidebarTrigger({ className, onClick, ...properties }: React.ComponentPr
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon"
-      className={cn("size-7", className)}
+      className={cn("size-8 rounded-full", className)}
       onClick={(event) => {
         onClick?.(event);
         toggleSidebar();
       }}
       {...properties}
     >
-      <PanelLeftIcon />
+      {open ? <ChevronLeft size={16} className="stroke-3" /> : <ChevronRight size={16} className="stroke-3" />}
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );

@@ -10,10 +10,10 @@ export const ProgressBar = ({ current, total }: ProgressBarProperties) => {
 
   return (
     <div className="flex w-full flex-col items-end gap-2 sm:w-[216px]">
-      <div className="text-xs">
-        <span className="text-gray">
+      <div className="">
+        <p className="text-gray !text-xs">
           {current} of {total} tasks completed
-        </span>
+        </p>
       </div>
       <div className="bg-success-75 h-1 w-full overflow-hidden rounded-full">
         <div

@@ -22,6 +22,8 @@ export default function TopBar({ adminName, notificationsCount = 0, className = 
   const locale = useLocale();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const displayNotificationsCount = notificationsCount > 9 ? "9+" : notificationsCount;
+
   const handleLogout = async () => {
     try {
       await signOut({
@@ -36,8 +38,8 @@ export default function TopBar({ adminName, notificationsCount = 0, className = 
   return (
     <header className={cn("bg-background grid h-16 grid-cols-2 items-center gap-4 px-0 lg:px-4", className)}>
       {/* Search Input */}
-      <div className="relative hidden w-full max-w-[240px] items-center gap-4 md:flex">
-        <SidebarTrigger className="-ml-1" />
+      <div className="relative hidden w-fit items-center gap-4 md:flex">
+        <SidebarTrigger className="absolute top-[3rem] -left-[30px] bg-[#1F2666] text-white shadow-none" />
         <GlobalSearchInput />
       </div>
 
@@ -52,7 +54,7 @@ export default function TopBar({ adminName, notificationsCount = 0, className = 
           <Notification size="24" className="text-gray-500" variant="Outline" />
           {notificationsCount > 0 && (
             <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
-              {notificationsCount > 9 ? "9+" : notificationsCount}
+              {displayNotificationsCount}
             </span>
           )}
         </button>

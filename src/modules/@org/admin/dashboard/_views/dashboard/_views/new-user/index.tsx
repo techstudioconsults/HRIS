@@ -24,7 +24,7 @@ export const NewUser = ({ steps, completedSteps }: NewUserProperties) => {
           title="Welcome, Tosin"
           desc="Complete your company profile to unlock the full experience and get started with your HR setup."
         />
-        <div className="flex flex-col justify-between space-y-6">
+        <div className="flex flex-col justify-center gap-4">
           <OnboardingHeader completedSteps={completedSteps} totalSteps={steps.length} />
           {nextStep && (
             <ActionBanner

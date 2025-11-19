@@ -16,7 +16,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <SidebarProvider>
       <AppSidebar
-        className={cn("bg-[#1F2666] text-white shadow-2xl")}
+        className={cn("z-[9999] bg-[#1F2666] text-white shadow-2xl")}
         navMain={[]}
         navSecondary={adminNavItems}
         teams={[
@@ -34,7 +34,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             notificationsCount={12}
             className="sticky top-0 z-[999] px-6 shadow"
           />
-          <Wrapper className="max-w-[1440px]">{children}</Wrapper>
+          <Wrapper className="max-w-[1440px] py-10">{children}</Wrapper>
         </ActiveTargetProvider>
       </SidebarInset>
     </SidebarProvider>

@@ -46,7 +46,7 @@ export const ActionBanner = ({
       )}
     >
       <div className="flex w-full items-center justify-between gap-4">
-        <div className="flex items-start gap-4">
+        <div className="flex items-center gap-4">
           <Checkbox
             checked={isCompleted}
             className={cn("h-6 w-6 rounded-full border-2", isCompleted ? "bg-primary border-black" : "border-primary")}
@@ -54,7 +54,7 @@ export const ActionBanner = ({
 
           <div className="flex flex-col gap-4">
             <div className="flex flex-col">
-              <p className="text-foreground font-semibold">{title}</p>
+              <p className="text-foreground !text-sm font-medium">{title}</p>
               {!isCompleted && <p className="text-sm">{description}</p>}
             </div>
           </div>
@@ -63,7 +63,6 @@ export const ActionBanner = ({
         {!isCompleted && (
           <MainButton
             isLoading={isPending}
-            size="lg"
             variant="primary"
             className={cn("w-fit", buttonClassName)}
             onClick={handleClick}

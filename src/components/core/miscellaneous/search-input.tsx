@@ -193,11 +193,7 @@ export function GlobalSearchInput({
           )}
         </div>
       </PopoverTrigger>
-      <PopoverContent
-        align="start"
-        className="z-[999] min-w-[500px] p-0"
-        onOpenAutoFocus={(event) => event.preventDefault()}
-      >
+      <PopoverContent align="start" className="min-w-[500px] p-0" onOpenAutoFocus={(event) => event.preventDefault()}>
         <ScrollArea className="max-h-[400px]">
           {showRecent && (
             <div className="p-2">

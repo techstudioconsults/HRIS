@@ -1,5 +1,7 @@
 "use client";
 
+import { PageSection, PageWrapper } from "@/lib/animation";
+
 import onboardingImage from "~/images/dashboard/banner_illustration.svg";
 import { ActionBanner } from "../../_components/action-banner";
 import { DashboardBanner } from "../../_components/home-banner";
@@ -17,8 +19,8 @@ export const NewUser = ({ steps, completedSteps }: NewUserProperties) => {
   const nextStep = steps.find((step) => !step.isCompleted);
 
   return (
-    <section className="space-y-10">
-      <div className="step-1 flex flex-col gap-4 lg:flex-row">
+    <PageWrapper className="space-y-10">
+      <PageSection index={4} className="step-1 flex flex-col gap-4 lg:flex-row">
         <DashboardBanner
           img={onboardingImage.src}
           title="Welcome, Tosin"
@@ -39,14 +41,19 @@ export const NewUser = ({ steps, completedSteps }: NewUserProperties) => {
             />
           )}
         </div>
-      </div>
-      <div className="step-2 space-y-4">
-        <section>
+      </PageSection>
+
+      <section>
+        <PageSection index={2}>
           <CardSection />
+        </PageSection>
+        <PageSection index={2}>
           <LeaveAndPayroll />
+        </PageSection>
+        <PageSection index={1}>
           <AttendanceAndRecentActivities />
-        </section>
-      </div>
-    </section>
+        </PageSection>
+      </section>
+    </PageWrapper>
   );
 };

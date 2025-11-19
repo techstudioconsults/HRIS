@@ -49,7 +49,7 @@ export function NotificationWidget({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="z-[999] min-w-[500px] p-0 shadow-none" align="end" sideOffset={8}>
+      <PopoverContent className="min-w-[500px] p-0 shadow-none" align="end" sideOffset={8}>
         {/* Header */}
         <div className="flex items-center justify-between border-b px-4 py-3">
           <div className="flex items-center gap-2">

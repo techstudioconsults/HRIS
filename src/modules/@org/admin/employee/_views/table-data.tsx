@@ -157,18 +157,14 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
     header: "Role",
     accessorKey: "role",
     render: (_, employee: Employee) => (
-      <Badge className="capitalize" variant="primary">
-        {employee?.employmentDetails?.role?.name}
-      </Badge>
+      <span className="text-primary text-sm font-medium capitalize">{employee?.employmentDetails?.role?.name}</span>
     ),
   },
   {
     header: "Department",
     accessorKey: "department",
     render: (_, employee: Employee) => (
-      <Badge className="capitalize" variant="primary">
-        {employee?.employmentDetails?.team?.name}
-      </Badge>
+      <span className="text-primary text-sm font-medium capitalize">{employee?.employmentDetails?.team?.name}</span>
     ),
   },
   {

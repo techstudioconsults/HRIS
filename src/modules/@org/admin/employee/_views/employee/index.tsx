@@ -9,6 +9,7 @@ import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState, FilteredEmptyState } from "@/components/shared/empty-state";
 import ExportAction from "@/components/shared/export-action";
 import { Button } from "@/components/ui/button";
+import { PageSection, PageWrapper } from "@/lib/animation";
 import { useEmployeeSearchParameters } from "@/lib/nuqs/use-employee-search-parameters";
 import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import { Add, Filter } from "iconsax-reactjs";
@@ -20,6 +21,8 @@ import empty1 from "~/images/empty-state.svg";
 import { FilterForm } from "../../_components/forms/filter-form";
 import { useEmployeeService } from "../../services/use-service";
 import { employeeColumn, useEmployeeRowActions } from "../table-data";
+
+// import { Users } from "lucide-react";
 
 export const AllEmployees = () => {
   const router = useRouter();
@@ -112,9 +115,10 @@ export const AllEmployees = () => {
   }, [resetFilters]);
 
   return (
-    <section className="space-y-10">
-      <section className="space-y-6">
+    <PageWrapper className="space-y-10">
+      <PageSection index={0} className="space-y-6">
         <DashboardHeader
+          // icon={<Users />}
           title="Employee"
           subtitle="All Employees"
           actionComponent={
@@ -216,9 +220,9 @@ export const AllEmployees = () => {
             )}
           </section>
         )}
-      </section>
+      </PageSection>
 
       <DeleteConfirmationModal />
-    </section>
+    </PageWrapper>
   );
 };

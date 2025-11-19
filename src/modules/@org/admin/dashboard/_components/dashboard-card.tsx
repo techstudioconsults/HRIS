@@ -156,7 +156,7 @@ export function DashboardCard({
   return (
     <div className={cn("bg-background rounded-xl p-6 shadow", className)}>
       {/* Card Header */}
-      <h3 className={cn("text-muted-foreground text-sm font-medium", titleColor)}>{title}</h3>
+      <h3 className={cn("text-muted-foreground mb-2 text-sm font-medium", titleColor)}>{title}</h3>
 
       {/* Card Body */}
       <div className="flex items-center justify-between">

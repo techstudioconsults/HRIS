@@ -10,6 +10,7 @@ import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState, FilteredEmptyState } from "@/components/shared/empty-state";
 import ExportAction from "@/components/shared/export-action";
 import { Button } from "@/components/ui/button";
+import { PageSection, PageWrapper } from "@/lib/animation";
 import { useTeamsSearchParameters } from "@/lib/nuqs/use-teams-search-parameters";
 import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import { useTeamWorkflowStore } from "@/modules/@org/admin/teams/store/team-store";
@@ -330,8 +331,8 @@ export const AllTeams = () => {
 
   return (
     <>
-      <section className="space-y-10">
-        <section className="space-y-4">
+      <PageWrapper className="space-y-10">
+        <PageSection index={0} className="space-y-4">
           <DashboardHeader
             title="Teams"
             subtitle="All Teams"
@@ -426,8 +427,8 @@ export const AllTeams = () => {
               )}
             </section>
           )}
-        </section>
-      </section>
+        </PageSection>
+      </PageWrapper>
 
       <ReusableDialog
         open={dialog === "team"}

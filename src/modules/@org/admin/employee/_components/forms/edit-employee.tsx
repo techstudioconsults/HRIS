@@ -485,7 +485,11 @@ export const EditEmployeeForm = () => {
             <MainButton
               type="button"
               variant="outline"
-              onClick={() => router.push("/admin/employees")}
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                event.preventDefault();
+                event.stopPropagation();
+                reset(formValues);
+              }}
               isDisabled={isSubmitting}
               className="text-destructive border-destructive w-full"
             >

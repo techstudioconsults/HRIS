@@ -173,6 +173,7 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
 
     return (
       <Button
+        type={type}
         variant={variant}
         size={size}
         disabled={isDisabled}

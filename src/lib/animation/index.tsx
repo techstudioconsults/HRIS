@@ -110,8 +110,8 @@ interface PageWrapperProperties extends UseWaveAnimationOptions {
 export const PageWrapper: FC<PageWrapperProperties> = ({
   children,
   className,
-  staggerDelay = 50,
-  duration = 600,
+  staggerDelay = 20,
+  duration = 400,
   threshold,
   rootMargin,
 }) => {

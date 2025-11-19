@@ -158,33 +158,33 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
       <section className={`space-y-4`}>
         <FormField
           placeholder={`Enter first name`}
-          className={`h-14 w-full`}
+          className={`h-12 w-full`}
           label={`First Name`}
           name={`employees.${index}.firstName`}
         />
         <FormField
           placeholder={`Enter last name`}
-          className={`h-14 w-full`}
+          className={`h-12 w-full`}
           label={`Last Name`}
           name={`employees.${index}.lastName`}
         />
         <FormField
           type={`email`}
           placeholder={`Enter email address`}
-          className={`h-14 w-full`}
+          className={`h-12 w-full`}
           label={`Email Address`}
           name={`employees.${index}.email`}
         />
         <FormField
           placeholder={`Enter phone number`}
-          className={`h-14 w-full`}
+          className={`h-12 w-full`}
           label={`Phone Number`}
           name={`employees.${index}.phoneNumber`}
         />
         <FormField
           type="select"
           placeholder={loadingDepartments ? "Loading departments..." : "Select department"}
-          className="!h-14 w-full"
+          className="!h-12 w-full"
           label="Department"
           name={`employees.${index}.teamId`}
           options={departments.map((dept) => ({
@@ -198,7 +198,7 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
           placeholder={
             selectedTeamId ? (loadingRoles ? "Loading roles..." : "Select role") : "Select a department first"
           }
-          className="!h-14 w-full"
+          className="!h-12 w-full"
           label="Role"
           name={`employees.${index}.roleId`}
           options={roles.map((role) => ({
@@ -216,7 +216,7 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
         <div>
           <label className={`mb-2 block text-[16px] font-medium`}>Customize Permissions</label>
           <div
-            className={`flex h-14 cursor-pointer items-center justify-between rounded-lg border px-4`}
+            className={`flex h-12 cursor-pointer items-center justify-between rounded-lg border px-4`}
             onClick={handleOpenPermissionsDialog}
           >
             <span>Show Permission</span>

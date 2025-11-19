@@ -29,14 +29,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       />
       <SidebarInset className="dark:bg-background bg-[#F8F8F9]">
         <ActiveTargetProvider>
-          <main className="flex flex-1 flex-col gap-10 p-4">
-            <TopBar
-              adminName={session?.user.employee.fullName || ""}
-              notificationsCount={12}
-              className="rounded-lg px-6 shadow"
-            />
-            <Wrapper className="max-w-[1440px] px-0">{children}</Wrapper>
-          </main>
+          <TopBar
+            adminName={session?.user.employee.fullName || ""}
+            notificationsCount={12}
+            className="sticky top-0 z-[999] px-6 shadow"
+          />
+          <Wrapper className="max-w-[1440px]">{children}</Wrapper>
         </ActiveTargetProvider>
       </SidebarInset>
     </SidebarProvider>

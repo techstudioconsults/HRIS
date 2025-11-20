@@ -85,6 +85,7 @@ export const changeEmailSchema = z.object({
 
 export const companyProfileSchema = z.object({
   // domain: z.string().min(1, "Company name is required"),
+  name: z.string().min(1, "Name is required"),
   industry: z.string().min(1, "Industry is required"),
   size: z.string().min(1, "Company size is required"),
   addressLine1: z.string().min(1, "Address line 1 is required"),

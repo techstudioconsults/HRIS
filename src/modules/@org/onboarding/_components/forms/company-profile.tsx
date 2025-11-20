@@ -41,6 +41,7 @@ export const CompanyProfile = () => {
     resolver: zodResolver(companyProfileSchema),
     defaultValues: {
       // domain: "",
+      name: "",
       industry: "",
       size: "",
       addressLine1: "",
@@ -89,14 +90,15 @@ export const CompanyProfile = () => {
     if (companyProfile) {
       reset({
         // domain: companyProfile?.data.domain || "",
-        industry: companyProfile?.data.industry || "",
-        size: companyProfile?.data.size || "",
-        addressLine1: companyProfile?.data.address?.addressLine1 || "",
-        addressLine2: companyProfile?.data.address?.addressLine2 || "",
-        city: companyProfile?.data.address?.city || "",
-        state: companyProfile?.data.address?.state || "",
-        country: companyProfile?.data.address?.country || "",
-        postcode: companyProfile?.data.address?.postcode || "",
+        name: companyProfile?.name || "",
+        industry: companyProfile?.industry || "",
+        size: companyProfile?.size || "",
+        addressLine1: companyProfile?.address?.addressLine1 || "",
+        addressLine2: companyProfile?.address?.addressLine2 || "",
+        city: companyProfile?.address?.city || "",
+        state: companyProfile?.address?.state || "",
+        country: companyProfile?.address?.country || "",
+        postcode: companyProfile?.address?.postcode || "",
       });
     }
   }, [companyProfile, reset]);
@@ -114,13 +116,13 @@ export const CompanyProfile = () => {
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(handleSubmitForm)}>
           <section className={`hide-scrollbar max-h-[500px] space-y-4 overflow-auto px-1`}>
-            {/* <FormField
+            <FormField
               placeholder={isPending ? `Getting company's profile` : `"Enter company name"`}
-              className="h-14 w-full"
+              className="h-12 w-full"
               label="Company's Name"
-              name="domain"
-              required
-            /> */}
+              name="name"
+              readOnly
+            />
 
             <FormField
               type="select"

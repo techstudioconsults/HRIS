@@ -1,4 +1,11 @@
 export const queryKeys = {
+  onboarding: {
+    companyProfile: () => ["onboarding", "companyProfile"] as const,
+    teams: () => ["onboarding", "teams"] as const,
+    roles: (teamId: string) => ["onboarding", "roles", teamId] as const,
+    role: (roleId: string) => ["onboarding", "role", roleId] as const,
+    teamsWithRoles: () => ["onboarding", "teamsWithRoles"] as const,
+  },
   product: {
     list: () => ["product", "list"] as const,
     details: (id: string) => ["product", "details", id] as const,

@@ -1,32 +1,31 @@
-/* eslint-disable no-console */
-// components/forms/TeamSetupForm.tsx
 "use client";
 
 import MainButton from "@/components/shared/button";
 import { FormHeader } from "@/components/shared/form-header";
 import { Skeleton } from "@/components/ui/skeleton";
-import { WithDependency } from "@/HOC/withDependencies";
-import { dependencies } from "@/lib/tools/dependencies";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { People } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { OnboardingService } from "../../services/service";
+// Refactored to use react-query service hooks instead of HOC dependency injection
+import { useOnboardingService } from "../../services/use-onboarding-service";
 import { TeamConfig } from "../accordions/team-config";
 import { Team, TeamSetupFormData, teamSetupSchema } from "./schema";
 
-interface TeamSetupFormProperties {
-  onBoardingService: OnboardingService;
-}
-
-const BaseTeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) => {
+export const TeamSetupForm = () => {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-  const [, setInitialTeams] = useState<Team[]>([]);
+  const { useGetTeamsWithRoles, useCreateTeam, useUpdateTeam, useCreateRole, useUpdateRole } = useOnboardingService();
+
+  const { data: fetchedTeams, isLoading } = useGetTeamsWithRoles();
+
+  const createTeamMutation = useCreateTeam();
+  const updateTeamMutation = useUpdateTeam();
+  const createRoleMutation = useCreateRole();
+  const updateRoleMutation = useUpdateRole();
 
   const methods = useForm<TeamSetupFormData>({
     resolver: zodResolver(teamSetupSchema),
@@ -38,29 +37,12 @@ const BaseTeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) => {
   const { handleSubmit, setValue, watch, reset } = methods;
   const teams = watch("teams");
 
-  // Load initial data
+  // Sync fetched teams into form once available
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const fetchedTeams = await onBoardingService.getTeams();
-        const teamsWithRoles = await Promise.all(
-          fetchedTeams.map(async (team) => {
-            const roles = await onBoardingService.getRoles(team.id!);
-            return { ...team, roles };
-          }),
-        );
-        setInitialTeams(teamsWithRoles);
-        reset({ teams: teamsWithRoles });
-      } catch (error) {
-        toast.error("Failed to load teams");
-        console.error("Error loading teams:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadData();
-  }, [onBoardingService, reset]);
+    if (fetchedTeams) {
+      reset({ teams: fetchedTeams as Team[] });
+    }
+  }, [fetchedTeams, reset]);
 
   const handleTeamsChange = (updatedTeams: Team[]) => {
     setValue("teams", updatedTeams, { shouldValidate: true });
@@ -72,30 +54,30 @@ const BaseTeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) => {
       for (const team of data.teams) {
         if (team.id) {
           // Update existing team
-          await onBoardingService.updateTeam(team.id, team.name);
+          await updateTeamMutation.mutateAsync({ teamId: team.id, name: team.name });
           // Handle role updates
           for (const role of team.roles) {
-            if (role.id) {
-              const updateData: { name?: string; permissions?: string[] } = {};
-              if (role.name !== undefined) updateData.name = role.name;
-              if (role.permissions !== undefined) updateData.permissions = role.permissions;
-              await onBoardingService.updateRole(role.id, updateData);
-            } else {
-              await onBoardingService.createRole({
-                name: role.name,
-                teamId: team.id!,
-                permissions: role.permissions,
-              });
-            }
+            await (role.id
+              ? updateRoleMutation.mutateAsync({
+                  roleId: role.id,
+                  name: role.name,
+                  permissions: role.permissions,
+                  teamId: team.id,
+                })
+              : createRoleMutation.mutateAsync({
+                  name: role.name,
+                  teamId: team.id!,
+                  permissions: role.permissions,
+                }));
           }
         } else {
           // Create new team
-          const createdTeam = await onBoardingService.createTeam(team.name);
+          const createdTeam = await createTeamMutation.mutateAsync({ name: team.name });
           // Create roles for new team
           if (createdTeam?.id) {
             await Promise.all(
               team.roles.map((role) =>
-                onBoardingService.createRole({
+                createRoleMutation.mutateAsync({
                   name: role.name,
                   teamId: createdTeam.id,
                   permissions: role.permissions,
@@ -108,9 +90,8 @@ const BaseTeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) => {
 
       toast.success("Team setup saved successfully");
       router.push("/onboarding/step-3");
-    } catch (error) {
+    } catch {
       toast.error("Failed to save team setup");
-      console.error("Error saving team setup:", error);
     }
   };
 
@@ -129,12 +110,7 @@ const BaseTeamSetupForm = ({ onBoardingService }: TeamSetupFormProperties) => {
       </div>
 
       <FormProvider {...methods}>
-        <form
-          onSubmit={(event: FormEvent) => {
-            event.preventDefault();
-            handleSubmit(handleFormSubmit);
-          }}
-        >
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
           <section className="hide-scrollbar max-h-[500px] space-y-4 overflow-auto">
             <TeamConfig teams={teams} onTeamsChange={handleTeamsChange} />
           </section>
@@ -208,6 +184,4 @@ const FormLoadingSkeleton = () => {
   );
 };
 
-export const TeamSetupForm = WithDependency(BaseTeamSetupForm, {
-  onBoardingService: dependencies.ONBOARDING_SERVICE,
-});
+// HOC removed; component now uses react-query hooks directly

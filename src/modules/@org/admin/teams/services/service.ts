@@ -1,5 +1,12 @@
 import { HttpAdapter } from "@/lib/http/http-adapter";
-import { RoleApiResponse, TeamApiResponse } from "@/modules/@org/onboarding/services/service";
+import {
+  getTeamsWithRoles,
+  Role,
+  createRole as sharedCreateRole,
+  getRoles as sharedGetRoles,
+  updateRole as sharedUpdateRole,
+  Team,
+} from "@/modules/@org/shared/organization-service";
 
 export interface CreateTeamDto {
   firstName: string;
@@ -79,65 +86,20 @@ export class TeamService {
   }
 
   // Team CRUD operations
-  async getTeams() {
-    const response = await this.http.get<PaginatedApiResponse<TeamApiResponse>>(`/teams`);
-
-    if (response?.status === 200) {
-      // Get roles for each team
-      const teamsWithRoles = await Promise.all(
-        response.data.data.items.map(async (team) => {
-          const roles = await this.getRoles(team.id);
-          return {
-            id: team.id,
-            name: team.name,
-            roles: roles,
-          };
-        }),
-      );
-      return teamsWithRoles;
-    }
-    return [];
+  async getTeams(): Promise<Team[]> {
+    return getTeamsWithRoles(this.http);
   }
 
-  async getRoles(teamId: string) {
-    const response = await this.http.get<PaginatedApiResponse<RoleApiResponse>>(`/roles?teamId=${teamId}`);
-
-    if (response?.status === 200) {
-      const roles = response.data.data.items.map((role) => ({
-        id: role.id,
-        name: role.name,
-        teamId: role.teamId,
-        permissions: role.permissions,
-      }));
-      return roles;
-    }
-    return [];
+  async getRoles(teamId: string): Promise<Role[]> {
+    return sharedGetRoles(this.http, teamId);
   }
 
   async createRole(roleData: { name: string; teamId: string; permissions: string[] }) {
-    const response = await this.http.post<{ data: RoleApiResponse; success: boolean }>(`/roles`, roleData);
-    if (response?.status === 201) {
-      return {
-        id: response.data.data.id,
-        name: response.data.data.name,
-        teamId: response.data.data.teamId,
-        permissions: response.data.data.permissions,
-      };
-    }
-    throw new Error("Failed to create role");
+    return sharedCreateRole(this.http, roleData);
   }
 
   async updateRole(roleId: string, roleData: { name?: string; permissions?: string[] }) {
-    const response = await this.http.patch<{ data: RoleApiResponse; success: boolean }>(`/roles/${roleId}`, roleData);
-    if (response?.status === 200) {
-      return {
-        id: response.data.data.id,
-        name: response.data.data.name,
-        teamId: response.data.data.teamId,
-        permissions: response.data.data.permissions,
-      };
-    }
-    throw new Error("Failed to update role");
+    return sharedUpdateRole(this.http, roleId, roleData);
   }
 
   async assignEmployeeToTeam(employeeId: string, teamId: string, roleId: string, customPermissions?: string[]) {

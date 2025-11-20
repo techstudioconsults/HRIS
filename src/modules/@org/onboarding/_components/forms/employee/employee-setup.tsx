@@ -4,6 +4,7 @@
 import MainButton from "@/components/shared/button";
 import { FormHeader } from "@/components/shared/form-header";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 import { User } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { FormEvent } from "react";
@@ -60,7 +61,7 @@ export const EmployeeSetupForm = ({ onBoardingService }: EmployeeSetupFormProper
     } catch (error) {
       console.error("Onboarding failed:", error);
       toast.error(`Registration Failed`, {
-        description: `Form not filled properly..please try again`,
+        description: error instanceof AxiosError ? error.response?.data?.message : "An unknown error occurred",
       });
     }
   };

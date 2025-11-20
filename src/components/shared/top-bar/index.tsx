@@ -64,7 +64,7 @@ export default function TopBar({
     <header className={cn("bg-background grid h-16 grid-cols-2 items-center gap-4 px-0 lg:px-4", className)}>
       {/* Search Input */}
       <div className="relative hidden w-fit items-center gap-4 md:flex">
-        <SidebarTrigger className="absolute top-[3rem] -left-[30px] bg-[#1F2666] text-white shadow-none" />
+        <SidebarTrigger className="absolute top-[3.5rem] -left-[30px] bg-[#1F2666] text-white shadow-none" />
         <GlobalSearchInput />
       </div>
 

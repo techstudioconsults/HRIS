@@ -15,3 +15,33 @@ export interface CompanyProfile {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface TeamApiResponse {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RoleApiResponse {
+  id: string;
+  name: string;
+  teamId: string;
+  permissions: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Domain models
+export interface Role {
+  id: string;
+  name: string;
+  teamId: string;
+  permissions: string[];
+}
+
+export interface Team {
+  id: string;
+  name: string;
+  roles: Role[];
+}

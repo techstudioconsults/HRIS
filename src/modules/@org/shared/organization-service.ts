@@ -1,39 +1,10 @@
 import { HttpAdapter } from "@/lib/http/http-adapter";
 
-// Core API response types
-export interface TeamApiResponse {
-  id: string;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface RoleApiResponse {
-  id: string;
-  name: string;
-  teamId: string;
-  permissions: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-// Domain models
-export interface Role {
-  id: string;
-  name: string;
-  teamId: string;
-  permissions: string[];
-}
-
-export interface Team {
-  id: string;
-  name: string;
-  roles: Role[];
-}
+import { RoleApiResponse, TeamApiResponse } from "../onboarding/types";
 
 // Fetch all teams and include their roles
 export async function getTeamsWithRoles(http: HttpAdapter): Promise<Team[]> {
-  const response = await http.get<PaginatedApiResponse<TeamApiResponse>>(`/teams`);
+  const response = await http.get<ApiResponse<TeamApiResponse>>(`/teams`);
   if (response?.status !== 200) return [];
 
   const teamsWithRoles = await Promise.all(
@@ -47,7 +18,7 @@ export async function getTeamsWithRoles(http: HttpAdapter): Promise<Team[]> {
 
 // Fetch roles for a given team
 export async function getRoles(http: HttpAdapter, teamId: string): Promise<Role[]> {
-  const response = await http.get<PaginatedApiResponse<RoleApiResponse>>(`/roles?teamId=${teamId}`);
+  const response = await http.get<ApiResponse<RoleApiResponse>>(`/roles?teamId=${teamId}`);
   if (response?.status !== 200) return [];
   return response.data.data.items.map((role) => ({
     id: role.id,

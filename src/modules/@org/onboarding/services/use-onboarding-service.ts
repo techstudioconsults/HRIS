@@ -58,7 +58,10 @@ export const useOnboardingService = () => {
       },
     );
 
-  const useDeleteTeam = () => useServiceMutation((service, teamId: string) => service.deleteTeam(teamId));
+  const useDeleteTeam = () =>
+    useServiceMutation((service, teamId: string) => service.deleteTeam(teamId), {
+      invalidateQueries: () => [queryKeys.onboarding.teams(), queryKeys.onboarding.teamsWithRoles()],
+    });
 
   const useCreateRole = () =>
     useServiceMutation(
@@ -85,7 +88,10 @@ export const useOnboardingService = () => {
       },
     );
 
-  const useDeleteRole = () => useServiceMutation((service, roleId: string) => service.deleteRole(roleId));
+  const useDeleteRole = () =>
+    useServiceMutation((service, roleId: string) => service.deleteRole(roleId), {
+      invalidateQueries: () => [queryKeys.onboarding.teamsWithRoles()],
+    });
 
   const useOnboardEmployees = () =>
     useServiceMutation((service, data: { employees: any[] }) => service.onboardEmployees(data));

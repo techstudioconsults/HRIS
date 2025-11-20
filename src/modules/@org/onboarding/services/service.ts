@@ -1,14 +1,10 @@
 import { HttpAdapter } from "@/lib/http/http-adapter";
 import {
   getTeamsWithRoles,
-  Role,
-  RoleApiResponse,
   createRole as sharedCreateRole,
   deleteRole as sharedDeleteRole,
   getRoles as sharedGetRoles,
   updateRole as sharedUpdateRole,
-  Team,
-  TeamApiResponse,
 } from "@/modules/@org/shared/organization-service";
 import { CompanyProfileFormData } from "@/schemas";
 
@@ -36,12 +32,12 @@ export class OnboardingService {
   }
 
   // Team CRUD operations
-  async getTeams(): Promise<Team[]> {
+  async getTeams() {
     return getTeamsWithRoles(this.http);
   }
 
-  async createTeam(data: { name: string; parentId?: string }): Promise<Team> {
-    const response = await this.http.post<{ data: TeamApiResponse; success: boolean }>(`/teams`, data);
+  async createTeam(data: { name: string; parentId?: string }) {
+    const response = await this.http.post(`/teams`, data);
 
     if (response?.status === 201) {
       return {
@@ -53,8 +49,8 @@ export class OnboardingService {
     throw new Error("Failed to create team");
   }
 
-  async updateTeam(teamId: string, name: string): Promise<Team> {
-    const response = await this.http.patch<{ data: TeamApiResponse; success: boolean }>(`/teams/${teamId}`, { name });
+  async updateTeam(teamId: string, name: string) {
+    const response = await this.http.patch(`/teams/${teamId}`, { name });
     if (response?.status === 200) {
       // Get the updated team's roles to maintain consistency
       const roles = await this.getRoles(teamId);
@@ -67,16 +63,16 @@ export class OnboardingService {
     throw new Error("Failed to update team");
   }
 
-  async deleteTeam(teamId: string): Promise<void> {
+  async deleteTeam(teamId: string) {
     await this.http.delete(`/teams/${teamId}`);
   }
 
   // Role CRUD operations
-  async getRoles(teamId: string): Promise<Role[]> {
+  async getRoles(teamId: string) {
     return sharedGetRoles(this.http, teamId);
   }
   async getRole(roleId: string) {
-    const response = await this.http.get<{ data: RoleApiResponse }>(`/roles/${roleId}`);
+    const response = await this.http.get(`/roles/${roleId}`);
     if (response?.status === 200) {
       return response.data;
     }
@@ -89,15 +85,15 @@ export class OnboardingService {
     }
   }
 
-  async createRole(roleData: { name: string; teamId: string; permissions: string[] }): Promise<Role> {
+  async createRole(roleData: { name: string; teamId: string; permissions: string[] }) {
     return sharedCreateRole(this.http, roleData);
   }
 
-  async updateRole(roleId: string, roleData: { name?: string; permissions?: string[] }): Promise<Role> {
+  async updateRole(roleId: string, roleData: { name?: string; permissions?: string[] }) {
     return sharedUpdateRole(this.http, roleId, roleData);
   }
 
-  async deleteRole(roleId: string): Promise<{ success: boolean }> {
+  async deleteRole(roleId: string) {
     return sharedDeleteRole(this.http, roleId);
   }
 

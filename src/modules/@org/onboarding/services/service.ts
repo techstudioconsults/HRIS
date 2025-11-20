@@ -74,8 +74,8 @@ export class OnboardingService {
     return [];
   }
 
-  async createTeam(name: string): Promise<Team> {
-    const response = await this.http.post<{ data: TeamApiResponse; success: boolean }>(`/teams`, { name });
+  async createTeam(data: { name: string; parentId?: string }): Promise<Team> {
+    const response = await this.http.post<{ data: TeamApiResponse; success: boolean }>(`/teams`, data);
 
     if (response?.status === 201) {
       return {

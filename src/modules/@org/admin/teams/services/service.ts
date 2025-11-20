@@ -80,7 +80,7 @@ export class TeamService {
 
   // Team CRUD operations
   async getTeams() {
-    const response = await this.http.get<ApiResponse<TeamApiResponse>>(`/teams`);
+    const response = await this.http.get<PaginatedApiResponse<TeamApiResponse>>(`/teams`);
 
     if (response?.status === 200) {
       // Get roles for each team
@@ -100,7 +100,7 @@ export class TeamService {
   }
 
   async getRoles(teamId: string) {
-    const response = await this.http.get<ApiResponse<RoleApiResponse>>(`/roles?teamId=${teamId}`);
+    const response = await this.http.get<PaginatedApiResponse<RoleApiResponse>>(`/roles?teamId=${teamId}`);
 
     if (response?.status === 200) {
       const roles = response.data.data.items.map((role) => ({

@@ -26,7 +26,8 @@ export const useOnboardingService = () => {
   const useCreateCompany = () =>
     useServiceMutation((service, data: CompanyProfileFormData) => service.createCompany(data));
 
-  const useCreateTeam = () => useServiceMutation((service, name: string) => service.createTeam(name));
+  const useCreateTeam = () =>
+    useServiceMutation((service, data: { name: string; parentId?: string }) => service.createTeam(data));
 
   const useUpdateTeam = () =>
     useServiceMutation((service, { teamId, name }: { teamId: string; name: string }) =>

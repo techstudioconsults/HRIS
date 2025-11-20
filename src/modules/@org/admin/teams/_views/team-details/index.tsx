@@ -71,7 +71,7 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
   const handleAddSubTeam = async (data: { name: string }) => {
     try {
       setIsSubmitting(true);
-      await createTeamMutation.mutateAsync(data.name);
+      await createTeamMutation.mutateAsync({ name: data.name, parentId: id });
       await queryClient.invalidateQueries({ queryKey: ["teams"] });
       await queryClient.invalidateQueries({ queryKey: ["team", id] });
       toast.success(`Sub-team "${data.name}" created successfully!`);

@@ -1,12 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import MainButton from "@/components/shared/button";
-import { WithDependency } from "@/HOC/withDependencies";
 import { PageSection, PageWrapper } from "@/lib/animation";
-import { dependencies } from "@/lib/tools/dependencies";
-import { z } from "zod";
 
 import { EmployeeSetupForm } from "../../_components/forms/employee/employee-setup";
-import { OnboardingService } from "../../services/service";
 
 // Enhanced Employee type with teamId and roleId
 export interface Employee {
@@ -24,17 +20,7 @@ export interface OnboardEmployeesPayload {
   employees: Employee[];
 }
 
-export const employeeSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
-  phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  teamId: z.string().min(1, "Department is required"),
-  roleId: z.string().min(1, "Role is required"),
-});
-
-export const StepThree = ({ onBoardingService }: { onBoardingService: OnboardingService }) => {
+export const EmployeeSetup = () => {
   return (
     <PageWrapper className={`flex flex-col items-center justify-between gap-8 lg:flex-row`}>
       <section className={`max-w-[646px] flex-1 space-y-[41px]`}>
@@ -62,12 +48,9 @@ export const StepThree = ({ onBoardingService }: { onBoardingService: Onboarding
         </PageSection>
       </section>
       <section className={`flex-1`}>
-        <EmployeeSetupForm onBoardingService={onBoardingService} />
+        <EmployeeSetupForm />
       </section>
     </PageWrapper>
   );
 };
-
-export const EmployeeSetup = WithDependency(StepThree, {
-  onBoardingService: dependencies.ONBOARDING_SERVICE,
-});
+// No HOC dependency injection; hooks are used inside forms directly.

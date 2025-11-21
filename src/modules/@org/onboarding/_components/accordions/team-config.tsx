@@ -197,7 +197,10 @@ export const TeamConfig = () => {
                 <div className="flex items-center gap-1 space-x-2 text-sm">
                   <span
                     className="flex cursor-pointer items-center gap-1 text-gray-600 hover:text-gray-900"
-                    onClick={() => handleOpenTeamDialog(team)}
+                    onClick={(event: React.MouseEvent<HTMLSpanElement>) => {
+                      event.stopPropagation();
+                      handleOpenTeamDialog(team);
+                    }}
                   >
                     <Pencil className="mr-2 h-4 w-4" />
                     Edit

@@ -24,12 +24,12 @@ export class OnboardingService {
     }
   }
 
-  async createCompany(data: CompanyProfileFormData) {
-    const response = await this.http.post<{ data: string; success: boolean }>(`/companies`, data);
-    if (response?.status === 200) {
-      return response.data;
-    }
-  }
+  // async createCompany(data: CompanyProfileFormData) {
+  //   const response = await this.http.post<{ data: string; success: boolean }>(`/companies`, data);
+  //   if (response?.status === 200) {
+  //     return response.data;
+  //   }
+  // }
 
   // Team CRUD operations
   async getTeams() {
@@ -71,10 +71,11 @@ export class OnboardingService {
   async getRoles(teamId: string) {
     return sharedGetRoles(this.http, teamId);
   }
+
   async getRole(roleId: string) {
     const response = await this.http.get(`/roles/${roleId}`);
     if (response?.status === 200) {
-      return response.data;
+      return response.data.data;
     }
   }
 

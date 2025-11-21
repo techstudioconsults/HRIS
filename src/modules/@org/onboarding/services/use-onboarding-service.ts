@@ -42,8 +42,8 @@ export const useOnboardingService = () => {
       invalidateQueries: () => [queryKeys.onboarding.companyProfile()],
     });
 
-  const useCreateCompany = () =>
-    useServiceMutation((service, data: CompanyProfileFormData) => service.createCompany(data));
+  // const useCreateCompany = () =>
+  //   useServiceMutation((service, data: CompanyProfileFormData) => service.createCompany(data));
 
   const useCreateTeam = () =>
     useServiceMutation((service, data: { name: string; parentId?: string }) => service.createTeam(data), {
@@ -106,7 +106,7 @@ export const useOnboardingService = () => {
 
     // Mutations
     useUpdateCompanyProfile,
-    useCreateCompany,
+    // useCreateCompany,
     useCreateTeam,
     useUpdateTeam,
     useDeleteTeam,

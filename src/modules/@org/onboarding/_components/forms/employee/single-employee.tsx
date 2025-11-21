@@ -40,6 +40,7 @@ export const SingleEmployeeForm = ({ index }: SingleEmployeeFormProperties) => {
   // Query-based data (departments/roles) via hooks rather than local service calls
   const [permissionsDialogOpen, setPermissionsDialogOpen] = useState(false);
   const [currentPermissions, setCurrentPermissions] = useState<{
+    id?: string;
     name: string;
     permissions: any[];
   } | null>(null);
@@ -61,36 +62,29 @@ export const SingleEmployeeForm = ({ index }: SingleEmployeeFormProperties) => {
   }, [selectedTeamId, setValue, index]);
 
   // Load permissions when role changes or when opening dialog
-  const roleDataQuery = useGetRole(selectedRoleId || "");
+  const { data: roleDataQuery } = useGetRole(selectedRoleId);
   useEffect(() => {
-    const roleData = roleDataQuery.data;
+    const roleData = roleDataQuery;
     if (selectedRoleId && roleData) {
-      setCurrentPermissions({ name: roleData.name, permissions: roleData.permissions || [] });
+      setCurrentPermissions({ id: selectedRoleId, name: roleData.name, permissions: roleData.permissions || [] });
     } else if (!selectedRoleId) {
       setCurrentPermissions(null);
     }
-  }, [roleDataQuery.data, selectedRoleId]);
+  }, [roleDataQuery, selectedRoleId]);
 
   // Auto-populate permissions when a team has exactly one role and no role has been manually selected yet.
   useEffect(() => {
     if (selectedTeamId && rolesData && rolesData.length === 1 && !selectedRoleId) {
       const soleRole = rolesData[0];
       setValue(`employees.${index}.roleId`, soleRole.id);
-      setCurrentPermissions({ name: soleRole.name, permissions: soleRole.permissions || [] });
+      setCurrentPermissions({ id: soleRole.id, name: soleRole.name, permissions: soleRole.permissions || [] });
     }
   }, [selectedTeamId, rolesData, selectedRoleId, setValue, index]);
 
   const handleOpenPermissionsDialog = () => {
-    if (selectedRoleId) {
-      // If there's exactly one available role for the selected team, auto-select it.
-      if (rolesData && rolesData.length === 1) {
-        const soleRole = rolesData[0];
-        setValue(`employees.${index}.roleId`, soleRole.id);
-        setCurrentPermissions({ name: soleRole.name, permissions: soleRole.permissions || [] });
-      } else {
-        toast.warning("Please select a role first");
-        return;
-      }
+    if (!selectedRoleId) {
+      toast.warning("Please select a role first");
+      return;
     }
     setPermissionsDialogOpen(true);
   };
@@ -193,8 +187,9 @@ export const SingleEmployeeForm = ({ index }: SingleEmployeeFormProperties) => {
         trigger={""}
       >
         <RolesAndPermission
+          key={selectedRoleId || "no-role"}
           isEdit
-          initialData={currentPermissions}
+          initialData={currentPermissions ? { ...currentPermissions, id: currentPermissions.id } : undefined}
           onSubmit={async (data) => {
             handleSavePermissions(data);
           }}

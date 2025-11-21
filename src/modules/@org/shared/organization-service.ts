@@ -6,9 +6,8 @@ import { RoleApiResponse, TeamApiResponse } from "../onboarding/types";
 export async function getTeamsWithRoles(http: HttpAdapter): Promise<Team[]> {
   const response = await http.get<ApiResponse<TeamApiResponse>>(`/teams`);
   if (response?.status !== 200) return [];
-
   const teamsWithRoles = await Promise.all(
-    response.data.data.items.map(async (team) => {
+    response.data.data.items.map(async (team: Team) => {
       const roles = await getRoles(http, team.id);
       return { id: team.id, name: team.name, roles };
     }),
@@ -20,7 +19,7 @@ export async function getTeamsWithRoles(http: HttpAdapter): Promise<Team[]> {
 export async function getRoles(http: HttpAdapter, teamId: string): Promise<Role[]> {
   const response = await http.get<ApiResponse<RoleApiResponse>>(`/roles?teamId=${teamId}`);
   if (response?.status !== 200) return [];
-  return response.data.data.items.map((role) => ({
+  return response.data.data.items.map((role: Role) => ({
     id: role.id,
     name: role.name,
     teamId: role.teamId,

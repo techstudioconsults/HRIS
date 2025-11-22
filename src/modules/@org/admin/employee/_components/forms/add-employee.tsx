@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { BreadCrumb } from "@/components/shared/breadcrumb";
@@ -56,9 +57,14 @@ export const AddEmployeeForm = () => {
 
   // Memoize derived team and roles to prevent re-renders triggering an effect loop
   const selectedTeam = useMemo(() => teams.find((team) => String(team.id) === selectedTeamId), [teams, selectedTeamId]);
-  type RoleLite = { id: string | number; name: string };
-  const normalizedDerivedRoles = useMemo(
-    () => (selectedTeam?.roles ?? []).map((r: RoleLite) => ({ id: String(r.id), name: r.name })),
+  type RoleInput = { id: string | number; name: string };
+  type RoleLite = { id: string; name: string };
+  const normalizedDerivedRoles = useMemo<RoleLite[]>(
+    () =>
+      ((selectedTeam?.roles ?? []) as RoleInput[]).map((r) => ({
+        id: String(r.id),
+        name: r.name,
+      })),
     [selectedTeam],
   );
 
@@ -82,7 +88,7 @@ export const AddEmployeeForm = () => {
     }
 
     // If team is selected but current role does not exist in that team, clear it
-    if (selectedTeamId && selectedRoleId && !normalizedDerivedRoles.some((r) => r.id === selectedRoleId)) {
+    if (selectedTeamId && selectedRoleId && !normalizedDerivedRoles.some((r: any) => r.id === selectedRoleId)) {
       setValue("roleId", "");
     }
   }, [selectedTeamId, selectedRoleId, normalizedDerivedRoles, setValue]);
@@ -90,7 +96,7 @@ export const AddEmployeeForm = () => {
   // Auto-set bank code when bank name is selected
   useEffect(() => {
     if (selectedBankName) {
-      const selectedBank = banks.find((bank) => bank.name === selectedBankName);
+      const selectedBank = banks.find((bank: any) => bank.name === selectedBankName);
       if (selectedBank) {
         setValue("bankCode", selectedBank.code);
       }
@@ -345,7 +351,7 @@ export const AddEmployeeForm = () => {
                         <ComboBox
                           value={value || ""}
                           onValueChange={onChange}
-                          options={banks.map((bank) => ({
+                          options={banks.map((bank: any) => ({
                             value: bank.name,
                             label: bank.name,
                           }))}

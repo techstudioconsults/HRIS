@@ -36,6 +36,12 @@ export const Register = () => {
     formState: { isValid },
   } = methods;
 
+  // Live watch of password fields for immediate user feedback
+  const passwordValue = methods.watch("password");
+  const confirmPasswordValue = methods.watch("confirmPassword");
+  const showPasswordStatus = typeof confirmPasswordValue === "string" && confirmPasswordValue.length > 0; // Only show once user starts confirming
+  const passwordsMatch = showPasswordStatus && passwordValue === confirmPasswordValue;
+
   const handleSubmitForm = async (data: RegisterFormData) => {
     try {
       const response = await signUp(data);
@@ -114,14 +120,25 @@ export const Register = () => {
                 name={"password"}
                 required
               />
-              <FormField
-                type={`password`}
-                placeholder={`Enter password`}
-                className={`h-14 w-full`}
-                label={`Confirm Password`}
-                name={"confirmPassword"}
-                required
-              />
+              <div className="space-y-1">
+                <FormField
+                  type={`password`}
+                  placeholder={`Re-enter password`}
+                  className={`h-14 w-full`}
+                  label={`Confirm Password`}
+                  name={"confirmPassword"}
+                  required
+                />
+                {showPasswordStatus && (
+                  <p
+                    className={`text-xs font-medium ${passwordsMatch ? "text-green-600" : "text-red-600"}`}
+                    role="status"
+                    aria-live="polite"
+                  >
+                    {passwordsMatch ? "Passwords match." : "Passwords do not match."}
+                  </p>
+                )}
+              </div>
             </section>
             <div className="pt-8">
               <div className="text-muted-foreground mb-4 text-sm">

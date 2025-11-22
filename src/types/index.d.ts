@@ -2,15 +2,6 @@
 import { ChangeEventHandler, FocusEventHandler, HTMLAttributes, MouseEventHandler } from "react";
 
 declare global {
-  interface Metadata {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-  }
-
   interface LogoProperties {
     logo: string;
     width?: number;

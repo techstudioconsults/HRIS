@@ -1,11 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// components/accordions/TeamConfig.tsx
 "use client";
 
 import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AxiosError } from "axios";
+import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -14,27 +14,32 @@ import { RolesAndPermission } from "../forms/roles&permission";
 import { Role, Team } from "../forms/schema";
 import { TeamForm } from "../forms/team/team-form";
 
-interface TeamConfigProperties {
-  teams: Team[];
-  onTeamsChange: (teams: Team[]) => void;
-}
-
-export const TeamConfig = ({ teams, onTeamsChange }: TeamConfigProperties) => {
+export const TeamConfig = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
   const [currentRole, setCurrentRole] = useState<Role | null>(null);
   const [dialogType, setDialogType] = useState<"team" | "role">("team");
+  const [deletingTeamId, setDeletingTeamId] = useState<string | null>(null);
+  const [deletingRoleId, setDeletingRoleId] = useState<string | null>(null);
 
-  const { useCreateTeam, useUpdateTeam, useDeleteTeam, useCreateRole, useUpdateRole, useDeleteRole } =
-    useOnboardingService();
+  const {
+    useGetTeamsWithRoles,
+    useDeleteTeam,
+    useCreateRole,
+    useUpdateRole,
+    useDeleteRole,
+    useCreateTeam,
+    useUpdateTeam,
+  } = useOnboardingService();
 
-  // Mutations
-  const { mutateAsync: createTeam, isPending: isCreatingTeam } = useCreateTeam();
-  const { mutateAsync: updateTeam, isPending: isUpdatingTeam } = useUpdateTeam();
-  const { mutateAsync: deleteTeam } = useDeleteTeam();
+  const { data: teams, isLoading: isLoadingTeams } = useGetTeamsWithRoles();
+
+  const { mutateAsync: deleteTeam, isPending: isDeletingTeam } = useDeleteTeam();
   const { mutateAsync: createRole, isPending: isCreatingRole } = useCreateRole();
   const { mutateAsync: updateRole, isPending: isUpdatingRole } = useUpdateRole();
-  const { mutateAsync: deleteRole } = useDeleteRole();
+  const { mutateAsync: deleteRole, isPending: isDeletingRole } = useDeleteRole();
+  const { mutateAsync: createTeam, isPending: isCreatingTeam } = useCreateTeam();
+  const { mutateAsync: updateTeam, isPending: isUpdatingTeam } = useUpdateTeam();
 
   const handleOpenTeamDialog = (team?: Team) => {
     setCurrentTeam(team || null);
@@ -51,111 +56,140 @@ export const TeamConfig = ({ teams, onTeamsChange }: TeamConfigProperties) => {
   };
 
   const handleAddTeam = async (name: string) => {
-    try {
-      const newTeam = await createTeam(name);
-      onTeamsChange([...teams, newTeam]);
-      setDialogOpen(false);
-    } catch (error: any) {
-      toast.error("Failed to add team", {
-        description: error.message,
-      });
-    }
+    await createTeam(
+      { name },
+      {
+        onSuccess: () => {
+          toast.success("Team created successfully");
+          setDialogOpen(false);
+        },
+        onError: (error) => {
+          const message = error instanceof AxiosError ? error.response?.data.message : "An unexpected error occurred";
+          toast.error("Failed to create team", { description: message });
+        },
+      },
+    );
   };
 
   const handleUpdateTeam = async (teamId: string, name: string) => {
-    try {
-      const updatedTeam = await updateTeam({ teamId, name });
-      onTeamsChange(teams.map((t) => (t.id === teamId ? { ...updatedTeam, roles: t.roles } : t)));
-      setDialogOpen(false);
-    } catch (error: any) {
-      toast.error("Failed to update team", {
-        description: error.message,
-      });
-    }
+    await updateTeam(
+      { teamId, name },
+      {
+        onSuccess: () => {
+          toast.success("Team updated successfully");
+          setDialogOpen(false);
+        },
+        onError: (error) => {
+          const message = error instanceof AxiosError ? error.response?.data.message : "An unexpected error occurred";
+          toast.error("Failed to update team", { description: message });
+        },
+      },
+    );
   };
 
   const handleDeleteTeam = async (teamId: string) => {
-    try {
-      await deleteTeam(teamId);
-      onTeamsChange(teams.filter((t) => t.id !== teamId));
-    } catch (error: any) {
-      toast.error("Failed to delete team", {
-        description: error.message,
-      });
-    }
+    setDeletingTeamId(teamId);
+    await deleteTeam(teamId, {
+      onSuccess: () => {
+        toast.success("Team deleted successfully");
+      },
+      onError: (error) => {
+        const message = error instanceof AxiosError ? error.response?.data.message : "An unexpected error occurred";
+        toast.error("Failed to delete team", {
+          description: message,
+        });
+      },
+      onSettled: () => setDeletingTeamId(null),
+    });
   };
 
   const handleAddRole = async (teamId: string, role: Omit<Role, "id">) => {
-    try {
-      const newRole = await createRole({
+    await createRole(
+      {
         name: role.name!,
         teamId,
         permissions: role.permissions,
-      });
-      onTeamsChange(teams.map((team) => (team.id === teamId ? { ...team, roles: [...team.roles, newRole] } : team)));
-      setDialogOpen(false);
-    } catch (error: any) {
-      toast.error("Failed to add role", {
-        description: error.message,
-      });
-    }
+      },
+      {
+        onSuccess: () => {
+          toast.success("Role created successfully");
+          setDialogOpen(false);
+        },
+        onError: (error) => {
+          const message = error instanceof AxiosError ? error.response?.data.message : "An unexpected error occurred";
+          toast.error("Failed to create role", { description: message });
+        },
+      },
+    );
   };
 
-  const handleUpdateRole = async (roleId: string, role: Partial<Role>) => {
+  const handleUpdateRole = async (roleId: string, role: Partial<Role> & { teamId?: string }) => {
     try {
-      const updateData: { roleId: string; name?: string; permissions?: string[] } = { roleId };
+      const resolvedTeamId = role.teamId ?? currentTeam?.id;
+      if (!resolvedTeamId) {
+        toast.error("Failed to update role", { description: "Missing team context for role update" });
+        return;
+      }
+      const updateData: { roleId: string; name?: string; permissions?: string[]; teamId: string } = {
+        roleId,
+        teamId: resolvedTeamId,
+      };
       if (role.name !== undefined) updateData.name = role.name;
       if (role.permissions !== undefined) updateData.permissions = role.permissions;
 
-      const updatedRole = await updateRole(updateData);
-      onTeamsChange(
-        teams.map((team) =>
-          team.id === currentTeam?.id
-            ? {
-                ...team,
-                roles: team.roles.map((r) => (r.id === roleId ? { ...r, ...updatedRole } : r)),
-              }
-            : team,
-        ),
-      );
-      setDialogOpen(false);
-    } catch (error: any) {
+      await updateRole(updateData, {
+        onSuccess: () => {
+          toast.success("Role updated successfully");
+        },
+        onError: (error) => {
+          const message = error instanceof AxiosError ? error.response?.data.message : "An unexpected error occurred";
+          toast.error("Failed to update role", { description: message });
+          setDialogOpen(false);
+        },
+      });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
       toast.error("Failed to update role", {
-        description: error.message,
+        description: message,
       });
     }
   };
 
-  const handleDeleteRole = async (teamId: string, roleId: string) => {
-    try {
-      await deleteRole(roleId, {
-        onSuccess: (response) => {
-          if (response.success) {
-            toast.success("Role deleted successfully");
-          }
-        },
-        onError: (error) => {
-          toast.error("Failed to delete role", {
-            description: error.message,
-          });
-        },
-      });
-      onTeamsChange(
-        teams.map((team) =>
-          team.id === teamId ? { ...team, roles: team.roles.filter((r) => r.id !== roleId) } : team,
-        ),
-      );
-    } catch (error: any) {
-      toast.error("Failed to delete role", {
-        description: error.message,
-      });
-    }
+  const handleDeleteRole = async (_teamId: string, roleId: string) => {
+    setDeletingRoleId(roleId);
+    await deleteRole(roleId, {
+      onSuccess: (response) => {
+        if (response.success) toast.success("Role deleted successfully");
+      },
+      onError: (error) => {
+        const message = error instanceof AxiosError ? error.response?.data.message : error.message;
+        toast.error("Failed to delete role", { description: message });
+      },
+      onSettled: () => setDeletingRoleId(null),
+    });
   };
+
+  if (isLoadingTeams) {
+    return (
+      <div className="rounded-lg border p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Skeleton className="h-5 w-5 rounded" />
+            <Skeleton className="h-6 w-[150px]" />
+          </div>
+          <div className="flex space-x-4">
+            <Skeleton className="h-5 w-5 rounded" />
+            <Skeleton className="h-5 w-5 rounded" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
       <Accordion type="multiple" className="w-full space-y-4">
-        {teams.map((team) => (
+        {teams?.map((team) => (
           <AccordionItem key={team.id} value={team.id!}>
             <AccordionTrigger className="flex-row-reverse border p-4 text-left text-sm md:text-[16px]">
               <div className="flex w-full items-center justify-between">
@@ -163,24 +197,35 @@ export const TeamConfig = ({ teams, onTeamsChange }: TeamConfigProperties) => {
                 <div className="flex items-center gap-1 space-x-2 text-sm">
                   <span
                     className="flex cursor-pointer items-center gap-1 text-gray-600 hover:text-gray-900"
-                    onClick={() => handleOpenTeamDialog(team)}
+                    onClick={(event: React.MouseEvent<HTMLSpanElement>) => {
+                      event.stopPropagation();
+                      handleOpenTeamDialog(team);
+                    }}
                   >
                     <Pencil className="mr-2 h-4 w-4" />
                     Edit
                   </span>
                   <span
                     className="text-destructive hover:text-destructive flex cursor-pointer items-center gap-1"
-                    onClick={() => handleDeleteTeam(team.id!)}
+                    onClick={(event: React.MouseEvent<HTMLSpanElement>) => {
+                      if (isDeletingTeam) return;
+                      event.stopPropagation();
+                      handleDeleteTeam(team.id!);
+                    }}
                   >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
+                    {isDeletingTeam && deletingTeamId === team.id ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="mr-2 h-4 w-4" />
+                    )}
+                    {isDeletingTeam && deletingTeamId === team.id ? "Deleting..." : "Delete"}
                   </span>
                 </div>
               </div>
             </AccordionTrigger>
             <AccordionContent className="mt-0.5 space-y-4 rounded-md border border-t p-4 font-medium">
               {team?.roles?.length > 0 ? (
-                team.roles.map((role) => (
+                team.roles.map((role: Role) => (
                   <div key={role.id} className="flex w-full items-center justify-between">
                     <p>{role.name}</p>
                     <div className="flex items-center gap-4 text-xs">
@@ -193,10 +238,17 @@ export const TeamConfig = ({ teams, onTeamsChange }: TeamConfigProperties) => {
                       </span>
                       <span
                         className="text-destructive hover:text-destructive flex cursor-pointer items-center"
-                        onClick={() => handleDeleteRole(team.id!, role.id!)}
+                        onClick={() => {
+                          if (isDeletingRole) return;
+                          handleDeleteRole(team.id!, role.id!);
+                        }}
                       >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
+                        {isDeletingRole && deletingRoleId === role.id ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="mr-2 h-4 w-4" />
+                        )}
+                        {isDeletingRole && deletingRoleId === role.id ? "Deleting..." : "Delete"}
                       </span>
                     </div>
                   </div>
@@ -222,7 +274,6 @@ export const TeamConfig = ({ teams, onTeamsChange }: TeamConfigProperties) => {
         <MainButton
           type="button"
           variant="default"
-          size="xl"
           className="text-primary h-fit rounded-none p-0"
           icon={<Plus className="mr-2 h-4 w-4" />}
           isLeftIconVisible
@@ -242,9 +293,7 @@ export const TeamConfig = ({ teams, onTeamsChange }: TeamConfigProperties) => {
       >
         <TeamForm
           initialData={currentTeam}
-          onSubmit={(data) => {
-            return currentTeam ? handleUpdateTeam(currentTeam.id!, data.name) : handleAddTeam(data.name);
-          }}
+          onSubmit={(data) => (currentTeam ? handleUpdateTeam(currentTeam.id!, data.name) : handleAddTeam(data.name))}
           onCancel={() => setDialogOpen(false)}
           isSubmitting={isCreatingTeam || isUpdatingTeam}
         />
@@ -263,7 +312,9 @@ export const TeamConfig = ({ teams, onTeamsChange }: TeamConfigProperties) => {
           <RolesAndPermission
             initialData={currentRole}
             onSubmit={(data) => {
-              return currentRole ? handleUpdateRole(currentRole.id!, data) : handleAddRole(currentTeam.id!, data);
+              return currentRole
+                ? handleUpdateRole(currentRole.id!, { ...data, teamId: currentTeam.id! })
+                : handleAddRole(currentTeam.id!, data);
             }}
             onCancel={() => setDialogOpen(false)}
             isSubmitting={isCreatingRole || isUpdatingRole}

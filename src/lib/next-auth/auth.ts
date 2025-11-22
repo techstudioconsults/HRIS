@@ -35,15 +35,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               permissions,
             } as User;
           }
+
+          // If response is not successful, throw error with message from response
+          const errorMessage = response.data?.message || "Login failed. Please try again.";
+          throw new CredentialsSignin(errorMessage);
         } catch (error) {
           if (axios.isAxiosError(error)) {
             const message = error.response?.data?.message || "Invalid email or password";
             throw new CredentialsSignin(message);
           }
+
+          // Re-throw if it's already a CredentialsSignin error
+          if (error instanceof CredentialsSignin) {
+            throw error;
+          }
+
           throw new CredentialsSignin("Login failed. Please try again.");
         }
-
-        throw new CredentialsSignin("Login failed. Please try again.");
       },
     }),
   ],

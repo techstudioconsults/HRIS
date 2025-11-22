@@ -1,5 +1,5 @@
 import { HttpAdapter } from "@/lib/http/http-adapter";
-import { RoleApiResponse, TeamApiResponse } from "@/modules/@org/onboarding/services/service";
+import { getTeamsWithRoles, getRoles as sharedGetRoles } from "@/modules/@org/shared/organization-service";
 
 export interface CreateEmployeeDto {
   firstName: string;
@@ -87,37 +87,11 @@ export class EmployeeService {
   }
 
   // Team CRUD operations
-  async getTeams() {
-    const response = await this.http.get<PaginatedApiResponse<TeamApiResponse>>(`/teams`);
-
-    if (response?.status === 200) {
-      // Get roles for each team
-      const teamsWithRoles = await Promise.all(
-        response.data.data.items.map(async (team) => {
-          const roles = await this.getRoles(team.id);
-          return {
-            id: team.id,
-            name: team.name,
-            roles: roles,
-          };
-        }),
-      );
-      return teamsWithRoles;
-    }
-    return [];
+  async getTeams(): Promise<Team[]> {
+    return getTeamsWithRoles(this.http);
   }
 
-  async getRoles(teamId: string) {
-    const response = await this.http.get<PaginatedApiResponse<RoleApiResponse>>(`/roles?teamId=${teamId}`);
-
-    if (response?.status === 200) {
-      return response.data.data.items.map((role) => ({
-        id: role.id,
-        name: role.name,
-        teamId: role.teamId,
-        permissions: role.permissions,
-      }));
-    }
-    return [];
+  async getRoles(teamId: string): Promise<Role[]> {
+    return sharedGetRoles(this.http, teamId);
   }
 }

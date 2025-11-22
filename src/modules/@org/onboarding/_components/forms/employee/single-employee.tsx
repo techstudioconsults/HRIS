@@ -9,14 +9,13 @@ import { useFormContext, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import { Employee } from "../../../_views/step-three";
-import { OnboardingService } from "../../../services/service";
+import { useOnboardingService } from "../../../services/use-onboarding-service";
 import { RolesAndPermission } from "../roles&permission";
 
 // import { Role } from "../schema";
 
 interface SingleEmployeeFormProperties {
   index: number;
-  onBoardingService: OnboardingService;
 }
 
 interface Department {
@@ -30,7 +29,7 @@ interface Role {
   permissions?: any[];
 }
 
-export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeFormProperties) => {
+export const SingleEmployeeForm = ({ index }: SingleEmployeeFormProperties) => {
   const { control, setValue } = useFormContext<{ employees: Employee[] }>();
   const employee = useWatch({ control, name: `employees.${index}` });
   const selectedTeamId = useWatch({ control, name: `employees.${index}.teamId` });
@@ -38,97 +37,49 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
   // const { data: session } = useSession();
   // console.log(session);
 
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [loadingDepartments, setLoadingDepartments] = useState(false);
-  const [loadingRoles, setLoadingRoles] = useState(false);
+  // Query-based data (departments/roles) via hooks rather than local service calls
   const [permissionsDialogOpen, setPermissionsDialogOpen] = useState(false);
   const [currentPermissions, setCurrentPermissions] = useState<{
+    id?: string;
     name: string;
     permissions: any[];
   } | null>(null);
 
   // Fetch departments on component mount
-  useEffect(() => {
-    const fetchDepartments = async () => {
-      setLoadingDepartments(true);
-      try {
-        const teams = await onBoardingService.getTeams();
-        const departmentOptions = teams.map((team: { id: any; name: any }) => ({
-          id: team.id,
-          name: team.name,
-        }));
-        setDepartments(departmentOptions);
-      } catch (error: any) {
-        toast.error("Failed to load department", {
-          description: error.response.data.message,
-        });
-      } finally {
-        setLoadingDepartments(false);
-      }
-    };
-
-    fetchDepartments();
-  }, [onBoardingService]);
+  const { useGetTeams, useGetRoles, useGetRole, useUpdateRole } = useOnboardingService();
+  const { data: teamsData, isLoading: loadingDepartments } = useGetTeams();
+  const departmentOptions: Department[] = (teamsData || []).map((team: any) => ({ id: team.id, name: team.name }));
 
   // Fetch roles when department changes
+  const { data: rolesData, isLoading: loadingRoles } = useGetRoles(selectedTeamId || "");
+  const roleOptions: Role[] = selectedTeamId
+    ? (rolesData || []).map((role: any) => ({ id: role.id, name: role.name, permissions: role.permissions || [] }))
+    : [];
   useEffect(() => {
-    const fetchRoles = async () => {
-      if (!selectedTeamId) {
-        setRoles([]);
-        setValue(`employees.${index}.roleId`, "");
-        return;
-      }
-
-      setLoadingRoles(true);
-      try {
-        const rolesData = await onBoardingService.getRoles(selectedTeamId);
-        const roleOptions = rolesData.map((role: { id: any; name: any; permissions?: any }) => ({
-          id: role.id,
-          name: role.name,
-          permissions: role.permissions || [],
-        }));
-        setRoles(roleOptions);
-      } catch (error: any) {
-        toast.error("Failed to load roles", {
-          description: error.response.data.message,
-        });
-      } finally {
-        setLoadingRoles(false);
-      }
-    };
-
-    fetchRoles();
-  }, [selectedTeamId, onBoardingService, index, setValue]);
+    if (!selectedTeamId) {
+      setValue(`employees.${index}.roleId`, "");
+    }
+  }, [selectedTeamId, setValue, index]);
 
   // Load permissions when role changes or when opening dialog
+  const { data: roleDataQuery } = useGetRole(selectedRoleId);
   useEffect(() => {
-    const fetchRolePermissions = async () => {
-      if (selectedRoleId) {
-        try {
-          const roleData = await onBoardingService.getRole(selectedRoleId);
+    const roleData = roleDataQuery;
+    if (selectedRoleId && roleData) {
+      setCurrentPermissions({ id: selectedRoleId, name: roleData.name, permissions: roleData.permissions || [] });
+    } else if (!selectedRoleId) {
+      setCurrentPermissions(null);
+    }
+  }, [roleDataQuery, selectedRoleId]);
 
-          if (roleData) {
-            setCurrentPermissions({
-              name: roleData.name,
-              permissions: roleData.permissions || [],
-            });
-          } else {
-            setCurrentPermissions({ name: "", permissions: [] });
-          }
-        } catch (error: any) {
-          toast.error("Failed to load permission", {
-            description: error.response.data.message,
-          });
-          setCurrentPermissions(null);
-        }
-      } else {
-        setCurrentPermissions(null);
-      }
-    };
-
-    fetchRolePermissions();
-  }, [selectedRoleId, onBoardingService]);
+  // Auto-populate permissions when a team has exactly one role and no role has been manually selected yet.
+  useEffect(() => {
+    if (selectedTeamId && rolesData && rolesData.length === 1 && !selectedRoleId) {
+      const soleRole = rolesData[0];
+      setValue(`employees.${index}.roleId`, soleRole.id);
+      setCurrentPermissions({ id: soleRole.id, name: soleRole.name, permissions: soleRole.permissions || [] });
+    }
+  }, [selectedTeamId, rolesData, selectedRoleId, setValue, index]);
 
   const handleOpenPermissionsDialog = () => {
     if (!selectedRoleId) {
@@ -138,17 +89,22 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
     setPermissionsDialogOpen(true);
   };
 
+  const { mutateAsync: updateRole, isPending: isUpdatingRole } = useUpdateRole();
   const handleSavePermissions = async (permissions: { name: string; permissions: any[] }) => {
+    if (!selectedRoleId || !selectedTeamId) return;
     try {
-      const updatedRole = await onBoardingService.updateRole(selectedRoleId, permissions);
-      if (updatedRole) {
-        toast.success("Permissions updated successfully");
-        setCurrentPermissions(permissions);
-        setPermissionsDialogOpen(false);
-      }
+      await updateRole({
+        roleId: selectedRoleId,
+        permissions: permissions.permissions,
+        name: permissions.name,
+        teamId: selectedTeamId,
+      });
+      toast.success("Permissions updated successfully");
+      setCurrentPermissions(permissions);
+      setPermissionsDialogOpen(false);
     } catch (error: any) {
       toast.error("Failed to update permissions", {
-        description: error.response.data.message,
+        description: error.message,
       });
     }
   };
@@ -187,10 +143,7 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
           className="!h-12 w-full"
           label="Department"
           name={`employees.${index}.teamId`}
-          options={departments.map((dept) => ({
-            value: dept.id,
-            label: dept.name,
-          }))}
+          options={departmentOptions.map((dept) => ({ value: dept.id, label: dept.name }))}
           disabled={loadingDepartments}
         />
         <FormField
@@ -201,10 +154,7 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
           className="!h-12 w-full"
           label="Role"
           name={`employees.${index}.roleId`}
-          options={roles.map((role) => ({
-            value: role.id,
-            label: role.name,
-          }))}
+          options={roleOptions.map((role) => ({ value: role.id, label: role.name }))}
           disabled={!selectedTeamId || loadingRoles}
         />
         <input
@@ -237,8 +187,9 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
         trigger={""}
       >
         <RolesAndPermission
+          key={selectedRoleId || "no-role"}
           isEdit
-          initialData={currentPermissions}
+          initialData={currentPermissions ? { ...currentPermissions, id: currentPermissions.id } : undefined}
           onSubmit={async (data) => {
             handleSavePermissions(data);
           }}
@@ -246,6 +197,7 @@ export const SingleEmployeeForm = ({ index, onBoardingService }: SingleEmployeeF
             event.preventDefault();
             setPermissionsDialogOpen(false);
           }}
+          isSubmitting={isUpdatingRole}
         />
       </ReusableDialog>
     </section>

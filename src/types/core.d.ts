@@ -10,6 +10,15 @@ declare global {
   /** Generic data item type for flexible object structures */
   type DataItem = Record<string, unknown>;
 
+  /** Pagination metadata */
+  interface PaginationMetadata {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  }
   /** Generic API response wrapper */
   interface ApiResponse<T> {
     success: boolean;
@@ -23,62 +32,52 @@ declare global {
       metadata: PaginationMetadata;
     }> {}
 
-  /** Pagination metadata */
-  interface PaginationMetadata {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-  }
+  // interface PaginationLink {
+  //   url: string | null;
+  //   label: string;
+  //   active: boolean;
+  // }
 
-  interface PaginationLink {
-    url: string | null;
-    label: string;
-    active: boolean;
-  }
+  // interface PaginationLinks {
+  //   first: string;
+  //   last: string;
+  //   prev: string | null;
+  //   next: string | null;
+  // }
 
-  interface PaginationLinks {
-    first: string;
-    last: string;
-    prev: string | null;
-    next: string | null;
-  }
+  // interface LegacyPaginatedResponse<T> {
+  //   data: T[];
+  //   links: PaginationLinks;
+  //   meta: LegacyPaginationMeta;
+  // }
 
-  interface LegacyPaginatedResponse<T> {
-    data: T[];
-    links: PaginationLinks;
-    meta: LegacyPaginationMeta;
-  }
-
-  /** Legacy pagination structure for backward compatibility */
-  interface LegacyPaginationMeta {
-    current_page: number;
-    from: number;
-    last_page: number;
-    links: PaginationLink[];
-    path: string;
-    per_page: number;
-    to: number;
-    total: number;
-  }
+  // /** Legacy pagination structure for backward compatibility */
+  // interface LegacyPaginationMeta {
+  //   current_page: number;
+  //   from: number;
+  //   last_page: number;
+  //   links: PaginationLink[];
+  //   path: string;
+  //   per_page: number;
+  //   to: number;
+  //   total: number;
+  // }
 
   // ============================================================================
   // HTTP AND API TYPES
   // ============================================================================
 
   /** HTTP response wrapper */
-  interface HttpResponse<T> {
-    data: T;
-    status: number;
-  }
+  // interface HttpResponse<T> {
+  //   data: T;
+  //   status: number;
+  // }
 
   /** Query parameters type */
-  type QueryParameters = Record<string, string | number | boolean>;
+  // type QueryParameters = Record<string, string | number | boolean>;
 
   /** Headers type for HTTP requests */
-  type HttpHeaders = Record<string, string>;
+  // type HttpHeaders = Record<string, string>;
 
   /** Short token response */
   interface ShortTokenResponse {

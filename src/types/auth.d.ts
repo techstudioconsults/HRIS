@@ -1,33 +1,33 @@
 // HR Application Auth Types for Role and Permission-based Access Control
 
-export interface Role {
-  id: string;
-  name: string;
-  permissions: string[];
-  createdAt?: string;
-  updatedAt?: string;
-}
+// export interface Role {
+//   id: string;
+//   name: string;
+//   permissions: string[];
+//   createdAt?: string;
+//   updatedAt?: string;
+// }
 
-export interface Employee {
-  id: string;
-  fullName: string;
-  email: string;
-  role: Role;
-}
+// export interface Employee {
+//   id: string;
+//   fullName: string;
+//   email: string;
+//   role: Role;
+// }
 
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-}
+// export interface AuthTokens {
+//   accessToken: string;
+//   refreshToken: string;
+// }
 
-export interface AuthResponse {
-  success: boolean;
-  data: {
-    employee: Employee;
-    tokens: AuthTokens;
-    permissions: string[];
-  };
-}
+// export interface AuthResponse {
+//   success: boolean;
+//   data: {
+//     employee: Employee;
+//     tokens: AuthTokens;
+//     permissions: string[];
+//   };
+// }
 
 // Module-based permissions for HR application
 export const MODULE_PERMISSIONS = {

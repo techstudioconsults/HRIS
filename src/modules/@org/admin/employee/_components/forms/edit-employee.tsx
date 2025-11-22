@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { BreadCrumb } from "@/components/shared/breadcrumb";
@@ -153,7 +154,7 @@ export const EditEmployeeForm = () => {
   // Auto-set bank code when bank name is selected
   useEffect(() => {
     if (selectedBankName) {
-      const selectedBank = banks.find((bank) => bank.name === selectedBankName);
+      const selectedBank = banks.find((bank: { name: string; code: string }) => bank.name === selectedBankName);
       if (selectedBank) {
         setValue("bankCode", selectedBank.code);
       }
@@ -179,9 +180,10 @@ export const EditEmployeeForm = () => {
   }, [teams, formValues?.teamId, selectedTeamId, employee?.employmentDetails?.team?.name]);
 
   const roleOptions = useMemo(() => {
-    const base = (derivedRoles ?? []).map((role) => ({ value: String(role.id), label: role.name }));
+    const rolesArray = Array.isArray(derivedRoles) ? derivedRoles : [];
+    const base = rolesArray.map((role: any) => ({ value: String(role.id), label: role.name }));
     const currentRoleId = formValues?.roleId || selectedRoleId;
-    if (currentRoleId && !base.some((opt) => opt.value === currentRoleId)) {
+    if (currentRoleId && !base.some((opt: { value: string }) => opt.value === currentRoleId)) {
       base.push({ value: currentRoleId, label: employee?.employmentDetails?.role?.name || "Current role" });
     }
     return base;
@@ -430,10 +432,10 @@ export const EditEmployeeForm = () => {
                     render={({ field: { value, onChange }, fieldState }) => (
                       <>
                         <ComboBox
-                          readOnly
+                          // readOnly
                           value={value || ""}
                           onValueChange={onChange}
-                          options={banks.map((bank) => ({
+                          options={banks.map((bank: { name: string; code: string }) => ({
                             value: bank.name,
                             label: bank.name,
                           }))}
@@ -449,7 +451,7 @@ export const EditEmployeeForm = () => {
                   />
                 </div>
                 <FormField
-                  readOnly
+                  // readOnly
                   name="accountName"
                   label="Account Name"
                   type="text"
@@ -459,7 +461,7 @@ export const EditEmployeeForm = () => {
                   required
                 />
                 <FormField
-                  readOnly
+                  // readOnly
                   name="accountNumber"
                   label="Account Number"
                   type="text"
@@ -485,7 +487,11 @@ export const EditEmployeeForm = () => {
             <MainButton
               type="button"
               variant="outline"
-              onClick={() => router.push("/admin/employees")}
+              onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                event.preventDefault();
+                event.stopPropagation();
+                reset(formValues);
+              }}
               isDisabled={isSubmitting}
               className="text-destructive border-destructive w-full"
             >

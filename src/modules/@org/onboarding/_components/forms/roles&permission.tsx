@@ -255,6 +255,7 @@ export const RolesAndPermission = ({
             Cancel
           </MainButton>
           <MainButton
+            // onClick={(event) => event.stopPropagation()}
             type="submit"
             variant={`primary`}
             isDisabled={isSubmitting || isDeleting || !isValid}

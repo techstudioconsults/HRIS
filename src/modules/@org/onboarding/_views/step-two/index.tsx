@@ -1,6 +1,3 @@
-// app/setup/teams/page.tsx
-"use client";
-
 import MainButton from "@/components/shared/button";
 import { PageSection, PageWrapper } from "@/lib/animation";
 

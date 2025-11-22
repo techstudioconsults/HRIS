@@ -3,7 +3,9 @@
 
 import MainButton from "@/components/shared/button";
 import { FormHeader } from "@/components/shared/form-header";
+import { onboardEmployeeSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 import { User } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { FormEvent } from "react";
@@ -11,20 +13,18 @@ import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { Employee, employeeSchema } from "../../../_views/step-three";
-import { OnboardingService } from "../../../services/service";
+import { Employee } from "../../../_views/step-three";
+import { useOnboardingService } from "../../../services/use-onboarding-service";
 import { EmployeeConfig } from "../../accordions/employee-config";
 
-interface EmployeeSetupFormProperties {
-  onBoardingService: OnboardingService;
-}
-
-export const EmployeeSetupForm = ({ onBoardingService }: EmployeeSetupFormProperties) => {
+export const EmployeeSetupForm = () => {
   const router = useRouter();
+  const { useOnboardEmployees } = useOnboardingService();
+  const { mutateAsync: onboardEmployees, isPending: isOnboarding } = useOnboardEmployees();
   const methods = useForm<{ employees: Employee[] }>({
     resolver: zodResolver(
       z.object({
-        employees: z.array(employeeSchema),
+        employees: z.array(onboardEmployeeSchema),
       }),
     ),
     defaultValues: {
@@ -49,18 +49,26 @@ export const EmployeeSetupForm = ({ onBoardingService }: EmployeeSetupFormProper
 
   const handleSubmitForm = async (data: { employees: Employee[] }) => {
     try {
-      console.log("Submitting employees:", data);
-      const response = await onBoardingService.onboardEmployees(data);
-      if (response.success) {
-        toast.success(`Registration Successful`, {
-          description: `Employees registration completed, you can edit employee status in setting.`,
-        });
-        router.push(`/admin/dashboard`);
-      }
+      await onboardEmployees(data, {
+        onSuccess: (response) => {
+          if (response.success) {
+            toast.success(`Registration Successful`, {
+              description: `Employees registration completed, you can edit employee status in setting.`,
+            });
+            router.push(`/admin/dashboard`);
+          }
+        },
+        onError: (error) => {
+          console.error("Onboarding failed:", error);
+          toast.error(`Registration Failed`, {
+            description: error instanceof AxiosError ? error.response?.data?.message : "An unknown error occurred",
+          });
+        },
+      });
     } catch (error) {
-      console.error("Onboarding failed:", error);
+      console.error("Onboarding failed (unexpected):", error);
       toast.error(`Registration Failed`, {
-        description: `Form not filled properly..please try again`,
+        description: error instanceof AxiosError ? error.response?.data?.message : "An unknown error occurred",
       });
     }
   };
@@ -80,14 +88,14 @@ export const EmployeeSetupForm = ({ onBoardingService }: EmployeeSetupFormProper
           className=""
         >
           <section className={`hide-scrollbar max-h-[500px] space-y-4 overflow-auto`}>
-            <EmployeeConfig onBoardingService={onBoardingService} />
+            <EmployeeConfig />
           </section>
           <div className="mt-4">
             <MainButton
               type="submit"
               variant="primary"
-              isDisabled={isSubmitting}
-              isLoading={isSubmitting}
+              isDisabled={isSubmitting || isOnboarding}
+              isLoading={isSubmitting || isOnboarding}
               className="w-full"
               size="xl"
             >

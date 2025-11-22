@@ -38,7 +38,24 @@ export const Login = () => {
       });
 
       if (result?.error) {
-        throw new Error(result.error);
+        // Extract the actual error message from CredentialsSignin error
+        let errorMessage = result.error;
+
+        // Try to extract message after "CredentialsSignin: " prefix
+        if (errorMessage.includes("CredentialsSignin: ")) {
+          errorMessage = errorMessage.split("CredentialsSignin: ")[1];
+        }
+
+        // If it's the default NextAuth error, show the axios message
+        if (errorMessage.includes("Read more at")) {
+          errorMessage = errorMessage.split(".")[0];
+        }
+
+        toast.error("Login Failed", {
+          description: errorMessage,
+        });
+        setError("password", { message: errorMessage });
+        return;
       }
 
       if (result?.ok) {
@@ -51,7 +68,7 @@ export const Login = () => {
       toast.error("Login Failed", {
         description: error.message || "An error occurred during login",
       });
-      setError("password", { message: error.message || "Invalid OTP" });
+      setError("password", { message: error.message || "Invalid credentials" });
     }
   };
 

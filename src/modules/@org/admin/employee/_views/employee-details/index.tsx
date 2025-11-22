@@ -43,9 +43,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
               <MainButton
                 isLeftIconVisible
                 icon={<Edit />}
-                onClick={() => {
-                  window.location.href = `/admin/employees/edit-employee?employeeid=${employeeData?.id}`;
-                }}
+                href={`/admin/employees/edit-employee?employeeid=${employeeData?.id}`}
                 variant="primary"
               >
                 Edit Employee

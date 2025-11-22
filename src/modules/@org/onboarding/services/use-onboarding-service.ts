@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { queryKeys } from "@/lib/react-query/query-keys";
 import { createServiceHooks } from "@/lib/react-query/use-service-query";
 import { dependencies } from "@/lib/tools/dependencies";
 import { CompanyProfileFormData } from "@/schemas";
@@ -11,42 +12,86 @@ export const useOnboardingService = () => {
   );
 
   // Queries
-  const useGetCompanyProfile = () => useServiceQuery(["company-profile"], (service) => service.getCompanyProfile());
+  const useGetCompanyProfile = () =>
+    useServiceQuery(queryKeys.onboarding.companyProfile(), (service) => service.getCompanyProfile());
 
-  const useGetTeams = () => useServiceQuery(["teams"], (service) => service.getTeams());
+  const useGetTeams = () => useServiceQuery(queryKeys.onboarding.teams(), (service) => service.getTeams());
 
-  const useGetRoles = (teamId: string) => useServiceQuery(["roles", teamId], (service) => service.getRoles(teamId));
+  const useGetRoles = (teamId: string) =>
+    useServiceQuery(queryKeys.onboarding.roles(teamId), (service) => service.getRoles(teamId));
 
-  const useGetRole = (roleId: string) => useServiceQuery(["role", roleId], (service) => service.getRole(roleId));
+  const useGetRole = (roleId: string) =>
+    useServiceQuery(queryKeys.onboarding.role(roleId), (service) => service.getRole(roleId));
+
+  // Combined query to fetch teams along with their roles (used in Team Setup form)
+  const useGetTeamsWithRoles = () =>
+    useServiceQuery(queryKeys.onboarding.teamsWithRoles(), async (service) => {
+      const teams = await service.getTeams();
+      const enriched = await Promise.all(
+        teams.map(async (team: any) => ({
+          ...team,
+          roles: await service.getRoles(team.id!),
+        })),
+      );
+      return enriched;
+    });
 
   // Mutations
   const useUpdateCompanyProfile = () =>
-    useServiceMutation((service, data: CompanyProfileFormData) => service.updateCompanyProfile(data));
+    useServiceMutation((service, data: CompanyProfileFormData) => service.updateCompanyProfile(data), {
+      invalidateQueries: () => [queryKeys.onboarding.companyProfile()],
+    });
 
-  const useCreateCompany = () =>
-    useServiceMutation((service, data: CompanyProfileFormData) => service.createCompany(data));
+  // const useCreateCompany = () =>
+  //   useServiceMutation((service, data: CompanyProfileFormData) => service.createCompany(data));
 
-  const useCreateTeam = () => useServiceMutation((service, name: string) => service.createTeam(name));
+  const useCreateTeam = () =>
+    useServiceMutation((service, data: { name: string; parentId?: string }) => service.createTeam(data), {
+      invalidateQueries: () => [queryKeys.onboarding.teams(), queryKeys.onboarding.teamsWithRoles()],
+    });
 
   const useUpdateTeam = () =>
-    useServiceMutation((service, { teamId, name }: { teamId: string; name: string }) =>
-      service.updateTeam(teamId, name),
+    useServiceMutation(
+      (service, { teamId, name }: { teamId: string; name: string }) => service.updateTeam(teamId, name),
+      {
+        invalidateQueries: () => [queryKeys.onboarding.teams(), queryKeys.onboarding.teamsWithRoles()],
+      },
     );
 
-  const useDeleteTeam = () => useServiceMutation((service, teamId: string) => service.deleteTeam(teamId));
+  const useDeleteTeam = () =>
+    useServiceMutation((service, teamId: string) => service.deleteTeam(teamId), {
+      invalidateQueries: () => [queryKeys.onboarding.teams(), queryKeys.onboarding.teamsWithRoles()],
+    });
 
   const useCreateRole = () =>
-    useServiceMutation((service, roleData: { name: string; teamId: string; permissions: string[] }) =>
-      service.createRole(roleData),
+    useServiceMutation(
+      (service, roleData: { name: string; teamId: string; permissions: string[] }) => service.createRole(roleData),
+      {
+        invalidateQueries: (_data, variables) => [
+          queryKeys.onboarding.roles(variables.teamId),
+          queryKeys.onboarding.teamsWithRoles(),
+        ],
+      },
     );
 
   const useUpdateRole = () =>
     useServiceMutation(
-      (service, { roleId, name, permissions }: { roleId: string; name?: string; permissions?: string[] }) =>
-        service.updateRole(roleId, { name, permissions }),
+      (
+        service,
+        { roleId, name, permissions }: { roleId: string; name?: string; permissions?: string[]; teamId: string },
+      ) => service.updateRole(roleId, { name, permissions }),
+      {
+        invalidateQueries: (_data, variables) => [
+          queryKeys.onboarding.roles(variables.teamId),
+          queryKeys.onboarding.teamsWithRoles(),
+        ],
+      },
     );
 
-  const useDeleteRole = () => useServiceMutation((service, roleId: string) => service.deleteRole(roleId));
+  const useDeleteRole = () =>
+    useServiceMutation((service, roleId: string) => service.deleteRole(roleId), {
+      invalidateQueries: () => [queryKeys.onboarding.teamsWithRoles()],
+    });
 
   const useOnboardEmployees = () =>
     useServiceMutation((service, data: { employees: any[] }) => service.onboardEmployees(data));
@@ -57,10 +102,11 @@ export const useOnboardingService = () => {
     useGetTeams,
     useGetRoles,
     useGetRole,
+    useGetTeamsWithRoles,
 
     // Mutations
     useUpdateCompanyProfile,
-    useCreateCompany,
+    // useCreateCompany,
     useCreateTeam,
     useUpdateTeam,
     useDeleteTeam,

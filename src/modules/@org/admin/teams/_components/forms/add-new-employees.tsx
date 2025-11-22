@@ -301,8 +301,8 @@ export const AddNewEmployees = ({
                                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </button>
                               </PopoverTrigger>
-                              <PopoverContent className="w-full p-0" align="start">
-                                <Command>
+                              <PopoverContent className="max-w-[100%] p-0" align="start">
+                                <Command className="">
                                   <CommandInput placeholder="Search employees..." />
                                   <CommandList>
                                     <CommandEmpty>No employees found.</CommandEmpty>

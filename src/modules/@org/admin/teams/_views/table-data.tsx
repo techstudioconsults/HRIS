@@ -28,7 +28,7 @@ export const teamColumn: IColumnDefinition<Team>[] = [
   {
     header: "Team Members",
     accessorKey: "members",
-    render: (_, team: Team) => <Badge variant={`primary`}>{team.members || 0} members</Badge>,
+    render: (_, team: Team) => <span className="text-primary font-medium">{team.members || 0} members</span>,
   },
   {
     header: "Status",

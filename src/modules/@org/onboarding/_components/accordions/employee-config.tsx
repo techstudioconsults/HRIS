@@ -3,10 +3,9 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 import { Employee } from "../../_views/step-three";
-import { OnboardingService } from "../../services/service";
 import { SingleEmployeeForm } from "../forms/employee/single-employee";
 
-export const EmployeeConfig = ({ onBoardingService }: { onBoardingService: OnboardingService }) => {
+export const EmployeeConfig = () => {
   const { control } = useFormContext<{ employees: Employee[] }>();
   const { fields, append, remove } = useFieldArray({
     control,
@@ -53,7 +52,7 @@ export const EmployeeConfig = ({ onBoardingService }: { onBoardingService: Onboa
             </div>
           </AccordionTrigger>
           <AccordionContent className="space-y-4 border-t px-0.5 py-4 font-medium">
-            <SingleEmployeeForm index={index} onBoardingService={onBoardingService} />
+            <SingleEmployeeForm index={index} />
           </AccordionContent>
         </AccordionItem>
       ))}

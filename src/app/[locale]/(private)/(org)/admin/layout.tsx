@@ -25,6 +25,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             logo: <Logo logo="/images/logo.png" />,
             plan: "Enterprise",
           },
+          {
+            name: "Strategic Dot",
+            logo: <Logo logo="/images/logo.png" />,
+            plan: "Enterprise",
+          },
         ]}
       />
       <SidebarInset className="dark:bg-background bg-[#F8F8F9]">

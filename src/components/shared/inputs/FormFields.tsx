@@ -92,28 +92,35 @@ export function FormField({
                   className={cn(inputClassName, "min-h-[80px] resize-y")}
                 />
               ) : type === "select" ? (
-                <Select
-                  onValueChange={readOnly ? undefined : field.onChange}
-                  value={field.value ?? undefined}
-                  disabled={disabled}
-                >
-                  <SelectTrigger
-                    className={cn(
-                      readOnly && "pointer-events-none cursor-not-allowed opacity-100",
-                      inputClassName,
-                      "w-full shadow-none",
-                    )}
-                  >
-                    <SelectValue placeholder={placeholder || "Select a value"} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background shadow-none">
-                    {options.map((option) => (
-                      <SelectItem key={option.value} value={option.value} className="hover:bg-gray-50">
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                (() => {
+                  const selectValue = field.value == null ? "" : String(field.value);
+                  const selectKey = `${options.map((o) => o.value).join("|")}::${selectValue}`;
+                  return (
+                    <Select
+                      key={selectKey}
+                      onValueChange={readOnly ? undefined : field.onChange}
+                      value={selectValue}
+                      disabled={disabled}
+                    >
+                      <SelectTrigger
+                        className={cn(
+                          readOnly && "pointer-events-none cursor-not-allowed opacity-100",
+                          inputClassName,
+                          "w-full shadow-none",
+                        )}
+                      >
+                        <SelectValue placeholder={placeholder || "Select a value"} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background shadow-none">
+                        {options.map((option) => (
+                          <SelectItem key={option.value} value={option.value} className="hover:bg-gray-50">
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  );
+                })()
               ) : type === "number" ? (
                 <Input
                   {...field}
@@ -135,7 +142,9 @@ export function FormField({
                     readOnly={readOnly}
                     className={inputClassName}
                     onChange={(event) => {
-                      field.onChange(event);
+                      // Ensure we store the actual string value, not the event object
+                      const value = event.target.value;
+                      field.onChange(value);
                       onChange?.(event);
                     }}
                   />

@@ -4,6 +4,7 @@
 
 import MainButton from "@/components/shared/button";
 import { useDecodedSearchParameters } from "@/hooks/use-search-parameters";
+import { PageSection } from "@/lib/animation";
 import { LoginOTPFormData, loginOTPSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
@@ -83,7 +84,7 @@ export const InputOtpCard = () => {
   };
 
   return (
-    <section className="mx-auto max-w-[589px] rounded-xl bg-white p-8 shadow-2xl shadow-gray-100">
+    <PageSection index={0} className="bg-background mx-auto max-w-[589px] rounded-md p-8 shadow shadow-gray-100">
       <div className={`mb-8 space-y-2`}>
         <h3 className="text-[32px]/[120%] font-[600] tracking-[-2%] text-black">Enter the 6-digit Code</h3>
         <p className={`text-gray text-lg`}>
@@ -112,19 +113,19 @@ export const InputOtpCard = () => {
             </MainButton>
             <p className="text-grey-500 mt-4 text-center text-sm">
               Didn&apos;t receive the code?{" "}
-              <span onClick={resendOTP} className="text-primary font-medium hover:underline">
+              <span onClick={resendOTP} className="text-primary cursor-pointer font-medium hover:underline">
                 {otpPending ? "Sent" : "Resend"}
               </span>
             </p>
             <p className="text-grey-500 mt-4 text-center text-sm">
               Wrong email?{" "}
-              <Link href="/register" className="text-primary font-medium hover:underline">
+              <Link href="/login/otp" className="text-primary font-medium hover:underline">
                 Change email
               </Link>
             </p>
           </div>
         </form>
       </FormProvider>
-    </section>
+    </PageSection>
   );
 };

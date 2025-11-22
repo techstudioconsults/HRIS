@@ -16,9 +16,9 @@ import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table"
 import { useTeamWorkflowStore } from "@/modules/@org/admin/teams/store/team-store";
 import type { Role as FormRole, Team as TeamFormType } from "@/modules/@org/onboarding/_components/forms/schema";
 import { TeamForm } from "@/modules/@org/onboarding/_components/forms/team/team-form";
-import type { Team as ServiceTeam } from "@/modules/@org/onboarding/services/service";
 import { useOnboardingService } from "@/modules/@org/onboarding/services/use-onboarding-service";
 import { useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { Add, Filter } from "iconsax-reactjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -128,11 +128,9 @@ export const AllTeams = () => {
   };
 
   const { useGetAllTeams, useGetRoles, useCreateRole, useUpdateRole, useDownloadTeams } = useTeamService();
-  const { useGetAllEmployees } = useEmployeeService();
-  const { useOnboardEmployees } = useOnboardingService();
+  const { useGetAllEmployees, useUpdateEmployee } = useEmployeeService();
+  const { mutateAsync: updateEmployee } = useUpdateEmployee();
   const { refetch: downloadTeams } = useDownloadTeams({}, { enabled: false });
-
-  const onboardEmployeesMutation = useOnboardEmployees();
 
   // Apply debounced search to URL (nuqs) and reset page to 1
   useEffect(() => {
@@ -192,23 +190,32 @@ export const AllTeams = () => {
   const queryClient = useQueryClient();
   const { useCreateTeam } = useOnboardingService();
 
-  const createTeamMutation = useCreateTeam();
+  const { mutateAsync: createTeam } = useCreateTeam();
   const createRoleMutation = useCreateRole();
   const updateRoleMutation = useUpdateRole();
 
   const handleAddTeam = async (name: string) => {
     try {
       setSubmitting(true);
-      const newTeam = await createTeamMutation.mutateAsync(name);
 
+      const newTeam = await createTeam(
+        { name },
+        {
+          onSuccess: () => {
+            toast.success(`Team "${name}" created successfully!`);
+            queryClient.invalidateQueries({ queryKey: ["teams"] });
+          },
+          onError: (error) => {
+            const message = error instanceof AxiosError ? error.response?.data.message : "An unexpected error occurred";
+            toast.error("Failed to create team", { description: message });
+          },
+        },
+      );
       const formTeam: TeamFormType = {
-        id: (newTeam as ServiceTeam)?.id,
-        name: (newTeam as ServiceTeam)?.name,
+        id: (newTeam as Team)?.id,
+        name: (newTeam as Team)?.name,
         roles: [],
       };
-
-      await queryClient.invalidateQueries({ queryKey: ["teams"] });
-      toast.success(`Team "${name}" created successfully!`);
 
       // Close team dialog
       closeDialog();
@@ -292,30 +299,27 @@ export const AllTeams = () => {
 
     try {
       // Find the full employee data from the available employees
-      const selectedEmployee = employeesData?.data?.items?.find((emp) => emp.id === data.employeeId);
+      const selectedEmployee = employeesData?.data?.items?.find((emp: Employee) => emp.id === data.employeeId);
 
       if (!selectedEmployee) {
         toast.error("Employee not found. Please try again.");
         throw new Error("Employee not found");
       }
 
-      // Transform the data to match the onboarding API format
-      const onboardingData = {
-        employees: [
-          {
-            firstName: selectedEmployee.firstName,
-            lastName: selectedEmployee.lastName,
-            email: selectedEmployee.email,
-            phoneNumber: selectedEmployee.phoneNumber || "",
-            password: "DefaultPassword123!", // Default password for existing employees
-            teamId: currentTeam.id,
-            roleId: data.roleId,
-            permissions: data.customPermissions || [],
-          },
-        ],
-      };
+      // Build FormData with ONLY fields being reassigned/changed
+      const formData = new FormData();
+      formData.append("teamId", currentTeam.id);
+      formData.append("roleId", data.roleId);
+      if (data.customPermissions && data.customPermissions.length > 0) {
+        let index = 0;
+        for (const perm of data.customPermissions) {
+          formData.append(`permissions[${index}]`, perm);
+          index++;
+        }
+      }
 
-      await onboardEmployeesMutation.mutateAsync(onboardingData);
+      // Call updateEmployee mutation using expected signature { id, data }
+      await updateEmployee({ id: selectedEmployee.id, data: formData });
 
       // Invalidate queries to refresh the UI
       await queryClient.invalidateQueries({ queryKey: ["teams"] });
@@ -536,7 +540,7 @@ export const AllTeams = () => {
               })) || []
             }
             availableEmployees={
-              employeesData?.data?.items?.map((employee) => ({
+              employeesData?.data?.items?.map((employee: Employee) => ({
                 id: employee.id,
                 name: `${employee.firstName} ${employee.lastName}`,
                 email: employee.email,

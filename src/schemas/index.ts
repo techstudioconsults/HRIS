@@ -85,6 +85,7 @@ export const changeEmailSchema = z.object({
 
 export const companyProfileSchema = z.object({
   // domain: z.string().min(1, "Company name is required"),
+  name: z.string().min(1, "Name is required"),
   industry: z.string().min(1, "Industry is required"),
   size: z.string().min(1, "Company size is required"),
   addressLine1: z.string().min(1, "Address line 1 is required"),
@@ -93,6 +94,16 @@ export const companyProfileSchema = z.object({
   state: z.string().min(1, "State is required"),
   city: z.string().min(1, "City is required"),
   postcode: z.string().min(1, "Postal code is required"),
+});
+
+export const onboardEmployeeSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email address"),
+  phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  teamId: z.string().min(1, "Department is required"),
+  roleId: z.string().min(1, "Role is required"),
 });
 
 // Define validation schema

@@ -37,6 +37,7 @@ declare global {
     id: string;
     name: string;
     manager?: string;
+    parent?: string;
     subteams?: string;
     members?: number;
     createdAt?: string;
@@ -46,6 +47,7 @@ declare global {
   interface Role {
     id: string;
     name: string;
+    teamId: string;
     permissions: Permission[];
   }
 

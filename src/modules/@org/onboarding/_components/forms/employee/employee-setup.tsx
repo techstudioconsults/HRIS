@@ -87,7 +87,7 @@ export const EmployeeSetupForm = () => {
           }}
           className=""
         >
-          <section className={`hide-scrollbar max-h-[500px] space-y-4 overflow-auto`}>
+          <section className={`hide-scrollba max-h-[500px] space-y-4 overflow-auto`}>
             <EmployeeConfig />
           </section>
           <div className="mt-4">

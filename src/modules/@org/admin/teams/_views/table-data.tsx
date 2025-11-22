@@ -114,6 +114,7 @@ const useTeamRowActionsBase = (
             }
           },
         },
+        ...(onAddRole && teamType === "team" ? [{ type: "separator" } as IRowAction<Team>] : []),
         ...(onAddRole && teamType === "team"
           ? [
               {

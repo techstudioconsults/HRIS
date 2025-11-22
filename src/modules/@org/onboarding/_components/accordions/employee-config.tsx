@@ -33,7 +33,7 @@ export const EmployeeConfig = () => {
     <Accordion type="multiple" className="w-full space-y-8">
       {fields.map((field, index) => (
         <AccordionItem key={field.id} value={`member-${field.id}`} className="relative">
-          <AccordionTrigger className="p-4 text-left text-sm lg:text-lg">
+          <AccordionTrigger className="cursor-pointer p-4 text-left text-sm lg:text-lg">
             <div className="flex w-full items-center justify-between">
               <p className="font-semibold">
                 {field.firstName ? `${field.firstName} ${field.lastName}` : `Team Member ${index + 1}`}
@@ -44,7 +44,7 @@ export const EmployeeConfig = () => {
                     event.stopPropagation();
                     removeTeamMember(index);
                   }}
-                  className="text-destructive hover:text-destructive text-xs"
+                  className="text-destructive hover:text-destructive cursor-pointer text-xs"
                 >
                   Remove
                 </span>

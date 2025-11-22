@@ -1,5 +1,5 @@
 import { HttpAdapter } from "@/lib/http/http-adapter";
-import { getTeamsWithRoles, Role, getRoles as sharedGetRoles, Team } from "@/modules/@org/shared/organization-service";
+import { getTeamsWithRoles, getRoles as sharedGetRoles } from "@/modules/@org/shared/organization-service";
 
 export interface CreateEmployeeDto {
   firstName: string;

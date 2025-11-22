@@ -65,7 +65,7 @@ export const useEmployeeRowActions = () => {
           icon: <Edit className="h-4 w-4" aria-hidden="true" />,
           onClick: () => {
             setActiveEmployee(employee);
-            window.location.href = `/admin/employees/edit-employee?employeeid=${employee.id}`;
+            router.push(`/admin/employees/edit-employee?employeeid=${employee.id}`);
           },
           ariaLabel: `Edit ${employee.firstName} ${employee.lastName}`,
         },

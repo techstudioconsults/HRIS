@@ -142,7 +142,9 @@ export function FormField({
                     readOnly={readOnly}
                     className={inputClassName}
                     onChange={(event) => {
-                      field.onChange(event);
+                      // Ensure we store the actual string value, not the event object
+                      const value = event.target.value;
+                      field.onChange(value);
                       onChange?.(event);
                     }}
                   />

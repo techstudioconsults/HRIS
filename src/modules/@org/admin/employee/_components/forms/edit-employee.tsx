@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { BreadCrumb } from "@/components/shared/breadcrumb";
@@ -179,7 +180,8 @@ export const EditEmployeeForm = () => {
   }, [teams, formValues?.teamId, selectedTeamId, employee?.employmentDetails?.team?.name]);
 
   const roleOptions = useMemo(() => {
-    const base = (derivedRoles ?? []).map((role: Role) => ({ value: String(role.id), label: role.name }));
+    const rolesArray = Array.isArray(derivedRoles) ? derivedRoles : [];
+    const base = rolesArray.map((role: any) => ({ value: String(role.id), label: role.name }));
     const currentRoleId = formValues?.roleId || selectedRoleId;
     if (currentRoleId && !base.some((opt: { value: string }) => opt.value === currentRoleId)) {
       base.push({ value: currentRoleId, label: employee?.employmentDetails?.role?.name || "Current role" });

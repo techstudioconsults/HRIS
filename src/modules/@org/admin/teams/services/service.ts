@@ -1,11 +1,9 @@
 import { HttpAdapter } from "@/lib/http/http-adapter";
 import {
   getTeamsWithRoles,
-  Role,
   createRole as sharedCreateRole,
   getRoles as sharedGetRoles,
   updateRole as sharedUpdateRole,
-  Team,
 } from "@/modules/@org/shared/organization-service";
 
 export interface CreateTeamDto {
@@ -45,8 +43,7 @@ export class TeamService {
   }
 
   async getAllTeams(filters: Filters = Object.create({ page: 1 })) {
-    const queryParameters = this.buildQueryParameters(filters);
-    const response = await this.http.get<ApiResponse<Team>>(`/teams?${queryParameters}`);
+    const response = await this.http.get<ApiResponse<Team>>(`/teams`, { filters });
 
     if (response?.status === 200) {
       return response.data;
@@ -54,10 +51,13 @@ export class TeamService {
   }
 
   async downloadTeams(filters: Filters = Object.create({ page: 1 })) {
-    const queryParameters = this.buildQueryParameters(filters);
-    const response = await this.http.get<Blob>(`/teams/export?${queryParameters}`, {
-      responseType: "blob",
-    });
+    const response = await this.http.get<Blob>(
+      `/teams/export`,
+      { filters },
+      {
+        responseType: "blob",
+      },
+    );
 
     if (response?.status === 200) {
       return response.data;
@@ -112,15 +112,5 @@ export class TeamService {
       return response.data;
     }
     throw new Error("Failed to assign employee to team");
-  }
-
-  private buildQueryParameters(filters: Filters): string {
-    const queryParameters = new URLSearchParams();
-    for (const [key, value] of Object.entries(filters)) {
-      if (value !== undefined) {
-        queryParameters.append(key, value.toString());
-      }
-    }
-    return queryParameters.toString();
   }
 }

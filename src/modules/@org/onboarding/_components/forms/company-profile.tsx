@@ -9,6 +9,7 @@ import { industryOptions, sizeOptions } from "@/lib/tools/constants";
 import { cn } from "@/lib/utils";
 import { CompanyProfileFormData, companyProfileSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 import { Building2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -45,7 +46,7 @@ export const CompanyProfile = () => {
       industry: "",
       size: "",
       addressLine1: "",
-      addressLine2: "",
+      addressLine2: ".",
       city: "",
       state: "",
       country: "",
@@ -83,6 +84,11 @@ export const CompanyProfile = () => {
         });
         router.push(`/onboarding/step-2`);
       },
+      onError: (error) => {
+        toast.error("Failed to save company profile", {
+          description: error instanceof AxiosError ? error.response?.data?.message : "An unknown error occurred",
+        });
+      },
     });
   };
 
@@ -94,7 +100,7 @@ export const CompanyProfile = () => {
         industry: companyProfile?.industry || "",
         size: companyProfile?.size || "",
         addressLine1: companyProfile?.address?.addressLine1 || "",
-        addressLine2: companyProfile?.address?.addressLine2 || "",
+        addressLine2: companyProfile?.address?.addressLine2 || ".",
         city: companyProfile?.address?.city || "",
         state: companyProfile?.address?.state || "",
         country: companyProfile?.address?.country || "",
@@ -115,13 +121,13 @@ export const CompanyProfile = () => {
 
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(handleSubmitForm)}>
-          <section className={`hide-scrollbar max-h-[500px] space-y-4 overflow-auto px-1`}>
+          <section className={`hide-scrollba max-h-[500px] space-y-4 overflow-auto px-1`}>
             <FormField
               placeholder={isPending ? `Getting company's profile` : `"Enter company name"`}
               className="h-12 w-full"
               label="Company's Name"
               name="name"
-              readOnly
+              // readOnly
             />
 
             <FormField

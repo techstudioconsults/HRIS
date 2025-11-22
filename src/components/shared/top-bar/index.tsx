@@ -5,6 +5,7 @@ import { NotificationWidget, type Notification } from "@/components/shared/notif
 import { UserMenu } from "@/components/shared/user-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+// import { PayrollNotificationBanner } from "@/modules/@org/admin/payroll/_components/payroll-notification-banner";
 import { signOut } from "next-auth/react";
 import { useLocale } from "next-intl";
 import { useState } from "react";
@@ -61,41 +62,44 @@ export default function TopBar({
   };
 
   return (
-    <header className={cn("bg-background grid h-16 grid-cols-2 items-center gap-4 px-0 lg:px-4", className)}>
-      {/* Search Input */}
-      <div className="relative hidden w-fit items-center gap-4 md:flex">
-        <SidebarTrigger className="absolute top-[3.5rem] -left-[30px] bg-[#1F2666] text-white shadow-none" />
-        <GlobalSearchInput />
-      </div>
+    <section>
+      <header className={cn("bg-background flex h-16 items-center justify-between gap-4 px-0 lg:px-4", className)}>
+        {/* Search Input */}
+        <div className="relative hidden w-fit items-center gap-4 md:flex">
+          <SidebarTrigger className="absolute top-[3.5rem] -left-[30px] bg-[#1F2666] text-white shadow-none" />
+          <GlobalSearchInput />
+        </div>
 
-      {/* Right Section */}
-      <div className="flex items-center justify-end gap-2 md:gap-4">
-        {/* Notification Widget */}
-        <NotificationWidget
-          notifications={notificationsList}
-          onNotificationClick={handleNotificationClick}
-          onMarkAsRead={handleMarkAsRead}
-          onMarkAllAsRead={handleMarkAllAsRead}
-          onClearAll={handleClearAll}
-        />
+        {/* Right Section */}
+        <div className="flex items-center justify-end gap-2 md:gap-4">
+          {/* Notification Widget */}
+          <NotificationWidget
+            notifications={notificationsList}
+            onNotificationClick={handleNotificationClick}
+            onMarkAsRead={handleMarkAsRead}
+            onMarkAllAsRead={handleMarkAllAsRead}
+            onClearAll={handleClearAll}
+          />
 
-        {/* User Menu */}
-        <UserMenu
-          userName={adminName}
-          userEmail={adminEmail}
-          userAvatar={adminAvatar}
-          userRole={adminRole}
-          onProfileClick={() => {
-            // Navigate to profile page
-            window.location.href = `/${locale}/profile`;
-          }}
-          onSettingsClick={() => {
-            // Navigate to settings page
-            window.location.href = `/${locale}/settings`;
-          }}
-          onLogout={handleLogout}
-        />
-      </div>
-    </header>
+          {/* User Menu */}
+          <UserMenu
+            userName={adminName}
+            userEmail={adminEmail}
+            userAvatar={adminAvatar}
+            userRole={adminRole}
+            onProfileClick={() => {
+              // Navigate to profile page
+              window.location.href = `/${locale}/profile`;
+            }}
+            onSettingsClick={() => {
+              // Navigate to settings page
+              window.location.href = `/${locale}/settings`;
+            }}
+            onLogout={handleLogout}
+          />
+        </div>
+      </header>
+      {/* <PayrollNotificationBanner /> */}
+    </section>
   );
 }

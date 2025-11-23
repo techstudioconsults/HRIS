@@ -139,6 +139,7 @@ declare global {
      * to scope results to a specific employee.
      */
     employeeId?: string;
+    permission?: string;
   }
 }
 

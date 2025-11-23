@@ -6,6 +6,7 @@ import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { FormField, MultiSelect } from "@/components/shared/inputs/FormFields";
 import { cn } from "@/lib/utils";
 import { useEmployeeService } from "@/modules/@org/admin/employee/services/use-service";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import type React from "react";
@@ -74,7 +75,7 @@ export const PayrollSetupForm = () => {
   // Fetch employees for approval dropdown
   const { useGetAllEmployees } = useEmployeeService();
   const { data: employeesData } = useGetAllEmployees(
-    {},
+    { permission: "admin,payroll:read" },
     {
       staleTime: 0,
       refetchOnMount: true,
@@ -150,7 +151,12 @@ export const PayrollSetupForm = () => {
           setHasCompletedPayrollPolicySetupForm(true);
         },
         onError: (error) => {
-          toast.error(`Failed to update payroll policy: ${error.message}`);
+          toast.error(`Failed to update payroll policy`, {
+            description:
+              error instanceof AxiosError
+                ? error.response?.data.message
+                : "An unexpected error occurred. Please try again.",
+          });
         },
       });
     } catch {

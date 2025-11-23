@@ -2,10 +2,10 @@
 
 import { GlobalSearchInput } from "@/components/core/miscellaneous/search-input";
 import { NotificationWidget, type Notification } from "@/components/shared/notification-widget";
+import { AppEventsListener } from "@/components/shared/notification-widget/app-events-listener";
 import { UserMenu } from "@/components/shared/user-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-// import { PayrollNotificationBanner } from "@/modules/@org/admin/payroll/_components/payroll-notification-banner";
 import { signOut } from "next-auth/react";
 import { useLocale } from "next-intl";
 import { useState } from "react";
@@ -99,7 +99,7 @@ export default function TopBar({
           />
         </div>
       </header>
-      {/* <PayrollNotificationBanner /> */}
+      <AppEventsListener />
     </section>
   );
 }

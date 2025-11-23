@@ -5,7 +5,6 @@
 import Loading from "@/app/Loading";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
-import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -38,7 +37,7 @@ import { TableSkeleton } from "../../_components/table";
 import { DashboardCard } from "../../dashboard/_components/dashboard-card";
 import { usePayrollService } from "../services/use-service";
 import { usePayrollStore } from "../stores/payroll-store";
-import type { PayrollApproval } from "../types";
+import type { Payroll, PayrollApproval } from "../types";
 import { payrollColumn, usePayrollRowActions } from "./table-data";
 
 const LOW_BALANCE_LIMIT = 0; // 0M NGN
@@ -129,7 +128,7 @@ const PayrollView = () => {
   // Find the full record for the currently selected payroll
   const selectedPayrollRecord =
     Array.isArray(allPayrolls?.data) && selectedPayrollId
-      ? allPayrolls.data.find((p) => p.id === selectedPayrollId)
+      ? allPayrolls.data.find((payroll: Payroll) => payroll.id === selectedPayrollId)
       : undefined;
 
   // Disable running payroll for future months (e.g., December while still in November)
@@ -165,8 +164,8 @@ const PayrollView = () => {
   // Map payrolls to ComboBox options
   const payrollOptions = Array.isArray(allPayrolls?.data)
     ? allPayrolls.data
-        .sort((a, b) => new Date(a.paymentDate).getTime() - new Date(b.paymentDate).getTime())
-        .map((payroll) => ({
+        .sort((a: Payroll, b: Payroll) => new Date(a.paymentDate).getTime() - new Date(b.paymentDate).getTime())
+        .map((payroll: Payroll) => ({
           label: `${formatDate(payroll.paymentDate, "en", {
             month: "long",
             year: "numeric",
@@ -178,7 +177,9 @@ const PayrollView = () => {
   const handlePayrollSelection = (value: string) => {
     setSelectedPayrollId(value);
     // Payslips will be automatically fetched when selectedPayrollId changes
-    const selectedPayroll = Array.isArray(allPayrolls?.data) ? allPayrolls.data.find((p) => p.id === value) : undefined;
+    const selectedPayroll = Array.isArray(allPayrolls?.data)
+      ? allPayrolls.data.find((payroll: Payroll) => payroll.id === value)
+      : undefined;
     if (selectedPayroll) {
       setPayrollData((previous) => ({
         ...previous,
@@ -759,21 +760,6 @@ const PayrollView = () => {
           )}
         </section>
       </ReusableDialog>
-
-      <ConfirmDialog
-        isOpen={isTopupPromptOpen}
-        onClose={() => setIsTopupPromptOpen(false)}
-        onConfirm={() => {
-          setIsTopupPromptOpen(false);
-          void handleGeneratePayroll();
-        }}
-        loading={isCreatingPayroll}
-        title="Generate Payroll?"
-        description="you have just top up your wallet, do you want to generate a new payroll?"
-        confirmText="Generate Payroll"
-        cancelText="Not now"
-        variant="default"
-      />
 
       {/* Add Employee Modal */}
       <AddEmployeeDrawer payrollId={selectedPayrollId || null} hasPayslips={hasPayslipsForSelectedPayroll} />

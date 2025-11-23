@@ -225,7 +225,7 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
             button={{
               text: "Add Sub-team",
               onClick: () => {
-                return;
+                setIsAddSubTeamDialogOpen(true);
               },
             }}
           />

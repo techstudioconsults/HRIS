@@ -239,6 +239,7 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
         title="Edit Team Name"
         description="Update the name of this team"
         trigger={<span />}
+        className="min-w-2xl"
       >
         <TeamForm
           initialData={
@@ -261,6 +262,7 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
         title="Add Sub-team"
         description="Create a new sub-team under this team"
         trigger={<span />}
+        className="min-w-2xl"
       >
         <TeamForm
           onSubmit={handleAddSubTeam}

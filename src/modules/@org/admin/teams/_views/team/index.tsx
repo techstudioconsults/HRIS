@@ -458,6 +458,7 @@ export const AllTeams = () => {
             : "Create a new team for your organization. You can add roles and employees later."
         }
         trigger={<span />}
+        className="min-w-2xl"
       >
         <TeamForm
           initialData={currentTeam}
@@ -569,7 +570,7 @@ export const AllTeams = () => {
         }}
         title="Edit Team"
         description="Update team information and settings"
-        className="!max-w-2xl"
+        className="min-w-2xl"
         trigger={<span />}
       >
         {editingTeam && (

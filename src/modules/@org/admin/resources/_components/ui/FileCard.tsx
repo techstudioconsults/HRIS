@@ -1,6 +1,6 @@
 "use client";
 
-import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
+import { AlertModal } from "@/components/shared/dialog";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -103,7 +103,8 @@ export const FileCard = ({ file }: FileCardProperties) => {
       </div>
 
       {/* Delete File Dialog */}
-      <ConfirmDialog
+      <AlertModal
+        type="warning"
         isOpen={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
         onConfirm={handleConfirmDelete}
@@ -111,7 +112,7 @@ export const FileCard = ({ file }: FileCardProperties) => {
         title="Delete File"
         description={`You're about to delete "${file.name}". This action cannot be undone.`}
         confirmText="Delete File"
-        variant="destructive"
+        cancelText="Cancel"
       />
     </>
   );

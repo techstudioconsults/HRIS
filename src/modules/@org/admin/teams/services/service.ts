@@ -43,7 +43,7 @@ export class TeamService {
   }
 
   async getAllTeams(filters: Filters = Object.create({ page: 1 })) {
-    const response = await this.http.get<ApiResponse<Team>>(`/teams`, { filters });
+    const response = await this.http.get<ApiResponse<Team>>(`/teams`, { ...filters });
 
     if (response?.status === 200) {
       return response.data;
@@ -53,7 +53,7 @@ export class TeamService {
   async downloadTeams(filters: Filters = Object.create({ page: 1 })) {
     const response = await this.http.get<Blob>(
       `/teams/export`,
-      { filters },
+      { ...filters },
       {
         responseType: "blob",
       },

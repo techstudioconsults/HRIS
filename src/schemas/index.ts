@@ -136,7 +136,7 @@ export const employeeSchema = z.object({
   employmentType: z.enum(["full time", "part time", "contract"]),
   workMode: z.enum(["remote", "onsite", "hybrid"]),
   // Salary Details
-  baseSalary: z.string().min(1, "Base salary is required"),
+  baseSalary: z.number().min(1, "Base salary is required"),
   bankName: z.string().min(1, "Bank name is required"),
   accountName: z.string().min(1, "Account name is required"),
   accountNumber: z.string().min(1, "Account number is required"),

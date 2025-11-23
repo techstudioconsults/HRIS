@@ -128,6 +128,10 @@ declare global {
     flag?: string;
     deliveryStatus?: string;
     role?: string;
+    /** Filter employees by team identifier */
+    teamId?: string;
+    /** Filter employees by role identifier */
+    roleId?: string;
     buyerId?: string;
     productId?: string;
     /**

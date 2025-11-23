@@ -89,8 +89,8 @@ export function NotificationWidget({
         {/* Notifications List */}
         {notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
-            <div className="bg-muted rounded-full p-3">
-              <BellOff className="text-muted-foreground size-8" />
+            <div className="bg-primary-50 rounded-full p-3">
+              <BellOff className="text-primary size-8" />
             </div>
             <h4 className="mt-4 text-sm font-medium">No notifications</h4>
             <p className="text-muted-foreground mt-1 text-xs">You&apos;re all caught up!</p>

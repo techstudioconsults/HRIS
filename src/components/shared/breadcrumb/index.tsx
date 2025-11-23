@@ -3,11 +3,11 @@
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 import { PiHouse } from "react-icons/pi";
@@ -70,10 +70,10 @@ export const BreadCrumb = ({
           {showHome && (
             <>
               <BreadcrumbItem>
-                <BreadcrumbLink href="/" className="hover:text-primary flex items-center gap-1">
+                <Link href="/" className="hover:text-primary flex items-center gap-1">
                   {homeIcon}
                   <span>{homeLabel}</span>
-                </BreadcrumbLink>
+                </Link>
               </BreadcrumbItem>
               {breadcrumbItems.length > 0 && <BreadcrumbSeparator className="">{separator}</BreadcrumbSeparator>}
             </>
@@ -92,10 +92,10 @@ export const BreadCrumb = ({
                       <span>{item.label}</span>
                     </BreadcrumbPage>
                   ) : (
-                    <BreadcrumbLink href={item.href || "#"} className="hover:text-primary flex items-center gap-1">
+                    <Link href={item.href || "#"} className="hover:text-primary flex items-center gap-1">
                       {item.icon}
                       <span>{item.label}</span>
-                    </BreadcrumbLink>
+                    </Link>
                   )}
                 </BreadcrumbItem>
 

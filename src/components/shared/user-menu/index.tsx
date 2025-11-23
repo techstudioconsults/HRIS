@@ -65,7 +65,7 @@ export function UserMenu({
         <DropdownMenuLabel>
           <div className="flex flex-col gap-1">
             <p className="text-sm font-medium">{userName}</p>
-            {userRole && <span className="text-gray mt-1 text-xs capitalize">{userRole}</span>}
+            {userRole && <span className="text-gray mt-1 text-[11px] capitalize">{userRole}</span>}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

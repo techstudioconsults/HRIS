@@ -1,15 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import Loading from "@/app/Loading";
 import { BreadCrumb } from "@/components/shared/breadcrumb";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
+import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { PageSection, PageWrapper } from "@/lib/animation";
+import { queryKeys } from "@/lib/react-query/query-keys";
 import { formatDate } from "@/lib/tools/format";
 import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import type { Team as TeamFormType } from "@/modules/@org/onboarding/_components/forms/schema";
@@ -36,12 +39,17 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
   const { useGetTeamsById, useDeleteTeam } = useTeamService();
   const { useUpdateTeam, useCreateTeam } = useOnboardingService();
   const { data: teamData, isLoading } = useGetTeamsById(id, { enabled: !!id });
-  const { getRowActions, DeleteConfirmationModal } = useSubTeamRowActions();
 
   // Local state for dialogs
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isAddSubTeamDialogOpen, setIsAddSubTeamDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [editingTeam, setEditingTeam] = useState<Team | null>(null);
+  const { getRowActions, DeleteConfirmationModal } = useSubTeamRowActions((team) => {
+    setEditingTeam(team);
+    setIsEditDialogOpen(true);
+  }, id);
 
   const updateTeamMutation = useUpdateTeam();
   const createTeamMutation = useCreateTeam();
@@ -54,11 +62,17 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
   const handleUpdateTeamName = async (data: { name: string }) => {
     try {
       setIsSubmitting(true);
-      await updateTeamMutation.mutateAsync({ teamId: id, name: data.name });
-      await queryClient.invalidateQueries({ queryKey: ["teams"] });
-      await queryClient.invalidateQueries({ queryKey: ["team", id] });
+      const targetId = editingTeam?.id || id;
+      await updateTeamMutation.mutateAsync({ teamId: targetId, name: data.name });
+      // Invalidate list and both affected detail queries (parent & edited team if different)
+      await queryClient.invalidateQueries({ queryKey: queryKeys.team.list() });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.team.details(targetId) });
+      if (editingTeam && editingTeam.id !== id) {
+        await queryClient.invalidateQueries({ queryKey: queryKeys.team.details(id) });
+      }
       toast.success(`Team name updated successfully!`);
       setIsEditDialogOpen(false);
+      setEditingTeam(null);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to update team name";
       toast.error(errorMessage);
@@ -72,8 +86,8 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
     try {
       setIsSubmitting(true);
       await createTeamMutation.mutateAsync({ name: data.name, parentId: id });
-      await queryClient.invalidateQueries({ queryKey: ["teams"] });
-      await queryClient.invalidateQueries({ queryKey: ["team", id] });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.team.list() });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.team.details(id) });
       toast.success(`Sub-team "${data.name}" created successfully!`);
       setIsAddSubTeamDialogOpen(false);
     } catch (error) {
@@ -129,8 +143,18 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
                   </div>
                 }
               >
-                <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>Edit Team&apos;s Name</DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={handleDeleteTeam}>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setEditingTeam(teamData as Team);
+                    setIsEditDialogOpen(true);
+                  }}
+                >
+                  Edit Team&apos;s Name
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive"
+                  onClick={() => setIsDeleteConfirmOpen(true)}
+                >
                   Delete Team
                 </DropdownMenuItem>
               </GenericDropdown>
@@ -182,6 +206,11 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
             showPagination={false}
             enableRowSelection={true}
             enableColumnVisibility={true}
+            onRowClick={(team: any) => {
+              if (team?.id) {
+                router.push(`/admin/teams/sub-team/${team.id}`);
+              }
+            }}
             enableSorting={true}
             enableFiltering={true}
             mobileCardView={true}
@@ -213,13 +242,11 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
       >
         <TeamForm
           initialData={
-            teamData
-              ? ({
-                  id: teamData.id,
-                  name: teamData.name,
-                  roles: [],
-                } as TeamFormType)
-              : undefined
+            editingTeam
+              ? ({ id: editingTeam.id, name: editingTeam.name, roles: [] } as TeamFormType)
+              : teamData
+                ? ({ id: teamData.id, name: teamData.name, roles: [] } as TeamFormType)
+                : undefined
           }
           onSubmit={handleUpdateTeamName}
           onCancel={() => setIsEditDialogOpen(false)}
@@ -244,6 +271,24 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
 
       {/* Delete Confirmation Modal for Sub-teams */}
       <DeleteConfirmationModal />
+      {/* Delete Team Confirmation */}
+      <AlertModal
+        isOpen={isDeleteConfirmOpen}
+        onClose={() => !isSubmitting && setIsDeleteConfirmOpen(false)}
+        onConfirm={async () => {
+          if (isSubmitting) return;
+          setIsSubmitting(true);
+          await handleDeleteTeam();
+          setIsSubmitting(false);
+          setIsDeleteConfirmOpen(false);
+        }}
+        loading={isSubmitting}
+        type="warning"
+        title="Delete Team"
+        description={`Are you sure you want to delete "${teamData?.name}"? This action cannot be undone.`}
+        confirmText={isSubmitting ? "Deleting..." : "Delete Team"}
+        cancelText="Cancel"
+      />
     </PageWrapper>
   );
 };

@@ -35,7 +35,7 @@ export const AddEmployeeForm = () => {
   const { data: teams = [], isLoading: loadingTeams } = useGetAllTeams();
   const { data: banksResponse, isLoading: loadingBanks } = useGetApprovedBanks();
   const banks = useMemo(() => banksResponse?.data ?? [], [banksResponse]);
-  const createEmployeeMutation = useCreateEmployee();
+  const { mutateAsync: createEmployeeMutation } = useCreateEmployee();
   // const [showAlert, setShowAlert] = useState(false);
   // const [alertTitle, setAlertTitle] = useState("");
   // const [alertDescription, setAlertDescription] = useState("");
@@ -139,7 +139,7 @@ export const AddEmployeeForm = () => {
       formDataToSend.append("workMode", formData.workMode || "");
 
       // Salary details
-      formDataToSend.append("baseSalary", formData.baseSalary);
+      formDataToSend.append("baseSalary", formData.baseSalary.toString());
       formDataToSend.append("bankName", formData.bankName);
       formDataToSend.append("accountName", formData.accountName);
       formDataToSend.append("accountNumber", formData.accountNumber);
@@ -153,13 +153,16 @@ export const AddEmployeeForm = () => {
       }
 
       // Call create employee
-      const response = await createEmployeeMutation.mutateAsync(formDataToSend);
-      if (response) {
-        toast.success("Employee Added Successfully");
-        router.push("/admin/employees");
-      } else {
-        toast.error("Failed to add employee");
-      }
+      createEmployeeMutation(formDataToSend, {
+        onSuccess: () => {
+          // Invalidate or update any relevant queries here if needed
+          toast.success("Employee Added Successfully");
+          router.push("/admin/employees");
+        },
+        onError: (error: any) => {
+          toast.error(error?.response?.data?.message || "Failed to add employee");
+        },
+      });
 
       // setShowAlert(true);
     } catch {
@@ -334,8 +337,8 @@ export const AddEmployeeForm = () => {
                 <FormField
                   name="baseSalary"
                   label="Base Salary"
-                  type="text"
-                  placeholder="800000"
+                  type="number"
+                  placeholder="e.g 100000"
                   className="border-border !h-14 w-full"
                   required
                 />
@@ -361,7 +364,7 @@ export const AddEmployeeForm = () => {
                           searchPlaceholder="Search banks..."
                           emptyMessage="No bank found."
                           disabled={loadingBanks || loadingTeams || isSubmitting}
-                          className="w-full"
+                          className="h-14 w-full"
                         />
                         {fieldState.error && <p className="text-destructive text-sm">{fieldState.error.message}</p>}
                       </>

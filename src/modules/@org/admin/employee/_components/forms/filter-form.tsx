@@ -1,20 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { FormField } from "@/components/shared/inputs/FormFields";
 import { useEffect, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useDebounce } from "use-debounce";
-
-interface Role {
-  id: string;
-  name: string;
-}
-
-interface Team {
-  id: string;
-  name: string;
-  roles: Role[];
-}
 
 interface FilterValues {
   search?: string;
@@ -44,7 +34,7 @@ export const FilterForm = ({
 
   // Get roles for the selected team
   const selectedTeamId = methods.watch("teamId");
-  const roles = teams.find((team) => team.id === selectedTeamId)?.roles || [];
+  const roles: any = teams.find((team) => team.id === selectedTeamId)?.roles || [];
 
   // Sync form with parent's filter state when it changes (e.g., on reset)
   useEffect(() => {
@@ -60,7 +50,6 @@ export const FilterForm = ({
     const normalized: FilterValues = {};
     for (const [key, value] of Object.entries(debouncedFilters)) {
       if (value === undefined || value === "" || value === "all") continue;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (normalized as any)[key] = value;
     }
     onFilterChange(normalized);
@@ -123,7 +112,7 @@ export const FilterForm = ({
             disabled={!selectedTeamId}
             options={[
               { value: "all", label: "All Roles" },
-              ...roles.map((role) => ({ value: role.id, label: role.name })),
+              ...roles.map((role: Role) => ({ value: role.id, label: role.name })),
             ]}
             onChange={(event) => handleFilterChange("roleId", event.target.value)}
             className="border-border !h-10"

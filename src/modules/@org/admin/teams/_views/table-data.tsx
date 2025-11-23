@@ -2,6 +2,7 @@ import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { Badge } from "@/components/ui/badge";
 import { useActiveTarget } from "@/context/active-target";
 import { formatDate } from "@/lib/i18n/utils";
+import { queryKeys } from "@/lib/react-query/query-keys";
 import { IColumnDefinition, IRowAction } from "@/modules/@org/admin/_components/table/table";
 import { useQueryClient } from "@tanstack/react-query";
 import { Eye, Pencil, Trash } from "lucide-react";
@@ -57,6 +58,7 @@ const useTeamRowActionsBase = (
   onAddEmployees?: (team: Team) => void,
   onEditTeam?: (team: Team) => void,
   onAddRole?: (team: Team) => void,
+  parentId?: string,
 ) => {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -75,7 +77,8 @@ const useTeamRowActionsBase = (
     try {
       const response = await deleteTeam(teamToDelete.id);
       if (response?.success) {
-        await queryClient.invalidateQueries({ queryKey: ["teams", "list"] });
+        await queryClient.invalidateQueries({ queryKey: queryKeys.team.list() });
+        await queryClient.invalidateQueries({ queryKey: queryKeys.team.details(parentId!) });
         toast.success(`${teamType === "sub-team" ? "Sub-team" : "Team"} "${teamToDelete.name}" deleted successfully!`);
         setIsDeleteModalOpen(false);
         setTeamToDelete(null);
@@ -84,33 +87,33 @@ const useTeamRowActionsBase = (
       const errorMessage = error instanceof Error ? error.message : `Failed to delete ${teamType}. Please try again.`;
       toast.error(errorMessage);
     }
-  }, [teamToDelete, deleteTeam, queryClient, teamType]);
+  }, [teamToDelete, deleteTeam, queryClient, parentId, teamType]);
 
   const getRowActions = useCallback(
     (team: Team) => {
       const viewPath = teamType === "sub-team" ? `/admin/teams/sub-team/${team.id}` : `/admin/teams/${team.id}`;
-      const editPath = teamType === "sub-team" ? `/` : `/admin/teams/${team.id}/edit`;
 
       const baseActions: IRowAction<Team>[] = [
         {
           label: "View team",
-          kbd: "Ctrl+V",
+          // kbd: "Ctrl+V",
           icon: <Eye className="h-4 w-4" aria-hidden="true" />,
           onClick: async () => {
             setActiveTeam(team);
+            undefined;
             router.push(viewPath);
           },
         },
         {
           label: "Edit team",
-          kbd: "Ctrl+E",
+          // kbd: "Ctrl+E",
           icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
           onClick: () => {
             setActiveTeam(team);
             if (onEditTeam) {
               onEditTeam(team);
             } else {
-              router.push(editPath);
+              // router.push(editPath);
             }
           },
         },
@@ -140,7 +143,7 @@ const useTeamRowActionsBase = (
         { type: "separator" },
         {
           label: "Delete team",
-          kbd: "Ctrl+Del",
+          // kbd: "Ctrl+Del",
           variant: "destructive",
           icon: <Trash className="text-destructive h-4 w-4" aria-hidden="true" />,
           onClick: () => {
@@ -223,6 +226,6 @@ export const subTeamColumn: IColumnDefinition<Team>[] = [
   },
 ];
 
-export const useSubTeamRowActions = () => {
-  return useTeamRowActionsBase("sub-team");
+export const useSubTeamRowActions = (onEditTeam?: (team: Team) => void, id?: string) => {
+  return useTeamRowActionsBase("sub-team", undefined, onEditTeam, undefined, id);
 };

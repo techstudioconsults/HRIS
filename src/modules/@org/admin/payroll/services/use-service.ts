@@ -290,14 +290,50 @@ export const usePayrollService = () => {
           employeeId: string;
         },
       ) => service.createPayslip(data),
-      options,
+      {
+        ...options,
+        invalidateQueries: (_, variables: any) => {
+          const keys: ReadonlyArray<readonly unknown[]> = [
+            ["payrolls", "payslips"] as const,
+            ["payrolls", "payslip"] as const,
+            queryKeys.payroll.list({}),
+            queryKeys.payroll.details(variables.payrollId),
+            queryKeys.employee.suspendedByPayroll(variables.payrollId, {}),
+          ];
+
+          // const extra = options?.invalidateQueries?.(result, variables, context);
+          // if (extra && Array.isArray(extra) && extra.length > 0) {
+          //   return [...keys, ...extra] as ReadonlyArray<readonly unknown[]>;
+          // }
+
+          return keys;
+        },
+      },
     );
 
   const useDeletePayslip = (options?: any) =>
     useServiceMutation(
       (service, payload: { payrollId: string; payslipId: string }) =>
         service.deletePayslip(payload.payrollId, payload.payslipId),
-      options,
+      {
+        ...options,
+        invalidateQueries: (_, variables: any) => {
+          const keys: ReadonlyArray<readonly unknown[]> = [
+            ["payrolls", "payslips"] as const,
+            ["payrolls", "payslip"] as const,
+            queryKeys.payroll.list({}),
+            queryKeys.payroll.details(variables.payrollId),
+            queryKeys.employee.suspendedByPayroll(variables.payrollId, {}),
+          ];
+
+          // const extra = options?.invalidateQueries?.(result, variables, context);
+          // if (extra && Array.isArray(extra) && extra.length > 0) {
+          //   return [...keys, ...extra] as ReadonlyArray<readonly unknown[]>;
+          // }
+
+          return keys;
+        },
+      },
     );
 
   return {

@@ -5,6 +5,7 @@ import { formatCurrency } from "@/lib/i18n/utils";
 import { queryKeys } from "@/lib/react-query/query-keys";
 import { cn } from "@/lib/utils";
 import { IColumnDefinition, IRowAction } from "@/modules/@org/admin/_components/table/table";
+import { AxiosError } from "axios";
 import { Edit, MinusCircle, Trash } from "lucide-react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
@@ -42,18 +43,25 @@ export const usePayrollRowActions = () => {
   const handleDeletePayslip = useCallback(async () => {
     if (!payslipToDelete || isDeleting) return;
 
-    try {
-      await deletePayslip({
+    await deletePayslip(
+      {
         payrollId: payslipToDelete.payrollId as any,
         payslipId: payslipToDelete.id,
-      });
-      toast.success("Employee removed from payroll successfully.");
-      resetModalState();
-    } catch (error) {
-      const message =
-        (error as { message?: string })?.message ?? "Failed to remove employee from payroll. Please try again.";
-      toast.error(message);
-    }
+      },
+      {
+        onSuccess: () => {
+          toast.success("Employee removed from payroll successfully.");
+          resetModalState();
+        },
+        onError: (error) => {
+          const message =
+            error instanceof AxiosError
+              ? error.response?.data.message
+              : "Failed to remove employee from payroll. Please try again.";
+          toast.error(message);
+        },
+      },
+    );
   }, [deletePayslip, isDeleting, payslipToDelete, resetModalState]);
 
   const getRowActions = (payslip: Payslip): IRowAction<Payslip>[] => [

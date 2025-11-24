@@ -14,7 +14,6 @@ import { Badge } from "@/components/ui/badge";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useSSE } from "@/context/sse-provider";
 import { formatCurrency, formatDate } from "@/lib/i18n/utils";
-import { EventRegistry } from "@/lib/sse/use-notifications";
 import { cn } from "@/lib/utils";
 import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import { CloseCircle, Eye, EyeSlash } from "iconsax-reactjs";
@@ -82,11 +81,17 @@ const PayrollView = () => {
     useGetPayslips,
     useGetCompanyWallet,
     useGetPayrollApprovals,
+    useDecidePayrollApproval,
+    useGetPayrollByID,
   } = usePayrollService();
   const { data: companyWallet, refetch: refetchCompanyWallet } = useGetCompanyWallet();
   const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
   const { data: allPayrolls, isLoading: loadingPayrolls, refetch: refetchPayrolls } = useGetAllPayrolls();
   const { mutateAsync: createPayroll, isPending: isCreatingPayroll } = useCreatePayroll();
+  const { mutateAsync: decideApproval, isPending: isDecidingApproval } = useDecidePayrollApproval({
+    onSuccess: () => toast.success("Decision recorded"),
+    onError: () => toast.error("Failed to record decision"),
+  });
   const [isWalletBalanceVisible, setIsWalletBalanceVisible] = useState(true);
   const [showNoPayrollBanner, setShowNoPayrollBanner] = useState(false);
   const [isTopupPromptOpen, setIsTopupPromptOpen] = useState(false);
@@ -100,6 +105,11 @@ const PayrollView = () => {
     employeesInPayroll: 0,
     paymentDate: "",
     walletBalance: companyWallet?.data?.balance || 0,
+  });
+
+  // Fetch single payroll details when an ID is selected
+  const { data: selectedPayrollResponse, isLoading: loadingSelectedPayroll } = useGetPayrollByID(selectedPayrollId, {
+    enabled: !!selectedPayrollId,
   });
 
   // Fetch payslips automatically when a payroll is selected
@@ -126,10 +136,11 @@ const PayrollView = () => {
   const showGeneratePayslipButton = !!selectedPayrollId && !hasPayslipsForSelectedPayroll;
 
   // Find the full record for the currently selected payroll
-  const selectedPayrollRecord =
-    Array.isArray(allPayrolls?.data) && selectedPayrollId
-      ? allPayrolls.data.find((payroll: Payroll) => payroll.id === selectedPayrollId)
-      : undefined;
+  const selectedPayrollRecord: Payroll | undefined =
+    (selectedPayrollResponse?.data as Payroll) ||
+    (Array.isArray(allPayrolls?.data) && selectedPayrollId
+      ? (allPayrolls.data.find((payroll: Payroll) => payroll.id === selectedPayrollId) as Payroll)
+      : undefined);
 
   // Disable running payroll for future months (e.g., December while still in November)
   const isSelectedPayrollInFuture = (() => {
@@ -146,7 +157,9 @@ const PayrollView = () => {
 
   // Robust awaiting detection (captures "awaiting", "awaiting approval", etc.)
   const normalizedStatus = (selectedPayrollRecord?.status ?? "").toString().toLowerCase();
-  const isAwaitingApproval = normalizedStatus.includes("await");
+  const isAwaitingApproval = normalizedStatus.includes("waiting");
+  const isDisbursed = normalizedStatus.includes("disbursed");
+  const isCompleted = normalizedStatus.includes("completed");
 
   // Show the banner if status is awaiting (ignore hide flag in this state),
   // otherwise show only when a run is in progress and the banner isn't hidden
@@ -160,6 +173,14 @@ const PayrollView = () => {
     payrollSelectedDate && shouldShowApprovalProgressBanner
       ? formatDate(payrollSelectedDate, "en", { month: "long", year: "numeric" })
       : payrollData.paymentDate;
+
+  // If current selected payroll is disbursed, attempt to locate the next scheduled payroll (future payment date)
+  const nextScheduledPayroll =
+    isDisbursed && Array.isArray(allPayrolls?.data) && selectedPayrollRecord
+      ? [...allPayrolls.data]
+          .filter((p: Payroll) => new Date(p.paymentDate) > new Date(selectedPayrollRecord.paymentDate))
+          .sort((a: Payroll, b: Payroll) => new Date(a.paymentDate).getTime() - new Date(b.paymentDate).getTime())[0]
+      : null;
 
   // Map payrolls to ComboBox options
   const payrollOptions = Array.isArray(allPayrolls?.data)
@@ -176,22 +197,7 @@ const PayrollView = () => {
 
   const handlePayrollSelection = (value: string) => {
     setSelectedPayrollId(value);
-    // Payslips will be automatically fetched when selectedPayrollId changes
-    const selectedPayroll = Array.isArray(allPayrolls?.data)
-      ? allPayrolls.data.find((payroll: Payroll) => payroll.id === value)
-      : undefined;
-    if (selectedPayroll) {
-      setPayrollData((previous) => ({
-        ...previous,
-        id: selectedPayroll.id,
-        status: String(selectedPayroll.status || ""),
-        policyId: selectedPayroll.policyId,
-        netPay: selectedPayroll.netPay || 0,
-        employeesInPayroll: selectedPayroll.employeesInPayroll || 0,
-        paymentDate: formatDate(selectedPayroll.paymentDate),
-        walletBalance: companyWallet?.data?.balance || 0,
-      }));
-    }
+    // Payslips and payroll details will be fetched automatically via hooks when ID changes
   };
 
   const payrollPolicyStatus = payrollPolicy?.data?.status === `incomplete`;
@@ -274,94 +280,6 @@ const PayrollView = () => {
     }
   }, [payrollPolicy?.data.payday, payrollPolicyStatus, setHasCompletedPayrollPolicySetupForm]);
 
-  // Wallet + payroll notifications via SSE
-  useEffect(() => {
-    // Wallet top-up success
-    const offTopup = on(EventRegistry.WALLET_TOP_SUCCESS, () => {
-      toast.success("Company wallet funded successfully.");
-      setShowFundWalletAccountModal(false);
-      const hasPayrolls = Array.isArray(allPayrolls?.data) && allPayrolls.data.length > 0;
-      if (!hasPayrolls) {
-        setShowNoPayrollBanner(true);
-      }
-      setIsTopupPromptOpen(true);
-      void refetchCompanyWallet();
-    });
-
-    // Wallet created / setup completed
-    const offCreated = on(EventRegistry.WALLET_CREATED_SUCCESS, () => {
-      toast.success("Company wallet setup completed successfully.");
-      void refetchCompanyWallet();
-    });
-
-    // Payroll approval requested
-    const offPayrollApproveRequest = on(EventRegistry.PAYROLL_APPROVE_REQUEST, (payload) => {
-      const { title, body } = payload?.data ?? {};
-      const message = title && body ? `${title} - ${body}` : title || body || "New payroll approval request received.";
-      toast(message);
-    });
-
-    // Payroll approved
-    const offPayrollApproved = on(EventRegistry.PAYROLL_APPROVED, (payload) => {
-      const { title, body } = payload?.data ?? {};
-      const message = title && body ? `${title} - ${body}` : title || body || "Payroll approved successfully.";
-      toast.success(message);
-      void refetchPayrolls();
-    });
-
-    // Payroll rejected
-    const offPayrollRejected = on(EventRegistry.PAYROLL_REJECTED, (payload) => {
-      const { title, body } = payload?.data ?? {};
-      const message = title && body ? `${title} - ${body}` : title || body || "Payroll approval was rejected.";
-      toast.error(message);
-      void refetchPayrolls();
-    });
-
-    // Payroll completed (fully processed)
-    const offPayrollCompleted = on(EventRegistry.PAYROLL_COMPLETED, (payload) => {
-      const { title, body } = payload?.data ?? {};
-      const message = title && body ? `${title} - ${body}` : title || body || "Payroll run completed.";
-      toast.success(message);
-      void refetchPayrolls();
-      void refetchCompanyWallet();
-    });
-
-    // Generic payroll status updates
-    const offPayrollStatus = on(EventRegistry.PAYROLL_STATUS, (payload) => {
-      const { title, body } = payload?.data ?? {};
-      const message = title && body ? `${title} - ${body}` : title || body || "Payroll status updated.";
-      toast(message);
-    });
-
-    // Salary paid / disbursement notifications
-    const offSalaryPaid = on(EventRegistry.SALARY_PAID, (payload) => {
-      const { title, body } = payload?.data ?? {};
-      const message = title && body ? `${title} - ${body}` : title || body || "Employee salaries have been paid.";
-      toast.success(message);
-      void refetchCompanyWallet();
-    });
-
-    return () => {
-      offTopup();
-      offCreated();
-      offPayrollApproveRequest();
-      offPayrollApproved();
-      offPayrollRejected();
-      offPayrollCompleted();
-      offPayrollStatus();
-      offSalaryPaid();
-    };
-  }, [
-    on,
-    refetchCompanyWallet,
-    refetchPayrolls,
-    setShowFundWalletAccountModal,
-    setShowFundWalletFormModal,
-    setIsTopupPromptOpen,
-    allPayrolls,
-    setShowNoPayrollBanner,
-  ]);
-
   // When wallet setup has just completed (success alert shown),
   // ensure the "No payroll" banner becomes visible if there are no payrolls yet.
   useEffect(() => {
@@ -381,6 +299,23 @@ const PayrollView = () => {
     }
   }, [companyWallet?.data?.balance]);
 
+  // Sync detailed payroll data when fetched
+  useEffect(() => {
+    if (selectedPayrollResponse?.data) {
+      const p = selectedPayrollResponse.data as Payroll;
+      setPayrollData((previous) => ({
+        ...previous,
+        id: p.id,
+        status: String(p.status || ""),
+        policyId: p.policyId,
+        netPay: p.netPay || 0,
+        employeesInPayroll: p.employeesInPayroll || 0,
+        paymentDate: formatDate(p.paymentDate),
+        walletBalance: companyWallet?.data?.balance || previous.walletBalance,
+      }));
+    }
+  }, [selectedPayrollResponse?.data, companyWallet?.data?.balance]);
+
   // Check if there are any payrolls available and load current payroll (only affects dashboard cards)
   useEffect(() => {
     if (!loadingPayrolls && allPayrolls) {
@@ -390,32 +325,15 @@ const PayrollView = () => {
       // Load the most recent payroll data if available (sorted by earliest month)
       // This only affects dashboard cards, not the table
       if (hasPayrolls) {
-        // Sort payrolls by payment date (earliest first)
+        // Sort payrolls by payment date (earliest first) and select earliest; detailed fetch will populate cards
         const payrollsArray = Array.isArray(allPayrolls.data) ? allPayrolls.data : [];
-        const sortedPayrolls = [...payrollsArray].sort((a, b) => {
-          return new Date(a.paymentDate).getTime() - new Date(b.paymentDate).getTime();
-        });
-
-        const earliestPayroll = sortedPayrolls[0] as {
-          id: string;
-          status: string;
-          policyId: string;
-          netPay?: number;
-          employeesInPayroll?: number;
-          paymentDate: string;
-        };
-
-        setSelectedPayrollId(earliestPayroll.id);
-        setPayrollData((previous) => ({
-          ...previous,
-          id: earliestPayroll.id,
-          status: earliestPayroll.status,
-          policyId: earliestPayroll.policyId,
-          netPay: earliestPayroll.netPay || 0,
-          employeesInPayroll: earliestPayroll.employeesInPayroll || 0,
-          paymentDate: formatDate(earliestPayroll.paymentDate),
-          walletBalance: companyWallet?.data?.balance || 0,
-        }));
+        const sortedPayrolls = [...payrollsArray].sort(
+          (a, b) => new Date(a.paymentDate).getTime() - new Date(b.paymentDate).getTime(),
+        );
+        const earliestPayroll = sortedPayrolls[0];
+        if (earliestPayroll) {
+          setSelectedPayrollId(earliestPayroll.id);
+        }
       }
     }
   }, [allPayrolls, companyWallet?.data?.balance, loadingPayrolls]);
@@ -450,7 +368,8 @@ const PayrollView = () => {
             {showRunPayrollButton ? (
               <MainButton
                 onClick={handleRunPayroll}
-                isDisabled={payrollPolicyStatus || !canRunSelectedPayroll}
+                // isDisabled={payrollPolicyStatus || !canRunSelectedPayroll || isCompleted}
+                isDisabled={isCompleted}
                 variant="primary"
               >
                 Run Payroll
@@ -598,7 +517,16 @@ const PayrollView = () => {
           <p className="text-background max-w-4xl text-sm">
             {shouldShowApprovalProgressBanner
               ? PAYROLL_RUN_MESSAGE(approvalBannerDateLabel ?? "", () => setIsApprovalProgressOpen(true))
-              : GET_SCHEDULE_MESSAGE(payrollData.paymentDate)}
+              : isDisbursed
+                ? nextScheduledPayroll
+                  ? GET_SCHEDULE_MESSAGE(
+                      formatDate(nextScheduledPayroll.paymentDate, "en", {
+                        month: "long",
+                        year: "numeric",
+                      }),
+                    )
+                  : "Payroll is currently being disbursed."
+                : GET_SCHEDULE_MESSAGE(payrollData.paymentDate)}
           </p>
         </div>
       </section>
@@ -729,8 +657,16 @@ const PayrollView = () => {
                     ? approval.status.charAt(0).toUpperCase() + approval.status.slice(1)
                     : "Pending";
 
+                const isPending = statusLabel === "Pending";
+                const handleApprove = () => {
+                  void decideApproval({ payrollId: approval.payrollId, status: "approved" });
+                };
+                const handleDecline = () => {
+                  void decideApproval({ payrollId: approval.payrollId, status: "declined" });
+                };
+
                 return (
-                  <section key={approval.payrollId} className="flex items-center justify-between">
+                  <section key={approval.employee.id} className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Avatar>
                         <AvatarImage src={approval.employee.avatar ?? "https://github.com/shadcn.png"} alt={name} />
@@ -741,16 +677,40 @@ const PayrollView = () => {
                         {role ? <p className="text-xs text-gray-500">{role}</p> : null}
                       </div>
                     </div>
-                    <Badge
-                      className={cn(
-                        "rounded-full px-4 py-2",
-                        statusLabel === "Pending" && "bg-warning-50 text-warning",
-                        statusLabel === "Approved" && "bg-success-50 text-success",
-                        statusLabel === "Declined" && "bg-destructive-50 text-destructive",
+                    <div className="flex items-center gap-3">
+                      <Badge
+                        className={cn(
+                          "rounded-full px-4 py-2",
+                          statusLabel === "Pending" && "bg-warning-50 text-warning",
+                          statusLabel === "Approved" && "bg-success-50 text-success",
+                          statusLabel === "Declined" && "bg-destructive-50 text-destructive",
+                        )}
+                      >
+                        {statusLabel}
+                      </Badge>
+                      {isPending && (
+                        <div className="flex items-center gap-2">
+                          <MainButton
+                            size="sm"
+                            variant="primary"
+                            onClick={handleApprove}
+                            isDisabled={isDecidingApproval}
+                            isLoading={isDecidingApproval}
+                          >
+                            Approve
+                          </MainButton>
+                          <MainButton
+                            size="sm"
+                            variant="destructive"
+                            onClick={handleDecline}
+                            isDisabled={isDecidingApproval}
+                            isLoading={isDecidingApproval}
+                          >
+                            Decline
+                          </MainButton>
+                        </div>
                       )}
-                    >
-                      {statusLabel}
-                    </Badge>
+                    </div>
                   </section>
                 );
               })

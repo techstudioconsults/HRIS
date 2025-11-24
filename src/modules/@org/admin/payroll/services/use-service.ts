@@ -45,6 +45,29 @@ export const usePayrollService = () => {
       options,
     );
 
+  // Decide payroll approval (approve / decline)
+  const useDecidePayrollApproval = (options?: any) =>
+    useServiceMutation(
+      (service, data: { payrollId: string; status: "approved" | "declined" }) => service.decidePayrollApproval(data),
+      {
+        ...options,
+        invalidateQueries: (result: any, variables: { payrollId: string; status: string }, context: unknown) => {
+          const keys: ReadonlyArray<readonly unknown[]> = [
+            queryKeys.payroll.approvals(variables.payrollId),
+            queryKeys.payroll.details(variables.payrollId),
+            queryKeys.payroll.list({}),
+          ];
+
+          // Merge with any caller-provided invalidations
+          const extra = options?.invalidateQueries?.(result, variables, context);
+          if (extra && Array.isArray(extra) && extra.length > 0) {
+            return [...keys, ...extra] as ReadonlyArray<readonly unknown[]>;
+          }
+          return keys;
+        },
+      },
+    );
+
   // Wallet
   const useUpdateCompanyWallet = (options?: any) =>
     useServiceMutation(
@@ -95,10 +118,9 @@ export const usePayrollService = () => {
         invalidateQueries: (result: any, variables: any, context: unknown) => {
           const keys: ReadonlyArray<readonly unknown[]> = [
             ["payrolls", "bonuses"] as const,
-            // Invalidate all payslip list queries
             ["payrolls", "payslips"] as const,
-            // Invalidate all individual payslip detail queries so salary details refresh
             ["payrolls", "payslip"] as const,
+            queryKeys.payroll.list({}),
           ];
 
           const extra = options?.invalidateQueries?.(result, variables, context);
@@ -126,6 +148,7 @@ export const usePayrollService = () => {
             ["payrolls", "bonuses"] as const,
             ["payrolls", "payslips"] as const,
             ["payrolls", "payslip"] as const,
+            queryKeys.payroll.list({}),
           ];
 
           const extra = options?.invalidateQueries?.(result, variables, context);
@@ -145,6 +168,7 @@ export const usePayrollService = () => {
           ["payrolls", "bonuses"] as const,
           ["payrolls", "payslips"] as const,
           ["payrolls", "payslip"] as const,
+          queryKeys.payroll.list({}),
         ];
 
         const extra = options?.invalidateQueries?.(result, variables, context);
@@ -182,6 +206,7 @@ export const usePayrollService = () => {
             ["payrolls", "deductions"] as const,
             ["payrolls", "payslips"] as const,
             ["payrolls", "payslip"] as const,
+            queryKeys.payroll.list({}),
           ];
 
           const extra = options?.invalidateQueries?.(result, variables, context);
@@ -209,6 +234,7 @@ export const usePayrollService = () => {
             ["payrolls", "deductions"] as const,
             ["payrolls", "payslips"] as const,
             ["payrolls", "payslip"] as const,
+            queryKeys.payroll.list({}),
           ];
 
           const extra = options?.invalidateQueries?.(result, variables, context);
@@ -228,6 +254,7 @@ export const usePayrollService = () => {
           ["payrolls", "deductions"] as const,
           ["payrolls", "payslips"] as const,
           ["payrolls", "payslip"] as const,
+          queryKeys.payroll.list({}),
         ];
 
         const extra = options?.invalidateQueries?.(result, variables, context);
@@ -282,6 +309,7 @@ export const usePayrollService = () => {
     useGetApprovedBanks,
     useGetPayrollByID,
     useGetPayrollApprovals,
+    useDecidePayrollApproval,
     useGetAllPayrolls,
     useDownloadPayrolls,
     useUpdateCompanyWallet,

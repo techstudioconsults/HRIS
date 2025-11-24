@@ -3,8 +3,10 @@
 import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { useSSE } from "@/context/sse-provider";
+import { queryKeys } from "@/lib/react-query/query-keys";
 import { EventRegistry, type INotificationPayload } from "@/lib/sse/use-notifications";
 import { cn } from "@/lib/utils";
+import { useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, CheckCircle2, Info, XCircle } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -25,6 +27,12 @@ interface BaseNotification {
     onClick: () => void;
   }>;
   dismissible?: boolean;
+}
+
+interface PayrollMetadata {
+  payrollId?: string;
+  id?: string;
+  payroll_id?: string;
 }
 
 function createId() {
@@ -100,6 +108,7 @@ export const AppEventsListener = () => {
 
   const [banners, setBanners] = useState<BaseNotification[]>([]);
   const [modal, setModal] = useState<BaseNotification | null>(null);
+  const queryClient = useQueryClient();
 
   const dismissBanner = useCallback((id: string) => {
     setBanners((previous) => previous.filter((b) => b.id !== id));
@@ -110,15 +119,62 @@ export const AppEventsListener = () => {
       const mapped = mapEventToNotification(payload, inPayrollRoute);
       if (!mapped) return;
 
+      const meta = payload?.data?.metadata as PayrollMetadata | undefined;
+      const payrollId: string | undefined = meta?.payrollId ?? meta?.id ?? meta?.payroll_id;
+
+      // Helper to invalidate a set of payroll-related queries
+      const invalidatePayrollQueries = (withApprovals: boolean) => {
+        queryClient.invalidateQueries({ queryKey: queryKeys.payroll.list({}) });
+        if (payrollId) {
+          queryClient.invalidateQueries({ queryKey: queryKeys.payroll.details(payrollId) });
+          if (withApprovals) {
+            queryClient.invalidateQueries({ queryKey: queryKeys.payroll.approvals(payrollId) });
+          }
+          // Invalidate payslips for this payroll (any filter variant)
+          queryClient.invalidateQueries({
+            predicate: (q) =>
+              Array.isArray(q.queryKey) &&
+              q.queryKey[0] === "payrolls" &&
+              q.queryKey[1] === "payslips" &&
+              q.queryKey[2] === payrollId,
+          });
+        }
+      };
+
+      // Wallet events -> refresh wallet + perhaps payroll list (balances may affect UI state)
+      if (payload.type === EventRegistry.WALLET_TOP_SUCCESS || payload.type === EventRegistry.WALLET_CREATED_SUCCESS) {
+        queryClient.invalidateQueries({ queryKey: queryKeys.payroll.wallet() });
+        queryClient.invalidateQueries({ queryKey: queryKeys.payroll.list({}) });
+      }
+
+      // Approval lifecycle events
+      if (payload.type === EventRegistry.PAYROLL_APPROVE_REQUEST) {
+        invalidatePayrollQueries(true);
+      }
+      if (
+        payload.type === EventRegistry.PAYROLL_APPROVED ||
+        payload.type === EventRegistry.PAYROLL_REJECTED ||
+        payload.type === EventRegistry.PAYROLL_COMPLETED ||
+        payload.type === EventRegistry.PAYROLL_STATUS
+      ) {
+        invalidatePayrollQueries(true);
+      }
+
+      // Salary paid -> payroll details & wallet update
+      if (payload.type === EventRegistry.SALARY_PAID) {
+        queryClient.invalidateQueries({ queryKey: queryKeys.payroll.wallet() });
+        invalidatePayrollQueries(false);
+      }
+
       if (mapped.render === "toast") {
         const message = mapped.title && mapped.body ? `${mapped.title} - ${mapped.body}` : mapped.title || mapped.body;
         switch (mapped.severity) {
           case "success": {
-            toast.success(message);
+            toast.success("Notification", { description: message });
             break;
           }
           case "error": {
-            toast.error(message);
+            toast.error("Notification", { description: message });
             break;
           }
           case "warning": {
@@ -127,12 +183,12 @@ export const AppEventsListener = () => {
             if (typeof potential === "function") {
               (potential as (message_: string) => void)(message);
             } else {
-              toast(message);
+              toast("Notification", { description: message });
             }
             break;
           }
           default: {
-            toast(message);
+            toast("Notification", { description: message });
           }
         }
         return;
@@ -151,7 +207,7 @@ export const AppEventsListener = () => {
         });
       }
     },
-    [inPayrollRoute],
+    [inPayrollRoute, queryClient],
   );
 
   useEffect(() => {
@@ -161,35 +217,19 @@ export const AppEventsListener = () => {
   }, [on, handleNotification]);
 
   // Auto-dismiss banners after 25s (optional)
-  useEffect(() => {
-    if (banners.length === 0) return;
-    const timers = banners.map((banner) => {
-      if (!banner.dismissible) return null;
-      return window.setTimeout(() => dismissBanner(banner.id), 25_000);
-    });
-    return () => {
-      for (const t of timers) if (t) clearTimeout(t);
-    };
-  }, [banners, dismissBanner]);
+  // useEffect(() => {
+  //   if (banners.length === 0) return;
+  //   const timers = banners.map((banner) => {
+  //     if (!banner.dismissible) return null;
+  //     return window.setTimeout(() => dismissBanner(banner.id), 25_000);
+  //   });
+  //   return () => {
+  //     for (const t of timers) if (t) clearTimeout(t);
+  //   };
+  // }, [banners, dismissBanner]);
 
   return (
     <>
-      {/* <div className="flex w-full items-center justify-between bg-green-500 p-4 px-8">
-        <p className="text-background flex max-w-5xl text-sm font-medium">
-          <span>
-            <Info className="mr-4 stroke-2" size={18} />
-          </span>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vitae alias suscipit accusantium ullam, facere
-          laboriosam, non aspernatur iure inventore reiciendis quo fuga sapiente labore odio consequuntur quaerat
-          perferendis nisi modi!
-        </p>
-        <div className="flex items-center gap-4">
-          <MainButton variant="default" className="">
-            Accept
-          </MainButton>
-          <MainButton variant="destructiveOutline">Decline</MainButton>
-        </div>
-      </div> */}
       {/* Banners Stack (top fixed) */}
       <div>
         {banners.map((banner) => {
@@ -205,7 +245,7 @@ export const AppEventsListener = () => {
             <div
               key={banner.id}
               className={cn(
-                "pointer-events-auto flex w-full items-start justify-between rounded-md border p-4 shadow",
+                "pointer-events-auto flex w-full items-start justify-between border-y p-4 px-8",
                 banner.severity === "success" && "border-success-200 bg-success-50",
                 banner.severity === "error" && "border-destructive-200 bg-destructive-50",
                 banner.severity === "warning" && "border-warning-200 bg-warning-50",
@@ -219,9 +259,9 @@ export const AppEventsListener = () => {
                   <p className="text-muted-foreground text-xs leading-relaxed">{banner.body}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-8">
                 {banner.actions?.map((a) => (
-                  <MainButton key={a.label} size="sm" variant={a.variant || "outline"} onClick={() => a.onClick()}>
+                  <MainButton key={a.label} variant={a.variant || "outline"} onClick={() => a.onClick()}>
                     {a.label}
                   </MainButton>
                 ))}

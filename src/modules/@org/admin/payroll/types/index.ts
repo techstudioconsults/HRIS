@@ -24,6 +24,7 @@ export interface Payroll extends Record<string, unknown> {
   netPay: number;
   employeesInPayroll: number;
   paymentDate: ISODateString;
+  status: "idle" | "completed" | "disbursed" | "awaiting";
 }
 
 export interface BonusDeduction {
@@ -95,7 +96,7 @@ export interface CompanyWallet {
 }
 
 // Define Payslip domain types based on provided object
-export type PayslipStatus = "pending" | "draft" | "finalized" | "paid" | "cancelled";
+export type PayslipStatus = "pending" | "draft" | "failed" | "paid" | "cancelled";
 
 // Payslip adjustments reuse the common adjustment item
 export type PayslipBonus = AdjustmentItem;

@@ -3,6 +3,7 @@ import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/i18n/utils";
 import { queryKeys } from "@/lib/react-query/query-keys";
+import { cn } from "@/lib/utils";
 import { IColumnDefinition, IRowAction } from "@/modules/@org/admin/_components/table/table";
 import { Edit, MinusCircle, Trash } from "lucide-react";
 import { useCallback, useState } from "react";
@@ -146,7 +147,20 @@ export const payrollColumn: IColumnDefinition<Payslip>[] = [
     header: "Status",
     accessorKey: "status",
     render: (_, payslip: Payslip) => (
-      <Badge className="bg-warning-50 text-warning rounded-full px-4 py-2">{payslip.status}</Badge>
+      <Badge
+        className={cn(
+          "rounded-full px-4 py-2 text-sm capitalize",
+          payslip.status === "paid"
+            ? "bg-success-50 text-success"
+            : payslip.status === "pending"
+              ? "bg-warning-50 text-warning"
+              : payslip.status === "failed"
+                ? "bg-destructive-50 text-destructive"
+                : "bg-gray-100 text-gray-800",
+        )}
+      >
+        {payslip.status}
+      </Badge>
     ),
   },
 ];

@@ -5,7 +5,7 @@ import { BreadCrumb } from "@/components/shared/breadcrumb";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { GenericDropdown } from "@/components/shared/drop-down";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { PageSection, PageWrapper } from "@/lib/animation";
@@ -81,8 +81,11 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
             {/* Employee summary */}
             <Card className="bg-background p-6 shadow lg:p-8">
               <div className="flex flex-col items-center justify-between text-center">
-                <Avatar className="border-primary bg-gray size-[8rem]">
-                  <AvatarImage src={employeeData?.avatar || "https://github.com/shadcn.png"} />
+                <Avatar className="border-primary bg-primary size-[8rem]">
+                  <AvatarImage src={employeeData?.avatar || ""} />
+                  <AvatarFallback className="rounded-lg bg-transparent text-2xl text-white">
+                    {`${employeeData?.firstName} ${employeeData?.lastName}`.slice(0, 2).toUpperCase() || "CN"}
+                  </AvatarFallback>
                 </Avatar>
                 <h2 className="text-xl font-semibold">{employeeData?.firstName}</h2>
                 <p className="text-muted-foreground">{employeeData?.employmentDetails?.role?.name}</p>

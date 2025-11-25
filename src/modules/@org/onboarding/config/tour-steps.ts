@@ -10,11 +10,6 @@ export const welcomeTourSteps: Step[] = [
     disableBeacon: true,
   },
   {
-    target: '[data-tour="welcome-heading"]',
-    content: "This is your starting point. You can either take a quick video tour or jump right into the setup.",
-    placement: "bottom",
-  },
-  {
     target: '[data-tour="take-tour-button"]',
     content: "Click here to watch a quick video overview of the platform's key features.",
     placement: "bottom",
@@ -35,44 +30,14 @@ export const stepOneTourSteps: Step[] = [
     disableBeacon: true,
   },
   {
-    target: '[data-tour="progress-indicator"]',
-    content: "Track your progress through the 3-step onboarding process here.",
-    placement: "bottom",
-  },
-  {
-    target: '[data-tour="step-heading"]',
-    content: "We'll gather basic information about your company to customize the platform for your needs.",
-    placement: "bottom",
-  },
-  {
     target: '[data-tour="company-form"]',
     content:
       "Fill in your company details including name, industry, size, and address. All fields are required for a complete setup.",
     placement: "left",
   },
   {
-    target: '[data-tour="company-name"]',
-    content: "Enter your company's legal or registered business name.",
-    placement: "right",
-  },
-  {
-    target: '[data-tour="company-industry"]',
-    content: "Select the industry that best describes your business.",
-    placement: "right",
-  },
-  {
-    target: '[data-tour="company-size"]',
-    content: "Choose your company size range. This helps us tailor features and recommendations.",
-    placement: "right",
-  },
-  {
-    target: '[data-tour="company-address"]',
-    content: "Provide your company's physical address for legal and tax purposes.",
-    placement: "right",
-  },
-  {
-    target: '[data-tour="submit-button"]',
-    content: "Once all fields are complete, click here to save and proceed to team setup.",
+    target: '[data-tour="skip-form"]',
+    content: "If you're not ready to provide this information, you can skip and complete it later from the dashboard.",
     placement: "top",
   },
 ];
@@ -87,23 +52,6 @@ export const stepTwoTourSteps: Step[] = [
     disableBeacon: true,
   },
   {
-    target: '[data-tour="progress-indicator"]',
-    content: "You're making great progress! Two steps down, one to go.",
-    placement: "bottom",
-  },
-  {
-    target: '[data-tour="step-heading"]',
-    content:
-      "Build your organizational structure by creating teams (departments) and assigning roles with appropriate access levels.",
-    placement: "bottom",
-  },
-  {
-    target: '[data-tour="team-form"]',
-    content:
-      "We've suggested common departments to get you started. You can customize these, add new teams, or remove ones you don't need.",
-    placement: "left",
-  },
-  {
     target: '[data-tour="team-accordion"]',
     content:
       "Click on any team to expand and see its roles. You can edit team names, add custom roles, and configure permissions for each role.",
@@ -115,8 +63,8 @@ export const stepTwoTourSteps: Step[] = [
     placement: "top",
   },
   {
-    target: '[data-tour="continue-button"]',
-    content: "When your team structure is ready, continue to the final step where you'll add your employees.",
+    target: '[data-tour="add-role-button"]',
+    content: "Need a role that's not listed? Click here to create a custom role.",
     placement: "top",
   },
 ];
@@ -131,52 +79,16 @@ export const stepThreeTourSteps: Step[] = [
     disableBeacon: true,
   },
   {
-    target: '[data-tour="progress-indicator"]',
-    content: "Almost there! This is the final step of your onboarding journey.",
-    placement: "bottom",
-  },
-  {
-    target: '[data-tour="step-heading"]',
-    content:
-      "Add your team members one by one, or use bulk import to add multiple employees at once (available after setup).",
-    placement: "bottom",
-  },
-  {
     target: '[data-tour="employee-form"]',
     content:
       "Enter employee details including their name, email, phone number, and assign them to the appropriate team and role you created in the previous step.",
     placement: "left",
   },
   {
-    target: '[data-tour="employee-name"]',
-    content: "Enter the employee's full name as it should appear in the system.",
-    placement: "right",
-  },
-  {
-    target: '[data-tour="employee-email"]',
-    content: "This email will be used for login and system notifications.",
-    placement: "right",
-  },
-  {
-    target: '[data-tour="employee-team"]',
-    content: "Assign the employee to one of the teams you created earlier.",
-    placement: "right",
-  },
-  {
-    target: '[data-tour="employee-role"]',
-    content: "Select the role that defines their permissions and access level within their team.",
-    placement: "right",
-  },
-  {
     target: '[data-tour="add-another-employee"]',
-    content: "Click here to add additional employees to your organization.",
-    placement: "top",
-  },
-  {
-    target: '[data-tour="finish-button"]',
     content:
-      "Once you've added your team members, click here to complete the onboarding process and access your dashboard!",
-    placement: "top",
+      "Enter employee details including their name, email, phone number, and assign them to the appropriate team and role you created in the previous step.",
+    placement: "left",
   },
 ];
 

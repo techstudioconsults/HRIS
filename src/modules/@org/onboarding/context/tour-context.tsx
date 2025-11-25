@@ -79,7 +79,7 @@ export const TourProvider = ({ children }: TourProviderProperties) => {
             boxShadow: "0 0 0 2px var(--destructive)",
           },
           overlay: {
-            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            backgroundColor: "rgba(0, 0, 0, 0.6)",
           },
           spotlight: {
             borderRadius: 6,

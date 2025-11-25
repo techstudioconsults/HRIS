@@ -9,6 +9,7 @@ import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { useTour } from "../../context/tour-context";
 import { useOnboardingService } from "../../services/use-onboarding-service";
 import { RolesAndPermission } from "../forms/roles&permission";
 import { Role, Team } from "../forms/schema";
@@ -21,6 +22,7 @@ export const TeamConfig = () => {
   const [dialogType, setDialogType] = useState<"team" | "role">("team");
   const [deletingTeamId, setDeletingTeamId] = useState<string | null>(null);
   const [deletingRoleId, setDeletingRoleId] = useState<string | null>(null);
+  const { stopTour } = useTour();
 
   const {
     useGetTeamsWithRoles,
@@ -42,6 +44,7 @@ export const TeamConfig = () => {
   const { mutateAsync: updateTeam, isPending: isUpdatingTeam } = useUpdateTeam();
 
   const handleOpenTeamDialog = (team?: Team) => {
+    stopTour();
     setCurrentTeam(team || null);
     setCurrentRole(null);
     setDialogType("team");
@@ -49,6 +52,7 @@ export const TeamConfig = () => {
   };
 
   const handleOpenRoleDialog = (team: Team, role?: Role) => {
+    stopTour();
     setCurrentTeam(team);
     setCurrentRole(role || null);
     setDialogType("role");
@@ -188,7 +192,7 @@ export const TeamConfig = () => {
 
   return (
     <>
-      <Accordion type="multiple" className="w-full space-y-4">
+      <Accordion type="multiple" className="w-full space-y-4" defaultValue={teams?.map((team) => team.id!)}>
         {teams?.map((team) => (
           <AccordionItem key={team.id} value={team.id!}>
             <AccordionTrigger className="flex-row-reverse border p-4 text-left text-sm md:text-[16px]">
@@ -234,7 +238,7 @@ export const TeamConfig = () => {
                         onClick={() => handleOpenRoleDialog(team, role)}
                       >
                         <Pencil className="mr-2 h-4 w-4" />
-                        Edit
+                        {/* Edit */}
                       </span>
                       <span
                         className="text-destructive hover:text-destructive flex cursor-pointer items-center"
@@ -248,7 +252,7 @@ export const TeamConfig = () => {
                         ) : (
                           <Trash2 className="mr-2 h-4 w-4" />
                         )}
-                        {isDeletingRole && deletingRoleId === role.id ? "Deleting..." : "Delete"}
+                        {/* {isDeletingRole && deletingRoleId === role.id ? "Deleting..." : "Delete"} */}
                       </span>
                     </div>
                   </div>
@@ -258,6 +262,7 @@ export const TeamConfig = () => {
               )}
               <div className="mt-4">
                 <span
+                  data-tour="add-role-button"
                   className="text-primary flex cursor-pointer items-center gap-1 font-medium"
                   onClick={() => handleOpenRoleDialog(team)}
                 >
@@ -270,7 +275,7 @@ export const TeamConfig = () => {
         ))}
       </Accordion>
 
-      <div className="mt-4" data-tour="add-team-button">
+      <div className="mt-4 w-fit" data-tour="add-team-button">
         <MainButton
           type="button"
           variant="default"

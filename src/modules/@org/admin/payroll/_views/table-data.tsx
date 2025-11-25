@@ -2,7 +2,6 @@
 import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/i18n/utils";
-import { queryKeys } from "@/lib/react-query/query-keys";
 import { cn } from "@/lib/utils";
 import { IColumnDefinition, IRowAction } from "@/modules/@org/admin/_components/table/table";
 import { AxiosError } from "axios";
@@ -17,20 +16,7 @@ import { Payslip } from "../types";
 export const usePayrollRowActions = () => {
   const { setShowEmployeeInformationDrawer, setSelectedPayslipId, setEmployeeInformationActiveTab } = usePayrollStore();
   const { useDeletePayslip } = usePayrollService();
-  const { mutateAsync: deletePayslip, isPending: isDeleting } = useDeletePayslip({
-    // When an employee is removed from a payroll, also refresh the suspended-employees list
-    // used in AddEmployeeDrawer (useGetSuspendedEmployeesByPayroll).
-    invalidateQueries: (_result: any, variables: any) => {
-      const payrollId = variables?.payrollId;
-
-      const baseKeys = [["payrolls", "payslips"] as const, ["payrolls", "list", {}] as const];
-
-      const suspendedKey = payrollId ? [queryKeys.employee.suspendedByPayroll(payrollId, {})] : [];
-
-      // Return a new array to satisfy the ReadonlyArray<readonly unknown[]> requirement
-      return [...baseKeys, ...suspendedKey];
-    },
-  });
+  const { mutateAsync: deletePayslip, isPending: isDeleting } = useDeletePayslip();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [payslipToDelete, setPayslipToDelete] = useState<Payslip | null>(null);
@@ -124,12 +110,14 @@ export const payrollColumn: IColumnDefinition<Payslip>[] = [
   {
     header: "Name",
     accessorKey: "id",
-    render: (_, payslip: Payslip) => <span className="text-sm">{payslip.employee?.name ?? ""}</span>,
+    render: (_, payslip: Payslip) => (
+      <span className="text-sm font-medium capitalize">{payslip.employee?.name ?? ""}</span>
+    ),
   },
   {
     header: "Role",
     accessorKey: "employeeId",
-    render: (_, payslip: Payslip) => <span className="text-sm">{payslip.employee?.role?.name ?? ""}</span>,
+    render: (_, payslip: Payslip) => <span className="text-sm capitalize">{payslip.employee?.role?.name ?? ""}</span>,
   },
   {
     header: "Gross Pay",

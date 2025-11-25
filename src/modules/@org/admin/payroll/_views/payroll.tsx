@@ -157,14 +157,17 @@ const PayrollView = () => {
 
   // Robust awaiting detection (captures "awaiting", "awaiting approval", etc.)
   const normalizedStatus = (selectedPayrollRecord?.status ?? "").toString().toLowerCase();
-  const isAwaitingApproval = normalizedStatus.includes("waiting");
+  const isAwaitingApproval = normalizedStatus.includes("awaiting");
   const isDisbursed = normalizedStatus.includes("disbursed");
   const isCompleted = normalizedStatus.includes("completed");
 
   // Show the banner if status is awaiting (ignore hide flag in this state),
   // otherwise show only when a run is in progress and the banner isn't hidden
   const shouldShowApprovalProgressBanner =
-    isAwaitingApproval || (!!payrollSelectedDate && !hidePayrollNotificationBanner);
+    !isCompleted && (isAwaitingApproval || (!!payrollSelectedDate && !hidePayrollNotificationBanner));
+
+  // Final banner visibility (hide entirely for completed payrolls)
+  const showPayrollBanner = !isCompleted && (shouldShowApprovalProgressBanner || !!payrollData.paymentDate);
 
   // Show the button if payroll run is in progress or status is awaiting (do not tie to hide flag)
   const shouldShowApprovalProgressButton = !!payrollSelectedDate || isAwaitingApproval;
@@ -497,9 +500,7 @@ const PayrollView = () => {
         </div>
       </section>
 
-      <section
-        className={cn("rounded-lg", payrollData.paymentDate || shouldShowApprovalProgressBanner ? `block` : `hidden`)}
-      >
+      <section className={cn("rounded-lg", showPayrollBanner ? `block` : `hidden`)}>
         <div className="bg-primary-500 text-background relative rounded-lg p-5">
           <button
             type="button"

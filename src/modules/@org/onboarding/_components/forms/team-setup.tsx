@@ -10,7 +10,7 @@ import { TeamConfig } from "../accordions/team-config";
 
 export const TeamSetupForm = () => {
   return (
-    <section className="rounded-[10px] border p-7">
+    <section className="rounded-[10px] border p-7" data-tour="team-form">
       <div className="">
         <FormHeader
           icon={<People />}
@@ -20,14 +20,16 @@ export const TeamSetupForm = () => {
       </div>
 
       <section>
-        <section className="hide-scrollbar max-h-[500px] space-y-4 overflow-auto">
+        <section className="hide-scrollbar max-h-[500px] space-y-4 overflow-auto" data-tour="team-accordion">
           <TeamConfig />
         </section>
 
         <div className="mt-8 space-y-4">
-          <MainButton href={`/onboarding/step-3`} type="button" variant="primary" className="w-full" size="xl">
-            Continue
-          </MainButton>
+          <div data-tour="continue-button">
+            <MainButton href={`/onboarding/step-3`} type="button" variant="primary" className="w-full" size="xl">
+              Continue
+            </MainButton>
+          </div>
 
           <div className="flex w-full items-center justify-center py-5">
             <Link href={`/admin/dashboard`} className="text-primary text-sm font-medium hover:underline">

@@ -1,13 +1,23 @@
 import MainButton from "@/components/shared/button";
 import { PageSection, PageWrapper } from "@/lib/animation";
+import { Play } from "lucide-react";
 
 import { TeamSetupForm } from "../../_components/forms/team-setup";
+import { stepTwoTourSteps } from "../../config/tour-steps";
+import { useTour } from "../../context/tour-context";
 
 export const TeamSetupPage = () => {
+  const { startTour, setTourSteps } = useTour();
+
+  const handleStartTour = () => {
+    setTourSteps(stepTwoTourSteps);
+    startTour();
+  };
+
   return (
     <PageWrapper className="flex flex-col items-center justify-between gap-8 lg:flex-row">
       <section className="max-w-[646px] flex-1 space-y-[41px]">
-        <PageSection index={0} className="space-y-4">
+        <PageSection index={0} className="space-y-4" data-tour="progress-indicator">
           <p>Step 2 of 3</p>
           <div>
             <div className="flex items-center gap-2">
@@ -17,7 +27,7 @@ export const TeamSetupPage = () => {
             </div>
           </div>
         </PageSection>
-        <PageSection index={1} className="space-y-[24px]">
+        <PageSection index={1} className="space-y-[24px]" data-tour="step-heading">
           <h1 className="text-3xl font-semibold">Structure your team with the right access</h1>
           <p className="text-lg">
             Start with suggested departments and tailor them to fit your organization. Add custom roles under each
@@ -27,6 +37,10 @@ export const TeamSetupPage = () => {
         <PageSection index={2} className="flex gap-4">
           <MainButton href="/onboarding/step-1" variant="primaryOutline">
             Back
+          </MainButton>
+          <MainButton onClick={handleStartTour} variant="outline" className="flex items-center gap-2">
+            <Play className="h-4 w-4" />
+            Tour
           </MainButton>
         </PageSection>
       </section>

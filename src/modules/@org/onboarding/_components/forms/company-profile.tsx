@@ -110,7 +110,7 @@ export const CompanyProfile = () => {
   }, [companyProfile, reset]);
 
   return (
-    <section className="border-border rounded-[10px] border p-7">
+    <section className="border-border rounded-[10px] border p-7" data-tour="company-form">
       <div className={`mb-8 space-y-2`}>
         <FormHeader
           icon={<Building2 />}
@@ -122,41 +122,49 @@ export const CompanyProfile = () => {
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(handleSubmitForm)}>
           <section className={`hide-scrollba max-h-[500px] space-y-4 overflow-auto px-1`}>
-            <FormField
-              placeholder={isPending ? `Getting company's profile` : `"Enter company name"`}
-              className="h-12 w-full"
-              label="Company's Name"
-              name="name"
-              // readOnly
-            />
+            <div data-tour="company-name">
+              <FormField
+                placeholder={isPending ? `Getting company's profile` : `"Enter company name"`}
+                className="h-12 w-full"
+                label="Company's Name"
+                name="name"
+                // readOnly
+              />
+            </div>
 
-            <FormField
-              type="select"
-              placeholder={isPending ? `Getting company's profile` : `Select industry`}
-              className="!h-12 w-full"
-              label="Industry"
-              name="industry"
-              options={industryOptions}
-              required
-            />
+            <div data-tour="company-industry">
+              <FormField
+                type="select"
+                placeholder={isPending ? `Getting company's profile` : `Select industry`}
+                className="!h-12 w-full"
+                label="Industry"
+                name="industry"
+                options={industryOptions}
+                required
+              />
+            </div>
 
-            <FormField
-              type="select"
-              placeholder={isPending ? `Getting company's profile` : `Select size`}
-              className="!h-12 w-full"
-              label="Company Size"
-              name="size"
-              options={sizeOptions}
-              required
-            />
+            <div data-tour="company-size">
+              <FormField
+                type="select"
+                placeholder={isPending ? `Getting company's profile` : `Select size`}
+                className="!h-12 w-full"
+                label="Company Size"
+                name="size"
+                options={sizeOptions}
+                required
+              />
+            </div>
 
-            <FormField
-              placeholder={isPending ? `Getting company's profile` : `Enter address line 1`}
-              className="h-12 w-full"
-              label="Address Line 1"
-              name="addressLine1"
-              required
-            />
+            <div data-tour="company-address">
+              <FormField
+                placeholder={isPending ? `Getting company's profile` : `Enter address line 1`}
+                className="h-12 w-full"
+                label="Address Line 1"
+                name="addressLine1"
+                required
+              />
+            </div>
 
             <FormField
               placeholder={isPending ? `Getting company's profile` : `Enter address line 2 (optional)`}
@@ -265,7 +273,7 @@ export const CompanyProfile = () => {
             />
           </section>
 
-          <div className="pt-8">
+          <div className="pt-8" data-tour="submit-button">
             <MainButton
               type="submit"
               variant="primary"

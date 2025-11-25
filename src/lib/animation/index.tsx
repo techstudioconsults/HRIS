@@ -131,13 +131,13 @@ export const PageWrapper: FC<PageWrapperProperties> = ({
   );
 };
 
-interface PageSectionProperties {
+interface PageSectionProperties extends React.HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   index: number;
   className?: string;
 }
 
-export const PageSection: FC<PageSectionProperties> = ({ children, index, className }) => {
+export const PageSection: FC<PageSectionProperties> = ({ children, index, className, ...properties }) => {
   const context = useContext(AnimationContext);
 
   if (!context) {
@@ -147,7 +147,7 @@ export const PageSection: FC<PageSectionProperties> = ({ children, index, classN
   const { getItemStyle, getItemClassName } = context;
 
   return (
-    <div style={getItemStyle(index)} className={getItemClassName(className)}>
+    <div {...properties} style={getItemStyle(index)} className={getItemClassName(className)}>
       {children}
     </div>
   );

@@ -1,13 +1,23 @@
 import MainButton from "@/components/shared/button";
 import { PageSection, PageWrapper } from "@/lib/animation";
+import { Play } from "lucide-react";
 
 import { CompanyProfile } from "../../_components/forms/company-profile";
+import { stepOneTourSteps } from "../../config/tour-steps";
+import { useTour } from "../../context/tour-context";
 
 export const StepOne = () => {
+  const { startTour, setTourSteps } = useTour();
+
+  const handleStartTour = () => {
+    setTourSteps(stepOneTourSteps);
+    startTour();
+  };
+
   return (
     <PageWrapper className={`flex flex-col items-center justify-between gap-8 lg:flex-row`}>
       <section className={`max-w-[646px] flex-1 space-y-[41px]`}>
-        <PageSection index={0} className={`space-y-4`}>
+        <PageSection index={0} className={`space-y-4`} data-tour="progress-indicator">
           <p>Step 1 of 3</p>
           <div>
             <div className={`flex items-center gap-2`}>
@@ -17,7 +27,7 @@ export const StepOne = () => {
             </div>
           </div>
         </PageSection>
-        <PageSection index={1} className={`space-y-[24px]`}>
+        <PageSection index={1} className={`space-y-[24px]`} data-tour="step-heading">
           <h1 className={`text-3xl font-semibold`}>Tell us a bit about your company to get started</h1>
           <p className={`text-lg`}>
             Let&apos;s set the stage for your HR setup. Just a few quick details about your company and you&apos;ll be
@@ -27,6 +37,10 @@ export const StepOne = () => {
         <PageSection index={2} className="flex gap-4">
           <MainButton href="/onboarding/welcome" variant="primaryOutline">
             Back
+          </MainButton>
+          <MainButton onClick={handleStartTour} variant="outline" className="flex items-center gap-2">
+            <Play className="h-4 w-4" />
+            Tour
           </MainButton>
         </PageSection>
       </section>

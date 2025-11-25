@@ -7,13 +7,17 @@ import { updateQueryParamameters } from "@/hooks/use-search-parameters";
 import { PageSection, PageWrapper } from "@/lib/animation";
 import TourVideo, { TourSegment } from "@/modules/@org/onboarding/_components/TourVideo";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
+import { welcomeTourSteps } from "../../config/tour-steps";
+import { useTour } from "../../context/tour-context";
 
 export const Welcome = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParameters = useSearchParams();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { startTour, setTourSteps, stopTour } = useTour();
 
   // Define tour segments (timestamps must match actual video length)
   const tourSegments: TourSegment[] = [
@@ -41,31 +45,46 @@ export const Welcome = () => {
   }, [searchParameters]);
 
   const handleOpenTeamDialog = () => {
+    stopTour();
     updateQueryParamameters(router, pathname, searchParameters, { modal: "tour" });
   };
 
   const handleCloseDialog = () => {
+    stopTour();
     updateQueryParamameters(router, pathname, searchParameters, { modal: null });
   };
+
+  const handleStartTour = useCallback(() => {
+    setTourSteps(welcomeTourSteps);
+    startTour();
+  }, [setTourSteps, startTour]);
+
+  useEffect(() => {
+    handleStartTour();
+  }, [handleStartTour]);
 
   return (
     <PageWrapper>
       <section className={`flex flex-col-reverse items-center justify-between gap-8 lg:flex-row`}>
         <section className={`max-w-[646px]`}>
-          <PageSection index={1} className={`space-y-[24px]`}>
-            <h1 className={`text-foreground text-4xl font-semibold`}>Welcome to TechstudioHR,</h1>
-            <p className={`text-muted-foreground text-lg`}>
+          <PageSection index={1} className={`space-y-[24px]`} data-tour="welcome-heading">
+            <h1 className={`text-4xl font-semibold`}>Welcome to TechstudioHR,</h1>
+            <p className={`text-lg`}>
               Let&apos;s help you get started. You can take a quick tour to understand how Techstudio HR works or you
               can jump straight in and begin set up.
             </p>
           </PageSection>
           <PageSection index={1} className={`mt-[36px] flex flex-col gap-[28px] lg:flex-row`}>
-            <MainButton onClick={handleOpenTeamDialog} className={`w-full lg:w-fit`} variant={`primary`}>
-              Take a Quick Tour
-            </MainButton>
-            <MainButton href={`/onboarding/step-1`} className={`w-full lg:w-fit`} variant={`primaryOutline`}>
-              Skip Tour & Continue
-            </MainButton>
+            <div data-tour="take-tour-button">
+              <MainButton onClick={handleOpenTeamDialog} className={`w-full lg:w-fit`} variant={`primary`}>
+                Take a Quick Tour
+              </MainButton>
+            </div>
+            <div data-tour="skip-tour-button">
+              <MainButton href={`/onboarding/step-1`} className={`w-full lg:w-fit`} variant={`primaryOutline`}>
+                Skip Tour & Continue
+              </MainButton>
+            </div>
           </PageSection>
         </section>
 

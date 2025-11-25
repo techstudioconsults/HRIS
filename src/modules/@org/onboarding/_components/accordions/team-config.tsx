@@ -270,7 +270,7 @@ export const TeamConfig = () => {
         ))}
       </Accordion>
 
-      <div className="mt-4">
+      <div className="mt-4" data-tour="add-team-button">
         <MainButton
           type="button"
           variant="default"

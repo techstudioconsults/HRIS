@@ -57,16 +57,18 @@ export const EmployeeConfig = () => {
         </AccordionItem>
       ))}
 
-      <MainButton
-        variant="default"
-        size="sm"
-        isLeftIconVisible
-        className="text-primary text-[16px]"
-        onClick={addTeamMember}
-        type="button"
-      >
-        Add team member
-      </MainButton>
+      <div data-tour="add-another-employee">
+        <MainButton
+          variant="default"
+          size="sm"
+          isLeftIconVisible
+          className="text-primary text-[16px]"
+          onClick={addTeamMember}
+          type="button"
+        >
+          Add team member
+        </MainButton>
+      </div>
     </Accordion>
   );
 };

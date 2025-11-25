@@ -62,8 +62,13 @@ export default function TopBar({
   };
 
   return (
-    <section>
-      <header className={cn("bg-background flex h-16 items-center justify-between gap-4 px-0 lg:px-4", className)}>
+    <>
+      <header
+        className={cn(
+          "bg-background sticky top-0 z-[1] flex h-16 items-center justify-between gap-4 px-6 shadow lg:px-4",
+          className,
+        )}
+      >
         {/* Search Input */}
         <div className="relative hidden w-fit items-center gap-4 md:flex">
           <SidebarTrigger className="absolute top-[3.5rem] -left-[30px] bg-[#1F2666] text-white shadow-none" />
@@ -100,6 +105,6 @@ export default function TopBar({
         </div>
       </header>
       <AppEventsListener />
-    </section>
+    </>
   );
 }

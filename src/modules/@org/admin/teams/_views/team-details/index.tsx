@@ -11,6 +11,7 @@ import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
 import { PageSection, PageWrapper } from "@/lib/animation";
 import { queryKeys } from "@/lib/react-query/query-keys";
 import { formatDate } from "@/lib/tools/format";
@@ -19,8 +20,8 @@ import type { Team as TeamFormType } from "@/modules/@org/onboarding/_components
 import { TeamForm } from "@/modules/@org/onboarding/_components/forms/team/team-form";
 import { useOnboardingService } from "@/modules/@org/onboarding/services/use-onboarding-service";
 import { useQueryClient } from "@tanstack/react-query";
-import { More } from "iconsax-reactjs";
-import { Plus } from "lucide-react";
+import { More, Trash } from "iconsax-reactjs";
+import { Edit, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -149,12 +150,19 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
                     setIsEditDialogOpen(true);
                   }}
                 >
+                  <span>
+                    <Edit className="mr-2 size-4" />
+                  </span>
                   Edit Team&apos;s Name
                 </DropdownMenuItem>
+                <Separator className="bg-border/40" />
                 <DropdownMenuItem
                   className="text-destructive focus:text-destructive"
                   onClick={() => setIsDeleteConfirmOpen(true)}
                 >
+                  <span>
+                    <Trash className="text-destructive mr-2 size-4" />
+                  </span>
                   Delete Team
                 </DropdownMenuItem>
               </GenericDropdown>

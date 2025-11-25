@@ -61,7 +61,7 @@ export function UserMenu({
         </div>
         <ChevronDown className="text-muted-foreground size-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-56 shadow-none">
+      <DropdownMenuContent sideOffset={14} align="end" className="min-w-56 shadow-none">
         <DropdownMenuLabel>
           <div className="flex flex-col gap-1">
             <p className="text-sm font-medium">{userName}</p>

@@ -8,10 +8,13 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { ActiveTargetProvider } from "@/context/active-target";
 import { adminNavItems } from "@/lib/tools/constants";
 import { cn } from "@/lib/utils";
+import { useOnboardingService } from "@/modules/@org/onboarding/services/use-onboarding-service";
 import { useSession } from "next-auth/react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
+  const { useGetCompanyProfile } = useOnboardingService();
+  const { data: companyProfile } = useGetCompanyProfile();
 
   return (
     <SidebarProvider>
@@ -21,14 +24,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         navSecondary={adminNavItems}
         teams={[
           {
-            name: "Tech Studio Academy",
+            name: companyProfile?.name || "Tech Studio Academy",
             logo: <Logo logo="/images/logo.png" />,
-            plan: "Enterprise",
-          },
-          {
-            name: "Strategic Dot",
-            logo: <Logo logo="/images/logo.png" />,
-            plan: "Enterprise",
+            plan: companyProfile?.domain,
           },
         ]}
       />
@@ -39,9 +37,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             adminRole={session?.user.employee.role?.name || ""}
             adminEmail={session?.user.employee.email || ""}
             notifications={[]}
-            className="sticky top-0 z-[1] px-6 shadow"
           />
-          <Wrapper className="max-w-[1440px] py-10">{children}</Wrapper>
+          <Wrapper className="max-w-[1440px] pt-10">{children}</Wrapper>
         </ActiveTargetProvider>
       </SidebarInset>
     </SidebarProvider>

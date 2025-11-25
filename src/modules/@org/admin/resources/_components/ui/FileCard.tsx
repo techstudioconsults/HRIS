@@ -8,7 +8,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { More } from "iconsax-reactjs";
+import { Separator } from "@/components/ui/separator";
+import { Eye, More, Trash } from "iconsax-reactjs";
+import { Download } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -64,21 +66,21 @@ export const FileCard = ({ file }: FileCardProperties) => {
 
   return (
     <>
-      <div className="group bg-background rounded-lg p-4 shadow transition-all">
+      <div className="group bg-background min-w-md rounded-lg p-4 shadow transition-all">
         <div className="flex items-start justify-between">
           <div className="flex min-w-0 flex-1 items-start gap-3">
             <Image
-              src={getFileIcon(file.type)}
-              alt={`${file.type} icon`}
+              src={getFileIcon(file.mimetype)}
+              alt={`${file.mimetype} icon`}
               width={40}
               height={40}
               className="mt-1 h-10 w-10 flex-shrink-0 object-contain"
             />
             <div className="min-w-0 flex-1">
-              <h6 className="truncate font-medium text-gray-900" title={file.name}>
+              <h6 className="truncate text-base font-medium" title={file.name}>
                 {file.name}
               </h6>
-              <p className="text-muted-foreground mt-1 text-sm">
+              <p className="text-muted-foreground mt-1 text-xs">
                 {formatFileSize(file.size)} • {formatDate(file.createdAt)}
               </p>
             </div>
@@ -89,12 +91,17 @@ export const FileCard = ({ file }: FileCardProperties) => {
                 <More className="h-4 w-4 rotate-90" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuContent align="end" className="w-48 shadow-none">
               <DropdownMenuItem disabled onClick={handleDownload}>
+                <Download className="mr-2 h-4 w-4" />
                 Download File
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleView}>View File</DropdownMenuItem>
-              <DropdownMenuItem onClick={handleDeleteClick} className="text-red-600">
+              <DropdownMenuItem onClick={handleView}>
+                <Eye className="mr-2 h-4 w-4" /> View File
+              </DropdownMenuItem>
+              <Separator className="bg-border/40 my-1" />
+              <DropdownMenuItem onClick={handleDeleteClick} className="text-destructive">
+                <Trash className="text-destructive mr-2 h-4 w-4" />
                 Delete File
               </DropdownMenuItem>
             </DropdownMenuContent>

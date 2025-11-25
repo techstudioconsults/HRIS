@@ -80,7 +80,7 @@ export interface FolderFile {
   id: string;
   name: string;
   size: number;
-  type: string;
+  mimetype: string;
   url?: string;
   createdAt: string;
   folderId?: string;

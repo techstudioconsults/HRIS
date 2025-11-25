@@ -1,5 +1,6 @@
 "use client";
 
+import { EmptyState } from "@/components/shared/empty-state";
 import { Input } from "@/components/ui/input";
 // Global Search with Autocomplete Dropdown
 
@@ -81,7 +82,7 @@ export function GlobalSearchInput({
   disabled = false,
   recentSearches = [],
   onClearRecent,
-  emptyMessage = "No results found",
+  emptyMessage = "Try searching with different keywords.",
   delay = 300,
 }: GlobalSearchInputProperties) {
   const [open, setOpen] = useState(false);
@@ -193,7 +194,12 @@ export function GlobalSearchInput({
           )}
         </div>
       </PopoverTrigger>
-      <PopoverContent align="start" className="min-w-[500px] p-0" onOpenAutoFocus={(event) => event.preventDefault()}>
+      <PopoverContent
+        sideOffset={16}
+        align="start"
+        className="min-w-[500px] p-0"
+        onOpenAutoFocus={(event) => event.preventDefault()}
+      >
         <ScrollArea className="max-h-[400px]">
           {showRecent && (
             <div className="p-2">
@@ -226,10 +232,12 @@ export function GlobalSearchInput({
           )}
 
           {searchQuery.trim() && !isLoading && !hasResults && (
-            <div className="flex flex-col items-center justify-center gap-2 py-8 text-center">
-              <Search className="text-muted-foreground h-8 w-8" />
-              <p className="text-muted-foreground text-sm">{emptyMessage}</p>
-            </div>
+            <EmptyState
+              className="text-primary"
+              icon={<Search className="text-primary" />}
+              title="No results found."
+              description={emptyMessage}
+            />
           )}
 
           {searchQuery.trim() && hasResults && (

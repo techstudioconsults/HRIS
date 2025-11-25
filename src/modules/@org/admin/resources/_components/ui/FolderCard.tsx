@@ -10,7 +10,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { More } from "iconsax-reactjs";
+import { Separator } from "@/components/ui/separator";
+import { Eye, More, Trash } from "iconsax-reactjs";
+import { Edit } from "lucide-react";
 import { useState } from "react";
 import { FcFolder, FcOpenedFolder } from "react-icons/fc";
 
@@ -76,7 +78,7 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
   return (
     <>
       <div
-        className="group bg-background cursor-pointer rounded-lg p-4 shadow transition-all"
+        className="group bg-background min-w-md cursor-pointer rounded-lg p-4 shadow transition-all hover:shadow-md"
         onClick={handleFolderClick}
       >
         <div className="flex items-start justify-between">
@@ -85,10 +87,10 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
               <FcFolder size={48} />
             </span>
             <div className="min-w-0 flex-1">
-              <h6 className="truncate font-medium text-gray-900" title={folder.name}>
+              <h6 className="truncate text-base font-medium" title={folder.name}>
                 {folder.name}
               </h6>
-              <p className="text-muted-foreground mt-1 text-sm">
+              <p className="text-muted-foreground mt-1 text-xs">
                 {folder.fileCount || 0} files • {formatDate(folder.createdAt)}
               </p>
             </div>
@@ -99,12 +101,18 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
                 <More className="h-4 w-4 rotate-90" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48" onClick={(event) => event.stopPropagation()}>
+            <DropdownMenuContent align="end" className="w-48 shadow-none" onClick={(event) => event.stopPropagation()}>
               <DropdownMenuItem onClick={handleFolderClick}>
+                <Eye className="mr-2 h-4 w-4" />
                 {isFetchingFolderFiles ? "Loading..." : "View Folder"}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleRenameClick}>Rename Folder</DropdownMenuItem>
-              <DropdownMenuItem onClick={handleDeleteClick} className="text-red-600">
+              <DropdownMenuItem onClick={handleRenameClick}>
+                <Edit className="mr-2 h-4 w-4" />
+                Rename Folder
+              </DropdownMenuItem>
+              <Separator className="bg-border/40 my-1" />
+              <DropdownMenuItem onClick={handleDeleteClick} className="text-destructive">
+                <Trash className="text-destructive mr-2 h-4 w-4" />
                 Delete Folder
               </DropdownMenuItem>
             </DropdownMenuContent>

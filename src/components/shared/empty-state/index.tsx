@@ -87,10 +87,10 @@ export const EmptyState = ({
   return (
     <Empty className={cn("border-none", className)}>
       <EmptyHeader className={headerClassName}>
-        {/* Media rendering based on variant */}
+        {/* Media rendering based on variant or fallback */}
         {variant === "icon" && icon && <EmptyMedia variant="icon">{icon}</EmptyMedia>}
 
-        {variant === "image" && (image || images) && (
+        {variant === "image" && (image || images) ? (
           <EmptyMedia variant="default">
             <div className="flex flex-wrap items-center justify-center gap-2">
               {image ? (
@@ -117,7 +117,11 @@ export const EmptyState = ({
               )}
             </div>
           </EmptyMedia>
-        )}
+        ) : variant === "image" && icon ? (
+          <EmptyMedia className="bg-primary-50" variant="icon">
+            {icon}
+          </EmptyMedia>
+        ) : null}
 
         {/* Title and Description */}
         {title && <EmptyTitle className={titleClassName}>{title}</EmptyTitle>}

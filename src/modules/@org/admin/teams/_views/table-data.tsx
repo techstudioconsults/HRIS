@@ -5,7 +5,8 @@ import { formatDate } from "@/lib/i18n/utils";
 import { queryKeys } from "@/lib/react-query/query-keys";
 import { IColumnDefinition, IRowAction } from "@/modules/@org/admin/_components/table/table";
 import { useQueryClient } from "@tanstack/react-query";
-import { Eye, Pencil, Trash } from "lucide-react";
+import { Trash } from "iconsax-reactjs";
+import { Edit, Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -107,7 +108,7 @@ const useTeamRowActionsBase = (
         {
           label: "Edit team",
           // kbd: "Ctrl+E",
-          icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
+          icon: <Edit className="h-4 w-4" aria-hidden="true" />,
           onClick: () => {
             setActiveTeam(team);
             if (onEditTeam) {

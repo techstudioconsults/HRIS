@@ -9,15 +9,6 @@ export const welcomeTourSteps: DriveStep[] = [
     },
   },
   {
-    element: '[data-tour="welcome-heading"]',
-    popover: {
-      title: "Your Starting Point",
-      description: "You can either take a quick video tour or jump right into the setup.",
-      side: "bottom",
-      align: "start",
-    },
-  },
-  {
     element: '[data-tour="take-tour-button"]',
     popover: {
       title: "Video Tour",

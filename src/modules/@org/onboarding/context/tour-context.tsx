@@ -3,6 +3,7 @@
 import { Config, driver, DriveStep } from "driver.js";
 
 import "driver.js/dist/driver.css";
+import "@/styles/driver-custom.css";
 
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef } from "react";
 

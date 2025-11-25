@@ -7,12 +7,11 @@ import { stepTwoTourSteps } from "../../config/tour-steps";
 import { useTour } from "../../context/tour-context";
 
 export const TeamSetupPage = () => {
-  const { startTour, setTourSteps } = useTour();
+  const { startTour } = useTour();
 
   const handleStartTour = useCallback(() => {
-    setTourSteps(stepTwoTourSteps);
-    startTour();
-  }, [setTourSteps, startTour]);
+    startTour(stepTwoTourSteps);
+  }, [startTour]);
 
   useEffect(() => {
     handleStartTour();

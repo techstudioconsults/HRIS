@@ -24,12 +24,11 @@ export interface OnboardEmployeesPayload {
 }
 
 export const EmployeeSetup = () => {
-  const { startTour, setTourSteps } = useTour();
+  const { startTour } = useTour();
 
   const handleStartTour = useCallback(() => {
-    setTourSteps(stepThreeTourSteps);
-    startTour();
-  }, [setTourSteps, startTour]);
+    startTour(stepThreeTourSteps);
+  }, [startTour]);
 
   useEffect(() => {
     handleStartTour();

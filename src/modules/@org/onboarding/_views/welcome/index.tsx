@@ -17,7 +17,7 @@ export const Welcome = () => {
   const pathname = usePathname();
   const searchParameters = useSearchParams();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { startTour, setTourSteps, stopTour } = useTour();
+  const { startTour, stopTour } = useTour();
 
   // Define tour segments (timestamps must match actual video length)
   const tourSegments: TourSegment[] = [
@@ -55,9 +55,8 @@ export const Welcome = () => {
   };
 
   const handleStartTour = useCallback(() => {
-    setTourSteps(welcomeTourSteps);
-    startTour();
-  }, [setTourSteps, startTour]);
+    startTour(welcomeTourSteps);
+  }, [startTour]);
 
   useEffect(() => {
     handleStartTour();

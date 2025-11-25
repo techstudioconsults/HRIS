@@ -10,7 +10,7 @@ import { TeamConfig } from "../accordions/team-config";
 
 export const TeamSetupForm = () => {
   return (
-    <section className="rounded-[10px] border p-7">
+    <section className="rounded-[10px] border p-7" data-tour="team-form">
       <div className="">
         <FormHeader
           icon={<People />}

@@ -5,6 +5,7 @@ import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { updateQueryParamameters } from "@/hooks/use-search-parameters";
 import { PageSection, PageWrapper } from "@/lib/animation";
+import TourVideo, { TourSegment } from "@/modules/@org/onboarding/_components/TourVideo";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -13,6 +14,25 @@ export const Welcome = () => {
   const pathname = usePathname();
   const searchParameters = useSearchParams();
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  // Define tour segments (timestamps must match actual video length)
+  const tourSegments: TourSegment[] = [
+    { id: "intro", title: "Introduction", time: 0, description: "Welcome and high-level platform overview." },
+    { id: "dashboard", title: "Dashboard", time: 2, description: "Navigating the main dashboard widgets." },
+    { id: "employees", title: "Employees", time: 4, description: "Managing employee records and profiles." },
+    { id: "payroll", title: "Payroll", time: 6, description: "Running payroll and reviewing summaries." },
+    { id: "reports", title: "Reports", time: 8, description: "Generating and exporting reports." },
+    { id: "wrap", title: "Wrap Up", time: 10, description: "Next steps and further resources." },
+  ];
+
+  const transcriptLines = [
+    "Welcome to TechstudioHR, your streamlined HR management suite.",
+    "In this tour we'll highlight the main dashboard and quick actions.",
+    "Learn how to add and manage employees effortlessly.",
+    "Process payroll with confidence and real-time validation.",
+    "Generate insightful reports to drive decision making.",
+    "Thank you for watching. You're ready to begin onboarding steps!",
+  ];
 
   // Initialize dialog state from URL
   useEffect(() => {
@@ -60,23 +80,19 @@ export const Welcome = () => {
       <ReusableDialog
         trigger={null}
         open={dialogOpen}
-        className={`!max-w-3xl`}
+        className={`!max-w-5xl`}
         onOpenChange={(open) => {
           setDialogOpen(open);
           if (!open) handleCloseDialog();
         }}
       >
-        <video
-          width="100%"
-          height="auto"
-          controls
+        <TourVideo
+          src="/video/trees.mp4"
           poster="/images/onboarding/video-poster.png"
-          style={{ borderRadius: "12px" }}
-          autoPlay
-        >
-          <source src="/video/trees.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+          segments={tourSegments}
+          transcript={transcriptLines}
+          className="py-2"
+        />
       </ReusableDialog>
     </PageWrapper>
   );

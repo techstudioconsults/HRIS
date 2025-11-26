@@ -8,17 +8,19 @@ import { usePayrollService } from "../services/use-service";
 import { usePayrollStore } from "../stores/payroll-store";
 
 export const PayrollSetupSettingsModal = () => {
-  const { setShowPayrollSettingsSetupModal, showPayrollSettingsSetupModal } = usePayrollStore();
+  const { setShowPayrollSettingsSetupModal, showPayrollSettingsSetupModal, hasCompletedPayrollPolicySetupForm } =
+    usePayrollStore();
   const { useGetCompanyPayrollPolicy } = usePayrollService();
   const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
 
   useEffect(() => {
-    if (payrollPolicy?.data.payday === 0) {
+    // Only show modal if payday is 0 AND user hasn't just completed the setup form
+    if (payrollPolicy?.data.payday === 0 && !hasCompletedPayrollPolicySetupForm) {
       setShowPayrollSettingsSetupModal(true);
-    } else {
+    } else if (payrollPolicy?.data.payday !== 0) {
       setShowPayrollSettingsSetupModal(false);
     }
-  }, [payrollPolicy?.data?.payday, setShowPayrollSettingsSetupModal]);
+  }, [payrollPolicy?.data?.payday, hasCompletedPayrollPolicySetupForm, setShowPayrollSettingsSetupModal]);
 
   const handleRemindMeLater = () => {
     setShowPayrollSettingsSetupModal(false);
@@ -57,9 +59,12 @@ export const PayrollSetupSettingsModal = () => {
             Set Up Payroll
           </MainButton>
 
-          <button onClick={handleRemindMeLater} className="text-center text-sm text-gray-600 hover:text-gray-800">
+          <MainButton
+            onClick={handleRemindMeLater}
+            className="text-center text-sm text-gray-600 hover:text-gray-800 hover:underline"
+          >
             Remind me later
-          </button>
+          </MainButton>
         </div>
       </div>
     </ReusableDialog>

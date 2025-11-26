@@ -143,25 +143,22 @@ export const PayrollSetupForm = () => {
       payday: Number(data.payday),
       approvers: normalizeIds(data.approvers),
     };
-    try {
-      await updatePolicy(payload, {
-        onSuccess: () => {
-          setIsSubmittedAlertOpen(true);
-          setShowPayrollSettingsSetupModal(false);
-          setHasCompletedPayrollPolicySetupForm(true);
-        },
-        onError: (error) => {
-          toast.error(`Failed to update payroll policy`, {
-            description:
-              error instanceof AxiosError
-                ? error.response?.data.message
-                : "An unexpected error occurred. Please try again.",
-          });
-        },
-      });
-    } catch {
-      return;
-    }
+
+    await updatePolicy(payload, {
+      onSuccess: () => {
+        setIsSubmittedAlertOpen(true);
+        setShowPayrollSettingsSetupModal(false);
+        setHasCompletedPayrollPolicySetupForm(true);
+      },
+      onError: (error) => {
+        toast.error(`Failed to update payroll policy`, {
+          description:
+            error instanceof AxiosError
+              ? error.response?.data.message
+              : "An unexpected error occurred. Please try again.",
+        });
+      },
+    });
   };
 
   return (

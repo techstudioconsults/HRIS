@@ -84,27 +84,42 @@ class TokenManager {
 
   /**
    * Refresh the access token using the refresh token
+   * Calls backend directly without going through Next.js API route
    */
   async refreshAccessToken(): Promise<string | null> {
     try {
-      const response = await fetch("/api/auth/refresh", {
+      // Get the current session to access the refresh token
+      const session = await getSession();
+
+      if (!session?.tokens?.refreshToken) {
+        // eslint-disable-next-line no-console
+        console.error("TokenManager: No refresh token available");
+        this.invalidate();
+        return null;
+      }
+
+      // Call backend refresh endpoint directly
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/refresh`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          refreshToken: session.tokens.refreshToken,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to refresh token");
+        throw new Error(`Failed to refresh token: ${response.status}`);
       }
 
       const data = await response.json();
 
-      if (data.success && data.tokens?.accessToken) {
+      if (data.success && data.data?.tokens?.accessToken) {
         // Update the cache with new token
         const expiresAt = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
         this.cache = {
-          accessToken: data.tokens.accessToken,
+          accessToken: data.data.tokens.accessToken,
           expiresAt,
         };
 

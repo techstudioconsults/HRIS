@@ -12,7 +12,6 @@ import { ComboBox } from "@/components/shared/select-dropdown/combo-box";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { useSSE } from "@/context/sse-provider";
 import { formatCurrency, formatDate } from "@/lib/i18n/utils";
 import { cn } from "@/lib/utils";
 import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
@@ -20,7 +19,6 @@ import { CloseCircle, Eye, EyeSlash } from "iconsax-reactjs";
 import { AlertTriangle, MoreVertical } from "lucide-react"; // add AlertTriangle
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
@@ -57,8 +55,6 @@ const PAYROLL_RUN_MESSAGE = (dateLabel: string, onOpenApprovalProgress: () => vo
 );
 
 const PayrollView = () => {
-  const { on } = useSSE();
-  const router = useRouter();
   const { getRowActions, DeleteConfirmationModal } = usePayrollRowActions();
   const {
     hasCompletedPayrollPolicySetupForm,
@@ -84,7 +80,7 @@ const PayrollView = () => {
     useDecidePayrollApproval,
     useGetPayrollByID,
   } = usePayrollService();
-  const { data: companyWallet, refetch: refetchCompanyWallet } = useGetCompanyWallet();
+  const { data: companyWallet } = useGetCompanyWallet();
   const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
   const { data: allPayrolls, isLoading: loadingPayrolls, refetch: refetchPayrolls } = useGetAllPayrolls();
   const { mutateAsync: createPayroll, isPending: isCreatingPayroll } = useCreatePayroll();
@@ -94,7 +90,6 @@ const PayrollView = () => {
   });
   const [isWalletBalanceVisible, setIsWalletBalanceVisible] = useState(true);
   const [showNoPayrollBanner, setShowNoPayrollBanner] = useState(false);
-  const [isTopupPromptOpen, setIsTopupPromptOpen] = useState(false);
   const [selectedPayrollId, setSelectedPayrollId] = useState<string>("");
   const [isApprovalProgressOpen, setIsApprovalProgressOpen] = useState(false);
   const [payrollData, setPayrollData] = useState({

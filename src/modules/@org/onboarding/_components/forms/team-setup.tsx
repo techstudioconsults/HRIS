@@ -24,7 +24,7 @@ export const TeamSetupForm = () => {
           <TeamConfig />
         </section>
 
-        <div className="mt-8 space-y-4">
+        <div className="mt-8">
           <div>
             <MainButton href={`/onboarding/step-3`} type="button" variant="primary" className="w-full" size="xl">
               Continue

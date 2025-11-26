@@ -6,6 +6,7 @@ import { FormField } from "@/components/shared/inputs/FormFields";
 import { PageSection, PageWrapper } from "@/lib/animation";
 import { ForgotPasswordData, forgotPasswordSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -32,17 +33,19 @@ export const ForgotPassword = () => {
   } = methods;
 
   const handleSubmitForm = async (data: ForgotPasswordData) => {
-    try {
-      const response = await forgotPassword(data);
-      toast.success(`Registration Successful`, {
-        description: response?.data,
-      });
-      router.push(`/reset-password?email=${encodeURIComponent(data.email)}`);
-    } catch (error) {
-      toast.error("Registration Failed", {
-        description: error instanceof Error ? error.message : "An unknown error occurred",
-      });
-    }
+    await forgotPassword(data, {
+      onSuccess: (response) => {
+        router.push(`/reset-password?email=${encodeURIComponent(data.email)}`);
+        toast.success(`Request Successful`, {
+          description: response?.data,
+        });
+      },
+      onError: (error) => {
+        toast.error("Request Failed", {
+          description: error instanceof AxiosError ? error.response?.data.message : "An unknown error occurred",
+        });
+      },
+    });
   };
 
   return (

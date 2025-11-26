@@ -6,6 +6,7 @@ import { FormField } from "@/components/shared/inputs/FormFields";
 import { PageSection, PageWrapper } from "@/lib/animation";
 import { RegisterFormData, registerSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 import { Info } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -43,19 +44,19 @@ export const Register = () => {
   const passwordsMatch = showPasswordStatus && passwordValue === confirmPasswordValue;
 
   const handleSubmitForm = async (data: RegisterFormData) => {
-    try {
-      const response = await signUp(data);
-      if (response?.success) {
+    await signUp(data, {
+      onSuccess: () => {
         toast.success(`Registration Successful`, {
           description: `Registration Successful`,
         });
         router.push(`/login`);
-      }
-    } catch (error) {
-      toast.error("Registration Failed", {
-        description: error instanceof Error ? error.message : "An unknown error occurred",
-      });
-    }
+      },
+      onError: (error) => {
+        toast.warning("Registration Failed", {
+          description: error instanceof AxiosError ? error?.response?.data.message : "An unknown error occurred",
+        });
+      },
+    });
   };
 
   return (

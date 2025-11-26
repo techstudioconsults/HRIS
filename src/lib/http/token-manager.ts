@@ -83,6 +83,44 @@ class TokenManager {
   }
 
   /**
+   * Refresh the access token using the refresh token
+   */
+  async refreshAccessToken(): Promise<string | null> {
+    try {
+      const response = await fetch("/api/auth/refresh", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to refresh token");
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.tokens?.accessToken) {
+        // Update the cache with new token
+        const expiresAt = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+        this.cache = {
+          accessToken: data.tokens.accessToken,
+          expiresAt,
+        };
+
+        return this.cache.accessToken;
+      }
+
+      return null;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error("TokenManager: Failed to refresh token", error);
+      this.invalidate();
+      return null;
+    }
+  }
+
+  /**
    * Invalidate the cached token (useful for logout or token refresh)
    */
   invalidate(): void {

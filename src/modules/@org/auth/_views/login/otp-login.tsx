@@ -30,7 +30,7 @@ export const OTPLogin = () => {
   } = methods;
 
   const handleSubmitForm = async (data: LoginOTPFFormData) => {
-    requestOTP(data, {
+    await requestOTP(data, {
       onSuccess: (response) => {
         if (response?.success) {
           toast.success(`Request Sent Successfully`, {

@@ -22,7 +22,7 @@ const Toaster = ({ ...properties }: ToasterProps) => {
       }}
       toastOptions={{
         classNames: {
-          toast: "!gap-4 !shadow-5xl",
+          toast: "!gap-4 !shadow-5xl !min-w-md",
           title: "!font-bold",
           description: "!font-medium",
           actionButton: "",

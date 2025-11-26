@@ -68,11 +68,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         };
       }
 
-      // Update triggered from client
+      // Update triggered from client (e.g., after token refresh)
       if (trigger === "update" && session) {
         return {
           ...token,
-          tokens: session.tokens,
+          tokens: session.tokens || token.tokens,
+          employee: session.employee || token.employee,
         };
       }
 

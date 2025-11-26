@@ -48,7 +48,7 @@ export const Login = () => {
         errorMessage = errorMessage.split(".")[0];
       }
 
-      toast.success("Login Failed", {
+      toast.warning("Login Failed", {
         description: errorMessage,
       });
       setError("password", { message: errorMessage });

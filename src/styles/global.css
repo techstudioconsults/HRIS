@@ -577,12 +577,13 @@ input[type="date"]::-moz-calendar-picker-indicator:hover {
 }
 
 /* Toast/Sonner styling */
-[data-sonner-toaster] {
+/* [data-sonner-toaster] {
   z-index: 9999 !important;
   pointer-events: auto !important;
 }
 
 [data-sonner-toast] {
+  border: none !important;
   background-color: var(--background) !important;
   border-radius: 0.5rem;
   box-shadow:
@@ -609,4 +610,4 @@ input[type="date"]::-moz-calendar-picker-indicator:hover {
   transition: all 0.2s ease;
   pointer-events: auto !important;
   cursor: pointer !important;
-}
+} */

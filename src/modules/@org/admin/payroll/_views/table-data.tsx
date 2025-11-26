@@ -5,7 +5,8 @@ import { formatCurrency } from "@/lib/i18n/utils";
 import { cn } from "@/lib/utils";
 import { IColumnDefinition, IRowAction } from "@/modules/@org/admin/_components/table/table";
 import { AxiosError } from "axios";
-import { Edit, MinusCircle, Trash } from "lucide-react";
+import { Trash } from "iconsax-reactjs";
+import { Edit, MinusCircle } from "lucide-react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 

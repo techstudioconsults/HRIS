@@ -107,6 +107,7 @@
   border-top-color: rgba(0, 0, 0, 0);
   border-left-color: rgba(0, 0, 0, 0);
   border-right-color: rgba(0, 0, 0, 0);
+  border-bottom-color: var(--primary) !important;
 }
 .driver-popover-arrow-side-right {
   border-top-color: rgba(0, 0, 0, 0);

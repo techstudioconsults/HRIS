@@ -69,7 +69,7 @@ export const useEmployeeRowActions = () => {
           },
           ariaLabel: `Edit ${employee.firstName} ${employee.lastName}`,
         },
-        { type: "separator" },
+        // { type: "separator" },
         // {
         //   label: "Delete employee",
         //   kbd: "Ctrl+Del",

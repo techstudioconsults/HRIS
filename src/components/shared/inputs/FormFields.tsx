@@ -29,6 +29,7 @@ interface FormFieldProperties {
   leftAddon?: React.ReactNode; // Add left icon or button
   rightAddon?: React.ReactNode; // Add right icon or button
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  [key: string]: unknown; // Allow any additional props like data-tour
 }
 
 export function FormField({
@@ -46,6 +47,7 @@ export function FormField({
   rightAddon,
   labelDetailedNode,
   onChange,
+  ...rest
 }: FormFieldProperties) {
   const {
     control,
@@ -81,7 +83,7 @@ export function FormField({
           );
 
           const inputWithAddons = (
-            <div className={cn(`flex items-center gap-2`, containerClassName)}>
+            <div className={cn(`flex items-center gap-2`, containerClassName)} {...rest}>
               {leftAddon && <div className="flex items-center">{leftAddon}</div>}
               {type === "textarea" ? (
                 <Textarea
@@ -205,6 +207,7 @@ export function MultiSelect({
   disabled = false,
   readOnly = false,
   className = "",
+  ...rest
 }: {
   label?: string;
   name: string;
@@ -214,6 +217,7 @@ export function MultiSelect({
   disabled?: boolean;
   readOnly?: boolean;
   className?: string;
+  [key: string]: unknown;
 }) {
   const {
     control,
@@ -248,7 +252,11 @@ export function MultiSelect({
           return (
             <>
               <Select>
-                <SelectTrigger className={cn(error && "border-destructive", className)} disabled={disabled || readOnly}>
+                <SelectTrigger
+                  className={cn(error && "border-destructive", className)}
+                  disabled={disabled || readOnly}
+                  {...rest}
+                >
                   <SelectValue placeholder={placeholderText} />
                 </SelectTrigger>
                 <SelectContent>

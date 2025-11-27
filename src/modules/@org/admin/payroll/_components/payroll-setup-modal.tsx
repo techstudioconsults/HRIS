@@ -2,16 +2,21 @@
 
 import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
+import { useTour } from "@/modules/@org/onboarding";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
+import { payrollSetupTourSteps } from "../config/tour-steps";
 import { usePayrollService } from "../services/use-service";
 import { usePayrollStore } from "../stores/payroll-store";
 
 export const PayrollSetupSettingsModal = () => {
+  const router = useRouter();
   const { setShowPayrollSettingsSetupModal, showPayrollSettingsSetupModal, hasCompletedPayrollPolicySetupForm } =
     usePayrollStore();
   const { useGetCompanyPayrollPolicy } = usePayrollService();
   const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
+  const { startTour } = useTour();
 
   useEffect(() => {
     // Only show modal if payday is 0 AND user hasn't just completed the setup form
@@ -33,7 +38,7 @@ export const PayrollSetupSettingsModal = () => {
       trigger={""}
       title="Let's Get Payroll Set Up"
       description="To begin processing payroll, you'll need to set your company's pay schedule. This includes how often you pay your team and on what date each cycle runs."
-      className="!max-w-lg"
+      className="min-w-md"
     >
       <div className="space-y-6">
         <div className="bg-primary/10 border-primary-75 rounded-lg border p-5">
@@ -55,7 +60,14 @@ export const PayrollSetupSettingsModal = () => {
         </div>
 
         <div className="flex flex-col space-y-3">
-          <MainButton variant="primary" className="w-full" href="/admin/payroll/setup">
+          <MainButton
+            variant="primary"
+            className="w-full"
+            onClick={() => {
+              startTour(payrollSetupTourSteps);
+              router.push("/admin/payroll/setup");
+            }}
+          >
             Set Up Payroll
           </MainButton>
 

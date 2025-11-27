@@ -46,7 +46,7 @@ export const CalendarModal = ({
       open={open}
       onOpenChange={onOpenChange}
       title="Change Scheduled Date"
-      className="max-w-md"
+      className="min-w-sm"
       trigger={<div />} // Hidden trigger since we control open state
     >
       <div className="space-y-6">

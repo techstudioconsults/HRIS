@@ -27,7 +27,7 @@ const Toaster = ({ ...properties }: ToasterProps) => {
           description: "!font-medium",
           actionButton: "",
           cancelButton: "",
-          closeButton: "!absolute !right-2 !top-[58%] !-translate-y-[50%] !relative-auto !ml-auto",
+          closeButton: "!absolute !-right-4 !-top-1 !relative-auto !ml-auto",
           error: "!text-destructive !bg-background",
           success: "!text-success !bg-success-50",
           warning: "!text-warning-600 !bg-warning-50",

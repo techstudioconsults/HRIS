@@ -140,7 +140,7 @@ export const GenerateRunPayrollDrawer = ({
               <DashboardCard
                 title="Total Employees"
                 value={<p className="text-base">{totalEmployees}</p>}
-                className="border-border flex flex-col items-center justify-center gap-4 border text-center shadow-none"
+                className="bg-muted flex flex-col items-center justify-center gap-4 text-center shadow-none"
               />
               <DashboardCard
                 title="Wallet Balance"
@@ -166,18 +166,18 @@ export const GenerateRunPayrollDrawer = ({
                 titleColor="text-white"
               />
             </section>
-            <section className="border-border space-y-4 rounded-lg border p-4">
+            <section className="bg-muted space-y-4 rounded-lg p-4">
               <div className="flex items-center justify-between">
-                <p>Total Payroll</p>
-                <p>{formatCurrency(totalPayroll)}</p>
+                <p className="text-base">Total Payroll</p>
+                <p className="text-foreground font-medium">{formatCurrency(totalPayroll)}</p>
               </div>
               <div className="flex items-center justify-between">
-                <p>Processing Charges</p>
-                <p>{formatCurrency(processingCharges)}</p>
+                <p className="text-base">Processing Charges</p>
+                <p className="text-foreground font-medium">{formatCurrency(processingCharges)}</p>
               </div>
-              <div className="flex items-center justify-between font-bold">
-                <p>Total Amount</p>
-                <p>{formatCurrency(totalAmount)}</p>
+              <div className="flex items-center justify-between font-semibold">
+                <p className="text-success">Total Amount</p>
+                <p className="text-success">{formatCurrency(totalAmount)}</p>
               </div>
             </section>
             <div
@@ -198,8 +198,8 @@ export const GenerateRunPayrollDrawer = ({
               </p>
             </div>
             <section>
-              <h1 className="text-xl font-bold">Approvers</h1>
-              <section className="border-border space-y-4 rounded-lg border p-4">
+              <h1 className="text-base font-bold">Approvers</h1>
+              <section className="bg-muted space-y-4 rounded-lg p-4">
                 {payrollId ? (
                   isApprovalsLoading ? (
                     <div className="text-muted-foreground text-sm">Loading approvers...</div>
@@ -232,7 +232,7 @@ export const GenerateRunPayrollDrawer = ({
                               <AvatarFallback>{initials}</AvatarFallback>
                             </Avatar>
                             <div>
-                              <p className="text-foreground">{name}</p>
+                              <p className="text-foreground text-sm font-medium">{name}</p>
                               {role ? <p className="text-xs text-gray-500">{role}</p> : null}
                             </div>
                           </div>

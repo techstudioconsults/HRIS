@@ -102,7 +102,7 @@ export function FundWalletFormModal({ initialData }: FundWalletFormModalProperti
         open={showFundWalletFormModal}
         onOpenChange={setShowFundWalletFormModal}
         title="Set up Payroll Wallet"
-        className="!max-w-lg"
+        className="min-w-md"
       >
         <FormProvider {...methods}>
           <form

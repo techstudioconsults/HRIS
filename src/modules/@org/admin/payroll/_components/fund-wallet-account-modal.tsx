@@ -2,9 +2,11 @@
 
 import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
+import { useTour } from "@/modules/@org/onboarding";
 import { AlertTriangle, Copy } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { generatePayrollTourStep } from "../config/tour-steps";
 import { usePayrollService } from "../services/use-service";
 import { usePayrollStore } from "../stores/payroll-store";
 
@@ -16,8 +18,9 @@ import { usePayrollStore } from "../stores/payroll-store";
 // }
 
 export function FundWalletAccountModal() {
+  const { startTour } = useTour();
   const [copied, setCopied] = useState(false);
-  const { showFundWalletAccountModal, setShowFundWalletAccountModal } = usePayrollStore();
+  const { showFundWalletAccountModal, setShowFundWalletAccountModal, walletSetupCompleted } = usePayrollStore();
   const { useGetCompanyWallet } = usePayrollService();
   // get the query object so we can refetch during polling
   const walletQuery = useGetCompanyWallet();
@@ -48,6 +51,9 @@ export function FundWalletAccountModal() {
 
   const handleConfirm = async () => {
     setShowFundWalletAccountModal(false);
+    if (walletSetupCompleted) {
+      startTour(generatePayrollTourStep);
+    }
   };
 
   return (
@@ -56,7 +62,7 @@ export function FundWalletAccountModal() {
       open={showFundWalletAccountModal}
       onOpenChange={setShowFundWalletAccountModal}
       title="Fund Wallet"
-      className="!max-w-lg"
+      className="min-w-md"
     >
       <div className="space-y-6">
         {/* Instructional text */}

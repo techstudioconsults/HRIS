@@ -5,17 +5,14 @@
 import Loading from "@/app/Loading";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
-import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { GenericDropdown } from "@/components/shared/drop-down";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ComboBox } from "@/components/shared/select-dropdown/combo-box";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { formatCurrency, formatDate } from "@/lib/i18n/utils";
 import { cn } from "@/lib/utils";
 import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
-import { CloseCircle, Eye, EyeSlash } from "iconsax-reactjs";
+import { CloseCircle, Eye, EyeSlash, InfoCircle } from "iconsax-reactjs";
 import { AlertTriangle, MoreVertical } from "lucide-react"; // add AlertTriangle
 
 import Link from "next/link";
@@ -23,6 +20,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
 import empty1 from "~/images/empty-state.svg";
+import { ApprovalProgressModal } from "../_components/approval-progress-modal";
 import { AddEmployeeDrawer } from "../_components/drawers/add-employee-drawer";
 import { EmployeeInformationDrawer } from "../_components/drawers/employee-infomation-drawer";
 import { GenerateRunPayrollDrawer } from "../_components/drawers/generate-run-payroll-drawer";
@@ -412,6 +410,7 @@ const PayrollView = () => {
 
       {/* Setup almost complete banner (policy done but wallet not yet set up) */}
       <section
+        data-tour="payroll-setup-wallet"
         className={cn(
           "border-warning/50 bg-warning-50 hidden rounded-lg border p-4",
           hasCompletedPayrollPolicySetupForm && payrollPolicyStatus && `block`,
@@ -419,7 +418,7 @@ const PayrollView = () => {
       >
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="text-warning mt-0.5" size={18} />
+            <InfoCircle className="text-warning mt-0.5" size={18} />
             <p className="text-muted-foreground text-sm">
               Payroll setup almost complete. Create and fund your company wallet to finish setup and enable payroll
               generation.
@@ -435,6 +434,7 @@ const PayrollView = () => {
 
       {/* No Payroll Available Banner */}
       <section
+        data-tour="generate-payroll"
         className={cn(
           "hidden rounded-lg border border-blue-200 bg-blue-50 p-4",
           showNoPayrollBanner && (!payrollPolicyStatus || walletSetupCompleted) && `block`,
@@ -497,7 +497,7 @@ const PayrollView = () => {
 
       <section className={cn("rounded-lg", showPayrollBanner ? `block` : `hidden`)}>
         <div className="bg-primary-500 text-background relative rounded-lg p-5">
-          <button
+          {/* <button
             type="button"
             aria-label="Hide banner"
             className="text-background/80 hover:text-background absolute top-2 right-2"
@@ -509,7 +509,7 @@ const PayrollView = () => {
             }}
           >
             <CloseCircle />
-          </button>
+          </button> */}
           <p className="text-background max-w-4xl text-sm">
             {shouldShowApprovalProgressBanner
               ? PAYROLL_RUN_MESSAGE(approvalBannerDateLabel ?? "", () => setIsApprovalProgressOpen(true))
@@ -573,7 +573,7 @@ const PayrollView = () => {
               variant="primary"
               isLeftIconVisible
               onClick={() => setShowAddEmployeeModal(true)}
-              isDisabled={!payslipsData?.data.items || payslipsData.data.items.length === 0}
+              isDisabled={isCompleted || !payslipsData?.data.items || payslipsData.data.items.length === 0}
             >
               Add Employee
             </MainButton>
@@ -623,99 +623,15 @@ const PayrollView = () => {
       />
 
       {/* Approval Progress Modal */}
-      <ReusableDialog
+      <ApprovalProgressModal
         open={isApprovalProgressOpen}
         onOpenChange={setIsApprovalProgressOpen}
-        title="Track Approvers Progress"
-        className="min-w-2xl"
-        headerClassName="text-xl"
-        trigger={<div />}
-      >
-        <section className="space-y-4">
-          {selectedPayrollId ? (
-            isApprovalsLoading ? (
-              <p className="text-muted-foreground text-sm">Loading approvers...</p>
-            ) : approvals.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No approvers configured for this payroll.</p>
-            ) : (
-              approvals.map((approval) => {
-                const name = approval.employee.name ?? "Approver";
-                const role = (approval.approverRole as ReactNode) ?? <></>;
-                const initials =
-                  name
-                    .split(" ")
-                    .map((part) => part.charAt(0))
-                    .join("")
-                    .toUpperCase()
-                    .slice(0, 2) || "AP";
-                const statusLabel =
-                  approval.status && approval.status.length > 0
-                    ? approval.status.charAt(0).toUpperCase() + approval.status.slice(1)
-                    : "Pending";
-
-                const isPending = statusLabel === "Pending";
-                const handleApprove = () => {
-                  void decideApproval({ payrollId: approval.payrollId, status: "approved" });
-                };
-                const handleDecline = () => {
-                  void decideApproval({ payrollId: approval.payrollId, status: "declined" });
-                };
-
-                return (
-                  <section key={approval.employee.id} className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarImage src={approval.employee.avatar ?? "https://github.com/shadcn.png"} alt={name} />
-                        <AvatarFallback>{initials}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="text-foreground">{name}</p>
-                        {role ? <p className="text-xs text-gray-500">{role}</p> : null}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Badge
-                        className={cn(
-                          "rounded-full px-4 py-2",
-                          statusLabel === "Pending" && "bg-warning-50 text-warning",
-                          statusLabel === "Approved" && "bg-success-50 text-success",
-                          statusLabel === "Declined" && "bg-destructive-50 text-destructive",
-                        )}
-                      >
-                        {statusLabel}
-                      </Badge>
-                      {isPending && (
-                        <div className="flex items-center gap-2">
-                          <MainButton
-                            size="sm"
-                            variant="primary"
-                            onClick={handleApprove}
-                            isDisabled={isDecidingApproval}
-                            isLoading={isDecidingApproval}
-                          >
-                            Approve
-                          </MainButton>
-                          <MainButton
-                            size="sm"
-                            variant="destructive"
-                            onClick={handleDecline}
-                            isDisabled={isDecidingApproval}
-                            isLoading={isDecidingApproval}
-                          >
-                            Decline
-                          </MainButton>
-                        </div>
-                      )}
-                    </div>
-                  </section>
-                );
-              })
-            )
-          ) : (
-            <p className="text-muted-foreground text-sm">Select a payroll to view approvers.</p>
-          )}
-        </section>
-      </ReusableDialog>
+        selectedPayrollId={selectedPayrollId}
+        approvals={approvals}
+        isApprovalsLoading={isApprovalsLoading}
+        isDecidingApproval={isDecidingApproval}
+        onDecideApproval={decideApproval}
+      />
 
       {/* Add Employee Modal */}
       <AddEmployeeDrawer payrollId={selectedPayrollId || null} hasPayslips={hasPayslipsForSelectedPayroll} />

@@ -63,25 +63,29 @@ export const usePayrollRowActions = () => {
       },
       icon: <MinusCircle className="text-high-warning" />,
     },
-    {
-      label: "Edit employee payroll",
-      onClick: () => {
-        setSelectedPayslipId(payslip?.id ?? null);
-        setEmployeeInformationActiveTab("salary-details");
-        setShowEmployeeInformationDrawer(true);
-      },
-      icon: <Edit className="text-high-primary" />,
-    },
-    { type: "separator" },
-    {
-      label: "Remove employee from payroll",
-      variant: "destructive",
-      onClick: () => {
-        setPayslipToDelete(payslip);
-        setIsDeleteModalOpen(true);
-      },
-      icon: <Trash className="text-destructive" />,
-    },
+    ...(payslip?.status === "paid"
+      ? []
+      : [
+          {
+            label: "Edit employee payroll",
+            onClick: () => {
+              setSelectedPayslipId(payslip?.id ?? null);
+              setEmployeeInformationActiveTab("salary-details");
+              setShowEmployeeInformationDrawer(true);
+            },
+            icon: <Edit className="text-high-primary" />,
+          },
+          { type: "separator" as const },
+          {
+            label: "Remove employee from payroll",
+            variant: "destructive" as const,
+            onClick: () => {
+              setPayslipToDelete(payslip);
+              setIsDeleteModalOpen(true);
+            },
+            icon: <Trash className="text-destructive" />,
+          },
+        ]),
   ];
 
   const DeleteConfirmationModal = () => (

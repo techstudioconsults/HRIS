@@ -268,7 +268,7 @@ export const SchedulePayrollDrawer = () => {
                   <DashboardCard
                     title="Total Employees"
                     value={<p className="text-base">{selectedPayroll?.employeesInPayroll ?? 0}</p>}
-                    className="border-border flex flex-col items-center justify-center gap-4 border text-center shadow-none"
+                    className="bg-muted flex flex-col items-center justify-center gap-4 text-center shadow-none"
                   />
                   <DashboardCard
                     title="Wallet Balance"
@@ -294,27 +294,27 @@ export const SchedulePayrollDrawer = () => {
                     titleColor="text-white"
                   />
                 </section>
-                <section className="border-border space-y-2 rounded-lg border p-4">
+                <section className="bg-muted space-y-2 rounded-lg p-4">
                   <div className="flex items-center justify-between">
-                    <p>Gross Pay</p>
-                    <p>{formatCurrency(selectedPayroll?.grossPay ?? 0)}</p>
+                    <p className="font-medium">Gross Pay</p>
+                    <p className="text-foreground font-medium">{formatCurrency(selectedPayroll?.grossPay ?? 0)}</p>
                   </div>
                   <div className="flex items-center justify-between">
-                    <p>Total Bonuses</p>
-                    <p>{formatCurrency(selectedPayroll?.bonus ?? 0)}</p>
+                    <p className="font-medium">Total Bonuses</p>
+                    <p className="text-foreground font-medium">{formatCurrency(selectedPayroll?.bonus ?? 0)}</p>
                   </div>
                   <div className="flex items-center justify-between">
-                    <p>Total Deductions</p>
-                    <p>{formatCurrency(selectedPayroll?.deduction ?? 0)}</p>
+                    <p className="font-medium">Total Deductions</p>
+                    <p className="text-foreground font-medium">{formatCurrency(selectedPayroll?.deduction ?? 0)}</p>
                   </div>
                   <div className="flex items-center justify-between pt-4 font-bold">
-                    <p>Net Pay</p>
-                    <p>{formatCurrency(selectedPayroll?.netPay ?? 0)}</p>
+                    <p className="text-success">Net Pay</p>
+                    <p className="text-success">{formatCurrency(selectedPayroll?.netPay ?? 0)}</p>
                   </div>
                 </section>
                 <section>
                   <h1 className="text-xl font-bold">Approvers</h1>
-                  <section className="border-border space-y-4 rounded-lg border p-4">
+                  <section className="bg-muted space-y-4 rounded-lg p-4">
                     {isApprovalsLoading ? (
                       <div className="text-muted-foreground text-sm">Loading approvers...</div>
                     ) : approvals.length === 0 ? (
@@ -346,7 +346,7 @@ export const SchedulePayrollDrawer = () => {
                                 <AvatarFallback>{initials}</AvatarFallback>
                               </Avatar>
                               <div>
-                                <p className="text-foreground">{name}</p>
+                                <p className="text-foreground text-sm font-medium">{name}</p>
                                 {role ? <p className="text-xs text-gray-500">{role}</p> : null}
                               </div>
                             </div>

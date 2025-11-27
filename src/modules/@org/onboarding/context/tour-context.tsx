@@ -44,8 +44,10 @@ export const TourProvider = ({ children }: TourProviderProperties) => {
       ...config,
     });
 
-    // Start the tour
-    driverInstance.current.drive();
+    // Start the tour after 1 second delay
+    setTimeout(() => {
+      driverInstance.current?.drive();
+    }, 1500);
   }, []);
 
   const stopTour = useCallback(() => {

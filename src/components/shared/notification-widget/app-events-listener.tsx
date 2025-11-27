@@ -8,7 +8,6 @@ import { EventRegistry, type INotificationPayload } from "@/lib/sse/use-notifica
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, CheckCircle2, Info, XCircle } from "lucide-react";
-import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -40,7 +39,7 @@ function createId() {
 }
 
 // Map incoming SSE event -> UI notification config
-function mapEventToNotification(payload: INotificationPayload, inPayrollRoute: boolean): BaseNotification | null {
+function mapEventToNotification(payload: INotificationPayload): BaseNotification | null {
   const { type: eventType, data } = payload;
   const base: Omit<BaseNotification, "id" | "render"> = {
     event: eventType,
@@ -49,45 +48,45 @@ function mapEventToNotification(payload: INotificationPayload, inPayrollRoute: b
   };
 
   switch (eventType) {
-    case EventRegistry.WALLET_TOP_SUCCESS: {
-      return { id: createId(), render: "toast", severity: "success", ...base };
-    }
-    case EventRegistry.WALLET_CREATED_SUCCESS: {
-      return {
-        id: createId(),
-        render: "banner",
-        severity: "success",
-        dismissible: true,
-        ...base,
-        actions: [
-          {
-            label: "Fund Wallet",
-            variant: "primary",
-            onClick: () => window.dispatchEvent(new CustomEvent("wallet:fund")),
-          },
-        ],
-      };
-    }
-    case EventRegistry.PAYROLL_APPROVE_REQUEST: {
-      return {
-        id: createId(),
-        render: inPayrollRoute ? "modal" : "banner",
-        severity: "info",
-        dismissible: true,
-        ...base,
-        actions: [
-          {
-            label: "View",
-            variant: "primary",
-            onClick: () => window.dispatchEvent(new CustomEvent("payroll:approval-open")),
-          },
-        ],
-      };
-    }
+    // case EventRegistry.WALLET_CREATED_SUCCESS: {
+    //   return {
+    //     id: createId(),
+    //     render: "banner",
+    //     severity: "success",
+    //     dismissible: true,
+    //     ...base,
+    //     actions: [
+    //       {
+    //         label: "Fund Wallet",
+    //         variant: "primary",
+    //         onClick: () => window.dispatchEvent(new CustomEvent("wallet:fund")),
+    //       },
+    //     ],
+    //   };
+    // }
+    // case EventRegistry.PAYROLL_APPROVE_REQUEST: {
+    //   return {
+    //     id: createId(),
+    //     render: inPayrollRoute ? "modal" : "banner",
+    //     severity: "info",
+    //     dismissible: true,
+    //     ...base,
+    //     actions: [
+    //       {
+    //         label: "View",
+    //         variant: "primary",
+    //         onClick: () => window.dispatchEvent(new CustomEvent("payroll:approval-open")),
+    //       },
+    //     ],
+    //   };
+    // }
+    case EventRegistry.PAYROLL_APPROVE_REQUEST:
+    case EventRegistry.WALLET_CREATED_SUCCESS:
+    case EventRegistry.WALLET_TOP_SUCCESS:
     case EventRegistry.PAYROLL_APPROVED:
     case EventRegistry.PAYROLL_COMPLETED:
     case EventRegistry.SALARY_PAID: {
-      return { id: createId(), render: "toast", severity: "success", ...base };
+      return { id: createId(), render: "toast", severity: "info", ...base };
     }
     case EventRegistry.PAYROLL_REJECTED: {
       return { id: createId(), render: "toast", severity: "error", ...base };
@@ -103,8 +102,8 @@ function mapEventToNotification(payload: INotificationPayload, inPayrollRoute: b
 
 export const AppEventsListener = () => {
   const { on } = useSSE();
-  const pathname = usePathname();
-  const inPayrollRoute = pathname.startsWith("/admin/payroll");
+  // const pathname = usePathname();
+  // const inPayrollRoute = pathname.startsWith("/admin/payroll");
 
   const [banners, setBanners] = useState<BaseNotification[]>([]);
   const [modal, setModal] = useState<BaseNotification | null>(null);
@@ -116,7 +115,7 @@ export const AppEventsListener = () => {
 
   const handleNotification = useCallback(
     (payload: INotificationPayload) => {
-      const mapped = mapEventToNotification(payload, inPayrollRoute);
+      const mapped = mapEventToNotification(payload);
       if (!mapped) return;
 
       const meta = payload?.data?.metadata as PayrollMetadata | undefined;
@@ -169,6 +168,10 @@ export const AppEventsListener = () => {
       if (mapped.render === "toast") {
         const message = mapped.title && mapped.body ? `${mapped.title} - ${mapped.body}` : mapped.title || mapped.body;
         switch (mapped.severity) {
+          case "info": {
+            toast.info("Notification", { description: message });
+            break;
+          }
           case "success": {
             toast.success("Notification", { description: message });
             break;
@@ -207,7 +210,7 @@ export const AppEventsListener = () => {
         });
       }
     },
-    [inPayrollRoute, queryClient],
+    [queryClient],
   );
 
   useEffect(() => {

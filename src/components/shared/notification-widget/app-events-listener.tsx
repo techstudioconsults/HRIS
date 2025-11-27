@@ -1,5 +1,6 @@
 "use client";
 
+import { Wrapper } from "@/components/core/layout/wrapper";
 import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { useSSE } from "@/context/sse-provider";
@@ -7,8 +8,10 @@ import { queryKeys } from "@/lib/react-query/query-keys";
 import { EventRegistry, type INotificationPayload } from "@/lib/sse/use-notifications";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, CheckCircle2, Info, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { PiInfoFill } from "react-icons/pi";
 import { toast } from "sonner";
 
 type RenderType = "toast" | "banner" | "modal";
@@ -39,7 +42,7 @@ function createId() {
 }
 
 // Map incoming SSE event -> UI notification config
-function mapEventToNotification(payload: INotificationPayload): BaseNotification | null {
+function mapEventToNotification(payload: INotificationPayload, inPayrollRoute: boolean): BaseNotification | null {
   const { type: eventType, data } = payload;
   const base: Omit<BaseNotification, "id" | "render"> = {
     event: eventType,
@@ -47,52 +50,103 @@ function mapEventToNotification(payload: INotificationPayload): BaseNotification
     body: data?.body ? String(data.body) : "",
   };
 
+  // Determine render type based on route
+  const renderType: RenderType = inPayrollRoute ? "banner" : "toast";
+
   switch (eventType) {
-    // case EventRegistry.WALLET_CREATED_SUCCESS: {
-    //   return {
-    //     id: createId(),
-    //     render: "banner",
-    //     severity: "success",
-    //     dismissible: true,
-    //     ...base,
-    //     actions: [
-    //       {
-    //         label: "Fund Wallet",
-    //         variant: "primary",
-    //         onClick: () => window.dispatchEvent(new CustomEvent("wallet:fund")),
-    //       },
-    //     ],
-    //   };
-    // }
-    // case EventRegistry.PAYROLL_APPROVE_REQUEST: {
-    //   return {
-    //     id: createId(),
-    //     render: inPayrollRoute ? "modal" : "banner",
-    //     severity: "info",
-    //     dismissible: true,
-    //     ...base,
-    //     actions: [
-    //       {
-    //         label: "View",
-    //         variant: "primary",
-    //         onClick: () => window.dispatchEvent(new CustomEvent("payroll:approval-open")),
-    //       },
-    //     ],
-    //   };
-    // }
-    case EventRegistry.PAYROLL_APPROVE_REQUEST:
-    case EventRegistry.WALLET_CREATED_SUCCESS:
-    case EventRegistry.WALLET_TOP_SUCCESS:
-    case EventRegistry.PAYROLL_APPROVED:
-    case EventRegistry.PAYROLL_COMPLETED:
-    case EventRegistry.SALARY_PAID: {
-      return { id: createId(), render: "toast", severity: "info", ...base };
+    case EventRegistry.WALLET_CREATED_SUCCESS: {
+      return {
+        id: createId(),
+        render: renderType,
+        severity: "info",
+        dismissible: true,
+        ...base,
+      };
+    }
+    case EventRegistry.WALLET_TOP_SUCCESS: {
+      return {
+        id: createId(),
+        render: renderType,
+        severity: "info",
+        dismissible: true,
+        actions: [
+          {
+            label: "View",
+            onClick: () => {
+              window.location.href = `/admin/payroll`;
+            },
+          },
+        ],
+        ...base,
+      };
+    }
+    case EventRegistry.PAYROLL_APPROVE_REQUEST: {
+      return {
+        id: createId(),
+        render: renderType,
+        severity: "info",
+        dismissible: true,
+        actions: [
+          {
+            label: "Approve Payroll",
+            onClick: () => {
+              window.location.href = `/admin/payroll`;
+            },
+          },
+          {
+            label: "Decline Payroll",
+            onClick: () => {
+              window.location.href = `/admin/payroll`;
+            },
+          },
+        ],
+        ...base,
+      };
+    }
+    case EventRegistry.PAYROLL_APPROVED: {
+      return {
+        id: createId(),
+        render: renderType,
+        severity: "info",
+        dismissible: true,
+        ...base,
+      };
+    }
+    case EventRegistry.PAYROLL_COMPLETED: {
+      return {
+        id: createId(),
+        render: renderType,
+        severity: "info",
+        dismissible: true,
+        ...base,
+      };
     }
     case EventRegistry.PAYROLL_REJECTED: {
-      return { id: createId(), render: "toast", severity: "error", ...base };
+      return {
+        id: createId(),
+        render: renderType,
+        severity: "error",
+        dismissible: true,
+        ...base,
+      };
+    }
+    case EventRegistry.SALARY_PAID: {
+      return {
+        id: createId(),
+        render: renderType,
+        severity: "info",
+        dismissible: true,
+        ...base,
+      };
     }
     case EventRegistry.PAYROLL_STATUS: {
-      return { id: createId(), render: "toast", severity: "info", ...base };
+      return {
+        id: createId(),
+        render: renderType,
+        severity: "info",
+        dismissible: true,
+        ...base,
+      };
     }
     default: {
       return null;
@@ -102,8 +156,8 @@ function mapEventToNotification(payload: INotificationPayload): BaseNotification
 
 export const AppEventsListener = () => {
   const { on } = useSSE();
-  // const pathname = usePathname();
-  // const inPayrollRoute = pathname.startsWith("/admin/payroll");
+  const pathname = usePathname();
+  const inPayrollRoute = pathname.includes("/admin/payroll");
 
   const [banners, setBanners] = useState<BaseNotification[]>([]);
   const [modal, setModal] = useState<BaseNotification | null>(null);
@@ -115,7 +169,7 @@ export const AppEventsListener = () => {
 
   const handleNotification = useCallback(
     (payload: INotificationPayload) => {
-      const mapped = mapEventToNotification(payload);
+      const mapped = mapEventToNotification(payload, inPayrollRoute);
       if (!mapped) return;
 
       const meta = payload?.data?.metadata as PayrollMetadata | undefined;
@@ -169,7 +223,13 @@ export const AppEventsListener = () => {
         const message = mapped.title && mapped.body ? `${mapped.title} - ${mapped.body}` : mapped.title || mapped.body;
         switch (mapped.severity) {
           case "info": {
-            toast.info("Notification", { description: message });
+            toast.info("Notification", {
+              description: message,
+              action: mapped.actions?.[0],
+              actionButtonStyle: {
+                backgroundColor: "var(--primary)",
+              },
+            });
             break;
           }
           case "success": {
@@ -210,7 +270,7 @@ export const AppEventsListener = () => {
         });
       }
     },
-    [queryClient],
+    [queryClient, inPayrollRoute],
   );
 
   useEffect(() => {
@@ -233,8 +293,8 @@ export const AppEventsListener = () => {
 
   return (
     <>
-      {/* Banners Stack (top fixed) */}
-      <div>
+      {/* Banners Stack */}
+      <div className="space-y-4">
         {banners.map((banner) => {
           const Icon =
             banner.severity === "success"
@@ -243,42 +303,59 @@ export const AppEventsListener = () => {
                 ? XCircle
                 : banner.severity === "warning"
                   ? AlertTriangle
-                  : Info;
+                  : PiInfoFill;
           return (
-            <div
+            <Wrapper
               key={banner.id}
               className={cn(
-                "pointer-events-auto flex w-full items-start justify-between border-y p-4 px-8",
-                banner.severity === "success" && "border-success-200 bg-success-50",
-                banner.severity === "error" && "border-destructive-200 bg-destructive-50",
-                banner.severity === "warning" && "border-warning-200 bg-warning-50",
-                banner.severity === "info" && "border-blue-200 bg-blue-50",
+                "bg-background border-primary-75 animate-entrance pointer-events-auto mx-auto mt-10 flex w-full items-center justify-between border-y p-2",
+                banner.severity === "success" && "border-success/20",
+                banner.severity === "error" && "border-destructive/20",
+                banner.severity === "warning" && "border-warning/20",
+                banner.severity === "info" && "text-primary bg-primary-50",
               )}
             >
-              <div className="flex max-w-4xl items-start gap-3">
-                <Icon size={18} className="mt-0.5" />
+              <div className="flex items-start gap-3">
+                <Icon
+                  size={18}
+                  className={cn(
+                    "mt-0.5",
+                    banner.severity === "success" && "text-success",
+                    banner.severity === "error" && "text-destructive",
+                    banner.severity === "warning" && "text-warning",
+                    banner.severity === "info" && "text-primary",
+                  )}
+                />
                 <div className="space-y-1">
-                  {banner.title ? <p className="text-sm font-semibold">{banner.title}</p> : null}
-                  <p className="text-muted-foreground text-xs leading-relaxed">{banner.body}</p>
+                  {/* {banner.title ? <p className="text-sm font-medium">{banner.title}</p> : null} */}
+                  <p className="text-primary text-sm font-medium">{banner.body}</p>
                 </div>
               </div>
-              <div className="flex items-center gap-8">
+              <div className="flex items-center gap-10">
                 {banner.actions?.map((a) => (
-                  <MainButton key={a.label} variant={a.variant || "outline"} onClick={() => a.onClick()}>
+                  <MainButton
+                    key={a.label}
+                    className="px-8"
+                    size="sm"
+                    variant={a.variant || "primary"}
+                    onClick={() => a.onClick()}
+                  >
                     {a.label}
                   </MainButton>
                 ))}
                 {banner.dismissible && (
-                  <button
+                  <MainButton
                     aria-label="Dismiss notification"
-                    className="text-muted-foreground hover:text-foreground"
+                    icon={<XCircle />}
+                    isIconOnly
+                    size="icon"
+                    variant="ghost"
+                    className="p-0"
                     onClick={() => dismissBanner(banner.id)}
-                  >
-                    ✕
-                  </button>
+                  />
                 )}
               </div>
-            </div>
+            </Wrapper>
           );
         })}
       </div>

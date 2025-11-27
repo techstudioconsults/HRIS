@@ -23,7 +23,7 @@ export interface Payroll extends Record<string, unknown> {
   policyId: string;
   netPay: number;
   employeesInPayroll: number;
-  paymentDate: ISODateString;
+  paymentDate: string;
   status: "idle" | "completed" | "disbursed" | "awaiting";
 }
 

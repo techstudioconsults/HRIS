@@ -17,14 +17,16 @@ import { usePayrollStore } from "../stores/payroll-store";
 //   onCheckPayrollAvailability?: () => void;
 // }
 
-export function FundWalletAccountModal() {
+export function FundWalletAccountModal({
+  isGeneratePayrollBannerShowing,
+}: {
+  isGeneratePayrollBannerShowing: boolean;
+}) {
   const { startTour } = useTour();
   const [copied, setCopied] = useState(false);
   const { showFundWalletAccountModal, setShowFundWalletAccountModal, walletSetupCompleted } = usePayrollStore();
   const { useGetCompanyWallet } = usePayrollService();
-  // get the query object so we can refetch during polling
-  const walletQuery = useGetCompanyWallet();
-  const { data: companyWalletData } = walletQuery || {};
+  const { data: companyWalletData, refetch: refetchCompanyWallet } = useGetCompanyWallet();
 
   const handleCopyAccountNumber = async () => {
     try {
@@ -43,15 +45,15 @@ export function FundWalletAccountModal() {
     if (companyWalletData?.data?.accountNumber) return;
 
     const id = setInterval(() => {
-      walletQuery?.refetch?.();
+      refetchCompanyWallet?.();
     }, 5000);
 
     return () => clearInterval(id);
-  }, [showFundWalletAccountModal, companyWalletData?.data?.accountNumber, walletQuery]);
+  }, [showFundWalletAccountModal, companyWalletData?.data?.accountNumber, refetchCompanyWallet]);
 
   const handleConfirm = async () => {
     setShowFundWalletAccountModal(false);
-    if (walletSetupCompleted) {
+    if (walletSetupCompleted && isGeneratePayrollBannerShowing) {
       startTour(generatePayrollTourStep);
     }
   };

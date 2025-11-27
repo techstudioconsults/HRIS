@@ -1,6 +1,5 @@
 "use client";
 
-import MainButton from "@/components/shared/button";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -15,8 +14,6 @@ interface ApprovalProgressModalProperties {
   selectedPayrollId: string;
   approvals: PayrollApproval[];
   isApprovalsLoading: boolean;
-  isDecidingApproval: boolean;
-  onDecideApproval: (parameters: { payrollId: string; status: "approved" | "declined" }) => void;
 }
 
 export const ApprovalProgressModal = ({
@@ -25,8 +22,6 @@ export const ApprovalProgressModal = ({
   selectedPayrollId,
   approvals,
   isApprovalsLoading,
-  isDecidingApproval,
-  onDecideApproval,
 }: ApprovalProgressModalProperties) => {
   return (
     <ReusableDialog
@@ -59,14 +54,6 @@ export const ApprovalProgressModal = ({
                   ? approval.status.charAt(0).toUpperCase() + approval.status.slice(1)
                   : "Pending";
 
-              const isPending = statusLabel === "Pending";
-              const handleApprove = () => {
-                void onDecideApproval({ payrollId: approval.payrollId, status: "approved" });
-              };
-              const handleDecline = () => {
-                void onDecideApproval({ payrollId: approval.payrollId, status: "declined" });
-              };
-
               return (
                 <section key={approval.employee.id} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -79,40 +66,16 @@ export const ApprovalProgressModal = ({
                       {role ? <p className="text-xs text-gray-500">{role}</p> : null}
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Badge
-                      className={cn(
-                        "rounded-full px-4 py-2",
-                        statusLabel === "Pending" && "bg-warning-50 text-warning",
-                        statusLabel === "Approved" && "bg-success-50 text-success",
-                        statusLabel === "Declined" && "bg-destructive-50 text-destructive",
-                      )}
-                    >
-                      {statusLabel}
-                    </Badge>
-                    {isPending && (
-                      <div className="flex items-center gap-2">
-                        <MainButton
-                          size="sm"
-                          variant="primary"
-                          onClick={handleApprove}
-                          isDisabled={isDecidingApproval}
-                          isLoading={isDecidingApproval}
-                        >
-                          Approve
-                        </MainButton>
-                        <MainButton
-                          size="sm"
-                          variant="destructive"
-                          onClick={handleDecline}
-                          isDisabled={isDecidingApproval}
-                          isLoading={isDecidingApproval}
-                        >
-                          Decline
-                        </MainButton>
-                      </div>
+                  <Badge
+                    className={cn(
+                      "rounded-full px-4 py-2",
+                      statusLabel === "Pending" && "bg-warning-50 text-warning",
+                      statusLabel === "Approved" && "bg-success-50 text-success",
+                      statusLabel === "Declined" && "bg-destructive-50 text-destructive",
                     )}
-                  </div>
+                  >
+                    {statusLabel}
+                  </Badge>
                 </section>
               );
             })

@@ -66,7 +66,6 @@ const PayrollView = () => {
     setShowPayrollDrawer,
     hidePayrollNotificationBanner,
     payrollSelectedDate,
-    setHideNotificationBanner,
   } = usePayrollStore();
   const {
     useGetCompanyPayrollPolicy,
@@ -75,17 +74,12 @@ const PayrollView = () => {
     useGetPayslips,
     useGetCompanyWallet,
     useGetPayrollApprovals,
-    useDecidePayrollApproval,
     useGetPayrollByID,
   } = usePayrollService();
   const { data: companyWallet } = useGetCompanyWallet();
   const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
   const { data: allPayrolls, isLoading: loadingPayrolls, refetch: refetchPayrolls } = useGetAllPayrolls();
   const { mutateAsync: createPayroll, isPending: isCreatingPayroll } = useCreatePayroll();
-  const { mutateAsync: decideApproval, isPending: isDecidingApproval } = useDecidePayrollApproval({
-    onSuccess: () => toast.success("Decision recorded"),
-    onError: () => toast.error("Failed to record decision"),
-  });
   const [isWalletBalanceVisible, setIsWalletBalanceVisible] = useState(true);
   const [showNoPayrollBanner, setShowNoPayrollBanner] = useState(false);
   const [selectedPayrollId, setSelectedPayrollId] = useState<string>("");
@@ -101,7 +95,7 @@ const PayrollView = () => {
   });
 
   // Fetch single payroll details when an ID is selected
-  const { data: selectedPayrollResponse, isLoading: loadingSelectedPayroll } = useGetPayrollByID(selectedPayrollId, {
+  const { data: selectedPayrollResponse } = useGetPayrollByID(selectedPayrollId, {
     enabled: !!selectedPayrollId,
   });
 
@@ -496,20 +490,7 @@ const PayrollView = () => {
       </section>
 
       <section className={cn("rounded-lg", showPayrollBanner ? `block` : `hidden`)}>
-        <div className="bg-primary-500 text-background relative rounded-lg p-5">
-          {/* <button
-            type="button"
-            aria-label="Hide banner"
-            className="text-background/80 hover:text-background absolute top-2 right-2"
-            onClick={() => {
-              // Do not allow hiding while awaiting approval; ensure run banner stays visible
-              if (!isAwaitingApproval && shouldShowApprovalProgressBanner) {
-                setHideNotificationBanner(true);
-              }
-            }}
-          >
-            <CloseCircle />
-          </button> */}
+        <div className="bg-primary-500 text-background relative rounded-lg p-5 shadow">
           <p className="text-background max-w-4xl text-sm">
             {shouldShowApprovalProgressBanner
               ? PAYROLL_RUN_MESSAGE(approvalBannerDateLabel ?? "", () => setIsApprovalProgressOpen(true))
@@ -609,8 +590,8 @@ const PayrollView = () => {
       <PayrollSetupSettingsModal />
 
       {/* Fund Wallet Modal */}
-      <FundWalletFormModal />
-      <FundWalletAccountModal />
+      <FundWalletFormModal isGeneratePayrollBannerShowing={showNoPayrollBanner} />
+      <FundWalletAccountModal isGeneratePayrollBannerShowing={showNoPayrollBanner} />
 
       {/* Schedule Payroll Drawer */}
       <SchedulePayrollDrawer />
@@ -618,7 +599,7 @@ const PayrollView = () => {
         open={showRunPayrollDrawer}
         onOpenChange={setShowPayrollDrawer}
         payrollId={selectedPayrollId || null}
-        summary={payrollData}
+        summary={selectedPayrollRecord}
         canRunNow={canRunSelectedPayroll}
       />
 
@@ -629,8 +610,6 @@ const PayrollView = () => {
         selectedPayrollId={selectedPayrollId}
         approvals={approvals}
         isApprovalsLoading={isApprovalsLoading}
-        isDecidingApproval={isDecidingApproval}
-        onDecideApproval={decideApproval}
       />
 
       {/* Add Employee Modal */}

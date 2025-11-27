@@ -120,6 +120,8 @@ export const SchedulePayrollDrawer = () => {
     return payrolls.find((p) => p.id === selectedPayrollId) ?? null;
   }, [payrolls, selectedPayrollId]);
 
+  const status = selectedPayroll?.status !== `idle`;
+
   const statusBanner = getStatusBanner(selectedPayroll?.status, selectedPayroll?.paymentDate);
 
   const payrollIdForApprovals = selectedPayroll?.id ?? "";
@@ -138,32 +140,31 @@ export const SchedulePayrollDrawer = () => {
 
     setSelectedDate(date);
 
-    try {
-      await createPayroll({ paymentDate: date.toISOString() });
-
-      toast.success("Payroll scheduled successfully.", {
-        description: `Payroll has been scheduled for ${formatDate(date.toISOString())}.`,
-      });
-
-      setIsChangeDateModalOpen(false);
-      refetchPayrolls();
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message?: string }>;
-      const message = axiosError.response?.data?.message ?? "Failed to schedule payroll.";
-
-      toast.error(message, {
-        description:
-          axiosError.response?.data?.message ?? "Something went wrong while scheduling payroll. Please try again.",
-        action: axiosError.response?.data?.message
-          ? {
+    await createPayroll(
+      { paymentDate: date.toISOString() },
+      {
+        onSuccess: () => {
+          toast.success("Payroll scheduled successfully.", {
+            description: `Payroll has been scheduled for ${formatDate(date.toISOString())}.`,
+          });
+          setIsChangeDateModalOpen(false);
+          refetchPayrolls();
+        },
+        onError: (error) => {
+          const axiosError = error as AxiosError<{ message?: string }>;
+          const message = axiosError.response?.data?.message ?? "Failed to schedule payroll.";
+          toast.error("Something went wrong", {
+            description: message,
+            action: {
               label: "Payroll Settings",
               onClick: () => {
                 router.push("/admin/payroll/setup");
               },
-            }
-          : undefined,
-      });
-    }
+            },
+          });
+        },
+      },
+    );
   };
 
   return (
@@ -350,16 +351,18 @@ export const SchedulePayrollDrawer = () => {
                                 {role ? <p className="text-xs text-gray-500">{role}</p> : null}
                               </div>
                             </div>
-                            <Badge
-                              className={cn(
-                                `rounded-full px-4 py-2`,
-                                statusLabel === "Pending" && "bg-warning-50 text-warning",
-                                statusLabel === "Approved" && "bg-success-50 text-success",
-                                statusLabel === "Declined" && "bg-destructive-50 text-destructive",
-                              )}
-                            >
-                              {statusLabel}
-                            </Badge>
+                            {status && (
+                              <Badge
+                                className={cn(
+                                  `rounded-full px-4 py-2`,
+                                  statusLabel === "Pending" && "bg-warning-50 text-warning",
+                                  statusLabel === "Approved" && "bg-success-50 text-success",
+                                  statusLabel === "Declined" && "bg-destructive-50 text-destructive",
+                                )}
+                              >
+                                {statusLabel}
+                              </Badge>
+                            )}
                           </section>
                         );
                       })

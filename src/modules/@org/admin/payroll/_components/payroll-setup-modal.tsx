@@ -19,10 +19,18 @@ export const PayrollSetupSettingsModal = () => {
   const { startTour } = useTour();
 
   useEffect(() => {
-    // Only show modal if payday is 0 AND user hasn't just completed the setup form
-    if (payrollPolicy?.data.payday === 0 && !hasCompletedPayrollPolicySetupForm) {
-      setShowPayrollSettingsSetupModal(true);
-    } else if (payrollPolicy?.data.payday !== 0) {
+    // If payday is set (not 0), mark setup as complete and clear the modal
+    if (payrollPolicy?.data.payday !== 0 && payrollPolicy?.data.payday !== undefined) {
+      localStorage.setItem("tsahr-payroll-setup-modal-seen", "true");
+      setShowPayrollSettingsSetupModal(false);
+    }
+    // If payday is 0 (setup not done), show modal regardless of local storage
+    else if (payrollPolicy?.data.payday === 0) {
+      const hasSeenModal = localStorage.getItem("tsahr-payroll-setup-modal-seen");
+      if (!hasSeenModal && !hasCompletedPayrollPolicySetupForm) {
+        setShowPayrollSettingsSetupModal(true);
+      }
+    } else {
       setShowPayrollSettingsSetupModal(false);
     }
   }, [payrollPolicy?.data?.payday, hasCompletedPayrollPolicySetupForm, setShowPayrollSettingsSetupModal]);
@@ -64,6 +72,7 @@ export const PayrollSetupSettingsModal = () => {
             variant="primary"
             className="w-full"
             onClick={() => {
+              localStorage.setItem("payroll-setup-modal-seen", "true");
               startTour(payrollSetupTourSteps);
               router.push("/admin/payroll/setup");
             }}

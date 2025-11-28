@@ -1,6 +1,6 @@
 "use client";
 
-import Loading from "@/app/Loading";
+import Loading from "@/app/loading";
 import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import { BackButton } from "@/components/shared/back-button";
 import MainButton from "@/components/shared/button";

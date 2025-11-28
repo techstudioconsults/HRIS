@@ -1,7 +1,9 @@
 "use client";
 
 import MainButton from "@/components/shared/button";
-import { Add, Calendar, Export } from "iconsax-reactjs";
+import ExportAction from "@/components/shared/export-action";
+import { ComboBox } from "@/components/shared/select-dropdown/combo-box";
+import { Add } from "iconsax-reactjs";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
@@ -12,28 +14,21 @@ export const DashboardHeader = () => {
       <div className="min-h-[88px] py-3">
         {session && (
           <>
-            <h4 className="">Hi {`${session?.user.name}`},</h4>
+            <h4 className="">Hi {`${session?.user.employee.fullName}`},</h4>
             <p className="">Manage your team with confidence today.</p>
           </>
         )}
       </div>
       <div className="hidden flex-col items-center gap-4 lg:flex lg:flex-row">
-        <MainButton
-          className="border-gray-75 text-black dark:text-white"
-          variant="outline"
-          isLeftIconVisible={true}
-          icon={<Calendar />}
-        >
-          May 17 2025
-        </MainButton>
-        <MainButton
-          className="border-gray-75 text-black dark:text-white"
-          variant="outline"
-          isLeftIconVisible={true}
-          icon={<Export />}
-        >
-          Export
-        </MainButton>
+        <ComboBox
+          options={[]}
+          value={undefined}
+          onValueChange={() => {}}
+          placeholder="Select overview period"
+          className="border-border h-10 w-[20rem] border"
+        />
+
+        <ExportAction />
         <Link href="/admin/employees/add-employee">
           <MainButton variant="primary" isLeftIconVisible={true} icon={<Add />}>
             Add Employee

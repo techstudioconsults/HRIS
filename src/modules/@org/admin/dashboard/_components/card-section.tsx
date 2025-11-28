@@ -1,12 +1,15 @@
+import { SkeletonLoader } from "@/components/shared/loading";
 import { Briefcase, Calendar, Clock, People } from "iconsax-reactjs";
+import { lazy, Suspense } from "react";
 
 import { CardGroup } from "./card-group";
-import { DashboardCard } from "./dashboard-card";
+
+const DashboardCard = lazy(() => import("./dashboard-card").then((module) => ({ default: module.DashboardCard })));
 
 export const CardSection = () => {
   return (
-    <div className="space-y-6">
-      <CardGroup>
+    <CardGroup>
+      <Suspense fallback={SkeletonLoader({ variant: "card" })}>
         <DashboardCard
           title="New Joiners"
           value={15}
@@ -17,7 +20,9 @@ export const CardSection = () => {
           iconVariant="success"
           titleColor=""
         />
+      </Suspense>
 
+      <Suspense fallback={SkeletonLoader({ variant: "card" })}>
         <DashboardCard
           title="Pending Leave Request"
           value={8}
@@ -26,7 +31,9 @@ export const CardSection = () => {
           icon={<Calendar size={20} />}
           iconVariant="primary"
         />
+      </Suspense>
 
+      <Suspense fallback={SkeletonLoader({ variant: "card" })}>
         <DashboardCard
           title="Payroll Summary"
           value="N5.5M"
@@ -34,9 +41,11 @@ export const CardSection = () => {
           icon={<Briefcase size={20} />}
           iconVariant="warning"
         />
+      </Suspense>
 
+      <Suspense fallback={SkeletonLoader({ variant: "card" })}>
         <DashboardCard title="Click-In Summary" value="98%" icon={<Clock size={20} />} iconVariant="purple-500" />
-      </CardGroup>
-    </div>
+      </Suspense>
+    </CardGroup>
   );
 };

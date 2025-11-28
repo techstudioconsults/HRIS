@@ -2,7 +2,7 @@
 /* eslint-disable unused-imports/no-unused-vars */
 "use client";
 
-import Loading from "@/app/Loading";
+import Loading from "@/app/loading";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { GenericDropdown } from "@/components/shared/drop-down";

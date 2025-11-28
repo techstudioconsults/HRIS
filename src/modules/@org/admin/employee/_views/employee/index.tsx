@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import Loading from "@/app/Loading";
 import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
@@ -62,7 +61,7 @@ export const AllEmployees = () => {
   // Build API filters from URL state (nuqs)
   const apiFilters = useMemo(() => getApiFilters(), [getApiFilters]);
 
-  const { data: employeeData, isLoading } = useGetAllEmployees(apiFilters);
+  const { data: employeeData } = useGetAllEmployees(apiFilters);
 
   // Apply filter values to URL (nuqs) and reset page
   const handleFilterChange = useCallback(
@@ -156,54 +155,50 @@ export const AllEmployees = () => {
           }
         />
 
-        {isLoading ? (
-          <Loading className="!h-[70dvh]" text="Loading employee table." />
-        ) : (
-          <section>
-            {employeeData?.data?.items.length ? (
-              <AdvancedDataTable
-                data={employeeData.data.items}
-                columns={employeeColumn}
-                currentPage={employeeData.data.metadata.page}
-                totalPages={employeeData.data.metadata.totalPages}
-                itemsPerPage={employeeData.data.metadata.limit}
-                hasPreviousPage={employeeData.data.metadata.hasPreviousPage}
-                hasNextPage={employeeData.data.metadata.hasNextPage}
-                onPageChange={handlePageChange}
-                rowActions={getRowActions}
-                onRowClick={(employee: any) => {
-                  if (employee?.id) {
-                    router.push(`/admin/employees/${employee.id}`);
-                  }
-                }}
-                showPagination={true}
-                enableRowSelection={true}
-                enableColumnVisibility={true}
-                enableSorting={true}
-                enableFiltering={true}
-                mobileCardView={true}
-                showColumnCustomization={false}
-              />
-            ) : (debouncedSearch && debouncedSearch.trim()) ||
-              teamId ||
-              roleId ||
-              (status && status !== "all") ||
-              sortBy ? (
-              <FilteredEmptyState onReset={handleResetFilters} />
-            ) : (
-              <EmptyState
-                className="bg-background"
-                images={[{ src: empty1.src, alt: "No employees", width: 100, height: 100 }]}
-                title="No employee yet."
-                description="Once you add team members, you'll see their details here, including department, role, work status, and more."
-                button={{
-                  text: "Add New Employee",
-                  onClick: () => router.push("/admin/employees/add-employee"),
-                }}
-              />
-            )}
-          </section>
-        )}
+        <section>
+          {employeeData?.data?.items.length ? (
+            <AdvancedDataTable
+              data={employeeData.data.items}
+              columns={employeeColumn}
+              currentPage={employeeData.data.metadata.page}
+              totalPages={employeeData.data.metadata.totalPages}
+              itemsPerPage={employeeData.data.metadata.limit}
+              hasPreviousPage={employeeData.data.metadata.hasPreviousPage}
+              hasNextPage={employeeData.data.metadata.hasNextPage}
+              onPageChange={handlePageChange}
+              rowActions={getRowActions}
+              onRowClick={(employee: any) => {
+                if (employee?.id) {
+                  router.push(`/admin/employees/${employee.id}`);
+                }
+              }}
+              showPagination={true}
+              enableRowSelection={true}
+              enableColumnVisibility={true}
+              enableSorting={true}
+              enableFiltering={true}
+              mobileCardView={true}
+              showColumnCustomization={false}
+            />
+          ) : (debouncedSearch && debouncedSearch.trim()) ||
+            teamId ||
+            roleId ||
+            (status && status !== "all") ||
+            sortBy ? (
+            <FilteredEmptyState onReset={handleResetFilters} />
+          ) : (
+            <EmptyState
+              className="bg-background"
+              images={[{ src: empty1.src, alt: "No employees", width: 100, height: 100 }]}
+              title="No employee yet."
+              description="Once you add team members, you'll see their details here, including department, role, work status, and more."
+              button={{
+                text: "Add New Employee",
+                onClick: () => router.push("/admin/employees/add-employee"),
+              }}
+            />
+          )}
+        </section>
       </PageSection>
 
       <DeleteConfirmationModal />

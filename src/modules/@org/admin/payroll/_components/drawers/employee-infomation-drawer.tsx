@@ -1,6 +1,6 @@
 "use client";
 
-import Loading from "@/app/Loading";
+import Loading from "@/app/loading";
 import { BackButton } from "@/components/shared/back-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

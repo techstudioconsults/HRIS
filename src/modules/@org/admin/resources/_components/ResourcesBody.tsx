@@ -1,6 +1,6 @@
 "use client";
 
-import Loading from "@/app/Loading";
+import Loading from "@/app/loading";
 import { ErrorEmptyState } from "@/components/shared/empty-state";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 

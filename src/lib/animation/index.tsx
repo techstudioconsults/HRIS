@@ -141,13 +141,54 @@ export const PageSection: FC<PageSectionProperties> = ({ children, index, classN
   const context = useContext(AnimationContext);
 
   if (!context) {
-    throw new Error("PageSection must be used within a PageWrapper");
+    throw new Error("PageSection must be usegetItemStyled within a PageWrapper");
   }
 
   const { getItemStyle, getItemClassName } = context;
 
   return (
     <div {...properties} style={getItemStyle(index)} className={getItemClassName(className)}>
+      {children}
+    </div>
+  );
+};
+
+// =========================================================
+// AnimatedContent – Inner wrapper for Suspense-loaded content
+// Use this INSIDE Suspense boundaries to animate only when real content loads
+
+interface AnimatedContentProperties extends React.HTMLAttributes<HTMLDivElement> {
+  children: ReactNode;
+  index: number;
+  className?: string;
+}
+
+export const AnimatedContent: FC<AnimatedContentProperties> = ({ children, index, className, ...properties }) => {
+  const context = useContext(AnimationContext);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+
+  if (!context) {
+    throw new Error("AnimatedContent must be used within a PageWrapper");
+  }
+
+  const { getItemStyle, getItemClassName } = context;
+
+  // Trigger animation after component mounts (after Suspense resolves)
+  useEffect(() => {
+    // Use double RAF to ensure content is painted
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setShouldAnimate(true);
+      });
+    });
+  }, []);
+
+  return (
+    <div
+      {...properties}
+      style={shouldAnimate ? getItemStyle(index) : undefined}
+      className={cn(shouldAnimate ? getItemClassName(className) : cn(className, "translate-y-8 scale-95 opacity-0"))}
+    >
       {children}
     </div>
   );

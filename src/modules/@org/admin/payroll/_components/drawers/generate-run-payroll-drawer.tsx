@@ -53,7 +53,7 @@ export const GenerateRunPayrollDrawer = ({
   const approvals = (approvalsResponse?.data ?? []) as PayrollApproval[];
 
   const totalEmployees = summary?.employeesInPayroll ?? 0;
-  const totalPayroll = Number(summary?.netPay) ?? 0;
+  const totalPayroll = summary?.netPay ?? 0;
   const walletBalance = Number(summary?.walletBalance) ?? 0;
   const paymentDateLabel = summary?.paymentDate ? formatDate(summary.paymentDate) : "";
   const processingCharges = 0;

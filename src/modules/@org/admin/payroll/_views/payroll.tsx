@@ -599,7 +599,8 @@ const PayrollView = () => {
         open={showRunPayrollDrawer}
         onOpenChange={setShowPayrollDrawer}
         payrollId={selectedPayrollId || null}
-        summary={selectedPayrollRecord}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        summary={payrollData as any}
         canRunNow={canRunSelectedPayroll}
       />
 

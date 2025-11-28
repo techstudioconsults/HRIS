@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Wrapper } from "@/components/core/layout/wrapper";
@@ -7,6 +8,7 @@ import { useSSE } from "@/context/sse-provider";
 import { queryKeys } from "@/lib/react-query/query-keys";
 import { EventRegistry, type INotificationPayload } from "@/lib/sse/use-notifications";
 import { cn } from "@/lib/utils";
+import { usePayrollService } from "@/modules/@org/admin/payroll/services/use-service";
 import { useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -29,6 +31,7 @@ interface BaseNotification {
     onClick: () => void;
   }>;
   dismissible?: boolean;
+  payrollId?: string;
 }
 
 interface PayrollMetadata {
@@ -44,10 +47,14 @@ function createId() {
 // Map incoming SSE event -> UI notification config
 function mapEventToNotification(payload: INotificationPayload, inPayrollRoute: boolean): BaseNotification | null {
   const { type: eventType, data } = payload;
+  const meta = data?.metadata as PayrollMetadata | undefined;
+  const payrollId: string | undefined = meta?.payrollId ?? meta?.id ?? meta?.payroll_id;
+
   const base: Omit<BaseNotification, "id" | "render"> = {
     event: eventType,
     title: data?.title ? String(data.title) : eventType,
     body: data?.body ? String(data.body) : "",
+    payrollId,
   };
 
   // Determine render type based on route
@@ -89,15 +96,13 @@ function mapEventToNotification(payload: INotificationPayload, inPayrollRoute: b
         actions: [
           {
             label: "Approve Payroll",
-            onClick: () => {
-              window.location.href = `/admin/payroll`;
-            },
+            variant: "primary",
+            onClick: () => {}, // Will be wired in component
           },
           {
             label: "Decline Payroll",
-            onClick: () => {
-              window.location.href = `/admin/payroll`;
-            },
+            variant: "destructive",
+            onClick: () => {}, // Will be wired in component
           },
         ],
         ...base,
@@ -162,10 +167,54 @@ export const AppEventsListener = () => {
   const [banners, setBanners] = useState<BaseNotification[]>([]);
   const [modal, setModal] = useState<BaseNotification | null>(null);
   const queryClient = useQueryClient();
+  const { useDecidePayrollApproval } = usePayrollService();
+  const { mutateAsync: decideApproval, isPending: isDeciding } = useDecidePayrollApproval();
 
   const dismissBanner = useCallback((id: string) => {
     setBanners((previous) => previous.filter((b) => b.id !== id));
   }, []);
+
+  const handleApprovePayroll = useCallback(
+    async (payrollId: string, bannerId: string) => {
+      if (!payrollId) {
+        toast.error("Unable to approve", { description: "Payroll ID not found" });
+        return;
+      }
+      try {
+        await decideApproval({ payrollId, status: "approved" });
+        toast.success("Payroll approved successfully");
+        dismissBanner(bannerId);
+        queryClient.invalidateQueries({ queryKey: queryKeys.payroll.approvals(payrollId) });
+        queryClient.invalidateQueries({ queryKey: queryKeys.payroll.details(payrollId) });
+        queryClient.invalidateQueries({ queryKey: queryKeys.payroll.list({}) });
+      } catch (error: any) {
+        const message = error?.response?.data?.message ?? "Failed to approve payroll";
+        toast.error("Approval failed", { description: message });
+      }
+    },
+    [decideApproval, dismissBanner, queryClient],
+  );
+
+  const handleDeclinePayroll = useCallback(
+    async (payrollId: string, bannerId: string) => {
+      if (!payrollId) {
+        toast.error("Unable to decline", { description: "Payroll ID not found" });
+        return;
+      }
+      try {
+        await decideApproval({ payrollId, status: "declined" });
+        toast.success("Payroll declined");
+        dismissBanner(bannerId);
+        queryClient.invalidateQueries({ queryKey: queryKeys.payroll.approvals(payrollId) });
+        queryClient.invalidateQueries({ queryKey: queryKeys.payroll.details(payrollId) });
+        queryClient.invalidateQueries({ queryKey: queryKeys.payroll.list({}) });
+      } catch (error: any) {
+        const message = error?.response?.data?.message ?? "Failed to decline payroll";
+        toast.error("Decline failed", { description: message });
+      }
+    },
+    [decideApproval, dismissBanner, queryClient],
+  );
 
   const handleNotification = useCallback(
     (payload: INotificationPayload) => {
@@ -332,17 +381,31 @@ export const AppEventsListener = () => {
                 </div>
               </div>
               <div className="flex items-center gap-10">
-                {banner.actions?.map((a) => (
-                  <MainButton
-                    key={a.label}
-                    className="px-8"
-                    size="sm"
-                    variant={a.variant || "primary"}
-                    onClick={() => a.onClick()}
-                  >
-                    {a.label}
-                  </MainButton>
-                ))}
+                {banner.actions?.map((a) => {
+                  const isApprove = a.label === "Approve Payroll";
+                  const isDecline = a.label === "Decline Payroll";
+                  const handleClick = () => {
+                    if (isApprove && banner.payrollId) {
+                      handleApprovePayroll(banner.payrollId, banner.id);
+                    } else if (isDecline && banner.payrollId) {
+                      handleDeclinePayroll(banner.payrollId, banner.id);
+                    } else {
+                      a.onClick();
+                    }
+                  };
+                  return (
+                    <MainButton
+                      key={a.label}
+                      className="px-8"
+                      size="sm"
+                      variant={a.variant || "primary"}
+                      onClick={handleClick}
+                      isDisabled={isDeciding}
+                    >
+                      {a.label}
+                    </MainButton>
+                  );
+                })}
                 {banner.dismissible && (
                   <MainButton
                     aria-label="Dismiss notification"

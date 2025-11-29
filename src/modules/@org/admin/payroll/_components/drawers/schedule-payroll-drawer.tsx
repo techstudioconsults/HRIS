@@ -29,6 +29,51 @@ import { usePayrollService } from "../../services/use-service";
 import { usePayrollStore } from "../../stores/payroll-store";
 import type { Payroll, PayrollApproval } from "../../types";
 
+// Pure helpers (moved to module scope to satisfy lint rule requiring outer scope for arrow functions)
+const normalizeStatus = (status?: string) => (status || "").toLowerCase();
+const getStatusBadgeClasses = (status?: string) => {
+  const value = normalizeStatus(status);
+  if (value.includes("await")) return "bg-warning-50 text-warning";
+  if (value.includes("reject") || value.includes("decline")) return "bg-destructive-50 text-destructive";
+  if (value.includes("complete")) return "bg-success-50 text-success";
+  if (value.includes("disbursed")) return "bg-success-50 text-success"; // treat disbursed as success
+  if (value.includes("approve")) return "bg-blue-50 text-blue-600";
+  return "bg-muted text-foreground";
+};
+const getStatusBanner = (status?: string, date?: string): { message: string; classes: string } => {
+  const value = normalizeStatus(status);
+  const formattedDate = date ? formatDate(date) : "this period";
+  if (value.includes("await"))
+    return {
+      message: `Payroll for ${formattedDate} is awaiting approvals. Approvers must act before disbursement can begin.`,
+      classes: "border-warning-200 bg-warning-50",
+    };
+  if (value.includes("approve"))
+    return {
+      message: `Payroll for ${formattedDate} has been approved and is queued for processing/disbursement.`,
+      classes: "border-blue-200 bg-blue-50",
+    };
+  if (value.includes("disburs"))
+    return {
+      message: `Payroll for ${formattedDate} is currently being disbursed to employee accounts.`,
+      classes: "border-success-200 bg-success-50",
+    };
+  if (value.includes("complete"))
+    return {
+      message: `Payroll for ${formattedDate} has been completed successfully.`,
+      classes: "border-success-200 bg-success-50",
+    };
+  if (value.includes("reject") || value.includes("decline"))
+    return {
+      message: `Payroll for ${formattedDate} was rejected. Adjust the payroll or approvers then re-run.`,
+      classes: "border-destructive-200 bg-destructive-50",
+    };
+  return {
+    message: `Payroll is scheduled for ${formattedDate}. You can reschedule or cancel before processing begins.`,
+    classes: "border-accent bg-accent/10",
+  };
+};
+
 export const SchedulePayrollDrawer = () => {
   const router = useRouter();
   const { useGetCompanyWallet, useGetAllPayrolls, useCreatePayroll, useGetPayrollApprovals } = usePayrollService();
@@ -56,6 +101,7 @@ export const SchedulePayrollDrawer = () => {
     const shaped = payrollsResponse as unknown as { data?: ListPayroll[]; items?: ListPayroll[] } | undefined;
     const data = shaped?.data ?? shaped?.items ?? [];
     return Array.isArray(data) ? data : [];
+    24 / 11 / 2025;
   }, [payrollsResponse]);
 
   // Sort by payment date (default: earliest first)
@@ -74,6 +120,10 @@ export const SchedulePayrollDrawer = () => {
     return payrolls.find((p) => p.id === selectedPayrollId) ?? null;
   }, [payrolls, selectedPayrollId]);
 
+  const status = selectedPayroll?.status !== `idle`;
+
+  const statusBanner = getStatusBanner(selectedPayroll?.status, selectedPayroll?.paymentDate);
+
   const payrollIdForApprovals = selectedPayroll?.id ?? "";
   const { data: approvalsResponse, isLoading: isApprovalsLoading } = useGetPayrollApprovals(payrollIdForApprovals, {
     enabled: !!payrollIdForApprovals,
@@ -90,32 +140,31 @@ export const SchedulePayrollDrawer = () => {
 
     setSelectedDate(date);
 
-    try {
-      await createPayroll({ paymentDate: date.toISOString() });
-
-      toast.success("Payroll scheduled successfully.", {
-        description: `Payroll has been scheduled for ${formatDate(date.toISOString())}.`,
-      });
-
-      setIsChangeDateModalOpen(false);
-      refetchPayrolls();
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message?: string }>;
-      const message = axiosError.response?.data?.message ?? "Failed to schedule payroll.";
-
-      toast.error(message, {
-        description:
-          axiosError.response?.data?.message ?? "Something went wrong while scheduling payroll. Please try again.",
-        action: axiosError.response?.data?.message
-          ? {
+    await createPayroll(
+      { paymentDate: date.toISOString() },
+      {
+        onSuccess: () => {
+          toast.success("Payroll scheduled successfully.", {
+            description: `Payroll has been scheduled for ${formatDate(date.toISOString())}.`,
+          });
+          setIsChangeDateModalOpen(false);
+          refetchPayrolls();
+        },
+        onError: (error) => {
+          const axiosError = error as AxiosError<{ message?: string }>;
+          const message = axiosError.response?.data?.message ?? "Failed to schedule payroll.";
+          toast.error("Something went wrong", {
+            description: message,
+            action: {
               label: "Payroll Settings",
               onClick: () => {
                 router.push("/admin/payroll/setup");
               },
-            }
-          : undefined,
-      });
-    }
+            },
+          });
+        },
+      },
+    );
   };
 
   return (
@@ -187,7 +236,9 @@ export const SchedulePayrollDrawer = () => {
                                 {/* <td className="px-4 py-2">{p.policyId}</td>
                                 <td className="px-4 py-2">{p.id}</td> */}
                                 <td className="border px-4 py-2">
-                                  <Badge className="bg-warning-50 text-warning rounded-full">{p.status ?? "-"}</Badge>
+                                  <Badge className={cn("rounded-full px-3 py-1", getStatusBadgeClasses(p.status))}>
+                                    {p.status ?? "-"}
+                                  </Badge>
                                 </td>
                               </tr>
                             ))}
@@ -210,18 +261,15 @@ export const SchedulePayrollDrawer = () => {
                     Back to list
                   </button>
                 </div>
-                <div className="item-center border-accent bg-accent/10 flex gap-4 rounded-lg border p-4 text-sm text-gray-500">
+                <div className={cn("item-center flex gap-4 rounded-lg border p-4 text-sm", statusBanner.classes)}>
                   <Info size={16} />
-                  <p>
-                    Payroll is scheduled for
-                    {` ${formatDate(selectedPayroll.paymentDate)}`}.
-                  </p>
+                  <p className="leading-relaxed">{statusBanner.message}</p>
                 </div>
                 <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <DashboardCard
                     title="Total Employees"
                     value={<p className="text-base">{selectedPayroll?.employeesInPayroll ?? 0}</p>}
-                    className="border-border flex flex-col items-center justify-center gap-4 border text-center shadow-none"
+                    className="bg-muted flex flex-col items-center justify-center gap-4 text-center shadow-none"
                   />
                   <DashboardCard
                     title="Wallet Balance"
@@ -247,27 +295,27 @@ export const SchedulePayrollDrawer = () => {
                     titleColor="text-white"
                   />
                 </section>
-                <section className="border-border space-y-2 rounded-lg border p-4">
+                <section className="bg-muted space-y-2 rounded-lg p-4">
                   <div className="flex items-center justify-between">
-                    <p>Gross Pay</p>
-                    <p>{formatCurrency(selectedPayroll?.grossPay ?? 0)}</p>
+                    <p className="font-medium">Gross Pay</p>
+                    <p className="text-foreground font-medium">{formatCurrency(selectedPayroll?.grossPay ?? 0)}</p>
                   </div>
                   <div className="flex items-center justify-between">
-                    <p>Total Bonuses</p>
-                    <p>{formatCurrency(selectedPayroll?.bonus ?? 0)}</p>
+                    <p className="font-medium">Total Bonuses</p>
+                    <p className="text-foreground font-medium">{formatCurrency(selectedPayroll?.bonus ?? 0)}</p>
                   </div>
                   <div className="flex items-center justify-between">
-                    <p>Total Deductions</p>
-                    <p>{formatCurrency(selectedPayroll?.deduction ?? 0)}</p>
+                    <p className="font-medium">Total Deductions</p>
+                    <p className="text-foreground font-medium">{formatCurrency(selectedPayroll?.deduction ?? 0)}</p>
                   </div>
                   <div className="flex items-center justify-between pt-4 font-bold">
-                    <p>Net Pay</p>
-                    <p>{formatCurrency(selectedPayroll?.netPay ?? 0)}</p>
+                    <p className="text-success">Net Pay</p>
+                    <p className="text-success">{formatCurrency(selectedPayroll?.netPay ?? 0)}</p>
                   </div>
                 </section>
                 <section>
                   <h1 className="text-xl font-bold">Approvers</h1>
-                  <section className="border-border space-y-4 rounded-lg border p-4">
+                  <section className="bg-muted space-y-4 rounded-lg p-4">
                     {isApprovalsLoading ? (
                       <div className="text-muted-foreground text-sm">Loading approvers...</div>
                     ) : approvals.length === 0 ? (
@@ -299,20 +347,22 @@ export const SchedulePayrollDrawer = () => {
                                 <AvatarFallback>{initials}</AvatarFallback>
                               </Avatar>
                               <div>
-                                <p className="text-foreground">{name}</p>
+                                <p className="text-foreground text-sm font-medium">{name}</p>
                                 {role ? <p className="text-xs text-gray-500">{role}</p> : null}
                               </div>
                             </div>
-                            <Badge
-                              className={cn(
-                                `rounded-full px-4 py-2`,
-                                statusLabel === "Pending" && "bg-warning-50 text-warning",
-                                statusLabel === "Approved" && "bg-success-50 text-success",
-                                statusLabel === "Declined" && "bg-destructive-50 text-destructive",
-                              )}
-                            >
-                              {statusLabel}
-                            </Badge>
+                            {status && (
+                              <Badge
+                                className={cn(
+                                  `rounded-full px-4 py-2`,
+                                  statusLabel === "Pending" && "bg-warning-50 text-warning",
+                                  statusLabel === "Approved" && "bg-success-50 text-success",
+                                  statusLabel === "Declined" && "bg-destructive-50 text-destructive",
+                                )}
+                              >
+                                {statusLabel}
+                              </Badge>
+                            )}
                           </section>
                         );
                       })

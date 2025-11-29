@@ -54,7 +54,7 @@ export function TeamSwitcher({
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
             align="start"
             side={isMobile ? "bottom" : "right"}
-            sideOffset={4}
+            sideOffset={12}
           >
             <DropdownMenuLabel className="text-muted-foreground text-xs">Teams</DropdownMenuLabel>
             {teams.map(

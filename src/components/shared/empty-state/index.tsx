@@ -2,6 +2,7 @@
 
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { cn } from "@/lib/utils";
+import { AlertCircle } from "lucide-react";
 import Image from "next/image";
 import { ReactNode } from "react";
 
@@ -87,10 +88,10 @@ export const EmptyState = ({
   return (
     <Empty className={cn("border-none", className)}>
       <EmptyHeader className={headerClassName}>
-        {/* Media rendering based on variant */}
+        {/* Media rendering based on variant or fallback */}
         {variant === "icon" && icon && <EmptyMedia variant="icon">{icon}</EmptyMedia>}
 
-        {variant === "image" && (image || images) && (
+        {variant === "image" && (image || images) ? (
           <EmptyMedia variant="default">
             <div className="flex flex-wrap items-center justify-center gap-2">
               {image ? (
@@ -117,7 +118,11 @@ export const EmptyState = ({
               )}
             </div>
           </EmptyMedia>
-        )}
+        ) : variant === "image" && icon ? (
+          <EmptyMedia className="bg-primary-50" variant="icon">
+            {icon}
+          </EmptyMedia>
+        ) : null}
 
         {/* Title and Description */}
         {title && <EmptyTitle className={titleClassName}>{title}</EmptyTitle>}
@@ -218,10 +223,13 @@ export const ErrorEmptyState = ({
   onRetry: () => void;
 }) => (
   <EmptyState
+    className="bg-destructive/5"
     variant="image"
-    image={{ src: empty1.src, alt: "Error", width: 180, height: 180 }}
+    icon={<AlertCircle className="text-destructive" />}
     title={title}
+    titleClassName="text-destructive"
     description={description}
+    descriptionClassName="text-destructive"
     primaryAction={{
       text: "Try Again",
       onClick: onRetry,

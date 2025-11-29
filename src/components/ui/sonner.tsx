@@ -1,6 +1,8 @@
 "use client";
 
 import { useTheme } from "next-themes";
+import { BiSolidErrorAlt, BiSolidInfoCircle, BiSolidMessageSquareCheck } from "react-icons/bi";
+import { PiWarningFill } from "react-icons/pi";
 import { Toaster as Sonner, ToasterProps } from "sonner";
 
 const Toaster = ({ ...properties }: ToasterProps) => {
@@ -11,27 +13,27 @@ const Toaster = ({ ...properties }: ToasterProps) => {
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       position="bottom-center"
+      richColors
+      icons={{
+        error: <BiSolidErrorAlt size={24} />,
+        success: <BiSolidMessageSquareCheck size={24} />,
+        warning: <PiWarningFill size={24} />,
+        info: <BiSolidInfoCircle size={24} />,
+      }}
       toastOptions={{
         classNames: {
-          toast:
-            "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg group-[.toaster]:rounded-lg",
-          description: "group-[.toast]:text-muted-foreground",
-          actionButton:
-            "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground hover:group-[.toast]:bg-primary/90",
-          cancelButton: "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
-          error: "!text-destructive",
-          success: "group-[.toast]:bg-success group-[.toast]:text-success-foreground group-[.toast]:border-success",
-          warning: "group-[.toast]:bg-warning group-[.toast]:text-warning-foreground group-[.toast]:border-warning",
-          info: "group-[.toast]:bg-info group-[.toast]:text-info-foreground group-[.toast]:border-info",
+          toast: "!gap-4 !shadow-5xl !min-w-md",
+          title: "!font-bold",
+          description: "!font-medium",
+          actionButton: "",
+          cancelButton: "",
+          closeButton: "!absolute !-right-4 !-top-1 !relative-auto !ml-auto",
+          error: "!text-destructive !bg-background",
+          success: "!text-success !bg-success-50",
+          warning: "!text-warning-600 !bg-warning-50",
+          info: "!text-info !bg-primary-50 ",
         },
       }}
-      style={
-        {
-          "--normal-bg": "hsl(var(--background))",
-          "--normal-text": "hsl(var(--foreground))",
-          "--normal-border": "hsl(var(--border))",
-        } as React.CSSProperties
-      }
       {...properties}
     />
   );

@@ -1,7 +1,9 @@
 "use client";
 
-import Loading from "@/app/Loading";
+import { BreadCrumb } from "@/components/shared/breadcrumb";
 import MainButton from "@/components/shared/button";
+import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
+import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { PageSection, PageWrapper } from "@/lib/animation";
@@ -10,10 +12,12 @@ import { AdvancedDataTable, type IColumnDefinition } from "@/modules/@org/admin/
 // Removed inline dropdown; using table rowActions instead
 import { Plus } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import empty1 from "~/images/empty-state.svg";
+import AddNewMembers from "../../_components/forms/add-new-members";
+import Loading from "../../../../../../../note/loading";
 import { CardGroup } from "../../../dashboard/_components/card-group";
 import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
 import { useEmployeeRowActions } from "../../../employee/_views/table-data";
@@ -36,6 +40,7 @@ function hasDataItems(value: unknown): value is { data: { items: unknown[] } } {
 
 const SubTeamDetails = ({ params }: { params: { id: string } }) => {
   const { id } = params;
+  const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] = useState(false);
   // Employee row actions manage routing internally; no local router required
 
   const { useGetTeamsById } = useTeamService();
@@ -130,21 +135,29 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
   return (
     <PageWrapper className="space-y-8">
       <PageSection index={0}>
-        <div className="flex items-center justify-between pb-4">
-          <div className="flex flex-col items-start gap-2 text-center md:text-left">
-            <h1 className="text-2xl font-bold">Sub-Team Details</h1>
-            <div className="flex items-center gap-1 text-sm">
-              <Link href="/admin/teams" className="text-primary">
-                All Teams
-              </Link>
-            </div>
-          </div>
-          <div className="flex items-center gap-5">
-            <MainButton variant="primary" size="lg" isLeftIconVisible icon={<Plus />}>
+        <DashboardHeader
+          title="Sub Team Details"
+          subtitle={
+            <BreadCrumb
+              items={[
+                { label: "Teams", href: "/admin/teams" },
+                { label: teamData?.parent?.name || "Parent Team", href: `/admin/teams/${teamData?.parent?.id}` },
+                { label: teamData?.name || "", href: `/admin/teams/${id}` },
+              ]}
+            />
+          }
+          actionComponent={
+            <MainButton
+              variant="primary"
+              size="lg"
+              isLeftIconVisible
+              icon={<Plus />}
+              onClick={() => setIsAddMemberDialogOpen(true)}
+            >
               Add Member
             </MainButton>
-          </div>
-        </div>
+          }
+        />
       </PageSection>
 
       <PageSection index={1}>
@@ -200,12 +213,37 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
             description="Add members to this team to collaborate and assign roles."
             button={{
               text: "Add Member",
-              onClick: () => {
-                return;
-              },
+              onClick: () => setIsAddMemberDialogOpen(true),
             }}
           />
         )}
+        <ReusableDialog
+          open={isAddMemberDialogOpen}
+          onOpenChange={setIsAddMemberDialogOpen}
+          title="Assign Members"
+          description="Assign existing parent team members to this sub-team."
+          trigger={<span />}
+          className="min-w-2xl"
+        >
+          <AddNewMembers
+            parentTeamId={(() => {
+              const t = teamData as Team | undefined;
+              // If backend returns parent as object, extract id, else assume string
+              const parent: unknown = (t as unknown as { parent?: unknown })?.parent;
+              if (parent && typeof parent === "object" && (parent as { id?: string }).id) {
+                return (parent as { id: string }).id;
+              }
+              if (typeof parent === "string") return parent;
+              return t?.id || "";
+            })()}
+            availableRoles={[]}
+            onSubmit={async () => {
+              // TODO: integrate actual membership assignment mutation
+              toast.success("Member assigned (simulate).");
+            }}
+            onCancel={() => setIsAddMemberDialogOpen(false)}
+          />
+        </ReusableDialog>
       </PageSection>
     </PageWrapper>
   );

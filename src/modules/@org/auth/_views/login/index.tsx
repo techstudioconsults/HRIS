@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import MainButton from "@/components/shared/button";
@@ -30,45 +29,35 @@ export const Login = () => {
   } = methods;
 
   const handleSubmitForm = async (data: LoginFormData) => {
-    try {
-      const result = await signIn("credentials", {
-        email: data.email,
-        password: data.password,
-        redirect: false,
-      });
+    const result = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    });
 
-      if (result?.error) {
-        // Extract the actual error message from CredentialsSignin error
-        let errorMessage = result.error;
-
-        // Try to extract message after "CredentialsSignin: " prefix
-        if (errorMessage.includes("CredentialsSignin: ")) {
-          errorMessage = errorMessage.split("CredentialsSignin: ")[1];
-        }
-
-        // If it's the default NextAuth error, show the axios message
-        if (errorMessage.includes("Read more at")) {
-          errorMessage = errorMessage.split(".")[0];
-        }
-
-        toast.error("Login Failed", {
-          description: errorMessage,
-        });
-        setError("password", { message: errorMessage });
-        return;
+    if (result?.error) {
+      // Extract the actual error message from CredentialsSignin error
+      let errorMessage = result.error;
+      // Try to extract message after "CredentialsSignin: " prefix
+      if (errorMessage.includes("CredentialsSignin: ")) {
+        errorMessage = errorMessage.split("CredentialsSignin: ")[1];
+      }
+      // If it's the default NextAuth error, show the axios message
+      if (errorMessage.includes("Read more at")) {
+        errorMessage = errorMessage.split(".")[0];
       }
 
-      if (result?.ok) {
-        toast.success("Login Successful", {
-          description: "Redirecting to dashboard...",
-        });
-        router.push("/onboarding");
-      }
-    } catch (error: any) {
-      toast.error("Login Failed", {
-        description: error.message || "An error occurred during login",
+      toast.warning("Login Failed", {
+        description: errorMessage,
       });
-      setError("password", { message: error.message || "Invalid credentials" });
+      setError("password", { message: errorMessage });
+      return;
+    }
+    if (result?.ok) {
+      toast.success("Login Successful", {
+        description: "Redirecting to dashboard...",
+      });
+      router.push("/onboarding");
     }
   };
 

@@ -43,10 +43,7 @@ export function ReusableDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent
-        hideClose={hideClose}
-        className={cn("border-default h-full items-center sm:max-w-[425px] md:h-fit", className)}
-      >
+      <DialogContent hideClose={hideClose} className={cn("border-default min-w-2xl items-center", className)}>
         <DialogHeader className={cn("h-fit", wrapperClassName)}>
           {img &&
             (img.startsWith("http") || img.startsWith("/") ? (

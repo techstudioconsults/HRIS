@@ -1,9 +1,22 @@
 import MainButton from "@/components/shared/button";
 import { PageSection, PageWrapper } from "@/lib/animation";
+import { useCallback, useEffect } from "react";
 
 import { CompanyProfile } from "../../_components/forms/company-profile";
+import { stepOneTourSteps } from "../../config/tour-steps";
+import { useTour } from "../../context/tour-context";
 
 export const StepOne = () => {
+  const { startTour } = useTour();
+
+  const handleStartTour = useCallback(() => {
+    startTour(stepOneTourSteps);
+  }, [startTour]);
+
+  useEffect(() => {
+    handleStartTour();
+  }, [handleStartTour]);
+
   return (
     <PageWrapper className={`flex flex-col items-center justify-between gap-8 lg:flex-row`}>
       <section className={`max-w-[646px] flex-1 space-y-[41px]`}>
@@ -25,7 +38,7 @@ export const StepOne = () => {
           </p>
         </PageSection>
         <PageSection index={2} className="flex gap-4">
-          <MainButton href="/onboarding/welcome" variant="primaryOutline">
+          <MainButton href={`/onboarding/welcome`} variant="primaryOutline">
             Back
           </MainButton>
         </PageSection>

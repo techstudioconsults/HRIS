@@ -112,51 +112,59 @@ export const SingleEmployeeForm = ({ index }: SingleEmployeeFormProperties) => {
   return (
     <section className="w-full">
       <section className={`space-y-4`}>
-        <FormField
-          placeholder={`Enter first name`}
-          className={`h-12 w-full`}
-          label={`First Name`}
-          name={`employees.${index}.firstName`}
-        />
+        <div data-tour="employee-name">
+          <FormField
+            placeholder={`Enter first name`}
+            className={`h-12 w-full`}
+            label={`First Name`}
+            name={`employees.${index}.firstName`}
+          />
+        </div>
         <FormField
           placeholder={`Enter last name`}
           className={`h-12 w-full`}
           label={`Last Name`}
           name={`employees.${index}.lastName`}
         />
-        <FormField
-          type={`email`}
-          placeholder={`Enter email address`}
-          className={`h-12 w-full`}
-          label={`Email Address`}
-          name={`employees.${index}.email`}
-        />
+        <div data-tour="employee-email">
+          <FormField
+            type={`email`}
+            placeholder={`Enter email address`}
+            className={`h-12 w-full`}
+            label={`Email Address`}
+            name={`employees.${index}.email`}
+          />
+        </div>
         <FormField
           placeholder={`Enter phone number`}
           className={`h-12 w-full`}
           label={`Phone Number`}
           name={`employees.${index}.phoneNumber`}
         />
-        <FormField
-          type="select"
-          placeholder={loadingDepartments ? "Loading departments..." : "Select department"}
-          className="!h-12 w-full"
-          label="Department"
-          name={`employees.${index}.teamId`}
-          options={departmentOptions.map((dept) => ({ value: dept.id, label: dept.name }))}
-          disabled={loadingDepartments}
-        />
-        <FormField
-          type="select"
-          placeholder={
-            selectedTeamId ? (loadingRoles ? "Loading roles..." : "Select role") : "Select a department first"
-          }
-          className="!h-12 w-full"
-          label="Role"
-          name={`employees.${index}.roleId`}
-          options={roleOptions.map((role) => ({ value: role.id, label: role.name }))}
-          disabled={!selectedTeamId || loadingRoles}
-        />
+        <div data-tour="employee-team">
+          <FormField
+            type="select"
+            placeholder={loadingDepartments ? "Loading departments..." : "Select department"}
+            className="!h-12 w-full"
+            label="Department"
+            name={`employees.${index}.teamId`}
+            options={departmentOptions.map((dept) => ({ value: dept.id, label: dept.name }))}
+            disabled={loadingDepartments}
+          />
+        </div>
+        <div data-tour="employee-role">
+          <FormField
+            type="select"
+            placeholder={
+              selectedTeamId ? (loadingRoles ? "Loading roles..." : "Select role") : "Select a department first"
+            }
+            className="!h-12 w-full"
+            label="Role"
+            name={`employees.${index}.roleId`}
+            options={roleOptions.map((role) => ({ value: role.id, label: role.name }))}
+            disabled={!selectedTeamId || loadingRoles}
+          />
+        </div>
         <input
           type="hidden"
           name={`employees.${index}.password`}

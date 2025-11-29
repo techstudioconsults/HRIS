@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { BreadCrumb } from "@/components/shared/breadcrumb";
@@ -34,7 +35,7 @@ export const AddEmployeeForm = () => {
   const { data: teams = [], isLoading: loadingTeams } = useGetAllTeams();
   const { data: banksResponse, isLoading: loadingBanks } = useGetApprovedBanks();
   const banks = useMemo(() => banksResponse?.data ?? [], [banksResponse]);
-  const createEmployeeMutation = useCreateEmployee();
+  const { mutateAsync: createEmployeeMutation, isPending: isSubmitting } = useCreateEmployee();
   // const [showAlert, setShowAlert] = useState(false);
   // const [alertTitle, setAlertTitle] = useState("");
   // const [alertDescription, setAlertDescription] = useState("");
@@ -45,7 +46,6 @@ export const AddEmployeeForm = () => {
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
     watch,
     setValue,
     // reset,
@@ -56,9 +56,14 @@ export const AddEmployeeForm = () => {
 
   // Memoize derived team and roles to prevent re-renders triggering an effect loop
   const selectedTeam = useMemo(() => teams.find((team) => String(team.id) === selectedTeamId), [teams, selectedTeamId]);
-  type RoleLite = { id: string | number; name: string };
-  const normalizedDerivedRoles = useMemo(
-    () => (selectedTeam?.roles ?? []).map((r: RoleLite) => ({ id: String(r.id), name: r.name })),
+  type RoleInput = { id: string | number; name: string };
+  type RoleLite = { id: string; name: string };
+  const normalizedDerivedRoles = useMemo<RoleLite[]>(
+    () =>
+      ((selectedTeam?.roles ?? []) as RoleInput[]).map((r) => ({
+        id: String(r.id),
+        name: r.name,
+      })),
     [selectedTeam],
   );
 
@@ -82,7 +87,7 @@ export const AddEmployeeForm = () => {
     }
 
     // If team is selected but current role does not exist in that team, clear it
-    if (selectedTeamId && selectedRoleId && !normalizedDerivedRoles.some((r) => r.id === selectedRoleId)) {
+    if (selectedTeamId && selectedRoleId && !normalizedDerivedRoles.some((r: any) => r.id === selectedRoleId)) {
       setValue("roleId", "");
     }
   }, [selectedTeamId, selectedRoleId, normalizedDerivedRoles, setValue]);
@@ -90,7 +95,7 @@ export const AddEmployeeForm = () => {
   // Auto-set bank code when bank name is selected
   useEffect(() => {
     if (selectedBankName) {
-      const selectedBank = banks.find((bank) => bank.name === selectedBankName);
+      const selectedBank = banks.find((bank: any) => bank.name === selectedBankName);
       if (selectedBank) {
         setValue("bankCode", selectedBank.code);
       }
@@ -102,64 +107,60 @@ export const AddEmployeeForm = () => {
   };
 
   const onSubmit = async (formData: EmployeeFormData) => {
-    try {
-      const formDataToSend = new FormData();
+    const formDataToSend = new FormData();
 
-      // Add all fields from the form
-      formDataToSend.append("firstName", formData.firstName);
-      formDataToSend.append("lastName", formData.lastName);
-      formDataToSend.append("email", formData.email);
-      formDataToSend.append("phoneNumber", formData.phoneNumber);
+    // Add all fields from the form
+    formDataToSend.append("firstName", formData.firstName);
+    formDataToSend.append("lastName", formData.lastName);
+    formDataToSend.append("email", formData.email);
+    formDataToSend.append("phoneNumber", formData.phoneNumber);
 
-      // Add password for new employees
-      formDataToSend.append("password", "PleaseSetAdefaultHere1.");
+    // Add password for new employees
+    formDataToSend.append("password", "PleaseSetAdefaultHere1.");
 
-      // Team and role
-      formDataToSend.append("teamId", formData.teamId);
-      formDataToSend.append("roleId", formData.roleId);
+    // Team and role
+    formDataToSend.append("teamId", formData.teamId);
+    formDataToSend.append("roleId", formData.roleId);
 
-      // Add document if uploaded
-      if (files.length > 0) {
-        formDataToSend.append("document", files[0]);
+    // Add document if uploaded
+    if (files.length > 0) {
+      formDataToSend.append("document", files[0]);
+    }
+
+    // Personal info
+    formDataToSend.append("dateOfBirth", new Date(formData.dateOfBirth).toISOString());
+    formDataToSend.append("gender", formData.gender);
+
+    // Employment info
+    formDataToSend.append("startDate", new Date(formData.startDate).toISOString());
+    formDataToSend.append("employmentType", formData.employmentType || "");
+    formDataToSend.append("workMode", formData.workMode || "");
+
+    // Salary details
+    formDataToSend.append("baseSalary", formData.baseSalary.toString());
+    formDataToSend.append("bankName", formData.bankName);
+    formDataToSend.append("accountName", formData.accountName);
+    formDataToSend.append("accountNumber", formData.accountNumber);
+    formDataToSend.append("bankCode", formData.bankCode);
+
+    // Optional permissions
+    if (formData.permissions && formData.permissions.length > 0) {
+      for (const [index, permission] of formData.permissions.entries()) {
+        formDataToSend.append(`permissions[${index}]`, permission);
       }
+    }
 
-      // Personal info
-      formDataToSend.append("dateOfBirth", new Date(formData.dateOfBirth).toISOString());
-      formDataToSend.append("gender", formData.gender);
-
-      // Employment info
-      formDataToSend.append("startDate", new Date(formData.startDate).toISOString());
-      formDataToSend.append("employmentType", formData.employmentType || "");
-      formDataToSend.append("workMode", formData.workMode || "");
-
-      // Salary details
-      formDataToSend.append("baseSalary", formData.baseSalary);
-      formDataToSend.append("bankName", formData.bankName);
-      formDataToSend.append("accountName", formData.accountName);
-      formDataToSend.append("accountNumber", formData.accountNumber);
-      formDataToSend.append("bankCode", formData.bankCode);
-
-      // Optional permissions
-      if (formData.permissions && formData.permissions.length > 0) {
-        for (const [index, permission] of formData.permissions.entries()) {
-          formDataToSend.append(`permissions[${index}]`, permission);
-        }
-      }
-
-      // Call create employee
-      const response = await createEmployeeMutation.mutateAsync(formDataToSend);
-      if (response) {
+    // Call create employee
+    createEmployeeMutation(formDataToSend, {
+      onSuccess: () => {
+        // Invalidate or update any relevant queries here if needed
         toast.success("Employee Added Successfully");
         router.push("/admin/employees");
-      } else {
-        toast.error("Failed to add employee");
-      }
-
-      // setShowAlert(true);
-    } catch {
-      toast.error("An unexpected error occurred while saving. Please try again.");
-      // You could also set error state here and show an error alert
-    }
+      },
+      onError: (error: any) => {
+        toast.error("Something went wrong", { description: error?.response?.data?.message });
+      },
+    });
   };
 
   // if (loadingTeams) {
@@ -328,8 +329,8 @@ export const AddEmployeeForm = () => {
                 <FormField
                   name="baseSalary"
                   label="Base Salary"
-                  type="text"
-                  placeholder="800000"
+                  type="number"
+                  placeholder="e.g 100000"
                   className="border-border !h-14 w-full"
                   required
                 />
@@ -345,7 +346,7 @@ export const AddEmployeeForm = () => {
                         <ComboBox
                           value={value || ""}
                           onValueChange={onChange}
-                          options={banks.map((bank) => ({
+                          options={banks.map((bank: any) => ({
                             value: bank.name,
                             label: bank.name,
                           }))}
@@ -355,7 +356,7 @@ export const AddEmployeeForm = () => {
                           searchPlaceholder="Search banks..."
                           emptyMessage="No bank found."
                           disabled={loadingBanks || loadingTeams || isSubmitting}
-                          className="w-full"
+                          className="h-14 w-full"
                         />
                         {fieldState.error && <p className="text-destructive text-sm">{fieldState.error.message}</p>}
                       </>

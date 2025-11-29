@@ -1,11 +1,11 @@
 import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { EmailTooltip, NameTooltip } from "@/components/shared/tooltip";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useActiveTarget } from "@/context/active-target";
 import { IColumnDefinition, IRowAction } from "@/modules/@org/admin/_components/table/table";
 import { useQueryClient } from "@tanstack/react-query";
 import { Edit, Eye } from "lucide-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -69,7 +69,7 @@ export const useEmployeeRowActions = () => {
           },
           ariaLabel: `Edit ${employee.firstName} ${employee.lastName}`,
         },
-        { type: "separator" },
+        // { type: "separator" },
         // {
         //   label: "Delete employee",
         //   kbd: "Ctrl+Del",
@@ -123,25 +123,33 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
     header: "Name",
     accessorKey: "firstName",
     render: (_, employee: Employee) => (
-      <div className="group hover:bg-muted/60 flex w-fit cursor-pointer items-center gap-2 rounded-md px-1 py-0.5 transition-colors">
-        <Image
-          src={
-            typeof employee.avatar === "string" && employee.avatar.length > 0
-              ? employee.avatar
-              : "https://res.cloudinary.com/kingsleysolomon/image/upload/v1699879092/techstudio/icons/avatar_vvgjji_zzdq9m.png"
-          }
-          alt={employee.firstName}
-          width={100}
-          height={100}
-          className="bg-muted ring-border group-hover:ring-primary/40 h-8 w-8 rounded-full object-cover ring-1"
-        />
-        <div className="flex flex-col space-y-1">
-          <NameTooltip name={`${employee.firstName} ${employee.lastName}`}>
-            <span className="text-sm font-medium tracking-wide capitalize">{`${employee.firstName} ${employee.lastName}`}</span>
-          </NameTooltip>
-          <span className="muted-foreground text-[10px] uppercase">ID: {employee.id.slice(0, 8)}</span>
+      <>
+        <div className="group hover:bg-muted/60 flex w-fit cursor-pointer items-center gap-2 rounded-md px-1 py-0.5 transition-colors">
+          {/* <Image
+            src={
+              typeof employee.avatar === "string" && employee.avatar.length > 0
+                ? employee.avatar
+                : "https://res.cloudinary.com/kingsleysolomon/image/upload/v1699879092/techstudio/icons/avatar_vvgjji_zzdq9m.png"
+            }
+            alt={employee.firstName}
+            width={100}
+            height={100}
+            className="bg-muted ring-border group-hover:ring-primary/40 h-8 w-8 rounded-full object-cover ring-1"
+          /> */}
+          <Avatar className={`bg-primary`}>
+            <AvatarImage src={employee.avatar || ""} alt={`${employee.firstName} ${employee.lastName}`} />
+            <AvatarFallback className="rounded-lg bg-transparent text-sm text-white">
+              {`${employee.firstName} ${employee.lastName}`.slice(0, 2).toUpperCase() || "CN"}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col space-y-1">
+            <NameTooltip name={`${employee.firstName} ${employee.lastName}`}>
+              <span className="text-sm font-medium tracking-wide capitalize">{`${employee.firstName} ${employee.lastName}`}</span>
+            </NameTooltip>
+            <span className="muted-foreground text-[10px] uppercase">ID: {employee.id.slice(0, 8)}</span>
+          </div>
         </div>
-      </div>
+      </>
     ),
   },
   {

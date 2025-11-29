@@ -6,6 +6,8 @@ import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { FormField, MultiSelect } from "@/components/shared/inputs/FormFields";
 import { cn } from "@/lib/utils";
 import { useEmployeeService } from "@/modules/@org/admin/employee/services/use-service";
+import { useTour } from "@/modules/@org/onboarding";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import type React from "react";
@@ -13,6 +15,7 @@ import type React from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import { payrollSetupTourStep } from "../../config/tour-steps";
 import { usePayrollService } from "../../services/use-service";
 import { usePayrollStore } from "../../stores/payroll-store";
 import type { CompanyPayrollPolicy, PayrollBonusDeduction } from "../../types";
@@ -37,6 +40,7 @@ export const PayrollSetupForm = () => {
   const router = useRouter();
   const [isSubmittedAlertOpen, setIsSubmittedAlertOpen] = useState(false);
   const { setHasCompletedPayrollPolicySetupForm, setShowPayrollSettingsSetupModal } = usePayrollStore();
+  const { startTour } = useTour();
 
   // Fetch company payroll policy (needed to set form values directly via useForm)
   const { useGetCompanyPayrollPolicy, useUpdateCompanyPayrollPolicy } = usePayrollService();
@@ -74,7 +78,7 @@ export const PayrollSetupForm = () => {
   // Fetch employees for approval dropdown
   const { useGetAllEmployees } = useEmployeeService();
   const { data: employeesData } = useGetAllEmployees(
-    {},
+    { permission: "admin,payroll:read" },
     {
       staleTime: 0,
       refetchOnMount: true,
@@ -142,20 +146,22 @@ export const PayrollSetupForm = () => {
       payday: Number(data.payday),
       approvers: normalizeIds(data.approvers),
     };
-    try {
-      await updatePolicy(payload, {
-        onSuccess: () => {
-          setIsSubmittedAlertOpen(true);
-          setShowPayrollSettingsSetupModal(false);
-          setHasCompletedPayrollPolicySetupForm(true);
-        },
-        onError: (error) => {
-          toast.error(`Failed to update payroll policy: ${error.message}`);
-        },
-      });
-    } catch {
-      return;
-    }
+
+    await updatePolicy(payload, {
+      onSuccess: () => {
+        setIsSubmittedAlertOpen(true);
+        setShowPayrollSettingsSetupModal(false);
+        setHasCompletedPayrollPolicySetupForm(true);
+      },
+      onError: (error) => {
+        toast.error(`Failed to update payroll policy`, {
+          description:
+            error instanceof AxiosError
+              ? error.response?.data.message
+              : "An unexpected error occurred. Please try again.",
+        });
+      },
+    });
   };
 
   return (
@@ -165,7 +171,7 @@ export const PayrollSetupForm = () => {
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="space-y-10">
-            <section className="">
+            <section className="" data-tour="payroll-general-setup">
               <h2 className="mb-4 text-lg font-semibold">General payroll setup</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
                 <FormField
@@ -204,11 +210,11 @@ export const PayrollSetupForm = () => {
               </div>
             </section>
 
-            <section>
+            <section data-tour="payroll-bonuses-deductions">
               <h2 className="mb-6 text-lg font-semibold">Global Bonuses & Deductions</h2>
 
               {/* Bonuses Section */}
-              <div className="mb-8">
+              <div className="mb-8" data-tour="payroll-bonuses">
                 <BonusDeductionManager
                   key={`bonuses-${(policyData?.data as CompanyPayrollPolicy | undefined)?.bonuses?.length ?? 0}`}
                   type="bonus"
@@ -229,7 +235,7 @@ export const PayrollSetupForm = () => {
               </div>
 
               {/* Deductions Section */}
-              <div>
+              <div data-tour="payroll-deductions">
                 <BonusDeductionManager
                   key={`deductions-${(policyData?.data as CompanyPayrollPolicy | undefined)?.deductions?.length ?? 0}`}
                   type="deduction"
@@ -277,6 +283,9 @@ export const PayrollSetupForm = () => {
         onConfirm={() => {
           setIsSubmittedAlertOpen(false);
           router.push("/admin/payroll");
+          if (policy?.status === `incomplete`) {
+            startTour(payrollSetupTourStep);
+          }
         }}
         type="success"
         title="Payroll Setup Completed"

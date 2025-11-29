@@ -4,17 +4,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function PieGraphSkeleton() {
   return (
     <Card>
-      <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0">
-        <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-          <Skeleton className="h-6 w-[180px]" />
-          <Skeleton className="h-4 w-[250px]" />
-        </div>
+      <CardHeader>
+        <Skeleton className="h-6 w-40" />
       </CardHeader>
-      <CardContent className="p-6">
-        <div className="flex h-[280px] items-center justify-center">
-          {/* Circular skeleton for pie chart */}
-          <Skeleton className="h-[300px] w-[300px] rounded-full" />
-        </div>
+      <CardContent className="flex items-center justify-center">
+        <Skeleton className="h-[200px] w-[200px] rounded-full" />
       </CardContent>
     </Card>
   );

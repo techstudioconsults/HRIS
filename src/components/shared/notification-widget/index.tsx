@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Bell, BellOff, Check, Trash2 } from "lucide-react";
 import { useState } from "react";
 
+import { EmptyState } from "../empty-state";
 import { NotificationItem } from "./notification-item";
 import { NotificationWidgetProperties } from "./types";
 
@@ -49,7 +50,7 @@ export function NotificationWidget({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="min-w-[500px] p-0 shadow-none" align="end" sideOffset={8}>
+      <PopoverContent className="min-w-[500px] p-0 shadow-none" align="end" sideOffset={16}>
         {/* Header */}
         <div className="flex items-center justify-between border-b px-4 py-3">
           <div className="flex items-center gap-2">
@@ -88,13 +89,12 @@ export function NotificationWidget({
 
         {/* Notifications List */}
         {notifications.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12">
-            <div className="bg-muted rounded-full p-3">
-              <BellOff className="text-muted-foreground size-8" />
-            </div>
-            <h4 className="mt-4 text-sm font-medium">No notifications</h4>
-            <p className="text-muted-foreground mt-1 text-xs">You&apos;re all caught up!</p>
-          </div>
+          <EmptyState
+            className="text-primary"
+            icon={<BellOff className="text-primary" />}
+            title="No notifications."
+            description="You have no notifications at the moment."
+          />
         ) : (
           <ScrollArea className={cn("overflow-y-auto")} style={{ maxHeight }}>
             <div className="flex flex-col gap-2 p-2">

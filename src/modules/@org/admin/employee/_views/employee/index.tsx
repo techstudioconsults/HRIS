@@ -1,29 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import Loading from "@/app/Loading";
-import { SearchInput } from "@/components/core/miscellaneous/search-input";
-import MainButton from "@/components/shared/button";
-import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
-import { GenericDropdown } from "@/components/shared/drop-down";
-import { EmptyState, FilteredEmptyState } from "@/components/shared/empty-state";
-import ExportAction from "@/components/shared/export-action";
-import { Button } from "@/components/ui/button";
-import { PageSection, PageWrapper } from "@/lib/animation";
-import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
+// import { SuspenseLoading } from "@/components/shared/loading";
 import { useEmployeeSearchParameters } from "@/modules/@org/admin/employee/hooks/use-employee-search-parameters";
-import { Add, Filter } from "iconsax-reactjs";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDebounce } from "use-debounce";
 
-import empty1 from "~/images/empty-state.svg";
-import { FilterForm } from "../../_components/forms/filter-form";
-import { useEmployeeService } from "../../services/use-service";
-import { employeeColumn, useEmployeeRowActions } from "../table-data";
+import { EmployeeHeaderSection } from "./components/employee-header-section";
+import { EmployeeTableSection } from "./components/employee-table-section";
+
+// import { TableSkeleton } from "../../../_components/table/table-skeleton";
 
 export const AllEmployees = () => {
-  const router = useRouter();
   const {
     page,
     search,
@@ -48,11 +36,6 @@ export const AllEmployees = () => {
   const [searchInput, setSearchInput] = useState(search || "");
   const [debouncedSearch] = useDebounce(searchInput, 300);
 
-  const { getRowActions, DeleteConfirmationModal } = useEmployeeRowActions();
-  const { useGetAllEmployees, useGetAllTeams, useDownloadEmployees } = useEmployeeService();
-  const { mutateAsync: downloadEmployees } = useDownloadEmployees();
-  const { data: teams = [] } = useGetAllTeams();
-
   // Apply debounced search to URL (nuqs) and reset page to 1
   useEffect(() => {
     setSearch(debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : null);
@@ -61,8 +44,6 @@ export const AllEmployees = () => {
 
   // Build API filters from URL state (nuqs)
   const apiFilters = useMemo(() => getApiFilters(), [getApiFilters]);
-
-  const { data: employeeData, isLoading } = useGetAllEmployees(apiFilters);
 
   // Apply filter values to URL (nuqs) and reset page
   const handleFilterChange = useCallback(
@@ -94,114 +75,30 @@ export const AllEmployees = () => {
   }, [resetFilters]);
 
   return (
-    <PageWrapper className="space-y-10">
-      <PageSection index={0} className="space-y-6">
-        <DashboardHeader
-          // icon={<Users />}
-          title="Employee"
-          subtitle="All Employees"
-          actionComponent={
-            <div>
-              <div className="flex items-center gap-2">
-                <SearchInput
-                  className="border-border h-10 rounded-md border"
-                  placeholder="Search employee..."
-                  onSearch={handleSearchChange}
-                />
-                <GenericDropdown
-                  contentClassName="bg-background"
-                  trigger={
-                    <Button
-                      className="data-[state=open]:border-border data-[state=open]:text-gray h-10 rounded-md border px-3"
-                      variant="primaryOutline"
-                    >
-                      <Filter className="size-4" />
-                      Filter
-                    </Button>
-                  }
-                >
-                  <section className="min-w-sm">
-                    <FilterForm
-                      initialFilters={{
-                        search: search || undefined,
-                        teamId: teamId || undefined,
-                        roleId: roleId || undefined,
-                        status: status || undefined,
-                        sortBy: sortBy || undefined,
-                        limit: limit ? String(limit) : undefined,
-                        page: page ? String(page) : undefined,
-                      }}
-                      onFilterChange={handleFilterChange}
-                      teams={teams}
-                    />
-                  </section>
-                </GenericDropdown>
-                <ExportAction
-                  isDisabled={!employeeData?.data?.items?.length}
-                  downloadMutation={async () => {
-                    // Use current apiFilters to ensure exported data matches table view
-                    const fileData = await downloadEmployees(apiFilters);
-                    // If backend returns string CSV, wrap in Blob in ExportAction
-                    return fileData as unknown as Blob;
-                  }}
-                  currentPage={employeeData?.data?.metadata.page}
-                  buttonText="Export Employees"
-                  fileName="employees"
-                />
-                <MainButton href="/admin/employees/add-employee" variant="primary" isLeftIconVisible icon={<Add />}>
-                  Add Employee
-                </MainButton>
-              </div>
-            </div>
-          }
-        />
+    <section className="space-y-6">
+      <EmployeeHeaderSection
+        search={search}
+        teamId={teamId}
+        roleId={roleId}
+        status={status}
+        sortBy={sortBy}
+        limit={limit}
+        page={page ?? 1}
+        apiFilters={apiFilters}
+        onSearchChange={handleSearchChange}
+        onFilterChange={handleFilterChange}
+      />
 
-        {isLoading ? (
-          <Loading className="!h-[70dvh]" text="Loading employee table." />
-        ) : (
-          <section>
-            {employeeData?.data?.items.length ? (
-              <AdvancedDataTable
-                data={employeeData.data.items}
-                columns={employeeColumn}
-                currentPage={employeeData.data.metadata.page}
-                totalPages={employeeData.data.metadata.totalPages}
-                itemsPerPage={employeeData.data.metadata.limit}
-                hasPreviousPage={employeeData.data.metadata.hasPreviousPage}
-                hasNextPage={employeeData.data.metadata.hasNextPage}
-                onPageChange={handlePageChange}
-                rowActions={getRowActions}
-                showPagination={true}
-                enableRowSelection={true}
-                enableColumnVisibility={true}
-                enableSorting={true}
-                enableFiltering={true}
-                mobileCardView={true}
-                showColumnCustomization={false}
-              />
-            ) : (debouncedSearch && debouncedSearch.trim()) ||
-              teamId ||
-              roleId ||
-              (status && status !== "all") ||
-              sortBy ? (
-              <FilteredEmptyState onReset={handleResetFilters} />
-            ) : (
-              <EmptyState
-                className="bg-background"
-                images={[{ src: empty1.src, alt: "No employees", width: 100, height: 100 }]}
-                title="No employee yet."
-                description="Once you add team members, you'll see their details here, including department, role, work status, and more."
-                button={{
-                  text: "Add New Employee",
-                  onClick: () => router.push("/admin/employees/add-employee"),
-                }}
-              />
-            )}
-          </section>
-        )}
-      </PageSection>
-
-      <DeleteConfirmationModal />
-    </PageWrapper>
+      <EmployeeTableSection
+        apiFilters={apiFilters}
+        debouncedSearch={debouncedSearch}
+        teamId={teamId}
+        roleId={roleId}
+        status={status}
+        sortBy={sortBy}
+        onPageChange={handlePageChange}
+        onResetFilters={handleResetFilters}
+      />
+    </section>
   );
 };

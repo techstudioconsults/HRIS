@@ -4,8 +4,9 @@ import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
-import { Add } from "iconsax-reactjs";
+import { Folder } from "iconsax-reactjs";
 import { useState } from "react";
+import { PiFileFill } from "react-icons/pi";
 
 import { CreateFileForm } from "./forms/create-file";
 import { CreateFolderForm } from "./forms/create-folder";
@@ -51,12 +52,12 @@ export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
             <MainButton
               variant="primaryOutline"
               isLeftIconVisible={true}
-              icon={<Add />}
+              icon={<Folder />}
               onClick={handleOpenFolderDialog}
             >
               Create Folder
             </MainButton>
-            <MainButton variant="primary" isLeftIconVisible={true} icon={<Add />} onClick={handleOpenFileDialog}>
+            <MainButton variant="primary" isLeftIconVisible={true} icon={<PiFileFill />} onClick={handleOpenFileDialog}>
               Upload File
             </MainButton>
           </div>

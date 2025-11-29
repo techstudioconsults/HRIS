@@ -520,19 +520,54 @@ export function AdvancedDataTable<T extends DataItem>({
   };
 
   return (
-    <div className="w-full space-y-4">
-      {renderHeader()}
-
-      {/* Desktop Table View */}
-      <div className="bg-background hidden h-full overflow-auto rounded-lg shadow md:block">
-        {enableDragAndDrop ? (
-          <DndContext
-            collisionDetection={closestCenter}
-            modifiers={[restrictToVerticalAxis]}
-            onDragEnd={handleDragEnd}
-            sensors={sensors}
-            id={sortableId}
-          >
+    <div className="flex min-h-[76dvh] w-full flex-col justify-between gap-4">
+      <div>
+        {renderHeader()}
+        {/* Desktop Table View */}
+        <div className="bg-background hidden h-full overflow-auto rounded-lg shadow md:block">
+          {enableDragAndDrop ? (
+            <DndContext
+              collisionDetection={closestCenter}
+              modifiers={[restrictToVerticalAxis]}
+              onDragEnd={handleDragEnd}
+              sensors={sensors}
+              id={sortableId}
+            >
+              <Table>
+                <TableHeader className="!bg-muted sticky top-0 z-10">
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id} className="border-border/50">
+                      {headerGroup.headers.map((header) => {
+                        return (
+                          <TableHead key={header.id} colSpan={header.colSpan}>
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(header.column.columnDef.header, header.getContext())}
+                          </TableHead>
+                        );
+                      })}
+                      {rowActions && <TableHead className="w-[50px]"></TableHead>}
+                    </TableRow>
+                  ))}
+                </TableHeader>
+                <TableBody>
+                  {table.getRowModel().rows?.length ? (
+                    <SortableContext items={dataIds} strategy={verticalListSortingStrategy}>
+                      {table.getRowModel().rows.map((row) => (
+                        <DraggableRow key={row.id} row={row} rowActions={rowActions} onRowClick={onRowClick} />
+                      ))}
+                    </SortableContext>
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={columns.length + (rowActions ? 1 : 0)} className="h-24 text-center">
+                        {emptyState || "No results."}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </DndContext>
+          ) : (
             <Table>
               <TableHeader className="!bg-muted sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -552,198 +587,166 @@ export function AdvancedDataTable<T extends DataItem>({
               </TableHeader>
               <TableBody>
                 {table.getRowModel().rows?.length ? (
-                  <SortableContext items={dataIds} strategy={verticalListSortingStrategy}>
-                    {table.getRowModel().rows.map((row) => (
-                      <DraggableRow key={row.id} row={row} rowActions={rowActions} onRowClick={onRowClick} />
-                    ))}
-                  </SortableContext>
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                      onClick={() => onRowClick?.(row.original)}
+                      className={cn(
+                        "border-border/30 border-b",
+                        onRowClick ? "hover:bg-primary/10 cursor-pointer" : "",
+                        "text-[16px]",
+                      )}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                      ))}
+                      {rowActions && (
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger className="cursor-pointer p-2">
+                              <MoreVertical className="h-4 w-4" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="bg-background min-w-[15rem] shadow-none" align="end">
+                              {rowActions(row.original).map((action, actionIndex) => {
+                                if (action.type === "separator") {
+                                  return (
+                                    <DropdownMenuItem
+                                      key={actionIndex}
+                                      disabled
+                                      className="pointer-events-none"
+                                      data-type="separator"
+                                    >
+                                      <div className="bg-border mx-1 h-px w-full" />
+                                    </DropdownMenuItem>
+                                  );
+                                }
+                                return (
+                                  <DropdownMenuItem
+                                    key={actionIndex}
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      action.onClick?.(row.original);
+                                    }}
+                                    className={cn(
+                                      action.variant === "destructive" && "text-destructive focus:text-destructive",
+                                    )}
+                                  >
+                                    {action.icon && <span className="mr-2">{action.icon}</span>}
+                                    {action.label}
+                                    {action.kbd && (
+                                      <span className="ml-auto font-mono text-[10px] opacity-60">{action.kbd}</span>
+                                    )}
+                                  </DropdownMenuItem>
+                                );
+                              })}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  ))
                 ) : (
                   <TableRow>
                     <TableCell colSpan={columns.length + (rowActions ? 1 : 0)} className="h-24 text-center">
-                      {emptyState || "No results."}
+                      No results.
                     </TableCell>
                   </TableRow>
                 )}
               </TableBody>
             </Table>
-          </DndContext>
-        ) : (
-          <Table>
-            <TableHeader className="!bg-muted sticky top-0 z-10">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="border-border/50">
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id} colSpan={header.colSpan}>
-                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                      </TableHead>
-                    );
-                  })}
-                  {rowActions && <TableHead className="w-[50px]"></TableHead>}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                    onClick={() => onRowClick?.(row.original)}
-                    className={cn(
-                      "border-border/30 border-b",
-                      onRowClick ? "hover:bg-primary/10 cursor-pointer" : "",
-                      "text-[16px]",
-                    )}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                    ))}
-                    {rowActions && (
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger className="cursor-pointer p-2">
-                            <MoreVertical className="h-4 w-4" />
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent className="bg-background min-w-[15rem] shadow-none" align="end">
-                            {rowActions(row.original).map((action, actionIndex) => {
-                              if (action.type === "separator") {
-                                return (
-                                  <DropdownMenuItem
-                                    key={actionIndex}
-                                    disabled
-                                    className="pointer-events-none"
-                                    data-type="separator"
-                                  >
-                                    <div className="bg-border mx-1 h-px w-full" />
-                                  </DropdownMenuItem>
-                                );
-                              }
-                              return (
-                                <DropdownMenuItem
-                                  key={actionIndex}
-                                  onClick={(event) => {
-                                    event.stopPropagation();
-                                    action.onClick?.(row.original);
-                                  }}
-                                  className={cn(
-                                    action.variant === "destructive" && "text-destructive focus:text-destructive",
-                                  )}
-                                >
-                                  {action.icon && <span className="mr-2">{action.icon}</span>}
-                                  {action.label}
-                                  {action.kbd && (
-                                    <span className="ml-auto font-mono text-[10px] opacity-60">{action.kbd}</span>
-                                  )}
-                                </DropdownMenuItem>
-                              );
-                            })}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length + (rowActions ? 1 : 0)} className="h-24 text-center">
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        )}
-      </div>
+          )}
+        </div>
 
-      {/* Mobile Card View */}
-      {mobileCardView && (
-        <div className="grid grid-cols-1 gap-4 md:hidden">
-          {data.map((item, index) => (
-            <div
-              key={index}
-              className={cn(
-                "group border-default bg-card relative overflow-hidden rounded-lg p-5 transition-all",
-                "hover:border-primary/50 hover:shadow-md",
-                onRowClick && "cursor-pointer",
-              )}
-              onClick={() => {
-                if (onRowClick) onRowClick(item);
-              }}
-              aria-label={`View details for item ${(item as Record<string, unknown>).id || index}`}
-            >
-              {/* Card Header */}
-              <div className="mb-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="text-muted-foreground text-sm font-medium">
-                    {renderColumn(inputColumns[0], item) as React.ReactNode}
+        {/* Mobile Card View */}
+        {mobileCardView && (
+          <div className="grid grid-cols-1 gap-4 md:hidden">
+            {data.map((item, index) => (
+              <div
+                key={index}
+                className={cn(
+                  "group border-default bg-card relative overflow-hidden rounded-lg p-5 transition-all",
+                  "hover:border-primary/50 hover:shadow-md",
+                  onRowClick && "cursor-pointer",
+                )}
+                onClick={() => {
+                  if (onRowClick) onRowClick(item);
+                }}
+                aria-label={`View details for item ${(item as Record<string, unknown>).id || index}`}
+              >
+                {/* Card Header */}
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="text-muted-foreground text-sm font-medium">
+                      {renderColumn(inputColumns[0], item) as React.ReactNode}
+                    </div>
                   </div>
-                </div>
-                {rowActions && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className="h-8 w-8 p-0" aria-label="Open menu">
-                      <span className="sr-only">Open menu</span>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="shadow-none" align="end">
-                      {rowActions(item).map((action, actionIndex) => {
-                        if (action.type === "separator") {
+                  {rowActions && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="h-8 w-8 p-0" aria-label="Open menu">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="shadow-none" align="end">
+                        {rowActions(item).map((action, actionIndex) => {
+                          if (action.type === "separator") {
+                            return (
+                              <DropdownMenuItem
+                                key={actionIndex}
+                                disabled
+                                className="pointer-events-none"
+                                data-type="separator"
+                              >
+                                <div className="bg-border mx-1 h-px w-full" />
+                              </DropdownMenuItem>
+                            );
+                          }
                           return (
                             <DropdownMenuItem
                               key={actionIndex}
-                              disabled
-                              className="pointer-events-none"
-                              data-type="separator"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                action.onClick?.(item);
+                              }}
+                              className={cn(
+                                action.variant === "destructive" && "text-destructive focus:text-destructive",
+                              )}
                             >
-                              <div className="bg-border mx-1 h-px w-full" />
+                              {action.icon && <span className="mr-2">{action.icon}</span>}
+                              {action.label}
+                              {action.kbd && (
+                                <span className="ml-auto font-mono text-[10px] opacity-60">{action.kbd}</span>
+                              )}
                             </DropdownMenuItem>
                           );
-                        }
-                        return (
-                          <DropdownMenuItem
-                            key={actionIndex}
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              action.onClick?.(item);
-                            }}
-                            className={cn(
-                              action.variant === "destructive" && "text-destructive focus:text-destructive",
-                            )}
-                          >
-                            {action.icon && <span className="mr-2">{action.icon}</span>}
-                            {action.label}
-                            {action.kbd && (
-                              <span className="ml-auto font-mono text-[10px] opacity-60">{action.kbd}</span>
-                            )}
-                          </DropdownMenuItem>
-                        );
-                      })}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                        })}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
+                </div>
+
+                {/* Card Content - Other columns */}
+                <div className="grid grid-cols-2 gap-4">
+                  {inputColumns.slice(1, -1).map((column, colIndex) => (
+                    <div key={colIndex} className="space-y-1">
+                      <p className="text-muted-foreground/60 text-xs font-medium uppercase">{column.header}</p>
+                      <div className="text-xs font-medium">{renderColumn(column, item) as React.ReactNode}</div>
+                    </div>
+                  ))}
+                  <span className="text-xs">
+                    {inputColumns.at(-1) ? (renderColumn(inputColumns.at(-1)!, item) as React.ReactNode) : "N/A"}
+                  </span>
+                </div>
+
+                {/* Hover Effect Indicator */}
+                {onRowClick && (
+                  <div className="bg-primary/50 absolute inset-x-0 bottom-0 h-0.5 opacity-0 transition-opacity group-hover:opacity-100" />
                 )}
               </div>
-
-              {/* Card Content - Other columns */}
-              <div className="grid grid-cols-2 gap-4">
-                {inputColumns.slice(1, -1).map((column, colIndex) => (
-                  <div key={colIndex} className="space-y-1">
-                    <p className="text-muted-foreground/60 text-xs font-medium uppercase">{column.header}</p>
-                    <div className="text-xs font-medium">{renderColumn(column, item) as React.ReactNode}</div>
-                  </div>
-                ))}
-                <span className="text-xs">
-                  {inputColumns.at(-1) ? (renderColumn(inputColumns.at(-1)!, item) as React.ReactNode) : "N/A"}
-                </span>
-              </div>
-
-              {/* Hover Effect Indicator */}
-              {onRowClick && (
-                <div className="bg-primary/50 absolute inset-x-0 bottom-0 h-0.5 opacity-0 transition-opacity group-hover:opacity-100" />
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Pagination - Dashboard Table Style */}
       {showPagination && (

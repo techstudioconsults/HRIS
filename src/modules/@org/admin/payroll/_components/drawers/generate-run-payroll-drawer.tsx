@@ -6,7 +6,7 @@ import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-import { formatCurrency } from "@/lib/i18n/utils";
+import { formatCurrency, formatDate } from "@/lib/i18n/utils";
 import { cn } from "@/lib/utils";
 import { CalendarModal } from "@/modules/@org/admin/payroll/_components/calendar-modal";
 import { Eye, EyeSlash } from "iconsax-reactjs";
@@ -19,26 +19,13 @@ import { toast } from "sonner";
 import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
 import { usePayrollService } from "../../services/use-service";
 import { usePayrollStore } from "../../stores/payroll-store";
-import type { PayrollApproval } from "../../types";
+import type { Payroll, PayrollApproval } from "../../types";
 
 interface SchedulePayrollDrawerProperties {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /** The currently selected payroll ID that will be run. */
   payrollId: string | null;
-  /**
-   * Summary information for the currently selected payroll period.
-   * Mapped from the PayrollView (net pay, employees, wallet balance, payment date).
-   */
-  summary?: {
-    netPay: number;
-    employeesInPayroll: number;
-    walletBalance: number;
-    paymentDate: string;
-  } | null;
-  /**
-   * Whether this payroll can be run now (false when payroll is for a future month).
-   */
+  summary?: Payroll;
   canRunNow?: boolean;
 }
 
@@ -67,10 +54,11 @@ export const GenerateRunPayrollDrawer = ({
 
   const totalEmployees = summary?.employeesInPayroll ?? 0;
   const totalPayroll = summary?.netPay ?? 0;
-  const walletBalance = summary?.walletBalance ?? 0;
-  const paymentDateLabel = summary?.paymentDate ?? "";
+  const walletBalance = Number(summary?.walletBalance) ?? 0;
+  const paymentDateLabel = summary?.paymentDate ? formatDate(summary.paymentDate) : "";
   const processingCharges = 0;
   const totalAmount = totalPayroll + processingCharges;
+  const status = summary?.status !== `idle`;
 
   const router = useRouter();
 
@@ -109,9 +97,10 @@ export const GenerateRunPayrollDrawer = ({
     );
   };
 
-  const handleSchedulePayment = () => {
-    setIsChangeDateModalOpen(true);
-  };
+  // const handleSchedulePayment = (event: React.MouseEvent<HTMLButtonElement>) => {
+  //   event.stopPropagation();
+  //   setIsChangeDateModalOpen(true);
+  // };
 
   return (
     <>
@@ -140,14 +129,14 @@ export const GenerateRunPayrollDrawer = ({
               <DashboardCard
                 title="Total Employees"
                 value={<p className="text-base">{totalEmployees}</p>}
-                className="border-border flex flex-col items-center justify-center gap-4 border text-center shadow-none"
+                className="bg-muted flex flex-col items-center justify-center gap-4 text-center shadow-none"
               />
               <DashboardCard
                 title="Wallet Balance"
                 value={
                   <div className="flex items-center gap-4">
                     <p className="text-base text-white">
-                      {isNetPayVisible ? formatCurrency(walletBalance) : "••••••••"}
+                      {isNetPayVisible ? formatCurrency(Number(walletBalance)) : "••••••••"}
                     </p>
                     <button
                       onClick={() => setIsNetPayVisible(!isNetPayVisible)}
@@ -166,18 +155,18 @@ export const GenerateRunPayrollDrawer = ({
                 titleColor="text-white"
               />
             </section>
-            <section className="border-border space-y-4 rounded-lg border p-4">
+            <section className="bg-muted space-y-4 rounded-lg p-4">
               <div className="flex items-center justify-between">
-                <p>Total Payroll</p>
-                <p>{formatCurrency(totalPayroll)}</p>
+                <p className="text-base">Total Payroll</p>
+                <p className="text-foreground font-medium">{formatCurrency(totalPayroll)}</p>
               </div>
               <div className="flex items-center justify-between">
-                <p>Processing Charges</p>
-                <p>{formatCurrency(processingCharges)}</p>
+                <p className="text-base">Processing Charges</p>
+                <p className="text-foreground font-medium">{formatCurrency(processingCharges)}</p>
               </div>
-              <div className="flex items-center justify-between font-bold">
-                <p>Total Amount</p>
-                <p>{formatCurrency(totalAmount)}</p>
+              <div className="flex items-center justify-between font-semibold">
+                <p className="text-success">Total Amount</p>
+                <p className="text-success">{formatCurrency(totalAmount)}</p>
               </div>
             </section>
             <div
@@ -198,8 +187,8 @@ export const GenerateRunPayrollDrawer = ({
               </p>
             </div>
             <section>
-              <h1 className="text-xl font-bold">Approvers</h1>
-              <section className="border-border space-y-4 rounded-lg border p-4">
+              <h1 className="text-base font-bold">Approvers</h1>
+              <section className="bg-muted space-y-4 rounded-lg p-4">
                 {payrollId ? (
                   isApprovalsLoading ? (
                     <div className="text-muted-foreground text-sm">Loading approvers...</div>
@@ -232,20 +221,22 @@ export const GenerateRunPayrollDrawer = ({
                               <AvatarFallback>{initials}</AvatarFallback>
                             </Avatar>
                             <div>
-                              <p className="text-foreground">{name}</p>
+                              <p className="text-foreground text-sm font-medium">{name}</p>
                               {role ? <p className="text-xs text-gray-500">{role}</p> : null}
                             </div>
                           </div>
-                          <Badge
-                            className={cn(
-                              `rounded-full px-4 py-2`,
-                              statusLabel === "Pending" && "bg-warning-50 text-warning",
-                              statusLabel === "Approved" && "bg-success-50 text-success",
-                              statusLabel === "Declined" && "bg-destructive-50 text-destructive",
-                            )}
-                          >
-                            {statusLabel}
-                          </Badge>
+                          {status && (
+                            <Badge
+                              className={cn(
+                                `rounded-full px-4 py-2`,
+                                statusLabel === "Pending" && "bg-warning-50 text-warning",
+                                statusLabel === "Approved" && "bg-success-50 text-success",
+                                statusLabel === "Declined" && "bg-destructive-50 text-destructive",
+                              )}
+                            >
+                              {statusLabel}
+                            </Badge>
+                          )}
                         </section>
                       );
                     })
@@ -267,9 +258,9 @@ export const GenerateRunPayrollDrawer = ({
               >
                 Run Payroll
               </MainButton>
-              <MainButton variant="outline" onClick={handleSchedulePayment} className="flex-1">
+              {/* <MainButton variant="outline" onClick={handleSchedulePayment} className="flex-1">
                 Schedule Payment
-              </MainButton>
+              </MainButton> */}
             </div>
           </div>
         </DrawerContent>

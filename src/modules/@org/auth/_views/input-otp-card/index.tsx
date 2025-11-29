@@ -67,19 +67,24 @@ export const InputOtpCard = () => {
   };
 
   const resendOTP = async () => {
-    try {
-      if (email) {
-        const response = await requestOTP({ email });
-        if (response?.success) {
-          toast.success(`Request Sent Successfully`, {
-            description: `Please check you mail for OTP`,
-          });
-        }
-      }
-    } catch (error) {
-      toast.error("Registration Failed", {
-        description: error instanceof Error ? error.message : "An unknown error occurred",
-      });
+    if (email) {
+      await requestOTP(
+        { email },
+        {
+          onError: (error) => {
+            toast.error("Request Failed", {
+              description: error instanceof Error ? error.message : "An unknown error occurred",
+            });
+          },
+          onSuccess: (response) => {
+            if (response?.success) {
+              toast.success(`Request Sent Successfully`, {
+                description: `Please check you mail for OTP`,
+              });
+            }
+          },
+        },
+      );
     }
   };
 

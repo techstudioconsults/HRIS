@@ -74,7 +74,7 @@ export const EmployeeSetupForm = () => {
   };
 
   return (
-    <section className="rounded-[10px] border p-7">
+    <section className="rounded-[10px] border p-7" data-tour="employee-form">
       <div className={`mb-8 space-y-2`}>
         <FormHeader icon={<User />} title="Onboard Employees" subTitle="Add your team members to get started" />
       </div>
@@ -87,7 +87,7 @@ export const EmployeeSetupForm = () => {
           }}
           className=""
         >
-          <section className={`hide-scrollbar max-h-[500px] space-y-4 overflow-auto`}>
+          <section className={`space-y-4`}>
             <EmployeeConfig />
           </section>
           <div className="mt-4">

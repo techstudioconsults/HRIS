@@ -55,7 +55,7 @@ export const EditEmployeeForm = () => {
     workMode: "remote",
     teamId: "",
     roleId: "",
-    baseSalary: "",
+    baseSalary: 0,
     bankName: "",
     accountName: "",
     accountNumber: "",
@@ -108,7 +108,7 @@ export const EditEmployeeForm = () => {
       workMode: workMode as "remote" | "onsite" | "hybrid",
       teamId,
       roleId,
-      baseSalary: employee.payProfile.baseSalary ? String(employee.payProfile.baseSalary) : "",
+      baseSalary: employee.payProfile.baseSalary ? Number(employee.payProfile.baseSalary) : 0,
       bankName: employee.payProfile.bankName ?? employee.bankName ?? "",
       accountName: employee.payProfile.accountName ?? employee.accountName ?? "",
       accountNumber: employee.payProfile.accountNumber ?? employee.accountNumber ?? "",
@@ -226,7 +226,7 @@ export const EditEmployeeForm = () => {
     formDataToSend.append("workMode", formData.workMode);
 
     // Salary details
-    formDataToSend.append("baseSalary", formData.baseSalary);
+    formDataToSend.append("baseSalary", formData.baseSalary.toString());
     formDataToSend.append("bankName", formData.bankName);
     formDataToSend.append("accountName", formData.accountName);
     formDataToSend.append("accountNumber", formData.accountNumber);
@@ -416,7 +416,7 @@ export const EditEmployeeForm = () => {
                 <FormField
                   name="baseSalary"
                   label="Base Salary"
-                  type="text"
+                  type="number"
                   placeholder={isHydrating ? `Loading base salary...` : `800000`}
                   className="border-border !h-14 w-full"
                   disabled={isHydrating || isSubmitting}

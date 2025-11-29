@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import Loading from "@/app/Loading";
 import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
@@ -20,6 +19,7 @@ import { useOnboardingService } from "@/modules/@org/onboarding/services/use-onb
 import { useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { Add, Filter } from "iconsax-reactjs";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useDebounce } from "use-debounce";
@@ -29,11 +29,13 @@ import { AddNewEmployees } from "../../_components/forms/add-new-employees";
 import { RolesAndPermission } from "../../_components/forms/add-new-roles";
 import { FilterForm } from "../../_components/forms/filter-form";
 import { useTeamEditing } from "../../_hooks/use-team-editing";
+import Loading from "../../../../../../../note/loading";
 import { useEmployeeService } from "../../../employee/services/use-service";
 import { useTeamService } from "../../services/use-service";
 import { teamColumn, useTeamRowActions } from "../table-data";
 
 export const AllTeams = () => {
+  const router = useRouter();
   const {
     page,
     search,
@@ -141,16 +143,7 @@ export const AllTeams = () => {
   // Build API filters from URL state (nuqs)
   const apiFilters = useMemo(() => getApiFilters(), [getApiFilters]);
 
-  const { data: teamData, isLoading } = useGetAllTeams(apiFilters, {
-    keepPreviousData: false, // Don't keep previous data to ensure fresh results
-    staleTime: 0, // Always consider data stale to ensure fresh API calls
-    cacheTime: 0, // Don't cache data to prevent stale data issues
-    refetchOnWindowFocus: false, // Don't refetch on window focus
-    refetchOnMount: true, // Always refetch when component mounts
-    refetchOnReconnect: true, // Refetch when network reconnects
-    retry: 1, // Only retry once on failure
-    retryDelay: 1000, // Wait 1 second before retry
-  });
+  const { data: teamData, isLoading } = useGetAllTeams(apiFilters);
 
   // Apply filter values to URL (nuqs) and reset page
   const handleFilterChange = useCallback(
@@ -191,8 +184,8 @@ export const AllTeams = () => {
   const { useCreateTeam } = useOnboardingService();
 
   const { mutateAsync: createTeam } = useCreateTeam();
-  const createRoleMutation = useCreateRole();
-  const updateRoleMutation = useUpdateRole();
+  const { mutateAsync: createRoleMutation } = useCreateRole();
+  const { mutateAsync: updateRoleMutation } = useUpdateRole();
 
   const handleAddTeam = async (name: string) => {
     try {
@@ -242,15 +235,26 @@ export const AllTeams = () => {
   const handleAddRole = async (teamId: string, data: FormRole) => {
     try {
       setSubmitting(true);
-      await createRoleMutation.mutateAsync({
-        name: data.name,
-        teamId,
-        permissions: data.permissions || [],
-      });
-
-      // Invalidate queries to refresh data
-      await queryClient.invalidateQueries({ queryKey: ["teams"] });
-      await queryClient.invalidateQueries({ queryKey: ["roles", teamId] });
+      await createRoleMutation(
+        {
+          name: data.name,
+          teamId,
+          permissions: data.permissions || [],
+        },
+        {
+          onSuccess: () => {
+            // toast.success(`Role "${data.name}" created successfully!`);
+            // Invalidate queries to refresh data
+            queryClient.invalidateQueries({ queryKey: ["teams"] });
+            queryClient.invalidateQueries({ queryKey: ["roles", teamId] });
+            closeDialog();
+          },
+          onError: (error) => {
+            const message = error instanceof AxiosError ? error.response?.data.message : "An unexpected error occurred";
+            toast.error("Failed to create role", { description: message });
+          },
+        },
+      );
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to create role. Please try again.";
       toast.error(errorMessage);
@@ -273,7 +277,7 @@ export const AllTeams = () => {
   const handleUpdateRole = async (roleId: string, data: FormRole) => {
     try {
       setSubmitting(true);
-      await updateRoleMutation.mutateAsync({
+      await updateRoleMutation({
         roleId,
         name: data.name,
         permissions: data.permissions,
@@ -406,6 +410,11 @@ export const AllTeams = () => {
                   hasPreviousPage={(teamData.data as any).metadata.hasPreviousPage}
                   hasNextPage={(teamData.data as any).metadata.hasNextPage}
                   onPageChange={handlePageChange}
+                  onRowClick={(team: any) => {
+                    if (team?.id) {
+                      router.push(`/admin/teams/${team.id}`);
+                    }
+                  }}
                   rowActions={getRowActions}
                   showPagination={true}
                   enableRowSelection={true}
@@ -449,6 +458,7 @@ export const AllTeams = () => {
             : "Create a new team for your organization. You can add roles and employees later."
         }
         trigger={<span />}
+        className="min-w-2xl"
       >
         <TeamForm
           initialData={currentTeam}
@@ -560,7 +570,7 @@ export const AllTeams = () => {
         }}
         title="Edit Team"
         description="Update team information and settings"
-        className="!max-w-2xl"
+        className="min-w-2xl"
         trigger={<span />}
       >
         {editingTeam && (

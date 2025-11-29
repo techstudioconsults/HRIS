@@ -5,6 +5,7 @@ import { FormField } from "@/components/shared/inputs/FormFields";
 import { useSearchParameters } from "@/hooks/use-search-parameters";
 import { ResetPasswordData, resetPasswordSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 import { ArrowLeft } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -40,17 +41,20 @@ export const ResetPassword = () => {
       ...data,
       ...(token ? { token } : {}),
     };
-    try {
-      const response = await resetPassword(tokenizedData);
-      toast.success(`Password Reset Successful`, {
-        description: response?.data,
-      });
-      router.push(`/login`);
-    } catch (error) {
-      toast.error("Password Reset Failed", {
-        description: error instanceof Error ? error.message : "An unknown error occurred",
-      });
-    }
+
+    await resetPassword(tokenizedData, {
+      onSuccess: (response) => {
+        toast.success(`Password Reset Successful`, {
+          description: response?.data,
+        });
+        router.push(`/login`);
+      },
+      onError: (error) => {
+        toast.error("Password Reset Failed", {
+          description: error instanceof AxiosError ? error.response?.data.message : "An unknown error occurred",
+        });
+      },
+    });
   };
 
   return (

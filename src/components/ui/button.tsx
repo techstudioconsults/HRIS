@@ -21,7 +21,7 @@ const buttonVariants = cva(
           "bg-loading text-loading-foreground hover:bg-loading-hover opacity-50 hover:opacity-100 transition-opacity duration-500 ease-out",
         outline: "text-gray-500 border border-border hover:bg-primary-75 hover:text-primary shadow-none",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-primary-75 hover:text-primary text-primary",
+        ghost: "hover:bg-primary-75 hover:text-primary text-primary shadow-none",
         link: "text-link underline-offset-4 hover:underline shadow-none",
       },
       size: {

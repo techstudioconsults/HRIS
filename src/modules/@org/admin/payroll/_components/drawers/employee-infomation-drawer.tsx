@@ -1,6 +1,5 @@
 "use client";
 
-import Loading from "@/app/loading";
 import { BackButton } from "@/components/shared/back-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User } from "iconsax-reactjs";
 
+import Loading from "../../../../../../../note/loading";
 import { usePayrollService } from "../../services/use-service";
 import { usePayrollStore } from "../../stores/payroll-store";
 import EmployeeInformation from "../tab-content/employee-information";

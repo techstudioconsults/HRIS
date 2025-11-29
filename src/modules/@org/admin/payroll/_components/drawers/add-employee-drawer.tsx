@@ -1,6 +1,5 @@
 "use client";
 
-import Loading from "@/app/loading";
 import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import { BackButton } from "@/components/shared/back-button";
 import MainButton from "@/components/shared/button";
@@ -16,6 +15,7 @@ import { Filter } from "iconsax-reactjs";
 import { useCallback, useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 
+import Loading from "../../../../../../../note/loading";
 import { FilterForm } from "../../../employee/_components/forms/filter-form";
 import { useEmployeeService } from "../../../employee/services/use-service";
 import { usePayrollService } from "../../services/use-service";

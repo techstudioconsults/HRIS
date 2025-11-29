@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import Loading from "@/app/loading";
 import { BreadCrumb } from "@/components/shared/breadcrumb";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
@@ -27,6 +26,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import empty1 from "~/images/empty-state.svg";
+import Loading from "../../../../../../../note/loading";
 import { CardGroup } from "../../../dashboard/_components/card-group";
 import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
 import { useTeamService } from "../../services/use-service";

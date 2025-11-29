@@ -1,6 +1,5 @@
 "use client";
 
-import Loading from "@/app/loading";
 import { BreadCrumb } from "@/components/shared/breadcrumb";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
@@ -18,6 +17,7 @@ import { toast } from "sonner";
 
 import empty1 from "~/images/empty-state.svg";
 import AddNewMembers from "../../_components/forms/add-new-members";
+import Loading from "../../../../../../../note/loading";
 import { CardGroup } from "../../../dashboard/_components/card-group";
 import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
 import { useEmployeeRowActions } from "../../../employee/_views/table-data";

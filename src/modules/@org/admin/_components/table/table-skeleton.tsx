@@ -1,108 +1,24 @@
-"use client";
-
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
 
-interface TableSkeletonProperties {
-  // Table structure
-  columns?: number;
-  rows?: number;
+export function TableSkeleton() {
+  // Calculate total columns including optional ones
+  //   const totalColumns = columns + (showDragColumn ? 1 : 0) + (showSelectColumn ? 1 : 0) + (showActionsColumn ? 1 : 0);
 
-  // Features to show skeleton for
-  enableDragAndDrop?: boolean;
-  enableRowSelection?: boolean;
-  enableColumnVisibility?: boolean;
-  showAddButton?: boolean;
-  showPagination?: boolean;
-  showTabs?: boolean;
-
-  // Layout options
-  mobileCardView?: boolean;
-  className?: string;
-}
-
-export function TableSkeleton({
-  rows = 8,
-
-  showPagination = false,
-  showTabs = false,
-
-  className,
-}: TableSkeletonProperties) {
   return (
-    <div className={cn("w-full space-y-4", className)}>
-      {showTabs && <Skeleton className="h-10 w-full" />}
-
-      <div className="bg-background rounded-lg">
-        <Skeleton className="h-10 w-full" />
-        <div className="space-y-2 p-2">
-          {Array.from({ length: rows }).map((_, index) => (
-            <Skeleton key={index} className="h-12 w-full" />
-          ))}
+    <section className="flex min-h-[76dvh] w-full flex-col justify-between gap-4">
+      <div>
+        <Skeleton className="mb-4 h-[70dvh] w-full" />
+      </div>
+      <div className="text-muted-foreground flex flex-col-reverse gap-4 text-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center justify-between md:w-[50%]">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-4 w-24" />
+        </div>
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-10 w-full rounded-sm sm:w-[137px]" />
+          <Skeleton className="h-10 w-full rounded-sm sm:w-[137px]" />
         </div>
       </div>
-
-      {showPagination && <Skeleton className="h-10 w-full" />}
-    </div>
-  );
-}
-
-// Specialized skeleton components for different table types
-export function EmployeeTableSkeleton() {
-  return (
-    <TableSkeleton
-      columns={5}
-      rows={10}
-      enableRowSelection={true}
-      enableColumnVisibility={true}
-      showAddButton={true}
-      showPagination={true}
-      mobileCardView={true}
-    />
-  );
-}
-
-export function PayrollTableSkeleton() {
-  return (
-    <TableSkeleton
-      columns={6}
-      rows={8}
-      enableRowSelection={true}
-      enableColumnVisibility={true}
-      showAddButton={true}
-      showPagination={true}
-      mobileCardView={true}
-    />
-  );
-}
-
-export function TeamsTableSkeleton() {
-  return (
-    <TableSkeleton
-      columns={4}
-      rows={6}
-      enableRowSelection={false}
-      enableColumnVisibility={true}
-      showAddButton={true}
-      showPagination={true}
-      showTabs={true}
-      mobileCardView={true}
-    />
-  );
-}
-
-// Dashboard table skeleton with drag and drop
-export function DashboardTableSkeleton() {
-  return (
-    <TableSkeleton
-      columns={6}
-      rows={5}
-      enableDragAndDrop={true}
-      enableRowSelection={true}
-      enableColumnVisibility={true}
-      showAddButton={true}
-      showTabs={true}
-      mobileCardView={false}
-    />
+    </section>
   );
 }

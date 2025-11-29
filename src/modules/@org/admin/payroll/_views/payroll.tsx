@@ -2,7 +2,6 @@
 /* eslint-disable unused-imports/no-unused-vars */
 "use client";
 
-import Loading from "@/app/loading";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
 import { GenericDropdown } from "@/components/shared/drop-down";
@@ -29,6 +28,7 @@ import { FundWalletFormModal } from "../_components/forms/fund-wallet-form-modal
 import { FundWalletAccountModal } from "../_components/fund-wallet-account-modal";
 import { PayrollSetupSettingsModal } from "../_components/payroll-setup-modal";
 import { TableSkeleton } from "../../_components/table";
+import Loading from "../../../../../../note/loading";
 import { DashboardCard } from "../../dashboard/_components/dashboard-card";
 import { usePayrollService } from "../services/use-service";
 import { usePayrollStore } from "../stores/payroll-store";

@@ -2,6 +2,7 @@
 
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { cn } from "@/lib/utils";
+import { AlertCircle } from "lucide-react";
 import Image from "next/image";
 import { ReactNode } from "react";
 
@@ -222,10 +223,13 @@ export const ErrorEmptyState = ({
   onRetry: () => void;
 }) => (
   <EmptyState
+    className="bg-destructive/5"
     variant="image"
-    image={{ src: empty1.src, alt: "Error", width: 180, height: 180 }}
+    icon={<AlertCircle className="text-destructive" />}
     title={title}
+    titleClassName="text-destructive"
     description={description}
+    descriptionClassName="text-destructive"
     primaryAction={{
       text: "Try Again",
       onClick: onRetry,

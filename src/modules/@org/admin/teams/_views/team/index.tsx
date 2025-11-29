@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import Loading from "@/app/loading";
 import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import MainButton from "@/components/shared/button";
 import { DashboardHeader } from "@/components/shared/dashboard/dashboard-header";
@@ -30,6 +29,7 @@ import { AddNewEmployees } from "../../_components/forms/add-new-employees";
 import { RolesAndPermission } from "../../_components/forms/add-new-roles";
 import { FilterForm } from "../../_components/forms/filter-form";
 import { useTeamEditing } from "../../_hooks/use-team-editing";
+import Loading from "../../../../../../../note/loading";
 import { useEmployeeService } from "../../../employee/services/use-service";
 import { useTeamService } from "../../services/use-service";
 import { teamColumn, useTeamRowActions } from "../table-data";

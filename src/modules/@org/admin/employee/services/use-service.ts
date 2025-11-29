@@ -8,13 +8,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { EmployeeService } from "./service";
 
 export const useEmployeeService = () => {
-  const { useServiceQuery, useSuspenseServiceQuery, useServiceMutation } = createServiceHooks<EmployeeService>(
-    dependencies.EMPLOYEE_SERVICE,
-  );
+  const { useServiceQuery, useServiceMutation } = createServiceHooks<EmployeeService>(dependencies.EMPLOYEE_SERVICE);
 
   // Queries with Suspense support
   const useGetAllEmployees = (filters: Filters = {}, options?: any) =>
-    useSuspenseServiceQuery(queryKeys.employee.list(filters), (service) => service.getAllEmployees(filters), options);
+    useServiceQuery(queryKeys.employee.list(filters), (service) => service.getAllEmployees(filters), options);
 
   const useGetSuspendedEmployeesByPayroll = (payrollId: string, filters: Filters = {}, options?: any) =>
     useServiceQuery(
@@ -27,7 +25,7 @@ export const useEmployeeService = () => {
     useServiceQuery(queryKeys.employee.details(id), (service) => service.getEmployeeById(id), options);
 
   const useGetAllTeams = (options?: any) =>
-    useSuspenseServiceQuery(queryKeys.employee.teams(), (service) => service.getTeams(), options);
+    useServiceQuery(queryKeys.employee.teams(), (service) => service.getTeams(), options);
 
   // Use mutation for on-demand filtered downloads
   const useDownloadEmployees = () =>

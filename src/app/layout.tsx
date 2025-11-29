@@ -11,7 +11,6 @@ import "../styles/theme.css";
 
 import { SessionProvider } from "@/components/core/layout/SessionProvider";
 import ThemeProvider from "@/components/core/layout/ThemeToggle/theme-provider";
-import { ModeToggle } from "@/components/core/layout/ThemeToggle/theme-toggle";
 import { NetworkStatusModal } from "@/components/core/miscellaneous/network-error";
 import { Toast } from "@/components/shared/Toast";
 import { TooltipProvider } from "@/components/ui/tooltip";

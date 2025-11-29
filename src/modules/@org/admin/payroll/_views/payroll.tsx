@@ -27,7 +27,7 @@ import { SchedulePayrollDrawer } from "../_components/drawers/schedule-payroll-d
 import { FundWalletFormModal } from "../_components/forms/fund-wallet-form-modal";
 import { FundWalletAccountModal } from "../_components/fund-wallet-account-modal";
 import { PayrollSetupSettingsModal } from "../_components/payroll-setup-modal";
-import { TableSkeleton } from "../../_components/table";
+import { TableSkeleton } from "../../_components/table/table-skeleton";
 import Loading from "../../../../../../note/loading";
 import { DashboardCard } from "../../dashboard/_components/dashboard-card";
 import { usePayrollService } from "../services/use-service";
@@ -561,7 +561,7 @@ const PayrollView = () => {
           </div>
         </section>
         {loadingPayslips ? (
-          <TableSkeleton columns={payrollColumn.length} rows={10} />
+          <TableSkeleton />
         ) : !payslipsData?.data.items || payslipsData.data.items.length === 0 ? (
           <EmptyState
             className="bg-background shadow"

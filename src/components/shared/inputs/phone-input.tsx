@@ -11,7 +11,8 @@ import flags from "react-phone-number-input/flags";
 
 type PhoneInputProperties = Omit<React.ComponentProps<"input">, "onChange" | "value" | "ref"> &
   Omit<RPNInput.Props<typeof RPNInput.default>, "onChange"> & {
-    onChange?: (value: RPNInput.Value) => void;
+    /* Allow undefined during intermediate typing */
+    onChange?: (value: RPNInput.Value | undefined) => void;
     inputClassName?: string;
     buttonClassName?: string;
   };
@@ -20,29 +21,41 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProperties> = React.
   React.ElementRef<typeof RPNInput.default>,
   PhoneInputProperties
 >(({ className, onChange, value, inputClassName, buttonClassName, ...properties }, reference) => {
+  // Stable memoized wrappers prevent the input element from being recreated
+  // on every keystroke (which was causing focus loss).
+  const CountrySelectComponent = React.useCallback(
+    (countrySelectProperties: CountrySelectProperties) => (
+      <CountrySelect {...countrySelectProperties} buttonClassName={buttonClassName} />
+    ),
+    [buttonClassName],
+  );
+
+  const InputFieldComponent = React.useCallback(
+    (inputProperties: React.ComponentProps<"input">) => (
+      <InputComponent {...inputProperties} inputClassName={cn("shadow-none", inputClassName)} />
+    ),
+    [inputClassName],
+  );
+
   return (
     <RPNInput.default
       ref={reference}
       className={cn("flex shadow-none", className)}
       flagComponent={FlagComponent}
-      countrySelectComponent={(countrySelectProperties) => (
-        <CountrySelect {...countrySelectProperties} buttonClassName={buttonClassName} />
-      )}
-      inputComponent={(inputProperties) => (
-        <InputComponent {...inputProperties} inputClassName={cn(`shadow-none`, inputClassName)} />
-      )}
+      countrySelectComponent={CountrySelectComponent}
+      inputComponent={InputFieldComponent}
       smartCaret={false}
-      value={value || undefined}
+      /* Pass the value directly; letting undefined represent an in-progress (incomplete) number.
+        Avoid converting empty/intermediate states to '' which caused uncontrolled/controlled toggling */
+      value={value}
       /**
        * Handles the onChange event.
        *
        * react-phone-number-input might trigger the onChange event as undefined
        * when a valid phone number is not entered. To prevent this,
        * the value is coerced to an empty string.
-       *
-       * @param {E164Number | undefined} value - The entered value
        */
-      onChange={(value) => onChange?.(value || ("" as RPNInput.Value))}
+      onChange={(newValue) => onChange?.(newValue)}
       {...properties}
     />
   );

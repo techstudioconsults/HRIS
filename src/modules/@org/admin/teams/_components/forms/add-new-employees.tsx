@@ -87,9 +87,9 @@ export const AddNewEmployees = ({
     );
   };
 
-  const toggleCustomPermissions = (index: number) => {
-    setOpenCustomPermissions((previous) => previous.map((isOpen, index_) => (index_ === index ? !isOpen : isOpen)));
-  };
+  // const toggleCustomPermissions = (index: number) => {
+  //   setOpenCustomPermissions((previous) => previous.map((isOpen, index_) => (index_ === index ? !isOpen : isOpen)));
+  // };
 
   const toggleEmployeeCombo = (index: number) => {
     setOpenEmployeeCombos((previous) => previous.map((isOpen, index_) => (index_ === index ? !isOpen : isOpen)));
@@ -188,7 +188,7 @@ export const AddNewEmployees = ({
 
   return (
     <FormProvider {...methods}>
-      <div className="max-h-[70vh] overflow-y-auto pr-2">
+      <div>
         <form
           onSubmit={(event) => {
             event.preventDefault();
@@ -225,209 +225,211 @@ export const AddNewEmployees = ({
             </p>
           </section>
 
-          {[...employees].reverse().map((employee, originalIndex) => {
-            const index = employees.length - 1 - originalIndex; // Calculate original index for state updates
-            const isEmployeeValid = employee.employeeId.trim().length > 0 && employee.roleId.trim().length > 0;
-            return (
-              <section
-                key={index}
-                className={`space-y-4 rounded-lg p-4 ${isEmployeeValid ? "bg-primary/5" : "bg-destructive/5 border-destructive/20 border"}`}
-              >
-                <section className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <p className="text-lg font-semibold">Employee {index + 1}</p>
-                    {!isEmployeeValid && (
-                      <span className="text-destructive bg-destructive/10 rounded px-2 py-1 text-xs">
-                        {employee.employeeId.trim().length === 0 ? "Employee required" : "Role required"}
-                      </span>
-                    )}
-                  </div>
-                  {employees.length > 1 && (
-                    <p
-                      className="text-destructive flex cursor-pointer items-center gap-1 font-medium"
-                      onClick={() => removeEmployee(index)}
-                    >
-                      <Trash className="size-4" /> Remove
-                    </p>
-                  )}
-                </section>
-
-                {isEdit ? (
-                  <>
-                    <div className={`bg-warning-50 text-warning-200 rounded-lg p-4 text-sm`}>
-                      <div className={`flex items-start gap-2`}>
-                        <div>
-                          <InfoCircle size={12} className={`mt-1 text-sm`} />
-                        </div>
-                        <p>
-                          You can assign this employee to a role and customize their permissions. These settings can be
-                          changed later.
-                        </p>
-                      </div>
+          <section className="max-h-[50vh] space-y-4 overflow-y-auto">
+            {[...employees].reverse().map((employee, originalIndex) => {
+              const index = employees.length - 1 - originalIndex; // Calculate original index for state updates
+              const isEmployeeValid = employee.employeeId.trim().length > 0 && employee.roleId.trim().length > 0;
+              return (
+                <section
+                  key={index}
+                  className={`space-y-4 rounded-lg p-4 ${isEmployeeValid ? "bg-primary/5" : "bg-destructive/5 border-destructive/20 border"}`}
+                >
+                  <section className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <p className="text-lg font-semibold">Employee {index + 1}</p>
+                      {!isEmployeeValid && (
+                        <span className="text-destructive bg-destructive/10 rounded px-2 py-1 text-xs">
+                          {employee.employeeId.trim().length === 0 ? "Employee required" : "Role required"}
+                        </span>
+                      )}
                     </div>
-                    {/* Hidden fields for edit mode to maintain form validation */}
-                    <FormField
-                      name="employeeId"
-                      label="Search Employee"
-                      type="text"
-                      placeholder="Type to search employee..."
-                      className="h-[48px] w-full shadow-none"
-                    />
-                    <FormField
-                      name="roleId"
-                      label="Assign to Role"
-                      type="select"
-                      placeholder="Select a role..."
-                      className="h-[48px] w-full shadow-none"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <Card className={`border-none bg-transparent p-0 shadow-none`}>
-                      <CardContent className={`p-0`}>
-                        <div className="space-y-4">
+                    {employees.length > 1 && (
+                      <p
+                        className="text-destructive flex cursor-pointer items-center gap-1 text-xs font-medium"
+                        onClick={() => removeEmployee(index)}
+                      >
+                        <Trash className="size-4" /> Remove
+                      </p>
+                    )}
+                  </section>
+
+                  {isEdit ? (
+                    <>
+                      <div className={`bg-warning-50 text-warning-200 rounded-lg p-4 text-sm`}>
+                        <div className={`flex items-start gap-2`}>
                           <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Search Employee</label>
-                            <Popover open={openEmployeeCombos[index]} onOpenChange={() => toggleEmployeeCombo(index)}>
-                              <PopoverTrigger asChild>
-                                <button
-                                  type="button"
-                                  className={cn(
-                                    "border-input bg-background ring-offset-background focus-visible:ring-ring flex h-[48px] w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-                                    !employee.employeeId && "text-muted-foreground",
-                                  )}
-                                >
-                                  {employee.employeeId ? getEmployeeName(employee.employeeId) : "Select employee..."}
-                                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </button>
-                              </PopoverTrigger>
-                              <PopoverContent className="max-w-[100%] p-0" align="start">
-                                <Command className="">
-                                  <CommandInput placeholder="Search employees..." />
-                                  <CommandList>
-                                    <CommandEmpty>No employees found.</CommandEmpty>
-                                    <CommandGroup>
-                                      {availableEmployees.map((emp) => (
-                                        <CommandItem
-                                          key={emp.id}
-                                          value={`${emp.name} ${emp.email}`}
-                                          onSelect={() => {
-                                            updateEmployee(index, "employeeId", emp.id);
-                                            toggleEmployeeCombo(index);
-                                          }}
-                                        >
-                                          <Check
-                                            className={cn(
-                                              "mr-2 h-4 w-4",
-                                              employee.employeeId === emp.id ? "opacity-100" : "opacity-0",
-                                            )}
-                                          />
-                                          <div>
-                                            <div className="font-medium">{emp.name}</div>
-                                            <div className="text-muted-foreground text-sm">{emp.email}</div>
-                                          </div>
-                                        </CommandItem>
-                                      ))}
-                                    </CommandGroup>
-                                  </CommandList>
-                                </Command>
-                              </PopoverContent>
-                            </Popover>
+                            <InfoCircle size={12} className={`mt-1 text-sm`} />
                           </div>
-                          <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Assign to Role</label>
-                            <Popover open={openRoleCombos[index]} onOpenChange={() => toggleRoleCombo(index)}>
-                              <PopoverTrigger asChild>
-                                <button
-                                  type="button"
-                                  className={cn(
-                                    "border-input bg-background ring-offset-background focus-visible:ring-ring flex h-[48px] w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-                                    !employee.roleId && "text-muted-foreground",
-                                  )}
-                                >
-                                  {employee.roleId ? getRoleName(employee.roleId) : "Select a role..."}
-                                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-full p-0" align="start">
-                                <Command>
-                                  <CommandInput placeholder="Search roles..." />
-                                  <CommandList>
-                                    <CommandEmpty>No roles found.</CommandEmpty>
-                                    <CommandGroup>
-                                      {availableRoles.map((role) => (
-                                        <CommandItem
-                                          key={role.id}
-                                          value={role.name}
-                                          onSelect={() => {
-                                            updateEmployee(index, "roleId", role.id);
-                                            toggleRoleCombo(index);
-                                          }}
-                                        >
-                                          <Check
-                                            className={cn(
-                                              "mr-2 h-4 w-4",
-                                              employee.roleId === role.id ? "opacity-100" : "opacity-0",
-                                            )}
-                                          />
-                                          <div>
-                                            <div className="font-medium">{role.name}</div>
-                                            {role.description && (
-                                              <div className="text-muted-foreground text-sm">{role.description}</div>
-                                            )}
-                                          </div>
-                                        </CommandItem>
-                                      ))}
-                                    </CommandGroup>
-                                  </CommandList>
-                                </Command>
-                              </PopoverContent>
-                            </Popover>
+                          <p>
+                            You can assign this employee to a role and customize their permissions. These settings can
+                            be changed later.
+                          </p>
+                        </div>
+                      </div>
+                      {/* Hidden fields for edit mode to maintain form validation */}
+                      <FormField
+                        name="employeeId"
+                        label="Search Employee"
+                        type="text"
+                        placeholder="Type to search employee..."
+                        className="h-[48px] w-full shadow-none"
+                      />
+                      <FormField
+                        name="roleId"
+                        label="Assign to Role"
+                        type="select"
+                        placeholder="Select a role..."
+                        className="h-[48px] w-full shadow-none"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Card className={`border-none bg-transparent p-0 shadow-none`}>
+                        <CardContent className={`p-0`}>
+                          <div className="space-y-4">
+                            <div>
+                              <label className="mb-2 block text-sm font-medium text-gray-700">Search Employee</label>
+                              <Popover open={openEmployeeCombos[index]} onOpenChange={() => toggleEmployeeCombo(index)}>
+                                <PopoverTrigger asChild>
+                                  <button
+                                    type="button"
+                                    className={cn(
+                                      "border-input bg-background ring-offset-background focus-visible:ring-ring flex h-[48px] w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+                                      !employee.employeeId && "text-muted-foreground",
+                                    )}
+                                  >
+                                    {employee.employeeId ? getEmployeeName(employee.employeeId) : "Select employee..."}
+                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                  </button>
+                                </PopoverTrigger>
+                                <PopoverContent className="p-0 shadow-none lg:w-[588px]" align="start">
+                                  <Command className="">
+                                    <CommandInput placeholder="Search employees..." />
+                                    <CommandList>
+                                      <CommandEmpty>No employees found.</CommandEmpty>
+                                      <CommandGroup>
+                                        {availableEmployees.map((emp) => (
+                                          <CommandItem
+                                            key={emp.id}
+                                            value={`${emp.name} ${emp.email}`}
+                                            onSelect={() => {
+                                              updateEmployee(index, "employeeId", emp.id);
+                                              toggleEmployeeCombo(index);
+                                            }}
+                                          >
+                                            <Check
+                                              className={cn(
+                                                "mr-2 h-4 w-4",
+                                                employee.employeeId === emp.id ? "opacity-100" : "opacity-0",
+                                              )}
+                                            />
+                                            <div>
+                                              <div className="font-medium">{emp.name}</div>
+                                              <div className="text-muted-foreground text-sm">{emp.email}</div>
+                                            </div>
+                                          </CommandItem>
+                                        ))}
+                                      </CommandGroup>
+                                    </CommandList>
+                                  </Command>
+                                </PopoverContent>
+                              </Popover>
+                            </div>
+                            <div>
+                              <label className="mb-2 block text-sm font-medium text-gray-700">Assign to Role</label>
+                              <Popover open={openRoleCombos[index]} onOpenChange={() => toggleRoleCombo(index)}>
+                                <PopoverTrigger asChild>
+                                  <button
+                                    type="button"
+                                    className={cn(
+                                      "border-input bg-background ring-offset-background focus-visible:ring-ring flex h-[48px] w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+                                      !employee.roleId && "text-muted-foreground",
+                                    )}
+                                  >
+                                    {employee.roleId ? getRoleName(employee.roleId) : "Select a role..."}
+                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                  </button>
+                                </PopoverTrigger>
+                                <PopoverContent className="p-0 shadow-none lg:w-[588px]" align="start">
+                                  <Command>
+                                    <CommandInput placeholder="Search roles..." />
+                                    <CommandList>
+                                      <CommandEmpty>No roles found.</CommandEmpty>
+                                      <CommandGroup>
+                                        {availableRoles.map((role) => (
+                                          <CommandItem
+                                            key={role.id}
+                                            value={role.name}
+                                            onSelect={() => {
+                                              updateEmployee(index, "roleId", role.id);
+                                              toggleRoleCombo(index);
+                                            }}
+                                          >
+                                            <Check
+                                              className={cn(
+                                                "mr-2 h-4 w-4",
+                                                employee.roleId === role.id ? "opacity-100" : "opacity-0",
+                                              )}
+                                            />
+                                            <div>
+                                              <div className="font-medium">{role.name}</div>
+                                              {role.description && (
+                                                <div className="text-muted-foreground text-sm">{role.description}</div>
+                                              )}
+                                            </div>
+                                          </CommandItem>
+                                        ))}
+                                      </CommandGroup>
+                                    </CommandList>
+                                  </Command>
+                                </PopoverContent>
+                              </Popover>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </>
+                  )}
+                  {/* 
+                  <p
+                    onClick={() => toggleCustomPermissions(index)}
+                    className="text-primary hover:text-primary/80 cursor-pointer text-sm font-medium transition-colors"
+                  >
+                    {openCustomPermissions[index] ? "Hide custom permissions" : "Customize this employee's role access"}
+                  </p> */}
+
+                  {/* Custom Permissions Section */}
+                  {openCustomPermissions[index] && (
+                    <Card className={`border-none bg-transparent p-0 shadow-none`}>
+                      <CardHeader className={`p-0`}>
+                        <CardTitle className="text-lg">Customize Employee Permissions</CardTitle>
+                        <p className="text-muted-foreground text-sm">
+                          Override the default role permissions for this specific employee.
+                        </p>
+                      </CardHeader>
+                      <CardContent className={`p-0`}>
+                        <div className="bg-warning/10 border-warning/20 rounded-lg border p-4">
+                          <div className="flex items-center gap-2">
+                            <InfoCircle className="text-warning h-4 w-4" />
+                            <p className="text-warning text-sm">
+                              Custom permissions will override the default role permissions for this employee.
+                            </p>
                           </div>
                         </div>
                       </CardContent>
                     </Card>
-                  </>
-                )}
-
-                <p
-                  onClick={() => toggleCustomPermissions(index)}
-                  className="text-primary hover:text-primary/80 cursor-pointer text-sm font-medium transition-colors"
-                >
-                  {openCustomPermissions[index] ? "Hide custom permissions" : "Customize this employee's role access"}
-                </p>
-
-                {/* Custom Permissions Section */}
-                {openCustomPermissions[index] && (
-                  <Card className={`border-none bg-transparent p-0 shadow-none`}>
-                    <CardHeader className={`p-0`}>
-                      <CardTitle className="text-lg">Customize Employee Permissions</CardTitle>
-                      <p className="text-muted-foreground text-sm">
-                        Override the default role permissions for this specific employee.
-                      </p>
-                    </CardHeader>
-                    <CardContent className={`p-0`}>
-                      <div className="bg-warning/10 border-warning/20 rounded-lg border p-4">
-                        <div className="flex items-center gap-2">
-                          <InfoCircle className="text-warning h-4 w-4" />
-                          <p className="text-warning text-sm">
-                            Custom permissions will override the default role permissions for this employee.
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </section>
-            );
-          })}
+                  )}
+                </section>
+              );
+            })}
+          </section>
 
           {/* Validation Summary */}
           {!allEmployeesValid && (
             <div className="bg-warning/10 border-warning/20 rounded-lg border p-4">
-              <div className="flex items-center gap-2">
+              <div className="flex items-start gap-2">
                 <InfoCircle className="text-warning h-4 w-4" />
-                <p className="text-warning text-sm">
+                <p className="text-muted-foreground text-xs">
                   Please complete all employees by selecting an employee and assigning them to a role.
                 </p>
               </div>

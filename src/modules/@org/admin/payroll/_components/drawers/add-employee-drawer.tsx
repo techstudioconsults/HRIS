@@ -1,6 +1,5 @@
 "use client";
 
-import Loading from "@/app/Loading";
 import { SearchInput } from "@/components/core/miscellaneous/search-input";
 import { BackButton } from "@/components/shared/back-button";
 import MainButton from "@/components/shared/button";
@@ -16,6 +15,7 @@ import { Filter } from "iconsax-reactjs";
 import { useCallback, useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 
+import Loading from "../../../../../../../note/loading";
 import { FilterForm } from "../../../employee/_components/forms/filter-form";
 import { useEmployeeService } from "../../../employee/services/use-service";
 import { usePayrollService } from "../../services/use-service";
@@ -98,16 +98,21 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
     resetToFirstPage();
   }, [debouncedSearch, setSearch, resetToFirstPage]);
 
-  // const apiFilters = useMemo(() => getApiFilters(), [getApiFilters]);
+  // Build API filters from URL parameters
+  const apiFilters: Filters = {
+    ...(search && { search }),
+    ...(teamId && { teamId }),
+    ...(roleId && { roleId }),
+    ...(status && status !== "all" && { status }),
+    ...(sortBy && { sortBy }),
+    ...(limit && { limit }),
+    ...(page && { page }),
+  };
 
-  const { data: employeesData, isLoading } = useGetSuspendedEmployeesByPayroll(
-    payrollId || "",
-    {},
-    {
-      // Ensure payslips are generated before calling the "absent" endpoint
-      enabled: !!payrollId && hasPayslips,
-    },
-  );
+  const { data: employeesData, isLoading } = useGetSuspendedEmployeesByPayroll(payrollId || "", apiFilters, {
+    // Ensure payslips are generated before calling the "absent" endpoint
+    enabled: !!payrollId && hasPayslips,
+  });
 
   const handleFilterChange = useCallback(
     (newFilters: FilterValues) => {

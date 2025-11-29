@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { Modal } from "@/components/ui/modal";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { AlertTriangle, Info } from "lucide-react";
 
 // import { useEffect, useState } from "react";
@@ -164,9 +164,15 @@ export const AlertModal: React.FC<AlertModalProperties> = ({
   const resolvedConfirmVariant = confirmVariant ?? config.buttonVariant;
   const resolvedCancelVariant = cancelVariant ?? "outline";
 
+  const onChange = (open: boolean) => {
+    if (!open) {
+      onClose();
+    }
+  };
+
   return (
-    <Modal title="" description="" isOpen={isOpen} onClose={onClose}>
-      <div className={`flex flex-col items-center gap-6 py-8 ${containerClassName ?? ""}`}>
+    <Dialog open={isOpen} onOpenChange={onChange}>
+      <DialogContent className={`flex flex-col items-center gap-6 py-8 ${containerClassName ?? ""}`}>
         {/* Icon */}
         <div
           className={`flex h-16 w-16 items-center justify-center rounded-full border-2 ${config.borderColor} ${config.bgColor} ${iconContainerClassName ?? ""}`}
@@ -206,7 +212,7 @@ export const AlertModal: React.FC<AlertModalProperties> = ({
             {confirmText}
           </MainButton>
         </div>
-      </div>
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 };

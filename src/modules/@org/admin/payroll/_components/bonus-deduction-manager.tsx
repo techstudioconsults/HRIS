@@ -3,7 +3,7 @@
 
 import { LoadingSpinner } from "@/components/core/miscellaneous/loading-spinner";
 import { AlertModal } from "@/components/shared/dialog/alert-modal";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type React from "react";
 
 import { usePayrollService } from "../services/use-service";
@@ -39,10 +39,34 @@ export function BonusDeductionManager({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<BonusDeduction | null>(null);
 
-  // Keep local items in sync when initialItems (from payslip/policy) change,
-  // so that freshly loaded bonuses/deductions show up immediately.
+  // Keep local items in sync with initialItems only when they truly change.
+  // Avoid overwriting local optimistic updates due to parent re-renders.
+  const lastSyncedReference = useRef<BonusDeduction[] | null>(null);
+
+  const areListsEqual = (a: BonusDeduction[] = [], b: BonusDeduction[] = []) => {
+    if (a === b) return true;
+    if (!a || !b) return false;
+    if (a.length !== b.length) return false;
+    for (const [index, ai] of a.entries()) {
+      const bi = b[index];
+      if (
+        ai.id !== bi.id ||
+        ai.name !== bi.name ||
+        ai.value !== bi.value ||
+        ai.valueType !== bi.valueType ||
+        ai.status !== bi.status ||
+        ai.type !== bi.type
+      )
+        return false;
+    }
+    return true;
+  };
+
   useEffect(() => {
-    setItems(initialItems);
+    if (!areListsEqual(initialItems, lastSyncedReference.current ?? [])) {
+      setItems(initialItems);
+      lastSyncedReference.current = initialItems;
+    }
   }, [initialItems]);
 
   // Success alert state for delete actions

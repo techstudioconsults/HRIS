@@ -4,11 +4,13 @@ import MainButton from "@/components/shared/button";
 import { AlertModal } from "@/components/shared/dialog/alert-modal";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
 import { FormField } from "@/components/shared/inputs/FormFields";
+import { useTour } from "@/modules/@org/onboarding";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { generatePayrollTourStep } from "../../config/tour-steps";
 import { usePayrollService } from "../../services/use-service";
 import { usePayrollStore } from "../../stores/payroll-store";
 
@@ -31,16 +33,20 @@ interface FundWalletFormModalProperties {
   onOpenChange?: (open: boolean) => void;
   onFundWallet?: () => void;
   initialData?: FundWalletFormData;
+
+  isGeneratePayrollBannerShowing?: boolean;
 }
 
-export function FundWalletFormModal({ initialData }: FundWalletFormModalProperties) {
+export function FundWalletFormModal({ initialData, isGeneratePayrollBannerShowing }: FundWalletFormModalProperties) {
   const {
     setShowFundWalletAccountModal,
     showFundWalletFormModal,
     setHasCompletedPayrollPolicySetupForm,
     setShowFundWalletFormModal,
     setWalletSetupCompleted,
+    walletSetupCompleted,
   } = usePayrollStore();
+  const { startTour } = useTour();
   const { useUpdateCompanyWallet } = usePayrollService();
   const { mutateAsync: updateWallet, isPending } = useUpdateCompanyWallet();
 
@@ -85,6 +91,9 @@ export function FundWalletFormModal({ initialData }: FundWalletFormModalProperti
 
   const handleSuccessAlertClose = () => {
     setIsSuccessAlertOpen(false);
+    if (walletSetupCompleted && isGeneratePayrollBannerShowing) {
+      startTour(generatePayrollTourStep);
+    }
     setTimeout(() => {
       methods.reset();
     }, 200);
@@ -102,7 +111,7 @@ export function FundWalletFormModal({ initialData }: FundWalletFormModalProperti
         open={showFundWalletFormModal}
         onOpenChange={setShowFundWalletFormModal}
         title="Set up Payroll Wallet"
-        className="!max-w-lg"
+        className="min-w-md"
       >
         <FormProvider {...methods}>
           <form

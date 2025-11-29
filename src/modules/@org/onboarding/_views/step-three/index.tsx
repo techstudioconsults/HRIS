@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import MainButton from "@/components/shared/button";
 import { PageSection, PageWrapper } from "@/lib/animation";
+import { useCallback, useEffect } from "react";
 
 import { EmployeeSetupForm } from "../../_components/forms/employee/employee-setup";
+import { stepThreeTourSteps } from "../../config/tour-steps";
+import { useTour } from "../../context/tour-context";
 
 // Enhanced Employee type with teamId and roleId
 export interface Employee {
@@ -21,6 +24,16 @@ export interface OnboardEmployeesPayload {
 }
 
 export const EmployeeSetup = () => {
+  const { startTour } = useTour();
+
+  const handleStartTour = useCallback(() => {
+    startTour(stepThreeTourSteps);
+  }, [startTour]);
+
+  useEffect(() => {
+    handleStartTour();
+  }, [handleStartTour]);
+
   return (
     <PageWrapper className={`flex flex-col items-center justify-between gap-8 lg:flex-row`}>
       <section className={`max-w-[646px] flex-1 space-y-[41px]`}>
@@ -47,7 +60,7 @@ export const EmployeeSetup = () => {
           </MainButton>
         </PageSection>
       </section>
-      <section className={`flex-1`}>
+      <section className={`flex-1 md:scale-85`}>
         <EmployeeSetupForm />
       </section>
     </PageWrapper>

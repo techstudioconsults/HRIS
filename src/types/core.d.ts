@@ -68,16 +68,16 @@ declare global {
   // ============================================================================
 
   /** HTTP response wrapper */
-  // interface HttpResponse<T> {
-  //   data: T;
-  //   status: number;
-  // }
+  interface HttpResponse<T> {
+    data: T;
+    status: number;
+  }
 
   /** Query parameters type */
-  // type QueryParameters = Record<string, string | number | boolean>;
+  type QueryParameters = Record<string, string | number | boolean>;
 
   /** Headers type for HTTP requests */
-  // type HttpHeaders = Record<string, string>;
+  type HttpHeaders = Record<string, string>;
 
   /** Short token response */
   interface ShortTokenResponse {
@@ -128,6 +128,10 @@ declare global {
     flag?: string;
     deliveryStatus?: string;
     role?: string;
+    /** Filter employees by team identifier */
+    teamId?: string;
+    /** Filter employees by role identifier */
+    roleId?: string;
     buyerId?: string;
     productId?: string;
     /**
@@ -135,6 +139,7 @@ declare global {
      * to scope results to a specific employee.
      */
     employeeId?: string;
+    permission?: string;
   }
 }
 

@@ -75,6 +75,16 @@ export class PayrollService {
     }
   }
 
+  // Decide (approve / decline) a payroll approval step
+  async decidePayrollApproval(data: { payrollId: string; status: "approved" | "declined" }) {
+    const response = await this.http.post<ApiResponse<PayrollApproval>>(`/payrolls/${data.payrollId}/approvals`, {
+      status: data.status,
+    });
+    if (response?.status === 200 || response?.status === 201) {
+      return response.data;
+    }
+  }
+
   async downloadPayrolls(filters: Filters = {}) {
     const response = await this.http.get(`/payrolls/download`, {
       ...filters,
@@ -203,6 +213,7 @@ export class PayrollService {
 
   async getPayslips(payrollID: string, filters: Filters) {
     const response = await this.http.get<PaginatedApiResponse<Payslip>>(`/payslips`, {
+      payrollId: payrollID,
       ...filters,
     });
     if (response?.status === 200) return response.data;
@@ -214,16 +225,15 @@ export class PayrollService {
   }
 
   async createPayslip(data: { payrollId: string; employeeId: string }) {
-    const response = await this.http.post<ApiResponse<Payslip>>(`/payrolls/${data.payrollId}/payslips`, {
+    const response = await this.http.post<ApiResponse<Payslip>>(`/payslips`, {
+      payrollId: data.payrollId,
       employeeId: data.employeeId,
     });
     if (response?.status === 201 || response?.status === 200) return response.data;
   }
 
   async deletePayslip(payrollId: string, payslipId: string) {
-    const response = await this.http.delete<ApiResponse<{ success: boolean }>>(
-      `/payrolls/${payrollId}/payslips/${payslipId}`,
-    );
+    const response = await this.http.delete<ApiResponse<{ success: boolean }>>(`/payslips/${payslipId}`);
     if (response?.status === 200) return response.data;
   }
 }

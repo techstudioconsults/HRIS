@@ -65,7 +65,7 @@ const BaseDashboardHomePage = () => {
     },
   ];
 
-  const completedSteps = ONBOARDING_STEPS.filter((step) => step.isCompleted).length || 4;
+  const completedSteps = ONBOARDING_STEPS.filter((step) => step.isCompleted).length || 7;
   // Less than 4 steps completed -> Onboarding
   if (completedSteps < 4) {
     return (

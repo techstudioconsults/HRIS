@@ -7,6 +7,9 @@ import {
   useQueryClient,
   UseQueryOptions,
   UseQueryResult,
+  useSuspenseQuery,
+  UseSuspenseQueryOptions,
+  UseSuspenseQueryResult,
 } from "@tanstack/react-query";
 
 import { container } from "../tools/dependencies";
@@ -67,6 +70,25 @@ export function createServiceHooks<TService>(serviceSymbol: symbol) {
   };
 
   /**
+   * Hook for creating service-based suspense queries (for use with React Suspense)
+   * @param queryKey - Unique key for the query
+   * @param serviceMethod - Method to call on the service
+   * @param options - Additional query options
+   */
+  const useSuspenseServiceQuery = <TData, TError = Error>(
+    queryKey: readonly unknown[],
+    serviceMethod: (service: TService) => Promise<TData>,
+    options?: Omit<UseSuspenseQueryOptions<TData, TError>, "queryKey" | "queryFn">,
+  ): UseSuspenseQueryResult<TData, TError> => {
+    const service = useService();
+    return useSuspenseQuery<TData, TError>({
+      queryKey,
+      queryFn: () => serviceMethod(service),
+      ...options,
+    });
+  };
+
+  /**
    * Hook for creating service-based mutations with automatic query invalidation
    * @param serviceMethod - Method to call on the service
    * @param options - Mutation options including optional invalidateQueries function
@@ -100,5 +122,5 @@ export function createServiceHooks<TService>(serviceSymbol: symbol) {
     });
   };
 
-  return { useServiceQuery, useServiceMutation };
+  return { useServiceQuery, useSuspenseServiceQuery, useServiceMutation };
 }

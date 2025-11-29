@@ -22,7 +22,7 @@ type Variant =
   | "accentOutline";
 type Size = "default" | "sm" | "lg" | "xl" | "2xl" | "link" | "icon" | "circle";
 
-interface ButtonProperties {
+interface ButtonProperties extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   type?: "submit" | "button" | "reset";
   /** Specifies the button style variant */
   variant?: Variant;
@@ -75,6 +75,7 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
       href,
       className,
       onClick,
+      ...properties
     },
     reference,
   ) => {
@@ -182,6 +183,7 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
         onClick={handleClick}
         role="button"
         ref={reference}
+        {...properties}
       >
         {buttonContent}
       </Button>

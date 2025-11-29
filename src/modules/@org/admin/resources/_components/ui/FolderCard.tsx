@@ -1,7 +1,8 @@
 "use client";
 
-import { ConfirmDialog } from "@/components/shared/dialog/confirm-dialog";
+import { AlertModal } from "@/components/shared/dialog";
 import { ReusableDialog } from "@/components/shared/dialog/Dialog";
+import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,10 +10,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { More } from "iconsax-reactjs";
+import { Separator } from "@/components/ui/separator";
+import { Eye, More, Trash } from "iconsax-reactjs";
+import { Edit } from "lucide-react";
 import { useState } from "react";
 import { FcFolder, FcOpenedFolder } from "react-icons/fc";
 
+import empty1 from "~/images/empty-state.svg";
 import type { Folder, FolderFile } from "../../services/types";
 import { useResourceService } from "../../services/use-service";
 import { formatDate } from "../../utils/format";
@@ -74,7 +78,7 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
   return (
     <>
       <div
-        className="group bg-background cursor-pointer rounded-lg p-4 shadow transition-all"
+        className="group bg-background min-w-md cursor-pointer rounded-lg p-4 shadow transition-all hover:shadow-md"
         onClick={handleFolderClick}
       >
         <div className="flex items-start justify-between">
@@ -83,10 +87,10 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
               <FcFolder size={48} />
             </span>
             <div className="min-w-0 flex-1">
-              <h6 className="truncate font-medium text-gray-900" title={folder.name}>
+              <h6 className="truncate text-base font-medium" title={folder.name}>
                 {folder.name}
               </h6>
-              <p className="text-muted-foreground mt-1 text-sm">
+              <p className="text-muted-foreground mt-1 text-xs">
                 {folder.fileCount || 0} files • {formatDate(folder.createdAt)}
               </p>
             </div>
@@ -97,12 +101,18 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
                 <More className="h-4 w-4 rotate-90" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48" onClick={(event) => event.stopPropagation()}>
+            <DropdownMenuContent align="end" className="w-48 shadow-none" onClick={(event) => event.stopPropagation()}>
               <DropdownMenuItem onClick={handleFolderClick}>
+                <Eye className="mr-2 h-4 w-4" />
                 {isFetchingFolderFiles ? "Loading..." : "View Folder"}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleRenameClick}>Rename Folder</DropdownMenuItem>
-              <DropdownMenuItem onClick={handleDeleteClick} className="text-red-600">
+              <DropdownMenuItem onClick={handleRenameClick}>
+                <Edit className="mr-2 h-4 w-4" />
+                Rename Folder
+              </DropdownMenuItem>
+              <Separator className="bg-border/40 my-1" />
+              <DropdownMenuItem onClick={handleDeleteClick} className="text-destructive">
+                <Trash className="text-destructive mr-2 h-4 w-4" />
                 Delete Folder
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -111,7 +121,7 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
       </div>
 
       {/* Delete Folder Dialog */}
-      <ConfirmDialog
+      <AlertModal
         isOpen={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
         onConfirm={handleConfirmDelete}
@@ -119,7 +129,8 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
         title="Delete Folder"
         description={`You're about to delete "${folder.name}" and all its files. This action cannot be undone.`}
         confirmText="Delete Folder"
-        variant="destructive"
+        type="warning"
+        cancelText="Cancel"
       />
 
       {/* View Folder Files Dialog */}
@@ -135,7 +146,14 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
         {isLoadingFiles ? (
           <div className="text-muted-foreground py-6 text-sm">Loading files...</div>
         ) : files.length === 0 ? (
-          <div className="text-muted-foreground py-6 text-sm">No files in this folder.</div>
+          <div className="text-muted-foreground py-6 text-sm">
+            <EmptyState
+              className="bg-background"
+              images={[{ src: empty1.src, alt: "No files", width: 80, height: 80 }]}
+              title="No File found"
+              description={"Upload files to this folder to see them here"}
+            />
+          </div>
         ) : (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {files.map((f) => (
@@ -152,6 +170,7 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
         title="Rename Folder"
         description="Enter a new name for this folder"
         trigger={null}
+        className="min-w-2xl"
       >
         <EditFolderForm folderId={folder.id} currentName={folder.name} onClose={handleCloseRename} />
       </ReusableDialog>

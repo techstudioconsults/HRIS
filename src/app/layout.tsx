@@ -11,6 +11,7 @@ import "../styles/theme.css";
 
 import { SessionProvider } from "@/components/core/layout/SessionProvider";
 import ThemeProvider from "@/components/core/layout/ThemeToggle/theme-provider";
+import { NetworkStatusModal } from "@/components/core/miscellaneous/network-error";
 import { Toast } from "@/components/shared/Toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SSEProvider } from "@/context/sse-provider";
@@ -71,8 +72,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     disableTransitionOnChange
                     enableColorScheme
                   >
-                    <KBarProviderWrapper>{children}</KBarProviderWrapper>
                     <Toast />
+                    {/* <ModeToggle /> */}
+                    <NetworkStatusModal />
+                    <KBarProviderWrapper>{children}</KBarProviderWrapper>
                   </ThemeProvider>
                 </TooltipProvider>
               </NuqsAdapter>

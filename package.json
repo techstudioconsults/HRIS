@@ -32,7 +32,8 @@
     "test:e2e:web": "playwright test --config apps/web/playwright.config.ts",
     "changeset": "changeset",
     "changeset:version": "changeset version",
-    "changeset:publish": "changeset publish"
+    "changeset:publish": "changeset publish",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.8",

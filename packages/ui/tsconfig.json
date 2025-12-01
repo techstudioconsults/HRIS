@@ -1,0 +1,21 @@
+{
+  "extends": "@workspace/typescript-config/react-library.json",
+  "compilerOptions": {
+    // "baseUrl": ".",
+    "paths": {
+      "@workspace/ui/*": ["./src/*"]
+    }
+  },
+  "include": [
+    ".",
+    "../../apps/user-dashboard/src/components/SessionProvider.tsx",
+    "../../apps/user-dashboard/src/components/shared/carousel",
+    "../../apps/user-dashboard/src/modules/@org/shared/search-input.tsx",
+    "../../apps/user-dashboard/src/components/shared/navbar",
+    "../../apps/user-dashboard/src/components/shared/footer",
+    "../../apps/user-dashboard/src/hooks/use-role-navigation.ts",
+    "../../apps/user-dashboard/src/components/shared/top-bar",
+    "../../apps/user-dashboard/src/components/shared/export-action"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

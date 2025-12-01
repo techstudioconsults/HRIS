@@ -1,0 +1,52 @@
+/* Small dots (1px) */
+bg-[image:radial-gradient(var(--pattern-fg)_1px,transparent_0)]
+bg-[size:10px_10px]
+
+/* Medium dots (1.5px) */
+bg-[image:radial-gradient(var(--pattern-fg)_1.5px,transparent_0)]
+bg-[size:12px_12px]
+
+/* Large dots (2px) */
+bg-[image:radial-gradient(var(--pattern-fg)_2px,transparent_0)]
+bg-[size:15px_15px]
+
+/* Square grid */
+bg-[image:linear-gradient(var(--pattern-fg)_1px,transparent_0),
+     linear-gradient(90deg,var(--pattern-fg)_1px,transparent_0)]
+bg-[size:20px_20px]
+
+/* Dotted grid */
+bg-[image:radial-gradient(var(--pattern-fg)_1px,transparent_1px),
+     radial-gradient(var(--pattern-fg)_1px,transparent_1px)]
+bg-[size:20px_20px]
+bg-[position:0_0,10px_10px]
+
+
+/* Horizontal lines */
+bg-[image:repeating-linear-gradient(0deg,var(--pattern-fg)_0_1px,transparent_1px_4px)]
+bg-[size:100%_4px]
+
+/* Vertical lines */
+bg-[image:repeating-linear-gradient(90deg,var(--pattern-fg)_0_1px,transparent_1px_4px)]
+bg-[size:4px_100%]
+
+/* Diagonal lines */
+bg-[image:repeating-linear-gradient(45deg,var(--pattern-fg)_0_1px,transparent_1px_5px)]
+bg-[size:5px_5px]
+
+/* Graph paper (grid + dots) */
+bg-[image:linear-gradient(var(--pattern-fg)_1px,transparent_0),
+     linear-gradient(90deg,var(--pattern-fg)_1px,transparent_0),
+     radial-gradient(var(--pattern-fg)_1px,transparent_1px)]
+bg-[size:40px_40px,40px_40px,20px_20px]
+bg-[position:0_0,0_0,10px_10px]
+
+<div class="
+  [--pattern-fg:oklch(0.5_0_0)]
+  dark:[--pattern-fg:oklch(0.8_0_0)]
+  bg-[image:radial-gradient(var(--pattern-fg)_1px,transparent_0)]
+  bg-[size:10px_10px]
+  bg-fixed
+">
+  <!-- Content -->
+</div>

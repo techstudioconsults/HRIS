@@ -75,6 +75,24 @@ module.exports = {
       },
     },
     {
+      // Playwright E2E test files - disable Vitest rules
+      files: ["**/*.spec.ts", "**/*.spec.tsx", "**/e2e/**/*.ts"],
+      rules: {
+        "vitest/consistent-test-filename": "off",
+        "vitest/require-hook": "off",
+        "vitest/max-expects": "off",
+        "vitest/no-hooks": "off",
+        "vitest/expect-expect": "off",
+      },
+    },
+    {
+      // Test files - allow inner function declarations
+      files: ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"],
+      rules: {
+        "unicorn/consistent-function-scoping": "off",
+      },
+    },
+    {
       files: ["!*.test.(js|jsx|ts|tsx)"],
       rules: {
         "vitest/require-hook": "off",

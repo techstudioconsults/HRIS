@@ -17,8 +17,8 @@ import {
 } from "@/components/ui/pagination";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
 import { MainButton } from "@workspace/ui/lib/button";
+import { cn } from "@workspace/ui/lib/utils";
 // import { MoreHorizontal } from "lucide-react";
 import { Add, Export, Filter, More } from "iconsax-reactjs";
 import Image from "next/image";

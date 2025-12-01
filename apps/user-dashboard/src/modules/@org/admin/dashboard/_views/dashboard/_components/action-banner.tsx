@@ -1,8 +1,8 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { Checkbox } from "@workspace/ui/components/checkbox";
 import { MainButton } from "@workspace/ui/lib/button";
+import { cn } from "@workspace/ui/lib/utils";
 // import Image from "next/image";
 import { ButtonHTMLAttributes, useTransition } from "react";
 

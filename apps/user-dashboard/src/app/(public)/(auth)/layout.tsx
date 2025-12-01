@@ -1,8 +1,8 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 // import { AuthCarousel } from "@/modules/@org/auth";
 import { Logo } from "@workspace/ui/lib";
+import { cn } from "@workspace/ui/lib/utils";
 import { usePathname } from "next/navigation";
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
@@ -32,11 +32,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
           {children}
         </section>
         {/* Carousel Section (Right on desktop, hidden on mobile and specific routes) */}
-        {!shouldHideCarousel && (
-          <div className="hidden max-h-[100dvh] md:block">
-            {/* <AuthCarousel /> */}
-          </div>
-        )}
+        {!shouldHideCarousel && <div className="hidden max-h-[100dvh] md:block">{/* <AuthCarousel /> */}</div>}
       </section>
     </main>
   );

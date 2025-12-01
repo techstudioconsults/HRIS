@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { formatCurrency } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
 import { IColumnDefinition, IRowAction } from "@/modules/@org/admin/_components/table/table";
 import { Badge } from "@workspace/ui/components/badge";
 import { AlertModal } from "@workspace/ui/lib";
+import { cn } from "@workspace/ui/lib/utils";
 import { AxiosError } from "axios";
 import { Trash } from "iconsax-reactjs";
 import { Edit, MinusCircle } from "lucide-react";

@@ -1,12 +1,12 @@
 "use client";
 
 import { industryOptions, sizeOptions } from "@/lib/tools/constants";
-import { cn } from "@/lib/utils";
 import { CompanyProfileFormData, companyProfileSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocationData } from "@workspace/ui/hooks";
 import { ComboBox, FormField, FormHeader } from "@workspace/ui/lib";
 import { MainButton } from "@workspace/ui/lib/button";
+import { cn } from "@workspace/ui/lib/utils";
 import { AxiosError } from "axios";
 import { Building2 } from "lucide-react";
 import Link from "next/link";

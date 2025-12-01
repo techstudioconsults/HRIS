@@ -3,12 +3,12 @@
 import TopBar from "@/components/shared/top-bar";
 import { ActiveTargetProvider } from "@/context/active-target";
 import { adminNavItems } from "@/lib/tools/constants";
-import { cn } from "@/lib/utils";
 import { TourProvider } from "@/modules/@org/onboarding";
 import { useOnboardingService } from "@/modules/@org/onboarding/services/use-onboarding-service";
 import { Wrapper } from "@workspace/ui/components/core/layout/wrapper";
 import { SidebarInset, SidebarProvider } from "@workspace/ui/components/sidebar";
 import { AppSidebar, Logo } from "@workspace/ui/lib";
+import { cn } from "@workspace/ui/lib/utils";
 import { useSession } from "next-auth/react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

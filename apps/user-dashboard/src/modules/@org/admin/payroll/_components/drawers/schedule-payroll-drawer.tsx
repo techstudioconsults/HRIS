@@ -1,9 +1,20 @@
 "use client";
 
 import { formatCurrency, formatDate } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
 import { CalendarModal } from "@/modules/@org/admin/payroll/_components/calendar-modal";
+import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
+import { Badge } from "@workspace/ui/components/badge";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@workspace/ui/components/drawer";
+import { BackButton, EmptyState } from "@workspace/ui/lib";
 import { MainButton } from "@workspace/ui/lib/button";
+import { cn } from "@workspace/ui/lib/utils";
 import { AxiosError } from "axios";
 import { Eye, EyeSlash } from "iconsax-reactjs";
 import { CalendarIcon, Info } from "lucide-react";
@@ -16,10 +27,6 @@ import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
 import { usePayrollService } from "../../services/use-service";
 import { usePayrollStore } from "../../stores/payroll-store";
 import type { Payroll, PayrollApproval } from "../../types";
-import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from "@workspace/ui/components/drawer";
-import { BackButton, EmptyState } from "@workspace/ui/lib";
-import { Badge } from "@workspace/ui/components/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
 
 // Pure helpers (moved to module scope to satisfy lint rule requiring outer scope for arrow functions)
 const normalizeStatus = (status?: string) => (status || "").toLowerCase();

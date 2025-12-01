@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useMemo } from "react";
 
-import { MODULE_PERMISSIONS, ROLES } from "../../../../apps/user-dashboard/src/lib/auth-types";
+import { MODULE_PERMISSIONS, ROLES } from "../lib/auth-types";
 
 export const usePermissions = () => {
   const { data: session, status } = useSession();

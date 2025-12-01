@@ -14,8 +14,6 @@ import { AlertCircle } from 'lucide-react'
 import Image from 'next/image'
 import { ReactNode } from 'react'
 
-import empty1 from '~/images/empty-state.svg'
-
 interface ImageConfig {
   src: string
   alt: string
@@ -197,7 +195,7 @@ export const FilteredEmptyState = ({ onReset }: { onReset: () => void }) => (
   <EmptyState
     variant='image'
     image={{
-      src: empty1.src,
+      src: `./empty-state.svg`,
       alt: 'No filtered results',
       width: 180,
       height: 180,
@@ -227,7 +225,12 @@ export const NoDataEmptyState = ({
 }) => (
   <EmptyState
     variant='image'
-    image={{ src: empty1.src, alt: 'No data', width: 180, height: 180 }}
+    image={{
+      src: `./empty-state.svg`,
+      alt: 'No data',
+      width: 180,
+      height: 180,
+    }}
     title={title}
     description={description}
     primaryAction={
@@ -278,7 +281,7 @@ export const SearchEmptyState = ({
   <EmptyState
     variant='image'
     image={{
-      src: empty1.src,
+      src: `./empty-state.svg`,
       alt: 'No search results',
       width: 180,
       height: 180,

@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@workspace/ui/lib/utils";
 
 import onboardingImage from "~/images/dashboard/banner_illustration.svg";
 import { ActionBanner } from "../../_components/action-banner";

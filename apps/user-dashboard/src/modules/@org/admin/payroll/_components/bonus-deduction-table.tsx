@@ -1,7 +1,6 @@
 "use client";
 
 import { formatCurrency } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
 import { Button } from "@workspace/ui/components/button";
 import {
   DropdownMenu,
@@ -11,6 +10,7 @@ import {
 } from "@workspace/ui/components/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@workspace/ui/components/table";
 import { MainButton } from "@workspace/ui/lib/button";
+import { cn } from "@workspace/ui/lib/utils";
 import { MoreHorizontal, Plus } from "lucide-react";
 
 import { BonusDeductionTableProperties } from "../types";

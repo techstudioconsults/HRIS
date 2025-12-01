@@ -1,11 +1,7 @@
 "use client";
 
 import { MainButton } from "@workspace/ui/lib/button";
-import { useEffect, useRef, useState } from "react";
-import { A11y, Autoplay, FreeMode, Navigation, Pagination, Scrollbar, Thumbs } from "swiper/modules";
-import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
-import type { Swiper as SwiperType } from "swiper/types";
-
+import { cn } from "@workspace/ui/lib/utils";
 // Import Swiper styles
 // import "swiper/css";
 // import "swiper/css/pagination";
@@ -15,8 +11,12 @@ import type { Swiper as SwiperType } from "swiper/types";
 // import "swiper/css/thumbs";
 
 // import { Icons } from "@/components/core/miscellaneous/icons";
-import { cn } from "@/lib/utils";
+
 import { ChevronLeftCircle, ChevronRightCircle } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { A11y, Autoplay, FreeMode, Navigation, Pagination, Scrollbar, Thumbs } from "swiper/modules";
+import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
+import type { Swiper as SwiperType } from "swiper/types";
 
 export const UniversalSwiper = ({
   items,

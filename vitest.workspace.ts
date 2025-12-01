@@ -13,38 +13,23 @@ export default defineWorkspace([
     test: {
       globals: true,
       environment: 'jsdom',
-      name: 'user-dashboard',
-      root: './apps/user-dashboard',
-      include: ['**/*.test.{ts,tsx}'],
-      exclude: [
-        '**/node_modules/**',
-        '**/.next/**',
-        '**/dist/**',
-        '**/*.spec.ts',
-      ],
-    },
-  },
-  {
-    test: {
-      globals: true,
-      environment: 'jsdom',
-      name: 'controller-dashboard',
-      root: './apps/controller-dashboard',
-      include: ['**/*.test.{ts,tsx}'],
-      exclude: [
-        '**/node_modules/**',
-        '**/.next/**',
-        '**/dist/**',
-        '**/*.spec.ts',
-      ],
-    },
-  },
-  {
-    test: {
-      globals: true,
-      environment: 'jsdom',
       name: 'web',
       root: './apps/web',
+      include: ['**/*.test.{ts,tsx}'],
+      exclude: [
+        '**/node_modules/**',
+        '**/.next/**',
+        '**/dist/**',
+        '**/*.spec.ts',
+      ],
+    },
+  },
+  {
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      name: 'user-dashboard',
+      root: './apps/user-dashboard',
       include: ['**/*.test.{ts,tsx}'],
       exclude: [
         '**/node_modules/**',

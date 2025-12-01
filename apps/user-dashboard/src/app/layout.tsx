@@ -1,6 +1,5 @@
 import { KBarProviderWrapper } from "@/lib/kbar/kbar-provider";
 import { fontVariables } from "@/lib/tools/font";
-import { cn } from "@/lib/utils";
 import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import NextTopLoader from "nextjs-toploader";
@@ -9,12 +8,14 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "@workspace/ui/globals.css";
 import "@workspace/ui/themes.css";
 
+import { SessionProvider } from "@/components/SessionProvider";
 import { SSEProvider } from "@/context/sse-provider";
 import { ReactQueryProvider } from "@/lib/react-query/query-provider";
-import { SessionProvider } from "@/components/SessionProvider";
 import { TooltipProvider } from "@workspace/ui/components/tooltip";
+import { cn } from "@workspace/ui/lib/utils";
 import { ThemeProvider } from "next-themes";
-// import { Toaster } from "@workspace/ui/components/sonner";
+import { Toast } from "@workspace/ui/lib";
+// import { ModeToggle } from "@workspace/ui/components/core/layout/ThemeToggle/theme-toggle";
 
 const META_THEME_COLORS = {
   light: "#ffffff",
@@ -65,7 +66,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <NuqsAdapter>
                 <TooltipProvider>
                   <ThemeProvider>
-                    {/* <Toaster /> */}
+                    <Toast />
                     {/* <ModeToggle /> */}
                     {/* <NetworkStatusModal /> */}
                     <KBarProviderWrapper>{children}</KBarProviderWrapper>

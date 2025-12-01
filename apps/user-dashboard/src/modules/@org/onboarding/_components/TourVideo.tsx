@@ -1,8 +1,8 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { Logo } from "@workspace/ui/lib";
 import { MainButton } from "@workspace/ui/lib/button";
+import { cn } from "@workspace/ui/lib/utils";
 import { Play } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 

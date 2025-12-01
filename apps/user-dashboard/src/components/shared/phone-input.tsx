@@ -14,7 +14,7 @@ import {
   PopoverTrigger,
 } from '@workspace/ui/components/popover'
 import { ScrollArea } from '@workspace/ui/components/scroll-area'
-import { cn } from '../utils'
+import { cn } from '@workspace/ui/lib/utils'
 import { CheckIcon, ChevronsUpDown } from 'lucide-react'
 import * as React from 'react'
 import * as RPNInput from 'react-phone-number-input'

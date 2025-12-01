@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { Logo } from "@workspace/ui/lib";
+import { cn } from "@workspace/ui/lib/utils";
 import { LucideLoader } from "lucide-react";
 
 export default function Loading({ text, className }: { text?: string; className?: string }) {

@@ -1,12 +1,12 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
+import { Badge } from "@workspace/ui/components/badge";
+import { ReusableDialog } from "@workspace/ui/lib";
+import { cn } from "@workspace/ui/lib/utils";
 import type { ReactNode } from "react";
 
 import type { PayrollApproval } from "../types";
-import { ReusableDialog } from "@workspace/ui/lib";
-import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
-import { Badge } from "@workspace/ui/components/badge";
 
 interface ApprovalProgressModalProperties {
   open: boolean;

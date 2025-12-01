@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@workspace/ui/lib/utils";
 import { usePathname } from "next/navigation";
 import {
   createContext,

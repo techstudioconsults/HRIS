@@ -51,12 +51,12 @@ export function formatCurrency(amount: number, locale: Locale = "en", currency?:
   }).format(amount);
 }
 
-export function formatDate(date: Date | string, locale: Locale = "en", options?: Intl.DateTimeFormatOptions): string {
-  const dateObject = typeof date === "string" ? new Date(date) : date;
-  const formatOptions = options || dateFormats[locale];
+// export function formatDate(date: Date | string, locale: Locale = "en", options?: Intl.DateTimeFormatOptions): string {
+//   const dateObject = typeof date === "string" ? new Date(date) : date;
+//   const formatOptions = options || dateFormats[locale];
 
-  return new Intl.DateTimeFormat(locale, formatOptions).format(dateObject);
-}
+//   return new Intl.DateTimeFormat(locale, formatOptions).format(dateObject);
+// }
 
 export function formatNumber(number: number, locale: Locale = "en", options?: Intl.NumberFormatOptions): string {
   const formatOptions = options || numberFormats[locale];
@@ -75,11 +75,11 @@ export function isValidLocale(locale: string): locale is Locale {
   return ["en", "fr", "es", "ar"].includes(locale);
 }
 
-export const formatTime = (date: Date | string, locale: Locale = "en", options?: Intl.DateTimeFormatOptions) => {
-  const dateObject = typeof date === "string" ? new Date(date) : date;
-  const formatOptions: Intl.DateTimeFormatOptions = { hour: "numeric", minute: "numeric", hour12: true, ...options };
-  return new Intl.DateTimeFormat(locale, formatOptions).format(dateObject);
-};
+// export const formatTime = (date: Date | string, locale: Locale = "en", options?: Intl.DateTimeFormatOptions) => {
+//   const dateObject = typeof date === "string" ? new Date(date) : date;
+//   const formatOptions: Intl.DateTimeFormatOptions = { hour: "numeric", minute: "numeric", hour12: true, ...options };
+//   return new Intl.DateTimeFormat(locale, formatOptions).format(dateObject);
+// };
 
 export const formatDateTime = (date: Date | string, locale: Locale = "en", options?: Intl.DateTimeFormatOptions) => {
   const dateObject = typeof date === "string" ? new Date(date) : date;
@@ -93,4 +93,27 @@ export const formatDateTime = (date: Date | string, locale: Locale = "en", optio
     ...options,
   };
   return new Intl.DateTimeFormat(locale, formatOptions).format(dateObject);
+};
+
+export function formatDate(date: Date | string | number | undefined, options: Intl.DateTimeFormatOptions = {}) {
+  if (!date) return "";
+
+  try {
+    return new Intl.DateTimeFormat("en-US", {
+      month: options.month ?? "long",
+      day: options.day ?? "numeric",
+      year: options.year ?? "numeric",
+      ...options,
+    }).format(new Date(date));
+  } catch {
+    return "";
+  }
+}
+
+export const formatTime = (date: string) => {
+  return new Date(date).toLocaleString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
 };

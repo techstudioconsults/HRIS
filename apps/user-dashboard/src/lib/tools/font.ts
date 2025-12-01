@@ -1,5 +1,5 @@
 // @/lib/tools/font.ts
-import { cn } from "@/lib/utils";
+import { cn } from "@workspace/ui/lib/utils";
 import { Fira_Code, Work_Sans } from "next/font/google";
 
 // Primary sans-serif font (clean, modern, highly readable)

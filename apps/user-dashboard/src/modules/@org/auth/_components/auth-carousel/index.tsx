@@ -2,7 +2,7 @@
 
 import { UniversalSwiper } from "@/components/shared/carousel";
 import { testimonials } from "@/lib/tools/constants";
-import { cn } from "@/lib/utils";
+import { cn } from "@workspace/ui/lib/utils";
 import Image from "next/image";
 
 export const AuthCarousel = () => {

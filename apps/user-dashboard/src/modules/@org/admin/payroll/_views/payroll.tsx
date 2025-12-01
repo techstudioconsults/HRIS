@@ -3,11 +3,11 @@
 "use client";
 
 import { formatCurrency, formatDate } from "@/lib/formatters";
-import { cn } from "@/lib/utils";
 import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import { DropdownMenuItem } from "@workspace/ui/components/dropdown-menu";
 import { ComboBox, DashboardHeader, EmptyState, GenericDropdown } from "@workspace/ui/lib";
 import { MainButton } from "@workspace/ui/lib/button";
+import { cn } from "@workspace/ui/lib/utils";
 import { CloseCircle, Eye, EyeSlash, InfoCircle } from "iconsax-reactjs";
 import { AlertTriangle, MoreVertical } from "lucide-react"; // add AlertTriangle
 

@@ -19,6 +19,17 @@ type TopBarProperties = {
   className?: string;
 };
 
+const handleLogout = async () => {
+  try {
+    await signOut({
+      redirect: true,
+      callbackUrl: `/login`,
+    });
+  } catch {
+    toast.error(`Something went wrong`);
+  }
+};
+
 export default function TopBar({
   adminName,
   adminEmail,
@@ -29,17 +40,6 @@ export default function TopBar({
 }: TopBarProperties) {
   // locales removed; use root paths
   const [notificationsList, setNotificationsList] = useState<Notification[]>(notifications);
-
-  const handleLogout = async () => {
-    try {
-      await signOut({
-        redirect: true,
-        callbackUrl: `/login`,
-      });
-    } catch {
-      toast.error(`Something went wrong`);
-    }
-  };
 
   const handleNotificationClick = (notification: Notification) => {
     // Navigate to notification action URL if available

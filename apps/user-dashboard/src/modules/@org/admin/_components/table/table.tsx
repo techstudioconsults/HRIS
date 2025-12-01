@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import {
   closestCenter,
   DndContext,
@@ -58,6 +57,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@workspace/ui/components/table";
 import { TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { MainButton } from "@workspace/ui/lib/button";
+import { cn } from "@workspace/ui/lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontal, MoreVertical } from "lucide-react";
 import * as React from "react";
 import { z } from "zod";

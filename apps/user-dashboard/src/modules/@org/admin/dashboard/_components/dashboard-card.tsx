@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@workspace/ui/lib/utils";
 import { Diagram } from "iconsax-reactjs";
 import Link from "next/link";
 

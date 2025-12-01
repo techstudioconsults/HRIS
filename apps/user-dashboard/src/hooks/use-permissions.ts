@@ -53,7 +53,7 @@ export const usePermissions = () => {
   // Get all permissions for a specific module
   const getModulePermissions = useMemo(() => {
     return (module: string) => {
-      return userPermissions.filter((permission) => permission.startsWith(`${module}:`));
+      return userPermissions.filter((permission: string) => permission.startsWith(`${module}:`));
     };
   }, [userPermissions]);
 

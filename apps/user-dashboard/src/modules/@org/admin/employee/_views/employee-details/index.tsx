@@ -1,6 +1,8 @@
 "use client";
 
-import { formatDate } from "@/lib/tools/format";
+import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
+import { Card } from "@workspace/ui/components/card";
+import { DropdownMenuItem } from "@workspace/ui/components/dropdown-menu";
 import { BreadCrumb, DashboardHeader, ErrorEmptyState, GenericDropdown } from "@workspace/ui/lib";
 import { MainButton } from "@workspace/ui/lib/button";
 import { Call, More, Sms } from "iconsax-reactjs";
@@ -9,9 +11,7 @@ import Image from "next/image";
 
 import { useEmployeeService } from "../../services/use-service";
 import { EmployeeDetailsSkeleton } from "./loader";
-import { DropdownMenuItem } from "@workspace/ui/components/dropdown-menu";
-import { Card } from "@workspace/ui/components/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
+import { formatDate } from "@/lib/formatters";
 
 // Employee Header Component
 const EmployeeDetailsHeader = ({ employeeId }: { employeeId: string }) => {

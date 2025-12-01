@@ -1,12 +1,11 @@
 "use client";
 
 import { queryKeys } from "@/lib/react-query/query-keys";
-import { AdvancedDataTable, type IColumnDefinition } from "@/modules/@org/admin/_components/table/table";
 import { useEmployeeSearchParameters } from "@/modules/@org/admin/employee/hooks/use-employee-search-parameters";
 import { SearchInput } from "@/modules/@org/shared/search-input";
 import { Button } from "@workspace/ui/components/button";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@workspace/ui/components/drawer";
-import { AlertModal, BackButton, EmptyState, FilteredEmptyState, GenericDropdown } from "@workspace/ui/lib";
+import { AdvancedDataTable, AlertModal, BackButton, EmptyState, FilteredEmptyState, GenericDropdown } from "@workspace/ui/lib";
 import { MainButton } from "@workspace/ui/lib/button";
 import { Filter } from "iconsax-reactjs";
 import { useCallback, useEffect, useState } from "react";

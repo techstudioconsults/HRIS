@@ -1,20 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { PhoneInput } from "@/components/shared/phone-input";
 import { employmentTypeOptions, genderOptions, workModeOptions } from "@/lib/tools/constants";
 import { usePayrollService } from "@/modules/@org/admin/payroll/services/use-service";
 import { EmployeeFormData, employeeSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@workspace/ui/components/label";
-import { BreadCrumb, ComboBox, DashboardHeader, ErrorEmptyState, FormField, PhoneInput } from "@workspace/ui/lib";
+import { BreadCrumb, ComboBox, DashboardHeader, ErrorEmptyState, FormField } from "@workspace/ui/lib";
 import { MainButton } from "@workspace/ui/lib/button";
+import FileUpload from "@workspace/ui/lib/file-upload/file-upload";
 import { AxiosError } from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import FileUpload from "../../../_components/file-upload/file-upload";
 import { useEmployeeService } from "../../services/use-service";
 
 export const EditEmployeeForm = () => {

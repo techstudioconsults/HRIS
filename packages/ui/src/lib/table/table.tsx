@@ -32,7 +32,7 @@ import {
   ColumnFiltersState,
   flexRender,
   getCoreRowModel,
-  getFacetedRowModel,
+getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,

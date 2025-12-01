@@ -7,15 +7,16 @@ import { usePayrollService } from "@/modules/@org/admin/payroll/services/use-ser
 import { EmployeeFormData, employeeSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@workspace/ui/components/label";
-import { BreadCrumb, ComboBox, DashboardHeader, FormField, PhoneInput } from "@workspace/ui/lib";
+import { BreadCrumb, ComboBox, DashboardHeader, FormField } from "@workspace/ui/lib";
 import { MainButton } from "@workspace/ui/lib/button";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import FileUpload from "../../../_components/file-upload/file-upload";
 import { useEmployeeService } from "../../services/use-service";
+import { PhoneInput } from "@/components/shared/phone-input";
+import FileUpload from "@workspace/ui/lib/file-upload/file-upload";
 
 export const AddEmployeeForm = () => {
   const router = useRouter();

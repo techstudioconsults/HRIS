@@ -1,7 +1,7 @@
 "use client";
 
-import { formatDate } from "@/lib/tools/format";
-import { AdvancedDataTable, type IColumnDefinition } from "@/modules/@org/admin/_components/table/table";
+import { Badge } from "@workspace/ui/components/badge";
+import { AdvancedDataTable, BreadCrumb, DashboardHeader, EmptyState, ErrorEmptyState, ReusableDialog } from "@workspace/ui/lib";
 import { MainButton } from "@workspace/ui/lib/button";
 import { Plus } from "lucide-react";
 import Image from "next/image";
@@ -16,8 +16,7 @@ import { useEmployeeRowActions } from "../../../employee/_views/table-data";
 import { useEmployeeService } from "../../../employee/services/use-service";
 import { useTeamService } from "../../services/use-service";
 import { SubTeamDetailsSkeleton } from "./skeleton";
-import { BreadCrumb, DashboardHeader, EmptyState, ErrorEmptyState, ReusableDialog } from "@workspace/ui/lib";
-import { Badge } from "@workspace/ui/components/badge";
+import { formatDate } from "@/lib/formatters";
 
 // Type guards to safely normalize different response shapes without using `any`
 function isEmployeeArray(value: unknown): value is Employee[] {

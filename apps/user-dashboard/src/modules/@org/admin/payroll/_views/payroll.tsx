@@ -3,9 +3,15 @@
 "use client";
 
 import { formatCurrency, formatDate } from "@/lib/formatters";
-import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import { DropdownMenuItem } from "@workspace/ui/components/dropdown-menu";
-import { ComboBox, DashboardHeader, EmptyState, GenericDropdown } from "@workspace/ui/lib";
+import {
+  AdvancedDataTable,
+  ComboBox,
+  DashboardHeader,
+  EmptyState,
+  GenericDropdown,
+  TableSkeleton,
+} from "@workspace/ui/lib";
 import { MainButton } from "@workspace/ui/lib/button";
 import { cn } from "@workspace/ui/lib/utils";
 import { CloseCircle, Eye, EyeSlash, InfoCircle } from "iconsax-reactjs";
@@ -24,7 +30,6 @@ import { SchedulePayrollDrawer } from "../_components/drawers/schedule-payroll-d
 import { FundWalletFormModal } from "../_components/forms/fund-wallet-form-modal";
 import { FundWalletAccountModal } from "../_components/fund-wallet-account-modal";
 import { PayrollSetupSettingsModal } from "../_components/payroll-setup-modal";
-import { TableSkeleton } from "../../_components/table/table-skeleton";
 import Loading from "../../../../../../note/loading";
 import { DashboardCard } from "../../dashboard/_components/dashboard-card";
 import { usePayrollService } from "../services/use-service";
@@ -158,7 +163,7 @@ const PayrollView = () => {
 
   const approvalBannerDateLabel =
     payrollSelectedDate && shouldShowApprovalProgressBanner
-      ? formatDate(payrollSelectedDate, "en", { month: "long", year: "numeric" })
+      ? formatDate(payrollSelectedDate, { month: "long", year: "numeric" })
       : payrollData.paymentDate;
 
   // If current selected payroll is disbursed, attempt to locate the next scheduled payroll (future payment date)
@@ -174,7 +179,7 @@ const PayrollView = () => {
     ? allPayrolls.data
         .sort((a: Payroll, b: Payroll) => new Date(a.paymentDate).getTime() - new Date(b.paymentDate).getTime())
         .map((payroll: Payroll) => ({
-          label: `${formatDate(payroll.paymentDate, "en", {
+          label: `${formatDate(payroll.paymentDate, {
             month: "long",
             year: "numeric",
           })} - ${payroll.status || "Pending"}`,
@@ -494,7 +499,7 @@ const PayrollView = () => {
               : isDisbursed
                 ? nextScheduledPayroll
                   ? GET_SCHEDULE_MESSAGE(
-                      formatDate(nextScheduledPayroll.paymentDate, "en", {
+                      formatDate(nextScheduledPayroll.paymentDate, {
                         month: "long",
                         year: "numeric",
                       }),

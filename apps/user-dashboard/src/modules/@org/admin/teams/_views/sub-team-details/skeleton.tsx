@@ -1,6 +1,5 @@
 import { Skeleton } from "@workspace/ui/components/skeleton";
-
-import { TableSkeleton } from "../../../_components/table/table-skeleton";
+import { TableSkeleton } from "@workspace/ui/lib";
 
 export const SubTeamDetailsSkeleton = () => {
   return (

@@ -2,14 +2,14 @@
 
 import { FolderFormData, folderSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { FormField } from "@workspace/ui/lib";
 import { MainButton } from "@workspace/ui/lib/button";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { useResourceService } from "../../services/use-service";
-import { FormField } from "@workspace/ui/lib";
-import FileUpload from "../../../_components/file-upload/file-upload";
+import FileUpload from "@workspace/ui/lib/file-upload/file-upload";
 
 interface CreateFolderFormProperties {
   onClose?: () => void;

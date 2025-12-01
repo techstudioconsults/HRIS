@@ -4,12 +4,12 @@ import { FileFormData, fileSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormField } from "@workspace/ui/lib";
 import { MainButton } from "@workspace/ui/lib/button";
+import FileUpload from "@workspace/ui/lib/file-upload/file-upload";
 import { AlertCircle, Info } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import FileUpload from "../../../_components/file-upload/file-upload";
 import { useResourceService } from "../../services/use-service";
 
 interface CreateFileFormProperties {

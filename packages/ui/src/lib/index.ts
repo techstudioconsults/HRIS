@@ -13,6 +13,9 @@ export * from './dashboard/components/team-switcher'
 export * from './dashboard/dashboard-header'
 export * from './dashboard/sidebar/app-sidebar'
 
+//table
+export * from './table'
+
 // Dialog
 export * from './dialog'
 export * from './dialog/alert-modal'

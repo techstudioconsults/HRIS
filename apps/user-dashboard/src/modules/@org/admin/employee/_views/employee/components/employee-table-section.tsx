@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
-import { TableSkeleton } from "@/modules/@org/admin/_components/table/table-skeleton";
-import { EmptyState, ErrorEmptyState, FilteredEmptyState } from "@workspace/ui/lib";
+import { AdvancedDataTable, EmptyState, ErrorEmptyState, FilteredEmptyState, TableSkeleton } from "@workspace/ui/lib";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 

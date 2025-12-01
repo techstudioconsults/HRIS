@@ -2,8 +2,6 @@
 "use client";
 
 import { queryKeys } from "@/lib/react-query/query-keys";
-import { formatDate } from "@/lib/tools/format";
-import { AdvancedDataTable } from "@/modules/@org/admin/_components/table/table";
 import type { Team as TeamFormType } from "@/modules/@org/onboarding/_components/forms/schema";
 import { TeamForm } from "@/modules/@org/onboarding/_components/forms/team/team-form";
 import { useOnboardingService } from "@/modules/@org/onboarding/services/use-onboarding-service";
@@ -12,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/av
 import { DropdownMenuItem } from "@workspace/ui/components/dropdown-menu";
 import { Separator } from "@workspace/ui/components/separator";
 import {
+  AdvancedDataTable,
   AlertModal,
   BreadCrumb,
   DashboardHeader,
@@ -34,6 +33,7 @@ import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
 import { useTeamService } from "../../services/use-service";
 import { subTeamColumn, useSubTeamRowActions } from "../table-data";
 import { TeamDetailsSkeleton } from "./skeleton";
+import { formatDate } from "@/lib/formatters";
 
 // Team Details Header Component
 const TeamDetailsHeader = ({

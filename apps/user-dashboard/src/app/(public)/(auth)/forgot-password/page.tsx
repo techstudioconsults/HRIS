@@ -1,7 +1,7 @@
 "use client";
 
-import { useSearchParameters } from "@/hooks/use-search-parameters";
 import { CheckMailCard, ForgotPassword } from "@/modules/@org/auth";
+import { useSearchParameters } from "@workspace/ui/hooks";
 
 const Page = () => {
   const value = useSearchParameters("view");

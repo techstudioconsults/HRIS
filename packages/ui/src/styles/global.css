@@ -1,0 +1,16 @@
+/* Global Styles - Main Entry Point */
+
+/* Core Imports */
+@import 'tailwindcss';
+@source "../../../apps/**/*.{ts,tsx}";
+@source "../../../components/**/*.{ts,tsx}";
+@source "../**/*.{ts,tsx}";
+
+/* Custom Variants */
+@custom-variant dark (&:is(.dark *));
+
+/* Organized CSS Modules */
+@import './variables.css'; /* CSS variables and theme tokens */
+@import './base.css'; /* Base typography and element styles */
+@import './utilities.css'; /* Utility components and custom styles */
+@import './animations.css'; /* Animation utilities and keyframes */

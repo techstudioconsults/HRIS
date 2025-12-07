@@ -1,0 +1,15 @@
+{
+  "extends": "@workspace/typescript-config/react-library.json",
+  "compilerOptions": {
+    // "baseUrl": ".",
+    "paths": {
+      "@workspace/ui/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "src",
+    "../../apps/user-dashboard/src/components/shared/app-events-listener.tsx",
+    "../../apps/user-dashboard/src/hooks/sse"
+  ],
+  "exclude": ["node_modules", "dist", "../../apps/**/*"]
+}

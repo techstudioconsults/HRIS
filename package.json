@@ -1,0 +1,74 @@
+{
+  "name": "hris-mono-repo",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "dev:web": "turbo dev --filter=web",
+    "dev:user": "turbo dev --filter=user-dashboard",
+    "dev:controller": "turbo dev --filter=controller-dashboard",
+    "build:web": "turbo build --filter=web",
+    "build:user": "turbo build --filter=user-dashboard",
+    "build:controller": "turbo build --filter=controller-dashboard",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "test:user": "vitest --project user-dashboard",
+    "test:controller": "vitest --project controller-dashboard",
+    "test:web": "vitest --project web",
+    "test:ui-pkg": "vitest --project ui",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:user": "playwright test --config apps/user-dashboard/playwright.config.ts",
+    "test:e2e:controller": "playwright test --config apps/controller-dashboard/playwright.config.ts",
+    "test:e2e:web": "playwright test --config apps/web/playwright.config.ts",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.8",
+    "@commitlint/cli": "^19.4.0",
+    "@commitlint/config-conventional": "^19.4.0",
+    "@playwright/test": "^1.57.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@vitejs/plugin-react": "^5.1.1",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^4.0.14",
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "husky": "^9.1.6",
+    "jsdom": "^27.2.0",
+    "lint-staged": "^15.2.10",
+    "playwright": "^1.48.2",
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.5",
+    "typescript": "5.7.3",
+    "vitest": "^2.1.4"
+  },
+  "packageManager": "pnpm@10.4.1",
+  "engines": {
+    "node": ">=20"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "@vercel/speed-insights",
+      "unrs-resolver"
+    ],
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "msw",
+      "sharp"
+    ]
+  }
+}

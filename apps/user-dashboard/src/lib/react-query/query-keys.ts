@@ -53,5 +53,14 @@ export const queryKeys = {
     payslipDetails: (id: string) => ["payrolls", "payslip", id] as const,
     approvals: (payrollId: string) => ["payrolls", "approvals", payrollId] as const,
   },
+  leave: {
+    policy: () => ["leave", "policy"] as const,
+    types: () => ["leave", "types"] as const,
+    type: (id: string) => ["leave", "type", id] as const,
+    requests: (filters?: Filters) => ["leave", "requests", filters] as const,
+    request: (id: string) => ["leave", "request", id] as const,
+    balances: (employeeId?: string) => ["leave", "balances", employeeId] as const,
+    statistics: () => ["leave", "statistics"] as const,
+  },
   // Add other domains as needed
 };

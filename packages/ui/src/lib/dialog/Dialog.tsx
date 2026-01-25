@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from "@workspace/ui/components/dialog";
 import Image from "next/image";
-import { HTMLAttributes, ReactNode } from "react";
+import { HTMLAttributes, ReactNode, isValidElement } from "react";
 import { cn } from "../utils";
 
 interface ReusableDialogProperties extends HTMLAttributes<HTMLDivElement> {
@@ -40,9 +40,19 @@ export function ReusableDialog({
   icon,
   onOpenChange,
 }: ReusableDialogProperties) {
+  const hasTrigger = trigger !== null && trigger !== undefined && trigger !== false && trigger !== "";
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      {hasTrigger ? (
+        // Radix `DialogTrigger` with `asChild` requires a valid ReactElement.
+        // When consumers pass strings/null (common in controlled dialogs), omit the trigger or render without `asChild`.
+        isValidElement(trigger) ? (
+          <DialogTrigger asChild>{trigger}</DialogTrigger>
+        ) : (
+          <DialogTrigger>{trigger}</DialogTrigger>
+        )
+      ) : null}
       <DialogContent
         hideClose={hideClose}
         className={cn("border-default min-w-2xl items-center", className)}

@@ -1,4 +1,4 @@
-import { CardReceive, Element3, People, Profile2User } from "iconsax-reactjs";
+import { Calendar2, CardReceive, Element3, People, Profile2User } from "iconsax-reactjs";
 import { Clock } from "lucide-react";
 
 export const countries = [
@@ -250,6 +250,12 @@ export const adminNavItems = [
     name: "Payroll",
     url: "/admin/payroll",
     icon: CardReceive,
+  },
+  {
+    id: "leave",
+    name: "Leave Hub",
+    url: "/admin/leave",
+    icon: Calendar2,
   },
   {
     id: "attendance",

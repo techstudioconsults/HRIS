@@ -15,7 +15,7 @@ import { TooltipProvider } from "@workspace/ui/components/tooltip";
 import { cn } from "@workspace/ui/lib/utils";
 import { ThemeProvider } from "next-themes";
 import { Toast } from "@workspace/ui/lib";
-// import { ModeToggle } from "@workspace/ui/components/core/layout/ThemeToggle/theme-toggle";
+import { ModeToggle } from "@workspace/ui/components/core/layout/ThemeToggle/theme-toggle";
 
 const META_THEME_COLORS = {
   light: "#ffffff",
@@ -67,7 +67,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <TooltipProvider>
                   <ThemeProvider>
                     <Toast />
-                    {/* <ModeToggle /> */}
+                    <ModeToggle />
                     {/* <NetworkStatusModal /> */}
                     <KBarProviderWrapper>{children}</KBarProviderWrapper>
                   </ThemeProvider>

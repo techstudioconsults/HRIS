@@ -1,4 +1,4 @@
-import { Calendar2, CardReceive, Element3, People, Profile2User } from "iconsax-reactjs";
+import { Calendar2, CardReceive, Element3, People, Profile2User, Setting2 } from "iconsax-reactjs";
 import { Clock } from "lucide-react";
 
 export const countries = [
@@ -262,6 +262,12 @@ export const adminNavItems = [
     name: "Attendance",
     url: "/admin/attendance",
     icon: Clock,
+  },
+  {
+    id: "settings",
+    name: "Settings",
+    url: "/admin/settings",
+    icon: Setting2,
   },
 ];
 

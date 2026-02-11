@@ -7,7 +7,7 @@ import { TourProvider } from "@/modules/@org/onboarding";
 import { useOnboardingService } from "@/modules/@org/onboarding/services/use-onboarding-service";
 import { Wrapper } from "@workspace/ui/components/core/layout/wrapper";
 import { SidebarInset, SidebarProvider } from "@workspace/ui/components/sidebar";
-import { AppSidebar, Logo } from "@workspace/ui/lib";
+import { AppSidebar, Logo, useModeToggle } from "@workspace/ui/lib";
 import { cn } from "@workspace/ui/lib/utils";
 import { useSession } from "next-auth/react";
 
@@ -15,11 +15,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { data: session } = useSession();
   const { useGetCompanyProfile } = useOnboardingService();
   const { data: companyProfile } = useGetCompanyProfile();
+  const theme = useModeToggle();
 
   return (
     <TourProvider>
       <SidebarProvider>
         <AppSidebar
+          theme={theme}
           className={cn("z-1 bg-[#1F2666] text-white")}
           navMain={[]}
           navSecondary={adminNavItems}

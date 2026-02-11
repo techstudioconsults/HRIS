@@ -12,10 +12,9 @@ import { SessionProvider } from "@/components/SessionProvider";
 import { SSEProvider } from "@/context/sse-provider";
 import { ReactQueryProvider } from "@/lib/react-query/query-provider";
 import { TooltipProvider } from "@workspace/ui/components/tooltip";
+import { Toast } from "@workspace/ui/lib";
 import { cn } from "@workspace/ui/lib/utils";
 import { ThemeProvider } from "next-themes";
-import { Toast } from "@workspace/ui/lib";
-import { ModeToggle } from "@workspace/ui/components/core/layout/ThemeToggle/theme-toggle";
 
 const META_THEME_COLORS = {
   light: "#ffffff",
@@ -67,7 +66,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <TooltipProvider>
                   <ThemeProvider>
                     <Toast />
-                    <ModeToggle />
                     {/* <NetworkStatusModal /> */}
                     <KBarProviderWrapper>{children}</KBarProviderWrapper>
                   </ThemeProvider>

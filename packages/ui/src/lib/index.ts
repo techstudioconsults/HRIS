@@ -56,3 +56,6 @@ export * from "./Toast";
 export * from "./tooltip";
 export * from "./user-menu";
 export * from "./video-player";
+
+//Theme toggle
+export * from "../components/core/layout/ThemeToggle/use-theme-toggle";

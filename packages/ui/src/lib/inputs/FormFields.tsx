@@ -424,7 +424,14 @@ export function SwitchField({
                 }
               }}
               disabled={disabled || readOnly}
-              className={cn(error && 'border-destructive', 'mt-0')}
+              className={cn(
+                // Match checkbox styling (soft primary background + primary border)
+                'border-primary/30 data-[state=checked]:border-primary data-[state=checked]:bg-primary/10 data-[state=unchecked]:bg-background',
+                // Make the switch "knot" (thumb) blue instead of white
+                '[&_[data-slot=switch-thumb]]:bg-primary',
+                error && 'border-destructive',
+                'mt-0',
+              )}
             />
           )}
         />

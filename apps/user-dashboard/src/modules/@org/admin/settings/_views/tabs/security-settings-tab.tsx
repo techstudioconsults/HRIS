@@ -39,7 +39,7 @@ export const SecuritySettingsTab = () => {
       </div>
 
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)} className="rounded-lg p-4 sm:p-6">
+        <form onSubmit={methods.handleSubmit(onSubmit)} className="rounded-lg p-4 sm:p-8 bg-background shadow">
           <div className="grid gap-10 lg:grid-cols-[560px_1fr]">
             {/* Left descriptors */}
             <div className="space-y-2">

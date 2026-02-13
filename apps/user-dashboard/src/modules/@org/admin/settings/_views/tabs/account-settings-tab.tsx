@@ -128,7 +128,7 @@ export const AccountSettingsTab = () => {
         <p className="text-muted-foreground mt-1 text-sm">Manage your company profile and preferences</p>
       </div>
 
-      <div className="bg-background shadow rounded-lg border border-none p-6">
+      <div className="bg-background shadow rounded-lg border border-none p-4 sm:p-8">
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-12">
             {/* Company Information */}

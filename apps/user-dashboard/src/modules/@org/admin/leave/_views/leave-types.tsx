@@ -21,6 +21,30 @@ import { EditLeaveTypeForm } from "../_components/forms/edit-leave-type-form";
 import { useLeaveService } from "../services/use-service";
 import type { LeaveType } from "../types";
 
+const DEFAULT_TABLE_LEAVE_TYPES: LeaveType[] = [
+  {
+    id: "default-annual",
+    name: "Annual Leave",
+    days: 20,
+    cycle: "Yearly",
+    carryOver: false,
+  },
+  {
+    id: "default-sick",
+    name: "Sick Leave",
+    days: 10,
+    cycle: "Yearly",
+    carryOver: false,
+  },
+  {
+    id: "default-maternity",
+    name: "Maternity Leave",
+    days: 90,
+    cycle: "Yearly",
+    carryOver: false,
+  },
+];
+
 const leaveTypeColumns: IColumnDefinition<LeaveType>[] = [
   {
     accessorKey: "name",
@@ -93,10 +117,12 @@ const LeaveTypesView = () => {
     if (Array.isArray(nestedItems)) return nestedItems;
     return [];
   })();
+  const effectiveLeaveTypes = safeLeaveTypes.length > 0 ? safeLeaveTypes : DEFAULT_TABLE_LEAVE_TYPES;
+
   const filteredLeaveTypes = useMemo(() => {
-    if (!searchQuery.trim()) return safeLeaveTypes;
+    if (!searchQuery.trim()) return effectiveLeaveTypes;
     const lower = searchQuery.toLowerCase();
-    return safeLeaveTypes.filter((lt) => {
+    return effectiveLeaveTypes.filter((lt) => {
       return (
         String(lt.name ?? "")
           .toLowerCase()
@@ -106,7 +132,7 @@ const LeaveTypesView = () => {
           .includes(lower)
       );
     });
-  }, [safeLeaveTypes, searchQuery]);
+  }, [effectiveLeaveTypes, searchQuery]);
 
   const hasFilters = !!searchQuery.trim();
 
@@ -227,7 +253,7 @@ const LeaveTypesView = () => {
             hasNextPage={false}
             onPageChange={() => {}}
             rowActions={getRowActions}
-            showPagination={false}
+            showPagination={true}
             enableRowSelection={true}
             enableColumnVisibility={false}
             enableSorting={false}

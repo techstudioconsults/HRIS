@@ -1,20 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { useRolesManagementSearchParameters } from "@/lib/nuqs/use-roles-management-search-parameters";
 import { queryKeys } from "@/lib/react-query/query-keys";
+import { FilterForm } from "@/modules/@org/admin/teams/_components/forms/filter-form";
 import { useTeamService } from "@/modules/@org/admin/teams/services/use-service";
 import { RolesAndPermission } from "@/modules/@org/onboarding/_components/forms/roles&permission";
 import { useOnboardingService } from "@/modules/@org/onboarding/services/use-onboarding-service";
 import { SearchInput } from "@/modules/@org/shared/search-input";
 import { useQueryClient } from "@tanstack/react-query";
-import { ComboBox, ReusableDialog } from "@workspace/ui/lib";
+import { Button } from "@workspace/ui/components/button";
+import { ComboBox, GenericDropdown, ReusableDialog } from "@workspace/ui/lib";
 import { MainButton } from "@workspace/ui/lib/button";
 import { AlertModal } from "@workspace/ui/lib/dialog";
 import { AdvancedDataTable, TableSkeleton, type IColumnDefinition, type IRowAction } from "@workspace/ui/lib/table";
-import { DocumentDownload, Filter, More } from "iconsax-reactjs";
+import { Filter, More } from "iconsax-reactjs";
 import { Plus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { useDebounce } from "use-debounce";
 
 type RoleRow = {
   id: string;
@@ -44,12 +48,26 @@ type RoleToggleState =
       action: "deactivate" | "activate";
     };
 
-const PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 10;
 
 export const RolesManagementTab = () => {
   const queryClient = useQueryClient();
   const { useGetTeamsWithRoles } = useOnboardingService();
   const { useCreateRole, useUpdateRole } = useTeamService();
+
+  const {
+    page,
+    search,
+    teamId,
+    sortBy,
+    limit,
+    setPage,
+    setSearch,
+    setTeamId,
+    setSortBy,
+    setLimit,
+    resetToFirstPage,
+  } = useRolesManagementSearchParameters();
 
   const teamsWithRolesQueryKey = queryKeys.onboarding.teamsWithRoles();
 
@@ -57,10 +75,10 @@ export const RolesManagementTab = () => {
   const { mutateAsync: createRoleMutation, isPending: isCreating } = useCreateRole();
   const { mutateAsync: updateRoleMutation, isPending: isUpdating } = useUpdateRole();
 
-  const [search, setSearch] = useState("");
-  const [teamFilter, setTeamFilter] = useState<string>("");
-  const [page, setPage] = useState(1);
-  const [filterOpen, setFilterOpen] = useState(false);
+  // Local input state (debounced) to throttle URL updates via nuqs
+  const [searchInput, setSearchInput] = useState(search || "");
+  const [debouncedSearch] = useDebounce(searchInput, 300);
+
   const [roleEditor, setRoleEditor] = useState<RoleEditorState>({ open: false });
 
   // UI-only role activation state (until backend endpoints are wired)
@@ -77,6 +95,22 @@ export const RolesManagementTab = () => {
       })),
     [teamsWithRoles],
   );
+
+  // Apply debounced search to URL (nuqs) and reset page to 1
+  useEffect(() => {
+    setSearch(debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : null);
+    resetToFirstPage();
+  }, [debouncedSearch, setSearch, resetToFirstPage]);
+
+  // If the URL comes in with rolesTeamId=all, treat it as "no department filter" and clean the URL.
+  useEffect(() => {
+    if (teamId === "all") {
+      setTeamId(null);
+      resetToFirstPage();
+    }
+  }, [teamId, setTeamId, resetToFirstPage]);
+
+  const effectiveTeamId = teamId === "all" ? null : teamId;
 
   const allRoles = useMemo<RoleRow[]>(() => {
     const teams = Array.isArray(teamsWithRoles) ? (teamsWithRoles as any[]) : [];
@@ -123,23 +157,32 @@ export const RolesManagementTab = () => {
   );
 
   const filteredRoles = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return allRoles.filter((role) => {
+    const q = (search ?? "").trim().toLowerCase();
+    const filtered = allRoles.filter((role) => {
       const matchSearch = !q || role.name.toLowerCase().includes(q);
-      const matchTeam = !teamFilter || role.teamId === teamFilter;
+      const matchTeam = !effectiveTeamId || role.teamId === effectiveTeamId;
       return matchSearch && matchTeam;
     });
-  }, [allRoles, search, teamFilter]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredRoles.length / PAGE_SIZE));
-  const pageSafe = Math.min(Math.max(page, 1), totalPages);
-  const startIndex = (pageSafe - 1) * PAGE_SIZE;
-  const pageItems = filteredRoles.slice(startIndex, startIndex + PAGE_SIZE);
+    if (sortBy === "name_asc") {
+      return [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+    }
+    if (sortBy === "name_desc") {
+      return [...filtered].sort((a, b) => b.name.localeCompare(a.name));
+    }
+    return filtered;
+  }, [allRoles, search, effectiveTeamId, sortBy]);
+
+  const pageSize = limit ?? DEFAULT_PAGE_SIZE;
+  const totalPages = Math.max(1, Math.ceil(filteredRoles.length / pageSize));
+  const pageSafe = Math.min(Math.max(page ?? 1, 1), totalPages);
+  const startIndex = (pageSafe - 1) * pageSize;
+  const pageItems = filteredRoles.slice(startIndex, startIndex + pageSize);
 
   const isBusy = isCreating || isUpdating;
 
   const openCreateDialog = () => {
-    setRoleEditor({ open: true, mode: "create", teamId: teamFilter || "" });
+    setRoleEditor({ open: true, mode: "create", teamId: effectiveTeamId || "" });
   };
 
   const openEditDialog = (role: RoleRow) => {
@@ -152,6 +195,20 @@ export const RolesManagementTab = () => {
   };
 
   const closeRoleEditor = () => setRoleEditor({ open: false });
+
+  const handleFilterChange = useCallback(
+    (newFilters: any) => {
+      // Re-use the Teams FilterForm by mapping fields:
+      // status => teamId (Department)
+      // sortBy => sortBy
+      // limit => pageSize
+      setTeamId(newFilters.status ?? null);
+      setSortBy(newFilters.sortBy ?? null);
+      if (newFilters.limit != null) setLimit(Number(newFilters.limit));
+      resetToFirstPage();
+    },
+    [setTeamId, setSortBy, setLimit, resetToFirstPage],
+  );
 
   const isRoleActive = (roleId: string) => roleActiveOverrides[roleId] ?? true;
 
@@ -273,31 +330,48 @@ export const RolesManagementTab = () => {
           <SearchInput
             className="border-border h-10 w-full rounded-md border sm:w-[220px]"
             placeholder="Search role name..."
-            onSearch={(query) => {
-              setSearch(query);
-              setPage(1);
-            }}
+            delay={0}
+            onSearch={(query) => setSearchInput(query)}
           />
 
-          <MainButton
-            variant="primaryOutline"
-            isLeftIconVisible
-            icon={<Filter />}
-            className="w-full sm:w-auto"
-            onClick={() => setFilterOpen(true)}
+          <GenericDropdown
+            contentClassName="bg-background"
+            trigger={
+              <Button
+                variant={"primaryOutline"}
+                className="data-[state=open]:border-border data-[state=open]:text-gray h-10 w-full justify-center rounded-md border px-3 shadow-none sm:w-auto"
+              >
+                <Filter className="size-4" />
+                Filter
+              </Button>
+            }
           >
-            Filter
-          </MainButton>
-
-          <MainButton
-            variant="primaryOutline"
-            isLeftIconVisible
-            icon={<DocumentDownload />}
-            className="w-full sm:w-auto"
-            onClick={() => toast.info("Export is not wired yet")}
-          >
-            Export
-          </MainButton>
+            <section className="min-w-sm">
+              <FilterForm
+                title="Filter Roles"
+                statusLabel="Department"
+                statusPlaceholder="All Departments"
+                statusOptions={[{ value: "all", label: "All Departments" }, ...teamOptions]}
+                sortOptions={[
+                  { value: "all", label: "Default" },
+                  { value: "name_asc", label: "Role Name (A-Z)" },
+                  { value: "name_desc", label: "Role Name (Z-A)" },
+                ]}
+                initialFilters={{
+                  search: search || undefined,
+                  status: effectiveTeamId || undefined,
+                  sortBy: sortBy || undefined,
+                  limit: limit ? String(limit) : undefined,
+                  page: pageSafe ? String(pageSafe) : undefined,
+                }}
+                onFilterChange={handleFilterChange}
+                // Roles tab doesn't need the teams status filter values; we map it to Department.
+                showStatus
+                showSortBy
+                showLimit
+              />
+            </section>
+          </GenericDropdown>
 
           <MainButton
             variant="primary"
@@ -346,7 +420,7 @@ export const RolesManagementTab = () => {
             showPagination
             currentPage={pageSafe}
             totalPages={totalPages}
-            itemsPerPage={PAGE_SIZE}
+            itemsPerPage={pageSize}
             hasNextPage={pageSafe < totalPages}
             hasPreviousPage={pageSafe > 1}
             onPageChange={(nextPage) => setPage(Math.min(Math.max(nextPage, 1), totalPages))}
@@ -392,54 +466,6 @@ export const RolesManagementTab = () => {
         confirmText="Continue"
         showCancelButton={false}
       />
-
-      {/* Filter Dialog */}
-      <ReusableDialog
-        open={filterOpen}
-        onOpenChange={setFilterOpen}
-        title="Filter"
-        description="Filter roles by department"
-        className="min-w-xl"
-        trigger={null}
-      >
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Department</label>
-            <ComboBox
-              options={teamOptions}
-              value={teamFilter}
-              onValueChange={(value) => setTeamFilter(value)}
-              placeholder={isLoadingTeams ? "Loading departments..." : "Select department"}
-              className="h-12"
-              disabled={isLoadingTeams}
-            />
-          </div>
-
-          <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
-            <MainButton
-              variant="outline"
-              type="button"
-              onClick={() => {
-                setTeamFilter("");
-                setPage(1);
-                setFilterOpen(false);
-              }}
-            >
-              Clear
-            </MainButton>
-            <MainButton
-              variant="primary"
-              type="button"
-              onClick={() => {
-                setPage(1);
-                setFilterOpen(false);
-              }}
-            >
-              Apply
-            </MainButton>
-          </div>
-        </div>
-      </ReusableDialog>
 
       {/* Role Create/Edit Dialog */}
       <ReusableDialog

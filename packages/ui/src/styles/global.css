@@ -2,6 +2,11 @@
 
 /* Core Imports */
 @import 'tailwindcss';
+@import './variables.css';
+@import './base.css';
+@import './utilities.css';
+@import './animations.css';
+
 @source "../../../apps/**/*.{ts,tsx}";
 @source "../../../components/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
@@ -10,7 +15,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* Organized CSS Modules */
-@import './variables.css'; /* CSS variables and theme tokens */
-@import './base.css'; /* Base typography and element styles */
-@import './utilities.css'; /* Utility components and custom styles */
-@import './animations.css'; /* Animation utilities and keyframes */
+/* CSS variables and theme tokens */
+/* Base typography and element styles */
+/* Utility components and custom styles */
+/* Animation utilities and keyframes */

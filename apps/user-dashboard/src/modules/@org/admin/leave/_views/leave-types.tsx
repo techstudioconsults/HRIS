@@ -1,6 +1,6 @@
 "use client";
 
-import { getApiErrorMessage } from "@/lib/tools/api-error-message";
+import {getApiErrorMessage} from "@/lib/tools/api-error-message";
 import {
   AdvancedDataTable,
   AlertModal,
@@ -11,15 +11,15 @@ import {
   ReusableDialog,
   TableSkeleton,
 } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "sonner";
+import {MainButton} from "@workspace/ui/lib/button";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {toast} from "sonner";
 
 import empty1 from "~/images/empty-state.svg";
-import { CreateLeaveTypeForm } from "../_components/forms/create-leave-type-form";
-import { EditLeaveTypeForm } from "../_components/forms/edit-leave-type-form";
-import { useLeaveService } from "../services/use-service";
-import type { LeaveType } from "../types";
+import {CreateLeaveTypeForm} from "../_components/forms/create-leave-type-form";
+import {EditLeaveTypeForm} from "../_components/forms/edit-leave-type-form";
+import {useLeaveService} from "../services/use-service";
+import type {LeaveType} from "../types";
 
 const DEFAULT_TABLE_LEAVE_TYPES: LeaveType[] = [
   {
@@ -65,13 +65,13 @@ const leaveTypeColumns: IColumnDefinition<LeaveType>[] = [
     accessorKey: "carryOver",
     header: "Eligibility",
     render: (_value: unknown, row: LeaveType) => (
-      <span className="text-sm text-gray-600">{row.carryOver ? "Yes" : "No"}</span>
+        <span className="text-sm text-gray-600">{row.carryOver ? "Yes" : "No"}</span>
     ),
   },
 ];
 
 const LeaveTypesView = () => {
-  const { useGetLeaveTypes, useGetLeaveTypeById, useDeleteLeaveType } = useLeaveService();
+  const {useGetLeaveTypes, useGetLeaveTypeById, useDeleteLeaveType} = useLeaveService();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -79,8 +79,8 @@ const LeaveTypesView = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedLeaveType, setSelectedLeaveType] = useState<LeaveType | null>(null);
 
-  const { data: leaveTypesResponse, isLoading, isError, error, refetch } = useGetLeaveTypes();
-  const { mutateAsync: deleteLeaveType, isPending: isDeleting } = useDeleteLeaveType();
+  const {data: leaveTypesResponse, isLoading, isError, error, refetch} = useGetLeaveTypes();
+  const {mutateAsync: deleteLeaveType, isPending: isDeleting} = useDeleteLeaveType();
 
   const selectedLeaveTypeId = selectedLeaveType?.id ?? "";
   const {
@@ -124,10 +124,10 @@ const LeaveTypesView = () => {
     const lower = searchQuery.toLowerCase();
     return effectiveLeaveTypes.filter((lt) => {
       return (
-        String(lt.name ?? "")
+          String(lt.name ?? "")
           .toLowerCase()
           .includes(lower) ||
-        String(lt.cycle ?? "")
+          String(lt.cycle ?? "")
           .toLowerCase()
           .includes(lower)
       );
@@ -173,152 +173,153 @@ const LeaveTypesView = () => {
   };
 
   if (isLoading) {
-    return <TableSkeleton />;
+    return <TableSkeleton/>;
   }
 
   if (isError) {
-    return <ErrorEmptyState description={(error as Error | undefined)?.message} onRetry={refetch} />;
+    return <ErrorEmptyState description={(error as Error | undefined)?.message} onRetry={refetch}/>;
   }
 
   if (filteredLeaveTypes.length === 0) {
     if (hasFilters) {
-      return <FilteredEmptyState onReset={() => setSearchQuery("")} />;
+      return <FilteredEmptyState onReset={() => setSearchQuery("")}/>;
     }
 
     return (
-      <div className="space-y-6">
-        <DashboardHeader
-          title="Leave Types"
-          subtitle="Create and manage all leave types"
-          actionComponent={
-            <MainButton variant="primary" onClick={() => setCreateDialogOpen(true)}>
-              Add Leave Type
-            </MainButton>
-          }
-        />
-        <EmptyState
-          className="bg-background"
-          images={[{ src: empty1.src, alt: "No leave types", width: 100, height: 100 }]}
-          title="No leave types yet."
-          description="Create your first leave type (e.g., Annual Leave) to get started."
-          button={{
-            text: "Create Leave Type",
-            onClick: () => setCreateDialogOpen(true),
-          }}
-        />
+        <div className="space-y-6">
+          <DashboardHeader
+              title="Leave Types"
+              subtitle="Create and manage all leave types"
+              actionComponent={
+                <MainButton variant="primary" onClick={() => setCreateDialogOpen(true)}>
+                  Add Leave Type
+                </MainButton>
+              }
+          />
+          <EmptyState
+              className="bg-background"
+              images={[{src: empty1.src, alt: "No leave types", width: 100, height: 100}]}
+              title="No leave types yet."
+              description="Create your first leave type (e.g., Annual Leave) to get started."
+              button={{
+                text: "Create Leave Type",
+                onClick: () => setCreateDialogOpen(true),
+              }}
+          />
 
-        <ReusableDialog
-          open={createDialogOpen}
-          onOpenChange={setCreateDialogOpen}
-          title="Create Leave Type"
-          description="Add a new leave type to your organization"
-          className="min-w-3xl"
-          trigger={null}
-        >
-          <CreateLeaveTypeForm onClose={() => setCreateDialogOpen(false)} />
-        </ReusableDialog>
-      </div>
+          <ReusableDialog
+              open={createDialogOpen}
+              onOpenChange={setCreateDialogOpen}
+              title="Create Leave Type"
+              description="Add a new leave type to your organization"
+              className="min-w-3xl"
+              trigger={null}
+          >
+            <CreateLeaveTypeForm onClose={() => setCreateDialogOpen(false)}/>
+          </ReusableDialog>
+        </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <DashboardHeader
-        title="Leave Types"
-        subtitle="Create and manage all leave types"
-        actionComponent={
-          <div className="flex items-center gap-3">
-            <input
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="Search leave types..."
-              className="border-border bg-background h-10 w-[260px] rounded-md border px-3 text-sm"
-            />
-            <MainButton variant="primary" onClick={() => setCreateDialogOpen(true)}>
-              Add Leave Type
-            </MainButton>
-          </div>
-        }
-      />
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold">All Leave Types</h2>
-        <div className="!h-fit overflow-hidden rounded-lg">
-          <AdvancedDataTable
-            columns={leaveTypeColumns}
-            data={filteredLeaveTypes}
-            currentPage={1}
-            totalPages={1}
-            itemsPerPage={filteredLeaveTypes.length}
-            hasPreviousPage={false}
-            hasNextPage={false}
-            onPageChange={() => {}}
-            rowActions={getRowActions}
-            showPagination={true}
-            enableRowSelection={true}
-            enableColumnVisibility={false}
-            enableSorting={false}
-            enableFiltering={false}
-            mobileCardView={true}
-            showColumnCustomization={false}
-            className={`min-h-fit`}
-          />
-        </div>
-      </section>
-
-      <ReusableDialog
-        open={createDialogOpen}
-        onOpenChange={setCreateDialogOpen}
-        title="Create Leave Type"
-        description="Add a new leave type to your organization"
-        className="min-w-3xl"
-        trigger={null}
-      >
-        <CreateLeaveTypeForm onClose={() => setCreateDialogOpen(false)} />
-      </ReusableDialog>
-
-      <ReusableDialog
-        open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
-        title="Edit Leave Type"
-        description="Update leave type details"
-        className="min-w-2xl"
-        trigger={null}
-      >
-        {selectedLeaveType && (
-          <>
-            {isLoadingSelectedLeaveType && <TableSkeleton />}
-            {!isLoadingSelectedLeaveType && isSelectedLeaveTypeError && (
-              <ErrorEmptyState
-                description="Could not load leave type details."
-                onRetry={() => {
-                  void refetchSelectedLeaveType();
+      <div className="space-y-6">
+        <DashboardHeader
+            title="Leave Types"
+            subtitle="Create and manage all leave types"
+            actionComponent={
+              <div className="flex items-center gap-3">
+                <input
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    placeholder="Search leave types..."
+                    className="border-border bg-background h-10 w-[260px] rounded-md border px-3 text-sm"
+                />
+                <MainButton variant="primary" onClick={() => setCreateDialogOpen(true)}>
+                  Add Leave Type
+                </MainButton>
+              </div>
+            }
+        />
+        <section className="space-y-4">
+          <h2 className="text-lg font-semibold">All Leave Types</h2>
+          <div className="!h-fit overflow-hidden rounded-lg">
+            <AdvancedDataTable
+                columns={leaveTypeColumns}
+                data={filteredLeaveTypes}
+                currentPage={1}
+                totalPages={1}
+                itemsPerPage={filteredLeaveTypes.length}
+                hasPreviousPage={false}
+                hasNextPage={false}
+                onPageChange={() => {
                 }}
-              />
-            )}
-            {!isLoadingSelectedLeaveType && !isSelectedLeaveTypeError && (
-              <EditLeaveTypeForm
-                leaveType={(selectedLeaveTypeDetails ?? selectedLeaveType) as LeaveType}
-                onClose={() => setEditDialogOpen(false)}
-              />
-            )}
-          </>
-        )}
-      </ReusableDialog>
+                rowActions={getRowActions}
+                showPagination={true}
+                enableRowSelection={true}
+                enableColumnVisibility={false}
+                enableSorting={false}
+                enableFiltering={false}
+                mobileCardView={true}
+                showColumnCustomization={false}
+                className={`min-h-fit`}
+            />
+          </div>
+        </section>
 
-      {/* Delete confirmation */}
-      <AlertModal
-        type="warning"
-        isOpen={deleteDialogOpen}
-        onClose={() => setDeleteDialogOpen(false)}
-        onConfirm={handleConfirmDelete}
-        loading={isDeleting}
-        title="Delete Leave Type"
-        description={`You're about to delete "${selectedLeaveType?.name}". This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
-      />
-    </div>
+        <ReusableDialog
+            open={createDialogOpen}
+            onOpenChange={setCreateDialogOpen}
+            title="Create Leave Type"
+            description="Add a new leave type to your organization"
+            className="min-w-3xl"
+            trigger={null}
+        >
+          <CreateLeaveTypeForm onClose={() => setCreateDialogOpen(false)}/>
+        </ReusableDialog>
+
+        <ReusableDialog
+            open={editDialogOpen}
+            onOpenChange={setEditDialogOpen}
+            title="Edit Leave Type"
+            description="Update leave type details"
+            className="min-w-2xl"
+            trigger={null}
+        >
+          {selectedLeaveType && (
+              <>
+                {isLoadingSelectedLeaveType && <TableSkeleton/>}
+                {!isLoadingSelectedLeaveType && isSelectedLeaveTypeError && (
+                    <ErrorEmptyState
+                        description="Could not load leave type details."
+                        onRetry={() => {
+                          void refetchSelectedLeaveType();
+                        }}
+                    />
+                )}
+                {!isLoadingSelectedLeaveType && !isSelectedLeaveTypeError && (
+                    <EditLeaveTypeForm
+                        leaveType={(selectedLeaveTypeDetails ?? selectedLeaveType) as LeaveType}
+                        onClose={() => setEditDialogOpen(false)}
+                    />
+                )}
+              </>
+          )}
+        </ReusableDialog>
+
+        {/* Delete confirmation */}
+        <AlertModal
+            type="warning"
+            isOpen={deleteDialogOpen}
+            onClose={() => setDeleteDialogOpen(false)}
+            onConfirm={handleConfirmDelete}
+            loading={isDeleting}
+            title="Delete Leave Type"
+            description={`You're about to delete "${selectedLeaveType?.name}". This action cannot be undone.`}
+            confirmText="Delete"
+            cancelText="Cancel"
+        />
+      </div>
   );
 };
 
-export { LeaveTypesView };
+export {LeaveTypesView};

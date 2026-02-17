@@ -1,6 +1,6 @@
-import { HttpAdapter } from "@/lib/http/http-adapter";
+import {HttpAdapter} from "@/lib/http/http-adapter";
 
-import type { CreateLeaveTypePayload, LeaveRequest, LeaveType, UpdateLeaveTypePayload } from "../types/index";
+import type {CreateLeaveTypePayload, LeaveRequest, LeaveType, UpdateLeaveTypePayload} from "../types/index";
 
 type PaginatedResponse<TItem> = {
   items: TItem[];
@@ -34,8 +34,8 @@ export class LeaveService {
     // Backend commonly returns a paginated object: { items: LeaveType[], metadata: {...} }
     // Some environments may return { data: LeaveType[] }.
     const response = await this.http.get<PaginatedResponse<LeaveType> | { data: LeaveType[] }>(
-      "/leaves",
-      filters as QueryParameters,
+        "/leaves",
+        filters as QueryParameters,
     );
     if (response?.status === 200) {
       return response.data;
@@ -74,8 +74,8 @@ export class LeaveService {
    */
   async getLeaveRequests(filters: Filters = {}) {
     const response = await this.http.get<PaginatedResponse<LeaveRequest> | { data: LeaveRequest[] }>(
-      "/leave-requests",
-      filters as QueryParameters,
+        "/leave-requests",
+        filters as QueryParameters,
     );
     if (response?.status === 200) {
       return response.data;

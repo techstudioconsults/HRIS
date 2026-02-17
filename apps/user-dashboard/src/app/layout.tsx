@@ -21,12 +21,12 @@ const META_THEME_COLORS = {
   dark: "#09090b",
 };
 
-export const METADATA: Metadata = {
+export const metadata: Metadata = {
   title: "HRIS",
   description: "A New HR System by Techstudio Academy",
 };
 
-export const VIEWPORT: Viewport = {
+export const viewport: Viewport = {
   themeColor: META_THEME_COLORS.light,
 };
 

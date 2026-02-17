@@ -1,48 +1,65 @@
-"use client";
+'use client';
 
-import { Badge } from "@workspace/ui/components/badge";
-import { AdvancedDataTable, BreadCrumb, DashboardHeader, EmptyState, ErrorEmptyState, ReusableDialog } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { Plus } from "lucide-react";
-import Image from "next/image";
-import { useMemo, useState } from "react";
-import { toast } from "sonner";
+import { Badge } from '@workspace/ui/components/badge';
+import {
+  AdvancedDataTable,
+  BreadCrumb,
+  DashboardHeader,
+  EmptyState,
+  ErrorEmptyState,
+  ReusableDialog,
+} from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { Plus } from 'lucide-react';
+import Image from 'next/image';
+import { useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
-import empty1 from "~/images/empty-state.svg";
-import AddNewMembers from "../../_components/forms/add-new-members";
-import { CardGroup } from "../../../dashboard/_components/card-group";
-import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
-import { useEmployeeRowActions } from "../../../employee/_views/table-data";
-import { useEmployeeService } from "../../../employee/services/use-service";
-import { useTeamService } from "../../services/use-service";
-import { SubTeamDetailsSkeleton } from "./skeleton";
-import { formatDate } from "@/lib/formatters";
+import empty1 from '~/images/empty-state.svg';
+import AddNewMembers from '../../_components/forms/add-new-members';
+import { CardGroup } from '../../../dashboard/_components/card-group';
+import { DashboardCard } from '../../../dashboard/_components/dashboard-card';
+import { useEmployeeRowActions } from '../../../employee/_views/table-data';
+import { useEmployeeService } from '../../../employee/services/use-service';
+import { useTeamService } from '../../services/use-service';
+import { SubTeamDetailsSkeleton } from './skeleton';
+import { formatDate } from '@/lib/formatters';
 
 // Type guards to safely normalize different response shapes without using `any`
 function isEmployeeArray(value: unknown): value is Employee[] {
   return Array.isArray(value);
 }
 function hasItems(value: unknown): value is { items: unknown[] } {
-  return typeof value === "object" && value !== null && Array.isArray((value as { items?: unknown[] }).items);
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    Array.isArray((value as { items?: unknown[] }).items)
+  );
 }
 function hasDataItems(value: unknown): value is { data: { items: unknown[] } } {
-  if (typeof value !== "object" || value === null) return false;
+  if (typeof value !== 'object' || value === null) return false;
   const data = (value as { data?: unknown }).data;
-  if (typeof data !== "object" || data === null) return false;
+  if (typeof data !== 'object' || data === null) return false;
   return Array.isArray((data as { items?: unknown[] }).items);
 }
 
 // Sub Team Details Header Component
-const SubTeamDetailsHeader = ({ teamId, onAddMemberClick }: { teamId: string; onAddMemberClick: () => void }) => {
+const SubTeamDetailsHeader = ({
+  teamId,
+  onAddMemberClick,
+}: {
+  teamId: string;
+  onAddMemberClick: () => void;
+}) => {
   const { useGetTeamsById } = useTeamService();
   const { data: teamData } = useGetTeamsById(teamId, { enabled: !!teamId });
 
   const parentName =
-    typeof teamData?.parent === "object" && teamData?.parent !== null
+    typeof teamData?.parent === 'object' && teamData?.parent !== null
       ? (teamData.parent as { name?: string }).name
       : undefined;
   const parentId =
-    typeof teamData?.parent === "object" && teamData?.parent !== null
+    typeof teamData?.parent === 'object' && teamData?.parent !== null
       ? (teamData.parent as { id?: string }).id
       : teamData?.parent;
 
@@ -52,14 +69,20 @@ const SubTeamDetailsHeader = ({ teamId, onAddMemberClick }: { teamId: string; on
       subtitle={
         <BreadCrumb
           items={[
-            { label: "Teams", href: "/admin/teams" },
-            { label: parentName || "Parent Team", href: `/admin/teams/${parentId}` },
-            { label: teamData?.name || "", href: `/admin/teams/${teamId}` },
+            { label: 'Teams', href: '/admin/teams' },
+            { label: parentName || 'Parent Team', href: `/admin/teams/${parentId}` },
+            { label: teamData?.name || '', href: `/admin/teams/${teamId}` },
           ]}
         />
       }
       actionComponent={
-        <MainButton variant="primary" size="lg" isLeftIconVisible icon={<Plus />} onClick={onAddMemberClick}>
+        <MainButton
+          variant="primary"
+          size="lg"
+          isLeftIconVisible
+          icon={<Plus />}
+          onClick={onAddMemberClick}
+        >
           Add Member
         </MainButton>
       }
@@ -84,7 +107,10 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
 
   const allEmployees: Employee[] = useMemo(() => {
     const payload = employeesResp as unknown;
-    if (hasDataItems(payload) && isEmployeeArray((payload as { data: { items: unknown[] } }).data.items)) {
+    if (
+      hasDataItems(payload) &&
+      isEmployeeArray((payload as { data: { items: unknown[] } }).data.items)
+    ) {
       return (payload as { data: { items: Employee[] } }).data.items;
     }
     if (hasItems(payload) && isEmployeeArray((payload as { items: unknown[] }).items)) {
@@ -98,27 +124,27 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
 
   const members: Employee[] = useMemo(
     () => allEmployees.filter((employee) => employee?.employmentDetails?.team?.id === teamId),
-    [allEmployees, teamId],
+    [allEmployees, teamId]
   );
 
   const { getRowActions, DeleteConfirmationModal, setActiveEmployee } = useEmployeeRowActions();
   const columns = useMemo<IColumnDefinition<Employee>[]>(
     () => [
       {
-        header: "Team Member",
-        accessorKey: "firstName",
+        header: 'Team Member',
+        accessorKey: 'firstName',
         render: (_, employee: Employee) => (
           <div
-            className={"flex w-fit items-center gap-2"}
+            className={'flex w-fit items-center gap-2'}
             onMouseEnter={() => setActiveEmployee(employee)}
             onFocus={() => setActiveEmployee(employee)}
             tabIndex={0}
           >
             <Image
               src={
-                typeof employee.avatar === "string" && employee.avatar.length > 0
+                typeof employee.avatar === 'string' && employee.avatar.length > 0
                   ? employee.avatar
-                  : "https://res.cloudinary.com/kingsleysolomon/image/upload/v1742989662/byte-alley/fisnolvvuvfiebxskgbs.svg"
+                  : 'https://res.cloudinary.com/kingsleysolomon/image/upload/v1742989662/byte-alley/fisnolvvuvfiebxskgbs.svg'
               }
               alt={employee.firstName}
               width={100}
@@ -132,35 +158,42 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
         ),
       },
       {
-        header: "Email",
-        accessorKey: "email",
-        render: (_, employee: Employee) => <span className="text-sm">{employee?.email || "N/A"}</span>,
-      },
-      {
-        header: "Role",
-        accessorKey: "email",
+        header: 'Email',
+        accessorKey: 'email',
         render: (_, employee: Employee) => (
-          <span className="text-sm">{employee?.employmentDetails?.role?.name || "N/A"}</span>
+          <span className="text-sm">{employee?.email || 'N/A'}</span>
         ),
       },
       {
-        header: "Work Mode",
-        accessorKey: "email",
+        header: 'Role',
+        accessorKey: 'email',
         render: (_, employee: Employee) => (
-          <span className="text-sm capitalize">{employee?.employmentDetails?.workMode || "N/A"}</span>
+          <span className="text-sm">{employee?.employmentDetails?.role?.name || 'N/A'}</span>
         ),
       },
       {
-        header: "Status",
-        accessorKey: "status",
+        header: 'Work Mode',
+        accessorKey: 'email',
         render: (_, employee: Employee) => (
-          <Badge className="min-w-fit" variant={employee.status === `active` ? `success` : `warning`}>
-            {employee.status === `active` ? "Active" : "On Leave"}
+          <span className="text-sm capitalize">
+            {employee?.employmentDetails?.workMode || 'N/A'}
+          </span>
+        ),
+      },
+      {
+        header: 'Status',
+        accessorKey: 'status',
+        render: (_, employee: Employee) => (
+          <Badge
+            className="min-w-fit"
+            variant={employee.status === `active` ? `success` : `warning`}
+          >
+            {employee.status === `active` ? 'Active' : 'On Leave'}
           </Badge>
         ),
       },
     ],
-    [setActiveEmployee],
+    [setActiveEmployee]
   );
 
   if (isLoadingTeam) {
@@ -217,11 +250,11 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
         ) : (
           <EmptyState
             className="bg-background"
-            images={[{ src: empty1.src, alt: "No team member", width: 100, height: 100 }]}
+            images={[{ src: empty1.src, alt: 'No team member', width: 100, height: 100 }]}
             title="No team member yet."
             description="Add members to this team to collaborate and assign roles."
             button={{
-              text: "Add Member",
+              text: 'Add Member',
               onClick: () => setIsAddMemberDialogOpen(true),
             }}
           />
@@ -238,15 +271,15 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
             parentTeamId={(() => {
               const t = teamData as Team | undefined;
               const parent: unknown = (t as unknown as { parent?: unknown })?.parent;
-              if (parent && typeof parent === "object" && (parent as { id?: string }).id) {
+              if (parent && typeof parent === 'object' && (parent as { id?: string }).id) {
                 return (parent as { id: string }).id;
               }
-              if (typeof parent === "string") return parent;
-              return t?.id || "";
+              if (typeof parent === 'string') return parent;
+              return t?.id || '';
             })()}
             availableRoles={[]}
             onSubmit={async () => {
-              toast.success("Member assigned (simulate).");
+              toast.success('Member assigned (simulate).');
             }}
             onCancel={() => setIsAddMemberDialogOpen(false)}
           />
@@ -281,15 +314,15 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
           parentTeamId={(() => {
             const t = teamData as Team | undefined;
             const parent: unknown = (t as unknown as { parent?: unknown })?.parent;
-            if (parent && typeof parent === "object" && (parent as { id?: string }).id) {
+            if (parent && typeof parent === 'object' && (parent as { id?: string }).id) {
               return (parent as { id: string }).id;
             }
-            if (typeof parent === "string") return parent;
-            return t?.id || "";
+            if (typeof parent === 'string') return parent;
+            return t?.id || '';
           })()}
           availableRoles={[]}
           onSubmit={async () => {
-            toast.success("Member assigned (simulate).");
+            toast.success('Member assigned (simulate).');
           }}
           onCancel={() => setIsAddMemberDialogOpen(false)}
         />

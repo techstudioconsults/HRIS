@@ -1,16 +1,19 @@
 # Next.js Streaming with Suspense - Implementation Guide
 
 ## Overview
+
 This project now implements Next.js streaming with Suspense boundaries for improved loading states and error handling.
 
 ## Components Created
 
 ### 1. Error Boundaries
+
 - **`/src/app/error.tsx`** - Root level error boundary
 - **`/src/app/[locale]/error.tsx`** - Locale level error boundary
 - **`/src/components/shared/error/suspense-error.tsx`** - Reusable error component
 
 ### 2. Loading States
+
 - **`/src/app/loading.tsx`** - Root level loading (already exists)
 - **`/src/app/[locale]/loading.tsx`** - Locale level loading
 - **`/src/components/shared/loading/suspense-loading.tsx`** - Reusable loading component
@@ -21,8 +24,8 @@ This project now implements Next.js streaming with Suspense boundaries for impro
 ### 1. Basic Suspense with Loading State
 
 ```tsx
-import { Suspense } from "react";
-import { SuspenseLoading } from "@/components/shared/loading";
+import { Suspense } from 'react';
+import { SuspenseLoading } from '@/components/shared/loading';
 
 export default function Page() {
   return (
@@ -45,8 +48,8 @@ async function AsyncComponent() {
 ### 2. Multiple Suspense Boundaries
 
 ```tsx
-import { Suspense } from "react";
-import { SuspenseLoading, SkeletonLoader } from "@/components/shared/loading";
+import { Suspense } from 'react';
+import { SuspenseLoading, SkeletonLoader } from '@/components/shared/loading';
 
 export default function DashboardPage() {
   return (
@@ -73,8 +76,8 @@ export default function DashboardPage() {
 ### 3. Nested Suspense for Progressive Loading
 
 ```tsx
-import { Suspense } from "react";
-import { SuspenseLoading } from "@/components/shared/loading";
+import { Suspense } from 'react';
+import { SuspenseLoading } from '@/components/shared/loading';
 
 export default function UserProfilePage() {
   return (
@@ -82,7 +85,7 @@ export default function UserProfilePage() {
       {/* Profile loads first */}
       <Suspense fallback={<SuspenseLoading text="Loading profile..." />}>
         <UserProfile />
-        
+
         {/* Posts load after profile */}
         <Suspense fallback={<SuspenseLoading text="Loading posts..." size="sm" />}>
           <UserPosts />
@@ -96,11 +99,11 @@ export default function UserProfilePage() {
 ### 4. Error Boundary with Suspense
 
 ```tsx
-"use client";
+'use client';
 
-import { Suspense } from "react";
-import { ErrorBoundary } from "@/components/shared/error";
-import { SuspenseLoading } from "@/components/shared/loading";
+import { Suspense } from 'react';
+import { ErrorBoundary } from '@/components/shared/error';
+import { SuspenseLoading } from '@/components/shared/loading';
 
 export default function Page() {
   return (
@@ -116,8 +119,8 @@ export default function Page() {
 ### 5. Using Different Skeleton Variants
 
 ```tsx
-import { Suspense } from "react";
-import { SkeletonLoader } from "@/components/shared/loading";
+import { Suspense } from 'react';
+import { SkeletonLoader } from '@/components/shared/loading';
 
 export default function Page() {
   return (
@@ -149,8 +152,8 @@ export default function Page() {
 ### 6. Streaming Data with Loading States
 
 ```tsx
-import { Suspense } from "react";
-import { SuspenseLoading } from "@/components/shared/loading";
+import { Suspense } from 'react';
+import { SuspenseLoading } from '@/components/shared/loading';
 
 export default function Page() {
   return (
@@ -170,12 +173,12 @@ export default function Page() {
 
 // These components can fetch data in parallel
 async function FastComponent() {
-  const data = await fetch("/api/fast");
+  const data = await fetch('/api/fast');
   return <div>Fast data</div>;
 }
 
 async function SlowComponent() {
-  const data = await fetch("/api/slow");
+  const data = await fetch('/api/slow');
   return <div>Slow data</div>;
 }
 ```
@@ -183,27 +186,18 @@ async function SlowComponent() {
 ### 7. Custom Error Handler with Retry
 
 ```tsx
-"use client";
+'use client';
 
-import { Suspense, useState } from "react";
-import { SuspenseError } from "@/components/shared/error";
-import { SuspenseLoading } from "@/components/shared/loading";
+import { Suspense, useState } from 'react';
+import { SuspenseError } from '@/components/shared/error';
+import { SuspenseLoading } from '@/components/shared/loading';
 
 export default function Page() {
   const [key, setKey] = useState(0);
 
   return (
-    <Suspense 
-      key={key} 
-      fallback={<SuspenseLoading />}
-    >
-      <DataComponent 
-        onError={() => (
-          <SuspenseError 
-            onRetry={() => setKey(prev => prev + 1)}
-          />
-        )}
-      />
+    <Suspense key={key} fallback={<SuspenseLoading />}>
+      <DataComponent onError={() => <SuspenseError onRetry={() => setKey((prev) => prev + 1)} />} />
     </Suspense>
   );
 }
@@ -220,6 +214,7 @@ export default function Page() {
 ## Automatic Route-Level Handling
 
 The following files provide automatic error and loading states:
+
 - `/app/error.tsx` - Catches errors at root level
 - `/app/loading.tsx` - Shows when any route is loading
 - `/app/[locale]/error.tsx` - Catches errors in locale routes
@@ -235,7 +230,7 @@ For API routes that support streaming:
 // app/api/data/route.ts
 export async function GET() {
   const encoder = new TextEncoder();
-  
+
   const stream = new ReadableStream({
     async start(controller) {
       // Send data in chunks
@@ -250,7 +245,7 @@ export async function GET() {
     headers: {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
+      Connection: 'keep-alive',
     },
   });
 }
@@ -263,8 +258,8 @@ To test streaming behavior, add artificial delays:
 ```tsx
 async function MyComponent() {
   // Simulate slow data fetching
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
   const data = await fetchData();
   return <div>{data}</div>;
 }

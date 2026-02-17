@@ -177,6 +177,7 @@ useLocationData()
 ## API Request/Response Flow
 
 ### Request 1: Get Countries
+
 ```
 GET /api/location?type=countries
 
@@ -203,6 +204,7 @@ Response:
 ```
 
 ### Request 2: Get States
+
 ```
 GET /api/location?type=states&country=Nigeria
 
@@ -235,6 +237,7 @@ Response:
 ```
 
 ### Request 3: Get Cities
+
 ```
 GET /api/location?type=cities&country=Nigeria&state=Lagos
 
@@ -407,6 +410,7 @@ Your Backend
 ---
 
 **Legend:**
+
 - ─► : Data flow direction
 - ▼ : Downward flow
 - ◄─ : Return/Response

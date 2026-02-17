@@ -26,11 +26,10 @@ declare global {
   }
 
   /** Paginated API response wrapper */
-  interface PaginatedApiResponse<T>
-    extends ApiResponse<{
-      items: T[];
-      metadata: PaginationMetadata;
-    }> {}
+  interface PaginatedApiResponse<T> extends ApiResponse<{
+    items: T[];
+    metadata: PaginationMetadata;
+  }> {}
 
   // interface PaginationLink {
   //   url: string | null;
@@ -99,7 +98,10 @@ declare global {
   }
 
   /** Dependency injector function type */
-  type DependencyInjector = (Component: React.ElementType, dependencies: Record<string, symbol>) => React.ElementType;
+  type DependencyInjector = (
+    Component: React.ElementType,
+    dependencies: Record<string, symbol>
+  ) => React.ElementType;
 
   /** Dependency resolution interface */
   interface ResolveDependencies {

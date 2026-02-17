@@ -5,50 +5,55 @@ Complete documentation for the Country → State → City dynamic selection syst
 ## 📋 Documents
 
 ### 1. **IMPLEMENTATION_SUMMARY.md** ⭐ START HERE
-   - Overview of the entire implementation
-   - Files created and modified
-   - Key features and benefits
-   - Testing checklist
-   - Quick introduction to all components
+
+- Overview of the entire implementation
+- Files created and modified
+- Key features and benefits
+- Testing checklist
+- Quick introduction to all components
 
 ### 2. **QUICK_REFERENCE.md** 📚 FOR QUICK LOOKUPS
-   - One-page developer reference
-   - API endpoints table
-   - Hook return types
-   - Usage patterns
-   - Troubleshooting guide
-   - Common scenarios
+
+- One-page developer reference
+- API endpoints table
+- Hook return types
+- Usage patterns
+- Troubleshooting guide
+- Common scenarios
 
 ### 3. **LOCATION_SYSTEM_DOCS.md** 🔧 DETAILED TECHNICAL DOCS
-   - Complete API documentation
-   - Endpoint specifications and examples
-   - Hook documentation (all 4 hooks)
-   - Architecture overview
-   - Error handling strategy
-   - Performance optimizations
-   - Testing instructions
-   - Migration notes
+
+- Complete API documentation
+- Endpoint specifications and examples
+- Hook documentation (all 4 hooks)
+- Architecture overview
+- Error handling strategy
+- Performance optimizations
+- Testing instructions
+- Migration notes
 
 ### 4. **LOCATION_EXAMPLES.md** 💡 CODE EXAMPLES
-   - 6 practical implementation examples:
-     1. Simple React Hook Form integration
-     2. Individual hooks usage
-     3. Direct API fetch
-     4. React Query integration (recommended)
-     5. Search & filter functionality
-     6. Modal/Dialog component
-   - Testing examples with curl
+
+- 6 practical implementation examples:
+  1.  Simple React Hook Form integration
+  2.  Individual hooks usage
+  3.  Direct API fetch
+  4.  React Query integration (recommended)
+  5.  Search & filter functionality
+  6.  Modal/Dialog component
+- Testing examples with curl
 
 ### 5. **ARCHITECTURE_DIAGRAMS.md** 📊 VISUAL GUIDES
-   - System architecture diagram
-   - Data flow sequence diagram
-   - Component lifecycle diagram
-   - Hook state management structure
-   - API request/response flows
-   - Dependency injection diagram
-   - Error handling flow
-   - Caching strategy diagram
-   - External API calls diagram
+
+- System architecture diagram
+- Data flow sequence diagram
+- Component lifecycle diagram
+- Hook state management structure
+- API request/response flows
+- Dependency injection diagram
+- Error handling flow
+- Caching strategy diagram
+- External API calls diagram
 
 ## 🎯 Quick Navigation
 
@@ -66,6 +71,7 @@ Complete documentation for the Country → State → City dynamic selection syst
 ## 📁 Implementation Files
 
 ### Backend
+
 ```
 src/app/api/location/route.ts
 └─ GET /api/location endpoint
@@ -75,6 +81,7 @@ src/app/api/location/route.ts
 ```
 
 ### Frontend Hooks
+
 ```
 src/hooks/use-location.ts
 ├─ useCountries()
@@ -84,6 +91,7 @@ src/hooks/use-location.ts
 ```
 
 ### Updated Components
+
 ```
 src/modules/@org/onboarding/_components/forms/company-profile.tsx
 └─ Now uses dynamic location dropdowns
@@ -107,11 +115,11 @@ Location data saved
 
 ## 📊 API Endpoints Summary
 
-| Endpoint | Purpose | Query Params |
-|----------|---------|--------------|
-| `GET /api/location?type=countries` | Get all countries | `type=countries` |
-| `GET /api/location?type=states&country=Nigeria` | Get states | `type=states&country=` |
-| `GET /api/location?type=cities&country=Nigeria` | Get cities | `type=cities&country=` |
+| Endpoint                                                    | Purpose             | Query Params                  |
+| ----------------------------------------------------------- | ------------------- | ----------------------------- |
+| `GET /api/location?type=countries`                          | Get all countries   | `type=countries`              |
+| `GET /api/location?type=states&country=Nigeria`             | Get states          | `type=states&country=`        |
+| `GET /api/location?type=cities&country=Nigeria`             | Get cities          | `type=cities&country=`        |
 | `GET /api/location?type=cities&country=Nigeria&state=Lagos` | Get cities by state | `type=cities&country=&state=` |
 
 ## 🚀 Getting Started
@@ -135,21 +143,25 @@ Location data saved
 ## 🛠️ Common Tasks
 
 ### Task: Use location hook in a new component
+
 1. Import hook: `import { useLocationData } from "@/hooks/use-location"`
 2. Call hook: `const { countries, states, cities, ... } = useLocationData()`
 3. Follow Example 1 from LOCATION_EXAMPLES.md
 
 ### Task: Integrate with React Query
+
 1. See Example 4 from LOCATION_EXAMPLES.md
 2. Copy the implementation pattern
 3. Adjust query keys/config as needed
 
 ### Task: Add search functionality
+
 1. See Example 5 from LOCATION_EXAMPLES.md
 2. Use useMemo to filter results
 3. Update input field to update search term
 
 ### Task: Create a modal
+
 1. See Example 6 from LOCATION_EXAMPLES.md
 2. Wrap location selects in Dialog component
 3. Call onSelect callback on confirmation
@@ -178,23 +190,26 @@ Location data saved
 - **Created**: November 19, 2025
 - **Last Updated**: November 19, 2025
 - **Compatibility**: Next.js 13+, React 18+, TypeScript 5+
-- **External Dependencies**: 
+- **External Dependencies**:
   - REST Countries API (restcountries.com)
   - Countries Now API (countriesnow.space)
 
 ## 🎓 Learning Path
 
 ### Beginner
+
 1. Read: IMPLEMENTATION_SUMMARY.md
 2. Skim: QUICK_REFERENCE.md
 3. Follow: Example 1 from LOCATION_EXAMPLES.md
 
 ### Intermediate
+
 1. Study: LOCATION_SYSTEM_DOCS.md
 2. Explore: QUICK_REFERENCE.md troubleshooting
 3. Practice: Multiple examples from LOCATION_EXAMPLES.md
 
 ### Advanced
+
 1. Deep dive: ARCHITECTURE_DIAGRAMS.md
 2. Optimize: Performance considerations
 3. Customize: Adapt hooks for specific needs
@@ -230,13 +245,13 @@ ARCHITECTURE_DIAGRAMS.md
 
 ## 📚 Document Sizes
 
-| Document | Size | Reading Time |
-|----------|------|--------------|
-| IMPLEMENTATION_SUMMARY.md | ~4KB | 5-7 min |
-| QUICK_REFERENCE.md | ~5KB | 5-10 min |
-| LOCATION_SYSTEM_DOCS.md | ~7.5KB | 15-20 min |
-| LOCATION_EXAMPLES.md | ~12KB | 20-30 min |
-| ARCHITECTURE_DIAGRAMS.md | ~9KB | 15-20 min |
+| Document                  | Size   | Reading Time |
+| ------------------------- | ------ | ------------ |
+| IMPLEMENTATION_SUMMARY.md | ~4KB   | 5-7 min      |
+| QUICK_REFERENCE.md        | ~5KB   | 5-10 min     |
+| LOCATION_SYSTEM_DOCS.md   | ~7.5KB | 15-20 min    |
+| LOCATION_EXAMPLES.md      | ~12KB  | 20-30 min    |
+| ARCHITECTURE_DIAGRAMS.md  | ~9KB   | 15-20 min    |
 
 **Total**: ~37.5KB, ~60-87 minutes comprehensive reading
 

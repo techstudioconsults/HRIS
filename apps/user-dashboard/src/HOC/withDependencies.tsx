@@ -1,7 +1,7 @@
 /* eslint-disable react/display-name */
 
-import { container } from "@/lib/tools/dependencies";
-import { ComponentProps } from "react";
+import { container } from '@/lib/tools/dependencies';
+import { ComponentProps } from 'react';
 
 export const WithDependency: DependencyInjector = (Component, dependencies) => {
   const resolvedDependencies: ResolveDependencies = {};
@@ -19,5 +19,7 @@ export const WithDependency: DependencyInjector = (Component, dependencies) => {
     }
   }
 
-  return (properties: ComponentProps<typeof Component>) => <Component {...properties} {...resolvedDependencies} />;
+  return (properties: ComponentProps<typeof Component>) => (
+    <Component {...properties} {...resolvedDependencies} />
+  );
 };

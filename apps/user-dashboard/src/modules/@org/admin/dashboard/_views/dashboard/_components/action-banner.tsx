@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { Checkbox } from "@workspace/ui/components/checkbox";
-import { MainButton } from "@workspace/ui/lib/button";
-import { cn } from "@workspace/ui/lib/utils";
+import { Checkbox } from '@workspace/ui/components/checkbox';
 // import Image from "next/image";
-import { ButtonHTMLAttributes, useTransition } from "react";
+import { ButtonHTMLAttributes, useTransition } from 'react';
+import { MainButton } from '@workspace/ui/lib';
+import { cn } from '@workspace/ui/lib/utils';
 
 interface ActionBannerProperties {
   title: string;
@@ -40,16 +40,19 @@ export const ActionBanner = ({
   return (
     <div
       className={cn(
-        "bg-background flex items-center rounded-[9px] p-6 shadow",
+        'bg-background flex items-center rounded-[9px] p-6 shadow',
         // "border-low-grey-III border",
-        className,
+        className
       )}
     >
       <div className="flex w-full items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Checkbox
             checked={isCompleted}
-            className={cn("h-6 w-6 rounded-full border-2", isCompleted ? "bg-primary border-black" : "border-primary")}
+            className={cn(
+              'h-6 w-6 rounded-full border-2',
+              isCompleted ? 'bg-primary border-black' : 'border-primary'
+            )}
           />
 
           <div className="flex flex-col gap-4">
@@ -64,7 +67,7 @@ export const ActionBanner = ({
           <MainButton
             isLoading={isPending}
             variant="primary"
-            className={cn("w-fit", buttonClassName)}
+            className={cn('w-fit', buttonClassName)}
             onClick={handleClick}
             {...buttonProperties}
           >

@@ -1,4 +1,15 @@
 {
-  "*.{js,jsx,ts,tsx}": ["prettier --write"],
+  "apps/user-dashboard/**/*.{js,jsx,ts,tsx}": [
+    "pnpm --filter user-dashboard exec eslint --fix",
+    "prettier --write"
+  ],
+
+  "apps/web/**/*.{js,jsx,ts,tsx}": ["pnpm --filter web exec eslint --fix", "prettier --write"],
+
+  "packages/ui/**/*.{js,jsx,ts,tsx}": [
+    "pnpm --filter @workspace/ui exec eslint --fix",
+    "prettier --write"
+  ],
+
   "*.{json,md,yml,yaml}": ["prettier --write"]
 }

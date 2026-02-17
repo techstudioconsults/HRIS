@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { Input } from "@workspace/ui/components/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@workspace/ui/components/popover";
-import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import { EmptyState } from "@workspace/ui/lib";
-import { cn } from "@workspace/ui/lib/utils";
-import { Clock, Loader2, Search, SearchIcon, TrendingUp, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { useDebounce } from "use-debounce";
+import { Input } from '@workspace/ui/components/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@workspace/ui/components/popover';
+import { ScrollArea } from '@workspace/ui/components/scroll-area';
+import { EmptyState } from '@workspace/ui/lib';
+import { cn } from '@workspace/ui/lib/utils';
+import { Clock, Loader2, Search, SearchIcon, TrendingUp, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useDebounce } from 'use-debounce';
 
 interface SearchInputProperties {
   placeholder?: string;
@@ -18,13 +18,13 @@ interface SearchInputProperties {
 }
 
 export const SearchInput = ({
-  placeholder = "Search...",
+  placeholder = 'Search...',
   onSearch,
   delay = 300,
-  className = "",
+  className = '',
   isDisabled = false,
 }: SearchInputProperties) => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery] = useDebounce(searchQuery, delay);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ interface GlobalSearchInputProperties {
 
 export function GlobalSearchInput({
   className,
-  placeholder = "Search anything...",
+  placeholder = 'Search anything...',
   onSearch,
   onResultSelect,
   results = [],
@@ -80,11 +80,11 @@ export function GlobalSearchInput({
   disabled = false,
   recentSearches = [],
   onClearRecent,
-  emptyMessage = "Try searching with different keywords.",
+  emptyMessage = 'Try searching with different keywords.',
   delay = 300,
 }: GlobalSearchInputProperties) {
   const [open, setOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery] = useDebounce(searchQuery, delay);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputReference = useRef<HTMLInputElement>(null);
@@ -107,7 +107,7 @@ export function GlobalSearchInput({
 
   const handleResultClick = (result: SearchResult) => {
     onResultSelect?.(result);
-    setSearchQuery("");
+    setSearchQuery('');
     setOpen(false);
     inputReference.current?.blur();
   };
@@ -124,45 +124,46 @@ export function GlobalSearchInput({
     const totalResults = results.length;
 
     switch (event.key) {
-      case "ArrowDown": {
+      case 'ArrowDown': {
         event.preventDefault();
         setSelectedIndex((previous) => (previous < totalResults - 1 ? previous + 1 : previous));
         break;
       }
-      case "ArrowUp": {
+      case 'ArrowUp': {
         event.preventDefault();
         setSelectedIndex((previous) => (previous > 0 ? previous - 1 : -1));
         break;
       }
-      case "Enter": {
+      case 'Enter': {
         event.preventDefault();
         if (selectedIndex >= 0 && results[selectedIndex]) {
           handleResultClick(results[selectedIndex]);
         }
         break;
       }
-      case "Escape": {
+      case 'Escape': {
         event.preventDefault();
         setOpen(false);
-        setSearchQuery("");
+        setSearchQuery('');
         inputReference.current?.blur();
         break;
       }
     }
   };
 
-  const showDropdown = open && (searchQuery.trim() !== "" || recentSearches.length > 0);
+  const showDropdown = open && (searchQuery.trim() !== '' || recentSearches.length > 0);
   const hasResults = results.length > 0;
-  const showRecent = searchQuery.trim() === "" && recentSearches.length > 0;
+  const showRecent = searchQuery.trim() === '' && recentSearches.length > 0;
 
   return (
     <Popover open={showDropdown} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <div
           className={cn(
-            "bg-background border-border focus-within:ring-ring relative flex h-10 w-full min-w-[500px] items-center gap-2 rounded-md border px-3 transition-colors focus-within:ring-2 focus-within:ring-offset-0",
-            disabled && "cursor-not-allowed opacity-50",
-            className,
+            'bg-background border-border focus-within:ring-ring relative flex h-10 w-full min-w-[500px] ' +
+              'items-center gap-2 rounded-md border px-3 transition-colors focus-within:ring-2 focus-within:ring-offset-0',
+            disabled && 'cursor-not-allowed opacity-50',
+            className
           )}
         >
           <Search className="text-muted-foreground h-4 w-4 shrink-0" />
@@ -175,14 +176,15 @@ export function GlobalSearchInput({
             onKeyDown={handleKeyDown}
             onFocus={() => setOpen(true)}
             disabled={disabled}
-            className="placeholder:text-muted-foreground h-full flex-1 border-none bg-transparent p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none"
+            className="placeholder:text-muted-foreground h-full flex-1 border-none bg-transparent p-0
+            text-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none"
           />
           {isLoading && <Loader2 className="text-muted-foreground h-4 w-4 shrink-0 animate-spin" />}
           {searchQuery && !isLoading && (
             <button
               type="button"
               onClick={() => {
-                setSearchQuery("");
+                setSearchQuery('');
                 inputReference.current?.focus();
               }}
               className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
@@ -219,7 +221,8 @@ export function GlobalSearchInput({
                     key={index}
                     type="button"
                     onClick={() => handleRecentSearchClick(query)}
-                    className="hover:bg-accent flex w-full items-center gap-2 rounded-sm px-2 py-2 text-left text-sm transition-colors"
+                    className="hover:bg-accent flex w-full items-center gap-2 rounded-sm px-2 py-2 text-left text-sm
+                    transition-colors"
                   >
                     <Clock className="text-muted-foreground h-4 w-4 shrink-0" />
                     <span className="flex-1 truncate">{query}</span>
@@ -247,8 +250,9 @@ export function GlobalSearchInput({
                     type="button"
                     onClick={() => handleResultClick(result)}
                     className={cn(
-                      "hover:bg-accent flex w-full items-start gap-3 rounded-sm px-2 py-2.5 text-left transition-colors",
-                      selectedIndex === index && "bg-accent",
+                      'hover:bg-accent flex w-full items-start gap-3 rounded-sm px-2 py-2.5 text-left' +
+                        ' transition-colors',
+                      selectedIndex === index && 'bg-accent'
                     )}
                   >
                     {result.icon ? (
@@ -266,7 +270,9 @@ export function GlobalSearchInput({
                         )}
                       </div>
                       {result.description && (
-                        <p className="text-muted-foreground line-clamp-2 text-xs">{result.description}</p>
+                        <p className="text-muted-foreground line-clamp-2 text-xs">
+                          {result.description}
+                        </p>
                       )}
                     </div>
                   </button>

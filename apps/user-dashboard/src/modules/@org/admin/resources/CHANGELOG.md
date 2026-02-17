@@ -1,14 +1,17 @@
 # Resources Module Refactoring Changelog
 
 ## Overview
+
 Complete refactoring of the resources module to follow best practices, improve code quality, and enhance user experience with proper error handling and feedback mechanisms.
 
 ## Latest Updates (Architecture Refactoring - Prop Drilling Removal)
 
 ### Architecture Improvements
+
 **Issue**: Excessive prop drilling and dialog state management in parent components.
 
 **Fix**:
+
 - Created reusable [`ConfirmDialog`](src/components/shared/dialog/confirm-dialog.tsx:1) component
 - Refactored [`FolderCard`](src/modules/@org/admin/resources/_components/ui/FolderCard.tsx:1) to be self-contained
 - Refactored [`FileCard`](src/modules/@org/admin/resources/_components/ui/FileCard.tsx:1) to be self-contained
@@ -17,6 +20,7 @@ Complete refactoring of the resources module to follow best practices, improve c
 - Dramatically simplified [`ResourcesBody`](src/modules/@org/admin/resources/_components/ResourcesBody.tsx:1) (59% code reduction)
 
 **Changes Made**:
+
 1. **New Component** - [`confirm-dialog.tsx`](src/components/shared/dialog/confirm-dialog.tsx:1):
    - Reusable confirmation dialog wrapping AlertModal
    - Supports variants: `destructive`, `default`, `warning`
@@ -53,6 +57,7 @@ Complete refactoring of the resources module to follow best practices, improve c
    - Now focuses solely on data fetching and layout
 
 **Benefits**:
+
 - ✅ **Reduced Prop Drilling**: Eliminated 7 callback props across the component tree
 - ✅ **Better Encapsulation**: Each card owns its business logic and UI state
 - ✅ **Improved Testability**: Cards can be tested independently
@@ -69,15 +74,18 @@ See [`REFACTORING.md`](src/modules/@org/admin/resources/REFACTORING.md:1) for de
 ## Previous Updates (Query Invalidation Fix)
 
 ### React Query Cache Invalidation
+
 **Issue**: Changes were not reflected in the UI after successful operations despite mutations completing successfully.
 
 **Fix**:
+
 - Updated [`use-service-query.ts`](src/lib/react-query/use-service-query.ts:1) to properly handle query invalidation
 - Added `queryClient.invalidateQueries()` in mutation success handler
 - Mutations now automatically invalidate and refetch related queries
 - Added new endpoint `getFilesByFolderId` for viewing files in a specific folder
 
 **Changes Made**:
+
 1. **Service Layer** - [`service.ts`](src/modules/@org/admin/resources/services/service.ts:167):
    - Added `getFilesByFolderId()` method to fetch files by folder ID
    - Endpoint: `GET /files?folderId={folderId}`
@@ -98,9 +106,11 @@ See [`REFACTORING.md`](src/modules/@org/admin/resources/REFACTORING.md:1) for de
 ## Bug Fixes (Post-Refactoring)
 
 ### Query Parameter Issue
+
 **Issue**: API requests were including `search=undefined` and other unnecessary parameters in query strings.
 
 **Fix**:
+
 - Updated [`ResourcesBody.tsx`](src/modules/@org/admin/resources/_components/ResourcesBody.tsx:115) to use conditional spreading for query parameters
 - Only includes `search` parameter when it has a valid value
 - Simplified queries to send only essential parameters (page, limit)
@@ -113,6 +123,7 @@ See [`REFACTORING.md`](src/modules/@org/admin/resources/REFACTORING.md:1) for de
 ### 1. Service Layer Improvements (`services/`)
 
 #### New Files
+
 - **`types.ts`**: Centralized type definitions for better type safety
   - `ApiResponse<T>`: Generic API response type with pagination
   - `ApiError`: Error response interface
@@ -122,11 +133,12 @@ See [`REFACTORING.md`](src/modules/@org/admin/resources/REFACTORING.md:1) for de
   - `DeleteResponse` & `DownloadResponse`: Operation response types
 
 #### Updated Files
+
 - **`service.ts`**: Enhanced ResourceService class
   - Added comprehensive JSDoc documentation
   - Improved error handling with proper error messages
   - Added return type annotations for all methods
-  - Removed instance properties (DEFAULT_*_FILTERS now private)
+  - Removed instance properties (DEFAULT\_\*\_FILTERS now private)
   - Better type safety with explicit return types
   - Proper type casting for download operations
 
@@ -140,7 +152,9 @@ See [`REFACTORING.md`](src/modules/@org/admin/resources/REFACTORING.md:1) for de
 ### 2. Component Refactoring
 
 #### `ResourcesBody.tsx`
+
 **Improvements:**
+
 - ✅ Removed manual state management (no more useEffect for data extraction)
 - ✅ Proper TypeScript type casting for API responses
 - ✅ Extracted utility functions to module scope:
@@ -158,7 +172,9 @@ See [`REFACTORING.md`](src/modules/@org/admin/resources/REFACTORING.md:1) for de
 - ✅ React Query handles cache invalidation automatically
 
 #### `ResourcesHeader.tsx`
+
 **Improvements:**
+
 - ✅ Added search functionality with callback prop
 - ✅ Cleaner dialog state management
 - ✅ Better separation of concerns
@@ -166,7 +182,9 @@ See [`REFACTORING.md`](src/modules/@org/admin/resources/REFACTORING.md:1) for de
 - ✅ Improved dialog descriptions
 
 #### `forms/create-folder.tsx`
+
 **Improvements:**
+
 - ✅ Enhanced error handling with mutation callbacks
 - ✅ Added form validation error display
 - ✅ Better user feedback with toast notifications
@@ -177,7 +195,9 @@ See [`REFACTORING.md`](src/modules/@org/admin/resources/REFACTORING.md:1) for de
 - ✅ React Query auto-invalidation after successful creation
 
 #### `forms/create-file.tsx`
+
 **Improvements:**
+
 - ✅ Proper TypeScript typing for folder data
 - ✅ Enhanced folder loading states
 - ✅ Better error messages for folder loading failures
@@ -189,7 +209,9 @@ See [`REFACTORING.md`](src/modules/@org/admin/resources/REFACTORING.md:1) for de
 - ✅ Removed `window.location.reload()` anti-pattern
 
 #### `_views/resources/index.tsx`
+
 **Improvements:**
+
 - ✅ Added search state management
 - ✅ Props drilling for search functionality
 - ✅ Cleaner component composition
@@ -228,29 +250,34 @@ See [`REFACTORING.md`](src/modules/@org/admin/resources/REFACTORING.md:1) for de
 ### 4. User Experience Enhancements
 
 #### Loading States
+
 - ✅ Spinner with "Loading resources..." message
 - ✅ "Loading folders..." in file upload form
 - ✅ Button loading states ("Creating...", "Uploading...", "Deleting...")
 
 #### Error Handling
+
 - ✅ User-friendly error messages
 - ✅ "Try Again" button on error
 - ✅ Form validation errors displayed inline
 - ✅ Toast notifications for all operations
 
 #### Success Feedback
+
 - ✅ Toast notifications for successful operations
 - ✅ Automatic form reset after success
 - ✅ Dialog auto-close after success
 - ✅ Instant UI updates via React Query
 
 #### Empty States
+
 - ✅ "No files found" with contextual messages
 - ✅ "No folders found" with creation prompt
 - ✅ "No folders available" in file upload form
 - ✅ Search-aware empty states
 
 #### Additional Features
+
 - ✅ File size display in human-readable format
 - ✅ File counter in upload forms
 - ✅ Search functionality (integrated, ready for backend)
@@ -276,9 +303,11 @@ See [`REFACTORING.md`](src/modules/@org/admin/resources/REFACTORING.md:1) for de
 - ✅ Proper dependency arrays in useEffect
 
 ## Breaking Changes
+
 None - All changes are backward compatible with the existing API structure.
 
 ## Migration Notes
+
 No migration required. The refactored code works with the existing backend endpoints.
 
 ## Testing Recommendations
@@ -322,4 +351,5 @@ No migration required. The refactored code works with the existing backend endpo
 8. **Versioning**: File version history and rollback
 
 ## Conclusion
+
 The resources module has been completely refactored to follow React and TypeScript best practices, providing a solid foundation for future enhancements while maintaining a clean, maintainable codebase.

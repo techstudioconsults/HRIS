@@ -1,6 +1,7 @@
 # Quick Start Guide - HRIS Monorepo
 
 ## Prerequisites
+
 - Node.js 20+
 - pnpm 10.4.1+
 
@@ -14,10 +15,13 @@ pnpm install
 ## Running the Applications
 
 ### Option 1: Run All Apps Simultaneously
+
 ```bash
 pnpm dev
 ```
+
 This will start:
+
 - User Dashboard on http://localhost:3000
 - Controller Dashboard on http://localhost:3001
 - Web App on http://localhost:3002
@@ -25,18 +29,21 @@ This will start:
 ### Option 2: Run Individual Apps
 
 **User Dashboard (Main HRIS App)**
+
 ```bash
 pnpm dev:user
 # Runs on http://localhost:3000
 ```
 
 **Controller Dashboard**
+
 ```bash
 pnpm dev:controller
 # Runs on http://localhost:3001
 ```
 
 **Web/Marketing App**
+
 ```bash
 pnpm dev:web
 # Runs on http://localhost:3002
@@ -70,10 +77,12 @@ pnpm format
 ## Application Details
 
 ### User Dashboard (`apps/user-dashboard`)
+
 **Port:** 3000  
 **Description:** Main HRIS application with full employee management, payroll, teams, and resources functionality.
 
 **Key Features:**
+
 - Employee Management
 - Payroll Processing
 - Team Management
@@ -82,16 +91,19 @@ pnpm format
 - Real-time Notifications
 
 **Environment Files:**
+
 - `.env` - Template environment variables
 - `.env.local` - Local environment variables (gitignored)
 
 ### Controller Dashboard (`apps/controller-dashboard`)
+
 **Port:** 3001  
 **Description:** Dashboard for HRIS controllers and administrators.
 
 **Status:** Initial setup complete, ready for feature development.
 
 ### Web (`apps/web`)
+
 **Port:** 3002  
 **Description:** Marketing and landing pages.
 
@@ -112,6 +124,7 @@ hris-mono-repo/
 ## Development Tips
 
 1. **Running Specific App:** When developing a specific feature, run only that app:
+
    ```bash
    pnpm dev:user  # Focus on user dashboard
    ```
@@ -125,7 +138,9 @@ hris-mono-repo/
 ## Troubleshooting
 
 ### Port Already in Use
+
 If you get a "port already in use" error:
+
 ```bash
 # Find and kill the process using the port
 lsof -ti:3000 | xargs kill -9  # For user-dashboard
@@ -134,14 +149,18 @@ lsof -ti:3002 | xargs kill -9  # For web
 ```
 
 ### Build Errors
+
 Clear the cache and rebuild:
+
 ```bash
 rm -rf node_modules/.cache
 pnpm build
 ```
 
 ### Dependency Issues
+
 Reinstall dependencies:
+
 ```bash
 rm -rf node_modules
 pnpm install

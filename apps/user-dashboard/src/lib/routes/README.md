@@ -92,16 +92,16 @@ The middleware automatically protects routes based on the route configuration:
 
 ```typescript
 // src/lib/routes/routes.ts
-import { ACCESS_LEVELS, MODULE_PERMISSIONS } from "@/lib/auth-types";
+import { ACCESS_LEVELS, MODULE_PERMISSIONS } from '@/lib/auth-types';
 
 export const ROUTE_CONFIGS = [
   {
-    path: "/admin",
+    path: '/admin',
     accessLevel: ACCESS_LEVELS.OWNER_ONLY,
     requiredPermissions: [MODULE_PERMISSIONS.ADMIN],
   },
   {
-    path: "/employees",
+    path: '/employees',
     accessLevel: ACCESS_LEVELS.PERMISSION_BASED,
     requiredPermissions: [MODULE_PERMISSIONS.EMPLOYEE_READ, MODULE_PERMISSIONS.EMPLOYEE_MANAGE],
   },
@@ -253,13 +253,11 @@ export default withAuth(
 ### Common Issues
 
 1. **Access Denied on Admin Routes**
-
    - Ensure user has "owner" role
    - Ensure user has "admin" permission
    - Check session data structure
 
 2. **Permission Not Working**
-
    - Verify permission string format (e.g., "module:action")
    - Check if permission is included in user's permissions array
    - Ensure route is properly configured
@@ -275,19 +273,19 @@ export default withAuth(
 
 ```typescript
 const { data: session } = useSession();
-console.log("Session:", session);
+console.log('Session:', session);
 ```
 
 2. **Check User Permissions:**
 
 ```typescript
 const { userPermissions } = usePermissions();
-console.log("Permissions:", userPermissions);
+console.log('Permissions:', userPermissions);
 ```
 
 3. **Test Permission Checks:**
 
 ```typescript
 const { hasPermission } = usePermissions();
-console.log("Has admin:", hasPermission("admin"));
+console.log('Has admin:', hasPermission('admin'));
 ```

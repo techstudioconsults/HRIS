@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import { cn } from '@workspace/ui/lib/utils'
-import Image from 'next/image'
-import { useState, type ComponentProps } from 'react'
+import { cn } from '@workspace/ui/lib/utils';
+import Image from 'next/image';
+import { useState, type ComponentProps } from 'react';
 
 export function BlurImage(properties: ComponentProps<typeof Image>) {
-  const [isLoading, setLoading] = useState(true)
+  const [isLoading, setLoading] = useState(true);
 
   return (
     <Image
@@ -18,9 +18,9 @@ export function BlurImage(properties: ComponentProps<typeof Image>) {
       )}
       onLoad={() => {
         setTimeout(() => {
-          setLoading(false)
-        }, 500)
+          setLoading(false);
+        }, 500);
       }}
     />
-  )
+  );
 }

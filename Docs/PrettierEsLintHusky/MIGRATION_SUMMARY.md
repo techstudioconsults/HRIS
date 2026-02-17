@@ -1,9 +1,11 @@
 # HRIS Migration to Monorepo - Summary
 
 ## Overview
+
 Successfully migrated the standalone HRIS application into the `hris-mono-repo` monorepo structure with three applications.
 
 ## Migration Date
+
 December 1, 2025
 
 ## Monorepo Structure
@@ -23,6 +25,7 @@ hris-mono-repo/
 ## What Was Done
 
 ### 1. User Dashboard Migration
+
 - ✅ Copied entire HRIS application to `apps/user-dashboard`
 - ✅ Updated package name from `tsa-hri-system` to `user-dashboard`
 - ✅ Configured to run on port 3000
@@ -38,6 +41,7 @@ hris-mono-repo/
   - Dashboard Analytics
 
 ### 2. Controller Dashboard Setup
+
 - ✅ Created new Next.js 15 app at `apps/controller-dashboard`
 - ✅ Configured to run on port 3001
 - ✅ Set up basic structure with:
@@ -49,10 +53,12 @@ hris-mono-repo/
 - ✅ Created initial landing page
 
 ### 3. Web App Configuration
+
 - ✅ Updated existing web app to run on port 3002
 - ✅ Maintained existing structure and configuration
 
 ### 4. Root Configuration
+
 - ✅ Updated `turbo.json` with proper task configurations
 - ✅ Enhanced root `package.json` with app-specific scripts:
   - `dev:web`, `dev:user`, `dev:controller` - Run individual apps
@@ -61,17 +67,18 @@ hris-mono-repo/
 - ✅ Updated README with comprehensive documentation
 
 ### 5. Dependencies
+
 - ✅ Installed all dependencies successfully
 - ✅ Approved necessary build scripts (sharp, esbuild, msw)
 - ✅ All packages resolved correctly
 
 ## Port Assignments
 
-| Application | Port | Description |
-|------------|------|-------------|
-| user-dashboard | 3000 | Main HRIS User Dashboard |
-| controller-dashboard | 3001 | Controller Dashboard |
-| web | 3002 | Marketing/Landing pages |
+| Application          | Port | Description              |
+| -------------------- | ---- | ------------------------ |
+| user-dashboard       | 3000 | Main HRIS User Dashboard |
+| controller-dashboard | 3001 | Controller Dashboard     |
+| web                  | 3002 | Marketing/Landing pages  |
 
 ## Key Changes from Original HRIS
 
@@ -82,7 +89,9 @@ hris-mono-repo/
 5. **Port**: Explicitly set to 3000
 
 ## No Breaking Changes
+
 All original HRIS functionality has been preserved:
+
 - Authentication flows
 - Employee management
 - Payroll processing
@@ -96,6 +105,7 @@ All original HRIS functionality has been preserved:
 ## How to Use
 
 ### Run all apps:
+
 ```bash
 cd /home/kingsley/Documents/projects/hris-mono-repo
 pnpm install
@@ -103,6 +113,7 @@ pnpm dev
 ```
 
 ### Run individual apps:
+
 ```bash
 pnpm dev:user           # User Dashboard on port 3000
 pnpm dev:controller     # Controller Dashboard on port 3001
@@ -110,6 +121,7 @@ pnpm dev:web           # Web app on port 3002
 ```
 
 ### Build apps:
+
 ```bash
 pnpm build              # Build all
 pnpm build:user         # Build user dashboard only
@@ -118,6 +130,7 @@ pnpm build:web         # Build web app only
 ```
 
 ## Environment Variables
+
 - User Dashboard: `.env` and `.env.local` files copied from original HRIS
 - Controller Dashboard: Will need environment setup
 - Web: Will need environment setup

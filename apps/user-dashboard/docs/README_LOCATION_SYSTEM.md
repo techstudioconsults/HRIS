@@ -5,6 +5,7 @@ A production-ready dynamic location selection system for the HRIS application. A
 ## 🎯 Overview
 
 This system provides:
+
 - **Dynamic dropdowns** that populate based on user selection
 - **Seamless integration** with React Hook Form
 - **Reusable React hooks** for any component
@@ -77,6 +78,7 @@ GET /api/location?type=cities&country=Nigeria&state=Lagos
 ```
 
 **Response Format:**
+
 ```json
 {
   "success": true,
@@ -92,25 +94,27 @@ GET /api/location?type=cities&country=Nigeria&state=Lagos
 ## 🪝 React Hooks
 
 ### `useLocationData()` (Recommended)
+
 Composite hook managing all three location fields:
 
 ```typescript
 const {
-  countries,           // LocationOption[]
-  states,              // LocationOption[]
-  cities,              // LocationOption[]
-  selectedCountry,     // string | null
-  selectedState,       // string | null
-  countriesLoading,    // boolean
-  statesLoading,       // boolean
-  citiesLoading,       // boolean
-  error,               // string | null
+  countries, // LocationOption[]
+  states, // LocationOption[]
+  cities, // LocationOption[]
+  selectedCountry, // string | null
+  selectedState, // string | null
+  countriesLoading, // boolean
+  statesLoading, // boolean
+  citiesLoading, // boolean
+  error, // string | null
   handleCountryChange, // (country: string | null) => void
-  handleStateChange,   // (state: string | null) => void
+  handleStateChange, // (state: string | null) => void
 } = useLocationData();
 ```
 
 ### Individual Hooks
+
 For more control:
 
 ```typescript
@@ -133,19 +137,20 @@ const { cities, isLoading, error } = useCities(country, state);
 
 ## 📚 Documentation
 
-| Document | Purpose |
-|----------|---------|
-| **DOCUMENTATION_INDEX.md** | Navigation guide (start here) |
-| **IMPLEMENTATION_SUMMARY.md** | Executive summary and overview |
-| **QUICK_REFERENCE.md** | Quick lookup and troubleshooting |
-| **LOCATION_SYSTEM_DOCS.md** | Complete technical documentation |
-| **LOCATION_EXAMPLES.md** | 6 implementation examples |
-| **ARCHITECTURE_DIAGRAMS.md** | Visual system architecture |
-| **COMPLETION_REPORT.md** | Implementation status report |
+| Document                      | Purpose                          |
+| ----------------------------- | -------------------------------- |
+| **DOCUMENTATION_INDEX.md**    | Navigation guide (start here)    |
+| **IMPLEMENTATION_SUMMARY.md** | Executive summary and overview   |
+| **QUICK_REFERENCE.md**        | Quick lookup and troubleshooting |
+| **LOCATION_SYSTEM_DOCS.md**   | Complete technical documentation |
+| **LOCATION_EXAMPLES.md**      | 6 implementation examples        |
+| **ARCHITECTURE_DIAGRAMS.md**  | Visual system architecture       |
+| **COMPLETION_REPORT.md**      | Implementation status report     |
 
 ## 🚀 Implementation Examples
 
 ### Example 1: Simple Form Integration
+
 ```typescript
 import { useLocationData } from "@/hooks/use-location";
 
@@ -176,30 +181,31 @@ function SimpleLocationForm() {
 ```
 
 ### Example 2: React Query Integration
+
 ```typescript
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
 function LocationWithReactQuery() {
   const [country, setCountry] = useState<string | null>(null);
   const [state, setState] = useState<string | null>(null);
 
   const { data: countries = [] } = useQuery({
-    queryKey: ["countries"],
-    queryFn: () => fetch("/api/location?type=countries").then(r => r.json()),
+    queryKey: ['countries'],
+    queryFn: () => fetch('/api/location?type=countries').then((r) => r.json()),
   });
 
   const { data: states = [] } = useQuery({
-    queryKey: ["states", country],
-    queryFn: () => fetch(`/api/location?type=states&country=${country}`).then(r => r.json()),
+    queryKey: ['states', country],
+    queryFn: () => fetch(`/api/location?type=states&country=${country}`).then((r) => r.json()),
     enabled: !!country,
   });
 
   const { data: cities = [] } = useQuery({
-    queryKey: ["cities", country, state],
+    queryKey: ['cities', country, state],
     queryFn: () => {
-      const params = new URLSearchParams({ type: "cities", country, ...(state && { state }) });
-      return fetch(`/api/location?${params}`).then(r => r.json());
+      const params = new URLSearchParams({ type: 'cities', country, ...(state && { state }) });
+      return fetch(`/api/location?${params}`).then((r) => r.json());
     },
     enabled: !!country,
   });
@@ -227,7 +233,7 @@ curl "http://localhost:3000/api/location?type=cities&country=Nigeria&state=Lagos
 
 - [ ] Company profile form shows countries dropdown
 - [ ] Selecting country populates states dropdown
-- [ ] Selecting state populates cities dropdown  
+- [ ] Selecting state populates cities dropdown
 - [ ] Form submission includes location values
 - [ ] Loading indicators appear during API calls
 - [ ] No console errors or warnings
@@ -236,13 +242,13 @@ curl "http://localhost:3000/api/location?type=cities&country=Nigeria&state=Lagos
 
 ## 🔧 Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| States not showing | Select a country first |
-| Cities not showing | Select a country and state |
-| API returns empty | Check country name spelling |
-| Slow performance | Data is cached for 24 hours, subsequent calls are instant |
-| TypeScript errors | Ensure hooks imported from `@/hooks/use-location` |
+| Issue              | Solution                                                  |
+| ------------------ | --------------------------------------------------------- |
+| States not showing | Select a country first                                    |
+| Cities not showing | Select a country and state                                |
+| API returns empty  | Check country name spelling                               |
+| Slow performance   | Data is cached for 24 hours, subsequent calls are instant |
+| TypeScript errors  | Ensure hooks imported from `@/hooks/use-location`         |
 
 ## 🌐 External APIs
 
@@ -302,16 +308,19 @@ This system is production-ready:
 ## 🎓 Learning Path
 
 **Beginner**:
+
 1. Read IMPLEMENTATION_SUMMARY.md
 2. Check QUICK_REFERENCE.md
 3. Follow Example 1 from LOCATION_EXAMPLES.md
 
 **Intermediate**:
+
 1. Study LOCATION_SYSTEM_DOCS.md
 2. Explore LOCATION_EXAMPLES.md (all examples)
 3. Reference QUICK_REFERENCE.md troubleshooting
 
 **Advanced**:
+
 1. Deep dive into ARCHITECTURE_DIAGRAMS.md
 2. Customize hooks for specific needs
 3. Integrate React Query for advanced caching

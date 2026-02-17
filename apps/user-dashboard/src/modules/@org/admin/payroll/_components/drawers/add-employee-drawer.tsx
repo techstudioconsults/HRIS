@@ -1,21 +1,34 @@
-"use client";
+'use client';
 
-import { queryKeys } from "@/lib/react-query/query-keys";
-import { useEmployeeSearchParameters } from "@/modules/@org/admin/employee/hooks/use-employee-search-parameters";
-import { SearchInput } from "@/modules/@org/shared/search-input";
-import { Button } from "@workspace/ui/components/button";
-import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from "@workspace/ui/components/drawer";
-import { AdvancedDataTable, AlertModal, BackButton, EmptyState, FilteredEmptyState, GenericDropdown } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { Filter } from "iconsax-reactjs";
-import { useCallback, useEffect, useState } from "react";
-import { useDebounce } from "use-debounce";
+import { queryKeys } from '@/lib/react-query/query-keys';
+import { useEmployeeSearchParameters } from '@/modules/@org/admin/employee/hooks/use-employee-search-parameters';
+import { SearchInput } from '@/modules/@org/shared/search-input';
+import { Button } from '@workspace/ui/components/button';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+} from '@workspace/ui/components/drawer';
+import {
+  AdvancedDataTable,
+  AlertModal,
+  BackButton,
+  EmptyState,
+  FilteredEmptyState,
+  GenericDropdown,
+} from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { Filter } from 'iconsax-reactjs';
+import { useCallback, useEffect, useState } from 'react';
+import { useDebounce } from 'use-debounce';
 
-import Loading from "../../../../../../../note/loading";
-import { FilterForm } from "../../../employee/_components/forms/filter-form";
-import { useEmployeeService } from "../../../employee/services/use-service";
-import { usePayrollService } from "../../services/use-service";
-import { usePayrollStore } from "../../stores/payroll-store";
+import Loading from '../../../../../../../note/loading';
+import { FilterForm } from '../../../employee/_components/forms/filter-form';
+import { useEmployeeService } from '../../../employee/services/use-service';
+import { usePayrollService } from '../../services/use-service';
+import { usePayrollStore } from '../../stores/payroll-store';
 
 // Define FilterValues interface to match FilterForm
 interface FilterValues {
@@ -61,7 +74,7 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
     // getApiFilters,
   } = useEmployeeSearchParameters();
 
-  const [searchInput, setSearchInput] = useState(search || "");
+  const [searchInput, setSearchInput] = useState(search || '');
   const [debouncedSearch] = useDebounce(searchInput, 300);
 
   const [isSuccessAlertOpen, setIsSuccessAlertOpen] = useState(false);
@@ -99,34 +112,38 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
     ...(search && { search }),
     ...(teamId && { teamId }),
     ...(roleId && { roleId }),
-    ...(status && status !== "all" && { status }),
+    ...(status && status !== 'all' && { status }),
     ...(sortBy && { sortBy }),
     ...(limit && { limit }),
     ...(page && { page }),
   };
 
-  const { data: employeesData, isLoading } = useGetSuspendedEmployeesByPayroll(payrollId || "", apiFilters, {
-    // Ensure payslips are generated before calling the "absent" endpoint
-    enabled: !!payrollId && hasPayslips,
-  });
+  const { data: employeesData, isLoading } = useGetSuspendedEmployeesByPayroll(
+    payrollId || '',
+    apiFilters,
+    {
+      // Ensure payslips are generated before calling the "absent" endpoint
+      enabled: !!payrollId && hasPayslips,
+    }
+  );
 
   const handleFilterChange = useCallback(
     (newFilters: FilterValues) => {
       setTeamId(newFilters.teamId ?? null);
       setRoleId(newFilters.roleId ?? null);
-      setStatus((newFilters.status as "all" | "active" | "inactive" | "pending") ?? null);
+      setStatus((newFilters.status as 'all' | 'active' | 'inactive' | 'pending') ?? null);
       setSortBy(newFilters.sortBy ?? null);
       if (newFilters.limit != null) setLimit(Number(newFilters.limit));
       resetToFirstPage();
     },
-    [setTeamId, setRoleId, setStatus, setSortBy, setLimit, resetToFirstPage],
+    [setTeamId, setRoleId, setStatus, setSortBy, setLimit, resetToFirstPage]
   );
 
   const handlePageChange = useCallback(
     (newPage: number) => {
       setPage(newPage);
     },
-    [setPage],
+    [setPage]
   );
 
   const handleSearchChange = useCallback((query: string) => {
@@ -134,7 +151,7 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
   }, []);
 
   const handleResetFilters = useCallback(() => {
-    setSearchInput("");
+    setSearchInput('');
     resetFilters();
   }, [resetFilters]);
 
@@ -142,7 +159,7 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
     setAddedEmployee(employee);
     setLoadingEmployeeId(employee.id);
     createPayslip(
-      { payrollId: payrollId || "", employeeId: employee.id },
+      { payrollId: payrollId || '', employeeId: employee.id },
       {
         onSuccess: () => {
           setIsSuccessAlertOpen(true);
@@ -151,7 +168,7 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
         onError: () => {
           setLoadingEmployeeId(null);
         },
-      },
+      }
     );
   };
 
@@ -162,8 +179,8 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
 
   const employeeColumns: IColumnDefinition<Employee>[] = [
     {
-      accessorKey: "firstName",
-      header: "Employee Name",
+      accessorKey: 'firstName',
+      header: 'Employee Name',
       render: (_, employee: Employee) => (
         <div className="flex items-center gap-2">
           <div className="flex flex-col">
@@ -174,16 +191,18 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
       ),
     },
     {
-      accessorKey: "employmentDetails",
-      header: "Role",
+      accessorKey: 'employmentDetails',
+      header: 'Role',
       render: (_, employee: Employee) => (
-        <div className="text-sm text-gray-500">{employee.employmentDetails?.role?.name || "N/A"}</div>
+        <div className="text-sm text-gray-500">
+          {employee.employmentDetails?.role?.name || 'N/A'}
+        </div>
       ),
     },
     // {
     {
-      accessorKey: "id",
-      header: "Action",
+      accessorKey: 'id',
+      header: 'Action',
       render: (_value, row) => (
         <MainButton
           variant="primaryOutline"
@@ -202,16 +221,22 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
 
   return (
     <>
-      <Drawer open={showAddEmployeeToPayrollModal} onOpenChange={setShowAddEmployeeModal} direction="right">
+      <Drawer
+        open={showAddEmployeeToPayrollModal}
+        onOpenChange={setShowAddEmployeeModal}
+        direction="right"
+      >
         <DrawerContent className="h-full w-full p-4 sm:!max-w-3xl">
           <DrawerHeader className="border-b pb-4">
             <div className="flex items-center gap-10">
               <BackButton />
               <div>
-                <DrawerTitle className="text-xl font-semibold">Excluded Employees - Performance Bonus</DrawerTitle>
+                <DrawerTitle className="text-xl font-semibold">
+                  Excluded Employees - Performance Bonus
+                </DrawerTitle>
                 <DrawerDescription>
-                  These employees are currently excluded from receiving the Performance Bonus. You can re-include them
-                  anytime.
+                  These employees are currently excluded from receiving the Performance Bonus. You
+                  can re-include them anytime.
                 </DrawerDescription>
               </div>
             </div>
@@ -231,7 +256,7 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
                   contentClassName="bg-background"
                   trigger={
                     <Button
-                      variant={"ghost"}
+                      variant={'ghost'}
                       className="border-border bg-background flex h-12.5 items-center rounded-md border px-3 text-black shadow dark:text-white"
                       size="lg"
                     >
@@ -285,13 +310,20 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
                   ) : (debouncedSearch && debouncedSearch.trim()) ||
                     teamId ||
                     roleId ||
-                    (status && status !== "all") ||
+                    (status && status !== 'all') ||
                     sortBy ? (
                     <FilteredEmptyState onReset={handleResetFilters} />
                   ) : (
                     <EmptyState
                       className="bg-background"
-                      images={[{ src: "/images/empty-state.svg", alt: "No employees found", width: 100, height: 100 }]}
+                      images={[
+                        {
+                          src: '/images/empty-state.svg',
+                          alt: 'No employees found',
+                          width: 100,
+                          height: 100,
+                        },
+                      ]}
                       title="No employees found."
                       description="No employees are available to add to payroll. Try adjusting your search or filters."
                       titleClassName="text-xl font-bold"

@@ -1,4 +1,4 @@
-import { MainButton } from "@workspace/ui/lib"
+import { MainButton } from '@workspace/ui/lib';
 
 export default function Page() {
   return (
@@ -8,5 +8,5 @@ export default function Page() {
         <MainButton size="sm">Click Button</MainButton>
       </div>
     </div>
-  )
+  );
 }

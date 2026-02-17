@@ -34,11 +34,13 @@ pnpm install
 ### Development
 
 Run all apps concurrently:
+
 ```bash
 pnpm dev
 ```
 
 Run specific apps:
+
 ```bash
 # User Dashboard (Port 3000)
 pnpm dev:user
@@ -53,11 +55,13 @@ pnpm dev:web
 ### Building
 
 Build all apps:
+
 ```bash
 pnpm build
 ```
 
 Build specific apps:
+
 ```bash
 pnpm build:user
 pnpm build:controller
@@ -80,17 +84,23 @@ pnpm format
 ## 📦 Apps
 
 ### User Dashboard (`apps/user-dashboard`)
+
 The main HRIS application for end users. Migrated from the original HRIS standalone app.
+
 - **Port:** 3000
 - **Features:** Employee management, payroll, teams, resources, onboarding
 
 ### Controller Dashboard (`apps/controller-dashboard`)
+
 Dashboard for controllers to manage and oversee HRIS operations.
+
 - **Port:** 3001
 - **Status:** Initial setup
 
 ### Web (`apps/web`)
+
 Marketing and landing pages.
+
 - **Port:** 3002
 - **Status:** Initial setup
 
@@ -121,7 +131,7 @@ This will place the ui components in the `packages/ui/src/components` directory.
 Import components from the `ui` package:
 
 ```tsx
-import { Button } from "@workspace/ui/components/button"
+import { Button } from '@workspace/ui/components/button';
 ```
 
 Your `tailwind.config.ts` and `globals.css` are already set up to use the components from the `ui` package.
@@ -129,6 +139,7 @@ Your `tailwind.config.ts` and `globals.css` are already set up to use the compon
 ## 📄 Migration Notes
 
 The user-dashboard app has been migrated from the standalone HRIS project with the following changes:
+
 - Updated package name from `tsa-hri-system` to `user-dashboard`
 - Added workspace dependencies for shared packages
 - Configured to run on port 3000

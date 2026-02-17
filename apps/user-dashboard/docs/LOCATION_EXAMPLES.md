@@ -148,15 +148,13 @@ For simple scenarios, you can call the API directly:
 
 ```typescript
 async function fetchCountriesDirectly() {
-  const response = await fetch("/api/location?type=countries");
+  const response = await fetch('/api/location?type=countries');
   const data = await response.json();
   return data.data;
 }
 
 async function fetchStatesByCountry(country: string) {
-  const response = await fetch(
-    `/api/location?type=states&country=${encodeURIComponent(country)}`
-  );
+  const response = await fetch(`/api/location?type=states&country=${encodeURIComponent(country)}`);
   const data = await response.json();
   return data.data;
 }

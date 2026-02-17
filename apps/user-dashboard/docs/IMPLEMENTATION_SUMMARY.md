@@ -9,6 +9,7 @@ A complete country → state → city dynamic selection system has been implemen
 ### 1. Backend API Layer
 
 **File:** `/src/app/api/location/route.ts` (NEW)
+
 - Single GET endpoint that abstracts country, state, and city data
 - Integrates REST Countries API and Countries Now API
 - Implements caching with 24-hour revalidation
@@ -21,6 +22,7 @@ A complete country → state → city dynamic selection system has been implemen
 
 **File:** `/src/hooks/use-location.ts` (NEW)
 Four custom hooks for managing location data:
+
 - `useCountries()` - Fetch all countries
 - `useStates(country)` - Fetch states for a country
 - `useCities(country, state)` - Fetch cities for country/state
@@ -29,6 +31,7 @@ Four custom hooks for managing location data:
 ### 3. Updated Components
 
 **File:** `/src/modules/@org/onboarding/_components/forms/company-profile.tsx` (MODIFIED)
+
 - Integrated `useLocationData` hook
 - Replaced static constants with dynamic data
 - Changed state and city fields from FormField to Controller + ComboBox
@@ -38,6 +41,7 @@ Four custom hooks for managing location data:
 ### 4. Documentation
 
 **File:** `LOCATION_SYSTEM_DOCS.md` (NEW)
+
 - Complete API documentation
 - Hook usage and return values
 - Architecture overview
@@ -46,6 +50,7 @@ Four custom hooks for managing location data:
 - Performance optimizations
 
 **File:** `LOCATION_EXAMPLES.md` (NEW)
+
 - 6 practical implementation examples
 - React Hook Form integration
 - React Query integration
@@ -107,22 +112,28 @@ Component
 ## API Endpoints
 
 ### Get Countries
+
 ```
 GET /api/location?type=countries
 ```
+
 Returns array of all countries with flags
 
 ### Get States
+
 ```
 GET /api/location?type=states&country=Nigeria
 ```
+
 Returns array of states in the specified country
 
 ### Get Cities
+
 ```
 GET /api/location?type=cities&country=Nigeria
 GET /api/location?type=cities&country=Nigeria&state=Lagos
 ```
+
 Returns array of cities, optionally filtered by state
 
 ## Response Format
@@ -145,6 +156,7 @@ Returns array of cities, optionally filtered by state
 ### Quick Start - Company Profile Form
 
 The form is already integrated! It now:
+
 1. Loads all countries on mount
 2. Loads states when country is selected
 3. Loads cities when state is selected
@@ -154,7 +166,7 @@ The form is already integrated! It now:
 ### In Other Components
 
 ```typescript
-import { useLocationData } from "@/hooks/use-location";
+import { useLocationData } from '@/hooks/use-location';
 
 function MyComponent() {
   const {
@@ -222,6 +234,7 @@ curl "http://localhost:3000/api/location?type=cities&country=Nigeria&state=Lagos
 ## Migration Path
 
 The implementation maintains **full backward compatibility**:
+
 - Old static constants still exist
 - Other components can continue using static data
 - New forms can gradually migrate to dynamic data
@@ -229,13 +242,13 @@ The implementation maintains **full backward compatibility**:
 
 ## Files Summary
 
-| File | Type | Status | Description |
-|------|------|--------|-------------|
-| `src/app/api/location/route.ts` | Backend | NEW | API endpoints for location data |
-| `src/hooks/use-location.ts` | Hooks | NEW | React hooks for location management |
-| `src/modules/@org/onboarding/_components/forms/company-profile.tsx` | Component | MODIFIED | Integrated dynamic location dropdowns |
-| `LOCATION_SYSTEM_DOCS.md` | Documentation | NEW | Complete API and architecture docs |
-| `LOCATION_EXAMPLES.md` | Documentation | NEW | Implementation examples and patterns |
+| File                                                                | Type          | Status   | Description                           |
+| ------------------------------------------------------------------- | ------------- | -------- | ------------------------------------- |
+| `src/app/api/location/route.ts`                                     | Backend       | NEW      | API endpoints for location data       |
+| `src/hooks/use-location.ts`                                         | Hooks         | NEW      | React hooks for location management   |
+| `src/modules/@org/onboarding/_components/forms/company-profile.tsx` | Component     | MODIFIED | Integrated dynamic location dropdowns |
+| `LOCATION_SYSTEM_DOCS.md`                                           | Documentation | NEW      | Complete API and architecture docs    |
+| `LOCATION_EXAMPLES.md`                                              | Documentation | NEW      | Implementation examples and patterns  |
 
 ## Linting Status
 

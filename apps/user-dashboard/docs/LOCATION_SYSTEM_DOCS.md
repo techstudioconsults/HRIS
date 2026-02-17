@@ -18,6 +18,7 @@ A single GET endpoint that abstracts the external APIs with the following query 
 **Endpoint:** `GET /api/location`
 
 **Query Parameters:**
+
 - `type` (required): One of `countries`, `states`, or `cities`
 - `country` (required for `states` and `cities`): Country name
 - `state` (optional for `cities`): State name for filtered results
@@ -60,6 +61,7 @@ GET /api/location?type=cities&country=Nigeria&state=Lagos
 ```
 
 **Features:**
+
 - Caching strategy using Next.js `revalidate` (24 hours)
 - Automatic case normalization for searches
 - Fallback mechanism when state-specific cities fail
@@ -72,6 +74,7 @@ GET /api/location?type=cities&country=Nigeria&state=Lagos
 Four custom hooks for managing location data:
 
 ##### `useCountries()`
+
 Fetches and returns all countries on component mount.
 
 ```typescript
@@ -79,11 +82,13 @@ const { countries, isLoading, error } = useCountries();
 ```
 
 **Returns:**
+
 - `countries`: Array of country options
 - `isLoading`: Boolean loading state
 - `error`: String error message or null
 
 ##### `useStates(country: string | null)`
+
 Fetches states for a given country, updates when country changes.
 
 ```typescript
@@ -91,11 +96,13 @@ const { states, isLoading, error } = useStates(selectedCountry);
 ```
 
 **Returns:**
+
 - `states`: Array of state options (empty if no country selected)
 - `isLoading`: Boolean loading state
 - `error`: String error message or null
 
 ##### `useCities(country: string | null, state?: string | null)`
+
 Fetches cities for a given country and optional state.
 
 ```typescript
@@ -103,11 +110,13 @@ const { cities, isLoading, error } = useCities(selectedCountry, selectedState);
 ```
 
 **Returns:**
+
 - `cities`: Array of city options
 - `isLoading`: Boolean loading state
 - `error`: String error message or null
 
 ##### `useLocationData()`
+
 Composite hook that manages all location fields together.
 
 ```typescript
@@ -135,6 +144,7 @@ const {
 #### Company Profile Form (`src/modules/@org/onboarding/_components/forms/company-profile.tsx`)
 
 **Changes:**
+
 1. Removed static imports of `cityOptions`, `countries`, `stateOptions` from constants
 2. Added `useLocationData` hook import
 3. Integrated location hook into form with dynamic field population
@@ -144,6 +154,7 @@ const {
 7. All three location fields now use `Controller` with `ComboBox` for consistent behavior
 
 **Form Flow:**
+
 1. User selects country
 2. States dropdown automatically populates with that country's states
 3. States dropdown becomes enabled
@@ -213,12 +224,12 @@ function MyForm() {
 
 ### API Endpoints Summary
 
-| Endpoint | Method | Purpose | Query Params |
-|----------|--------|---------|--------------|
-| `/api/location?type=countries` | GET | Get all countries | type: "countries" |
-| `/api/location?type=states` | GET | Get states by country | type, country |
-| `/api/location?type=cities` | GET | Get cities by country | type, country |
-| `/api/location?type=cities` | GET | Get cities by state | type, country, state |
+| Endpoint                       | Method | Purpose               | Query Params         |
+| ------------------------------ | ------ | --------------------- | -------------------- |
+| `/api/location?type=countries` | GET    | Get all countries     | type: "countries"    |
+| `/api/location?type=states`    | GET    | Get states by country | type, country        |
+| `/api/location?type=cities`    | GET    | Get cities by country | type, country        |
+| `/api/location?type=cities`    | GET    | Get cities by state   | type, country, state |
 
 ### Error Handling
 
@@ -252,6 +263,7 @@ curl "http://localhost:3000/api/location?type=cities&country=Nigeria&state=Lagos
 ### Migration Notes
 
 The implementation maintains backward compatibility:
+
 - Static fallback constants still exist but are not used in the updated form
 - Other forms can continue using static constants or migrate to the new hooks
 - The API endpoint is ready for use in any component throughout the application

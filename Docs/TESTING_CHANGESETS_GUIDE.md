@@ -9,6 +9,7 @@ This monorepo is configured with comprehensive testing and version management to
 Vitest is configured for all apps and packages in the monorepo with workspace support.
 
 #### Configuration Files
+
 - `vitest.config.ts` - Base Vitest configuration
 - `vitest.workspace.ts` - Workspace configuration for all apps and packages
 - `tests/setup.ts` - Global test setup with React Testing Library
@@ -34,6 +35,7 @@ pnpm test:coverage
 Create test files alongside your source code with `.test.ts`, `.test.tsx`, `.spec.ts`, or `.spec.tsx` extensions:
 
 **For utility/logic tests:**
+
 ```typescript
 import { describe, it, expect } from 'vitest';
 
@@ -45,6 +47,7 @@ describe('myFunction', () => {
 ```
 
 **For React component tests (inside apps where React is installed):**
+
 ```typescript
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
@@ -63,6 +66,7 @@ describe('MyComponent', () => {
 Playwright is configured for end-to-end testing across all browsers.
 
 #### Configuration
+
 - `playwright.config.ts` - Playwright configuration with multi-browser support
 - `tests/e2e/` - E2E test files
 
@@ -96,6 +100,7 @@ test('should navigate to homepage', async ({ page }) => {
 ```
 
 #### Browsers Configured
+
 - Chromium (Desktop)
 - Firefox (Desktop)
 - Webkit (Desktop)
@@ -107,6 +112,7 @@ test('should navigate to homepage', async ({ page }) => {
 Changesets helps manage versioning and changelogs in this monorepo.
 
 ### Configuration
+
 - `.changeset/config.json` - Changesets configuration
 - `.changeset/` - Stores changeset files
 
@@ -121,6 +127,7 @@ pnpm changeset
 ```
 
 This will prompt you to:
+
 1. Select which packages have changed
 2. Choose version bump type (major, minor, patch)
 3. Write a summary of the changes
@@ -134,6 +141,7 @@ pnpm changeset:version
 ```
 
 This will:
+
 - Update package versions based on changesets
 - Update dependencies between packages
 - Generate/update CHANGELOG.md files
@@ -161,7 +169,7 @@ pnpm changeset:publish
 - **Base Branch**: `main`
 - **Access**: `restricted` (private packages by default)
 - **Internal Dependencies**: Updated with `patch` bumps
-- **Ignored Packages**: 
+- **Ignored Packages**:
   - `@workspace/eslint-config`
   - `@workspace/typescript-config`
 
@@ -190,6 +198,7 @@ pnpm changeset:publish
 ## 🔧 Dependencies Installed
 
 ### Testing
+
 - `@playwright/test` - E2E testing framework
 - `vitest` - Unit testing framework
 - `@vitest/ui` - Vitest UI mode
@@ -200,11 +209,13 @@ pnpm changeset:publish
 - `jsdom` - DOM implementation for Node.js
 
 ### Version Management
+
 - `@changesets/cli` - Version management tool
 
 ## 📝 Best Practices
 
 ### Testing
+
 1. Write tests close to your source code
 2. Use descriptive test names
 3. Test user behavior, not implementation details
@@ -212,6 +223,7 @@ pnpm changeset:publish
 5. Use the workspace configuration to run specific app tests
 
 ### Changesets
+
 1. Create a changeset for every PR with user-facing changes
 2. Write clear, user-focused changeset summaries
 3. Use semantic versioning correctly:

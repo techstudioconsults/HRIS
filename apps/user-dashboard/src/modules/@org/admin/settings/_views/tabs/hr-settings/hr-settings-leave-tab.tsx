@@ -1,17 +1,22 @@
-"use client";
+'use client';
 
-import { CreateLeaveTypeForm } from "@/modules/@org/admin/leave/_components/forms/create-leave-type-form";
-import { EditLeaveTypeForm } from "@/modules/@org/admin/leave/_components/forms/edit-leave-type-form";
-import { useLeaveService } from "@/modules/@org/admin/leave/services/use-service";
-import type { LeaveType } from "@/modules/@org/admin/leave/types";
-import { SearchInput } from "@/modules/@org/shared/search-input";
-import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar";
-import { ReusableDialog } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { AdvancedDataTable, TableSkeleton, type IColumnDefinition, type IRowAction } from "@workspace/ui/lib/table";
-import { Add } from "iconsax-reactjs";
-import { useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
+import { CreateLeaveTypeForm } from '@/modules/@org/admin/leave/_components/forms/create-leave-type-form';
+import { EditLeaveTypeForm } from '@/modules/@org/admin/leave/_components/forms/edit-leave-type-form';
+import { useLeaveService } from '@/modules/@org/admin/leave/services/use-service';
+import type { LeaveType } from '@/modules/@org/admin/leave/types';
+import { SearchInput } from '@/modules/@org/shared/search-input';
+import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar';
+import { ReusableDialog } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import {
+  AdvancedDataTable,
+  TableSkeleton,
+  type IColumnDefinition,
+  type IRowAction,
+} from '@workspace/ui/lib/table';
+import { Add } from 'iconsax-reactjs';
+import { useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 const PAGE_SIZE = 10;
 
@@ -41,7 +46,7 @@ function EligibilityPill({ count }: { count: number }) {
 export function HRSettingsLeaveTab() {
   const { useGetLeaveTypes, useGetLeaveTypeById, useDeleteLeaveType } = useLeaveService();
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -52,7 +57,7 @@ export function HRSettingsLeaveTab() {
   const { data: leaveTypesResponse, isLoading, isError, error } = useGetLeaveTypes();
   const { mutateAsync: deleteLeaveType, isPending: isDeleting } = useDeleteLeaveType();
 
-  const selectedLeaveTypeId = selectedLeaveType?.id ?? "";
+  const selectedLeaveTypeId = selectedLeaveType?.id ?? '';
   const {
     data: selectedLeaveTypeDetails,
     isLoading: isLoadingSelectedLeaveType,
@@ -63,8 +68,9 @@ export function HRSettingsLeaveTab() {
 
   useEffect(() => {
     if (!isError) return;
-    toast.error("Failed to load leave types", {
-      description: error instanceof Error ? error.message : "Could not fetch leave types from the server.",
+    toast.error('Failed to load leave types', {
+      description:
+        error instanceof Error ? error.message : 'Could not fetch leave types from the server.',
     });
   }, [isError, error]);
 
@@ -73,7 +79,7 @@ export function HRSettingsLeaveTab() {
     // Support legacy shapes too.
     if (Array.isArray(leaveTypesResponse)) return leaveTypesResponse as LeaveType[];
 
-    if (!leaveTypesResponse || typeof leaveTypesResponse !== "object") return [];
+    if (!leaveTypesResponse || typeof leaveTypesResponse !== 'object') return [];
     const responseObject = leaveTypesResponse as Record<string, unknown>;
 
     const items = responseObject.items;
@@ -81,7 +87,7 @@ export function HRSettingsLeaveTab() {
 
     const data = responseObject.data;
     if (Array.isArray(data)) return data as LeaveType[];
-    if (data && typeof data === "object") {
+    if (data && typeof data === 'object') {
       const dataObject = data as Record<string, unknown>;
       const nestedItems = dataObject.items;
       if (Array.isArray(nestedItems)) return nestedItems as LeaveType[];
@@ -94,9 +100,9 @@ export function HRSettingsLeaveTab() {
     const q = search.trim().toLowerCase();
     if (!q) return leaveTypes;
     return leaveTypes.filter((row) =>
-      String(row?.name ?? "")
+      String(row?.name ?? '')
         .toLowerCase()
-        .includes(q),
+        .includes(q)
     );
   }, [leaveTypes, search]);
 
@@ -108,15 +114,15 @@ export function HRSettingsLeaveTab() {
   const columns = useMemo<IColumnDefinition<LeaveType>[]>(
     () => [
       {
-        header: "Leave Name",
-        accessorKey: "name",
-        render: (value) => <span className="text-sm font-medium">{String(value ?? "—")}</span>,
+        header: 'Leave Name',
+        accessorKey: 'name',
+        render: (value) => <span className="text-sm font-medium">{String(value ?? '—')}</span>,
       },
-      { header: "Days", accessorKey: "days" },
-      { header: "Cycle", accessorKey: "cycle" },
+      { header: 'Days', accessorKey: 'days' },
+      { header: 'Cycle', accessorKey: 'cycle' },
       {
-        header: "Eligibility",
-        accessorKey: "eligibility",
+        header: 'Eligibility',
+        accessorKey: 'eligibility',
         render: (value) => {
           // Until backend provides an explicit eligible count, show a placeholder.
           const count = Number(value);
@@ -124,7 +130,7 @@ export function HRSettingsLeaveTab() {
         },
       },
     ],
-    [],
+    []
   );
 
   return (
@@ -164,16 +170,16 @@ export function HRSettingsLeaveTab() {
           columns={columns}
           rowActions={(row): IRowAction<LeaveType>[] => [
             {
-              label: "Edit",
+              label: 'Edit',
               onClick: () => {
                 setSelectedLeaveType(row);
                 setEditDialogOpen(true);
               },
             },
-            { type: "separator" },
+            { type: 'separator' },
             {
-              label: "Delete",
-              variant: "destructive",
+              label: 'Delete',
+              variant: 'destructive',
               onClick: () => {
                 setSelectedLeaveType(row);
                 setDeleteDialogOpen(true);
@@ -223,7 +229,9 @@ export function HRSettingsLeaveTab() {
           isLoadingSelectedLeaveType ? (
             <TableSkeleton />
           ) : isSelectedLeaveTypeError ? (
-            <div className="text-muted-foreground py-6 text-sm">Could not load leave type details.</div>
+            <div className="text-muted-foreground py-6 text-sm">
+              Could not load leave type details.
+            </div>
           ) : (
             <EditLeaveTypeForm
               leaveType={(selectedLeaveTypeDetails ?? selectedLeaveType) as LeaveType}
@@ -241,7 +249,7 @@ export function HRSettingsLeaveTab() {
           if (!open) setSelectedLeaveType(null);
         }}
         title="Delete Leave Type"
-        description={`You're about to delete "${selectedLeaveType?.name ?? "this leave type"}". This action cannot be undone.`}
+        description={`You're about to delete "${selectedLeaveType?.name ?? 'this leave type'}". This action cannot be undone.`}
         className="min-w-xl"
         trigger={null}
       >
@@ -268,11 +276,11 @@ export function HRSettingsLeaveTab() {
                   setSelectedLeaveType(null);
                 },
                 onError: (error_) => {
-                  toast.error("Failed to delete leave type", {
+                  toast.error('Failed to delete leave type', {
                     description:
                       error_ instanceof Error
                         ? error_.message
-                        : "Unable to delete leave type. Please try again.",
+                        : 'Unable to delete leave type. Please try again.',
                   });
                 },
               });
@@ -285,4 +293,3 @@ export function HRSettingsLeaveTab() {
     </div>
   );
 }
-

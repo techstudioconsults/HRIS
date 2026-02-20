@@ -7,11 +7,11 @@ import baseConfig from '@workspace/test-utils/vitest.config';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// @ts-ignore
-// @ts-ignore
+// @ts-ignore - Vite version mismatch between baseConfig and defineConfig
 export default mergeConfig(
-  baseConfig,
+  baseConfig as any,
   defineConfig({
+    // @ts-ignore - Vite version mismatch
     plugins: [react()],
     test: {
       setupFiles: [path.resolve(__dirname, '../../packages/test-utils/src/setup.ts')],
@@ -22,5 +22,5 @@ export default mergeConfig(
         '@': path.resolve(__dirname, './src'),
       },
     },
-  })
+  }) as any
 );

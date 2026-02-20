@@ -6,7 +6,9 @@ import { defineConfig } from 'vitest/config';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// @ts-ignore - Vite version mismatch
 export default defineConfig({
+  // @ts-ignore - Vite version mismatch
   plugins: [react()],
   test: {
     globals: true,
@@ -15,14 +17,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
-      exclude: [
-        'node_modules/',
-        'dist/',
-        'coverage/',
-        '**/*.test.ts(x)?',
-        '**/__tests__/**',
-        '**/setup.ts',
-      ],
+      exclude: ['node_modules/', 'dist/', 'coverage/', '**/*.test.ts(x)?', '**/__tests__/**', '**/setup.ts'],
       thresholds: {
         statements: 60,
         branches: 60,
@@ -37,4 +32,3 @@ export default defineConfig({
     },
   },
 });
-

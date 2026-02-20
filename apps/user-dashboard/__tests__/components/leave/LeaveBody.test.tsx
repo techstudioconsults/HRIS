@@ -89,18 +89,14 @@ describe('LeaveBody Component', () => {
     });
 
     it('should call row actions with request data', () => {
-      // @ts-ignore
       mockGetRowActions(mockLeaveRequests[0]);
 
       expect(mockGetRowActions).toHaveBeenCalledWith(mockLeaveRequests[0]);
     });
 
     it('should handle multiple row action calls', () => {
-      // @ts-ignore
       mockGetRowActions(mockLeaveRequests[0]);
-      // @ts-ignore
       mockGetRowActions(mockLeaveRequests[1]);
-      // @ts-ignore
       mockGetRowActions(mockLeaveRequests[2]);
 
       expect(mockGetRowActions).toHaveBeenCalledTimes(3);

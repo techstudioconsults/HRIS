@@ -1,0 +1,33 @@
+{
+  "name": "@workspace/test-utils",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./setup": "./src/setup.ts",
+    "./fixtures": "./src/fixtures.ts",
+    "./mocks": "./src/mocks.ts",
+    "./vitest.config": "./vitest.config.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@vitejs/plugin-react": "^5.1.1",
+    "@workspace/typescript-config": "workspace:*",
+    "jsdom": "^25.0.1",
+    "typescript": "^5.9.2",
+    "vitest": "^2.1.8",
+    "@vitest/coverage-v8": "^2.1.8"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  }
+}

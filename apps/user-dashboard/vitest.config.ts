@@ -1,25 +1,24 @@
-import { resolve } from "node:path";
-import { defineConfig, mergeConfig } from "vitest/config";
+import { defineConfig, mergeConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import baseConfig from '@workspace/test-utils/vitest.config';
 
-import baseConfig from "../../vitest.config";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default mergeConfig(
   baseConfig,
   defineConfig({
+    plugins: [react()],
     test: {
-      name: "user-dashboard",
-      root: "./",
-      //   include: ["__tests__/**/*.test.{ts,tsx}", "src/**/*.test.{ts,tsx}"],
-      //   exclude: ["**/node_modules/**", "**/.next/**", "**/dist/**", "**/*.spec.ts"],
+      setupFiles: [path.resolve(__dirname, '../../packages/test-utils/src/setup.ts')],
+      exclude: ['**/node_modules/**', '**/dist/**', '**/e2e/**', '**/.{idea,git,cache,output,temp}/**'],
     },
     resolve: {
       alias: {
-        // Ensure Vitest/Vite can resolve workspace UI imports that are used in the Next app.
-        // Alias to directories so subpath imports work, e.g. `@workspace/ui/lib/button`.
-        "@workspace/ui/lib": resolve(__dirname, "../../packages/ui/src/lib"),
-        "@workspace/ui/components": resolve(__dirname, "../../packages/ui/src/components"),
-        "@workspace/ui/hooks": resolve(__dirname, "../../packages/ui/src/hooks"),
+        '@': path.resolve(__dirname, './src'),
       },
     },
-  }),
+  })
 );

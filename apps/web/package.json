@@ -9,7 +9,13 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "test:e2e": "pnpm --dir ../.. exec playwright test --project=chromium apps/web",
+    "test:e2e:ui": "pnpm --dir ../.. exec playwright test --ui --project=chromium apps/web"
   },
   "dependencies": {
     "@workspace/ui": "workspace:*",
@@ -20,13 +26,18 @@
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.48.1",
     "@tailwindcss/postcss": "^4.1.11",
+    "@testing-library/react": "^16.1.0",
     "@types/node": "^20.19.9",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
     "@workspace/eslint-config": "workspace:^",
+    "@workspace/test-utils": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "eslint": "^9.32.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vitest": "^2.1.8",
+    "@vitest/coverage-v8": "^2.1.8"
   }
 }

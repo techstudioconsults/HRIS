@@ -1,0 +1,15 @@
+# Test coverage
+coverage/
+.nyc_output/
+
+# Vitest
+.vitest/
+
+# Playwright
+test-results/
+playwright-report/
+.auth/
+
+# Test cache
+**/.vitest-cache/
+

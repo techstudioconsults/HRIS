@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client';
 
-import { usePathname } from "next/navigation";
-import { useMemo } from "react";
+import { usePathname } from 'next/navigation';
+import { useMemo } from 'react';
 
 export interface NavigationItem {
   name: string;
@@ -18,26 +18,24 @@ export interface NavigationItem {
 export const useActiveNavigation = (items: NavigationItem[]) => {
   const pathname = usePathname();
 
-  const itemsWithActiveState = useMemo(() => {
-    const path = pathname || "/";
+  return useMemo(() => {
+    const path = pathname || '/';
 
     return items.map((item) => {
-      const isActive = path === item.url || path.startsWith(item.url + "/");
+      const isActive = path === item.url || path.startsWith(item.url + '/');
 
       // Check if any sub-items are active
       const hasActiveSubItem =
-        item.subItems?.some((subItem) => path === subItem.url || path.startsWith(subItem.url + "/")) || false;
+        item.subItems?.some((subItem) => path === subItem.url || path.startsWith(subItem.url + '/')) || false;
 
       return {
         ...item,
         isActive: isActive || hasActiveSubItem,
         subItems: item.subItems?.map((subItem) => ({
           ...subItem,
-          isActive: path === subItem.url || path.startsWith(subItem.url + "/"),
+          isActive: path === subItem.url || path.startsWith(subItem.url + '/'),
         })),
       };
     });
   }, [items, pathname]);
-
-  return itemsWithActiveState;
 };

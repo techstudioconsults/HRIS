@@ -7,6 +7,8 @@ import baseConfig from '@workspace/test-utils/vitest.config';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// @ts-ignore
+// @ts-ignore
 export default mergeConfig(
   baseConfig,
   defineConfig({

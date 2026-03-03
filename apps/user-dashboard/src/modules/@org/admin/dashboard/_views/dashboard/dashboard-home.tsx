@@ -2,7 +2,7 @@
 
 import { dependencies } from '@/lib/tools/dependencies';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
-// import { AuthService } from "@/modules/@org/auth/services/auth.service";
+
 import { useRouter } from 'next/navigation';
 
 import { ActiveUser } from './_views/active-user';

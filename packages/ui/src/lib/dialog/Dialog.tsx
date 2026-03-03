@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Dialog,
@@ -7,10 +7,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@workspace/ui/components/dialog";
-import Image from "next/image";
-import { HTMLAttributes, ReactNode, isValidElement } from "react";
-import { cn } from "../utils";
+} from '@workspace/ui/components/dialog';
+import Image from 'next/image';
+import { HTMLAttributes, isValidElement, ReactNode } from 'react';
+import { cn } from '../utils';
 
 interface ReusableDialogProperties extends HTMLAttributes<HTMLDivElement> {
   trigger: ReactNode;
@@ -40,41 +40,28 @@ export function ReusableDialog({
   icon,
   onOpenChange,
 }: ReusableDialogProperties) {
-  const hasTrigger = trigger !== null && trigger !== undefined && trigger !== false && trigger !== "";
+  const hasTrigger = trigger !== null && trigger !== undefined && trigger !== false && trigger !== '';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {hasTrigger ? (
-        // Radix `DialogTrigger` with `asChild` requires a valid ReactElement.
-        // When consumers pass strings/null (common in controlled dialogs), omit the trigger or render without `asChild`.
         isValidElement(trigger) ? (
           <DialogTrigger asChild>{trigger}</DialogTrigger>
         ) : (
           <DialogTrigger>{trigger}</DialogTrigger>
         )
       ) : null}
-      <DialogContent
-        hideClose={hideClose}
-        className={cn("border-default min-w-2xl items-center", className)}
-      >
-        <DialogHeader className={cn("h-fit", wrapperClassName)}>
+      <DialogContent hideClose={hideClose} className={cn('border-default min-w-2xl items-center', className)}>
+        <DialogHeader className={cn('h-fit', wrapperClassName)}>
           {img &&
-            (img.startsWith("http") || img.startsWith("/") ? (
-              <Image
-                width={100}
-                height={100}
-                src={img}
-                alt="icon"
-                className="h-[100px] w-[100px]"
-              />
+            (img.startsWith('http') || img.startsWith('/') ? (
+              <Image width={100} height={100} src={img} alt="icon" className="h-[100px] w-[100px]" />
             ) : (
               <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full bg-orange-100 text-6xl">
                 {img}
               </div>
             ))}
-          <DialogTitle
-            className={cn("flex items-center gap-2 text-2xl", headerClassName)}
-          >
+          <DialogTitle className={cn('flex items-center gap-2 text-2xl', headerClassName)}>
             <span>{icon}</span>
             {title}
           </DialogTitle>

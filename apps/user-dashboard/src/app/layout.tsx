@@ -15,6 +15,7 @@ import { TooltipProvider } from '@workspace/ui/components/tooltip';
 import { Toast } from '@workspace/ui/lib';
 import { cn } from '@workspace/ui/lib/utils';
 import { ThemeProvider } from 'next-themes';
+import React from 'react';
 
 const META_THEME_COLORS = {
   light: '#ffffff',

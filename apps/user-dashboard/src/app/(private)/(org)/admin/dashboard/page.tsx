@@ -1,4 +1,4 @@
-import { DashboardHomePage } from "@/modules/@org/admin/dashboard";
+import { DashboardHomePage } from '@/modules/@org/admin/dashboard';
 
 const AdminDashboardPage = () => {
   return <DashboardHomePage />;

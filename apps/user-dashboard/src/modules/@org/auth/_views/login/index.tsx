@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { PageSection, PageWrapper } from "@/lib/animation";
-import { LoginFormData, loginSchema } from "@/schemas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormField, FormHeader } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { signIn } from "next-auth/react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FormProvider, useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { PageSection, PageWrapper } from '@/lib/animation';
+import { LoginFormData, loginSchema } from '@/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FormField, FormHeader } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { signIn } from 'next-auth/react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 export const Login = () => {
   const router = useRouter();
   const methods = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
@@ -28,7 +28,7 @@ export const Login = () => {
   } = methods;
 
   const handleSubmitForm = async (data: LoginFormData) => {
-    const result = await signIn("credentials", {
+    const result = await signIn('credentials', {
       email: data.email,
       password: data.password,
       redirect: false,
@@ -38,25 +38,29 @@ export const Login = () => {
       // Extract the actual error message from CredentialsSignin error
       let errorMessage = result.error;
       // Try to extract message after "CredentialsSignin: " prefix
-      if (errorMessage.includes("CredentialsSignin: ")) {
-        errorMessage = errorMessage.split("CredentialsSignin: ")[1];
+      if (errorMessage.includes('CredentialsSignin: ')) {
+        errorMessage = errorMessage.split('CredentialsSignin: ')[1];
       }
       // If it's the default NextAuth error, show the axios message
-      if (errorMessage.includes("Read more at")) {
-        errorMessage = errorMessage.split(".")[0];
+      if (errorMessage.includes('Read more at')) {
+        errorMessage = errorMessage.split('.')[0];
       }
 
-      toast.warning("Login Failed", {
+      toast.warning('Login Failed', {
         description: errorMessage,
       });
-      setError("password", { message: errorMessage });
+      setError('password', { message: errorMessage });
       return;
     }
     if (result?.ok) {
-      toast.success("Login Successful", {
-        description: "Redirecting to dashboard...",
+      toast.success('Login Successful', {
+        description: 'Redirecting to dashboard...',
       });
-      router.push("/onboarding");
+
+      // Get the session to determine redirect path based on role
+      // Note: Session might not be immediately available, so we'll redirect to onboarding
+      // which will then redirect to the appropriate dashboard
+      router.push('/onboarding');
     }
   };
 
@@ -74,7 +78,7 @@ export const Login = () => {
                 placeholder={`Enter email address`}
                 className={`h-14 w-full`}
                 label={`Email Address`}
-                name={"email"}
+                name={'email'}
                 required
               />
               <div className="space-y-2">
@@ -83,7 +87,7 @@ export const Login = () => {
                   placeholder={`Enter password`}
                   className={`h-14 w-full`}
                   label={`Password`}
-                  name={"password"}
+                  name={'password'}
                   required
                 />
                 <div className="flex justify-end">
@@ -125,7 +129,7 @@ export const Login = () => {
 
         <PageSection index={4}>
           <p className="text-grey-500 mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
+            Don&apos;t have an account?{' '}
             <Link href="/register" className="text-primary hover:underline">
               Sign Up
             </Link>

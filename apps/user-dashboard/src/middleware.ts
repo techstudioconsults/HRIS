@@ -1,9 +1,9 @@
 // middleware.ts
-import { getRouteConfig } from "@/lib/routes/routes";
-import { getToken } from "next-auth/jwt";
-import { NextRequest, NextResponse } from "next/server";
+import { getRouteConfig } from '@/lib/routes/routes';
+import { getToken } from 'next-auth/jwt';
+import { NextRequest, NextResponse } from 'next/server';
 
-import { ACCESS_LEVELS, MODULE_PERMISSIONS, PermissionCheckResult, ROLES } from "./lib/auth-types";
+import { ACCESS_LEVELS, MODULE_PERMISSIONS, PermissionCheckResult, ROLES } from './lib/auth-types';
 
 // Check if user has required permissions
 const checkPermissions = (userPermissions: string[], requiredPermissions: string[]): PermissionCheckResult => {
@@ -17,7 +17,7 @@ const checkPermissions = (userPermissions: string[], requiredPermissions: string
     return {
       hasAccess: false,
       missingPermissions,
-      reason: `Missing required permissions: ${missingPermissions.join(", ")}`,
+      reason: `Missing required permissions: ${missingPermissions.join(', ')}`,
     };
   }
 
@@ -34,10 +34,10 @@ export async function middleware(request: NextRequest) {
 
   // Skip middleware for static files and API routes
   if (
-    pathname.startsWith("/_next/") ||
-    pathname.startsWith("/api/") ||
-    pathname.startsWith("/static/") ||
-    pathname.includes(".") // Skip files with extensions
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/api/') ||
+    pathname.startsWith('/static/') ||
+    pathname.includes('.') // Skip files with extensions
   ) {
     return NextResponse.next();
   }
@@ -49,13 +49,13 @@ export async function middleware(request: NextRequest) {
   const token = await getToken({
     req: request,
     secret: process.env.AUTH_SECRET,
-    secureCookie: process.env.NODE_ENV === "production",
+    secureCookie: process.env.NODE_ENV === 'production',
   });
 
   const isAuthenticated = !!token;
 
   // Extract user data from token
-  const userRole = (token?.employee as { role?: { name?: string } })?.role?.name || "";
+  const userRole = (token?.employee as { role?: { name?: string } })?.role?.name || '';
   const userPermissions = (token?.permissions as string[]) || [];
 
   // Get route configuration
@@ -64,6 +64,21 @@ export async function middleware(request: NextRequest) {
   // If no route config found, allow access (fallback)
   if (!routeConfig) {
     return NextResponse.next();
+  }
+
+  // Role-based dashboard redirection logic
+  const isAdminUser = userPermissions.includes(MODULE_PERMISSIONS.ADMIN);
+
+  // Prevent admins from accessing user routes
+  // if (isAuthenticated && isAdminUser && pathWithoutLocale.startsWith('/user')) {
+  //   const adminDashboardUrl = new URL('/admin/dashboard', request.url);
+  //   return NextResponse.redirect(adminDashboardUrl);
+  // }
+
+  // Prevent non-admins from accessing admin routes
+  if (isAuthenticated && !isAdminUser && pathWithoutLocale.startsWith('/admin')) {
+    const userDashboardUrl = new URL('/user/dashboard', request.url);
+    return NextResponse.redirect(userDashboardUrl);
   }
 
   // Handle different access levels
@@ -77,10 +92,10 @@ export async function middleware(request: NextRequest) {
       // Authenticated routes - require login but no specific permissions
       if (!isAuthenticated) {
         const loginUrl = new URL(`/login`, request.url);
-        loginUrl.searchParams.set("callbackUrl", pathname);
+        loginUrl.searchParams.set('callbackUrl', pathname);
         // Preserve original query parameters
         if (request.nextUrl.search) {
-          loginUrl.search += (loginUrl.search ? "&" : "?") + request.nextUrl.search.slice(1);
+          loginUrl.search += (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
         }
         return NextResponse.redirect(loginUrl);
       }
@@ -91,10 +106,10 @@ export async function middleware(request: NextRequest) {
       // Owner-only routes - only accessible to owner role with admin permission
       if (!isAuthenticated) {
         const loginUrl = new URL(`/login`, request.url);
-        loginUrl.searchParams.set("callbackUrl", pathname);
+        loginUrl.searchParams.set('callbackUrl', pathname);
         // Preserve original query parameters
         if (request.nextUrl.search) {
-          loginUrl.search += (loginUrl.search ? "&" : "?") + request.nextUrl.search.slice(1);
+          loginUrl.search += (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
         }
         return NextResponse.redirect(loginUrl);
       }
@@ -104,7 +119,7 @@ export async function middleware(request: NextRequest) {
         const loginUrl = new URL(`/login`, request.url);
         // Preserve original query parameters
         if (request.nextUrl.search) {
-          loginUrl.search += (loginUrl.search ? "&" : "?") + request.nextUrl.search.slice(1);
+          loginUrl.search += (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
         }
         return NextResponse.redirect(loginUrl);
       }
@@ -116,10 +131,10 @@ export async function middleware(request: NextRequest) {
       // Permission-based routes - require specific module permissions
       if (!isAuthenticated) {
         const loginUrl = new URL(`/login`, request.url);
-        loginUrl.searchParams.set("callbackUrl", pathname);
+        loginUrl.searchParams.set('callbackUrl', pathname);
         // Preserve original query parameters
         if (request.nextUrl.search) {
-          loginUrl.search += (loginUrl.search ? "&" : "?") + request.nextUrl.search.slice(1);
+          loginUrl.search += (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
         }
         return NextResponse.redirect(loginUrl);
       }
@@ -127,7 +142,7 @@ export async function middleware(request: NextRequest) {
       // Check if user has required permissions
       const permissionCheck = checkPermissions(
         userPermissions,
-        (routeConfig.requiredPermissions as unknown as string[]) || [],
+        (routeConfig.requiredPermissions as unknown as string[]) || []
       );
 
       if (!permissionCheck.hasAccess) {
@@ -135,7 +150,7 @@ export async function middleware(request: NextRequest) {
         const loginUrl = new URL(`/login`, request.url);
         // Preserve original query parameters
         if (request.nextUrl.search) {
-          loginUrl.search += (loginUrl.search ? "&" : "?") + request.nextUrl.search.slice(1);
+          loginUrl.search += (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
         }
         return NextResponse.redirect(loginUrl);
       }
@@ -148,7 +163,7 @@ export async function middleware(request: NextRequest) {
       const loginUrl = new URL(`/login`, request.url);
       // Preserve original query parameters
       if (request.nextUrl.search) {
-        loginUrl.search += (loginUrl.search ? "&" : "?") + request.nextUrl.search.slice(1);
+        loginUrl.search += (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
       }
       return NextResponse.redirect(loginUrl);
     }
@@ -165,6 +180,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder files
      */
-    "/((?!api|_next|static|images|favicon.ico|public|mockServiceWorker).*)",
+    '/((?!api|_next|static|images|favicon.ico|public|mockServiceWorker).*)',
   ],
 };

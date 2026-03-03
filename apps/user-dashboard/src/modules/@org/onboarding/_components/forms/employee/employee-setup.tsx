@@ -1,42 +1,45 @@
 /* eslint-disable no-console */
-"use client";
+'use client';
 
-import { onboardEmployeeSchema } from "@/schemas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormHeader } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { AxiosError } from "axios";
-import { User } from "iconsax-reactjs";
-import { useRouter } from "next/navigation";
-import { FormEvent } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
+import { getDashboardRoute } from '@/lib/routes/redirect-helpers';
+import { onboardEmployeeSchema } from '@/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FormHeader } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { AxiosError } from 'axios';
+import { User } from 'iconsax-reactjs';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { FormEvent } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
-import { Employee } from "../../../_views/step-three";
-import { useOnboardingService } from "../../../services/use-onboarding-service";
-import { EmployeeConfig } from "../../accordions/employee-config";
+import { Employee } from '../../../_views/step-three';
+import { useOnboardingService } from '../../../services/use-onboarding-service';
+import { EmployeeConfig } from '../../accordions/employee-config';
 
 export const EmployeeSetupForm = () => {
   const router = useRouter();
+  const { data: session } = useSession();
   const { useOnboardEmployees } = useOnboardingService();
   const { mutateAsync: onboardEmployees, isPending: isOnboarding } = useOnboardEmployees();
   const methods = useForm<{ employees: Employee[] }>({
     resolver: zodResolver(
       z.object({
         employees: z.array(onboardEmployeeSchema),
-      }),
+      })
     ),
     defaultValues: {
       employees: [
         {
-          firstName: "",
-          lastName: "",
-          email: "",
-          phoneNumber: "",
-          password: "PleaseSetAdefaultHere1.",
-          teamId: "",
-          roleId: "",
+          firstName: '',
+          lastName: '',
+          email: '',
+          phoneNumber: '',
+          password: 'PleaseSetAdefaultHere1.',
+          teamId: '',
+          roleId: '',
         },
       ],
     },
@@ -55,20 +58,24 @@ export const EmployeeSetupForm = () => {
             toast.success(`Registration Successful`, {
               description: `Employees registration completed, you can edit employee status in setting.`,
             });
-            router.push(`/admin/dashboard`);
+
+            // Redirect to appropriate dashboard based on user permissions
+            const permissions = (session?.user?.permissions as string[]) || [];
+            const dashboardRoute = getDashboardRoute(permissions);
+            router.push(dashboardRoute);
           }
         },
         onError: (error) => {
-          console.error("Onboarding failed:", error);
+          console.error('Onboarding failed:', error);
           toast.error(`Registration Failed`, {
-            description: error instanceof AxiosError ? error.response?.data?.message : "An unknown error occurred",
+            description: error instanceof AxiosError ? error.response?.data?.message : 'An unknown error occurred',
           });
         },
       });
     } catch (error) {
-      console.error("Onboarding failed (unexpected):", error);
+      console.error('Onboarding failed (unexpected):', error);
       toast.error(`Registration Failed`, {
-        description: error instanceof AxiosError ? error.response?.data?.message : "An unknown error occurred",
+        description: error instanceof AxiosError ? error.response?.data?.message : 'An unknown error occurred',
       });
     }
   };

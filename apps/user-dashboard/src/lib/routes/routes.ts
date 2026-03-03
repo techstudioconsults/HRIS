@@ -1,98 +1,113 @@
-import { ACCESS_LEVELS, MODULE_PERMISSIONS } from "../auth-types";
+import { ACCESS_LEVELS, MODULE_PERMISSIONS } from '../auth-types';
 
 // Define route patterns with access control
 export const ROUTE_CONFIGS = [
   // Public routes - accessible to everyone
   {
-    path: "/",
+    path: '/',
     accessLevel: ACCESS_LEVELS.PUBLIC,
   },
   {
-    path: "/pricing",
+    path: '/pricing',
     accessLevel: ACCESS_LEVELS.PUBLIC,
   },
   {
-    path: "/terms-and-conditions",
+    path: '/terms-and-conditions',
     accessLevel: ACCESS_LEVELS.PUBLIC,
   },
   {
-    path: "/privacy-policy",
+    path: '/privacy-policy',
     accessLevel: ACCESS_LEVELS.PUBLIC,
   },
   {
-    path: "/about",
+    path: '/about',
     accessLevel: ACCESS_LEVELS.PUBLIC,
   },
   {
-    path: "/contact",
+    path: '/contact',
     accessLevel: ACCESS_LEVELS.PUBLIC,
   },
   {
-    path: "/login",
+    path: '/login',
     accessLevel: ACCESS_LEVELS.PUBLIC,
   },
   {
-    path: "/register",
+    path: '/register',
     accessLevel: ACCESS_LEVELS.PUBLIC,
   },
   {
-    path: "/forgot-password",
+    path: '/forgot-password',
     accessLevel: ACCESS_LEVELS.PUBLIC,
   },
   {
-    path: "/reset-password",
+    path: '/reset-password',
     accessLevel: ACCESS_LEVELS.PUBLIC,
   },
   {
-    path: "/onboarding",
+    path: '/onboarding',
     accessLevel: ACCESS_LEVELS.PUBLIC,
   },
 
   // Authenticated routes - require login but no specific permissions
   {
-    path: "/dashboard",
+    path: '/dashboard',
     accessLevel: ACCESS_LEVELS.AUTHENTICATED,
   },
   {
-    path: "/profile",
+    path: '/profile',
     accessLevel: ACCESS_LEVELS.AUTHENTICATED,
   },
 
   // Owner-only routes - only accessible to owner role with admin permission
   {
-    path: "/admin",
+    path: '/admin',
+    accessLevel: ACCESS_LEVELS.OWNER_ONLY,
+    requiredPermissions: [MODULE_PERMISSIONS.ADMIN],
+  },
+  {
+    path: '/admin/*',
     accessLevel: ACCESS_LEVELS.OWNER_ONLY,
     requiredPermissions: [MODULE_PERMISSIONS.ADMIN],
   },
 
+  // User routes - accessible to authenticated employees (non-admin users)
+  {
+    path: '/user',
+    accessLevel: ACCESS_LEVELS.AUTHENTICATED,
+  },
+  {
+    path: '/user/*',
+    accessLevel: ACCESS_LEVELS.AUTHENTICATED,
+  },
+
   // Permission-based routes - require specific module permissions
   {
-    path: "/employees",
+    path: '/employees',
     accessLevel: ACCESS_LEVELS.PERMISSION_BASED,
     requiredPermissions: [MODULE_PERMISSIONS.EMPLOYEE_READ, MODULE_PERMISSIONS.EMPLOYEE_MANAGE],
   },
   {
-    path: "/payroll",
+    path: '/payroll',
     accessLevel: ACCESS_LEVELS.PERMISSION_BASED,
     requiredPermissions: [MODULE_PERMISSIONS.PAYROLL_READ, MODULE_PERMISSIONS.PAYROLL_MANAGE],
   },
   {
-    path: "/leave",
+    path: '/leave',
     accessLevel: ACCESS_LEVELS.PERMISSION_BASED,
     requiredPermissions: [MODULE_PERMISSIONS.LEAVE_READ, MODULE_PERMISSIONS.LEAVE_MANAGE],
   },
   {
-    path: "/attendance",
+    path: '/attendance',
     accessLevel: ACCESS_LEVELS.PERMISSION_BASED,
     requiredPermissions: [MODULE_PERMISSIONS.ATTENDANCE_READ, MODULE_PERMISSIONS.ATTENDANCE_MANAGE],
   },
   {
-    path: "/teams",
+    path: '/teams',
     accessLevel: ACCESS_LEVELS.PERMISSION_BASED,
     requiredPermissions: [MODULE_PERMISSIONS.TEAMS_READ, MODULE_PERMISSIONS.TEAMS_MANAGE],
   },
   {
-    path: "/company",
+    path: '/company',
     accessLevel: ACCESS_LEVELS.PERMISSION_BASED,
     requiredPermissions: [MODULE_PERMISSIONS.COMPANY_READ, MODULE_PERMISSIONS.COMPANY_MANAGE],
   },
@@ -101,27 +116,27 @@ export const ROUTE_CONFIGS = [
 // Helper function to get route config by path
 export const getRouteConfig = (path: string) => {
   return ROUTE_CONFIGS.find((config) => {
-    if (config.path.endsWith("*")) {
+    if (config.path.endsWith('*')) {
       const basePath = config.path.slice(0, -1);
       return path.startsWith(basePath);
     }
-    return path === config.path || path.startsWith(config.path + "/");
+    return path === config.path || path.startsWith(config.path + '/');
   });
 };
 
 // Legacy route arrays for backward compatibility
 export const PUBLIC_ROUTES = ROUTE_CONFIGS.filter((config) => config.accessLevel === ACCESS_LEVELS.PUBLIC).map(
-  (config) => config.path,
+  (config) => config.path
 );
 
 export const ADMIN_ROUTES = ROUTE_CONFIGS.filter((config) => config.accessLevel === ACCESS_LEVELS.OWNER_ONLY).map(
-  (config) => config.path,
+  (config) => config.path
 );
 
 export const AUTHENTICATED_ROUTES = ROUTE_CONFIGS.filter(
-  (config) => config.accessLevel === ACCESS_LEVELS.AUTHENTICATED,
+  (config) => config.accessLevel === ACCESS_LEVELS.AUTHENTICATED
 ).map((config) => config.path);
 
 export const PERMISSION_BASED_ROUTES = ROUTE_CONFIGS.filter(
-  (config) => config.accessLevel === ACCESS_LEVELS.PERMISSION_BASED,
+  (config) => config.accessLevel === ACCESS_LEVELS.PERMISSION_BASED
 ).map((config) => config.path);

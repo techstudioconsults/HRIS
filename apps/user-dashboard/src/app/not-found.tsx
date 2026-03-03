@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Home, LucideArrowLeft } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Home, LucideArrowLeft } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const NotFoundPage = () => {
   const router = useRouter();

@@ -39,3 +39,6 @@ npm-debug.log*
 .DS_Store
 *.pem
 /nbproject/private/
+
+#AI
+.ai

@@ -1,29 +1,31 @@
 'use client';
 
 import { useState } from 'react';
-import { toast } from 'sonner';
 
-import { RequestLeaveModal, UserLeaveBody, UserLeaveHeader } from '@/modules/@org/user';
+import { UserLeaveBody, UserLeaveHeader } from '@/modules/@org/user';
+import { LeaveDetailsModal } from '../_components/LeaveDetailsModal';
+import { LeaveRequestSubmittedModal } from '../_components/LeaveRequestSubmittedModal';
+import { RequestLeaveModal } from '../_components/RequestLeaveModal';
 import type { LeaveRequest } from '../types';
 
 const UserLeaveView = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const [isSubmittedModalOpen, setIsSubmittedModalOpen] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(null);
 
   const handleCreateRequest = () => {
     setIsRequestModalOpen(true);
   };
 
   const handleViewDetails = (request: LeaveRequest) => {
-    // TODO: Open leave details modal/drawer
-    console.log('View details for request:', request.id);
+    setSelectedRequest(request);
+    setIsDetailsModalOpen(true);
   };
 
   const handleRequestSuccess = () => {
-    toast.success('Leave Request Submitted', {
-      description:
-        "Your leave request has been submitted successfully. You'll receive a notification once it's reviewed by your HR admin.",
-    });
+    setIsSubmittedModalOpen(true);
   };
 
   return (
@@ -36,6 +38,10 @@ const UserLeaveView = () => {
         onOpenChange={setIsRequestModalOpen}
         onSuccess={handleRequestSuccess}
       />
+
+      <LeaveDetailsModal open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen} request={selectedRequest} />
+
+      <LeaveRequestSubmittedModal open={isSubmittedModalOpen} onOpenChange={setIsSubmittedModalOpen} />
     </div>
   );
 };

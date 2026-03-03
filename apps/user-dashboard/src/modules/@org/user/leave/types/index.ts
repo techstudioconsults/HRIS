@@ -28,6 +28,7 @@ export interface LeaveRequest extends Record<string, unknown> {
   status: 'pending' | 'approved' | 'declined';
   approvedBy?: string;
   approvedAt?: string;
+  supportingDocumentName?: string;
   createdAt: string;
   updatedAt: string;
 }

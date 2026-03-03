@@ -1,5 +1,4 @@
 'use client';
-import { SearchInput } from '@/modules/@org/shared/search-input';
 import { Button } from '@workspace/ui/components/button';
 import { DashboardHeader, GenericDropdown } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
@@ -7,22 +6,16 @@ import { Plus } from 'lucide-react';
 import { Filter } from 'iconsax-reactjs';
 
 interface UserLeaveHeaderProps {
-  onSearch: (query: string) => void;
   onCreateRequest?: () => void;
 }
 
-export const UserLeaveHeader = ({ onSearch, onCreateRequest }: UserLeaveHeaderProps) => {
+export const UserLeaveHeader = ({ onCreateRequest }: UserLeaveHeaderProps) => {
   return (
     <DashboardHeader
       title="Leave Management"
       subtitle="View your leave balance, requests, and apply for new leave"
       actionComponent={
         <div className="flex items-center gap-4">
-          <SearchInput
-            className="border-border h-10 w-[300px] rounded-md border"
-            placeholder="Search your requests..."
-            onSearch={onSearch}
-          />
           <GenericDropdown
             contentClassName="bg-background"
             trigger={

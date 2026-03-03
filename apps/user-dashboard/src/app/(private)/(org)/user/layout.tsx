@@ -40,7 +40,7 @@ export default function UserDashboardLayout({ children }: { children: ReactNode 
               adminEmail={session?.user.employee.email || ''}
               notifications={[]}
             />
-            <Wrapper className="max-w-[1440px] py-10">{children}</Wrapper>
+            <Wrapper className="max-w-[900px] py-10">{children}</Wrapper>
           </ActiveTargetProvider>
         </SidebarInset>
       </SidebarProvider>

@@ -1,12 +1,9 @@
 'use client';
-import { formatDate } from '@/lib/formatters';
-import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
-import { Card, CardContent } from '@workspace/ui/components/card';
 import { EmptyState } from '@workspace/ui/lib';
-import { cn } from '@workspace/ui/lib/utils';
 import { useMemo } from 'react';
 import empty1 from '~/images/empty-state.svg';
+import { LeaveCard } from './LeaveCard';
 import type { LeaveRequest } from '../types';
 
 interface UserLeaveBodyProps {
@@ -26,10 +23,12 @@ export const UserLeaveBody = ({ searchQuery = '', onViewDetails }: UserLeaveBody
         leaveTypeId: 'lt_annual',
         leaveTypeName: 'Annual Leave',
         startDate: '2026-02-10',
-        endDate: '2026-02-12',
+        endDate: '2026-02-13',
         days: 4,
-        reason: 'Vacation',
+        reason: 'Travelling for an event',
         status: 'approved',
+        approvedBy: 'Abdulhafeez Kekerekun',
+        supportingDocumentName: 'travel-docs.pdf',
         createdAt: '2026-02-01',
         updatedAt: '2026-02-01',
       },
@@ -44,6 +43,7 @@ export const UserLeaveBody = ({ searchQuery = '', onViewDetails }: UserLeaveBody
         days: 8,
         reason: 'Medical appointment',
         status: 'declined',
+        approvedBy: 'Adaeze Okafor',
         createdAt: '2026-01-10',
         updatedAt: '2026-01-10',
       },
@@ -72,6 +72,7 @@ export const UserLeaveBody = ({ searchQuery = '', onViewDetails }: UserLeaveBody
         days: 4,
         reason: 'Illness',
         status: 'approved',
+        approvedBy: 'Abdulhafeez Kekerekun',
         createdAt: '2025-12-15',
         updatedAt: '2025-12-15',
       },
@@ -89,45 +90,6 @@ export const UserLeaveBody = ({ searchQuery = '', onViewDetails }: UserLeaveBody
     [leaveRequests, searchQuery]
   );
 
-  const getStatusVariant = (status: LeaveRequest['status']) => {
-    switch (status) {
-      case 'approved':
-        return 'success';
-      case 'declined':
-        return 'danger';
-      case 'pending':
-        return 'warning';
-      default:
-        return 'default';
-    }
-  };
-
-  const getStatusBgColor = (status: LeaveRequest['status']) => {
-    switch (status) {
-      case 'approved':
-        return 'bg-[#ECFDF3]';
-      case 'declined':
-        return 'bg-[#FBE9E9]';
-      case 'pending':
-        return 'bg-[#FCF5E8]';
-      default:
-        return 'bg-gray-50';
-    }
-  };
-
-  const getStatusTextColor = (status: LeaveRequest['status']) => {
-    switch (status) {
-      case 'approved':
-        return 'text-[#027A48]';
-      case 'declined':
-        return 'text-[#DB4B46]';
-      case 'pending':
-        return 'text-[#E49817]';
-      default:
-        return 'text-gray-700';
-    }
-  };
-
   return (
     <div className="space-y-6">
       {filteredData.length === 0 ? (
@@ -141,49 +103,7 @@ export const UserLeaveBody = ({ searchQuery = '', onViewDetails }: UserLeaveBody
           {/* Leave Request Cards Grid */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {filteredData.map((request) => (
-              <Card
-                key={request.id}
-                className="bg-background overflow-hidden shadow-sm transition-shadow hover:shadow-md"
-              >
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    {/* Leave Type and Status Row */}
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="text-foreground text-base font-semibold">{request.leaveTypeName}</h3>
-                        <p className="text-muted-foreground text-sm">Requested on {formatDate(request.createdAt)}</p>
-                      </div>
-                      <Badge
-                        variant={getStatusVariant(request.status)}
-                        className={cn(
-                          'min-w-[90px] justify-center rounded-md px-3 py-1 text-xs font-medium capitalize',
-                          getStatusBgColor(request.status),
-                          getStatusTextColor(request.status)
-                        )}
-                      >
-                        {request.status}
-                      </Badge>
-                    </div>
-
-                    {/* Working Days */}
-                    <div className="bg-muted flex items-center justify-center rounded-md p-3">
-                      <div className="text-center">
-                        <p className="text-3xl font-bold">{request.days}</p>
-                        <p className="text-muted-foreground text-xs">Working Days</p>
-                      </div>
-                    </div>
-
-                    {/* View Details Button */}
-                    <Button
-                      variant="outline"
-                      className="border-border hover:bg-muted w-full"
-                      onClick={() => onViewDetails?.(request)}
-                    >
-                      View Details
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <LeaveCard key={request.id} request={request} onViewDetails={onViewDetails} />
             ))}
           </div>
 

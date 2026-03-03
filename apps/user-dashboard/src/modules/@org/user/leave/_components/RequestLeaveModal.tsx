@@ -40,14 +40,13 @@ export const RequestLeaveModal = ({ open, onOpenChange, onSuccess }: RequestLeav
       title={
         <div className="flex items-center gap-3">
           <span>Request for Leave</span>
-          <Badge className="bg-success-50 text-success-700 rounded-full px-3 py-1 text-xs font-medium hover:bg-success-50">
+          <Badge className="bg-success-50 text-success-700 rounded-ful py-1 text-xs font-medium hover:bg-success-50">
             Paid
           </Badge>
         </div>
       }
       description="Fill in your leave details below. Make sure your dates don't overlap with an existing approved leave."
       trigger={undefined}
-      className="sm:max-w-[600px]"
     >
       <RequestLeaveForm onSubmit={handleSubmit} onCancel={handleCancel} isSubmitting={isSubmitting} />
     </ReusableDialog>

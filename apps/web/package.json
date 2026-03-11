@@ -36,6 +36,7 @@
     "@workspace/test-utils": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "eslint": "^9.32.0",
+    "tailwindcss": "^4.1.11",
     "typescript": "^5.9.2",
     "vitest": "^2.1.8",
     "@vitest/coverage-v8": "^2.1.8"

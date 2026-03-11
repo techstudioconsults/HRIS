@@ -70,10 +70,10 @@ export async function middleware(request: NextRequest) {
   const isAdminUser = userPermissions.includes(MODULE_PERMISSIONS.ADMIN);
 
   // Prevent admins from accessing user routes
-  // if (isAuthenticated && isAdminUser && pathWithoutLocale.startsWith('/user')) {
-  //   const adminDashboardUrl = new URL('/admin/dashboard', request.url);
-  //   return NextResponse.redirect(adminDashboardUrl);
-  // }
+  if (isAuthenticated && isAdminUser && pathWithoutLocale.startsWith('/user')) {
+    const adminDashboardUrl = new URL('/admin/dashboard', request.url);
+    return NextResponse.redirect(adminDashboardUrl);
+  }
 
   // Prevent non-admins from accessing admin routes
   if (isAuthenticated && !isAdminUser && pathWithoutLocale.startsWith('/admin')) {

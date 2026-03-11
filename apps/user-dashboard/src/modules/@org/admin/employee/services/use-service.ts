@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { queryKeys } from "@/lib/react-query/query-keys";
-import { createServiceHooks } from "@/lib/react-query/use-service-query";
-import { dependencies } from "@/lib/tools/dependencies";
-import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from '@/lib/react-query/query-keys';
+import { createServiceHooks } from '@/lib/react-query/use-service-query';
+import { dependencies } from '@/lib/tools/dependencies';
+import { useQueryClient } from '@tanstack/react-query';
 
-import { EmployeeService } from "./service";
+import { EmployeeService } from './service';
 
 export const useEmployeeService = () => {
   const { useServiceQuery, useServiceMutation } = createServiceHooks<EmployeeService>(dependencies.EMPLOYEE_SERVICE);
@@ -18,7 +18,7 @@ export const useEmployeeService = () => {
     useServiceQuery(
       queryKeys.employee.suspendedByPayroll(payrollId, filters),
       (service) => service.getSuspendedEmployeesByPayroll(payrollId, filters),
-      options,
+      options
     );
 
   const useGetEmployeeById = (id: string, options?: any) =>
@@ -36,7 +36,7 @@ export const useEmployeeService = () => {
     useServiceMutation((service, data: FormData) => service.createEmployee(data), {
       invalidateQueries: () => {
         // Invalidate all employee list queries (with any filters)
-        return [["employee", "list"]];
+        return [['employee', 'list']];
       },
     });
 
@@ -48,13 +48,13 @@ export const useEmployeeService = () => {
       {
         invalidateQueries: (_, { id, payrollIds }) => {
           const base: (readonly unknown[])[] = [
-            ["employee", "list"],
+            ['employee', 'list'],
             queryKeys.employee.details(id),
-            ["payrolls", "list"], // partial matches all payroll list variants
+            ['payrolls', 'list'], // partial matches all payroll list variants
           ];
           if (Array.isArray(payrollIds)) {
             for (const pid of payrollIds) {
-              base.push(queryKeys.payroll.details(pid), ["payrolls", "payslips", pid]);
+              base.push(queryKeys.payroll.details(pid), ['payrolls', 'payslips', pid]);
             }
           }
           return base;
@@ -64,11 +64,11 @@ export const useEmployeeService = () => {
           await queryClient.invalidateQueries({
             predicate: (q) => {
               const k = q.queryKey as unknown[];
-              return Array.isArray(k) && k[0] === "payrolls" && (k[1] === "detail" || k[1] === "payslips");
+              return Array.isArray(k) && k[0] === 'payrolls' && (k[1] === 'detail' || k[1] === 'payslips');
             },
           });
         },
-      },
+      }
     );
   };
 
@@ -76,7 +76,7 @@ export const useEmployeeService = () => {
     useServiceMutation((service, id: string) => service.deleteEmployee(id), {
       invalidateQueries: () => {
         // Invalidate all employee list queries (with any filters)
-        return [["employee", "list"]];
+        return [['employee', 'list']];
       },
     });
 

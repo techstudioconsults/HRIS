@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client';
 
 // import { SuspenseLoading } from "@/components/shared/loading";
-import { useEmployeeSearchParameters } from "@/modules/@org/admin/employee/hooks/use-employee-search-parameters";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useDebounce } from "use-debounce";
+import { useEmployeeSearchParameters } from '@/modules/@org/admin/employee/hooks/use-employee-search-parameters';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDebounce } from 'use-debounce';
 
-import { EmployeeHeaderSection } from "./components/employee-header-section";
-import { EmployeeTableSection } from "./components/employee-table-section";
+import { EmployeeHeaderSection } from './components/employee-header-section';
+import { EmployeeTableSection } from './components/employee-table-section';
 
 // import { TableSkeleton } from "../../../_components/table/table-skeleton";
 
@@ -33,7 +33,7 @@ export const AllEmployees = () => {
   } = useEmployeeSearchParameters();
 
   // Local input state (debounced) to throttle URL updates via nuqs
-  const [searchInput, setSearchInput] = useState(search || "");
+  const [searchInput, setSearchInput] = useState(search || '');
   const [debouncedSearch] = useDebounce(searchInput, 300);
 
   // Apply debounced search to URL (nuqs) and reset page to 1
@@ -55,14 +55,14 @@ export const AllEmployees = () => {
       if (newFilters.limit != null) setLimit(Number(newFilters.limit));
       resetToFirstPage();
     },
-    [setTeamId, setRoleId, setStatus, setSortBy, setLimit, resetToFirstPage],
+    [setTeamId, setRoleId, setStatus, setSortBy, setLimit, resetToFirstPage]
   );
 
   const handlePageChange = useCallback(
     (newPage: number) => {
       setPage(newPage);
     },
-    [setPage],
+    [setPage]
   );
 
   const handleSearchChange = useCallback((query: string) => {
@@ -70,7 +70,7 @@ export const AllEmployees = () => {
   }, []);
 
   const handleResetFilters = useCallback(() => {
-    setSearchInput("");
+    setSearchInput('');
     resetFilters();
   }, [resetFilters]);
 

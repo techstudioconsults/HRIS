@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client';
 
 import {
   AdvancedDataTable,
@@ -7,13 +7,13 @@ import {
   ErrorEmptyState,
   FilteredEmptyState,
   TableSkeleton,
-} from "@workspace/ui/lib/index";
-import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+} from '@workspace/ui/lib/index';
+import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
 
-import empty1 from "~/images/empty-state.svg";
-import { useEmployeeService } from "../../../services/use-service";
-import { employeeColumn, useEmployeeRowActions } from "../../table-data";
+import empty1 from '~/images/empty-state.svg';
+import { useEmployeeService } from '../../../services/use-service';
+import { employeeColumn, useEmployeeRowActions } from '../../table-data';
 
 interface EmployeeTableSectionProperties {
   apiFilters: any;
@@ -50,7 +50,7 @@ export const EmployeeTableSection = ({
     (newPage: number) => {
       onPageChange(newPage);
     },
-    [onPageChange],
+    [onPageChange]
   );
 
   if (isLoadingEmployees) {
@@ -61,14 +61,14 @@ export const EmployeeTableSection = ({
     return (
       <ErrorEmptyState
         onRetry={function (): void {
-          throw new Error("Function not implemented.");
+          throw new Error('Function not implemented.');
         }}
       />
     );
   }
 
   const hasActiveFilters =
-    (debouncedSearch && debouncedSearch.trim()) || teamId || roleId || (status && status !== "all") || sortBy;
+    (debouncedSearch && debouncedSearch.trim()) || teamId || roleId || (status && status !== 'all') || sortBy;
 
   if (!employeeData?.data?.items.length) {
     if (hasActiveFilters) {
@@ -78,12 +78,12 @@ export const EmployeeTableSection = ({
     return (
       <EmptyState
         className="bg-background"
-        images={[{ src: empty1.src, alt: "No employees", width: 100, height: 100 }]}
+        images={[{ src: empty1.src, alt: 'No employees', width: 100, height: 100 }]}
         title="No employee yet."
         description="Once you add team members, you'll see their details here, including department, role, work status, and more."
         button={{
-          text: "Add New Employee",
-          onClick: () => router.push("/admin/employees/add-employee"),
+          text: 'Add New Employee',
+          onClick: () => router.push('/admin/employees/add-employee'),
         }}
       />
     );

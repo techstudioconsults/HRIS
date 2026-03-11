@@ -1,9 +1,9 @@
-const DashboardPage = () => {
+'use client';
+import { HomePage } from '../_components/home-page';
+export default function DashboardPage() {
   return (
-    <main>
-      <h1 className="text-3xl font-bold">User Dashboard</h1>
-      <p className="text-gray-600 mt-2">Welcome to your dashboard</p>
+    <main className="">
+      <HomePage />
     </main>
   );
-};
-export default DashboardPage;
+}

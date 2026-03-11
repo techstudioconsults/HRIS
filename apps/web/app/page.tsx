@@ -5,7 +5,9 @@ export default function Page() {
     <div className="flex items-center justify-center min-h-svh">
       <div className="flex flex-col items-center justify-center gap-4">
         <h1 className="text-2xl font-bold">Hello World</h1>
-        <MainButton size="sm">Click Button</MainButton>
+        <MainButton size="sm" className={'text-'}>
+          Click Button
+        </MainButton>
       </div>
     </div>
   );

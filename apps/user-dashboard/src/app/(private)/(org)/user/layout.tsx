@@ -32,7 +32,7 @@ export default function UserDashboardLayout({ children }: { children: ReactNode 
             },
           ]}
         />
-        <SidebarInset className="dark:bg-background bg-[#F8F8F9]">
+        <SidebarInset className="dark:bg-background bg-[#F7F9FC]">
           <ActiveTargetProvider>
             <TopBar
               adminName={session?.user.employee.fullName || ''}
@@ -40,7 +40,7 @@ export default function UserDashboardLayout({ children }: { children: ReactNode 
               adminEmail={session?.user.employee.email || ''}
               notifications={[]}
             />
-            <Wrapper className="max-w-[900px] py-10">{children}</Wrapper>
+            <Wrapper className="max-w-[1000px] py-10">{children}</Wrapper>
           </ActiveTargetProvider>
         </SidebarInset>
       </SidebarProvider>

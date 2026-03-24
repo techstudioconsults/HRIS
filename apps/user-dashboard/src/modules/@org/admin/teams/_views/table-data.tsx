@@ -1,7 +1,7 @@
 import { useActiveTarget } from '@/context/active-target';
 import { formatDate } from '@/lib/formatters';
 import { queryKeys } from '@/lib/react-query/query-keys';
-// @ts-ignore
+
 import { IColumnDefinition, IRowAction } from '@/modules/@org/admin/_components/table/table';
 import { useQueryClient } from '@tanstack/react-query';
 import { Trash } from 'iconsax-reactjs';

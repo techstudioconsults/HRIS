@@ -1,9 +1,10 @@
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Playfair_Display, Geist_Mono } from 'next/font/google';
 
 import './globals.css';
 import { Providers } from '../components/providers';
+import { ReactNode } from 'react';
 
-const fontSans = Geist({
+const fontSans = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-sans',
 });
@@ -16,7 +17,7 @@ const fontMono = Geist_Mono({
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>

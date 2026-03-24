@@ -1,5 +1,11 @@
 /* Minimal animation utilities used across the current apps and shared UI */
 
+@property --radix-accordion-content-height {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
+}
+
 @utility animate-in {
     animation-name: ui-enter;
     animation-duration: 300ms;
@@ -79,11 +85,11 @@
 }
 
 @utility animate-accordion-down {
-    animation: accordion-down 300ms ease-in-out;
+    animation: accordion-down 200ms ease-in-out;
 }
 
 @utility animate-accordion-up {
-    animation: accordion-up 300ms ease-in-out;
+    animation: accordion-up 200ms ease-in-out;
 }
 
 @utility animate-entrance {
@@ -137,13 +143,13 @@
         height: 0;
     }
     to {
-        height: var(--radix-accordion-content-height);
+        height: var(--radix-accordion-content-height, 0px);
     }
 }
 
 @keyframes accordion-up {
     from {
-        height: var(--radix-accordion-content-height);
+        height: var(--radix-accordion-content-height, 0px);
     }
     to {
         height: 0;

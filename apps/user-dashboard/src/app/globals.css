@@ -1,0 +1,3 @@
+@import '@workspace/ui/globals.css'; /* Local Tailwind entrypoint for apps/user-dashboard so editor tooling can detect the app. */
+@config '../../tailwind.config.ts';
+

@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
-import { Check, ChevronsUpDown, GalleryVerticalEnd } from "lucide-react";
-import * as React from "react";
+} from '@workspace/ui/components/dropdown-menu';
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@workspace/ui/components/sidebar';
+import { Check, ChevronsUpDown, GalleryVerticalEnd } from 'lucide-react';
+import * as React from 'react';
 
 interface Tenant {
   id: string;
@@ -25,7 +25,7 @@ export function OrgSwitcher({
   onTenantSwitch?: (tenantId: string) => void;
 }) {
   const [selectedTenant, setSelectedTenant] = React.useState<Tenant | undefined>(
-    defaultTenant || (tenants.length > 0 ? tenants[0] : undefined),
+    defaultTenant || (tenants.length > 0 ? tenants[0] : undefined)
   );
 
   const handleTenantSwitch = (tenant: Tenant) => {

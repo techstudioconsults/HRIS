@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { AlertModal } from "@/components/shared/dialog/alert-modal";
-import { useEffect, useState } from "react";
+import { AlertModal } from '@workspace/ui/lib/dialog/alert-modal';
+import { useEffect, useState } from 'react';
 
 export const NetworkStatusModal = () => {
   const [, setIsOnline] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       setIsOnline(navigator.onLine);
       setIsOpen(!navigator.onLine);
 
@@ -23,12 +23,12 @@ export const NetworkStatusModal = () => {
         setIsOpen(true);
       };
 
-      window.addEventListener("online", handleOnline);
-      window.addEventListener("offline", handleOffline);
+      window.addEventListener('online', handleOnline);
+      window.addEventListener('offline', handleOffline);
 
       return () => {
-        window.removeEventListener("online", handleOnline);
-        window.removeEventListener("offline", handleOffline);
+        window.removeEventListener('online', handleOnline);
+        window.removeEventListener('offline', handleOffline);
       };
     }
   }, []);

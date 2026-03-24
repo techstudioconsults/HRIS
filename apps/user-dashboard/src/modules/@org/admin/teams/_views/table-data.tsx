@@ -1,6 +1,7 @@
 import { useActiveTarget } from '@/context/active-target';
 import { formatDate } from '@/lib/formatters';
 import { queryKeys } from '@/lib/react-query/query-keys';
+// @ts-ignore
 import { IColumnDefinition, IRowAction } from '@/modules/@org/admin/_components/table/table';
 import { useQueryClient } from '@tanstack/react-query';
 import { Trash } from 'iconsax-reactjs';
@@ -18,24 +19,24 @@ export const teamColumn: IColumnDefinition<Team>[] = [
   {
     header: 'Team Name',
     accessorKey: 'name',
-    render: (_, team: Team) => <span className="text-sm font-medium">{team.name}</span>,
+    render: (_: any, team: Team) => <span className="text-sm font-medium">{team.name}</span>,
   },
   {
     header: 'Team Lead',
     accessorKey: 'manager',
-    render: (_, team: Team) => (
+    render: (_: any, team: Team) => (
       <span className="text-sm text-gray-600 dark:text-gray-400">{team.manager || 'Not assigned'}</span>
     ),
   },
   {
     header: 'Team Members',
     accessorKey: 'members',
-    render: (_, team: Team) => <span className="text-primary font-medium">{team.members || 0} members</span>,
+    render: (_: any, team: Team) => <span className="text-primary font-medium">{team.members || 0} members</span>,
   },
   {
     header: 'Status',
     accessorKey: 'status',
-    render: (_, team: Team) => {
+    render: (_: any, team: Team) => {
       const status = team.status || 'active';
       return (
         <Badge variant={status === 'active' ? 'success' : 'destructive'} className="min-w-fit">
@@ -47,7 +48,7 @@ export const teamColumn: IColumnDefinition<Team>[] = [
   {
     header: 'Created on',
     accessorKey: 'createdAt',
-    render: (_, team: Team) => (
+    render: (_: any, team: Team) => (
       <span className="text-sm text-gray-600 dark:text-gray-400">{formatDate(team.createdAt as string)}</span>
     ),
   },
@@ -207,22 +208,22 @@ export const subTeamColumn: IColumnDefinition<Team>[] = [
   {
     header: 'Sub-team Name',
     accessorKey: 'name',
-    render: (_, team: Team) => <span className="text-sm">{team.name}</span>,
+    render: (_: any, team: Team) => <span className="text-sm">{team.name}</span>,
   },
   {
     header: 'Team Lead',
     accessorKey: 'manager',
-    render: (_, team: Team) => <span className="text-sm">{team.manager || `N/A`}</span>,
+    render: (_: any, team: Team) => <span className="text-sm">{team.manager || `N/A`}</span>,
   },
   {
     header: 'Team Members',
     accessorKey: 'members',
-    render: (_, team: Team) => <Badge variant={`primary`}>{team.members}</Badge>,
+    render: (_: any, team: Team) => <Badge variant={`primary`}>{team.members}</Badge>,
   },
   {
     header: 'Created on',
     accessorKey: 'createdAt',
-    render: (_, team: Team) => <span className="text-sm">{formatDate(team.createdAt as string)}</span>,
+    render: (_: any, team: Team) => <span className="text-sm">{formatDate(team.createdAt as string)}</span>,
   },
 ];
 

@@ -5,7 +5,7 @@ import { cookies } from 'next/headers';
 import NextTopLoader from 'nextjs-toploader';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
-import '@workspace/ui/globals.css';
+import './globals.css';
 import '@workspace/ui/themes.css';
 
 import { SessionProvider } from '@/components/SessionProvider';

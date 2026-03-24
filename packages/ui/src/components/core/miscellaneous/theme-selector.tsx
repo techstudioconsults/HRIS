@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Label } from "@/components/ui/label";
+import { Label } from '@workspace/ui/components/label';
 import {
   Select,
   SelectContent,
@@ -10,43 +10,43 @@ import {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useThemeConfig } from "@/context/active-theme";
+} from '@workspace/ui/components/select';
+import { useThemeConfig } from '@workspace/ui/context/active-theme';
 
 const DEFAULT_THEMES = [
   {
-    name: "Default",
-    value: "default",
+    name: 'Default',
+    value: 'default',
   },
   {
-    name: "Blue",
-    value: "blue",
+    name: 'Blue',
+    value: 'blue',
   },
   {
-    name: "Green",
-    value: "green",
+    name: 'Green',
+    value: 'green',
   },
   {
-    name: "Amber",
-    value: "amber",
+    name: 'Amber',
+    value: 'amber',
   },
 ];
 
 const SCALED_THEMES = [
   {
-    name: "Default",
-    value: "default-scaled",
+    name: 'Default',
+    value: 'default-scaled',
   },
   {
-    name: "Blue",
-    value: "blue-scaled",
+    name: 'Blue',
+    value: 'blue-scaled',
   },
 ];
 
 const MONO_THEMES = [
   {
-    name: "Mono",
-    value: "mono-scaled",
+    name: 'Mono',
+    value: 'mono-scaled',
   },
 ];
 

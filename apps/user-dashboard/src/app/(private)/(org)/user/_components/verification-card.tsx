@@ -17,7 +17,6 @@ export const VerificationCard: React.FC<VerificationCardProps> = ({
   status,
   title,
   description,
-  icon,
   decorativeIcon,
   buttonLabel,
   onButtonClick,

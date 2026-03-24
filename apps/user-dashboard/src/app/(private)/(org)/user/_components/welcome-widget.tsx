@@ -29,7 +29,7 @@ export const WelcomeWidget: React.FC<WelcomeWidgetProps> = ({ userName }) => {
       <div className="relative z-10 flex flex-col gap-[12px]">
         <h1 className="text-[36px] font-semibold leading-[1.2] text-[#F3F2FB]">Hi, {userName}!</h1>
         <p className="text-[18px] font-normal leading-[1.45] text-[#F3F2FB] opacity-[0.87]">
-          Welcome back! Hope you're having a productive day.
+          Welcome back! Hope you&apos;re having a productive day.
         </p>
       </div>
     </div>

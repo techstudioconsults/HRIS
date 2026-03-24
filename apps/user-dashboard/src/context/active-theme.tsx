@@ -1,16 +1,14 @@
-/* eslint-disable unicorn/prefer-spread */
-/* eslint-disable unicorn/no-document-cookie */
-"use client";
+'use client';
 
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
-const COOKIE_NAME = "active_theme";
-const DEFAULT_THEME = "default";
+const COOKIE_NAME = 'active_theme';
+const DEFAULT_THEME = 'default';
 
 function setThemeCookie(theme: string) {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
 
-  document.cookie = `${COOKIE_NAME}=${theme}; path=/; max-age=31536000; SameSite=Lax; ${window.location.protocol === "https:" ? "Secure;" : ""}`;
+  document.cookie = `${COOKIE_NAME}=${theme}; path=/; max-age=31536000; SameSite=Lax; ${window.location.protocol === 'https:' ? 'Secure;' : ''}`;
 }
 
 type ThemeContextType = {
@@ -26,12 +24,12 @@ export function ActiveThemeProvider({ children, initialTheme }: { children: Reac
   useEffect(() => {
     setThemeCookie(activeTheme);
 
-    for (const className of Array.from(document.body.classList).filter((className) => className.startsWith("theme-"))) {
+    for (const className of Array.from(document.body.classList).filter((className) => className.startsWith('theme-'))) {
       document.body.classList.remove(className);
     }
     document.body.classList.add(`theme-${activeTheme}`);
-    if (activeTheme.endsWith("-scaled")) {
-      document.body.classList.add("theme-scaled");
+    if (activeTheme.endsWith('-scaled')) {
+      document.body.classList.add('theme-scaled');
     }
   }, [activeTheme]);
 
@@ -41,7 +39,7 @@ export function ActiveThemeProvider({ children, initialTheme }: { children: Reac
 export function useThemeConfig() {
   const context = useContext(ThemeContext);
   if (context === undefined) {
-    throw new Error("useThemeConfig must be used within an ActiveThemeProvider");
+    throw new Error('useThemeConfig must be used within an ActiveThemeProvider');
   }
   return context;
 }

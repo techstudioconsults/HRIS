@@ -24,7 +24,7 @@ export class UserLeaveService {
   // =============================
   // Leave Types - User can view only
   // =============================
-  async getLeaveTypes(filters: Record<string, any> = {}) {
+  async getLeaveTypes(filters: QueryParameters = {}) {
     const response = await this.http.get<PaginatedResponse<LeaveType> | { data: LeaveType[] }>('/leaves', filters);
     if (response?.status === 200) {
       return response.data;
@@ -41,7 +41,7 @@ export class UserLeaveService {
   // =============================
   // Leave Requests - User can create and view their own
   // =============================
-  async getLeaveRequests(filters: Record<string, any> = {}) {
+  async getLeaveRequests(filters: QueryParameters = {}) {
     const response = await this.http.get<PaginatedResponse<LeaveRequest> | { data: LeaveRequest[] }>(
       '/leave-requests',
       filters

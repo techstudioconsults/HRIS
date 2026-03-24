@@ -103,10 +103,7 @@ export const SetupPage: React.FC = () => {
           icon: <PolicyIcon />,
           decorativeIcon: <PolicyDecorativeIcon />,
           buttonLabel: 'Acknowledge Policy',
-          buttonAction: () => {
-            // TODO: Open modal or navigate to policies page
-            console.log('Acknowledge policies clicked');
-          },
+          buttonAction: async () => {},
           order: 3,
         },
         {
@@ -142,7 +139,7 @@ export const SetupPage: React.FC = () => {
       completedCount,
       userSetupComplete,
     }));
-  }, [state.tasks]);
+  }, [state.tasks, state.totalCount]);
 
   const handleTaskAction = async (taskId: string) => {
     const task = state.tasks.find((t) => t.id === taskId);
@@ -202,7 +199,7 @@ export const SetupPage: React.FC = () => {
           </div>
           <h3 className="text-lg font-semibold text-green-800 mb-2">Setup Complete!</h3>
           <p className="text-green-700">
-            You've successfully completed your onboarding. You now have full access to your HR dashboard.
+            You&apos;ve successfully completed your onboarding. You now have full access to your HR dashboard.
           </p>
           <button
             onClick={() => router.push('/user/dashboard')}

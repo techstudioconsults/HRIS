@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { formatCurrency, formatDate } from "@/lib/formatters";
-import { CalendarModal } from "@/modules/@org/admin/payroll/_components/calendar-modal";
-import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
-import { Badge } from "@workspace/ui/components/badge";
+import { formatCurrency, formatDate } from '@/lib/formatters';
+import { CalendarModal } from '@/modules/@org/admin/payroll/_components/calendar-modal';
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar';
+import { Badge } from '@workspace/ui/components/badge';
 import {
   Drawer,
   DrawerContent,
@@ -11,65 +11,65 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-} from "@workspace/ui/components/drawer";
-import { BackButton, EmptyState } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { cn } from "@workspace/ui/lib/utils";
-import { AxiosError } from "axios";
-import { Eye, EyeSlash } from "iconsax-reactjs";
-import { CalendarIcon, Info } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { ReactNode, useMemo, useState } from "react";
-import { toast } from "sonner";
+} from '@workspace/ui/components/drawer';
+import { BackButton, EmptyState } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { cn } from '@workspace/ui/lib/utils';
+import { AxiosError } from 'axios';
+import { Eye, EyeSlash } from 'iconsax-reactjs';
+import { CalendarIcon, Info } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { ReactNode, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
-import empty1 from "~/images/empty-state.svg";
-import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
-import { usePayrollService } from "../../services/use-service";
-import { usePayrollStore } from "../../stores/payroll-store";
-import type { Payroll, PayrollApproval } from "../../types";
+import empty1 from '~/images/empty-state.svg';
+import { DashboardCard } from '../../../dashboard/_components/dashboard-card';
+import { usePayrollService } from '../../services/use-service';
+import { usePayrollStore } from '../../stores/payroll-store';
+import type { Payroll, PayrollApproval } from '../../types';
 
 // Pure helpers (moved to module scope to satisfy lint rule requiring outer scope for arrow functions)
-const normalizeStatus = (status?: string) => (status || "").toLowerCase();
+const normalizeStatus = (status?: string) => (status || '').toLowerCase();
 const getStatusBadgeClasses = (status?: string) => {
   const value = normalizeStatus(status);
-  if (value.includes("await")) return "bg-warning-50 text-warning";
-  if (value.includes("reject") || value.includes("decline")) return "bg-destructive-50 text-destructive";
-  if (value.includes("complete")) return "bg-success-50 text-success";
-  if (value.includes("disbursed")) return "bg-success-50 text-success"; // treat disbursed as success
-  if (value.includes("approve")) return "bg-blue-50 text-blue-600";
-  return "bg-muted text-foreground";
+  if (value.includes('await')) return 'bg-warning-50 text-warning';
+  if (value.includes('reject') || value.includes('decline')) return 'bg-destructive-50 text-destructive';
+  if (value.includes('complete')) return 'bg-success-50 text-success';
+  if (value.includes('disbursed')) return 'bg-success-50 text-success'; // treat disbursed as success
+  if (value.includes('approve')) return 'bg-blue-50 text-blue-600';
+  return 'bg-muted text-foreground';
 };
 const getStatusBanner = (status?: string, date?: string): { message: string; classes: string } => {
   const value = normalizeStatus(status);
-  const formattedDate = date ? formatDate(date) : "this period";
-  if (value.includes("await"))
+  const formattedDate = date ? formatDate(date) : 'this period';
+  if (value.includes('await'))
     return {
       message: `Payroll for ${formattedDate} is awaiting approvals. Approvers must act before disbursement can begin.`,
-      classes: "border-warning-200 bg-warning-50",
+      classes: 'border-warning-200 bg-warning-50',
     };
-  if (value.includes("approve"))
+  if (value.includes('approve'))
     return {
       message: `Payroll for ${formattedDate} has been approved and is queued for processing/disbursement.`,
-      classes: "border-blue-200 bg-blue-50",
+      classes: 'border-blue-200 bg-blue-50',
     };
-  if (value.includes("disburs"))
+  if (value.includes('disburs'))
     return {
       message: `Payroll for ${formattedDate} is currently being disbursed to employee accounts.`,
-      classes: "border-success-200 bg-success-50",
+      classes: 'border-success-200 bg-success-50',
     };
-  if (value.includes("complete"))
+  if (value.includes('complete'))
     return {
       message: `Payroll for ${formattedDate} has been completed successfully.`,
-      classes: "border-success-200 bg-success-50",
+      classes: 'border-success-200 bg-success-50',
     };
-  if (value.includes("reject") || value.includes("decline"))
+  if (value.includes('reject') || value.includes('decline'))
     return {
       message: `Payroll for ${formattedDate} was rejected. Adjust the payroll or approvers then re-run.`,
-      classes: "border-destructive-200 bg-destructive-50",
+      classes: 'border-destructive-200 bg-destructive-50',
     };
   return {
     message: `Payroll is scheduled for ${formattedDate}. You can reschedule or cancel before processing begins.`,
-    classes: "border-accent bg-accent/10",
+    classes: 'border-accent bg-accent/10',
   };
 };
 
@@ -87,7 +87,7 @@ export const SchedulePayrollDrawer = () => {
   const { data: payrollsResponse, isLoading: isPayrollsLoading, refetch: refetchPayrolls } = useGetAllPayrolls();
 
   // Normalize response to array (supports both summary and payroll shapes)
-  type ListPayroll = Pick<Payroll, "id" | "policyId" | "netPay" | "employeesInPayroll" | "paymentDate"> & {
+  type ListPayroll = Pick<Payroll, 'id' | 'policyId' | 'netPay' | 'employeesInPayroll' | 'paymentDate'> & {
     status?: string;
     name?: string;
     role?: string;
@@ -100,17 +100,16 @@ export const SchedulePayrollDrawer = () => {
     const shaped = payrollsResponse as unknown as { data?: ListPayroll[]; items?: ListPayroll[] } | undefined;
     const data = shaped?.data ?? shaped?.items ?? [];
     return Array.isArray(data) ? data : [];
-    24 / 11 / 2025;
   }, [payrollsResponse]);
 
   // Sort by payment date (default: earliest first)
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const sortedPayrolls = useMemo(() => {
     const array = [...payrolls];
     array.sort((a, b) => {
       const aTime = new Date(a.paymentDate).getTime();
       const bTime = new Date(b.paymentDate).getTime();
-      return sortDirection === "asc" ? aTime - bTime : bTime - aTime;
+      return sortDirection === 'asc' ? aTime - bTime : bTime - aTime;
     });
     return array;
   }, [payrolls, sortDirection]);
@@ -123,7 +122,7 @@ export const SchedulePayrollDrawer = () => {
 
   const statusBanner = getStatusBanner(selectedPayroll?.status, selectedPayroll?.paymentDate);
 
-  const payrollIdForApprovals = selectedPayroll?.id ?? "";
+  const payrollIdForApprovals = selectedPayroll?.id ?? '';
   const { data: approvalsResponse, isLoading: isApprovalsLoading } = useGetPayrollApprovals(payrollIdForApprovals, {
     enabled: !!payrollIdForApprovals,
   });
@@ -133,7 +132,7 @@ export const SchedulePayrollDrawer = () => {
 
   const handleDateSelection = async (date: Date | undefined) => {
     if (!date) {
-      toast.error("Please select a date to continue.");
+      toast.error('Please select a date to continue.');
       return;
     }
 
@@ -143,7 +142,7 @@ export const SchedulePayrollDrawer = () => {
       { paymentDate: date.toISOString() },
       {
         onSuccess: () => {
-          toast.success("Payroll scheduled successfully.", {
+          toast.success('Payroll scheduled successfully.', {
             description: `Payroll has been scheduled for ${formatDate(date.toISOString())}.`,
           });
           setIsChangeDateModalOpen(false);
@@ -151,18 +150,18 @@ export const SchedulePayrollDrawer = () => {
         },
         onError: (error) => {
           const axiosError = error as AxiosError<{ message?: string }>;
-          const message = axiosError.response?.data?.message ?? "Failed to schedule payroll.";
-          toast.error("Something went wrong", {
+          const message = axiosError.response?.data?.message ?? 'Failed to schedule payroll.';
+          toast.error('Something went wrong', {
             description: message,
             action: {
-              label: "Payroll Settings",
+              label: 'Payroll Settings',
               onClick: () => {
-                router.push("/admin/payroll/setup");
+                router.push('/admin/payroll/setup');
               },
             },
           });
         },
-      },
+      }
     );
   };
 
@@ -194,7 +193,7 @@ export const SchedulePayrollDrawer = () => {
                 ) : payrolls.length === 0 ? (
                   <EmptyState
                     className="bg-background gap-0"
-                    images={[{ src: empty1.src, alt: "No payroll summary", width: 80, height: 80 }]}
+                    images={[{ src: empty1.src, alt: 'No payroll summary', width: 80, height: 80 }]}
                     description="No scheduled payrolls yet."
                     titleClassName="text-xl font-bold"
                   />
@@ -208,12 +207,12 @@ export const SchedulePayrollDrawer = () => {
                               <th className="border px-4 py-2">
                                 <button
                                   type="button"
-                                  onClick={() => setSortDirection((previous) => (previous === "asc" ? "desc" : "asc"))}
+                                  onClick={() => setSortDirection((previous) => (previous === 'asc' ? 'desc' : 'asc'))}
                                   className="flex items-center gap-1 underline-offset-4 hover:underline"
                                 >
                                   Payment Date
                                   <span className="text-muted-foreground text-xs">
-                                    {sortDirection === "asc" ? "↑" : "↓"}
+                                    {sortDirection === 'asc' ? '↑' : '↓'}
                                   </span>
                                 </button>
                               </th>
@@ -235,8 +234,8 @@ export const SchedulePayrollDrawer = () => {
                                 {/* <td className="px-4 py-2">{p.policyId}</td>
                                 <td className="px-4 py-2">{p.id}</td> */}
                                 <td className="border px-4 py-2">
-                                  <Badge className={cn("rounded-full px-3 py-1", getStatusBadgeClasses(p.status))}>
-                                    {p.status ?? "-"}
+                                  <Badge className={cn('rounded-full px-3 py-1', getStatusBadgeClasses(p.status))}>
+                                    {p.status ?? '-'}
                                   </Badge>
                                 </td>
                               </tr>
@@ -260,7 +259,7 @@ export const SchedulePayrollDrawer = () => {
                     Back to list
                   </button>
                 </div>
-                <div className={cn("item-center flex gap-4 rounded-lg border p-4 text-sm", statusBanner.classes)}>
+                <div className={cn('item-center flex gap-4 rounded-lg border p-4 text-sm', statusBanner.classes)}>
                   <Info size={16} />
                   <p className="leading-relaxed">{statusBanner.message}</p>
                 </div>
@@ -280,7 +279,7 @@ export const SchedulePayrollDrawer = () => {
                         <button
                           onClick={() => setIsNetPayVisible(!isNetPayVisible)}
                           className="text-white transition-colors hover:text-gray-300"
-                          aria-label={isNetPayVisible ? "Hide net pay" : "Show net pay"}
+                          aria-label={isNetPayVisible ? 'Hide net pay' : 'Show net pay'}
                         >
                           {isNetPayVisible ? (
                             <EyeSlash className="text-white" size={30} />
@@ -321,26 +320,26 @@ export const SchedulePayrollDrawer = () => {
                       <div className="text-muted-foreground text-sm">No approvers configured for this payroll.</div>
                     ) : (
                       approvals.map((approval) => {
-                        const name = approval.employee.name ?? "Approver";
+                        const name = approval.employee.name ?? 'Approver';
                         const role = (approval.approverRole as ReactNode) ?? <></>;
                         const initials =
                           name
-                            .split(" ")
+                            .split(' ')
                             .map((part) => part.charAt(0))
-                            .join("")
+                            .join('')
                             .toUpperCase()
-                            .slice(0, 2) || "AP";
+                            .slice(0, 2) || 'AP';
                         const statusLabel =
                           approval.status && approval.status.length > 0
                             ? approval.status.charAt(0).toUpperCase() + approval.status.slice(1)
-                            : "Pending";
+                            : 'Pending';
 
                         return (
                           <section key={approval.payrollId} className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <Avatar>
                                 <AvatarImage
-                                  src={approval.employee.avatar ?? "https://github.com/shadcn.png"}
+                                  src={approval.employee.avatar ?? 'https://github.com/shadcn.png'}
                                   alt={name}
                                 />
                                 <AvatarFallback>{initials}</AvatarFallback>
@@ -354,9 +353,9 @@ export const SchedulePayrollDrawer = () => {
                               <Badge
                                 className={cn(
                                   `rounded-full px-4 py-2`,
-                                  statusLabel === "Pending" && "bg-warning-50 text-warning",
-                                  statusLabel === "Approved" && "bg-success-50 text-success",
-                                  statusLabel === "Declined" && "bg-destructive-50 text-destructive",
+                                  statusLabel === 'Pending' && 'bg-warning-50 text-warning',
+                                  statusLabel === 'Approved' && 'bg-success-50 text-success',
+                                  statusLabel === 'Declined' && 'bg-destructive-50 text-destructive'
                                 )}
                               >
                                 {statusLabel}

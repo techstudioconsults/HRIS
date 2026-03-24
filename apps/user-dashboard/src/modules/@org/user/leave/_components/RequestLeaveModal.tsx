@@ -3,6 +3,7 @@
 import { ReusableDialog } from '@workspace/ui/lib';
 import { Badge } from '@workspace/ui/components/badge';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { RequestLeaveForm } from '@/modules/@org/user';
 
 interface RequestLeaveModalProps {
@@ -18,12 +19,13 @@ export const RequestLeaveModal = ({ open, onOpenChange, onSuccess }: RequestLeav
     setIsSubmitting(true);
     try {
       // TODO: Implement actual submission logic using service
+      void data;
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       onSuccess?.();
       onOpenChange(false);
-    } catch (error) {
-      console.error('Failed to submit leave request:', error);
+    } catch {
+      toast.error('Failed to submit leave request.');
     } finally {
       setIsSubmitting(false);
     }
@@ -37,17 +39,15 @@ export const RequestLeaveModal = ({ open, onOpenChange, onSuccess }: RequestLeav
     <ReusableDialog
       open={open}
       onOpenChange={onOpenChange}
-      title={
-        <div className="flex items-center gap-3">
-          <span>Request for Leave</span>
-          <Badge className="bg-success-50 text-success-700 rounded-ful py-1 text-xs font-medium hover:bg-success-50">
-            Paid
-          </Badge>
-        </div>
-      }
+      title="Request for Leave"
       description="Fill in your leave details below. Make sure your dates don't overlap with an existing approved leave."
       trigger={undefined}
     >
+      <div className="mb-4 flex items-center gap-3">
+        <Badge className="bg-success-50 text-success-700 rounded-ful py-1 text-xs font-medium hover:bg-success-50">
+          Paid
+        </Badge>
+      </div>
       <RequestLeaveForm onSubmit={handleSubmit} onCancel={handleCancel} isSubmitting={isSubmitting} />
     </ReusableDialog>
   );

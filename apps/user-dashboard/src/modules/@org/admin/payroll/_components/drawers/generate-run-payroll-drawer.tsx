@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { formatCurrency, formatDate } from "@/lib/formatters";
-import { CalendarModal } from "@/modules/@org/admin/payroll/_components/calendar-modal";
-import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
-import { Badge } from "@workspace/ui/components/badge";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@workspace/ui/components/drawer";
-import { AlertModal, BackButton } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { cn } from "@workspace/ui/lib/utils";
-import { Eye, EyeSlash } from "iconsax-reactjs";
-import { CalendarIcon, Info } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ReactNode, useState } from "react";
-import { toast } from "sonner";
+import { formatCurrency, formatDate } from '@/lib/formatters';
+import { CalendarModal } from '@/modules/@org/admin/payroll/_components/calendar-modal';
+import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar';
+import { Badge } from '@workspace/ui/components/badge';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@workspace/ui/components/drawer';
+import { AlertModal, BackButton } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { cn } from '@workspace/ui/lib/utils';
+import { Eye, EyeSlash } from 'iconsax-reactjs';
+import { CalendarIcon, Info } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { ReactNode, useState } from 'react';
+import { toast } from 'sonner';
 
-import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
-import { usePayrollService } from "../../services/use-service";
-import { usePayrollStore } from "../../stores/payroll-store";
-import type { Payroll, PayrollApproval } from "../../types";
+import { DashboardCard } from '../../../dashboard/_components/dashboard-card';
+import { usePayrollService } from '../../services/use-service';
+import { usePayrollStore } from '../../stores/payroll-store';
+import type { Payroll, PayrollApproval } from '../../types';
 
 interface SchedulePayrollDrawerProperties {
   open?: boolean;
@@ -45,7 +45,7 @@ export const GenerateRunPayrollDrawer = ({
   const { useRunPayroll, useGetPayrollApprovals } = usePayrollService();
   const { mutateAsync: runPayroll, isPending: isRunningPayroll } = useRunPayroll();
 
-  const payrollIdForApprovals = payrollId ?? "";
+  const payrollIdForApprovals = payrollId ?? '';
   const { data: approvalsResponse, isLoading: isApprovalsLoading } = useGetPayrollApprovals(payrollIdForApprovals, {
     enabled: !!payrollIdForApprovals,
   });
@@ -53,8 +53,8 @@ export const GenerateRunPayrollDrawer = ({
 
   const totalEmployees = summary?.employeesInPayroll ?? 0;
   const totalPayroll = summary?.netPay ?? 0;
-  const walletBalance = Number(summary?.walletBalance) ?? 0;
-  const paymentDateLabel = summary?.paymentDate ? formatDate(summary.paymentDate) : "";
+  const walletBalance = Number(summary?.walletBalance ?? 0);
+  const paymentDateLabel = summary?.paymentDate ? formatDate(summary.paymentDate) : '';
   const processingCharges = 0;
   const totalAmount = totalPayroll + processingCharges;
   const status = summary?.status !== `idle`;
@@ -63,7 +63,7 @@ export const GenerateRunPayrollDrawer = ({
 
   const handleRunPayroll = async () => {
     if (!payrollId) {
-      toast.error("No payroll selected to run.");
+      toast.error('No payroll selected to run.');
       return;
     }
 
@@ -87,12 +87,12 @@ export const GenerateRunPayrollDrawer = ({
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: (error: any) => {
-          const message = error?.response?.data?.message ?? "Failed to run payroll. Please try again.";
-          toast.error("Something went wrong. ", {
+          const message = error?.response?.data?.message ?? 'Failed to run payroll. Please try again.';
+          toast.error('Something went wrong. ', {
             description: message,
           });
         },
-      },
+      }
     );
   };
 
@@ -114,7 +114,7 @@ export const GenerateRunPayrollDrawer = ({
                 </div>
                 <div>
                   <DrawerTitle className="text-lg font-semibold">
-                    Payroll Review{paymentDateLabel ? ` (${paymentDateLabel})` : ""}
+                    Payroll Review{paymentDateLabel ? ` (${paymentDateLabel})` : ''}
                   </DrawerTitle>
                   {/* <DrawerDescription>Set up automated payroll processing</DrawerDescription> */}
                 </div>
@@ -135,12 +135,12 @@ export const GenerateRunPayrollDrawer = ({
                 value={
                   <div className="flex items-center gap-4">
                     <p className="text-base text-white">
-                      {isNetPayVisible ? formatCurrency(Number(walletBalance)) : "••••••••"}
+                      {isNetPayVisible ? formatCurrency(Number(walletBalance)) : '••••••••'}
                     </p>
                     <button
                       onClick={() => setIsNetPayVisible(!isNetPayVisible)}
                       className="text-white transition-colors hover:text-gray-300"
-                      aria-label={isNetPayVisible ? "Hide net pay" : "Show net pay"}
+                      aria-label={isNetPayVisible ? 'Hide net pay' : 'Show net pay'}
                     >
                       {isNetPayVisible ? (
                         <EyeSlash className="text-white" size={30} />
@@ -170,18 +170,18 @@ export const GenerateRunPayrollDrawer = ({
             </section>
             <div
               className={cn(
-                "bg-accent/10 border-accent item-center flex gap-4 rounded-lg border p-4 text-sm text-gray-500",
-                walletBalance >= totalAmount ? "hidden" : "",
+                'bg-accent/10 border-accent item-center flex gap-4 rounded-lg border p-4 text-sm text-gray-500',
+                walletBalance >= totalAmount ? 'hidden' : ''
               )}
             >
               <div className="size-8">
                 <Info size={20} />
               </div>
               <p>
-                Your current wallet balance is insufficient to complete this payroll. Please{" "}
-                <Link href={"/"} className="font-semibold underline">
+                Your current wallet balance is insufficient to complete this payroll. Please{' '}
+                <Link href={'/'} className="font-semibold underline">
                   top up your wallet
-                </Link>{" "}
+                </Link>{' '}
                 to proceed.
               </p>
             </div>
@@ -195,26 +195,26 @@ export const GenerateRunPayrollDrawer = ({
                     <div className="text-muted-foreground text-sm">No approvers configured for this payroll.</div>
                   ) : (
                     approvals.map((approval) => {
-                      const name = approval.employee.name ?? "Approver";
+                      const name = approval.employee.name ?? 'Approver';
                       const role = (approval.approverRole as ReactNode) ?? <></>;
                       const initials =
                         name
-                          .split(" ")
+                          .split(' ')
                           .map((part) => part.charAt(0))
-                          .join("")
+                          .join('')
                           .toUpperCase()
-                          .slice(0, 2) || "AP";
+                          .slice(0, 2) || 'AP';
                       const statusLabel =
                         approval.status && approval.status.length > 0
                           ? approval.status.charAt(0).toUpperCase() + approval.status.slice(1)
-                          : "Pending";
+                          : 'Pending';
 
                       return (
                         <section key={approval.payrollId} className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Avatar>
                               <AvatarImage
-                                src={approval.employee.avatar ?? "https://github.com/shadcn.png"}
+                                src={approval.employee.avatar ?? 'https://github.com/shadcn.png'}
                                 alt={name}
                               />
                               <AvatarFallback>{initials}</AvatarFallback>
@@ -228,9 +228,9 @@ export const GenerateRunPayrollDrawer = ({
                             <Badge
                               className={cn(
                                 `rounded-full px-4 py-2`,
-                                statusLabel === "Pending" && "bg-warning-50 text-warning",
-                                statusLabel === "Approved" && "bg-success-50 text-success",
-                                statusLabel === "Declined" && "bg-destructive-50 text-destructive",
+                                statusLabel === 'Pending' && 'bg-warning-50 text-warning',
+                                statusLabel === 'Approved' && 'bg-success-50 text-success',
+                                statusLabel === 'Declined' && 'bg-destructive-50 text-destructive'
                               )}
                             >
                               {statusLabel}
@@ -305,7 +305,7 @@ export const GenerateRunPayrollDrawer = ({
         onClose={() => setIsRunSubmittedAlertOpen(false)}
         onConfirm={() => {
           setIsRunSubmittedAlertOpen(false);
-          router.push("/admin/payroll");
+          router.push('/admin/payroll');
         }}
         type="success"
         title="Payroll Submitted for Approval"

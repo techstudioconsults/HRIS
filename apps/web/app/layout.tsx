@@ -1,8 +1,8 @@
 import { Playfair_Display, Geist_Mono } from 'next/font/google';
 
 import './globals.css';
-import { Providers } from '../components/providers';
 import { ReactNode } from 'react';
+import { Providers } from '../components/providers';
 
 const fontSans = Playfair_Display({
   subsets: ['latin'],

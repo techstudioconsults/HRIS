@@ -1,15 +1,15 @@
-import { Playfair_Display, Geist_Mono } from 'next/font/google';
+import { Playfair_Display, Work_Sans } from 'next/font/google';
 
 import './globals.css';
 import { ReactNode } from 'react';
 import { Providers } from '../components/providers';
 
-const fontSans = Playfair_Display({
+const fontSans = Work_Sans({
   subsets: ['latin'],
   variable: '--font-sans',
 });
 
-const fontMono = Geist_Mono({
+const fontMono = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-mono',
 });

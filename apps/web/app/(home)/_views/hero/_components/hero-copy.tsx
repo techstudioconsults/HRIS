@@ -1,3 +1,5 @@
+import { Emphasis } from '../../../_components/Emphasis';
+
 export const HeroCopy = () => {
   return (
     <div className="space-y-6 my-8">
@@ -5,7 +7,7 @@ export const HeroCopy = () => {
         className="max-w-4xl text-balance text-4xl font-semibold tracking-[-0.02em] 
       text-zinc-800 sm:text-5xl lg:text-[62px] lg:leading-[1.2]"
       >
-        HR &amp; Payroll software built for <span className="font-mono text-primary italic">modern African</span> teams
+        HR &amp; Payroll software built for <Emphasis>modern African</Emphasis> teams
       </h1>
       <p
         className="mx-auto max-w-[507px] text-balance text-base tracking-[-0.02em] 

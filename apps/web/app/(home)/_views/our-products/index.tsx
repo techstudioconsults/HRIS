@@ -7,15 +7,14 @@ export const OurProducts = () => {
     <section className="bg-background px-4 pb-20 pt-20 sm:px-6 lg:px-8 lg:pb-28">
       <div className="mx-auto flex w-full max-w-[1226px] flex-col gap-10 lg:gap-12">
         <OurProductsSectionHeader />
-
         <div className="space-y-7">
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-[37px] md:grid-cols-2 xl:grid-cols-3">
             {productCardsTopRow.map((card) => (
               <OurProductCard key={card.title} card={card} />
             ))}
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-12">
+          <div className="grid gap-[37px] lg:grid-cols-12">
             <div className="lg:col-span-5">
               <OurProductCard card={productCardsBottomRow[0]} />
             </div>

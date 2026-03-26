@@ -9,7 +9,7 @@ export const productCardsTopRow: ProductCardItem[] = [
   {
     title: 'Employee Management',
     description: 'Centralize employee records, roles and departments in one secure system.',
-    imageSrc: '/images/home/ChatGPT Image Feb 27, 2026, 07_38_36 AM 1.png',
+    imageSrc: '/images/home/home-img-2.svg',
     imageAlt: 'Employee profile and management interface',
   },
   {

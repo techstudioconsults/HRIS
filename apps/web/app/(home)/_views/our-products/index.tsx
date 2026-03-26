@@ -4,7 +4,7 @@ import { productCardsBottomRow, productCardsTopRow } from './constants';
 
 export const OurProducts = () => {
   return (
-    <section className="bg-background px-4 pb-20 pt-20 sm:px-6 lg:px-8 lg:pb-28">
+    <section data-home-products className="bg-background px-4 pb-20 pt-20 sm:px-6 lg:px-8 lg:pb-28">
       <div className="mx-auto flex w-full max-w-[1226px] flex-col gap-10 lg:gap-12">
         <OurProductsSectionHeader />
         <div className="space-y-7">

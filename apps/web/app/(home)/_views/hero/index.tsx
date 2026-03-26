@@ -7,6 +7,7 @@ import { HeroActions } from './_components/hero-actions';
 export const Hero = () => {
   return (
     <main
+      data-home-hero
       className="relative flex min-h-svh flex-col items-center overflow-hidden bg-primary/5 px-4 sm:min-h-[108svh]
       sm:px-6 lg:min-h-[120vh] lg:px-8"
     >

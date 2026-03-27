@@ -3,7 +3,7 @@ import { Navbar } from './navbar';
 
 interface HeroProperties {
   title: string;
-  lastUpdated: string;
+  lastUpdated?: string;
   searchPlaceholder?: string;
   showSearch?: boolean;
 }
@@ -22,7 +22,9 @@ export const Hero = ({
         <h1 className="text-4xl md:text-[62px] font-semibold text-[#232323] mb-6 tracking-tight leading-tight">
           {title}
         </h1>
-        <p className="text-gray-500 mb-12 font-medium text-lg leading-relaxed">Last Update: {lastUpdated}</p>
+        {lastUpdated && (
+          <p className="text-gray-500 mb-12 font-medium text-lg leading-relaxed">Last Update: {lastUpdated}</p>
+        )}
 
         {showSearch && (
           <div className="w-full max-w-2xl relative group bg-white rounded-lg">

@@ -8,24 +8,34 @@ export const CardTransitions = () => {
     const media = gsap.matchMedia();
 
     media.add('(prefers-reduced-motion: no-preference)', () => {
-      const section = document.querySelector<HTMLElement>('[data-home-products]');
+      const section = document.querySelector<HTMLElement>(
+        '[data-home-products]'
+      );
 
       if (!section) {
         return;
       }
 
-      const animationTargets = Array.from(section.querySelectorAll<HTMLElement>('[data-product-animation-target]'));
+      const animationTargets = Array.from(
+        section.querySelectorAll<HTMLElement>('[data-product-animation-target]')
+      );
       const payrollAnimationCleanups: Array<() => void> = [];
 
       const fades = animationTargets
         .map((animationTarget) => {
-          const card = animationTarget.closest<HTMLElement>('[data-product-card]') ?? animationTarget;
-          const svgImages = Array.from(animationTarget.querySelectorAll<SVGElement>('svg'));
+          const card =
+            animationTarget.closest<HTMLElement>('[data-product-card]') ??
+            animationTarget;
+          const svgImages = Array.from(
+            animationTarget.querySelectorAll<SVGElement>('svg')
+          );
           if (svgImages.length === 0) {
             return null;
           }
 
-          const isPayrollCard = animationTarget.dataset.productAnimationTarget === 'payroll-automation';
+          const isPayrollCard =
+            animationTarget.dataset.productAnimationTarget ===
+            'payroll-automation';
 
           return gsap.from(svgImages, {
             autoAlpha: 0,
@@ -63,7 +73,9 @@ export const CardTransitions = () => {
         const allSvgImages = animationTargets.flatMap((target) =>
           Array.from(target.querySelectorAll<SVGElement>('svg'))
         );
-        gsap.set(allSvgImages, { clearProps: 'x,y,opacity,visibility,transform' });
+        gsap.set(allSvgImages, {
+          clearProps: 'x,y,opacity,visibility,transform',
+        });
       };
     });
 

@@ -32,7 +32,7 @@ export const CardTransitions = () => {
             y: 14,
             duration: 1,
             ease: 'power2.out',
-            immediateRender: false,
+            immediateRender: true,
             stagger: 0.08,
             onComplete: isPayrollCard
               ? () => {

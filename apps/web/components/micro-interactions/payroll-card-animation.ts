@@ -94,6 +94,7 @@ export const createPayrollCardAnimation = ({ card, animationTarget, fallbackTrig
 
     progressTween = gsap.to(progressBar, {
       delay: 1,
+      // immediateRender: true,
       attr: { width: progressTargetWidth },
       duration: 1.5,
       ease: 'power2.out',

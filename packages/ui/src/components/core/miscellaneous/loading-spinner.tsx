@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
-import { Loader } from "lucide-react";
+import { cn } from '@workspace/ui/lib/utils';
+import { Loader } from 'lucide-react';
 
 interface LoadingSpinnerProperties {
   size?: string | number; // e.g., 'text-sm', 'text-lg'
@@ -9,8 +9,8 @@ interface LoadingSpinnerProperties {
 
 export const LoadingSpinner = ({
   size = 18,
-  color = "text-primary",
-  speed = "animate-spin",
+  color = 'text-primary',
+  speed = 'animate-spin',
 }: LoadingSpinnerProperties) => {
   return (
     <span className={`flex h-8 w-8 items-center justify-center`}>

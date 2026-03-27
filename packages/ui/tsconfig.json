@@ -1,8 +1,15 @@
 {
   "extends": "@workspace/typescript-config/react-library.json",
   "compilerOptions": {
-    // "baseUrl": ".",
+    "baseUrl": ".",
     "paths": {
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/components/ui/*": ["./src/components/*"],
+      "@/components/shared/*": ["./src/lib/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/context/*": ["./src/context/*"],
       "@workspace/ui/*": ["./src/*"]
     }
   },

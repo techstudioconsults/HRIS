@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { NAV_LINKS } from "@/lib/tools/constants";
-import { ModeToggle } from "@workspace/ui/components/core/layout/ThemeToggle/theme-toggle";
-import { MainButton } from "@workspace/ui/lib/button";
-import { Menu, X } from "lucide-react";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { NAV_LINKS } from '@/lib/tools/constants';
+import { ModeToggle } from '@workspace/ui/components/core/layout/ThemeToggle/theme-toggle';
+import { MainButton } from '@workspace/ui/lib/button';
+import { cn } from '@workspace/ui/lib/utils';
+import { Menu, X } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { cn } from "../../../../../../packages/ui/src/lib/utils";
-import { NavItems } from "./nav-menu-item";
+import { NavItems } from './nav-menu-item';
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -44,7 +44,7 @@ const Navbar = () => {
         />
       </section>
       {isMobileMenuOpen && (
-        <div className={cn("fixed inset-x-0 z-40 w-full bg-white shadow-none lg:hidden")}>
+        <div className={cn('fixed inset-x-0 z-40 w-full bg-white shadow-none lg:hidden')}>
           <div>
             <NavItems className={``} links={NAV_LINKS} isMobile />
           </div>

@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useControllableState } from "@/hooks/use-controllable-state";
-import { cn } from "@/lib/utils";
-import { LucideFileUp, X } from "lucide-react";
-import Image from "next/image";
-import * as React from "react";
-import Dropzone, { type DropzoneProps, type FileRejection } from "react-dropzone";
-import { toast } from "sonner";
+import { Button } from '@workspace/ui/components/button';
+import { Progress } from '@workspace/ui/components/progress';
+import { ScrollArea } from '@workspace/ui/components/scroll-area';
+import { useControllableState } from '@workspace/ui/hooks/use-controllable-state';
+import { cn } from '@workspace/ui/lib/utils';
+import { LucideFileUp, X } from 'lucide-react';
+import Image from 'next/image';
+import * as React from 'react';
+import Dropzone, { type DropzoneProps, type FileRejection } from 'react-dropzone';
+import { toast } from 'sonner';
 
 interface FileUploaderProperties extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -53,7 +53,7 @@ interface FileUploaderProperties extends React.HTMLAttributes<HTMLDivElement> {
    * ```
    * @example accept={["image/png", "image/jpeg"]}
    */
-  accept?: DropzoneProps["accept"];
+  accept?: DropzoneProps['accept'];
 
   /**
    * Maximum file size for the uploader.
@@ -61,7 +61,7 @@ interface FileUploaderProperties extends React.HTMLAttributes<HTMLDivElement> {
    * @default 1024 * 1024 * 2 // 2MB
    * @example maxSize={1024 * 1024 * 2} // 2MB
    */
-  maxSize?: DropzoneProps["maxSize"];
+  maxSize?: DropzoneProps['maxSize'];
 
   /**
    * Maximum number of files for the uploader.
@@ -69,7 +69,7 @@ interface FileUploaderProperties extends React.HTMLAttributes<HTMLDivElement> {
    * @default 1
    * @example maxFiles={5}
    */
-  maxFiles?: DropzoneProps["maxFiles"];
+  maxFiles?: DropzoneProps['maxFiles'];
 
   /**
    * Whether the uploader should accept multiple files.
@@ -94,7 +94,7 @@ export function FileUploader(properties: FileUploaderProperties) {
     onValueChange,
     onUpload,
     progresses,
-    accept = { "image/*": [] },
+    accept = { 'image/*': [] },
     maxSize = 1024 * 1024 * 2,
     maxFiles = 1,
     multiple = false,
@@ -111,7 +111,7 @@ export function FileUploader(properties: FileUploaderProperties) {
   const onDrop = React.useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       if (!multiple && maxFiles === 1 && acceptedFiles.length > 1) {
-        toast.error("Cannot upload more than 1 file at a time");
+        toast.error('Cannot upload more than 1 file at a time');
         return;
       }
 
@@ -123,7 +123,7 @@ export function FileUploader(properties: FileUploaderProperties) {
       const newFiles = acceptedFiles.map((file) =>
         Object.assign(file, {
           preview: URL.createObjectURL(file),
-        }),
+        })
       );
 
       const updatedFiles = files ? [...files, ...newFiles] : newFiles;
@@ -150,7 +150,7 @@ export function FileUploader(properties: FileUploaderProperties) {
       }
     },
 
-    [files, maxFiles, multiple, onUpload, setFiles],
+    [files, maxFiles, multiple, onUpload, setFiles]
   );
 
   function onRemove(index: number) {
@@ -189,11 +189,11 @@ export function FileUploader(properties: FileUploaderProperties) {
           <div
             {...getRootProps()}
             className={cn(
-              "group border-muted-foreground/25 hover:bg-muted/25 relative grid h-52 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed px-5 py-2.5 text-center transition",
-              "ring-offset-background focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden",
-              isDragActive && "border-muted-foreground/50",
-              isDisabled && "pointer-events-none opacity-60",
-              className,
+              'group border-muted-foreground/25 hover:bg-muted/25 relative grid h-52 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed px-5 py-2.5 text-center transition',
+              'ring-offset-background focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden',
+              isDragActive && 'border-muted-foreground/50',
+              isDisabled && 'pointer-events-none opacity-60',
+              className
             )}
             {...dropzoneProperties}
           >
@@ -286,5 +286,5 @@ function FileCard({ file, progress, onRemove }: FileCardProperties) {
 }
 
 function isFileWithPreview(file: File): file is File & { preview: string } {
-  return "preview" in file && typeof file.preview === "string";
+  return 'preview' in file && typeof file.preview === 'string';
 }

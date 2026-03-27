@@ -1,9 +1,9 @@
-import { Input } from "@/components/ui/input";
-import { LucideSearch, X } from "lucide-react";
-import { useState } from "react";
+import { Input } from '@workspace/ui/components/input';
+import { LucideSearch, X } from 'lucide-react';
+import { useState } from 'react';
 
-import SkiButton from "../../button";
-import { ReusableDialog } from "../../dialog/Dialog";
+import { MainButton } from '@workspace/ui/lib';
+import { ReusableDialog } from '@workspace/ui/lib';
 
 export const SearchDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,10 +12,7 @@ export const SearchDialog = () => {
     <ReusableDialog
       hideClose
       trigger={
-        <button
-          aria-label="Open Search Dialog"
-          className="border-neutral-dark-2 rounded-full border p-2"
-        >
+        <button aria-label="Open Search Dialog" className="border-neutral-dark-2 rounded-full border p-2">
           <LucideSearch size={20} />
         </button>
       }
@@ -26,7 +23,7 @@ export const SearchDialog = () => {
       <div className="flex items-center border-b">
         <LucideSearch size={28} />
         <Input className="mx-4 h-[46px] border-0 hover:border-0 hover:ring-0 focus:border-0 focus:ring-0 focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none active:border-0 active:ring-0 active:outline-none" />
-        <SkiButton
+        <MainButton
           size={`icon`}
           isIconOnly
           icon={<X size={28} />}

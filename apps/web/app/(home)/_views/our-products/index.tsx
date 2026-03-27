@@ -1,7 +1,7 @@
 import { OurProductCard } from './_components/product-card';
 import { OurProductsSectionHeader } from './_components/section-header';
 import { productCardsBottomRow, productCardsTopRow } from './constants';
-import { CardTransitions } from './micro-interactions/card-transitions';
+import { CardTransitions } from '../../../../components/micro-interactions/card-transitions';
 
 export const OurProducts = () => {
   return (

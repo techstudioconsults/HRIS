@@ -22,7 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}>
-        <Providers>{children}</Providers>
+        <div id="smooth-wrapper">
+          <div id="smooth-content">
+            <Providers>{children}</Providers>
+          </div>
+        </div>
       </body>
     </html>
   );

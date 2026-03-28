@@ -6,6 +6,30 @@ interface PayrollCardAnimationOptions {
   fallbackTrigger: HTMLElement;
 }
 
+/**
+ * Number of points to pre-sample per path.
+ * 120 points gives sub-pixel accuracy at 60 fps over a 2-second loop
+ * (each frame advances ~0.008 of progress, so we get ~1 sample per frame).
+ */
+const PATH_SAMPLE_COUNT = 120;
+
+/** Pre-sample an SVG path into an array of {x, y} points.
+ *  This is called ONCE at animation setup time, converting N future
+ *  layout-forcing `getPointAtLength` calls into a single O(n) batch,
+ *  after which per-frame updates become a plain array lookup with no
+ *  DOM/layout interaction at all. */
+const samplePathPoints = (
+  path: SVGPathElement,
+  totalLength: number
+): Array<{ x: number; y: number }> => {
+  const points: Array<{ x: number; y: number }> = [];
+  for (let i = 0; i <= PATH_SAMPLE_COUNT; i++) {
+    const pt = path.getPointAtLength((i / PATH_SAMPLE_COUNT) * totalLength);
+    points.push({ x: pt.x, y: pt.y });
+  }
+  return points;
+};
+
 const normalizePathData = (pathData: string) =>
   pathData.trim().replace(/\s+/g, '').toLowerCase();
 
@@ -57,10 +81,10 @@ export const createPayrollCardAnimation = ({
   let progressTween: gsap.core.Tween | null = null;
   let flowTween: gsap.core.Tween | null = null;
   const initialProgressWidth = progressBar?.getAttribute('width') ?? null;
+  // Stores pre-sampled point arrays — no live DOM queries per animation frame.
   const flowMarkers: Array<{
     marker: SVGCircleElement;
-    path: SVGPathElement;
-    totalLength: number;
+    sampledPoints: Array<{ x: number; y: number }>;
   }> = [];
 
   const startCurrentFlowAnimation = () => {
@@ -78,9 +102,14 @@ export const createPayrollCardAnimation = ({
 
     const flowState = { progress: 0 };
 
+    // O(1) array lookup per frame — no layout-forcing DOM queries at all.
     const updateMarkers = () => {
-      flowMarkers.forEach(({ marker, path, totalLength }) => {
-        const point = path.getPointAtLength(totalLength * flowState.progress);
+      flowMarkers.forEach(({ marker, sampledPoints }) => {
+        const idx = Math.min(
+          Math.round(flowState.progress * PATH_SAMPLE_COUNT),
+          PATH_SAMPLE_COUNT
+        );
+        const point = sampledPoints[idx];
         marker.setAttribute('cx', String(point.x));
         marker.setAttribute('cy', String(point.y));
       });
@@ -91,8 +120,10 @@ export const createPayrollCardAnimation = ({
         'http://www.w3.org/2000/svg',
         'circle'
       );
+      // Sample the path once — all future per-frame updates are array lookups.
       const totalLength = path.getTotalLength();
-      const startPoint = path.getPointAtLength(0);
+      const sampledPoints = samplePathPoints(path, totalLength);
+      const startPoint = sampledPoints[0];
 
       marker.setAttribute('r', '2.5');
       marker.setAttribute('fill', '#0f973d');
@@ -111,7 +142,7 @@ export const createPayrollCardAnimation = ({
         markerLayerParent.append(marker);
       }
 
-      flowMarkers.push({ marker, path, totalLength });
+      flowMarkers.push({ marker, sampledPoints });
     });
 
     updateMarkers();

@@ -40,7 +40,7 @@ export const CardTransitions = () => {
           return gsap.from(svgRects, {
             autoAlpha: 0,
             y: 14,
-            duration: 2,
+            duration: 1,
             ease: 'power2.out',
             stagger: 0.5,
             onComplete: isPayrollCard
@@ -55,7 +55,7 @@ export const CardTransitions = () => {
               : undefined,
             scrollTrigger: {
               trigger: card,
-              start: 'top 70%',
+              start: 'top 90%',
               once: true,
               invalidateOnRefresh: true,
             },

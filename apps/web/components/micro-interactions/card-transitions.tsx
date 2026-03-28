@@ -40,10 +40,8 @@ export const CardTransitions = () => {
           return gsap.from(svgRects, {
             autoAlpha: 0,
             y: 14,
-            opacity: 0,
             duration: 2,
             ease: 'power2.out',
-            immediateRender: true,
             stagger: 0.5,
             onComplete: isPayrollCard
               ? () => {

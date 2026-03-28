@@ -1,4 +1,4 @@
-import { gsap } from '../../lib/gsap/gsap';
+import gsap from 'gsap';
 
 interface PayrollCardAnimationOptions {
   card: HTMLElement;

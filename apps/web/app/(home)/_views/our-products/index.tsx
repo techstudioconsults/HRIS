@@ -1,13 +1,22 @@
 import { OurProductCard } from './_components/product-card';
 import { OurProductsSectionHeader } from './_components/section-header';
 import { productCardsBottomRow, productCardsTopRow } from './constants';
-import { CardTransitions } from '../../../../components/micro-interactions/card-transitions';
+// import { CardTransitions } from '../../../../components/micro-interactions/card-transitions';
+import dynamic from 'next/dynamic';
+const CardTransitions = dynamic(() =>
+  import('../../../../components/micro-interactions/card-transitions').then(
+    (module) => module.CardTransitions
+  )
+);
 
 export const OurProducts = () => {
   return (
     <>
       <CardTransitions />
-      <section data-home-products className="bg-background px-4 pb-20 pt-20 sm:px-6 lg:px-8 lg:pb-28">
+      <section
+        data-home-products
+        className="bg-background px-4 pb-20 pt-20 sm:px-6 lg:px-8 lg:pb-28"
+      >
         <div className="mx-auto flex w-full max-w-[1226px] flex-col gap-10 lg:gap-12">
           <OurProductsSectionHeader />
           <div className="space-y-7">

@@ -6,18 +6,28 @@ interface ProductCardProperties {
   isWide?: boolean;
 }
 
-export const OurProductCard = ({ card, isWide = false }: ProductCardProperties) => {
+export const OurProductCard = ({
+  card,
+  isWide = false,
+}: ProductCardProperties) => {
   return (
     <article
-      data-product-card
+      data-product-car
       className="relative overflow-hidden rounded-[13px] border border-zinc-200/80 bg-background"
     >
       <div className="space-y-3 px-6 pb-6 pt-6">
         <h5 className="text-foreground font-semibold">{card.title}</h5>
-        <p className="tracking-[-0.02em] text-sm text-zinc-500">{card.description}</p>
+        <p className="tracking-[-0.02em] text-sm text-zinc-500">
+          {card.description}
+        </p>
       </div>
 
-      <div className={cn('relative px-6 pb-3', isWide ? 'h-80 md:h-[330px] lg:h-84' : 'h-[300px] md:h-80')}>
+      <div
+        className={cn(
+          'relative px-6 pb-3',
+          isWide ? 'h-80 md:h-[330px] lg:h-84' : 'h-[300px] md:h-80'
+        )}
+      >
         <div
           data-product-animation-target={card.animationTarget}
           className="relative size-full overflow-hidden rounded-xl"

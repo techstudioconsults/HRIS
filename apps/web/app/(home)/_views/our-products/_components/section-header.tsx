@@ -15,9 +15,9 @@ export const OurProductsSectionHeader = () => {
         className="max-w-[507px] text-balance text-base tracking-[-0.02em] text-zinc-500 sm:text-lg lg:text-[20px]
        lg:leading-[1.4]"
       >
-        From onboarding to payroll to compliance, manage your entire workforce from one intelligent dashboard.
+        From onboarding to payroll to compliance, manage your entire workforce
+        from one intelligent dashboard.
       </p>
-      ;
     </header>
   );
 };

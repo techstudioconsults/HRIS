@@ -16,8 +16,12 @@ export const SmoothScrollInit = () => {
       return;
     }
 
-    const wrapper = document.querySelector<HTMLElement>(SMOOTH_SCROLL_CONFIG.wrapper);
-    const content = document.querySelector<HTMLElement>(SMOOTH_SCROLL_CONFIG.content);
+    const wrapper = document.querySelector<HTMLElement>(
+      SMOOTH_SCROLL_CONFIG.wrapper
+    );
+    const content = document.querySelector<HTMLElement>(
+      SMOOTH_SCROLL_CONFIG.content
+    );
 
     if (!wrapper || !content) {
       return;

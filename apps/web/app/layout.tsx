@@ -3,6 +3,7 @@ import { Playfair_Display, Work_Sans } from 'next/font/google';
 import './globals.css';
 import { ReactNode } from 'react';
 import { Providers } from '../components/providers';
+import { SmoothScrollInit } from '../components/micro-interactions/smooth-scroll-init';
 
 const fontSans = Work_Sans({
   subsets: ['latin'],
@@ -21,7 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}>
+      <body
+        className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
+      >
+        <SmoothScrollInit />
         <div id="smooth-wrapper">
           <div id="smooth-content">
             <Providers>{children}</Providers>

@@ -1,8 +1,10 @@
+
+
 export default {
   multipass: true,
   plugins: [
     {
-      name: "preset-default",
+      name: 'preset-default',
       params: {
         overrides: {
           // Keep stable selectors for GSAP timelines.
@@ -18,12 +20,12 @@ export default {
     },
     // Keep viewBox for responsive scaling in the app.
     {
-      name: "removeViewBox",
+      name: 'removeViewBox',
       active: false,
     },
-    "sortAttrs",
+    'sortAttrs',
     {
-      name: "removeDimensions",
+      name: 'removeDimensions',
       active: true,
     },
   ],

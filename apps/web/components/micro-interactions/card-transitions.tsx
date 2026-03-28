@@ -26,10 +26,10 @@ export const CardTransitions = () => {
           const card =
             animationTarget.closest<HTMLElement>('[data-product-card]') ??
             animationTarget;
-          const svgImages = Array.from(
-            animationTarget.querySelectorAll<SVGElement>('svg')
+          const svgRects = Array.from(
+            animationTarget.querySelectorAll<SVGRectElement>('svg .rec-one')
           );
-          if (svgImages.length === 0) {
+          if (svgRects.length === 0) {
             return null;
           }
 
@@ -37,13 +37,14 @@ export const CardTransitions = () => {
             animationTarget.dataset.productAnimationTarget ===
             'payroll-automation';
 
-          return gsap.from(svgImages, {
+          return gsap.from(svgRects, {
             autoAlpha: 0,
             y: 14,
-            duration: 1,
+            opacity: 0,
+            duration: 2,
             ease: 'power2.out',
             immediateRender: true,
-            stagger: 0.08,
+            stagger: 0.5,
             onComplete: isPayrollCard
               ? () => {
                   const payrollCleanup = createPayrollCardAnimation({
@@ -56,7 +57,7 @@ export const CardTransitions = () => {
               : undefined,
             scrollTrigger: {
               trigger: card,
-              start: 'top 50%',
+              start: 'top 70%',
               once: true,
               invalidateOnRefresh: true,
             },
@@ -70,10 +71,10 @@ export const CardTransitions = () => {
           fade.kill();
         });
         payrollAnimationCleanups.forEach((cleanup) => cleanup());
-        const allSvgImages = animationTargets.flatMap((target) =>
-          Array.from(target.querySelectorAll<SVGElement>('svg'))
+        const allSvgRects = animationTargets.flatMap((target) =>
+          Array.from(target.querySelectorAll<SVGRectElement>('svg rect'))
         );
-        gsap.set(allSvgImages, {
+        gsap.set(allSvgRects, {
           clearProps: 'x,y,opacity,visibility,transform',
         });
       };

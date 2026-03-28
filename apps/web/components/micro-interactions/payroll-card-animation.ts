@@ -19,21 +19,9 @@ const CURRENT_FLOW_PATHS = new Set(
 );
 
 const getCurrentFlowPaths = (payrollSvg: SVGElement) => {
-  const paths = Array.from(payrollSvg.querySelectorAll<SVGPathElement>('path'));
-  const strokedFlowPaths = paths.filter(
-    (path) => path.getAttribute('stroke')?.toLowerCase() === '#ebe6e6'
+  return Array.from(
+    payrollSvg.querySelectorAll<SVGPathElement>('.current-line')
   );
-  const strictMatches = strokedFlowPaths.filter((path) => {
-    const pathData = path.getAttribute('d');
-    return pathData
-      ? CURRENT_FLOW_PATHS.has(normalizePathData(pathData))
-      : false;
-  });
-
-  // Keep a resilient fallback when SVG path formatting changes.
-  return strictMatches.length > 0
-    ? strictMatches
-    : strokedFlowPaths.slice(0, 4);
 };
 
 const getPayrollProgressElements = (animationTarget: HTMLElement) => {
@@ -80,6 +68,14 @@ export const createPayrollCardAnimation = ({
       return;
     }
 
+    // Insert markers before card/avatar layers so overlaps render above markers.
+    const markerInsertionTarget =
+      payrollSvg.querySelector<SVGGraphicsElement>('rect, circle');
+    const markerLayerParent =
+      markerInsertionTarget?.parentNode instanceof SVGElement
+        ? markerInsertionTarget.parentNode
+        : payrollSvg;
+
     const flowState = { progress: 0 };
 
     const updateMarkers = () => {
@@ -105,7 +101,15 @@ export const createPayrollCardAnimation = ({
       marker.setAttribute('cx', String(startPoint.x));
       marker.setAttribute('cy', String(startPoint.y));
       marker.setAttribute('opacity', '0.95');
-      payrollSvg.append(marker);
+      // insertBefore requires the reference node to be a child of the same parent.
+      if (
+        markerInsertionTarget &&
+        markerInsertionTarget.parentNode === markerLayerParent
+      ) {
+        markerLayerParent.insertBefore(marker, markerInsertionTarget);
+      } else {
+        markerLayerParent.append(marker);
+      }
 
       flowMarkers.push({ marker, path, totalLength });
     });

@@ -26,3 +26,5 @@ export const BuiltForAllTeams = () => {
     </section>
   );
 };
+// className="bg-primary/5 bg-[url('/images/home/techstudio-text.svg')]
+// bg-size-[min(1189px,95vw)_auto] bg-top bg-no-repeat px-4 py-20 sm:px-6 lg:px-8 lg:py-24"

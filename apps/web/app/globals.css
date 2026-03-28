@@ -4,3 +4,7 @@
 @config '../tailwind.config.ts';
 
 
+
+.rec-one{
+    display: none;
+}

@@ -9,10 +9,7 @@ function Accordion({ ...properties }: React.ComponentProps<typeof AccordionPrimi
   return <AccordionPrimitive.Root data-slot="accordion" {...properties} />;
 }
 
-function AccordionItem({
-  className,
-  ...properties
-}: React.ComponentProps<typeof AccordionPrimitive.Item>) {
+function AccordionItem({ className, ...properties }: React.ComponentProps<typeof AccordionPrimitive.Item>) {
   return (
     <AccordionPrimitive.Item
       data-slot="accordion-item"
@@ -38,7 +35,7 @@ function AccordionTrigger({
         {...properties}
       >
         {children}
-        <ChevronDownIcon className="text-muted-foreground pointer-events-none size-6 shrink-0 translate-y-0.5 transition-transform duration-200" />
+        <ChevronDownIcon className="text-muted-foreground pointer-events-none size-6 shrink-0 translate-y-0.5 transition-transform duration-300 ease-out" />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
   );
@@ -52,7 +49,7 @@ function AccordionContent({
   return (
     <AccordionPrimitive.Content
       data-slot="accordion-content"
-      className="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm"
+      className="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down data-[state=closed]:duration-300 data-[state=open]:duration-300 data-[state=closed]:ease-in-out data-[state=open]:ease-in-out overflow-hidden text-sm"
       {...properties}
     >
       <div className={cn('pt-0 pb-4', className)}>{children}</div>

@@ -1,302 +1,157 @@
-/* Animation Utility Classes */
-@utility animate-fade-in {
-  animation: fade-in 300ms ease-in-out;
+/* Minimal animation utilities used across the current apps and shared UI */
+
+@property --radix-accordion-content-height {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
 }
 
-@utility animate-fade-in-fast {
-  animation: fade-in 200ms ease-in-out;
+@utility animate-in {
+    animation-name: ui-enter;
+    animation-duration: 300ms;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-fill-mode: both;
 }
 
-@utility animate-fade-in-slow {
-  animation: fade-in 500ms ease-in-out;
+@utility animate-out {
+    animation-name: ui-exit;
+    animation-duration: 300ms;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-fill-mode: both;
 }
 
-@utility animate-slide-in-top {
-  animation: slide-in-from-top 300ms ease-in-out;
+@utility fade-in-0 {
+    --tw-enter-opacity: 0;
 }
 
-@utility animate-slide-in-bottom {
-  animation: slide-in-from-bottom 300ms ease-in-out;
+@utility fade-out-0 {
+    --tw-exit-opacity: 0;
 }
 
-@utility animate-slide-in-left {
-  animation: slide-in-from-left 300ms ease-in-out;
+@utility zoom-in-95 {
+    --tw-enter-scale: .95;
 }
 
-@utility animate-slide-in-right {
-  animation: slide-in-from-right 300ms ease-in-out;
+@utility zoom-out-95 {
+    --tw-exit-scale: .95;
 }
 
-@utility animate-slide-out-top {
-  animation: slide-out-to-top 300ms ease-in-out;
+@utility slide-in-from-top-2 {
+    --tw-enter-translate-y: -0.5rem;
 }
 
-@utility animate-slide-out-bottom {
-  animation: slide-out-to-bottom 300ms ease-in-out;
+@utility slide-in-from-bottom-2 {
+    --tw-enter-translate-y: 0.5rem;
 }
 
-@utility animate-slide-out-left {
-  animation: slide-out-to-left 300ms ease-in-out;
+@utility slide-in-from-left-2 {
+    --tw-enter-translate-x: -0.5rem;
 }
 
-@utility animate-slide-out-right {
-  animation: slide-out-to-right 300ms ease-in-out;
+@utility slide-in-from-right-2 {
+    --tw-enter-translate-x: 0.5rem;
 }
 
-@utility animate-scale-in {
-  animation: scale-in 300ms ease-in-out;
+@utility slide-in-from-top {
+    --tw-enter-translate-y: -100%;
 }
 
-@utility animate-scale-out {
-  animation: scale-out 300ms ease-in-out;
+@utility slide-in-from-bottom {
+    --tw-enter-translate-y: 100%;
 }
 
-@utility animate-bounce-in {
-  animation: bounce-in 500ms ease-out;
+@utility slide-in-from-left {
+    --tw-enter-translate-x: -100%;
 }
 
-/* Combined Animation Utilities */
+@utility slide-in-from-right {
+    --tw-enter-translate-x: 100%;
+}
+
+@utility slide-out-to-top {
+    --tw-exit-translate-y: -100%;
+}
+
+@utility slide-out-to-bottom {
+    --tw-exit-translate-y: 100%;
+}
+
+@utility slide-out-to-left {
+    --tw-exit-translate-x: -100%;
+}
+
+@utility slide-out-to-right {
+    --tw-exit-translate-x: 100%;
+}
+
+@utility animate-accordion-down {
+    animation: accordion-down 200ms ease-in-out;
+}
+
+@utility animate-accordion-up {
+    animation: accordion-up 200ms ease-in-out;
+}
+
 @utility animate-entrance {
-  animation:
-    fade-in 300ms ease-in-out,
-    slide-in-from-top 300ms ease-in-out;
+    animation: fade-in 300ms ease-in-out, ui-slide-in-from-top 300ms ease-in-out;
 }
 
-@utility animate-entrance-fast {
-  animation:
-    fade-in 200ms ease-in-out,
-    slide-in-from-top 200ms ease-in-out;
-}
-
-@utility animate-entrance-bottom {
-  animation:
-    fade-in 300ms ease-in-out,
-    slide-in-from-bottom 300ms ease-in-out;
-}
-
-@utility animate-entrance-left {
-  animation:
-    fade-in 300ms ease-in-out,
-    slide-in-from-left 300ms ease-in-out;
-}
-
-@utility animate-entrance-right {
-  animation:
-    fade-in 300ms ease-in-out,
-    slide-in-from-right 300ms ease-in-out;
-}
-
-@utility animate-exit {
-  animation:
-    fade-out 300ms ease-in-out,
-    slide-out-to-top 300ms ease-in-out;
-}
-
-@utility animate-exit-bottom {
-  animation:
-    fade-out 300ms ease-in-out,
-    slide-out-to-bottom 300ms ease-in-out;
-}
-
-/* Transition Utilities */
-@utility transition-smooth {
-  transition: all 0.3s ease-in-out;
-}
-
-@utility transition-smooth-fast {
-  transition: all 0.2s ease-in-out;
-}
-
-@utility transition-smooth-slow {
-  transition: all 0.5s ease-in-out;
-}
-
-@utility hover-lift {
-  transition: all 0.3s ease-in-out;
-  &:hover {
-    transform: translateY(-0.25rem);
-    box-shadow:
-      0 10px 15px -3px rgb(0 0 0 / 0.1),
-      0 4px 6px -4px rgb(0 0 0 / 0.1);
-  }
-}
-
-@utility hover-grow {
-  transition: all 0.3s ease-in-out;
-  &:hover {
-    transform: scale(1.05);
-  }
-}
-
-@utility hover-shrink {
-  transition: all 0.3s ease-in-out;
-  &:hover {
-    transform: scale(0.95);
-  }
-}
-
-@utility interactive {
-  transition: all 0.3s ease-in-out;
-  &:hover {
-    opacity: 0.8;
-  }
-  &:active {
-    transform: scale(0.95);
-  }
-}
-
-@utility interactive-lift {
-  transition: all 0.3s ease-in-out;
-  &:hover {
-    transform: translateY(-0.25rem);
-    box-shadow:
-      0 4px 6px -1px rgb(0 0 0 / 0.1),
-      0 2px 4px -2px rgb(0 0 0 / 0.1);
-  }
-  &:active {
-    transform: translateY(0);
-  }
+@layer base {
+    :where(.animate-in, .animate-out) {
+        animation-duration: 300ms;
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    }
 }
 
 /* Keyframe Definitions */
 @keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
-@keyframes fade-out {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+@keyframes ui-slide-in-from-top {
+    from {
+        transform: translateY(-1rem);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
-@keyframes slide-in-from-top {
-  from {
-    transform: translateY(-1rem);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+@keyframes ui-enter {
+    from {
+        opacity: var(--tw-enter-opacity, 1);
+        transform: translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0) scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1));
+    }
 }
 
-@keyframes slide-in-from-bottom {
-  from {
-    transform: translateY(1rem);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+@keyframes ui-exit {
+    to {
+        opacity: var(--tw-exit-opacity, 1);
+        transform: translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1));
+    }
 }
 
-@keyframes slide-in-from-left {
-  from {
-    transform: translateX(-1rem);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+@keyframes accordion-down {
+    from {
+        height: 0;
+    }
+    to {
+        height: var(--radix-accordion-content-height, 0px);
+    }
 }
 
-@keyframes slide-in-from-right {
-  from {
-    transform: translateX(1rem);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slide-out-to-top {
-  from {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(-1rem);
-    opacity: 0;
-  }
-}
-
-@keyframes slide-out-to-bottom {
-  from {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(1rem);
-    opacity: 0;
-  }
-}
-
-@keyframes slide-out-to-left {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(-1rem);
-    opacity: 0;
-  }
-}
-
-@keyframes slide-out-to-right {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(1rem);
-    opacity: 0;
-  }
-}
-
-@keyframes scale-in {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes scale-out {
-  from {
-    transform: scale(1);
-    opacity: 1;
-  }
-  to {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-}
-
-@keyframes bounce-in {
-  0% {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.02);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+@keyframes accordion-up {
+    from {
+        height: var(--radix-accordion-content-height, 0px);
+    }
+    to {
+        height: 0;
+    }
 }

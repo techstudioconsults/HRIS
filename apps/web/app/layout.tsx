@@ -1,14 +1,15 @@
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Playfair_Display, Work_Sans } from 'next/font/google';
 
 import './globals.css';
+import { ReactNode } from 'react';
 import { Providers } from '../components/providers';
 
-const fontSans = Geist({
+const fontSans = Work_Sans({
   subsets: ['latin'],
   variable: '--font-sans',
 });
 
-const fontMono = Geist_Mono({
+const fontMono = Playfair_Display({
   subsets: ['latin'],
   variable: '--font-mono',
 });
@@ -16,11 +17,14 @@ const fontMono = Geist_Mono({
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}>
+      <body
+        className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
+      >
+        {/*<SmoothScrollInit />*/}
         <Providers>{children}</Providers>
       </body>
     </html>

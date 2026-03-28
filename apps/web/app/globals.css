@@ -4,3 +4,6 @@
 @config '../tailwind.config.ts';
 
 
+.rec-one {
+    visibility: hidden;
+}

@@ -9,13 +9,22 @@ const nextConfig = {
             loader: '@svgr/webpack',
             options: {
               svgo: false,
-
             },
           },
         ],
         as: '*.js',
       },
     },
+  },
+  images: {
+    remotePatterns: [
+      {
+        hostname: 'cdn.dummyjson.com',
+      },
+      {
+        hostname: 'res.cloudinary.com',
+      },
+    ],
   },
 };
 

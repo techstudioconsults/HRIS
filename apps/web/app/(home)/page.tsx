@@ -1,11 +1,11 @@
-import { BuiltForAllTeams, Hero, OurProducts } from './_views';
-import { OrganizationOnboarding } from './_views/organization-onboarding';
+import { BuiltForAllTeams, Hero, OrganizationOnboarding } from './_views';
+import { LazyOurProducts } from './_components/lazy-our-products-section';
 
 export default function Page() {
   return (
     <main className="relative">
       <Hero />
-      <OurProducts />
+      <LazyOurProducts />
       <BuiltForAllTeams />
       <OrganizationOnboarding />
     </main>

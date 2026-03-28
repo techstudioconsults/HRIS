@@ -26,11 +26,7 @@ export default function RootLayout({
         className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
       >
         {/*<SmoothScrollInit />*/}
-        <div id="smooth-wrapper">
-          <div id="smooth-content">
-            <Providers>{children}</Providers>
-          </div>
-        </div>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

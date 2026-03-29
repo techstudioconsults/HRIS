@@ -17,9 +17,9 @@
         <circle cx="297.588" cy="63.369" r="12.414" fill="url(#pattern1_6028_34635)" stroke="#fff" stroke-width=".926"/>
         <circle cx="317.787" cy="63.369" r="12.414" fill="url(#pattern2_6028_34635)" stroke="#fff" stroke-width=".926"/>
         <g clip-path="url(#clip0_6028_34635)">
-            <rect width="318.332" height="12" x="12.332" y="83.869" fill="#f5f6f7" filter="url(#homeRectDropShadow)"
+            <rect id="payroll-progress-track" width="318.332" height="12" x="12.332" y="83.869" fill="#f5f6f7" filter="url(#homeRectDropShadow)"
                   rx="6"/>
-            <rect id="payroll-progress-bar" height="12" x="12.289" y="83.869" fill="#0f973d"
+            <rect id="payroll-progress-bar" width="" height="12" x="12.289" y="83.869" fill="#0f973d"
                   filter="url(#homeRectDropShadow)" rx="6"/>
         </g>
         <path fill="#6a717d"

@@ -157,7 +157,7 @@ export const createPayrollCardAnimation = ({
     const trackWidth = Number.parseFloat(
       trackRect?.getAttribute('width') ?? '0'
     );
-    const progressTargetWidth = trackWidth > 0 ? trackWidth : 40;
+    const progressTargetWidth = trackWidth > 0 ? trackWidth * 0.4 : 40;
 
     gsap.set(progressBar, { attr: { width: 0 } });
 

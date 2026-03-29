@@ -34,7 +34,12 @@ export const Hero = ({
               />
             </div>
             <input
-              type="text"
+              id="policy-search"
+              name="policySearch"
+              type="search"
+              autoComplete="off"
+              inputMode="search"
+              aria-label="Search policies"
               placeholder={searchPlaceholder}
               className="w-full h-12 pl-16 pr-8 rounded-lg border-none bg-white/100 shadow-md focus-visible:ring-2 focus-visible:ring-blue-400 text-lg text-gray-700"
             />

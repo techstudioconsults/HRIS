@@ -21,8 +21,8 @@ export default function NotFound() {
           </h1>
 
           <p className="text-gray-500 text-lg md:text-xl max-w-xl leading-relaxed">
-            Oops! The page you're looking for doesn't exist or may have been
-            moved. Let's get you back on track.
+            Oops! The page you&apos;re looking for doesn&apos;t exist or may
+            have been moved. Let&apos;s get you back on track.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">

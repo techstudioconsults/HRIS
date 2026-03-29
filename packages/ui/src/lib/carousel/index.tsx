@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Autoplay from 'embla-carousel-autoplay';
 
 import {
   Avatar,
@@ -33,6 +34,8 @@ type TestimonialCarouselProps = Pick<
   className?: string;
   cardClassName?: string;
   showControls?: boolean;
+  autoScroll?: boolean;
+  autoScrollDelayMs?: number;
 };
 
 const getFallback = (item: TestimonialCarouselItem) => {
@@ -54,7 +57,20 @@ export const TestimonialCarousel = ({
   className,
   cardClassName,
   showControls = true,
+  autoScroll = true,
+  autoScrollDelayMs = 5000,
 }: TestimonialCarouselProps) => {
+  const mergedPlugins = plugins ? [...plugins] : [];
+
+  if (autoScroll && items.length > 1) {
+    mergedPlugins.push(
+      Autoplay({
+        delay: autoScrollDelayMs,
+        stopOnFocusIn: true,
+      })
+    );
+  }
+
   if (!items.length) return null;
 
   return (
@@ -67,7 +83,7 @@ export const TestimonialCarousel = ({
           loop: items.length > 1,
           ...opts,
         }}
-        plugins={plugins}
+        plugins={mergedPlugins}
         setApi={setApi}
         className="mx-auto w-full max-w-[980px] pb-16 md:pb-0"
       >
@@ -103,7 +119,7 @@ export const TestimonialCarousel = ({
                     />
                   </svg>
                   <blockquote className="my-7 max-w-3xl text-left text-base leading-[1.35] text-zinc-700 sm:text-[26px]">
-                    "{item.quote}"
+                    &ldquo;{item.quote}&rdquo;
                   </blockquote>
                   <footer className="flex items-center gap-3 text-left">
                     <Avatar className="size-10 border border-zinc-200">

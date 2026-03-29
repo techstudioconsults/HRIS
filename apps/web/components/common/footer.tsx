@@ -54,7 +54,13 @@ export const Footer = () => {
             </h4>
             <div className="flex flex-col lg:flex-row gap-2 max-w-md">
               <input
+                id="newsletter-email"
+                name="newsletterEmail"
+                type="email"
+                autoComplete="email"
+                inputMode="email"
                 placeholder="Email address"
+                aria-label="Email address"
                 className="bg-white border-gray-100 border focus-visible:ring-0 rounded-[6px] h-[52px] px-5 text-black"
               />
               <Button className="rounded-[6px] bg-primary hover:bg-primary/80 text-white px-8 h-[52px] font-bold">

@@ -4,6 +4,7 @@ import {
   OrganizationOnboarding,
   OurProducts,
 } from './_views';
+import Testimonial from './_views/Testimonial';
 
 export default function Page() {
   return (
@@ -12,6 +13,7 @@ export default function Page() {
       <OurProducts />
       <BuiltForAllTeams />
       <OrganizationOnboarding />
+      <Testimonial />
     </main>
   );
 }

@@ -1,9 +1,43 @@
-/* Local Tailwind entrypoint for apps/web so editor tooling can detect the app. */
 @import '@workspace/ui/globals.css';
-
-@config '../tailwind.config.ts';
-
 
 .rec-one {
     visibility: hidden;
+}
+
+.stepper-track {
+    --stepper-indicator-top: 0px;
+    --stepper-indicator-height: 0px;
+    position: relative;
+}
+
+.stepper-track::before {
+    position: absolute;
+    display: block;
+    content: '';
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 100%;
+    border-radius: 20px;
+    background: lightgrey;
+}
+
+.stepper-track::after {
+    position: absolute;
+    display: block;
+    content: '';
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: var(--stepper-indicator-height);
+    border-radius: 16px;
+    background: var(--primary);
+    transform: translateY(var(--stepper-indicator-top));
+    transition: transform 300ms ease-out, height 300ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stepper-track::after {
+        transition: none;
+    }
 }

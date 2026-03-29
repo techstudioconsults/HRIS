@@ -13,7 +13,7 @@ export const OnboardingStepCard = ({
   onSelect,
 }: OnboardingStepCardProperties) => {
   return (
-    <article className="relative">
+    <article className="relative pl-8">
       <button
         type="button"
         onClick={onSelect}

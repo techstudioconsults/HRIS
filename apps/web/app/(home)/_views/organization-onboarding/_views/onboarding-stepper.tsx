@@ -8,8 +8,19 @@ import {
   type CSSProperties,
 } from 'react';
 import { onboardingSteps } from '../constants';
-import { OnboardingStepPreview } from '../_components/onboarding-step-preview';
 import { OnboardingStepCard } from '../_components/onboarding-step-card';
+import dynamic from 'next/dynamic';
+import { SuspenseLoading } from '@workspace/ui/lib';
+const OnboardingStepPreview = dynamic(
+  () =>
+    import('../_components/onboarding-step-preview').then(
+      (module) => module.OnboardingStepPreview
+    ),
+  {
+    ssr: false,
+    loading: () => <SuspenseLoading />,
+  }
+);
 
 const STEP_AUTO_ADVANCE_INTERVAL_MS = 3000;
 

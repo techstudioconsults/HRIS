@@ -1,8 +1,20 @@
+'use client';
+
 import React from 'react';
-import { BlurImage } from '@workspace/ui/components/core/miscellaneous/blur-image';
 import { Emphasis } from '../../../_components/Emphasis';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
-import { MainButton } from '@workspace/ui/lib';
+import { MainButton, SuspenseLoading } from '@workspace/ui/lib';
+import dynamic from 'next/dynamic';
+const BlurImage = dynamic(
+  () =>
+    import('@workspace/ui/components/core/miscellaneous/blur-image').then(
+      (module) => module.BlurImage
+    ),
+  {
+    ssr: false,
+    loading: () => <SuspenseLoading />,
+  }
+);
 
 export const TourBanner = () => {
   return (

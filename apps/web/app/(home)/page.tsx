@@ -4,6 +4,8 @@ import {
   OrganizationOnboarding,
   OurProducts,
 } from './_views';
+import { Testimonial } from './_views/Testimonial';
+import { FAQs } from './_views/frequently-asked-questions';
 
 export default function Page() {
   return (
@@ -12,6 +14,8 @@ export default function Page() {
       <OurProducts />
       <BuiltForAllTeams />
       <OrganizationOnboarding />
+      <Testimonial />
+      <FAQs />
     </main>
   );
 }

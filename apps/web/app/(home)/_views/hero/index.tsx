@@ -12,10 +12,6 @@ export const Hero = () => {
       sm:px-6 lg:min-h-[120vh] lg:px-8"
     >
       <HeroBackground />
-      <div
-        className="pointer-events-none fixed top-6 z-999 hidden h-16 w-[min(1068px,calc(100%-3rem))]
-        rounded-xl bg-background shadow-md lg:block"
-      />
       <section
         className="z-1 mx-auto w-full max-w-6xl pt-20 text-center sm:pt-28 md:pt-32 lg:pt-[20vh]
         mask-[linear-gradient(to_bottom,black_0%,black_58%,transparent_100%)]

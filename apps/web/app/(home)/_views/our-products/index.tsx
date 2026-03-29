@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { OurProductsSectionHeader } from './_components/section-header';
 import { productCardsBottomRow, productCardsTopRow } from './constants';
 import { OurProductCard } from './_components/product-card';
+import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 const CardTransitions = dynamic(
   () =>
     import('../../../../components/micro-interactions/card-transitions').then(
@@ -21,7 +22,7 @@ export const OurProducts = () => {
         data-home-products
         className="bg-background px-4 pb-20 pt-20 sm:px-6 lg:px-8 lg:pb-28"
       >
-        <div className="mx-auto flex w-full max-w-[1226px] flex-col gap-10 lg:gap-12">
+        <Wrapper>
           <OurProductsSectionHeader />
           <div className="space-y-7">
             <div className="grid gap-[37px] md:grid-cols-2 xl:grid-cols-3">
@@ -40,7 +41,7 @@ export const OurProducts = () => {
               </div>
             </div>
           </div>
-        </div>
+        </Wrapper>
       </section>
     </>
   );

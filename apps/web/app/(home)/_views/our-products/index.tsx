@@ -1,13 +1,7 @@
-import { OurProductCard } from './_components/product-card';
 import { OurProductsSectionHeader } from './_components/section-header';
 import { productCardsBottomRow, productCardsTopRow } from './constants';
-// import { CardTransitions } from '../../../../components/micro-interactions/card-transitions';
-import dynamic from 'next/dynamic';
-const CardTransitions = dynamic(() =>
-  import('../../../../components/micro-interactions/card-transitions').then(
-    (module) => module.CardTransitions
-  )
-);
+import { CardTransitions } from '../../../../components/micro-interactions/card-transitions';
+import { OurProductCard } from './_components/product-card';
 
 export const OurProducts = () => {
   return (

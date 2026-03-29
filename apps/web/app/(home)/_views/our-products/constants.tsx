@@ -1,12 +1,24 @@
-import { lazy, type ComponentType } from 'react';
+import dynamic from 'next/dynamic';
+import type { ComponentType, SVGProps } from 'react';
 
-// Lazy-loaded so each SVG's JS chunk is deferred out of the initial bundle
-// and only fetched when the card is about to render.
-const HomeImg2 = lazy(() => import('~/images/home/home-img-2.svg'));
-const HomeImg3 = lazy(() => import('~/images/home/home-img-3.svg'));
-const HomeImg4 = lazy(() => import('~/images/home/home-img-4.svg'));
-const HomeImg5 = lazy(() => import('~/images/home/home-img-5.svg'));
-const HomeImg6 = lazy(() => import('~/images/home/home-img-6.svg'));
+// Dynamically loaded so each SVG's JS chunk is deferred out of the initial bundle.
+const HomeImg2 = dynamic<SVGProps<SVGSVGElement>>(
+  () => import('~/images/home/home-img-2.svg')
+);
+const HomeImg3 = dynamic<SVGProps<SVGSVGElement>>(
+  () => import('~/images/home/home-img-3.svg')
+);
+const HomeImg4 = dynamic<SVGProps<SVGSVGElement>>(
+  () => import('~/images/home/home-img-4.svg')
+);
+const HomeImg5 = dynamic<SVGProps<SVGSVGElement>>(
+  () => import('~/images/home/home-img-5.svg')
+);
+const HomeImg6 = dynamic<SVGProps<SVGSVGElement>>(
+  () => import('~/images/home/home-img-6.svg')
+);
+
+type SvgComponent = ComponentType<SVGProps<SVGSVGElement>>;
 
 export type ProductCardAnimationTarget =
   | 'employee-management'
@@ -18,8 +30,8 @@ export type ProductCardAnimationTarget =
 export interface ProductCardItem {
   title: string;
   description: string;
-  /** A lazy React component — render as <ImageSrc /> inside a <Suspense> boundary. */
-  ImageSrc: ComponentType;
+  /** Render as <ImageSrc /> inside a <Suspense> boundary. */
+  ImageSrc: SvgComponent;
   imageAlt: string;
   animationTarget: ProductCardAnimationTarget;
 }

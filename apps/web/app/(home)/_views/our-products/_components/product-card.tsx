@@ -1,5 +1,7 @@
 import type { ProductCardItem } from '../constants';
 import { cn } from '@workspace/ui/lib/utils';
+import { Suspense } from 'react';
+import { SuspenseLoading } from '@workspace/ui/lib';
 
 interface ProductCardProperties {
   card: ProductCardItem;
@@ -23,7 +25,6 @@ export const OurProductCard = ({
           {card.description}
         </p>
       </div>
-
       <div
         className={cn(
           'relative px-6 pb-3',
@@ -34,7 +35,9 @@ export const OurProductCard = ({
           data-product-animation-target={card.animationTarget}
           className="relative size-full overflow-hidden rounded-xl"
         >
-          <ImageSrc />
+          <Suspense fallback={<SuspenseLoading />}>
+            <ImageSrc />
+          </Suspense>
         </div>
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-background to-transparent" />
       </div>

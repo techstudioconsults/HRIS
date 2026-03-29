@@ -1,7 +1,17 @@
+'use client';
+
+import dynamic from 'next/dynamic';
+
 import { OurProductsSectionHeader } from './_components/section-header';
 import { productCardsBottomRow, productCardsTopRow } from './constants';
-import { CardTransitions } from '../../../../components/micro-interactions/card-transitions';
 import { OurProductCard } from './_components/product-card';
+const CardTransitions = dynamic(
+  () =>
+    import('../../../../components/micro-interactions/card-transitions').then(
+      (module) => module.CardTransitions
+    ),
+  { ssr: false }
+);
 
 export const OurProducts = () => {
   return (

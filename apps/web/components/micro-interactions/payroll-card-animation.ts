@@ -60,11 +60,8 @@ const getPayrollProgressElements = (animationTarget: HTMLElement) => {
     };
   }
 
-  const rects = Array.from(payrollSvg.querySelectorAll<SVGRectElement>('rect'));
-  const trackRect =
-    rects.find((rect) => rect.getAttribute('fill') === '#f5f6f7') ?? null;
-  const progressBar =
-    rects.find((rect) => rect.getAttribute('fill') === '#0f973d') ?? null;
+  const trackRect = payrollSvg.querySelector(`#payroll-progress-track`);
+  const progressBar = payrollSvg.querySelector(`#payroll-progress-bar`);
   const currentFlowPaths = getCurrentFlowPaths(payrollSvg);
 
   return { progressBar, trackRect, payrollSvg, currentFlowPaths };
@@ -149,7 +146,7 @@ export const createPayrollCardAnimation = ({
 
     flowTween = gsap.to(flowState, {
       progress: 1,
-      duration: 2.5,
+      duration: 1,
       ease: 'none',
       repeat: -1,
       onUpdate: updateMarkers,
@@ -160,19 +157,18 @@ export const createPayrollCardAnimation = ({
     const trackWidth = Number.parseFloat(
       trackRect?.getAttribute('width') ?? '0'
     );
-    const progressTargetWidth = trackWidth > 0 ? trackWidth * 0.4 : 40;
+    const progressTargetWidth = trackWidth > 0 ? trackWidth : 40;
 
     gsap.set(progressBar, { attr: { width: 0 } });
 
     progressTween = gsap.to(progressBar, {
-      delay: 1,
       attr: { width: progressTargetWidth },
       duration: 1.5,
       ease: 'power2.out',
-      onStart: startCurrentFlowAnimation,
+      onComplete: startCurrentFlowAnimation,
       scrollTrigger: {
         trigger: triggerElement,
-        start: 'top 50%',
+        start: 'top 100%',
         invalidateOnRefresh: true,
       },
     });

@@ -168,7 +168,7 @@ export const createPayrollCardAnimation = ({
       onComplete: startCurrentFlowAnimation,
       scrollTrigger: {
         trigger: triggerElement,
-        start: 'top 90%',
+        start: 'top 100%',
         invalidateOnRefresh: true,
       },
     });

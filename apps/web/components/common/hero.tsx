@@ -1,5 +1,4 @@
 import { LucideSearch } from 'lucide-react';
-import { Navbar } from './navbar';
 
 interface HeroProperties {
   title: string;
@@ -16,8 +15,6 @@ export const Hero = ({
 }: HeroProperties) => {
   return (
     <section className="relative min-h-[355px] pt-32 pb-16 px-6 md:px-12 bg-[url('/images/hero-bg.svg')] bg-cover bg-center overflow-hidden">
-      <Navbar />
-
       <div className="max-w-7xl mx-auto text-center relative z-10 flex flex-col items-center">
         <h1 className="text-4xl md:text-[62px] font-semibold text-[#232323] mb-6 tracking-tight leading-tight">
           {title}

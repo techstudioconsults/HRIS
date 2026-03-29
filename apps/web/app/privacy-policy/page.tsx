@@ -1,14 +1,9 @@
-import {
-  LandingLayout,
-  Hero,
-  PolicyContent,
-  CTA,
-} from '../../components/common';
+import { Hero, PolicyContent, CTA } from '../../components/common';
 import { PRIVACY_POLICY_CONTENT } from '../../constants/privacy-policy';
 
 export default function PrivacyPolicyPage() {
   return (
-    <LandingLayout>
+    <>
       <Hero
         title={PRIVACY_POLICY_CONTENT.intro.title}
         lastUpdated={PRIVACY_POLICY_CONTENT.lastUpdated}
@@ -19,6 +14,6 @@ export default function PrivacyPolicyPage() {
         sections={PRIVACY_POLICY_CONTENT.sections}
       />
       <CTA />
-    </LandingLayout>
+    </>
   );
 }

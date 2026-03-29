@@ -52,7 +52,7 @@ export const Footer = () => {
             <h4 className="font-semibold text-[#232323] text-[18px]">
               Subscribe for Our Newsletter
             </h4>
-            <div className="flex gap-2 max-w-md">
+            <div className="flex flex-col lg:flex-row gap-2 max-w-md">
               <input
                 placeholder="Email address"
                 className="bg-white border-gray-100 border focus-visible:ring-0 rounded-[6px] h-[52px] px-5 text-black"

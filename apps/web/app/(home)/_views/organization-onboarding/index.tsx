@@ -1,7 +1,21 @@
+'use client';
+
 import { OrganizationOnboardingSectionHeader } from './_components/section-header';
 import { OnboardingStepCard } from './_components/onboarding-step-card';
-import { OnboardingPreview } from './_components/onboarding-preview';
 import { onboardingSteps } from './constants';
+import dynamic from 'next/dynamic';
+import { SuspenseLoading } from '@workspace/ui/lib';
+
+const OnboardingPreview = dynamic(
+  () =>
+    import('./_components/onboarding-preview').then(
+      (module) => module.OnboardingPreview
+    ),
+  {
+    ssr: false,
+    loading: () => <SuspenseLoading />,
+  }
+);
 
 export const OrganizationOnboarding = () => {
   return (

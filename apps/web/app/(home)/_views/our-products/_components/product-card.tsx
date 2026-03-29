@@ -15,7 +15,7 @@ export const OurProductCard = ({
 
   return (
     <article
-      data-product-car
+      data-product-card
       className="relative overflow-hidden rounded-[13px] border border-zinc-200/80 bg-background"
     >
       <div className="space-y-3 px-6 pb-6 pt-6">

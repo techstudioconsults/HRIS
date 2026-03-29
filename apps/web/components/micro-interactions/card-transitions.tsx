@@ -18,6 +18,19 @@ const cancelIdle = (id: number): void =>
     ? cancelIdleCallback(id)
     : clearTimeout(id);
 
+const MAX_TARGET_SCAN_ATTEMPTS = 30;
+
+const getSection = (): HTMLElement | null =>
+  document.querySelector<HTMLElement>('[data-home-products]');
+
+const hasAnimationRects = (section: HTMLElement): boolean =>
+  Array.from(
+    section.querySelectorAll<HTMLElement>('[data-product-animation-target]')
+  ).some(
+    (target) =>
+      target.querySelectorAll<SVGRectElement>('svg .rec-one').length > 0
+  );
+
 export const CardTransitions = () => {
   useGSAP(() => {
     // Create an empty context now so we have a stable reference for cleanup,
@@ -26,88 +39,116 @@ export const CardTransitions = () => {
       // Intentionally empty — populated via ctx.add() on idle.
     });
 
+    let rafId: number | null = null;
+
     const idleId = scheduleIdle(() => {
       // ctx.add() registers everything created inside into the existing context,
       // so ctx.revert() in the cleanup below will kill them all correctly.
-      ctx.add(() => {
-        const media = gsap.matchMedia();
+      const runAnimations = () =>
+        ctx.add(() => {
+          const media = gsap.matchMedia();
 
-        media.add('(prefers-reduced-motion: no-preference)', () => {
-          const section = document.querySelector<HTMLElement>(
-            '[data-home-products]'
-          );
+          media.add('(prefers-reduced-motion: no-preference)', () => {
+            const section = getSection();
 
-          if (!section) return;
+            if (!section) return;
 
-          const animationTargets = Array.from(
-            section.querySelectorAll<HTMLElement>(
-              '[data-product-animation-target]'
-            )
-          );
-          const payrollAnimationCleanups: Array<() => void> = [];
-
-          const fades = animationTargets
-            .map((animationTarget) => {
-              const card =
-                animationTarget.closest<HTMLElement>('[data-product-card]') ??
-                animationTarget;
-              const svgRects = Array.from(
-                animationTarget.querySelectorAll<SVGRectElement>('svg .rec-one')
-              );
-              if (svgRects.length === 0) return null;
-
-              const isPayrollCard =
-                animationTarget.dataset.productAnimationTarget ===
-                'payroll-automation';
-
-              return gsap.from(svgRects, {
-                autoAlpha: 0,
-                y: 14,
-                duration: 1,
-                ease: 'power2.out',
-                stagger: 0.5,
-                onComplete: isPayrollCard
-                  ? () => {
-                      const cleanup = createPayrollCardAnimation({
-                        card,
-                        animationTarget,
-                        fallbackTrigger: section,
-                      });
-                      payrollAnimationCleanups.push(cleanup);
-                    }
-                  : undefined,
-                scrollTrigger: {
-                  trigger: card,
-                  start: 'top 90%',
-                  once: true,
-                  invalidateOnRefresh: true,
-                },
-              });
-            })
-            .filter((fade): fade is gsap.core.Tween => fade !== null);
-
-          return () => {
-            fades.forEach((fade) => {
-              fade.scrollTrigger?.kill();
-              fade.kill();
-            });
-            payrollAnimationCleanups.forEach((cleanup) => cleanup());
-            const allSvgRects = animationTargets.flatMap((target) =>
-              Array.from(target.querySelectorAll<SVGRectElement>('svg rect'))
+            const animationTargets = Array.from(
+              section.querySelectorAll<HTMLElement>(
+                '[data-product-animation-target]'
+              )
             );
-            gsap.set(allSvgRects, {
-              clearProps: 'x,y,opacity,visibility,transform',
-            });
-          };
+            const payrollAnimationCleanups: Array<() => void> = [];
+
+            const fades = animationTargets
+              .map((animationTarget) => {
+                const card =
+                  animationTarget.closest<HTMLElement>('[data-product-card]') ??
+                  animationTarget;
+                const svgRects = Array.from(
+                  animationTarget.querySelectorAll<SVGRectElement>(
+                    'svg .rec-one'
+                  )
+                );
+                if (svgRects.length === 0) return null;
+
+                const isPayrollCard =
+                  animationTarget.dataset.productAnimationTarget ===
+                  'payroll-automation';
+
+                return gsap.from(svgRects, {
+                  autoAlpha: 0,
+                  y: 14,
+                  duration: 1,
+                  ease: 'power2.out',
+                  stagger: 0.5,
+                  onComplete: isPayrollCard
+                    ? () => {
+                        const cleanup = createPayrollCardAnimation({
+                          card,
+                          animationTarget,
+                          fallbackTrigger: section,
+                        });
+                        payrollAnimationCleanups.push(cleanup);
+                      }
+                    : undefined,
+                  scrollTrigger: {
+                    trigger: card,
+                    start: 'top 90%',
+                    once: true,
+                    invalidateOnRefresh: true,
+                  },
+                });
+              })
+              .filter((fade): fade is gsap.core.Tween => fade !== null);
+
+            // Ensure trigger positions are recalculated after lazy content settles.
+            ScrollTrigger.refresh();
+
+            return () => {
+              fades.forEach((fade) => {
+                fade.scrollTrigger?.kill();
+                fade.kill();
+              });
+              payrollAnimationCleanups.forEach((cleanup) => cleanup());
+              const allSvgRects = animationTargets.flatMap((target) =>
+                Array.from(target.querySelectorAll<SVGRectElement>('svg rect'))
+              );
+              gsap.set(allSvgRects, {
+                clearProps: 'x,y,opacity,visibility,transform',
+              });
+            };
+          });
+
+          return () => media.revert();
         });
 
-        return () => media.revert();
-      });
+      const scanForTargets = (attempt = 0) => {
+        const section = getSection();
+
+        if (section && hasAnimationRects(section)) {
+          runAnimations();
+          return;
+        }
+
+        if (attempt >= MAX_TARGET_SCAN_ATTEMPTS) {
+          // Fallback: initialize anyway if lazy SVGs took longer than expected.
+          runAnimations();
+          return;
+        }
+
+        rafId = requestAnimationFrame(() => scanForTargets(attempt + 1));
+      };
+
+      scanForTargets();
     });
 
     return () => {
       // Cancel the idle callback if the component unmounts before it fires.
       cancelIdle(idleId);
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
       // Revert the context to kill all GSAP instances — whether already
       // created or registered via ctx.add() after the idle callback ran.
       ctx.revert();

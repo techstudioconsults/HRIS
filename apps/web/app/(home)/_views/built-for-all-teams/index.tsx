@@ -1,6 +1,17 @@
+'use client';
+
 import { BuiltForAllTeamsSectionHeader } from './_components/section-header';
-import { TeamCard } from './_components/team-card';
+import dynamic from 'next/dynamic';
+import { SuspenseLoading } from '@workspace/ui/lib';
 import { teamCards } from './constants';
+
+const TeamCard = dynamic(
+  () => import('./_components/team-card').then((module) => module.TeamCard),
+  {
+    ssr: false,
+    loading: () => <SuspenseLoading />,
+  }
+);
 
 export const BuiltForAllTeams = () => {
   return (
@@ -26,5 +37,3 @@ export const BuiltForAllTeams = () => {
     </section>
   );
 };
-// className="bg-primary/5 bg-[url('/images/home/techstudio-text.svg')]
-// bg-size-[min(1189px,95vw)_auto] bg-top bg-no-repeat px-4 py-20 sm:px-6 lg:px-8 lg:py-24"

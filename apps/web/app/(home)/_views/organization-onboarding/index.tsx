@@ -12,7 +12,7 @@ import { OnboardingStepCard } from './_components/onboarding-step-card';
 import { OnboardingStepPreview } from './_components/onboarding-step-preview';
 import { onboardingSteps } from './constants';
 
-const STEP_AUTO_ADVANCE_INTERVAL_MS = 2000;
+const STEP_AUTO_ADVANCE_INTERVAL_MS = 3000;
 
 export const OrganizationOnboarding = () => {
   const [activeStepIndex, setActiveStepIndex] = useState(0);

@@ -19,7 +19,7 @@
     width: 8px;
     height: 100%;
     border-radius: 20px;
-    background: lightgrey;
+    background: var(--primary-50);
 }
 
 .stepper-track::after {

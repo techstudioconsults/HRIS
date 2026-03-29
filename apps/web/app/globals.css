@@ -2,6 +2,10 @@
 
 .rec-one {
     visibility: hidden;
+    filter: drop-shadow(0px 10px 22px rgba(179, 212, 255, 0.10));
+    /*drop-shadow(0px 39px 39px rgba(179, 212, 255, 0.09))*/
+    /*drop-shadow(0px 88px 53px rgba(179, 212, 255, 0.05))*/
+    /*drop-shadow(0px 157px 63px rgba(179, 212, 255, 0.02));*/
 }
 
 .stepper-track {

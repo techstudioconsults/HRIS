@@ -59,10 +59,7 @@ export const TestimonialCarousel = ({
 
   return (
     <div
-      className={cn(
-        'relative w-full bg-zinc-100 px-4 py-8 sm:px-8 lg:px-12',
-        className
-      )}
+      className={cn('relative w-full px-4 py-8 sm:px-8 lg:px-12', className)}
     >
       <Carousel
         opts={{
@@ -72,31 +69,40 @@ export const TestimonialCarousel = ({
         }}
         plugins={plugins}
         setApi={setApi}
-        className="mx-auto w-full max-w-[980px]"
+        className="mx-auto w-full max-w-[980px] pb-16 md:pb-0"
       >
         <CarouselContent>
           {items.map((item, index) => {
             const fallback = getFallback(item);
 
             return (
-              <CarouselItem key={`${item.name}-${index}`}>
+              <CarouselItem
+                className={`lg:pb-32`}
+                key={`${item.name}-${index}`}
+              >
                 <article
                   className={cn(
-                    'relative mx-auto w-full max-w-[820px] overflow-hidden rounded-md border border-[#B6D1FF] bg-white px-6 py-7 sm:px-10 sm:py-9',
+                    'relative mx-auto w-full max-w-[780px] overflow-hidden ' +
+                      'rounded-xl lg:border border-[#CDE2FF] border-t-6! border-t-primary bg-background' +
+                      'px-6 py-7 sm:px-10 sm:py-9 cc-shadow',
                     cardClassName
                   )}
                 >
-                  <span
-                    className="absolute inset-x-0 top-0 h-0.5 bg-[#3B82F6]"
+                  <svg
                     aria-hidden
-                  />
-                  <span
-                    className="mb-4 block text-6xl leading-none text-[#C6DCFF]"
-                    aria-hidden
+                    width="40"
+                    height="32"
+                    viewBox="0 0 40 32"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="mb-4 text-[#C6DCFF]"
                   >
-                    &ldquo;
-                  </span>
-                  <blockquote className="mb-7 max-w-3xl text-left text-xl leading-[1.35] text-zinc-700 sm:text-[30px]">
+                    <path
+                      d="M0 32V19.556C0 14.963 1.037 11.022 3.111 7.733 5.185 4.444 8.444 1.926 12.889 0.178L15.111 3.911C12.741 4.889 10.963 6.222 9.778 7.911 8.593 9.6 7.926 11.763 7.778 14.4H15.111V32H0ZM24.889 32V19.556C24.889 14.963 25.926 11.022 28 7.733 30.074 4.444 33.333 1.926 37.778 0.178L40 3.911C37.63 4.889 35.852 6.222 34.667 7.911 33.481 9.6 32.815 11.763 32.667 14.4H40V32H24.889Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                  <blockquote className="my-7 max-w-3xl text-left text-base leading-[1.35] text-zinc-700 sm:text-[26px]">
                     "{item.quote}"
                   </blockquote>
                   <footer className="flex items-center gap-3 text-left">
@@ -126,8 +132,18 @@ export const TestimonialCarousel = ({
 
         {showControls ? (
           <>
-            <CarouselPrevious className="left-0 size-12 border-zinc-200 bg-white text-zinc-700 shadow-[0_8px_20px_rgba(0,0,0,0.08)] hover:bg-white" />
-            <CarouselNext className="right-0 size-12 border-zinc-200 bg-white text-zinc-700 shadow-[0_8px_20px_rgba(0,0,0,0.08)] hover:bg-white" />
+            <CarouselPrevious
+              className="top-full bottom-auto left-1/2 size-12
+              -translate-x-[calc(100%+0.375rem)] -my-12 -translate-y-0 border-zinc-200
+              bg-white text-zinc-700 hover:bg-white
+               cc-shadow md:top-1/2 md:bottom-auto md:left-0 md:mt-0 md:-translate-x-0 md:-translate-y-1/2"
+            />
+            <CarouselNext
+              className="top-full bottom-auto left-1/2 size-12
+              translate-x-[0.375rem] -translate-y-0 border-zinc-200 bg-white text-zinc-700
+              -my-12 hover:bg-white cc-shadow md:top-1/2
+              md:right-0 md:left-auto md:mt-0 md:translate-x-0 md:-translate-y-1/2"
+            />
           </>
         ) : null}
       </Carousel>

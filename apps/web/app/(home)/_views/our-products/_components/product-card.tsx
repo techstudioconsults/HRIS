@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import type { ProductCardItem } from '../constants';
 import { cn } from '@workspace/ui/lib/utils';
 
@@ -35,10 +34,7 @@ export const OurProductCard = ({
           data-product-animation-target={card.animationTarget}
           className="relative size-full overflow-hidden rounded-xl"
         >
-          {/* Suspense is required by React.lazy — fallback keeps layout stable */}
-          <Suspense fallback={<div className="size-full" />}>
-            <ImageSrc />
-          </Suspense>
+          <ImageSrc />
         </div>
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-background to-transparent" />
       </div>

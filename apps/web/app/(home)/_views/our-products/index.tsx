@@ -1,27 +1,7 @@
-'use client';
-
 import { OurProductsSectionHeader } from './_components/section-header';
 import { productCardsBottomRow, productCardsTopRow } from './constants';
-import dynamic from 'next/dynamic';
-import { SuspenseLoading } from '@workspace/ui/lib';
-const CardTransitions = dynamic(
-  () =>
-    import('../../../../components/micro-interactions/card-transitions').then(
-      (module) => module.CardTransitions
-    ),
-  { ssr: false }
-);
-
-const OurProductCard = dynamic(
-  () =>
-    import('./_components/product-card').then(
-      (module) => module.OurProductCard
-    ),
-  {
-    ssr: false,
-    loading: () => <SuspenseLoading />,
-  }
-);
+import { CardTransitions } from '../../../../components/micro-interactions/card-transitions';
+import { OurProductCard } from './_components/product-card';
 
 export const OurProducts = () => {
   return (

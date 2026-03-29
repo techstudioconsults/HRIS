@@ -1,9 +1,20 @@
+'use client';
+
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 import { Emphasis } from '../../_components/Emphasis';
-import { FaqAccordion, MainButton } from '@workspace/ui/lib';
+import { MainButton, SuspenseLoading } from '@workspace/ui/lib';
 import React from 'react';
 import Tag from '../../_components/tag';
 import { faqItems } from './constants';
+import dynamic from 'next/dynamic';
+
+const FaqAccordion = dynamic(
+  () => import('@workspace/ui/lib').then((module) => module.FaqAccordion),
+  {
+    ssr: false,
+    loading: () => <SuspenseLoading />,
+  }
+);
 
 export const FAQs = () => {
   return (

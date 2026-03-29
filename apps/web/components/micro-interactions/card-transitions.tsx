@@ -1,94 +1,141 @@
 'use client';
 
-import { useGSAP } from '@gsap/react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { createPayrollCardAnimation } from './payroll-card-animation';
-
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+import { useEffect } from 'react';
 
 const getSection = (): HTMLElement | null =>
   document.querySelector<HTMLElement>('[data-home-products]');
 
 export const CardTransitions = () => {
-  useGSAP(() => {
-    let rafId = null;
-    rafId = requestAnimationFrame(() => {
-      const media = gsap.matchMedia();
+  useEffect(() => {
+    let rafId: number | null = null;
+    let disposeAnimations: (() => void) | undefined;
+    let isMounted = true;
+    let hasInitialized = false;
 
-      media.add('(prefers-reduced-motion: no-preference)', () => {
-        const section = getSection();
-        if (!section) return;
+    const initialize = async () => {
+      if (hasInitialized) return;
+      hasInitialized = true;
 
-        const animationTargets = Array.from(
-          section.querySelectorAll<HTMLElement>(
-            '[data-product-animation-target]'
-          )
-        );
-        const payrollAnimationCleanups: Array<() => void> = [];
+      try {
+        const [
+          { default: gsap },
+          { ScrollTrigger },
+          { createPayrollCardAnimation },
+        ] = await Promise.all([
+          import('gsap'),
+          import('gsap/ScrollTrigger'),
+          import('./payroll-card-animation'),
+        ]);
 
-        const fades = animationTargets
-          .map((animationTarget) => {
-            const card =
-              animationTarget.closest<HTMLElement>('[data-product-card]') ??
-              animationTarget;
-            const svgRects = Array.from(
-              animationTarget.querySelectorAll<SVGRectElement>('svg .rec-one')
+        if (!isMounted) return;
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        rafId = requestAnimationFrame(() => {
+          if (!isMounted) return;
+
+          const media = gsap.matchMedia();
+
+          media.add('(prefers-reduced-motion: no-preference)', () => {
+            const section = getSection();
+            if (!section) return;
+
+            const animationTargets = Array.from(
+              section.querySelectorAll<HTMLElement>(
+                '[data-product-animation-target]'
+              )
             );
-            if (svgRects.length === 0) return null;
+            const payrollAnimationCleanups: Array<() => void> = [];
+            const fades = animationTargets.reduce<
+              Array<ReturnType<typeof gsap.from>>
+            >((acc, animationTarget) => {
+              const card =
+                animationTarget.closest<HTMLElement>('[data-product-card]') ??
+                animationTarget;
+              const svgRects = Array.from(
+                animationTarget.querySelectorAll<SVGRectElement>('svg .rec-one')
+              );
+              if (svgRects.length === 0) return acc;
 
-            const isPayrollCard =
-              animationTarget.dataset.productAnimationTarget ===
-              'payroll-automation';
+              const isPayrollCard =
+                animationTarget.dataset.productAnimationTarget ===
+                'payroll-automation';
 
-            return gsap.from(svgRects, {
-              autoAlpha: 0,
-              y: 14,
-              duration: 1,
-              ease: 'power2.out',
-              stagger: 0.5,
-              onComplete: isPayrollCard
-                ? () => {
-                    const cleanup = createPayrollCardAnimation({
-                      card,
-                      animationTarget,
-                      fallbackTrigger: section,
-                    });
-                    payrollAnimationCleanups.push(cleanup);
-                  }
-                : undefined,
-              scrollTrigger: {
-                trigger: card,
-                start: 'top 90%',
-                once: true,
-                invalidateOnRefresh: true,
-              },
-            });
-          })
-          .filter((fade): fade is gsap.core.Tween => fade !== null);
+              const fade = gsap.from(svgRects, {
+                autoAlpha: 0,
+                y: 14,
+                duration: 1,
+                ease: 'power2.out',
+                stagger: 0.5,
+                onComplete: isPayrollCard
+                  ? () => {
+                      const cleanup = createPayrollCardAnimation({
+                        card,
+                        animationTarget,
+                        fallbackTrigger: section,
+                      });
+                      payrollAnimationCleanups.push(cleanup);
+                    }
+                  : undefined,
+                scrollTrigger: {
+                  trigger: card,
+                  start: 'top 90%',
+                  once: true,
+                  invalidateOnRefresh: true,
+                },
+              });
 
-        if (fades.length > 0) {
-          ScrollTrigger.refresh();
-        }
+              acc.push(fade);
+              return acc;
+            }, []);
 
-        return () => {
-          fades.forEach((fade) => {
-            fade.scrollTrigger?.kill();
-            fade.kill();
+            if (fades.length > 0) {
+              ScrollTrigger.refresh();
+            }
+
+            return () => {
+              fades.forEach((fade) => {
+                fade.scrollTrigger?.kill();
+                fade.kill();
+              });
+              payrollAnimationCleanups.forEach((cleanup) => cleanup());
+              const allSvgRects = animationTargets.flatMap((target) =>
+                Array.from(target.querySelectorAll<SVGRectElement>('svg rect'))
+              );
+              gsap.set(allSvgRects, {
+                clearProps: 'x,y,opacity,visibility,transform',
+              });
+            };
           });
-          payrollAnimationCleanups.forEach((cleanup) => cleanup());
-          const allSvgRects = animationTargets.flatMap((target) =>
-            Array.from(target.querySelectorAll<SVGRectElement>('svg rect'))
-          );
-          gsap.set(allSvgRects, {
-            clearProps: 'x,y,opacity,visibility,transform',
-          });
-        };
-      });
-      return () => media.revert();
-    });
-    return () => cancelAnimationFrame(rafId);
-  });
+
+          disposeAnimations = () => {
+            media.revert();
+          };
+        });
+      } catch {
+        // Ignore animation bootstrap failures to keep UI interactive.
+      }
+    };
+
+    const startWhenStable = () => {
+      void initialize();
+    };
+
+    if (document.readyState === 'complete') {
+      startWhenStable();
+    } else {
+      window.addEventListener('load', startWhenStable, { once: true });
+    }
+
+    return () => {
+      isMounted = false;
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+      }
+      window.removeEventListener('load', startWhenStable);
+      disposeAnimations?.();
+    };
+  }, []);
 
   return null;
 };

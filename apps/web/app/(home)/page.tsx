@@ -6,6 +6,7 @@ import {
 } from './_views';
 import { Testimonial } from './_views/Testimonial';
 import { FAQs } from './_views/frequently-asked-questions';
+import { CTA } from '../../components/common';
 
 export default function Page() {
   return (
@@ -16,6 +17,7 @@ export default function Page() {
       <OrganizationOnboarding />
       <Testimonial />
       <FAQs />
+      <CTA />
     </main>
   );
 }

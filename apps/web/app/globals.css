@@ -119,3 +119,12 @@ svg {
         transition: none;
     }
 }
+
+[data-header-text] {
+    position: relative;
+    overflow: hidden;
+}
+
+/*[data-header-text] h1 {*/
+/*    @apply translate-y-20;*/
+/*}*/

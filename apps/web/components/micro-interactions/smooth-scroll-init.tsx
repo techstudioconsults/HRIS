@@ -6,7 +6,7 @@ const SMOOTH_SCROLL_CONFIG = {
   wrapper: '#smooth-wrapper',
   content: '#smooth-content',
   smooth: 1.2,
-  speed: 'auto',
+  speed: 1,
   effects: true,
   ignoreMobileResize: true,
 } as const;

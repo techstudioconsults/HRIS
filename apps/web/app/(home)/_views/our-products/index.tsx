@@ -18,10 +18,7 @@ export const OurProducts = () => {
   return (
     <>
       <CardTransitions />
-      <section
-        data-home-products
-        className="bg-background px-4 pb-20 pt-20 sm:px-6 lg:px-8 lg:pb-28"
-      >
+      <section data-home-products className="bg-background">
         <Wrapper>
           <OurProductsSectionHeader />
           <div className="space-y-7">

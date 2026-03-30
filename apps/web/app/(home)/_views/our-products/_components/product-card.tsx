@@ -32,6 +32,7 @@ export const OurProductCard = ({
         )}
       >
         <div
+          data-speed={1.1}
           data-product-animation-target={card.animationTarget}
           className="relative size-full overflow-hidden rounded-xl"
         >

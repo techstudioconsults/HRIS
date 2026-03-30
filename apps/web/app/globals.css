@@ -8,6 +8,17 @@
     will-change: transform;
 }
 
+.global-page-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    background: var(--background);
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 280ms ease, visibility 280ms ease;
+}
 
 .svg {
     width: 100%;
@@ -20,7 +31,7 @@
 }
 
 #leave-svg {
-    @apply translate-x-[-10px] sm:translate-x-[-150px] lg:translate-x-[-170px];
+    @apply -translate-x-2.5 sm:translate-x-[-150px] lg:translate-x-[-170px];
 }
 
 .stepper-track {

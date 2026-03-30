@@ -19,7 +19,7 @@ export const BuiltForAllTeams = () => {
     <section
       data-home-built-for-all-teams
       className=" bg-[#F7F9FC] bg-[url(/images/home/techstudio-text.svg)] bg-fixed bg-contain bg-bottom
-      bg-no-repeat px-4 py-20 sm:px-6 lg:px-8 lg:py-24"
+      bg-no-repeat py-5 lg:py-10"
     >
       <Wrapper>
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between lg:gap-12">

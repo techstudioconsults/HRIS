@@ -19,7 +19,7 @@ export const OurProductCard = ({
       data-product-card
       className="relative overflow-hidden rounded-[13px] border border-zinc-200/80 bg-background"
     >
-      <div className="space-y-3 px-6 pb-6 pt-6">
+      <div className="space-y-3 px-6 pb-6 pt-6 text-center lg:text-left">
         <h5 className="text-foreground font-semibold">{card.title}</h5>
         <p className="tracking-[-0.02em] text-sm text-zinc-500">
           {card.description}
@@ -27,7 +27,7 @@ export const OurProductCard = ({
       </div>
       <div
         className={cn(
-          'relative px-6 pb-3',
+          'relative px-3 lg:px-6 pb-3',
           isWide ? 'h-80 md:h-[330px] lg:h-84' : 'h-[300px] md:h-80'
         )}
       >

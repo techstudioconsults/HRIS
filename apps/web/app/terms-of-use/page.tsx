@@ -4,11 +4,7 @@ import { TERMS_OF_USE_CONTENT } from '../../constants/terms-of-use';
 export default function TermsOfUsePage() {
   return (
     <LandingLayout>
-      <Hero
-        title={TERMS_OF_USE_CONTENT.intro.title}
-        lastUpdated={TERMS_OF_USE_CONTENT.lastUpdated}
-        searchPlaceholder="Search for terms, service.."
-      />
+      <Hero title={TERMS_OF_USE_CONTENT.intro.title} searchPlaceholder="Search for terms, service.." />
       <PolicyContent intro={TERMS_OF_USE_CONTENT.intro} sections={TERMS_OF_USE_CONTENT.sections} />
       <CTA />
     </LandingLayout>

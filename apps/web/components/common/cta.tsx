@@ -22,7 +22,7 @@ export const CTA = ({
   showSecondaryButton = true,
 }: CTAProps) => {
   return (
-    <section className="px-6 md:px-12 py-10 bg-white">
+    <section className="px-6 md:px-12 py-10 md:py-20 bg-white">
       <div
         className={cn(
           'max-w-[1240px] mx-auto rounded-[32px] py-10 lg:py-20 px-8 text-center relative overflow-hidden',

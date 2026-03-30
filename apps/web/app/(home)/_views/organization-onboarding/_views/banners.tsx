@@ -15,6 +15,13 @@ const BlurImage = dynamic(
     loading: () => <SuspenseLoading />,
   }
 );
+// const Phones = dynamic(
+//   () => import('~/images/home/phones.svg').then((module) => module.default),
+//   {
+//     ssr: false,
+//     loading: () => <SuspenseLoading />,
+//   }
+// );
 
 export const TourBanner = () => {
   return (
@@ -121,6 +128,7 @@ export const EmployeeBanner = () => {
           </div>
         </div>
         <div className="flex-1">
+          {/*<Phones />*/}
           <BlurImage
             src={
               'https://res.cloudinary.com/kingsleysolomon/image/upload/f_auto,q_auto,w_1000/v1774766845/techstudio/hris-repo/y6xgs9npgb9xvscim2fq.webp'

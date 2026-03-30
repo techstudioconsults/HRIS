@@ -1,12 +1,18 @@
-import { LandingLayout, Hero, PolicyContent, CTA } from '../../components/common';
+import { Hero, PolicyContent, CTA } from '../../components/common';
 import { PRIVACY_POLICY_CONTENT } from '../../constants/privacy-policy';
 
 export default function PrivacyPolicyPage() {
   return (
-    <LandingLayout>
-      <Hero title={PRIVACY_POLICY_CONTENT.intro.title} searchPlaceholder="Search for policy, data.." />
-      <PolicyContent intro={PRIVACY_POLICY_CONTENT.intro} sections={PRIVACY_POLICY_CONTENT.sections} />
+    <>
+      <Hero
+        title={PRIVACY_POLICY_CONTENT.intro.title}
+        searchPlaceholder="Search for policy, data.."
+      />
+      <PolicyContent
+        intro={PRIVACY_POLICY_CONTENT.intro}
+        sections={PRIVACY_POLICY_CONTENT.sections}
+      />
       <CTA />
-    </LandingLayout>
+    </>
   );
 }

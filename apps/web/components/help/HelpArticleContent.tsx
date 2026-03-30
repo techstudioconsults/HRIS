@@ -1,6 +1,11 @@
 import { HelpArticle, Section } from '../../constants/help-center';
 import { Button } from '@workspace/ui/components/button';
-import { LucideAlertTriangle, LucideInfo, LucideThumbsDown, LucideThumbsUp } from 'lucide-react';
+import {
+  LucideAlertTriangle,
+  LucideInfo,
+  LucideThumbsDown,
+  LucideThumbsUp,
+} from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 
 interface HelpArticleContentProps {
@@ -8,7 +13,10 @@ interface HelpArticleContentProps {
   categoryTitle: string;
 }
 
-export const HelpArticleContent = ({ article, categoryTitle }: HelpArticleContentProps) => {
+export const HelpArticleContent = ({
+  article,
+  categoryTitle,
+}: HelpArticleContentProps) => {
   const renderSection = (section: Section) => (
     <div key={`${section.id}-${section.title}`} className="flex gap-4 md:gap-6">
       {section.isNumbered !== false && (
@@ -16,7 +24,12 @@ export const HelpArticleContent = ({ article, categoryTitle }: HelpArticleConten
           {section.id}
         </div>
       )}
-      <div className={cn('flex flex-col gap-4', section.isNumbered === false && 'ml-0')}>
+      <div
+        className={cn(
+          'flex flex-col gap-4',
+          section.isNumbered === false && 'ml-0'
+        )}
+      >
         <h2
           className={cn(
             'text-xl md:text-2xl font-semibold text-[#1E293B]',
@@ -25,14 +38,21 @@ export const HelpArticleContent = ({ article, categoryTitle }: HelpArticleConten
         >
           {section.title}
         </h2>
-        <p className="text-sm md:text-base text-[#64748B] leading-relaxed whitespace-pre-wrap">{section.content}</p>
+        <p className="text-sm md:text-base text-[#64748B] leading-relaxed whitespace-pre-wrap">
+          {section.content}
+        </p>
 
         {section.items && (
           <ul className="flex flex-col gap-4 ml-2 list-none">
             {section.items.map((item, idx) => (
-              <li key={idx} className="flex items-start gap-2 text-sm md:text-base text-[#64748B]">
+              <li
+                key={idx}
+                className="flex items-start gap-2 text-sm md:text-base text-[#64748B]"
+              >
                 <span className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-2 shrink-0" />
-                <span className="leading-relaxed whitespace-pre-wrap">{item}</span>
+                <span className="leading-relaxed whitespace-pre-wrap">
+                  {item}
+                </span>
               </li>
             ))}
           </ul>
@@ -51,12 +71,19 @@ export const HelpArticleContent = ({ article, categoryTitle }: HelpArticleConten
     <div className="bg-[#F0F9FF] border border-[#E0F2FE] rounded-xl p-5 md:p-8 flex gap-2 md:gap-4 mt-2">
       <LucideInfo className="text-[#0284C7] shrink-0" size={24} />
       <div className="flex flex-col gap-2 w-full">
-        <h4 className="text-xl font-semibold text-[#0369A1]">{important.title}</h4>
+        <h4 className="text-xl font-semibold text-[#0369A1]">
+          {important.title}
+        </h4>
         <ul className="flex flex-col gap-2 list-none">
           {important.items.map((item, idx) => (
-            <li key={idx} className="flex items-start gap-2 text-sm md:text-base text-[#0369A1]">
+            <li
+              key={idx}
+              className="flex items-start gap-2 text-sm md:text-base text-[#0369A1]"
+            >
               <span className="w-1.5 h-1.5 rounded-full bg-[#0EA5E9] mt-2 shrink-0" />
-              <span className="leading-relaxed whitespace-pre-wrap">{item}</span>
+              <span className="leading-relaxed whitespace-pre-wrap">
+                {item}
+              </span>
             </li>
           ))}
         </ul>
@@ -66,7 +93,9 @@ export const HelpArticleContent = ({ article, categoryTitle }: HelpArticleConten
 
   const renderVideo = (videoUrl?: string) => (
     <div className="mt-2 flex flex-col gap-4">
-      <h3 className="text-xl md:text-2xl font-medium italic text-[#1E293B]">Watch the video guide.</h3>
+      <h3 className="text-xl md:text-2xl font-medium italic text-[#1E293B]">
+        Watch the video guide.
+      </h3>
       <div className="relative overflow-hidden shadow-xl border border-gray-100 aspect-video">
         {videoUrl ? (
           <iframe
@@ -78,7 +107,9 @@ export const HelpArticleContent = ({ article, categoryTitle }: HelpArticleConten
           />
         ) : (
           <div className="w-full h-full bg-[#F1F5F9] flex items-center justify-center">
-            <span className="text-gray-400 font-medium">Video tutorial coming soon...</span>
+            <span className="text-gray-400 font-medium">
+              Video tutorial coming soon...
+            </span>
           </div>
         )}
       </div>
@@ -91,21 +122,28 @@ export const HelpArticleContent = ({ article, categoryTitle }: HelpArticleConten
       <nav className="flex items-center gap-2 font-medium text-[#64748B]">
         <span className="hover:text-blue-500 cursor-pointer">Help Center</span>
         <span>/</span>
-        <span className="hover:text-blue-500 cursor-pointer">{categoryTitle}</span>
+        <span className="hover:text-blue-500 cursor-pointer">
+          {categoryTitle}
+        </span>
         <span>/</span>
         <span className="text-gray-400">{article.title}</span>
       </nav>
 
       {/* Header */}
       <div className="flex flex-col gap-4">
-        <h1 className="text-2xl md:text-3xl font-semibold text-[#1E293B] leading-tight">{article.title}</h1>
+        <h1 className="text-2xl md:text-3xl font-semibold text-[#1E293B] leading-tight">
+          {article.title}
+        </h1>
         <div className="text-sm md:text-base text-[#64748B] leading-relaxed whitespace-pre-wrap">
           {article.description}
         </div>
 
         {article.caution && (
           <div className="bg-[#FFF7ED] border border-[#FFEDD5] rounded-xl p-5 md:p-6 flex gap-2 md:gap-4">
-            <LucideAlertTriangle className="text-[#F97316] shrink-0" size={24} />
+            <LucideAlertTriangle
+              className="text-[#F97316] shrink-0"
+              size={24}
+            />
             <div className="flex flex-col gap-2">
               <h4 className="font-semibold text-[#9A3412]">Use caution</h4>
               <p className="text-sm md:text-base text-[#9A3412] leading-relaxed whitespace-pre-wrap">
@@ -123,13 +161,19 @@ export const HelpArticleContent = ({ article, categoryTitle }: HelpArticleConten
             <div key={idx} className="flex flex-col gap-4">
               {group.title && (
                 <div className="flex flex-col gap-4">
-                  <h2 className="text-2xl md:text-3xl font-semibold text-[#1E293B]">{group.title}</h2>
+                  <h2 className="text-2xl md:text-3xl font-semibold text-[#1E293B]">
+                    {group.title}
+                  </h2>
                   {group.description && (
-                    <p className="text-[#64748B] leading-relaxed whitespace-pre-wrap">{group.description}</p>
+                    <p className="text-[#64748B] leading-relaxed whitespace-pre-wrap">
+                      {group.description}
+                    </p>
                   )}
                 </div>
               )}
-              <div className="flex flex-col gap-4">{group.sections.map(renderSection)}</div>
+              <div className="flex flex-col gap-4">
+                {group.sections.map(renderSection)}
+              </div>
               {group.important && renderImportant(group.important)}
               {group.videoUrl && renderVideo(group.videoUrl)}
             </div>
@@ -139,13 +183,16 @@ export const HelpArticleContent = ({ article, categoryTitle }: HelpArticleConten
         <div className="flex flex-col gap-8 mt-4">
           {article.sections?.map(renderSection)}
           {article.important && renderImportant(article.important)}
-          {(article.videoUrl || !article.groups) && renderVideo(article.videoUrl)}
+          {(article.videoUrl || !article.groups) &&
+            renderVideo(article.videoUrl)}
         </div>
       )}
 
       {/* Feedback Section */}
       <div className="mt-10 flex flex-col gap-4">
-        <p className="text-xl md:text-2xl text-[#1E293B]">Was this article helpful?</p>
+        <p className="text-xl md:text-2xl text-[#1E293B]">
+          Was this article helpful?
+        </p>
         <div className="flex items-center gap-4">
           <Button className="bg-primary hover:bg-primary/80 text-white px-8 h-[56px] flex gap-3">
             <LucideThumbsUp size={22} />

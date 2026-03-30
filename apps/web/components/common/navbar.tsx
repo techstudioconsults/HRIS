@@ -39,10 +39,12 @@ export const Navbar = () => {
             scrolled ? 'shadow-xl' : 'shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)]'
           )}
         >
-          <div className="flex items-center gap-1">
+          <Link href={`/`} className="flex items-center gap-1">
             <Logo logo="/images/logo.png" width={25} height={25} />
-            <span className="font-extrabold text-lg transition-colors text-black">TechStudioHR</span>
-          </div>
+            <span className="font-extrabold text-lg transition-colors ">
+              TechStudioHR
+            </span>
+          </Link>
 
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-10">
@@ -50,25 +52,37 @@ export const Navbar = () => {
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-[#1E293B] hover:text-[#0052CC] font-medium text-sm transition-colors flex items-center gap-1"
+                className="text-[#1E293B] hover:text-[#0052CC] font-medium
+                 text-sm transition-colors flex items-center gap-1"
               >
                 {link.name}
-                {link.hasDropdown && <LucideChevronDown size={14} className="text-gray-400" />}
+                {link.hasDropdown && (
+                  <LucideChevronDown size={14} className="text-gray-400" />
+                )}
               </Link>
             ))}
           </div>
 
           <div className="hidden lg:flex items-center gap-8">
-            <Link href="/login" className="text-[#1E293B] hover:text-[#0052CC] font-semibold text-sm transition-colors">
+            <Link
+              href="/login"
+              className="text-[#1E293B] hover:text-[#0052CC] font-semibold text-sm transition-colors"
+            >
               Login
             </Link>
-            <Button className="rounded-md bg-[#0066F3] hover:bg-[#0052CC] text-white px-6 h-11 font-bold" asChild>
+            <Button
+              className="rounded-md bg-[#0066F3] hover:bg-[#0052CC] text-white px-6 h-11 font-bold"
+              asChild
+            >
               <Link href="/register">Start Free Trial</Link>
             </Button>
           </div>
 
           {/* Mobile Toggle */}
-          <button className="lg:hidden p-2 text-gray-600" onClick={() => setIsOpen(!isOpen)}>
+          <button
+            className="lg:hidden p-2 text-gray-600"
+            onClick={() => setIsOpen(!isOpen)}
+          >
             {isOpen ? <LucideX size={24} /> : <LucideMenu size={24} />}
           </button>
         </div>
@@ -94,10 +108,17 @@ export const Navbar = () => {
             </Link>
           ))}
           <div className="h-px bg-gray-100 my-4" />
-          <Link href="/login" onClick={() => setIsOpen(false)} className="text-xl font-bold text-[#1E293B]">
+          <Link
+            href="/login"
+            onClick={() => setIsOpen(false)}
+            className="text-xl font-bold text-[#1E293B]"
+          >
             Login
           </Link>
-          <Button className="rounded-xl bg-[#0066F3] hover:bg-[#0052CC] text-white h-14 text-lg font-bold" asChild>
+          <Button
+            className="rounded-xl bg-[#0066F3] hover:bg-[#0052CC] text-white h-14 text-lg font-bold"
+            asChild
+          >
             <Link href="/register" onClick={() => setIsOpen(false)}>
               Start Free Trial
             </Link>

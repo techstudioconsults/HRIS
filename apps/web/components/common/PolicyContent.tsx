@@ -27,18 +27,26 @@ export const PolicyContent = ({ intro, sections }: PolicyContentProps) => {
       {/* Intro section */}
       <div className="mb-12 flex flex-col gap-4">
         <p className="text-[20px]  font-normal">{intro.description}</p>
-        {intro.agreement && <p className="text-[20px]  font-normal">{intro.agreement}</p>}
+        {intro.agreement && (
+          <p className="text-[20px]  font-normal">{intro.agreement}</p>
+        )}
       </div>
 
       {/* Content sections */}
       <div className="flex flex-col gap-8">
         {sections.map((section) => (
-          <section key={section.id} id={`section-${section.id}`} className="scroll-mt-32">
+          <section
+            key={section.id}
+            id={`section-${section.id}`}
+            className="scroll-mt-32"
+          >
             <h2 className="text-[20px] font-bold mb-6 leading-[1.2]">
               {section.id}. {section.title}
             </h2>
             <div className="flex flex-col gap-4">
-              {section.content && <div className="text-[20px] ">{section.content}</div>}
+              {section.content && (
+                <div className="text-[20px] ">{section.content}</div>
+              )}
 
               {/* List items for main section */}
               {section.items && (
@@ -56,7 +64,9 @@ export const PolicyContent = ({ intro, sections }: PolicyContentProps) => {
                 <div className="flex flex-col gap-6">
                   {section.subsections.map((sub, idx) => (
                     <div key={idx} className="flex flex-col gap-2">
-                      <h3 className="text-[20px] font-bold leading-[1.3]">{sub.title}</h3>
+                      <h3 className="text-[20px] font-bold leading-[1.3]">
+                        {sub.title}
+                      </h3>
                       <ul className="flex flex-col gap-1">
                         {sub.items.map((item, iIdx) => (
                           <li key={iIdx} className="text-[20px] ">

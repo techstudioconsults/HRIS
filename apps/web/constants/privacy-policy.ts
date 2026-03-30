@@ -4,7 +4,8 @@ export const PRIVACY_POLICY_CONTENT = {
     title: 'Privacy Policy',
     description:
       'Techstudio HR is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our website, platform, and services.',
-    agreement: 'By using Techstudio HR, you agree to the terms of this Privacy Policy.',
+    agreement:
+      'By using Techstudio HR, you agree to the terms of this Privacy Policy.',
   },
   sections: [
     {
@@ -14,16 +15,34 @@ export const PRIVACY_POLICY_CONTENT = {
       subsections: [
         {
           title: '1.1 Personal Information',
-          items: ['Full name', 'Email address', 'Phone number', 'Job title and company name', 'Login credentials'],
+          items: [
+            'Full name',
+            'Email address',
+            'Phone number',
+            'Job title and company name',
+            'Login credentials',
+          ],
         },
         {
           title: '1.2 Employee Data (Processed on behalf of organizations)',
-          items: ['Employee records', 'Payroll data', 'Attendance logs', 'Leave requests', 'Performance evaluations'],
+          items: [
+            'Employee records',
+            'Payroll data',
+            'Attendance logs',
+            'Leave requests',
+            'Performance evaluations',
+          ],
           note: 'This data is processed strictly as a data processor on behalf of our customers.',
         },
         {
           title: '1.3 Technical Information',
-          items: ['IP address', 'Browser type', 'Device information', 'Usage data', 'Cookies and similar data'],
+          items: [
+            'IP address',
+            'Browser type',
+            'Device information',
+            'Usage data',
+            'Cookies and similar data',
+          ],
         },
       ],
     },
@@ -104,7 +123,11 @@ export const PRIVACY_POLICY_CONTENT = {
       id: 8,
       title: 'Cookies and Tracking',
       content: 'We use cookies to:',
-      items: ['Improve user experience', 'Analyze platform usage', 'Maintain login sessions'],
+      items: [
+        'Improve user experience',
+        'Analyze platform usage',
+        'Maintain login sessions',
+      ],
       note: 'You can disable cookies via browser settings.',
     },
     {

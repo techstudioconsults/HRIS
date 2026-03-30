@@ -61,7 +61,8 @@ export const HELP_CENTER_DATA: HelpCategory[] = [
           {
             id: 2,
             title: 'Enter Your Organization Details',
-            content: 'Provide the required information to register your organization. You will be asked to enter:',
+            content:
+              'Provide the required information to register your organization. You will be asked to enter:',
             items: ['Company name', 'Company size', 'Company address'],
           },
           {
@@ -108,17 +109,20 @@ export const HELP_CENTER_DATA: HelpCategory[] = [
           {
             id: 2,
             title: 'Create a New Team',
-            content: 'Click Add Team at the top right of the Teams page. Enter the team name and continue.',
+            content:
+              'Click Add Team at the top right of the Teams page. Enter the team name and continue.',
           },
           {
             id: 3,
             title: 'Add Employees to the Team',
-            content: 'You can now assign employees to the team and select their roles.',
+            content:
+              'You can now assign employees to the team and select their roles.',
           },
           {
             id: 4,
             title: 'Team Created Successfully',
-            content: 'Once the process is complete, the team will appear in your Teams dashboard.',
+            content:
+              'Once the process is complete, the team will appear in your Teams dashboard.',
           },
         ],
         videoUrl: 'https://www.youtube.com/embed/1n2Z2YeKj7M',
@@ -127,7 +131,8 @@ export const HELP_CENTER_DATA: HelpCategory[] = [
         id: 'deleting-team',
         slug: 'deleting-a-team',
         title: 'Deleting a Team',
-        description: 'Learn how to safely remove a team structure while preserving employee data within TechStudioHR.',
+        description:
+          'Learn how to safely remove a team structure while preserving employee data within TechStudioHR.',
         caution:
           'Deleting a team removes the organizational structure immediately. While employees are not deleted, their team associations will be cleared. Use this option carefully, especially if the team currently contains members or sub-teams.',
         sections: [
@@ -183,7 +188,8 @@ export const HELP_CENTER_DATA: HelpCategory[] = [
           {
             id: 3,
             title: 'Open the Team Details Page',
-            content: 'Once inside the team details page, you will see information such as:',
+            content:
+              'Once inside the team details page, you will see information such as:',
             items: [
               'Team name',
               'Team lead',
@@ -351,7 +357,8 @@ export const HELP_CENTER_DATA: HelpCategory[] = [
           {
             id: 3,
             title: 'Configure Bonuses',
-            content: 'Bonuses allow you to apply additional earnings to employee salaries. To add a bonus:',
+            content:
+              'Bonuses allow you to apply additional earnings to employee salaries. To add a bonus:',
             items: [
               '1. Click Add Bonus',
               '2. Enter the Bonus Name',
@@ -383,7 +390,8 @@ export const HELP_CENTER_DATA: HelpCategory[] = [
             id: 6,
             title: 'Payroll Setup Completed',
             isNumbered: false,
-            content: 'Once your payroll configuration is saved, payroll is ready for use. You can now:',
+            content:
+              'Once your payroll configuration is saved, payroll is ready for use. You can now:',
             items: [
               'Review employee salary information',
               'Adjust bonuses or deductions when necessary',
@@ -410,7 +418,8 @@ export const HELP_CENTER_DATA: HelpCategory[] = [
               '2. A Set up Payroll Wallet form will appear. Enter the required details: First Name, Last Name, Email Address, Phone Number',
               '3. Click Save & Continue to complete the wallet setup.',
             ],
-            afterItems: 'Once submitted, your payroll wallet will be created successfully.',
+            afterItems:
+              'Once submitted, your payroll wallet will be created successfully.',
           },
           {
             id: 2,
@@ -479,7 +488,8 @@ export const HELP_CENTER_DATA: HelpCategory[] = [
               'Deductions applied',
               'Payroll status',
             ],
-            afterItems: 'This review step helps ensure payroll calculations are accurate before processing payments.',
+            afterItems:
+              'This review step helps ensure payroll calculations are accurate before processing payments.',
           },
           {
             id: 4,
@@ -570,7 +580,8 @@ export const HELP_CENTER_DATA: HelpCategory[] = [
         groups: [
           {
             title: 'Running Payroll',
-            description: 'Running payroll processes the payments immediately for the current payroll cycle.',
+            description:
+              'Running payroll processes the payments immediately for the current payroll cycle.',
             sections: [
               {
                 id: 1,
@@ -593,7 +604,8 @@ export const HELP_CENTER_DATA: HelpCategory[] = [
               {
                 id: 4,
                 title: 'Review Payroll Details',
-                content: 'On the Run Payroll Modal, review the payroll summary including:',
+                content:
+                  'On the Run Payroll Modal, review the payroll summary including:',
                 items: [
                   'Total amount to be paid (Net Pay)',
                   'Total payroll deductions',
@@ -609,7 +621,11 @@ export const HELP_CENTER_DATA: HelpCategory[] = [
                 id: 5,
                 title: 'Confirm Payment Run',
                 content: 'After reviewing the details, confirm:',
-                items: ['Authorize payment', 'Confirm disbursement and approve', 'Click Run / Pay Payroll to proceed'],
+                items: [
+                  'Authorize payment',
+                  'Confirm disbursement and approve',
+                  'Click Run / Pay Payroll to proceed',
+                ],
                 afterItems: 'The payroll will then be processed for payment.',
               },
               {
@@ -633,7 +649,8 @@ export const HELP_CENTER_DATA: HelpCategory[] = [
               {
                 id: 1,
                 title: 'Open the Payroll Overview Page',
-                content: 'After generating payroll, click Run Payroll to open the Payroll Review page.',
+                content:
+                  'After generating payroll, click Run Payroll to open the Payroll Review page.',
               },
               {
                 id: 2,
@@ -652,12 +669,14 @@ export const HELP_CENTER_DATA: HelpCategory[] = [
           },
           {
             title: 'Viewing Scheduled Payroll',
-            description: 'You can view and manage scheduled payroll from the Payroll menu options.',
+            description:
+              'You can view and manage scheduled payroll from the Payroll menu options.',
             sections: [
               {
                 id: 1,
                 title: 'Open Payroll Options',
-                content: 'On the Payroll Overview page, click on the three-dot menu beside the Run Payroll button.',
+                content:
+                  'On the Payroll Overview page, click on the three-dot menu beside the Run Payroll button.',
               },
               {
                 id: 2,
@@ -826,8 +845,13 @@ export const HELP_CENTER_DATA: HelpCategory[] = [
               {
                 id: 5,
                 title: 'Set Employee Eligibility',
-                content: 'Select which employees or groups are eligible for the leave type.',
-                items: ['All employees', 'Specific departments', 'Specific employee groups'],
+                content:
+                  'Select which employees or groups are eligible for the leave type.',
+                items: [
+                  'All employees',
+                  'Specific departments',
+                  'Specific employee groups',
+                ],
               },
               {
                 id: 6,

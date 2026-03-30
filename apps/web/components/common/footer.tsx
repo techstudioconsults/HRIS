@@ -42,7 +42,9 @@ export const Footer = () => {
           <div className="flex flex-col items-center md:items-start gap-4">
             <div className="flex items-center gap-1">
               <Logo logo="/images/logo.png" width={30} height={30} />
-              <span className="font-extrabold text-xl transition-colors text-black">TechStudioHR</span>
+              <span className="font-extrabold text-xl transition-colors text-black">
+                TechStudioHR
+              </span>
             </div>
             <p className="text-black/70 text-base md:text-lg max-w-sm">
               1, Ogunlesi Street, Awoyokun Bus Stop, Onipanu Lagos
@@ -50,9 +52,16 @@ export const Footer = () => {
           </div>
 
           <div className="flex flex-col gap-4 w-full max-w-md">
-            <h4 className="font-semibold text-black text-[18px]">Subscribe for Our Newsletter</h4>
+            <h4 className="font-semibold text-black text-[18px]">
+              Subscribe for Our Newsletter
+            </h4>
             <div className="flex flex-col sm:flex-row gap-3 w-full">
               <input
+                id="newsletter-email"
+                name="newsletterEmail"
+                type="email"
+                autoComplete="email"
+                inputMode="email"
                 placeholder="Email address"
                 className="bg-white border-none rounded-[6px] h-[52px] px-5 text-black w-full"
               />
@@ -66,8 +75,13 @@ export const Footer = () => {
         {/* Link Columns */}
         <div className="lg:col-span-6 w-full grid grid-cols-1 sm:grid-cols-3 gap-12 sm:gap-8">
           {footerLinks.map((column) => (
-            <div key={column.title} className="flex flex-col items-center md:items-start">
-              <p className="text-black font-bold mb-6 text-xl">{column.title}</p>
+            <div
+              key={column.title}
+              className="flex flex-col items-center md:items-start"
+            >
+              <p className="text-black font-bold mb-6 text-xl">
+                {column.title}
+              </p>
               <ul className="flex flex-col gap-4">
                 {column.links.map((link) => (
                   <li key={link.name}>
@@ -87,7 +101,9 @@ export const Footer = () => {
       <hr className="border-black/10 mb-4" />
 
       <div className="max-w-7xl mx-auto pb-2 flex flex-col md:flex-row items-center justify-center relative z-10">
-        <p className="text-black/50 text-[14px]">© {new Date().getFullYear()} Techstudio HR — All rights reserved.</p>
+        <p className="text-black/50 text-[14px]">
+          © {new Date().getFullYear()} Techstudio HR — All rights reserved.
+        </p>
       </div>
 
       <div className="w-full flex justify-center pointer-events-none select-none overflow-hidden h-[100px] md:h-[150px] items-end">

@@ -2,7 +2,8 @@ export const REFUND_POLICY_CONTENT = {
   lastUpdated: '04/03/2026',
   intro: {
     title: 'Refund Policy',
-    description: 'This Refund Policy outlines how refunds are handled for Techstudio HR subscriptions.',
+    description:
+      'This Refund Policy outlines how refunds are handled for Techstudio HR subscriptions.',
   },
   sections: [
     {
@@ -15,7 +16,10 @@ export const REFUND_POLICY_CONTENT = {
       id: 2,
       title: 'Free Trials',
       content: 'If a free trial is offered:',
-      items: ['No charges apply during the trial period', 'You may cancel anytime before billing starts'],
+      items: [
+        'No charges apply during the trial period',
+        'You may cancel anytime before billing starts',
+      ],
     },
     {
       id: 3,
@@ -38,7 +42,8 @@ export const REFUND_POLICY_CONTENT = {
     {
       id: 5,
       title: 'Processing Time',
-      content: 'Approved refunds are processed within 5—10 business days depending on your payment provider.',
+      content:
+        'Approved refunds are processed within 5—10 business days depending on your payment provider.',
     },
     {
       id: 6,

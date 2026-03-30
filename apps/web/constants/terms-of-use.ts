@@ -2,13 +2,15 @@ export const TERMS_OF_USE_CONTENT = {
   lastUpdated: '04/03/2026',
   intro: {
     title: 'Terms Of Use',
-    description: 'By accessing or using Techstudio HR, you agree to these Terms.',
+    description:
+      'By accessing or using Techstudio HR, you agree to these Terms.',
   },
   sections: [
     {
       id: 1,
       title: 'Use of Service',
-      content: 'You agree to use the platform only for lawful purposes and in compliance with applicable regulations.',
+      content:
+        'You agree to use the platform only for lawful purposes and in compliance with applicable regulations.',
     },
     {
       id: 2,
@@ -56,24 +58,34 @@ export const TERMS_OF_USE_CONTENT = {
       id: 7,
       title: 'Limitation of Liability',
       content: 'Techstudio HR is not liable for:',
-      items: ['Indirect damages', 'Loss of profits', 'Data loss beyond our control'],
+      items: [
+        'Indirect damages',
+        'Loss of profits',
+        'Data loss beyond our control',
+      ],
       note: 'Use of the platform is at your own risk.',
     },
     {
       id: 8,
       title: 'Termination',
       content: 'We reserve the right to suspend accounts that:',
-      items: ['Violate these terms', 'Pose security risks', 'Abuse the platform'],
+      items: [
+        'Violate these terms',
+        'Pose security risks',
+        'Abuse the platform',
+      ],
     },
     {
       id: 9,
       title: 'Changes to Terms',
-      content: 'We may update these Terms at any time. Continued use implies acceptance.',
+      content:
+        'We may update these Terms at any time. Continued use implies acceptance.',
     },
     {
       id: 10,
       title: 'Governing Law',
-      content: 'These Terms are governed by the laws of [Insert Country — e.g., Nigeria]',
+      content:
+        'These Terms are governed by the laws of [Insert Country — e.g., Nigeria]',
     },
   ],
 };

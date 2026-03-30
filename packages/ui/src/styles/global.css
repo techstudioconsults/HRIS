@@ -19,3 +19,12 @@
 /* Base typography and element styles */
 /* Utility components and custom styles */
 /* Animation utilities and keyframes */
+
+.cc-shadow {
+    box-shadow: 0 10px 22px 0 #B3D4FF1A,
+    0 39px 39px 0 #B3D4FF17,
+    0 88px 53px 0 #B3D4FF0D,
+    0 157px 63px 0 #B3D4FF03,
+    0 245px 69px 0 #B3D4FF00,
+    0 0 0 0 transparent;
+}

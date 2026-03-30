@@ -12,15 +12,22 @@ export const HelpSidebar = () => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
   const toggleCategory = (slug: string) => {
-    setExpandedCategories((prev) => (prev.includes(slug) ? prev.filter((c) => c !== slug) : [...prev, slug]));
+    setExpandedCategories((prev) =>
+      prev.includes(slug) ? prev.filter((c) => c !== slug) : [...prev, slug]
+    );
   };
 
   useEffect(() => {
     const activeCategory = HELP_CENTER_DATA.find((category) =>
-      category.articles.some((article) => pathname === `/help-center/${category.slug}/${article.slug}`)
+      category.articles.some(
+        (article) =>
+          pathname === `/help-center/${category.slug}/${article.slug}`
+      )
     );
     if (activeCategory && !expandedCategories.includes(activeCategory.slug)) {
-      setExpandedCategories((prev) => [...new Set([...prev, activeCategory.slug])]);
+      setExpandedCategories((prev) => [
+        ...new Set([...prev, activeCategory.slug]),
+      ]);
     }
   }, [pathname]);
 
@@ -40,7 +47,10 @@ export const HelpSidebar = () => {
                   (isExpanded ? (
                     <LucideChevronUp size={18} className="text-blue-400" />
                   ) : (
-                    <LucideChevronDown size={18} className="text-gray-400 group-hover:text-blue-400" />
+                    <LucideChevronDown
+                      size={18}
+                      className="text-gray-400 group-hover:text-blue-400"
+                    />
                   ))}
               </button>
 

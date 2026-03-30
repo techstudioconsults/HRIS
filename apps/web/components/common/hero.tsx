@@ -34,7 +34,7 @@ export const Hero = ({
             <input
               type="text"
               placeholder={searchPlaceholder}
-              className="w-full h-12 pl-16 pr-8 rounded-lg border-none bg-white/100 shadow-md focus-visible:ring-2 focus-visible:ring-blue-400 text-lg text-gray-700"
+              className="w-full h-12 pl-16 pr-8 rounded-lg border-none bg-white shadow-md focus-visible:ring-2 focus-visible:ring-blue-400 text-lg text-gray-700"
             />
           </div>
         )}

@@ -7,7 +7,7 @@ interface LandingLayoutProperties {
 export const LandingLayout = ({ children }: LandingLayoutProperties) => {
   return (
     <div className="min-h-screen flex flex-col bg-white overflow-x-hidden">
-      <main className="flex-grow">{children}</main>
+      <main className="grow">{children}</main>
       <Footer />
     </div>
   );

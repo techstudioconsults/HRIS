@@ -26,8 +26,8 @@ export const PolicyContent = ({ intro, sections }: PolicyContentProps) => {
     <div className="max-w-4xl mx-auto px-6 py-10 text-black">
       {/* Intro section */}
       <div className="mb-12 flex flex-col gap-4">
-        <p className="text-[20px] leading-[1.5] font-normal">{intro.description}</p>
-        {intro.agreement && <p className="text-[20px] leading-[1.5] font-normal">{intro.agreement}</p>}
+        <p className="text-[20px]  font-normal">{intro.description}</p>
+        {intro.agreement && <p className="text-[20px]  font-normal">{intro.agreement}</p>}
       </div>
 
       {/* Content sections */}
@@ -38,13 +38,13 @@ export const PolicyContent = ({ intro, sections }: PolicyContentProps) => {
               {section.id}. {section.title}
             </h2>
             <div className="flex flex-col gap-4">
-              {section.content && <div className="text-[20px] leading-[1.5]">{section.content}</div>}
+              {section.content && <div className="text-[20px] ">{section.content}</div>}
 
               {/* List items for main section */}
               {section.items && (
                 <ul className="flex flex-col gap-1">
                   {section.items.map((item, idx) => (
-                    <li key={idx} className="text-[20px] leading-[1.5]">
+                    <li key={idx} className="text-[20px] ">
                       {item}
                     </li>
                   ))}
@@ -59,19 +59,19 @@ export const PolicyContent = ({ intro, sections }: PolicyContentProps) => {
                       <h3 className="text-[20px] font-bold leading-[1.3]">{sub.title}</h3>
                       <ul className="flex flex-col gap-1">
                         {sub.items.map((item, iIdx) => (
-                          <li key={iIdx} className="text-[20px] leading-[1.5]">
+                          <li key={iIdx} className="text-[20px] ">
                             {item}
                           </li>
                         ))}
                       </ul>
-                      {sub.note && <p className="text-[20px] leading-[1.5]">{sub.note}</p>}
+                      {sub.note && <p className="text-[20px] ">{sub.note}</p>}
                     </div>
                   ))}
                 </div>
               )}
 
               {/* General section note */}
-              {section.note && <p className="text-[20px] leading-[1.5]">{section.note}</p>}
+              {section.note && <p className="text-[20px] ">{section.note}</p>}
             </div>
           </section>
         ))}

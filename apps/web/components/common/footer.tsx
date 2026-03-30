@@ -1,6 +1,7 @@
 import { Logo } from '@workspace/ui/lib';
 import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const Footer = () => {
   const footerLinks = [
@@ -81,9 +82,11 @@ export const Footer = () => {
       </div>
 
       <div className="w-full flex justify-center pointer-events-none select-none overflow-hidden h-[100px] md:h-[150px] items-end">
-        <img
+        <Image
           src="/images/TechStudioHR-footer.svg"
           alt="hr "
+          width={1200}
+          height={150}
           className="w-full max-w-[1200px] object-contain object-bottom translate-y-4"
         />
       </div>

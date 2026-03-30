@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { LucideChevronDown, LucideMenu, LucideX } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@workspace/ui/lib/utils';
-
 export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -30,13 +29,13 @@ export const Navbar = () => {
     <>
       <nav
         className={cn(
-          'w-full flex justify-center px-4 md:px-6 fixed top-0 left-0 right-0 z-[100] transition-all duration-300',
+          'w-full flex justify-center px-4 md:px-6 fixed top-0 left-0 right-0 z-100 transition-all duration-300',
           scrolled ? 'pt-2 md:pt-4' : 'pt-4 md:pt-8'
         )}
       >
         <div
           className={cn(
-            'bg-white/95 backdrop-blur-md rounded-[17px] px-4 md:px-8 py-3 flex items-center justify-between w-full max-w-[1200px] transition-all duration-300 border border-black/[0.03]',
+            'bg-white/95 backdrop-blur-md rounded-[17px] px-4 md:px-8 py-3 flex items-center justify-between w-full max-w-[1200px] transition-all duration-300 border border-black/3',
             scrolled ? 'shadow-xl' : 'shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)]'
           )}
         >
@@ -78,7 +77,7 @@ export const Navbar = () => {
       {/* Mobile Menu Overlay */}
       <div
         className={cn(
-          'fixed inset-0 z-[90] bg-white transition-transform duration-300 lg:hidden',
+          'fixed inset-0 z-90 bg-white transition-transform duration-300 lg:hidden',
           isOpen ? 'translate-x-0' : 'translate-x-full'
         )}
       >

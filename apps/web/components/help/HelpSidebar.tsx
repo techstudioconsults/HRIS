@@ -25,7 +25,7 @@ export const HelpSidebar = () => {
   }, [pathname]);
 
   return (
-    <aside className="w-full md:w-[300px] flex-shrink-0">
+    <aside className="w-full md:w-[300px] shrink-0">
       <nav className="flex flex-col gap-2 sticky top-32">
         {HELP_CENTER_DATA.map((category) => {
           const isExpanded = expandedCategories.includes(category.slug);

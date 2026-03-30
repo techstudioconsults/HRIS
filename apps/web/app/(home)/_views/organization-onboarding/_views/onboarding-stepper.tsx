@@ -88,7 +88,7 @@ export const OnboardingStepper = () => {
       <div className="col-span-1 stepper-track" style={stepperStyle}>
         <div
           ref={stepListReference}
-          className="h-[400px] flex flex-col justify-between"
+          className="gap-2 lg:gap-5 flex flex-col justify-between"
         >
           {onboardingSteps.map((step, index) => (
             <OnboardingStepCard

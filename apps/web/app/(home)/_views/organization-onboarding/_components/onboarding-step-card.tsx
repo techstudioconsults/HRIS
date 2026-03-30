@@ -26,8 +26,8 @@ export const OnboardingStepCard = ({
             className={cn(
               'transition-[color,font-size,letter-spacing] duration-300 ease-out',
               isActive
-                ? 'text-[24px] font-semibold leading-tight tracking-[-0.02em] text-zinc-900 lg:text-[28px]'
-                : 'text-[18px] font-medium leading-tight tracking-[-0.01em] text-zinc-600 lg:text-[20px]'
+                ? 'text-[20px] font-semibold leading-tight tracking-[-0.02em] text-zinc-900 lg:text-[28px]'
+                : 'text-[16px] font-medium leading-tight tracking-[-0.01em] text-zinc-600 lg:text-[20px]'
             )}
           >
             {step.title}

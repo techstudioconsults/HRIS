@@ -1,5 +1,13 @@
 @import '@workspace/ui/globals.css';
 
+#smooth-wrapper {
+    overflow: clip;
+}
+
+#smooth-content {
+    will-change: transform;
+}
+
 
 .svg {
     width: 100%;
@@ -48,6 +56,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+    #smooth-content {
+        transform: none !important;
+        will-change: auto;
+    }
+
     .stepper-track::after {
         transition: none;
     }

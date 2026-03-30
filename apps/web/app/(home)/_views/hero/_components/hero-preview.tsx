@@ -2,7 +2,11 @@ import { BlurImage } from '@workspace/ui/components/core/miscellaneous/blur-imag
 
 export const HeroPreview = () => {
   return (
-    <div className="relative z-10 mx-auto mt-10 w-full max-w-[963px] overflow-hidden rounded-md border-2 border-white shadow-sm sm:mt-12 sm:rounded-lg sm:border-4 sm:shadow-md md:mt-14">
+    <div
+      data-speed={1.1}
+      className="relative z-10 mx-auto mt-10 w-full max-w-[963px] overflow-hidden rounded-md
+       border-2 border-white shadow-sm sm:mt-12 sm:rounded-lg sm:border-4 sm:shadow-md md:mt-0"
+    >
       <BlurImage
         priority
         fetchPriority="high"

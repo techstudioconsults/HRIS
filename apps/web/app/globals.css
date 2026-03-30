@@ -1,5 +1,48 @@
 @import '@workspace/ui/globals.css';
 
+/* ─── Sticker loader bounce ─────────────────────────────────────── */
+/*
+  Physics-accurate ball-bounce keyframe:
+    0 → 50 %  : launched upward — decelerates to peak  (ease-out)
+    50 → 100% : falls from peak — accelerates to floor (ease-in)
+*/
+@keyframes sticker-logo-bounce {
+    0% {
+        transform: translateY(0) scaleX(1.1) scaleY(0.9);
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); /* ease-out cubic */
+    }
+    50% {
+        transform: translateY(-78px) scaleX(0.95) scaleY(1.05) rotate(18deg);
+        animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19); /* ease-in cubic */
+    }
+    100% {
+        transform: translateY(0) scaleX(1.1) scaleY(0.9);
+    }
+}
+
+/* let the logo travel outside the SVG canvas */
+.sticker-loader svg {
+    overflow: visible;
+    @apply transform-[scale(0.5)] lg:transform-[scale(0.6)];
+}
+
+.sticker-loader #logo-icon {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    will-change: transform;
+    animation: sticker-logo-bounce 0.6s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sticker-loader #logo-icon {
+        animation: none;
+        will-change: auto;
+        transform: none;
+    }
+}
+
+/* ──────────────────────────────────────────────────────────────── */
+
 #smooth-wrapper {
     overflow: clip;
 }

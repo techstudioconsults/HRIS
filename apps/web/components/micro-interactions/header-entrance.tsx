@@ -47,7 +47,7 @@ export const HeaderEntrance = () => {
               const tl = gsap.timeline({
                 scrollTrigger: {
                   trigger: header,
-                  start: 'top 90%',
+                  start: 'top 100%',
                   once: true,
                   invalidateOnRefresh: true,
                 },

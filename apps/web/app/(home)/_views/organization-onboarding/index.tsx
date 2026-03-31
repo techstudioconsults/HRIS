@@ -6,11 +6,15 @@ import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 
 export const OrganizationOnboarding = () => {
   return (
-    <Wrapper data-home-organization-onboarding>
-      <OrganizationOnboardingSectionHeader />
-      <OnboardingStepper />
-      <TourBanner />
-      <EmployeeBanner />
-    </Wrapper>
+    <section data-home-organization-onboarding className={'relative'}>
+      <Wrapper>
+        <OrganizationOnboardingSectionHeader />
+        <OnboardingStepper />
+      </Wrapper>
+      <Wrapper className="my-0! max-w-full relative lg:max-h-[601.72px] overflow-y-scroll hide-scrollbar">
+        <TourBanner />
+        <EmployeeBanner />
+      </Wrapper>
+    </section>
   );
 };

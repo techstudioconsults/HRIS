@@ -25,7 +25,7 @@ const BlurImage = dynamic(
 
 export const TourBanner = () => {
   return (
-    <Wrapper className="bg-primary/10 py-4 lg:py-[66px] lg:px-[58px]! my-0! rounded-[18px]">
+    <Wrapper className="bg-primary/10 sticky top-0 lg:max-h-[601.72px] py-4 lg:py-[66px] lg:px-[58px]! my-0! rounded-[18px]">
       <div className="flex justify-center flex-col-reverse md:flex-row items-center gap-5 lg:gap-10">
         <div className="flex-1 space-y-10">
           <header>
@@ -85,7 +85,7 @@ export const TourBanner = () => {
 
 export const EmployeeBanner = () => {
   return (
-    <Wrapper className="bg-primary/5 py-4 lg:py-[66px] lg:px-[58px]! my-0! rounded-[18px]">
+    <Wrapper className="bg-[#F7F9FC] z-2 lg:max-h-[601.72px] py-4 lg:py-[66px] lg:px-[58px]! my-0! rounded-[18px]">
       <div className="flex justify-center flex-col-reverse md:flex-row-reverse items-center gap-5 lg:gap-10">
         <div className="flex-1 space-y-10">
           <header>

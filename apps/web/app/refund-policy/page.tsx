@@ -1,5 +1,6 @@
-import { Hero, PolicyContent, CTA } from '../../components/common';
+import { Hero, CTA } from '../../components/common';
 import { REFUND_POLICY_CONTENT } from '../../constants/refund-policy';
+import { PolicyContent } from '../privacy-policy/PolicyContent';
 
 export default function RefundPolicyPage() {
   return (

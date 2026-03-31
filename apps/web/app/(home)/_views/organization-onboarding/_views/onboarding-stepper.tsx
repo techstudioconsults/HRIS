@@ -27,21 +27,58 @@ const STEP_AUTO_ADVANCE_INTERVAL_MS = 3000;
 export const OnboardingStepper = () => {
   const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [indicator, setIndicator] = useState({ top: 0, height: 0 });
+  const sectionReference = useRef<HTMLDivElement | null>(null);
   const stepListReference = useRef<HTMLDivElement | null>(null);
+  const intervalReference = useRef<number | null>(null);
 
   const activeStep = onboardingSteps[activeStepIndex] ?? onboardingSteps[0];
 
   useEffect(() => {
     if (onboardingSteps.length <= 1) return;
 
-    const intervalId = window.setInterval(() => {
-      setActiveStepIndex(
-        (previousStepIndex) => (previousStepIndex + 1) % onboardingSteps.length
-      );
-    }, STEP_AUTO_ADVANCE_INTERVAL_MS);
+    const clearAutoAdvanceInterval = () => {
+      if (intervalReference.current === null) return;
+      window.clearInterval(intervalReference.current);
+      intervalReference.current = null;
+    };
+
+    const startAutoAdvanceInterval = () => {
+      if (intervalReference.current !== null) return;
+
+      intervalReference.current = window.setInterval(() => {
+        setActiveStepIndex(
+          (previousStepIndex) =>
+            (previousStepIndex + 1) % onboardingSteps.length
+        );
+      }, STEP_AUTO_ADVANCE_INTERVAL_MS);
+    };
+
+    if (typeof IntersectionObserver === 'undefined') {
+      startAutoAdvanceInterval();
+      return () => clearAutoAdvanceInterval();
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          startAutoAdvanceInterval();
+          return;
+        }
+
+        clearAutoAdvanceInterval();
+      },
+      {
+        threshold: 0.2,
+      }
+    );
+
+    if (sectionReference.current) {
+      observer.observe(sectionReference.current);
+    }
 
     return () => {
-      window.clearInterval(intervalId);
+      observer.disconnect();
+      clearAutoAdvanceInterval();
     };
   }, []);
 
@@ -84,7 +121,10 @@ export const OnboardingStepper = () => {
   } as CSSProperties;
 
   return (
-    <div className="relative grid lg:grid-cols-2 lg:items-center gap-10">
+    <div
+      ref={sectionReference}
+      className="relative grid lg:grid-cols-2 lg:items-center gap-10"
+    >
       <div className="col-span-1 stepper-track" style={stepperStyle}>
         <div
           ref={stepListReference}

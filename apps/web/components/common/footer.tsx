@@ -112,7 +112,7 @@ export const Footer = () => {
           alt="hr "
           width={1200}
           height={150}
-          className="w-full max-w-[1200px] object-contain object-bottom translate-y-4"
+          className="w-full max-w-[1200px] object-contain object-bottom lg:translate-y-4"
         />
       </div>
     </footer>

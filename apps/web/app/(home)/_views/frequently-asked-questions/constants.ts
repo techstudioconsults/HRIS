@@ -1,4 +1,4 @@
-import { type FaqAccordionItem } from '@workspace/ui/lib';
+import { type FaqAccordionItem } from '@workspace/ui/lib/faq-accordion';
 
 export const faqItems: FaqAccordionItem[] = [
   {

@@ -1,4 +1,4 @@
-import { Logo } from '@workspace/ui/lib';
+import { Logo } from '@workspace/ui/lib/logo';
 import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
 import Image from 'next/image';

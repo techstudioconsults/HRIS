@@ -1,4 +1,4 @@
-import { type TestimonialCarouselItem } from '@workspace/ui/lib';
+import { type TestimonialCarouselItem } from '@workspace/ui/lib/carousel';
 
 export const testimonials: TestimonialCarouselItem[] = [
   {

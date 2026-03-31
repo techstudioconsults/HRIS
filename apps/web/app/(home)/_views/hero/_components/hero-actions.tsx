@@ -1,4 +1,4 @@
-import { MainButton } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
 
 export const HeroActions = () => {
   return (

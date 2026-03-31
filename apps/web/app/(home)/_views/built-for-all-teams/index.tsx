@@ -2,7 +2,7 @@
 
 import { BuiltForAllTeamsSectionHeader } from './_components/section-header';
 import dynamic from 'next/dynamic';
-import { SuspenseLoading } from '@workspace/ui/lib';
+import { SuspenseLoading } from '@workspace/ui/lib/loading';
 import { teamCards } from './constants';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 

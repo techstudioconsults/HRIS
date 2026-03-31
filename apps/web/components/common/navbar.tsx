@@ -1,11 +1,12 @@
 'use client';
 
-import { Logo } from '@workspace/ui/lib';
 import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
 import { LucideChevronDown, LucideMenu, LucideX } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@workspace/ui/lib/utils';
+import { Logo } from '@workspace/ui/lib/logo';
+
 export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);

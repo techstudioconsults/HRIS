@@ -10,7 +10,7 @@ import {
 import { onboardingSteps } from '../constants';
 import { OnboardingStepCard } from '../_components/onboarding-step-card';
 import dynamic from 'next/dynamic';
-import { SuspenseLoading } from '@workspace/ui/lib';
+import { SuspenseLoading } from '@workspace/ui/lib/loading';
 const OnboardingStepPreview = dynamic(
   () =>
     import('../_components/onboarding-step-preview').then(

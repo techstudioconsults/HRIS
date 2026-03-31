@@ -1,7 +1,7 @@
 import type { ProductCardItem } from '../constants';
 import { cn } from '@workspace/ui/lib/utils';
 import { Suspense } from 'react';
-import { SuspenseLoading } from '@workspace/ui/lib';
+import { SuspenseLoading } from '@workspace/ui/lib/loading';
 
 interface ProductCardProperties {
   card: ProductCardItem;

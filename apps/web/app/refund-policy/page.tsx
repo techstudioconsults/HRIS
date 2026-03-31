@@ -1,12 +1,12 @@
-import { Hero, PolicyContent, CTA } from '../../components/common';
+import { Hero, CTA } from '../../components/common';
 import { REFUND_POLICY_CONTENT } from '../../constants/refund-policy';
+import { PolicyContent } from '../privacy-policy/PolicyContent';
 
 export default function RefundPolicyPage() {
   return (
     <>
       <Hero
         title={REFUND_POLICY_CONTENT.intro.title}
-        lastUpdated={REFUND_POLICY_CONTENT.lastUpdated}
         searchPlaceholder="Search for refund, billing.."
       />
       <PolicyContent

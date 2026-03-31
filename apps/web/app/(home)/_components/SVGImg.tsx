@@ -8,7 +8,14 @@ interface SVGImgProps {
 }
 
 const SVGImg = ({ src, alt, isWide = false }: SVGImgProps) => {
-  return <Image src={src} alt={alt} fill className={cn('object-top', isWide ? 'object-cover' : 'object-contain')} />;
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      className={cn('object-top', isWide ? 'object-cover' : 'object-contain')}
+    />
+  );
 };
 
 export default SVGImg;

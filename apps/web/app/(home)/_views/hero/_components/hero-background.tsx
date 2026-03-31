@@ -11,7 +11,8 @@ export const HeroBackground = () => {
          sm:h-[500px] sm:bg-size-[16px_16px] sm:opacity-40 lg:h-[560px] lg:bg-size-[18px_18px] lg:opacity-45"
         style={{
           maskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)',
+          WebkitMaskImage:
+            'linear-gradient(to bottom, black 30%, transparent 100%)',
         }}
       />
     </>

@@ -6,15 +6,15 @@ export const HeroCopy = () => {
       <header>
         <h1
           data-header-text
-          className="mx-auto max-w-4xl text-balance text-3xl font-semibold tracking-[-0.02em] text-zinc-800 sm:text-4xl md:text-5xl lg:text-[62px] lg:leading-[1.2]"
+          className="mx-auto max-w-4xl text-3xl font-semibold tracking-[-0.02em] text-zinc-800 sm:text-4xl md:text-5xl lg:text-[62px] lg:leading-[1.2]"
         >
           <span data-h1 className="inline-block">
             HR &amp; Payroll software built
-          </span>{' '}
+          </span>
         </h1>
         <h1
           data-header-text
-          className="mx-auto max-w-4xl text-balance text-3xl font-semibold tracking-[-0.02em] text-zinc-800 sm:text-4xl md:text-5xl lg:text-[62px] lg:leading-[1.2]"
+          className="mx-auto max-w-4xl text-3xl font-semibold tracking-[-0.02em] text-zinc-800 sm:text-4xl md:text-5xl lg:text-[62px] lg:leading-[1.2]"
         >
           <span data-h1 className="inline-block">
             for <Emphasis>modern African</Emphasis> teams

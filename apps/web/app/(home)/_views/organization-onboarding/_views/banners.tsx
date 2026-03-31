@@ -3,7 +3,8 @@
 import React from 'react';
 import { Emphasis } from '../../../_components/Emphasis';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
-import { MainButton, SuspenseLoading } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { SuspenseLoading } from '@workspace/ui/lib/loading';
 import dynamic from 'next/dynamic';
 const BlurImage = dynamic(
   () =>

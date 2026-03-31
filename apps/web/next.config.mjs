@@ -1,5 +1,12 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+
+import bundleAnalyzer from '@next/bundle-analyzer';
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
+
+export default withBundleAnalyzer({
   transpilePackages: ['@workspace/ui'],
   turbopack: {
     rules: {
@@ -7,9 +14,7 @@ const nextConfig = {
         loaders: [
           {
             loader: '@svgr/webpack',
-            options: {
-              svgo: false,
-            },
+            options: { svgo: false },
           },
         ],
         as: '*.js',
@@ -18,14 +23,8 @@ const nextConfig = {
   },
   images: {
     remotePatterns: [
-      {
-        hostname: 'cdn.dummyjson.com',
-      },
-      {
-        hostname: 'res.cloudinary.com',
-      },
+      { hostname: 'cdn.dummyjson.com' },
+      { hostname: 'res.cloudinary.com' },
     ],
   },
-};
-
-export default nextConfig;
+});

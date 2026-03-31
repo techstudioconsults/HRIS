@@ -18,15 +18,19 @@ export const HelpArticleContent = ({
   categoryTitle,
 }: HelpArticleContentProps) => {
   const renderSection = (section: Section) => (
-    <div key={`${section.id}-${section.title}`} className="flex gap-2 md:gap-4">
+    <div key={`${section.id}-${section.title}`} className="flex gap-4 md:gap-6">
       {section.isNumbered !== false && (
-        <div className="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl shadow-md">
+        <div
+          className="shrink-0 w-8 h-8 md:w-10 md:h-10 bg-primary
+         rounded-full flex items-center justify-center
+          text-white font-bold text-lg md:text-xl shadow-md"
+        >
           {section.id}
         </div>
       )}
       <div
         className={cn(
-          'flex flex-col gap-2',
+          'flex flex-col gap-4',
           section.isNumbered === false && 'ml-0'
         )}
       >
@@ -43,13 +47,13 @@ export const HelpArticleContent = ({
         </p>
 
         {section.items && (
-          <ul className="flex flex-col gap-2 ml-2 list-none">
+          <ul className="flex flex-col gap-4 ml-2 list-none">
             {section.items.map((item, idx) => (
               <li
                 key={idx}
                 className="flex items-start gap-2 text-sm md:text-base text-[#64748B]"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-2 flex-shrink-0" />
+                <span className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-2 shrink-0" />
                 <span className="leading-relaxed whitespace-pre-wrap">
                   {item}
                 </span>
@@ -69,7 +73,7 @@ export const HelpArticleContent = ({
 
   const renderImportant = (important: { title: string; items: string[] }) => (
     <div className="bg-[#F0F9FF] border border-[#E0F2FE] rounded-xl p-5 md:p-8 flex gap-2 md:gap-4 mt-2">
-      <LucideInfo className="text-[#0284C7] flex-shrink-0" size={24} />
+      <LucideInfo className="text-[#0284C7] shrink-0" size={24} />
       <div className="flex flex-col gap-2 w-full">
         <h4 className="text-xl font-semibold text-[#0369A1]">
           {important.title}
@@ -80,7 +84,7 @@ export const HelpArticleContent = ({
               key={idx}
               className="flex items-start gap-2 text-sm md:text-base text-[#0369A1]"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#0EA5E9] mt-2 flex-shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#0EA5E9] mt-2 shrink-0" />
               <span className="leading-relaxed whitespace-pre-wrap">
                 {item}
               </span>
@@ -93,7 +97,7 @@ export const HelpArticleContent = ({
 
   const renderVideo = (videoUrl?: string) => (
     <div className="mt-2 flex flex-col gap-4">
-      <h3 className="text-xl md:text-2xl font-[500] italic text-[#1E293B]">
+      <h3 className="text-xl md:text-2xl font-medium italic text-[#1E293B]">
         Watch the video guide.
       </h3>
       <div className="relative overflow-hidden shadow-xl border border-gray-100 aspect-video">
@@ -117,16 +121,20 @@ export const HelpArticleContent = ({
   );
 
   return (
-    <article className="flex-1 w-full max-w-[800px] flex flex-col gap-4">
+    <article className="w-full flex flex-col col-span-8 gap-4">
       {/* Breadcrumbs */}
-      <nav className="flex items-center gap-2 font-medium text-[#64748B]">
-        <span className="hover:text-blue-500 cursor-pointer">Help Center</span>
+      <nav className="flex items-center gap-2 text-[#64748B]">
+        <span className="hover:text-primary cursor-pointer text-sm lg:text-base">
+          Help Center
+        </span>
         <span>/</span>
-        <span className="hover:text-blue-500 cursor-pointer">
+        <span className="hover:text-primary cursor-pointer text-xs lg:text-base">
           {categoryTitle}
         </span>
         <span>/</span>
-        <span className="text-gray-400">{article.title}</span>
+        <span className="text-primary font-medium text-sm lg:text-base">
+          {article.title}
+        </span>
       </nav>
 
       {/* Header */}
@@ -141,7 +149,7 @@ export const HelpArticleContent = ({
         {article.caution && (
           <div className="bg-[#FFF7ED] border border-[#FFEDD5] rounded-xl p-5 md:p-6 flex gap-2 md:gap-4">
             <LucideAlertTriangle
-              className="text-[#F97316] flex-shrink-0"
+              className="text-[#F97316] shrink-0"
               size={24}
             />
             <div className="flex flex-col gap-2">

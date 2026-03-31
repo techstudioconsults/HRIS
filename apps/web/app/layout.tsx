@@ -4,7 +4,6 @@ import './globals.css';
 import { ReactNode } from 'react';
 import { Providers } from '../components/providers';
 import { Footer, GlobalPageLoader, Navbar } from '../components/common';
-import { SmoothScrollInit } from '../components/micro-interactions/smooth-scroll-init';
 
 const fontSans = Work_Sans({
   subsets: ['latin'],
@@ -27,16 +26,15 @@ export default function RootLayout({
         className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
       >
         <GlobalPageLoader />
-        <div id="smooth-wrapper">
-          <div id="smooth-content">
-            <Providers>
-              <SmoothScrollInit />
-              <Navbar />
+        <Providers>
+          <Navbar />
+          <div id="smooth-wrapper">
+            <div id="smooth-content">
               {children}
               <Footer />
-            </Providers>
+            </div>
           </div>
-        </div>
+        </Providers>
       </body>
     </html>
   );

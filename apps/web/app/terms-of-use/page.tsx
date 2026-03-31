@@ -1,12 +1,12 @@
-import { Hero, PolicyContent, CTA } from '../../components/common';
+import { Hero, CTA } from '../../components/common';
 import { TERMS_OF_USE_CONTENT } from '../../constants/terms-of-use';
+import { PolicyContent } from '../privacy-policy/PolicyContent';
 
 export default function TermsOfUsePage() {
   return (
     <>
       <Hero
         title={TERMS_OF_USE_CONTENT.intro.title}
-        lastUpdated={TERMS_OF_USE_CONTENT.lastUpdated}
         searchPlaceholder="Search for terms, service.."
       />
       <PolicyContent

@@ -112,7 +112,10 @@ export class MyFeatureService {
   constructor(private readonly http: HttpAdapter) {}
 
   async getItems(filters: QueryParameters = {}) {
-    const response = await this.http.get<{ data: MyItem[] }>('/my-endpoint', filters);
+    const response = await this.http.get<{ data: MyItem[] }>(
+      '/my-endpoint',
+      filters
+    );
     if (response?.status === 200) return response.data;
   }
 }
@@ -140,10 +143,15 @@ import { queryKeys } from '@/lib/react-query/query-keys';
 import { MyFeatureService } from './service';
 
 export const useMyFeatureService = () => {
-  const { useServiceQuery, useServiceMutation } = createServiceHooks<MyFeatureService>(dependencies.MY_FEATURE_SERVICE);
+  const { useServiceQuery, useServiceMutation } =
+    createServiceHooks<MyFeatureService>(dependencies.MY_FEATURE_SERVICE);
 
   const useGetItems = (filters = {}, options?: any) =>
-    useServiceQuery(queryKeys.myFeature.list(filters), (s) => s.getItems(filters), options);
+    useServiceQuery(
+      queryKeys.myFeature.list(filters),
+      (s) => s.getItems(filters),
+      options
+    );
 
   const useCreateItem = () =>
     useServiceMutation((s, data: CreateItemPayload) => s.createItem(data), {

@@ -1,6 +1,13 @@
 'use client';
 
-import { Calendar2, CardReceive, Clock, Element3, People, Profile2User } from 'iconsax-reactjs';
+import {
+  Calendar2,
+  CardReceive,
+  Clock,
+  Element3,
+  People,
+  Profile2User,
+} from 'iconsax-reactjs';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 
@@ -65,7 +72,12 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProperties) {
   const renderIcon = (item: NavItem) => {
     const IconComponent = iconComponents[item.icon];
     if (!IconComponent) return null;
-    return <IconComponent size="20" variant={pathname.includes(item.id) ? 'Bold' : 'Outline'} />;
+    return (
+      <IconComponent
+        size="20"
+        variant={pathname.includes(item.id) ? 'Bold' : 'Outline'}
+      />
+    );
   };
 
   return (
@@ -91,14 +103,23 @@ export function DashboardSidebar({ navItems }: DashboardSidebarProperties) {
                       : 'text-gray hover:text-primary hover:bg-[#ECF4FF]'
                   )}
                 >
-                  <Link onClick={handleCloseOnMobile} href={link} data-testid={item.id} role="sidebar-link">
+                  <Link
+                    onClick={handleCloseOnMobile}
+                    href={link}
+                    data-testid={item.id}
+                    role="sidebar-link"
+                  >
                     {renderIcon(item)}
-                    <span className="font-medium dark:text-white">{item.route}</span>
+                    <span className="font-medium dark:text-white">
+                      {item.route}
+                    </span>
                     {item.badge && (
                       <SidebarMenuBadge
                         className={cn(
                           'absolute right-2 flex h-5 w-5 items-center justify-center rounded-full text-xs',
-                          item.badge.variant === 'danger' ? 'bg-mid-danger text-white' : 'bg-gray-200',
+                          item.badge.variant === 'danger'
+                            ? 'bg-mid-danger text-white'
+                            : 'bg-gray-200',
                           item.badge.count === 0 && 'hidden'
                         )}
                       >

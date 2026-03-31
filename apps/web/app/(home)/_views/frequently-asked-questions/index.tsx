@@ -2,14 +2,18 @@
 
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 import { Emphasis } from '../../_components/Emphasis';
-import { MainButton, SuspenseLoading } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { SuspenseLoading } from '@workspace/ui/lib/loading';
 import React from 'react';
 import Tag from '../../_components/tag';
 import { faqItems } from './constants';
 import dynamic from 'next/dynamic';
 
 const FaqAccordion = dynamic(
-  () => import('@workspace/ui/lib').then((module) => module.FaqAccordion),
+  () =>
+    import('@workspace/ui/lib/faq-accordion').then(
+      (module) => module.FaqAccordion
+    ),
   {
     ssr: false,
     loading: () => <SuspenseLoading />,

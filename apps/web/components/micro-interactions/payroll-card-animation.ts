@@ -1,12 +1,9 @@
-// gsap is passed in as a parameter — no static import so this module stays
-// out of the initial bundle and is only loaded via the dynamic import in
-// card-transitions.tsx (true lazy-loading).
-type GsapInstance = typeof import('gsap').default;
+import gsap from 'gsap';
 
 interface PayrollCardAnimationOptions {
+  card: HTMLElement;
   animationTarget: HTMLElement;
-  /** The lazily-loaded gsap instance (passed from card-transitions.tsx). */
-  gsap: GsapInstance;
+  fallbackTrigger: HTMLElement;
 }
 
 /**
@@ -32,6 +29,18 @@ const samplePathPoints = (
   }
   return points;
 };
+
+const normalizePathData = (pathData: string) =>
+  pathData.trim().replace(/\s+/g, '').toLowerCase();
+
+const CURRENT_FLOW_PATHS = new Set(
+  [
+    'M255.207 119v67.764h50.578',
+    'M190.859 119.482v71.362h40.777v38.034',
+    'M137.927 117.914v86.653h-36.466v36.858',
+    'M100.677 118.307v50.188H47.352',
+  ].map(normalizePathData)
+);
 
 const getCurrentFlowPaths = (payrollSvg: SVGElement) => {
   return Array.from(
@@ -59,9 +68,11 @@ const getPayrollProgressElements = (animationTarget: HTMLElement) => {
 };
 
 export const createPayrollCardAnimation = ({
+  card,
   animationTarget,
-  gsap,
+  fallbackTrigger,
 }: PayrollCardAnimationOptions) => {
+  const triggerElement = card ?? fallbackTrigger;
   const { progressBar, trackRect, payrollSvg, currentFlowPaths } =
     getPayrollProgressElements(animationTarget);
   let progressTween: gsap.core.Tween | null = null;
@@ -102,20 +113,12 @@ export const createPayrollCardAnimation = ({
     };
 
     currentFlowPaths.forEach((path) => {
-      // iOS Safari bug: getTotalLength() returns 0 for paths that haven't
-      // been painted yet. Force a reflow via getBoundingClientRect() first,
-      // which flushes layout and ensures the path geometry is available.
-      void path.getBoundingClientRect();
-      const totalLength = path.getTotalLength();
-
-      // Skip paths that are still unresolvable after the reflow (e.g. hidden).
-      if (totalLength === 0) return;
-
       const marker = document.createElementNS(
         'http://www.w3.org/2000/svg',
         'circle'
       );
       // Sample the path once — all future per-frame updates are array lookups.
+      const totalLength = path.getTotalLength();
       const sampledPoints = samplePathPoints(path, totalLength);
       const startPoint = sampledPoints[0];
 
@@ -139,9 +142,6 @@ export const createPayrollCardAnimation = ({
       flowMarkers.push({ marker, sampledPoints });
     });
 
-    // If all paths had zero length (e.g. SVG not yet visible on iOS) bail out.
-    if (flowMarkers.length === 0) return;
-
     updateMarkers();
 
     flowTween = gsap.to(flowState, {
@@ -161,23 +161,23 @@ export const createPayrollCardAnimation = ({
 
     gsap.set(progressBar, { attr: { width: 0 } });
 
-    // No nested scrollTrigger here — this function is always called from
-    // inside an onComplete of a scroll-triggered fade, so the element is
-    // already in the viewport. A nested scrollTrigger reliably fails to fire
-    // on iOS WebKit because it cannot detect the current scroll position when
-    // a new trigger is created inside an animation callback.
     progressTween = gsap.to(progressBar, {
       attr: { width: progressTargetWidth },
       duration: 1.5,
       ease: 'power2.out',
-      delay: 0.1,
       onComplete: startCurrentFlowAnimation,
+      scrollTrigger: {
+        trigger: triggerElement,
+        start: 'top 100%',
+        invalidateOnRefresh: true,
+      },
     });
   } else {
     startCurrentFlowAnimation();
   }
 
   return () => {
+    progressTween?.scrollTrigger?.kill();
     progressTween?.kill();
     flowTween?.kill();
     flowMarkers.forEach(({ marker }) => marker.remove());

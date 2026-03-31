@@ -30,11 +30,6 @@ export const CardTransitions = () => {
         if (!isMounted) return;
 
         gsap.registerPlugin(ScrollTrigger);
-        // Prevent iOS from recalculating all trigger positions every time the
-        // browser address bar shows/hides (which changes the viewport height
-        // and causes ScrollTrigger to re-fire or miss triggers on iOS Safari
-        // and Chrome iOS).
-        ScrollTrigger.config({ ignoreMobileResize: true });
 
         rafId = requestAnimationFrame(() => {
           if (!isMounted) return;
@@ -75,8 +70,9 @@ export const CardTransitions = () => {
                 onComplete: isPayrollCard
                   ? () => {
                       const cleanup = createPayrollCardAnimation({
+                        card,
                         animationTarget,
-                        gsap,
+                        fallbackTrigger: section,
                       });
                       payrollAnimationCleanups.push(cleanup);
                     }

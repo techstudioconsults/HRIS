@@ -1,15 +1,12 @@
 import Link from 'next/link';
 import { Button } from '@workspace/ui/components/button';
-import { Navbar } from '../components/common/navbar';
-import { CTA } from '../components/common/cta';
+import { CTA } from '../components/common';
 
 export default function NotFound() {
   return (
     <>
       {/* Hero-style banner re-using the same bg image as the rest of the site */}
       <section className="relative min-h-[500px] pt-32 pb-20 px-6 md:px-12 bg-[url('/images/hero-bg.svg')] bg-cover bg-center overflow-hidden flex items-center">
-        <Navbar />
-
         <div className="max-w-7xl mx-auto text-center relative z-10 flex flex-col items-center gap-6 w-full">
           {/* Large 404 badge */}
           <span className="inline-flex items-center justify-center rounded-full bg-[#0066F3]/10 text-[#0066F3] text-sm font-semibold px-5 py-2 tracking-widest uppercase">

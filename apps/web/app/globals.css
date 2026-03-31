@@ -22,7 +22,7 @@
 
 /* let the logo travel outside the SVG canvas */
 .sticker-loader svg {
-    @apply transform-[scale(0.5)] lg:transform-[scale(0.6)];
+    @apply transform-[scale(0.6)] lg:transform-[scale(0.7)];
 }
 
 .sticker-loader #logo-icon {

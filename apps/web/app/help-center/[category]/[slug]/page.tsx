@@ -6,6 +6,7 @@ import {
   HelpArticle,
 } from '../../../../constants/help-center';
 import { notFound } from 'next/navigation';
+import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 
 interface PageProps {
   params: Promise<{
@@ -31,14 +32,10 @@ const Page = async ({ params }: PageProps) => {
         title="How can we help you"
         searchPlaceholder="Search for guides, features, or support articles"
       />
-
-      <div className="bg-white">
-        <div className="max-w-7xl mx-auto px-6 py-20 flex flex-col md:flex-row gap-16 lg:gap-24">
-          <HelpSidebar />
-          <HelpArticleContent article={article} categoryTitle={cat.title} />
-        </div>
-      </div>
-
+      <Wrapper className="grid grid-cols-1 space-y-10 gap-0 lg:gap-10 lg:grid-cols-12">
+        <HelpSidebar />
+        <HelpArticleContent article={article} categoryTitle={cat.title} />
+      </Wrapper>
       <CTA
         title="Still Need Help"
         description="If you can't find what you're looking for, our support team is ready to help."

@@ -20,7 +20,11 @@ export const HelpArticleContent = ({
   const renderSection = (section: Section) => (
     <div key={`${section.id}-${section.title}`} className="flex gap-4 md:gap-6">
       {section.isNumbered !== false && (
-        <div className="shrink-0 w-8 h-8 md:w-10 md:h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold text-lg md:text-xl shadow-md">
+        <div
+          className="shrink-0 w-8 h-8 md:w-10 md:h-10 bg-primary
+         rounded-full flex items-center justify-center
+          text-white font-bold text-lg md:text-xl shadow-md"
+        >
           {section.id}
         </div>
       )}
@@ -117,16 +121,20 @@ export const HelpArticleContent = ({
   );
 
   return (
-    <article className="flex-1 w-full max-w-[800px] flex flex-col gap-4">
+    <article className="w-full flex flex-col col-span-8 gap-4">
       {/* Breadcrumbs */}
-      <nav className="flex items-center gap-2 font-medium text-[#64748B]">
-        <span className="hover:text-blue-500 cursor-pointer">Help Center</span>
+      <nav className="flex items-center gap-2 text-[#64748B]">
+        <span className="hover:text-primary cursor-pointer text-sm lg:text-base">
+          Help Center
+        </span>
         <span>/</span>
-        <span className="hover:text-blue-500 cursor-pointer">
+        <span className="hover:text-primary cursor-pointer text-xs lg:text-base">
           {categoryTitle}
         </span>
         <span>/</span>
-        <span className="text-gray-400">{article.title}</span>
+        <span className="text-primary font-medium text-sm lg:text-base">
+          {article.title}
+        </span>
       </nav>
 
       {/* Header */}

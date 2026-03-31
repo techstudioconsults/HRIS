@@ -43,7 +43,8 @@
 /* ──────────────────────────────────────────────────────────────── */
 
 #smooth-wrapper {
-    overflow: clip;
+    overflow-x: clip;
+    overflow-y: visible;
 }
 
 #smooth-content {

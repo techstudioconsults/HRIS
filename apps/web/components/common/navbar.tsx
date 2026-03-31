@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { LucideChevronDown, LucideMenu, LucideX } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@workspace/ui/lib/utils';
-
 export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -36,9 +35,7 @@ export const Navbar = () => {
       >
         <div
           className={cn(
-            'bg-white/95 backdrop-blur-md rounded-[17px] px-4 md:px-8 py-3' +
-              ' flex items-center justify-between w-full max-w-[1200px]' +
-              ' transition-all duration-300 border border-black/3',
+            'bg-white/95 backdrop-blur-md rounded-[17px] px-4 md:px-8 py-3 flex items-center justify-between w-full max-w-[1200px] transition-all duration-300 border border-black/3',
             scrolled ? 'shadow-xl' : 'shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)]'
           )}
         >

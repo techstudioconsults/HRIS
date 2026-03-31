@@ -6,7 +6,10 @@ export const HeroActions = () => {
       <MainButton variant={'primary'} className="w-full sm:w-auto">
         Start Free Trial
       </MainButton>
-      <MainButton variant={'primaryOutline'} className="w-full bg-background sm:w-auto">
+      <MainButton
+        variant={'primaryOutline'}
+        className="w-full bg-background sm:w-auto"
+      >
         Login
       </MainButton>
     </div>

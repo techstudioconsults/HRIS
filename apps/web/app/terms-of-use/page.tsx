@@ -6,7 +6,6 @@ export default function TermsOfUsePage() {
     <>
       <Hero
         title={TERMS_OF_USE_CONTENT.intro.title}
-        lastUpdated={TERMS_OF_USE_CONTENT.lastUpdated}
         searchPlaceholder="Search for terms, service.."
       />
       <PolicyContent

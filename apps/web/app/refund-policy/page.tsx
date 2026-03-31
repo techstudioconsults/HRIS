@@ -6,7 +6,6 @@ export default function RefundPolicyPage() {
     <>
       <Hero
         title={REFUND_POLICY_CONTENT.intro.title}
-        lastUpdated={REFUND_POLICY_CONTENT.lastUpdated}
         searchPlaceholder="Search for refund, billing.."
       />
       <PolicyContent

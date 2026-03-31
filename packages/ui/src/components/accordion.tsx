@@ -5,11 +5,16 @@ import { ChevronDownIcon } from 'lucide-react';
 import * as React from 'react';
 import { cn } from '../lib/utils';
 
-function Accordion({ ...properties }: React.ComponentProps<typeof AccordionPrimitive.Root>) {
+function Accordion({
+  ...properties
+}: React.ComponentProps<typeof AccordionPrimitive.Root>) {
   return <AccordionPrimitive.Root data-slot="accordion" {...properties} />;
 }
 
-function AccordionItem({ className, ...properties }: React.ComponentProps<typeof AccordionPrimitive.Item>) {
+function AccordionItem({
+  className,
+  ...properties
+}: React.ComponentProps<typeof AccordionPrimitive.Item>) {
   return (
     <AccordionPrimitive.Item
       data-slot="accordion-item"

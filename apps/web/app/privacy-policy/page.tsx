@@ -6,7 +6,6 @@ export default function PrivacyPolicyPage() {
     <>
       <Hero
         title={PRIVACY_POLICY_CONTENT.intro.title}
-        lastUpdated={PRIVACY_POLICY_CONTENT.lastUpdated}
         searchPlaceholder="Search for policy, data.."
       />
       <PolicyContent

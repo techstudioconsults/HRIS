@@ -14,15 +14,17 @@ interface PageProps {
   };
 }
 
-export default function HelpArticlePage({ params }: PageProps) {
-  const category = HELP_CENTER_DATA.find(
-    (c: HelpCategory) => c.slug === params.category
-  );
-  if (!category) return notFound();
+const Page = async ({ params }: PageProps) => {
+  const { slug, category } = params;
 
-  const article = category.articles.find(
-    (a: HelpArticle) => a.slug === params.slug
-  );
+  // Find category
+  const cat = HELP_CENTER_DATA.find((c: HelpCategory) => c.slug === category);
+
+  if (!cat) return notFound();
+
+  // Find article inside category
+  const article = cat.articles.find((a: HelpArticle) => a.slug === slug);
+
   if (!article) return notFound();
 
   return (
@@ -35,10 +37,7 @@ export default function HelpArticlePage({ params }: PageProps) {
       <div className="bg-white">
         <div className="max-w-7xl mx-auto px-6 py-20 flex flex-col md:flex-row gap-16 lg:gap-24">
           <HelpSidebar />
-          <HelpArticleContent
-            article={article}
-            categoryTitle={category.title}
-          />
+          <HelpArticleContent article={article} categoryTitle={cat.title} />
         </div>
       </div>
 
@@ -51,4 +50,6 @@ export default function HelpArticlePage({ params }: PageProps) {
       />
     </>
   );
-}
+};
+
+export default Page;

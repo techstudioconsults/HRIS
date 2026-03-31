@@ -73,8 +73,8 @@ svg {
     filter: drop-shadow(0px 17px 5px var(--muted));
 }
 
-#leave-svg {
-    @apply -translate-x-2.5 sm:translate-x-[-150px] lg:translate-x-[-170px];
+.leave-svg {
+    @apply -translate-x-2.5 sm:translate-x-[-150px] lg:-translate-x-2.5;
 }
 
 .stepper-track {
@@ -119,3 +119,12 @@ svg {
         transition: none;
     }
 }
+
+[data-header-text] {
+    position: relative;
+    overflow: hidden;
+}
+
+/*[data-header-text] h1 {*/
+/*    @apply translate-y-20;*/
+/*}*/

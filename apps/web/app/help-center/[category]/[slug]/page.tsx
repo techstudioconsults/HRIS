@@ -8,21 +8,19 @@ import {
 import { notFound } from 'next/navigation';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     category: string;
     slug: string;
-  };
+  }>;
 }
 
 const Page = async ({ params }: PageProps) => {
-  const { slug, category } = params;
+  const { slug, category } = await params;
 
-  // Find category
   const cat = HELP_CENTER_DATA.find((c: HelpCategory) => c.slug === category);
 
   if (!cat) return notFound();
 
-  // Find article inside category
   const article = cat.articles.find((a: HelpArticle) => a.slug === slug);
 
   if (!article) return notFound();

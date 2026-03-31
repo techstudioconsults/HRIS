@@ -20,7 +20,7 @@ export const Footer = () => {
         { name: 'About', href: '/about' },
         { name: 'Contact', href: '/contact' },
         { name: 'Pricing', href: '/pricing' },
-        { name: 'Help Center', href: '#' },
+        { name: 'Help Center', href: '/help-center' },
       ],
     },
     {
@@ -36,7 +36,10 @@ export const Footer = () => {
 
   return (
     <footer className="bg-[#E6F0FE] pt-24 pb-0 px-6 md:px-12  relative overflow-hidden text-center md:text-left">
-      <div className="max-w-7xl mx-auto flex flex-col items-center md:items-start lg:grid lg:grid-cols-10 gap-16 lg:gap-8 border-b border-white/10 pb-16 mb-12 relative z-10">
+      <div
+        className="max-w-7xl mx-auto flex flex-col items-center md:items-start lg:grid
+      lg:grid-cols-10 gap-16 lg:gap-8 border-b border-white/10 pb-16 mb-12 relative z-10"
+      >
         {/* Logo & Info */}
         <div className="lg:col-span-4 flex flex-col items-center md:items-start gap-8 w-full">
           <div className="flex flex-col items-center md:items-start gap-4">

@@ -1,5 +1,6 @@
-import { Hero, PolicyContent, CTA } from '../../components/common';
+import { Hero, CTA } from '../../components/common';
 import { PRIVACY_POLICY_CONTENT } from '../../constants/privacy-policy';
+import { PolicyContent } from './PolicyContent';
 
 export default function PrivacyPolicyPage() {
   return (

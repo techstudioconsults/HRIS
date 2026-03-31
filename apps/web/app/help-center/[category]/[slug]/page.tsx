@@ -1,5 +1,4 @@
-import { LandingLayout, CTA } from '../../../../components/common';
-import { Hero } from '../../../../components/common/hero';
+import { CTA, Hero } from '../../../../components/common';
 import { HelpSidebar, HelpArticleContent } from '../../../../components/help';
 import {
   HELP_CENTER_DATA,
@@ -27,7 +26,7 @@ export default function HelpArticlePage({ params }: PageProps) {
   if (!article) return notFound();
 
   return (
-    <LandingLayout>
+    <>
       <Hero
         title="How can we help you"
         searchPlaceholder="Search for guides, features, or support articles"
@@ -50,6 +49,6 @@ export default function HelpArticlePage({ params }: PageProps) {
         primaryButtonHref="/contact"
         showSecondaryButton={false}
       />
-    </LandingLayout>
+    </>
   );
 }

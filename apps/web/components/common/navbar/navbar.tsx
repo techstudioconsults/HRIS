@@ -1,11 +1,11 @@
 import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
-import { LucideChevronDown } from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
 import { Logo } from '@workspace/ui/lib/logo';
 import { NavbarMobileMenu } from './navbar-mobile-menu';
 import { NavbarScrollState } from './navbar-scroll-state';
 import { NAV_LINKS } from './navbar-links';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 
 export const Navbar = () => {
   return (
@@ -47,7 +47,11 @@ export const Navbar = () => {
             >
               {link.name}
               {link.hasDropdown && (
-                <LucideChevronDown size={14} className="text-gray-400" />
+                <Icon
+                  name={`ChevronsUpDown`}
+                  size={14}
+                  className="text-gray-400"
+                />
               )}
             </Link>
           ))}

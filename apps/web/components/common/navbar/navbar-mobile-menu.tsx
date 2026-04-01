@@ -2,13 +2,6 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  LucideChevronDown,
-  LucideChevronRight,
-  LucideMenu,
-  LucideSparkles,
-  LucideX,
-} from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import {
@@ -23,6 +16,7 @@ import {
 import { MainButton } from '@workspace/ui/lib/button';
 import { cn } from '@workspace/ui/lib/utils';
 import type { NavLinkItem } from './navbar-links';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 
 interface NavbarMobileMenuProps {
   links: NavLinkItem[];
@@ -54,7 +48,13 @@ export const NavbarMobileMenu = ({ links }: NavbarMobileMenuProps) => {
           isIconOnly
           size="icon"
           className="lg:hidden"
-          icon={isOpen ? <LucideX size={18} /> : <LucideMenu size={18} />}
+          icon={
+            isOpen ? (
+              <Icon name={`X`} size={18} />
+            ) : (
+              <Icon name={`Menu`} size={18} />
+            )
+          }
         />
       </DrawerTrigger>
 
@@ -72,7 +72,7 @@ export const NavbarMobileMenu = ({ links }: NavbarMobileMenuProps) => {
           <div className="flex items-start justify-between gap-3">
             <div className="space-y-3">
               <span className="inline-flex items-center gap-2 rounded-full bg-[#E9F1FF] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#0052CC]">
-                <LucideSparkles size={12} />
+                <Icon name={`LucideSparkles`} size={12} />
                 Menu
               </span>
               <div>
@@ -92,7 +92,7 @@ export const NavbarMobileMenu = ({ links }: NavbarMobileMenuProps) => {
                 isIconOnly
                 size="icon"
                 aria-label="Close navigation menu"
-                icon={<LucideX size={18} />}
+                icon={<Icon name={`X`} size={18} />}
               />
             </DrawerClose>
           </div>
@@ -127,9 +127,9 @@ export const NavbarMobileMenu = ({ links }: NavbarMobileMenuProps) => {
 
                 <span className="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-slate-400 ring-1 ring-slate-200 transition-colors group-hover:text-[#0066F3]">
                   {link.hasDropdown ? (
-                    <LucideChevronDown size={18} />
+                    <Icon name={`ChevronLeftCircle`} size={18} />
                   ) : (
-                    <LucideChevronRight size={18} />
+                    <Icon name={`ChevronRightCircle`} size={18} />
                   )}
                 </span>
               </Link>

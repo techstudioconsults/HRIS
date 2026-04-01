@@ -6,7 +6,10 @@ import { adminNavItems } from '@/lib/tools/constants';
 import { TourProvider } from '@/modules/@org/onboarding';
 import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onboarding-service';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
-import { SidebarInset, SidebarProvider } from '@workspace/ui/components/sidebar';
+import {
+  SidebarInset,
+  SidebarProvider,
+} from '@workspace/ui/components/sidebar';
 import { AppSidebar, Logo, useModeToggle } from '@workspace/ui/lib';
 import { cn } from '@workspace/ui/lib/utils';
 import { useSession } from 'next-auth/react';
@@ -42,7 +45,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               adminEmail={session?.user.employee.email || ''}
               notifications={[]}
             />
-            <Wrapper className="max-w-[1440px] py-10">{children}</Wrapper>
+            <Wrapper className="max-w-[1440px] px-4! my-0! py-10">
+              {children}
+            </Wrapper>
           </ActiveTargetProvider>
         </SidebarInset>
       </SidebarProvider>

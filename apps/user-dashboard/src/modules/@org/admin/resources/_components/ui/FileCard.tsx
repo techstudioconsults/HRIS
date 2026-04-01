@@ -1,23 +1,22 @@
-"use client";
+'use client';
 
-import { Button } from "@workspace/ui/components/button";
+import { Button } from '@workspace/ui/components/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
-import { AlertModal } from "@workspace/ui/lib";
-import { Eye, More, Trash } from "iconsax-reactjs";
-import { Download } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
-import { toast } from "sonner";
+} from '@workspace/ui/components/dropdown-menu';
+import { AlertModal } from '@workspace/ui/lib';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import Image from 'next/image';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
-import type { FolderFile } from "../../services/types";
-import { useResourceService } from "../../services/use-service";
-import { formatDate, formatFileSize, getFileIcon } from "../../utils/format";
-import { Separator } from "@workspace/ui/components/separator";
+import type { FolderFile } from '../../services/types';
+import { useResourceService } from '../../services/use-service';
+import { formatDate, formatFileSize, getFileIcon } from '../../utils/format';
+import { Separator } from '@workspace/ui/components/separator';
 
 interface FileCardProperties {
   file: FolderFile;
@@ -51,7 +50,7 @@ export const FileCard = ({ file }: FileCardProperties) => {
         await downloadFileMutation(file.id);
       } else if (file.url) {
         // Fallback: open the file URL if no id
-        window.open(file.url, "_blank");
+        window.open(file.url, '_blank');
       }
     } catch {
       // ...optionally handle error (toast/snackbar)...
@@ -60,7 +59,7 @@ export const FileCard = ({ file }: FileCardProperties) => {
 
   const handleView = () => {
     if (file.url) {
-      window.open(file.url, "_blank");
+      window.open(file.url, '_blank');
     }
   };
 
@@ -87,21 +86,32 @@ export const FileCard = ({ file }: FileCardProperties) => {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0" aria-label="File actions menu">
-                <More className="h-4 w-4 rotate-90" />
+              <Button
+                variant="ghost"
+                className="h-8 w-8 p-0"
+                aria-label="File actions menu"
+              >
+                <Icon name="More" size={16} className="rotate-90" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 shadow-none">
               <DropdownMenuItem disabled onClick={handleDownload}>
-                <Download className="mr-2 h-4 w-4" />
+                <Icon name="Download" size={16} className="mr-2" />
                 Download File
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleView}>
-                <Eye className="mr-2 h-4 w-4" /> View File
+                <Icon name="Eye" size={16} className="mr-2" /> View File
               </DropdownMenuItem>
               <Separator className="bg-border/40 my-1" />
-              <DropdownMenuItem onClick={handleDeleteClick} className="text-destructive">
-                <Trash className="text-destructive mr-2 h-4 w-4" />
+              <DropdownMenuItem
+                onClick={handleDeleteClick}
+                className="text-destructive"
+              >
+                <Icon
+                  name="Trash"
+                  size={16}
+                  className="text-destructive mr-2"
+                />
                 Delete File
               </DropdownMenuItem>
             </DropdownMenuContent>

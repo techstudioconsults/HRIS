@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { SearchInput } from "@/modules/@org/shared/search-input";
-import { Button } from "@workspace/ui/components/button";
-import { DashboardHeader, GenericDropdown } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { Filter } from "iconsax-reactjs";
-import { useRouter } from "next/navigation";
+import { SearchInput } from '@/modules/@org/shared/search-input';
+import { Button } from '@workspace/ui/components/button';
+import { DashboardHeader, GenericDropdown } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { useRouter } from 'next/navigation';
 
 interface LeaveHeaderProperties {
   onSearch: (query: string) => void;
@@ -32,7 +32,7 @@ export const LeaveHeader = ({ onSearch }: LeaveHeaderProperties) => {
                 className="data-[state=open]:border-border data-[state=open]:text-gray h-10 rounded-md border px-3"
                 variant="primaryOutline"
               >
-                <Filter className="size-4" />
+                <Icon name="Filter" size={16} />
                 Filter
               </Button>
             }
@@ -44,7 +44,7 @@ export const LeaveHeader = ({ onSearch }: LeaveHeaderProperties) => {
           <MainButton
             variant="primary"
             onClick={() => {
-              router.push("/admin/leave/type");
+              router.push('/admin/leave/type');
             }}
           >
             Manage Leave Types

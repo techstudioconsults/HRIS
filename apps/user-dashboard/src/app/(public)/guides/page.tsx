@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { MainButton } from "@workspace/ui/lib/button";
-import { LucideOrbit, LucidePlus } from "lucide-react";
-import { FC } from "react";
+import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { FC } from 'react';
 
 const StyleGuide: FC = () => {
   return (
@@ -148,7 +148,7 @@ const StyleGuide: FC = () => {
       <h2 className="text-2xl font-semibold">Button Variants</h2>
       <div
         className="grid w-full grid-cols-5 items-start gap-4"
-        style={{ gridTemplateColumns: "repeat(auto-fit,minmax(250px,1fr))" }}
+        style={{ gridTemplateColumns: 'repeat(auto-fit,minmax(250px,1fr))' }}
       >
         <div className="group flex h-full flex-col items-start justify-between rounded-lg border px-5 py-5">
           <h2 className="mb-3 text-2xl font-semibold">Default Button</h2>
@@ -175,17 +175,25 @@ const StyleGuide: FC = () => {
           </div>
         </div>
         <div className="group flex h-full flex-col items-start justify-between rounded-lg border px-5 py-5">
-          <h2 className="mb-3 text-2xl font-semibold">With Icon Default Button</h2>
+          <h2 className="mb-3 text-2xl font-semibold">
+            With Icon Default Button
+          </h2>
           <div className="flex items-center gap-4">
-            <MainButton isLeftIconVisible={true} icon={<LucideOrbit />}>
+            <MainButton isLeftIconVisible={true} icon={<Icon name="Home" />}>
               Button CTA
             </MainButton>
           </div>
         </div>
         <div className="group flex h-full flex-col items-start justify-between rounded-lg border px-5 py-5">
-          <h2 className="mb-3 text-2xl font-semibold">With Icon Primary Button</h2>
+          <h2 className="mb-3 text-2xl font-semibold">
+            With Icon Primary Button
+          </h2>
           <div className="flex items-center gap-4">
-            <MainButton variant="primary" isLeftIconVisible={true} icon={<LucideOrbit />}>
+            <MainButton
+              variant="primary"
+              isLeftIconVisible={true}
+              icon={<Icon name="Home" />}
+            >
               Button CTA
             </MainButton>
           </div>
@@ -203,17 +211,31 @@ const StyleGuide: FC = () => {
           </div>
         </div>
         <div className="group flex h-full flex-col items-start justify-between rounded-lg border px-5 py-5">
-          <h2 className="mb-3 text-2xl font-semibold">Link With Left Icon Button</h2>
+          <h2 className="mb-3 text-2xl font-semibold">
+            Link With Left Icon Button
+          </h2>
           <div className="flex items-center gap-4">
-            <MainButton variant="link" size="link" isLeftIconVisible={true} icon={<LucideOrbit />}>
+            <MainButton
+              variant="link"
+              size="link"
+              isLeftIconVisible={true}
+              icon={<Icon name="Home" />}
+            >
               Button CTA
             </MainButton>
           </div>
         </div>
         <div className="group flex h-full flex-col items-start justify-between rounded-lg border px-5 py-5">
-          <h2 className="mb-3 text-2xl font-semibold">Link With Right Icon Button</h2>
+          <h2 className="mb-3 text-2xl font-semibold">
+            Link With Right Icon Button
+          </h2>
           <div className="flex items-center gap-4">
-            <MainButton variant="link" size="link" isRightIconVisible={true} icon={<LucideOrbit />}>
+            <MainButton
+              variant="link"
+              size="link"
+              isRightIconVisible={true}
+              icon={<Icon name="Home" />}
+            >
               Button CTA
             </MainButton>
           </div>
@@ -229,13 +251,25 @@ const StyleGuide: FC = () => {
         <div className="group flex h-full flex-col items-start justify-between rounded-lg border px-5 py-5">
           <h2 className="mb-3 text-2xl font-semibold">Icon Only Button</h2>
           <div className="flex items-center gap-4">
-            <MainButton variant="outline" size="icon" isIconOnly={true} icon={<LucidePlus />} />
+            <MainButton
+              variant="outline"
+              size="icon"
+              isIconOnly={true}
+              icon={<Icon name="Plus" />}
+            />
           </div>
         </div>
         <div className="group flex h-full flex-col items-start justify-between rounded-lg border px-5 py-5">
-          <h2 className="mb-3 text-2xl font-semibold">Icon Only Circle Button</h2>
+          <h2 className="mb-3 text-2xl font-semibold">
+            Icon Only Circle Button
+          </h2>
           <div className="flex items-center gap-4">
-            <MainButton variant="outline" size="circle" isIconOnly={true} icon={<LucidePlus />} />
+            <MainButton
+              variant="outline"
+              size="circle"
+              isIconOnly={true}
+              icon={<Icon name="Plus" />}
+            />
           </div>
         </div>
       </div>

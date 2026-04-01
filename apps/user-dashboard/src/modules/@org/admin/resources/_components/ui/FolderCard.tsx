@@ -1,25 +1,23 @@
-"use client";
+'use client';
 
-import { Button } from "@workspace/ui/components/button";
+import { Button } from '@workspace/ui/components/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
-import { Separator } from "@workspace/ui/components/separator";
-import { AlertModal, EmptyState, ReusableDialog } from "@workspace/ui/lib";
-import { Eye, More, Trash } from "iconsax-reactjs";
-import { Edit } from "lucide-react";
-import { useState } from "react";
-import { FcFolder, FcOpenedFolder } from "react-icons/fc";
+} from '@workspace/ui/components/dropdown-menu';
+import { Separator } from '@workspace/ui/components/separator';
+import { AlertModal, EmptyState, ReusableDialog } from '@workspace/ui/lib';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { useState } from 'react';
 
-import empty1 from "~/images/empty-state.svg";
-import type { Folder, FolderFile } from "../../services/types";
-import { useResourceService } from "../../services/use-service";
-import { formatDate } from "../../utils/format";
-import { EditFolderForm } from "../forms/edit-folder";
-import { FileCard } from "./FileCard";
+import empty1 from '~/images/empty-state.svg';
+import type { Folder, FolderFile } from '../../services/types';
+import { useResourceService } from '../../services/use-service';
+import { formatDate } from '../../utils/format';
+import { EditFolderForm } from '../forms/edit-folder';
+import { FileCard } from './FileCard';
 
 interface FolderCardProperties {
   folder: Folder;
@@ -27,7 +25,8 @@ interface FolderCardProperties {
 
 export const FolderCard = ({ folder }: FolderCardProperties) => {
   const { useDeleteFolder, useGetFilesByFolderId } = useResourceService();
-  const { mutateAsync: deleteFolderMutation, isPending: isDeleting } = useDeleteFolder();
+  const { mutateAsync: deleteFolderMutation, isPending: isDeleting } =
+    useDeleteFolder();
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [renameFolderDialog, setRenameFolderDialog] = useState(false);
@@ -37,7 +36,11 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
     data: folderFilesResponse,
     refetch: refetchFolderFiles,
     isFetching: isFetchingFolderFiles,
-  } = useGetFilesByFolderId(folder.id, {}, { enabled: false, onSuccess: () => setViewFolderDialog(true) });
+  } = useGetFilesByFolderId(
+    folder.id,
+    {},
+    { enabled: false, onSuccess: () => setViewFolderDialog(true) }
+  );
 
   const handleFolderClick = () => {
     setViewFolderDialog(true); // open modal immediately
@@ -64,7 +67,8 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
   };
 
   // Add: treat modal as loading until we receive the first response
-  const isLoadingFiles = isFetchingFolderFiles || (viewFolderDialog && !folderFilesResponse);
+  const isLoadingFiles =
+    isFetchingFolderFiles || (viewFolderDialog && !folderFilesResponse);
 
   // Normalize response -> files array (supports { data: { items: [...] } } shape)
   const files: FolderFile[] = (() => {
@@ -82,10 +86,13 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
         <div className="flex items-start justify-between">
           <div className="flex min-w-0 flex-1 items-start gap-3">
             <span>
-              <FcFolder size={48} />
+              <Icon name="Folder" size={48} className="text-primary" />
             </span>
             <div className="min-w-0 flex-1">
-              <h6 className="truncate text-base font-medium" title={folder.name}>
+              <h6
+                className="truncate text-base font-medium"
+                title={folder.name}
+              >
                 {folder.name}
               </h6>
               <p className="text-muted-foreground mt-1 text-xs">
@@ -94,23 +101,41 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
             </div>
           </div>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild onClick={(event) => event.stopPropagation()}>
-              <Button variant="ghost" className="h-8 w-8 p-0" aria-label="Folder actions menu">
-                <More className="h-4 w-4 rotate-90" />
+            <DropdownMenuTrigger
+              asChild
+              onClick={(event) => event.stopPropagation()}
+            >
+              <Button
+                variant="ghost"
+                className="h-8 w-8 p-0"
+                aria-label="Folder actions menu"
+              >
+                <Icon name="More" size={16} className="rotate-90" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 shadow-none" onClick={(event) => event.stopPropagation()}>
+            <DropdownMenuContent
+              align="end"
+              className="w-48 shadow-none"
+              onClick={(event) => event.stopPropagation()}
+            >
               <DropdownMenuItem onClick={handleFolderClick}>
-                <Eye className="mr-2 h-4 w-4" />
-                {isFetchingFolderFiles ? "Loading..." : "View Folder"}
+                <Icon name="Eye" size={16} className="mr-2" />
+                {isFetchingFolderFiles ? 'Loading...' : 'View Folder'}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleRenameClick}>
-                <Edit className="mr-2 h-4 w-4" />
+                <Icon name="Edit" size={16} className="mr-2" />
                 Rename Folder
               </DropdownMenuItem>
               <Separator className="bg-border/40 my-1" />
-              <DropdownMenuItem onClick={handleDeleteClick} className="text-destructive">
-                <Trash className="text-destructive mr-2 h-4 w-4" />
+              <DropdownMenuItem
+                onClick={handleDeleteClick}
+                className="text-destructive"
+              >
+                <Icon
+                  name="Trash"
+                  size={16}
+                  className="text-destructive mr-2"
+                />
                 Delete Folder
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -136,20 +161,24 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
         open={viewFolderDialog}
         onOpenChange={setViewFolderDialog}
         title={`${folder.name} Files`}
-        description={isLoadingFiles ? "Loading files..." : undefined}
+        description={isLoadingFiles ? 'Loading files...' : undefined}
         trigger={null}
-        icon={<FcOpenedFolder size={32} />}
+        icon={<Icon name="FolderOpen" size={32} className="text-primary" />}
         className="min-w-5xl"
       >
         {isLoadingFiles ? (
-          <div className="text-muted-foreground py-6 text-sm">Loading files...</div>
+          <div className="text-muted-foreground py-6 text-sm">
+            Loading files...
+          </div>
         ) : files.length === 0 ? (
           <div className="text-muted-foreground py-6 text-sm">
             <EmptyState
               className="bg-background"
-              images={[{ src: empty1.src, alt: "No files", width: 80, height: 80 }]}
+              images={[
+                { src: empty1.src, alt: 'No files', width: 80, height: 80 },
+              ]}
               title="No File found"
-              description={"Upload files to this folder to see them here"}
+              description={'Upload files to this folder to see them here'}
             />
           </div>
         ) : (
@@ -170,7 +199,11 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
         trigger={null}
         className="min-w-2xl"
       >
-        <EditFolderForm folderId={folder.id} currentName={folder.name} onClose={handleCloseRename} />
+        <EditFolderForm
+          folderId={folder.id}
+          currentName={folder.name}
+          onClose={handleCloseRename}
+        />
       </ReusableDialog>
     </>
   );

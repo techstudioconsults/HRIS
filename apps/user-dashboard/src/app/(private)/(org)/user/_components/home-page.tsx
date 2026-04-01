@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useSession } from 'next-auth/react';
-import { Calendar, FileText, Clock } from 'lucide-react';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 import { WelcomeWidget } from './welcome-widget';
 import { QuickActionCard } from './quick-action-card';
 import { RecentActivities } from './recent-activities';
@@ -28,7 +28,8 @@ const MOCK_ACTIVITIES: Activity[] = [
     id: '3',
     type: 'submitted',
     title: 'New Leave Request (Just Submitted)',
-    message: 'You requested Annual Leave (Oct 10 – Oct 13) — awaiting approval.',
+    message:
+      'You requested Annual Leave (Oct 10 – Oct 13) — awaiting approval.',
     timestamp: new Date('2025-09-22'),
   },
   {
@@ -52,7 +53,9 @@ export const HomePage: React.FC = () => {
       {/* Quick Action Cards - 3 columns as per design */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-[14.6px]">
         <QuickActionCard
-          icon={Calendar}
+          icon={({ className }) => (
+            <Icon name="Calendar" size={24} className={className} />
+          )}
           title="Request Leave"
           description="Submit a new leave request"
           bgColor="bg-[#E6F0FE]"
@@ -61,7 +64,9 @@ export const HomePage: React.FC = () => {
           href="/user/leave"
         />
         <QuickActionCard
-          icon={FileText}
+          icon={({ className }) => (
+            <Icon name="FileText" size={24} className={className} />
+          )}
           title="View Payslip"
           description="Access your payslip history"
           bgColor="bg-[#E7F5EC]"
@@ -70,7 +75,9 @@ export const HomePage: React.FC = () => {
           href="/user/payslip"
         />
         <QuickActionCard
-          icon={Clock}
+          icon={({ className }) => (
+            <Icon name="Clock" size={24} className={className} />
+          )}
           title="Attendance"
           description="Clock in and clock out"
           bgColor="bg-[#F8ECE9]"

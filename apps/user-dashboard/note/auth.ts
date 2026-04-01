@@ -1,23 +1,25 @@
-// middleware.ts
-import { auth } from "@/modules/@org/auth";
-import { NextResponse } from "next/server";
+// proxy.ts
+import { auth } from '@/modules/@org/auth';
+import { NextResponse } from 'next/server';
 
 export default auth((request) => {
   const { nextUrl } = request;
   const isLoggedIn = !!request.auth;
 
   // Define protected routes
-  const protectedRoutes = ["/onboarding", "/admin"];
+  const protectedRoutes = ['/onboarding', '/admin'];
 
   // Check if the current path is protected
-  const isProtectedRoute = protectedRoutes.some((route) => nextUrl.pathname.startsWith(route));
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    nextUrl.pathname.startsWith(route)
+  );
 
   // Redirect logic
   if (isProtectedRoute && !isLoggedIn) {
     // Get absolute URL for /login
-    const loginUrl = new URL("/login", nextUrl.origin);
+    const loginUrl = new URL('/login', nextUrl.origin);
     // Add redirect parameter to return to current page after login
-    loginUrl.searchParams.set("callbackUrl", nextUrl.pathname);
+    loginUrl.searchParams.set('callbackUrl', nextUrl.pathname);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -35,6 +37,6 @@ export const config = {
      * - auth callbacks
      * - login page
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|login).*)",
+    '/((?!api|_next/static|_next/image|favicon.ico|login).*)',
   ],
 };

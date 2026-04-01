@@ -10,6 +10,7 @@
     "dev:user": "turbo dev --filter=user-dashboard",
     "build:web": "turbo build --filter=web",
     "build:user": "turbo build --filter=user-dashboard",
+    "analyze": "ANALYZE=true turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "test": "turbo  test",

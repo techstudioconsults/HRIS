@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { queryClient } from "@/lib/react-query/query-client";
-import { ReactNode, useEffect } from "react";
+import { queryClient } from '@/lib/react-query/query-client';
+import { ReactNode, useEffect } from 'react';
 
-import { useAuthStore } from "./auth-store";
+import { useAuthStore } from './auth-store';
 
 interface StoreProviderProperties {
   children: ReactNode;
@@ -37,7 +37,7 @@ export function StoreProvider({ children }: StoreProviderProperties) {
       anyClient.getMutationCache?.().clear?.();
     };
 
-    // Track changes to isAuthenticated without subscribeWithSelector middleware
+    // Track changes to isAuthenticated without subscribeWithSelector proxy
     let previous = useAuthStore.getState().isAuthenticated;
     const unsubscribe = useAuthStore.subscribe((state) => {
       if (state.isAuthenticated !== previous) {

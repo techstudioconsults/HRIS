@@ -19,8 +19,7 @@ import {
   type IColumnDefinition,
   type IRowAction,
 } from '@workspace/ui/lib/table';
-import { Filter, More } from 'iconsax-reactjs';
-import { Plus } from 'lucide-react';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { useDebounce } from 'use-debounce';
@@ -76,34 +75,49 @@ export const RolesManagementTab = () => {
 
   const teamsWithRolesQueryKey = queryKeys.onboarding.teamsWithRoles();
 
-  const { data: teamsWithRoles = [], isLoading: isLoadingTeams } = useGetTeamsWithRoles();
-  const { mutateAsync: createRoleMutation, isPending: isCreating } = useCreateRole();
-  const { mutateAsync: updateRoleMutation, isPending: isUpdating } = useUpdateRole();
+  const { data: teamsWithRoles = [], isLoading: isLoadingTeams } =
+    useGetTeamsWithRoles();
+  const { mutateAsync: createRoleMutation, isPending: isCreating } =
+    useCreateRole();
+  const { mutateAsync: updateRoleMutation, isPending: isUpdating } =
+    useUpdateRole();
 
   // Local input state (debounced) to throttle URL updates via nuqs
   const [searchInput, setSearchInput] = useState(search || '');
   const [debouncedSearch] = useDebounce(searchInput, 300);
 
-  const [roleEditor, setRoleEditor] = useState<RoleEditorState>({ open: false });
+  const [roleEditor, setRoleEditor] = useState<RoleEditorState>({
+    open: false,
+  });
 
   // UI-only role activation state (until backend endpoints are wired)
-  const [roleActiveOverrides, setRoleActiveOverrides] = useState<Record<string, boolean>>({});
-  const [toggleModal, setToggleModal] = useState<RoleToggleState>({ open: false });
-  const [toggleSuccessModal, setToggleSuccessModal] = useState<RoleToggleState>({ open: false });
+  const [roleActiveOverrides, setRoleActiveOverrides] = useState<
+    Record<string, boolean>
+  >({});
+  const [toggleModal, setToggleModal] = useState<RoleToggleState>({
+    open: false,
+  });
+  const [toggleSuccessModal, setToggleSuccessModal] = useState<RoleToggleState>(
+    { open: false }
+  );
   const [isTogglingRole, setIsTogglingRole] = useState(false);
 
   const teamOptions = useMemo(
     () =>
-      (Array.isArray(teamsWithRoles) ? teamsWithRoles : []).map((team: any) => ({
-        value: String(team.id),
-        label: String(team.name),
-      })),
+      (Array.isArray(teamsWithRoles) ? teamsWithRoles : []).map(
+        (team: any) => ({
+          value: String(team.id),
+          label: String(team.name),
+        })
+      ),
     [teamsWithRoles]
   );
 
   // Apply debounced search to URL (nuqs) and reset page to 1
   useEffect(() => {
-    setSearch(debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : null);
+    setSearch(
+      debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : null
+    );
     resetToFirstPage();
   }, [debouncedSearch, setSearch, resetToFirstPage]);
 
@@ -118,7 +132,9 @@ export const RolesManagementTab = () => {
   const effectiveTeamId = teamId === 'all' ? null : teamId;
 
   const allRoles = useMemo<RoleRow[]>(() => {
-    const teams = Array.isArray(teamsWithRoles) ? (teamsWithRoles as any[]) : [];
+    const teams = Array.isArray(teamsWithRoles)
+      ? (teamsWithRoles as any[])
+      : [];
     const flattened: RoleRow[] = [];
     for (const team of teams) {
       const roles: any[] = Array.isArray(team.roles) ? team.roles : [];
@@ -142,7 +158,9 @@ export const RolesManagementTab = () => {
       {
         header: 'Role Name',
         accessorKey: 'name',
-        render: (value) => <span className="font-medium">{String(value ?? '—')}</span>,
+        render: (value) => (
+          <span className="font-medium">{String(value ?? '—')}</span>
+        ),
       },
       {
         header: 'Department',
@@ -187,7 +205,11 @@ export const RolesManagementTab = () => {
   const isBusy = isCreating || isUpdating;
 
   const openCreateDialog = () => {
-    setRoleEditor({ open: true, mode: 'create', teamId: effectiveTeamId || '' });
+    setRoleEditor({
+      open: true,
+      mode: 'create',
+      teamId: effectiveTeamId || '',
+    });
   };
 
   const openEditDialog = (role: RoleRow) => {
@@ -262,7 +284,8 @@ export const RolesManagementTab = () => {
             if (String(role?.id) !== patch.roleId) return role;
             const nextRole: any = { ...role };
             if (patch.name !== undefined) nextRole.name = patch.name;
-            if (patch.permissions !== undefined) nextRole.permissions = patch.permissions;
+            if (patch.permissions !== undefined)
+              nextRole.permissions = patch.permissions;
             return nextRole;
           }),
         };
@@ -270,7 +293,11 @@ export const RolesManagementTab = () => {
     });
   };
 
-  const handleSubmitRole = async (data: { id?: string; name: string; permissions?: string[] }) => {
+  const handleSubmitRole = async (data: {
+    id?: string;
+    name: string;
+    permissions?: string[];
+  }) => {
     const selectedTeamId = roleEditor.open ? roleEditor.teamId : '';
     if (!selectedTeamId) {
       toast.error('Select a department', {
@@ -289,7 +316,9 @@ export const RolesManagementTab = () => {
         name: data.name,
         permissions,
       };
-      const previousTeamsWithRoles = queryClient.getQueryData(teamsWithRolesQueryKey);
+      const previousTeamsWithRoles = queryClient.getQueryData(
+        teamsWithRolesQueryKey
+      );
       patchTeamsWithRolesCache(optimisticPatch);
       closeRoleEditor();
 
@@ -301,11 +330,16 @@ export const RolesManagementTab = () => {
             await queryClient.invalidateQueries({
               queryKey: queryKeys.onboarding.roles(selectedTeamId),
             });
-            await queryClient.invalidateQueries({ queryKey: teamsWithRolesQueryKey });
+            await queryClient.invalidateQueries({
+              queryKey: teamsWithRolesQueryKey,
+            });
           },
           onError: () => {
             // Rollback optimistic update
-            queryClient.setQueryData(teamsWithRolesQueryKey, previousTeamsWithRoles);
+            queryClient.setQueryData(
+              teamsWithRolesQueryKey,
+              previousTeamsWithRoles
+            );
             toast.error('Failed to update role');
           },
         }
@@ -321,7 +355,9 @@ export const RolesManagementTab = () => {
           await queryClient.invalidateQueries({
             queryKey: queryKeys.onboarding.roles(selectedTeamId),
           });
-          await queryClient.invalidateQueries({ queryKey: teamsWithRolesQueryKey });
+          await queryClient.invalidateQueries({
+            queryKey: teamsWithRolesQueryKey,
+          });
           closeRoleEditor();
         },
         onError: () => {
@@ -354,7 +390,7 @@ export const RolesManagementTab = () => {
                 variant={'primaryOutline'}
                 className="data-[state=open]:border-border data-[state=open]:text-gray h-10 w-full justify-center rounded-md border px-3 shadow-none sm:w-auto"
               >
-                <Filter className="size-4" />
+                <Icon name="Filter" size={16} />
                 Filter
               </Button>
             }
@@ -364,7 +400,10 @@ export const RolesManagementTab = () => {
                 title="Filter Roles"
                 statusLabel="Department"
                 statusPlaceholder="All Departments"
-                statusOptions={[{ value: 'all', label: 'All Departments' }, ...teamOptions]}
+                statusOptions={[
+                  { value: 'all', label: 'All Departments' },
+                  ...teamOptions,
+                ]}
                 sortOptions={[
                   { value: 'all', label: 'Default' },
                   { value: 'name_asc', label: 'Role Name (A-Z)' },
@@ -389,7 +428,7 @@ export const RolesManagementTab = () => {
           <MainButton
             variant="primary"
             isLeftIconVisible
-            icon={<Plus className="size-4" />}
+            icon={<Icon name="Plus" size={16} />}
             className="w-full sm:w-auto"
             onClick={openCreateDialog}
           >
@@ -413,12 +452,14 @@ export const RolesManagementTab = () => {
               {
                 label: 'Edit Role',
                 onClick: () => openEditDialog(row),
-                icon: <More className="size-4" />,
+                icon: <Icon name="More" size={16} />,
                 ariaLabel: `Edit role ${row.name}`,
               },
               { type: 'separator' },
               {
-                label: isRoleActive(row.id) ? 'Deactivate role' : 'Activate role',
+                label: isRoleActive(row.id)
+                  ? 'Deactivate role'
+                  : 'Activate role',
                 variant: isRoleActive(row.id) ? 'destructive' : 'default',
                 onClick: () =>
                   openToggleRoleModal({
@@ -429,14 +470,18 @@ export const RolesManagementTab = () => {
                 ariaLabel: `${isRoleActive(row.id) ? 'Deactivate' : 'Activate'} role ${row.name}`,
               },
             ]}
-            emptyState={<p className="text-muted-foreground text-sm">No roles found.</p>}
+            emptyState={
+              <p className="text-muted-foreground text-sm">No roles found.</p>
+            }
             showPagination
             currentPage={pageSafe}
             totalPages={totalPages}
             itemsPerPage={pageSize}
             hasNextPage={pageSafe < totalPages}
             hasPreviousPage={pageSafe > 1}
-            onPageChange={(nextPage) => setPage(Math.min(Math.max(nextPage, 1), totalPages))}
+            onPageChange={(nextPage) =>
+              setPage(Math.min(Math.max(nextPage, 1), totalPages))
+            }
             showColumnCustomization={false}
             enableSorting={false}
             enableFiltering={false}
@@ -450,7 +495,11 @@ export const RolesManagementTab = () => {
         onClose={closeToggleRoleModal}
         onConfirm={handleConfirmToggleRole}
         loading={isTogglingRole}
-        type={toggleModal.open && toggleModal.action === 'activate' ? 'info' : 'warning'}
+        type={
+          toggleModal.open && toggleModal.action === 'activate'
+            ? 'info'
+            : 'warning'
+        }
         title={
           toggleModal.open && toggleModal.action === 'activate'
             ? 'Activate Role'
@@ -469,7 +518,9 @@ export const RolesManagementTab = () => {
         cancelText="Cancel"
         showCancelButton
         confirmVariant={
-          toggleModal.open && toggleModal.action === 'activate' ? 'primary' : 'destructive'
+          toggleModal.open && toggleModal.action === 'activate'
+            ? 'primary'
+            : 'destructive'
         }
       />
 
@@ -498,7 +549,11 @@ export const RolesManagementTab = () => {
         onOpenChange={(open) => {
           if (!open) closeRoleEditor();
         }}
-        title={roleEditor.open && roleEditor.mode === 'edit' ? 'Edit Role' : 'Create New Role'}
+        title={
+          roleEditor.open && roleEditor.mode === 'edit'
+            ? 'Edit Role'
+            : 'Create New Role'
+        }
         description="Create roles and assign permissions"
         className="min-w-2xl"
         trigger={null}
@@ -515,7 +570,9 @@ export const RolesManagementTab = () => {
                 if (!roleEditor.open) return;
                 setRoleEditor({ ...roleEditor, teamId: value });
               }}
-              placeholder={isLoadingTeams ? 'Loading departments...' : 'Select department'}
+              placeholder={
+                isLoadingTeams ? 'Loading departments...' : 'Select department'
+              }
               className="h-12"
               disabled={isLoadingTeams || isBusy}
             />
@@ -524,7 +581,9 @@ export const RolesManagementTab = () => {
           <RolesAndPermission
             isEdit={roleEditor.open && roleEditor.mode === 'edit'}
             initialData={
-              roleEditor.open && roleEditor.mode === 'edit' ? roleEditor.role : undefined
+              roleEditor.open && roleEditor.mode === 'edit'
+                ? roleEditor.role
+                : undefined
             }
             isSubmitting={isBusy}
             onSubmit={handleSubmitRole as any}

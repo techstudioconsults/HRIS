@@ -8,13 +8,13 @@ import { SearchInput } from '@/modules/@org/shared/search-input';
 import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar';
 import { ReusableDialog } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 import {
   AdvancedDataTable,
   TableSkeleton,
   type IColumnDefinition,
   type IRowAction,
 } from '@workspace/ui/lib/table';
-import { Add } from 'iconsax-reactjs';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -27,13 +27,19 @@ function EligibilityPill({ count }: { count: number }) {
     <div className="flex items-center">
       <div className="flex -space-x-4">
         <Avatar className="border-background bg-muted size-8 border">
-          <AvatarFallback className="bg-muted text-muted-foreground text-[10px]">U</AvatarFallback>
+          <AvatarFallback className="bg-muted text-muted-foreground text-[10px]">
+            U
+          </AvatarFallback>
         </Avatar>
         <Avatar className="border-background bg-muted size-8 border">
-          <AvatarFallback className="bg-muted text-muted-foreground text-[10px]">U</AvatarFallback>
+          <AvatarFallback className="bg-muted text-muted-foreground text-[10px]">
+            U
+          </AvatarFallback>
         </Avatar>
         <Avatar className="border-background bg-muted size-8 border">
-          <AvatarFallback className="bg-muted text-muted-foreground text-[10px]">U</AvatarFallback>
+          <AvatarFallback className="bg-muted text-muted-foreground text-[10px]">
+            U
+          </AvatarFallback>
         </Avatar>
       </div>
       <span className="border-background bg-muted text-primary bg-primary/10 flex size-9 items-center justify-center rounded-full border text-[12px] font-medium">
@@ -44,7 +50,8 @@ function EligibilityPill({ count }: { count: number }) {
 }
 
 export function HRSettingsLeaveTab() {
-  const { useGetLeaveTypes, useGetLeaveTypeById, useDeleteLeaveType } = useLeaveService();
+  const { useGetLeaveTypes, useGetLeaveTypeById, useDeleteLeaveType } =
+    useLeaveService();
 
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -52,10 +59,18 @@ export function HRSettingsLeaveTab() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedLeaveType, setSelectedLeaveType] = useState<LeaveType | null>(null);
+  const [selectedLeaveType, setSelectedLeaveType] = useState<LeaveType | null>(
+    null
+  );
 
-  const { data: leaveTypesResponse, isLoading, isError, error } = useGetLeaveTypes();
-  const { mutateAsync: deleteLeaveType, isPending: isDeleting } = useDeleteLeaveType();
+  const {
+    data: leaveTypesResponse,
+    isLoading,
+    isError,
+    error,
+  } = useGetLeaveTypes();
+  const { mutateAsync: deleteLeaveType, isPending: isDeleting } =
+    useDeleteLeaveType();
 
   const selectedLeaveTypeId = selectedLeaveType?.id ?? '';
   const {
@@ -70,16 +85,20 @@ export function HRSettingsLeaveTab() {
     if (!isError) return;
     toast.error('Failed to load leave types', {
       description:
-        error instanceof Error ? error.message : 'Could not fetch leave types from the server.',
+        error instanceof Error
+          ? error.message
+          : 'Could not fetch leave types from the server.',
     });
   }, [isError, error]);
 
   const leaveTypes = useMemo<LeaveType[]>(() => {
     // Backend returns: { items: LeaveType[], metadata: {...} }
     // Support legacy shapes too.
-    if (Array.isArray(leaveTypesResponse)) return leaveTypesResponse as LeaveType[];
+    if (Array.isArray(leaveTypesResponse))
+      return leaveTypesResponse as LeaveType[];
 
-    if (!leaveTypesResponse || typeof leaveTypesResponse !== 'object') return [];
+    if (!leaveTypesResponse || typeof leaveTypesResponse !== 'object')
+      return [];
     const responseObject = leaveTypesResponse as Record<string, unknown>;
 
     const items = responseObject.items;
@@ -106,17 +125,25 @@ export function HRSettingsLeaveTab() {
     );
   }, [leaveTypes, search]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredLeaveTypes.length / PAGE_SIZE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredLeaveTypes.length / PAGE_SIZE)
+  );
   const pageSafe = Math.min(Math.max(page, 1), totalPages);
   const startIndex = (pageSafe - 1) * PAGE_SIZE;
-  const pageItems = filteredLeaveTypes.slice(startIndex, startIndex + PAGE_SIZE);
+  const pageItems = filteredLeaveTypes.slice(
+    startIndex,
+    startIndex + PAGE_SIZE
+  );
 
   const columns = useMemo<IColumnDefinition<LeaveType>[]>(
     () => [
       {
         header: 'Leave Name',
         accessorKey: 'name',
-        render: (value) => <span className="text-sm font-medium">{String(value ?? '—')}</span>,
+        render: (value) => (
+          <span className="text-sm font-medium">{String(value ?? '—')}</span>
+        ),
       },
       { header: 'Days', accessorKey: 'days' },
       { header: 'Cycle', accessorKey: 'cycle' },
@@ -152,7 +179,7 @@ export function HRSettingsLeaveTab() {
           <MainButton
             variant="primary"
             isLeftIconVisible
-            icon={<Add />}
+            icon={<Icon name="Add" />}
             className="w-full sm:w-auto"
             onClick={() => setCreateDialogOpen(true)}
           >
@@ -186,14 +213,20 @@ export function HRSettingsLeaveTab() {
               },
             },
           ]}
-          emptyState={<p className="text-muted-foreground text-sm">No leave types found.</p>}
+          emptyState={
+            <p className="text-muted-foreground text-sm">
+              No leave types found.
+            </p>
+          }
           showPagination
           currentPage={pageSafe}
           totalPages={totalPages}
           itemsPerPage={PAGE_SIZE}
           hasNextPage={pageSafe < totalPages}
           hasPreviousPage={pageSafe > 1}
-          onPageChange={(nextPage) => setPage(Math.min(Math.max(nextPage, 1), totalPages))}
+          onPageChange={(nextPage) =>
+            setPage(Math.min(Math.max(nextPage, 1), totalPages))
+          }
           showColumnCustomization={false}
           enableSorting={false}
           enableFiltering={false}
@@ -234,7 +267,9 @@ export function HRSettingsLeaveTab() {
             </div>
           ) : (
             <EditLeaveTypeForm
-              leaveType={(selectedLeaveTypeDetails ?? selectedLeaveType) as LeaveType}
+              leaveType={
+                (selectedLeaveTypeDetails ?? selectedLeaveType) as LeaveType
+              }
               onClose={() => setEditDialogOpen(false)}
             />
           )
@@ -271,7 +306,9 @@ export function HRSettingsLeaveTab() {
               if (!selectedLeaveType?.id) return;
               await deleteLeaveType(selectedLeaveType.id, {
                 onSuccess: () => {
-                  toast.success(`Leave type "${selectedLeaveType.name}" deleted.`);
+                  toast.success(
+                    `Leave type "${selectedLeaveType.name}" deleted.`
+                  );
                   setDeleteDialogOpen(false);
                   setSelectedLeaveType(null);
                 },

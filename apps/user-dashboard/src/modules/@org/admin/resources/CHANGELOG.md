@@ -208,7 +208,7 @@ See [`REFACTORING.md`](src/modules/@org/admin/resources/REFACTORING.md:1) for de
 - ✅ Toast notifications for success/error
 - ✅ Removed `window.location.reload()` anti-pattern
 
-#### `_views/resources/index.tsx`
+#### `_views/resources/index.ts`
 
 **Improvements:**
 

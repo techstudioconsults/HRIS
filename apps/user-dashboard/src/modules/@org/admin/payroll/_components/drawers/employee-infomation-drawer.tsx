@@ -1,26 +1,43 @@
-"use client";
+'use client';
 
-import { Badge } from "@workspace/ui/components/badge";
-import { Button } from "@workspace/ui/components/button";
-import { Card, CardContent, CardFooter } from "@workspace/ui/components/card";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@workspace/ui/components/drawer";
+import { Badge } from '@workspace/ui/components/badge';
+import { Button } from '@workspace/ui/components/button';
+import { Card, CardContent, CardFooter } from '@workspace/ui/components/card';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@workspace/ui/components/drawer';
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationNext,
   PaginationPrevious,
-} from "@workspace/ui/components/pagination";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@workspace/ui/components/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
-import { BackButton } from "@workspace/ui/lib";
-import { User } from "iconsax-reactjs";
+} from '@workspace/ui/components/pagination';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@workspace/ui/components/table';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@workspace/ui/components/tabs';
+import { BackButton } from '@workspace/ui/lib';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 
-import Loading from "../../../../../../../note/loading";
-import { usePayrollService } from "../../services/use-service";
-import { usePayrollStore } from "../../stores/payroll-store";
-import EmployeeInformation from "../tab-content/employee-information";
-import { SalaryDetails } from "../tab-content/salary-details";
+import Loading from '../../../../../../../note/loading';
+import { usePayrollService } from '../../services/use-service';
+import { usePayrollStore } from '../../stores/payroll-store';
+import EmployeeInformation from '../tab-content/employee-information';
+import { SalaryDetails } from '../tab-content/salary-details';
 
 interface EmployeeInformationDrawerProperties {
   /**
@@ -31,7 +48,9 @@ interface EmployeeInformationDrawerProperties {
   payrollId?: string | null;
 }
 
-export const EmployeeInformationDrawer = ({ payrollId }: EmployeeInformationDrawerProperties) => {
+export const EmployeeInformationDrawer = ({
+  payrollId,
+}: EmployeeInformationDrawerProperties) => {
   const {
     showEmployeeInformationDrawer,
     setShowEmployeeInformationDrawer,
@@ -41,33 +60,46 @@ export const EmployeeInformationDrawer = ({ payrollId }: EmployeeInformationDraw
   } = usePayrollStore();
   const { useGetPayslipById } = usePayrollService();
 
-  const { data: payslipResponse, isLoading } = useGetPayslipById(payrollId ?? "", selectedPayslipId || "", {
-    enabled: !!payrollId && !!selectedPayslipId,
-  });
+  const { data: payslipResponse, isLoading } = useGetPayslipById(
+    payrollId ?? '',
+    selectedPayslipId || '',
+    {
+      enabled: !!payrollId && !!selectedPayslipId,
+    }
+  );
 
   const payslip = payslipResponse?.data ?? null;
 
   const titleText =
     payslip?.employee?.name && payslip?.paymentDate
-      ? `Payroll Review (${new Date(payslip.paymentDate).toLocaleDateString(undefined, {
-          month: "long",
-          year: "numeric",
-        })}) - ${payslip.employee.name}`
-      : "Payroll Review";
+      ? `Payroll Review (${new Date(payslip.paymentDate).toLocaleDateString(
+          undefined,
+          {
+            month: 'long',
+            year: 'numeric',
+          }
+        )}) - ${payslip.employee.name}`
+      : 'Payroll Review';
 
   return (
     <>
-      <Drawer open={showEmployeeInformationDrawer} onOpenChange={setShowEmployeeInformationDrawer} direction="right">
+      <Drawer
+        open={showEmployeeInformationDrawer}
+        onOpenChange={setShowEmployeeInformationDrawer}
+        direction="right"
+      >
         <DrawerContent className="h-full !w-full sm:!max-w-xl md:!max-w-3xl">
           <DrawerHeader className="border-b pb-4">
             <div className="flex items-center gap-10">
               <BackButton />
               <div className="flex items-center gap-4">
                 <div className="flex size-10 items-center justify-center rounded-lg bg-blue-100">
-                  <User className="size-5 text-blue-600" />
+                  <Icon name="User" size={20} className="text-blue-600" />
                 </div>
                 <div>
-                  <DrawerTitle className="text-lg font-semibold">{titleText}</DrawerTitle>
+                  <DrawerTitle className="text-lg font-semibold">
+                    {titleText}
+                  </DrawerTitle>
                   {/* <DrawerDescription>Set up automated payroll processing</DrawerDescription> */}
                 </div>
               </div>
@@ -80,20 +112,30 @@ export const EmployeeInformationDrawer = ({ payrollId }: EmployeeInformationDraw
                 value={employeeInformationActiveTab}
                 onValueChange={(value) =>
                   setEmployeeInformationActiveTab(
-                    value as "employee-information" | "salary-details" | "payroll-history",
+                    value as
+                      | 'employee-information'
+                      | 'salary-details'
+                      | 'payroll-history'
                   )
                 }
                 className="w-full"
               >
                 <TabsList className="w-full bg-transparent">
-                  <TabsTrigger value="employee-information">Employee Infomation</TabsTrigger>
-                  <TabsTrigger value="salary-details">Salary Details</TabsTrigger>
+                  <TabsTrigger value="employee-information">
+                    Employee Infomation
+                  </TabsTrigger>
+                  <TabsTrigger value="salary-details">
+                    Salary Details
+                  </TabsTrigger>
                   <TabsTrigger className="" value="payroll-history">
                     Payroll History
                   </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="employee-information" className="mt-6 space-y-6">
+                <TabsContent
+                  value="employee-information"
+                  className="mt-6 space-y-6"
+                >
                   {isLoading || !payslip ? (
                     <div className="py-10">
                       <Loading text="Loading employee information..." />
@@ -117,7 +159,9 @@ export const EmployeeInformationDrawer = ({ payrollId }: EmployeeInformationDraw
                             <TableHead>Payment Date</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Net Paid</TableHead>
-                            <TableHead className="text-right">Payslip</TableHead>
+                            <TableHead className="text-right">
+                              Payslip
+                            </TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -127,9 +171,15 @@ export const EmployeeInformationDrawer = ({ payrollId }: EmployeeInformationDraw
                             <TableCell>
                               <Badge variant="success">Confirmed</Badge>
                             </TableCell>
-                            <TableCell className="text-success font-medium">₦300,000</TableCell>
+                            <TableCell className="text-success font-medium">
+                              ₦300,000
+                            </TableCell>
                             <TableCell className="text-right">
-                              <Button variant="ghost" size="icon" className="text-muted-foreground">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-muted-foreground"
+                              >
                                 ...
                               </Button>
                             </TableCell>
@@ -140,9 +190,15 @@ export const EmployeeInformationDrawer = ({ payrollId }: EmployeeInformationDraw
                             <TableCell>
                               <Badge variant="success">Confirmed</Badge>
                             </TableCell>
-                            <TableCell className="text-success font-medium">₦300,000</TableCell>
+                            <TableCell className="text-success font-medium">
+                              ₦300,000
+                            </TableCell>
                             <TableCell className="text-right">
-                              <Button variant="ghost" size="icon" className="text-muted-foreground">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-muted-foreground"
+                              >
                                 ...
                               </Button>
                             </TableCell>
@@ -153,9 +209,15 @@ export const EmployeeInformationDrawer = ({ payrollId }: EmployeeInformationDraw
                             <TableCell>
                               <Badge variant="success">Confirmed</Badge>
                             </TableCell>
-                            <TableCell className="text-success font-medium">₦300,000</TableCell>
+                            <TableCell className="text-success font-medium">
+                              ₦300,000
+                            </TableCell>
                             <TableCell className="text-right">
-                              <Button variant="ghost" size="icon" className="text-muted-foreground">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-muted-foreground"
+                              >
                                 ...
                               </Button>
                             </TableCell>
@@ -166,9 +228,15 @@ export const EmployeeInformationDrawer = ({ payrollId }: EmployeeInformationDraw
                             <TableCell>
                               <Badge variant="success">Confirmed</Badge>
                             </TableCell>
-                            <TableCell className="text-success font-medium">₦300,000</TableCell>
+                            <TableCell className="text-success font-medium">
+                              ₦300,000
+                            </TableCell>
                             <TableCell className="text-right">
-                              <Button variant="ghost" size="icon" className="text-muted-foreground">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-muted-foreground"
+                              >
                                 ...
                               </Button>
                             </TableCell>
@@ -179,9 +247,15 @@ export const EmployeeInformationDrawer = ({ payrollId }: EmployeeInformationDraw
                             <TableCell>
                               <Badge variant="success">Confirmed</Badge>
                             </TableCell>
-                            <TableCell className="text-success font-medium">₦300,000</TableCell>
+                            <TableCell className="text-success font-medium">
+                              ₦300,000
+                            </TableCell>
                             <TableCell className="text-right">
-                              <Button variant="ghost" size="icon" className="text-muted-foreground">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-muted-foreground"
+                              >
                                 ...
                               </Button>
                             </TableCell>

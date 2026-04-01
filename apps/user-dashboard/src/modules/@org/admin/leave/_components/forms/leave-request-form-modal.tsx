@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Calendar } from "@workspace/ui/components/calendar";
-import { FormField } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { ReusableDialog } from "@workspace/ui/lib/dialog/Dialog";
-import { CalendarIcon } from "lucide-react";
-import { useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Calendar } from '@workspace/ui/components/calendar';
+import { FormField } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { ReusableDialog } from '@workspace/ui/lib/dialog/Dialog';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
 // Form Schema
 const leaveRequestSchema = z
   .object({
-    employeeId: z.string().min(1, "Employee is required"),
-    leaveTypeId: z.string().min(1, "Leave type is required"),
-    startDate: z.string().min(1, "Start date is required"),
-    endDate: z.string().min(1, "End date is required"),
-    reason: z.string().min(10, "Reason must be at least 10 characters"),
+    employeeId: z.string().min(1, 'Employee is required'),
+    leaveTypeId: z.string().min(1, 'Leave type is required'),
+    startDate: z.string().min(1, 'Start date is required'),
+    endDate: z.string().min(1, 'End date is required'),
+    reason: z.string().min(10, 'Reason must be at least 10 characters'),
   })
   .refine(
     (data) => {
@@ -28,9 +28,9 @@ const leaveRequestSchema = z
       return true;
     },
     {
-      message: "End date must be after or equal to start date",
-      path: ["endDate"],
-    },
+      message: 'End date must be after or equal to start date',
+      path: ['endDate'],
+    }
   );
 
 type LeaveRequestFormData = z.infer<typeof leaveRequestSchema>;
@@ -40,7 +40,10 @@ interface LeaveRequestFormModalProperties {
   onOpenChange: (open: boolean) => void;
 }
 
-export function LeaveRequestFormModal({ open, onOpenChange }: LeaveRequestFormModalProperties) {
+export function LeaveRequestFormModal({
+  open,
+  onOpenChange,
+}: LeaveRequestFormModalProperties) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
@@ -50,11 +53,11 @@ export function LeaveRequestFormModal({ open, onOpenChange }: LeaveRequestFormMo
   const methods = useForm<LeaveRequestFormData>({
     resolver: zodResolver(leaveRequestSchema),
     defaultValues: {
-      employeeId: "",
-      leaveTypeId: "",
-      startDate: "",
-      endDate: "",
-      reason: "",
+      employeeId: '',
+      leaveTypeId: '',
+      startDate: '',
+      endDate: '',
+      reason: '',
     },
   });
 
@@ -72,13 +75,13 @@ export function LeaveRequestFormModal({ open, onOpenChange }: LeaveRequestFormMo
   // Update form values when dates change
   useEffect(() => {
     if (startDate) {
-      setValue("startDate", startDate.toISOString().split("T")[0]);
+      setValue('startDate', startDate.toISOString().split('T')[0]);
     }
   }, [startDate, setValue]);
 
   useEffect(() => {
     if (endDate) {
-      setValue("endDate", endDate.toISOString().split("T")[0]);
+      setValue('endDate', endDate.toISOString().split('T')[0]);
     }
   }, [endDate, setValue]);
 
@@ -86,7 +89,7 @@ export function LeaveRequestFormModal({ open, onOpenChange }: LeaveRequestFormMo
     setIsSubmitting(true);
     // Demo-only: simulate successful submission
     void data;
-    toast.success("Leave request submitted (demo only)");
+    toast.success('Leave request submitted (demo only)');
     onOpenChange(false);
     reset();
     setStartDate(undefined);
@@ -103,19 +106,19 @@ export function LeaveRequestFormModal({ open, onOpenChange }: LeaveRequestFormMo
 
   // Prepare employee options
   const employeeOptions = [
-    { label: "John Doe", value: "emp-1" },
-    { label: "Jane Smith", value: "emp-2" },
+    { label: 'John Doe', value: 'emp-1' },
+    { label: 'Jane Smith', value: 'emp-2' },
   ];
 
   // Prepare leave type options
   const leaveTypeOptions = [
-    { label: "Annual Leave (20 days)", value: "leave-type-1" },
-    { label: "Sick Leave (10 days)", value: "leave-type-2" },
+    { label: 'Annual Leave (20 days)', value: 'leave-type-1' },
+    { label: 'Sick Leave (10 days)', value: 'leave-type-2' },
   ];
 
   return (
     <ReusableDialog
-      trigger={""}
+      trigger={''}
       open={open}
       onOpenChange={onOpenChange}
       title="New Leave Request"
@@ -160,10 +163,18 @@ export function LeaveRequestFormModal({ open, onOpenChange }: LeaveRequestFormMo
                     onClick={() => setShowStartCalendar(!showStartCalendar)}
                     className="flex h-14 w-full items-center justify-between rounded-md border border-gray-300 bg-white px-3 text-left text-sm hover:border-gray-400"
                   >
-                    <span className={startDate ? "text-gray-900" : "text-gray-500"}>
-                      {startDate ? startDate.toLocaleDateString() : "Select start date"}
+                    <span
+                      className={startDate ? 'text-gray-900' : 'text-gray-500'}
+                    >
+                      {startDate
+                        ? startDate.toLocaleDateString()
+                        : 'Select start date'}
                     </span>
-                    <CalendarIcon className="h-4 w-4 text-gray-500" />
+                    <Icon
+                      name="CalendarIcon"
+                      size={16}
+                      className="text-gray-500"
+                    />
                   </button>
                   {showStartCalendar && (
                     <div className="absolute z-50 mt-2 rounded-md border bg-white p-3 shadow-lg">
@@ -174,7 +185,9 @@ export function LeaveRequestFormModal({ open, onOpenChange }: LeaveRequestFormMo
                           setStartDate(date);
                           setShowStartCalendar(false);
                         }}
-                        disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                        disabled={(date) =>
+                          date < new Date(new Date().setHours(0, 0, 0, 0))
+                        }
                       />
                     </div>
                   )}
@@ -190,10 +203,18 @@ export function LeaveRequestFormModal({ open, onOpenChange }: LeaveRequestFormMo
                     onClick={() => setShowEndCalendar(!showEndCalendar)}
                     className="flex h-14 w-full items-center justify-between rounded-md border border-gray-300 bg-white px-3 text-left text-sm hover:border-gray-400"
                   >
-                    <span className={endDate ? "text-gray-900" : "text-gray-500"}>
-                      {endDate ? endDate.toLocaleDateString() : "Select end date"}
+                    <span
+                      className={endDate ? 'text-gray-900' : 'text-gray-500'}
+                    >
+                      {endDate
+                        ? endDate.toLocaleDateString()
+                        : 'Select end date'}
                     </span>
-                    <CalendarIcon className="h-4 w-4 text-gray-500" />
+                    <Icon
+                      name="CalendarIcon"
+                      size={16}
+                      className="text-gray-500"
+                    />
                   </button>
                   {showEndCalendar && (
                     <div className="absolute z-50 mt-2 rounded-md border bg-white p-3 shadow-lg">
@@ -204,7 +225,11 @@ export function LeaveRequestFormModal({ open, onOpenChange }: LeaveRequestFormMo
                           setEndDate(date);
                           setShowEndCalendar(false);
                         }}
-                        disabled={(date) => date < (startDate || new Date(new Date().setHours(0, 0, 0, 0)))}
+                        disabled={(date) =>
+                          date <
+                          (startDate ||
+                            new Date(new Date().setHours(0, 0, 0, 0)))
+                        }
                       />
                     </div>
                   )}
@@ -238,7 +263,7 @@ export function LeaveRequestFormModal({ open, onOpenChange }: LeaveRequestFormMo
               isLoading={isSubmitting}
               isDisabled={isSubmitting}
             >
-              {isSubmitting ? "Submitting..." : "Submit Request"}
+              {isSubmitting ? 'Submitting...' : 'Submit Request'}
             </MainButton>
           </div>
         </form>

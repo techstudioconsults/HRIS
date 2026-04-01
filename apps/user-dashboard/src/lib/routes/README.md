@@ -88,7 +88,7 @@ The system supports the following modules with granular permissions:
 
 ### 1. Middleware Protection
 
-The middleware automatically protects routes based on the route configuration:
+The proxy automatically protects routes based on the route configuration:
 
 ```typescript
 // src/lib/routes/routes.ts
@@ -103,7 +103,10 @@ export const ROUTE_CONFIGS = [
   {
     path: '/employees',
     accessLevel: ACCESS_LEVELS.PERMISSION_BASED,
-    requiredPermissions: [MODULE_PERMISSIONS.EMPLOYEE_READ, MODULE_PERMISSIONS.EMPLOYEE_MANAGE],
+    requiredPermissions: [
+      MODULE_PERMISSIONS.EMPLOYEE_READ,
+      MODULE_PERMISSIONS.EMPLOYEE_MANAGE,
+    ],
   },
 ];
 ```
@@ -235,13 +238,13 @@ export default withAuth(
 
 ### 3. Permission Validation
 
-- Server-side permission checking in middleware
+- Server-side permission checking in proxy
 - Client-side permission checking in components
 - Granular module-level access control
 
 ## Best Practices
 
-1. **Always use middleware protection** for route-level security
+1. **Always use proxy protection** for route-level security
 2. **Use ComponentGuard** for sensitive components
 3. **Implement permission checks** in components that show/hide features
 4. **Test permission scenarios** thoroughly
@@ -265,7 +268,7 @@ export default withAuth(
 3. **Middleware Not Working**
    - Check route configuration in `routes.ts`
    - Verify access level and required permissions
-   - Ensure middleware is properly configured in `next.config.ts`
+   - Ensure proxy is properly configured in `next.config.ts`
 
 ### Debug Tips
 

@@ -2,8 +2,7 @@
 import { Button } from '@workspace/ui/components/button';
 import { DashboardHeader, GenericDropdown } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
-import { Plus } from 'lucide-react';
-import { Filter } from 'iconsax-reactjs';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 
 interface UserLeaveHeaderProps {
   onCreateRequest?: () => void;
@@ -23,7 +22,7 @@ export const UserLeaveHeader = ({ onCreateRequest }: UserLeaveHeaderProps) => {
                 className="data-[state=open]:border-border data-[state=open]:text-gray h-10 rounded-md border px-3"
                 variant="primaryOutline"
               >
-                <Filter className="size-4" />
+                <Icon name="Filter" size={16} />
                 Filter
               </Button>
             }
@@ -34,7 +33,7 @@ export const UserLeaveHeader = ({ onCreateRequest }: UserLeaveHeaderProps) => {
           </GenericDropdown>
           {onCreateRequest && (
             <MainButton
-              icon={<Plus className="size-4" />}
+              icon={<Icon name="Plus" size={16} />}
               isLeftIconVisible
               variant="primary"
               onClick={onCreateRequest}

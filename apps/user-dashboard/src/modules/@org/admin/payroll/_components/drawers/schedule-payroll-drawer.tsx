@@ -2,7 +2,11 @@
 
 import { formatCurrency, formatDate } from '@/lib/formatters';
 import { CalendarModal } from '@/modules/@org/admin/payroll/_components/calendar-modal';
-import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@workspace/ui/components/avatar';
 import { Badge } from '@workspace/ui/components/badge';
 import {
   Drawer,
@@ -14,10 +18,9 @@ import {
 } from '@workspace/ui/components/drawer';
 import { BackButton, EmptyState } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 import { cn } from '@workspace/ui/lib/utils';
 import { AxiosError } from 'axios';
-import { Eye, EyeSlash } from 'iconsax-reactjs';
-import { CalendarIcon, Info } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -33,13 +36,17 @@ const normalizeStatus = (status?: string) => (status || '').toLowerCase();
 const getStatusBadgeClasses = (status?: string) => {
   const value = normalizeStatus(status);
   if (value.includes('await')) return 'bg-warning-50 text-warning';
-  if (value.includes('reject') || value.includes('decline')) return 'bg-destructive-50 text-destructive';
+  if (value.includes('reject') || value.includes('decline'))
+    return 'bg-destructive-50 text-destructive';
   if (value.includes('complete')) return 'bg-success-50 text-success';
   if (value.includes('disbursed')) return 'bg-success-50 text-success'; // treat disbursed as success
   if (value.includes('approve')) return 'bg-blue-50 text-blue-600';
   return 'bg-muted text-foreground';
 };
-const getStatusBanner = (status?: string, date?: string): { message: string; classes: string } => {
+const getStatusBanner = (
+  status?: string,
+  date?: string
+): { message: string; classes: string } => {
   const value = normalizeStatus(status);
   const formattedDate = date ? formatDate(date) : 'this period';
   if (value.includes('await'))
@@ -75,19 +82,36 @@ const getStatusBanner = (status?: string, date?: string): { message: string; cla
 
 export const SchedulePayrollDrawer = () => {
   const router = useRouter();
-  const { useGetCompanyWallet, useGetAllPayrolls, useCreatePayroll, useGetPayrollApprovals } = usePayrollService();
+  const {
+    useGetCompanyWallet,
+    useGetAllPayrolls,
+    useCreatePayroll,
+    useGetPayrollApprovals,
+  } = usePayrollService();
   const { data: companyWallet } = useGetCompanyWallet();
   const [isNetPayVisible, setIsNetPayVisible] = useState(false);
   const [isChangeDateModalOpen, setIsChangeDateModalOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [selectedPayrollId, setSelectedPayrollId] = useState<string | null>(null);
-  const { showSchedulePayrollDrawer, setShowSchedulePayrollDrawer } = usePayrollStore();
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    new Date()
+  );
+  const [selectedPayrollId, setSelectedPayrollId] = useState<string | null>(
+    null
+  );
+  const { showSchedulePayrollDrawer, setShowSchedulePayrollDrawer } =
+    usePayrollStore();
 
   // Load available generated payrolls when drawer is open
-  const { data: payrollsResponse, isLoading: isPayrollsLoading, refetch: refetchPayrolls } = useGetAllPayrolls();
+  const {
+    data: payrollsResponse,
+    isLoading: isPayrollsLoading,
+    refetch: refetchPayrolls,
+  } = useGetAllPayrolls();
 
   // Normalize response to array (supports both summary and payroll shapes)
-  type ListPayroll = Pick<Payroll, 'id' | 'policyId' | 'netPay' | 'employeesInPayroll' | 'paymentDate'> & {
+  type ListPayroll = Pick<
+    Payroll,
+    'id' | 'policyId' | 'netPay' | 'employeesInPayroll' | 'paymentDate'
+  > & {
     status?: string;
     name?: string;
     role?: string;
@@ -97,7 +121,9 @@ export const SchedulePayrollDrawer = () => {
   };
 
   const payrolls: ListPayroll[] = useMemo(() => {
-    const shaped = payrollsResponse as unknown as { data?: ListPayroll[]; items?: ListPayroll[] } | undefined;
+    const shaped = payrollsResponse as unknown as
+      | { data?: ListPayroll[]; items?: ListPayroll[] }
+      | undefined;
     const data = shaped?.data ?? shaped?.items ?? [];
     return Array.isArray(data) ? data : [];
   }, [payrollsResponse]);
@@ -120,15 +146,20 @@ export const SchedulePayrollDrawer = () => {
 
   const status = selectedPayroll?.status !== `idle`;
 
-  const statusBanner = getStatusBanner(selectedPayroll?.status, selectedPayroll?.paymentDate);
+  const statusBanner = getStatusBanner(
+    selectedPayroll?.status,
+    selectedPayroll?.paymentDate
+  );
 
   const payrollIdForApprovals = selectedPayroll?.id ?? '';
-  const { data: approvalsResponse, isLoading: isApprovalsLoading } = useGetPayrollApprovals(payrollIdForApprovals, {
-    enabled: !!payrollIdForApprovals,
-  });
+  const { data: approvalsResponse, isLoading: isApprovalsLoading } =
+    useGetPayrollApprovals(payrollIdForApprovals, {
+      enabled: !!payrollIdForApprovals,
+    });
   const approvals = (approvalsResponse?.data ?? []) as PayrollApproval[];
 
-  const { mutateAsync: createPayroll, isPending: isCreatingPayroll } = useCreatePayroll();
+  const { mutateAsync: createPayroll, isPending: isCreatingPayroll } =
+    useCreatePayroll();
 
   const handleDateSelection = async (date: Date | undefined) => {
     if (!date) {
@@ -150,7 +181,8 @@ export const SchedulePayrollDrawer = () => {
         },
         onError: (error) => {
           const axiosError = error as AxiosError<{ message?: string }>;
-          const message = axiosError.response?.data?.message ?? 'Failed to schedule payroll.';
+          const message =
+            axiosError.response?.data?.message ?? 'Failed to schedule payroll.';
           toast.error('Something went wrong', {
             description: message,
             action: {
@@ -167,18 +199,30 @@ export const SchedulePayrollDrawer = () => {
 
   return (
     <>
-      <Drawer open={showSchedulePayrollDrawer} onOpenChange={setShowSchedulePayrollDrawer} direction="right">
+      <Drawer
+        open={showSchedulePayrollDrawer}
+        onOpenChange={setShowSchedulePayrollDrawer}
+        direction="right"
+      >
         <DrawerContent className="h-full w-full sm:!max-w-xl">
           <DrawerHeader className="border-b pb-4">
             <div className="flex items-center gap-10">
               <BackButton />
               <div className="flex items-center gap-4">
                 <div className="flex size-10 items-center justify-center rounded-lg bg-blue-100">
-                  <CalendarIcon className="size-5 text-blue-600" />
+                  <Icon
+                    name="CalendarIcon"
+                    size={20}
+                    className="text-blue-600"
+                  />
                 </div>
                 <div>
-                  <DrawerTitle className="text-lg font-semibold">Schedule Payroll</DrawerTitle>
-                  <DrawerDescription>Set up automated payroll processing</DrawerDescription>
+                  <DrawerTitle className="text-lg font-semibold">
+                    Schedule Payroll
+                  </DrawerTitle>
+                  <DrawerDescription>
+                    Set up automated payroll processing
+                  </DrawerDescription>
                 </div>
               </div>
             </div>
@@ -189,11 +233,20 @@ export const SchedulePayrollDrawer = () => {
               <>
                 <h1 className="text-xl font-bold">Scheduled Payroll</h1>
                 {isPayrollsLoading ? (
-                  <div className="text-muted-foreground flex h-64 items-center justify-center">Loading...</div>
+                  <div className="text-muted-foreground flex h-64 items-center justify-center">
+                    Loading...
+                  </div>
                 ) : payrolls.length === 0 ? (
                   <EmptyState
                     className="bg-background gap-0"
-                    images={[{ src: empty1.src, alt: 'No payroll summary', width: 80, height: 80 }]}
+                    images={[
+                      {
+                        src: empty1.src,
+                        alt: 'No payroll summary',
+                        width: 80,
+                        height: 80,
+                      },
+                    ]}
                     description="No scheduled payrolls yet."
                     titleClassName="text-xl font-bold"
                   />
@@ -207,7 +260,11 @@ export const SchedulePayrollDrawer = () => {
                               <th className="border px-4 py-2">
                                 <button
                                   type="button"
-                                  onClick={() => setSortDirection((previous) => (previous === 'asc' ? 'desc' : 'asc'))}
+                                  onClick={() =>
+                                    setSortDirection((previous) =>
+                                      previous === 'asc' ? 'desc' : 'asc'
+                                    )
+                                  }
                                   className="flex items-center gap-1 underline-offset-4 hover:underline"
                                 >
                                   Payment Date
@@ -228,13 +285,24 @@ export const SchedulePayrollDrawer = () => {
                                 className="hover:bg-muted/50 cursor-pointer"
                                 onClick={() => setSelectedPayrollId(p.id)}
                               >
-                                <td className="border px-4 py-2">{formatDate(p.paymentDate)}</td>
-                                <td className="border px-4 py-2">{p.employeesInPayroll ?? 0}</td>
-                                <td className="border px-4 py-2">{formatCurrency(p.netPay ?? 0)}</td>
+                                <td className="border px-4 py-2">
+                                  {formatDate(p.paymentDate)}
+                                </td>
+                                <td className="border px-4 py-2">
+                                  {p.employeesInPayroll ?? 0}
+                                </td>
+                                <td className="border px-4 py-2">
+                                  {formatCurrency(p.netPay ?? 0)}
+                                </td>
                                 {/* <td className="px-4 py-2">{p.policyId}</td>
                                 <td className="px-4 py-2">{p.id}</td> */}
                                 <td className="border px-4 py-2">
-                                  <Badge className={cn('rounded-full px-3 py-1', getStatusBadgeClasses(p.status))}>
+                                  <Badge
+                                    className={cn(
+                                      'rounded-full px-3 py-1',
+                                      getStatusBadgeClasses(p.status)
+                                    )}
+                                  >
                                     {p.status ?? '-'}
                                   </Badge>
                                 </td>
@@ -259,14 +327,23 @@ export const SchedulePayrollDrawer = () => {
                     Back to list
                   </button>
                 </div>
-                <div className={cn('item-center flex gap-4 rounded-lg border p-4 text-sm', statusBanner.classes)}>
-                  <Info size={16} />
+                <div
+                  className={cn(
+                    'item-center flex gap-4 rounded-lg border p-4 text-sm',
+                    statusBanner.classes
+                  )}
+                >
+                  <Icon name="Info" size={16} />
                   <p className="leading-relaxed">{statusBanner.message}</p>
                 </div>
                 <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <DashboardCard
                     title="Total Employees"
-                    value={<p className="text-base">{selectedPayroll?.employeesInPayroll ?? 0}</p>}
+                    value={
+                      <p className="text-base">
+                        {selectedPayroll?.employeesInPayroll ?? 0}
+                      </p>
+                    }
                     className="bg-muted flex flex-col items-center justify-center gap-4 text-center shadow-none"
                   />
                   <DashboardCard
@@ -274,17 +351,25 @@ export const SchedulePayrollDrawer = () => {
                     value={
                       <div className="flex items-center gap-4">
                         <p className="text-base text-white">
-                          {isNetPayVisible ? formatCurrency(companyWallet?.data?.balance || 0) : `••••••••`}
+                          {isNetPayVisible
+                            ? formatCurrency(companyWallet?.data?.balance || 0)
+                            : `••••••••`}
                         </p>
                         <button
                           onClick={() => setIsNetPayVisible(!isNetPayVisible)}
                           className="text-white transition-colors hover:text-gray-300"
-                          aria-label={isNetPayVisible ? 'Hide net pay' : 'Show net pay'}
+                          aria-label={
+                            isNetPayVisible ? 'Hide net pay' : 'Show net pay'
+                          }
                         >
                           {isNetPayVisible ? (
-                            <EyeSlash className="text-white" size={30} />
+                            <Icon
+                              name="EyeSlash"
+                              size={30}
+                              className="text-white"
+                            />
                           ) : (
-                            <Eye className="text-white" size={30} />
+                            <Icon name="Eye" size={30} className="text-white" />
                           )}
                         </button>
                       </div>
@@ -296,32 +381,46 @@ export const SchedulePayrollDrawer = () => {
                 <section className="bg-muted space-y-2 rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <p className="font-medium">Gross Pay</p>
-                    <p className="text-foreground font-medium">{formatCurrency(selectedPayroll?.grossPay ?? 0)}</p>
+                    <p className="text-foreground font-medium">
+                      {formatCurrency(selectedPayroll?.grossPay ?? 0)}
+                    </p>
                   </div>
                   <div className="flex items-center justify-between">
                     <p className="font-medium">Total Bonuses</p>
-                    <p className="text-foreground font-medium">{formatCurrency(selectedPayroll?.bonus ?? 0)}</p>
+                    <p className="text-foreground font-medium">
+                      {formatCurrency(selectedPayroll?.bonus ?? 0)}
+                    </p>
                   </div>
                   <div className="flex items-center justify-between">
                     <p className="font-medium">Total Deductions</p>
-                    <p className="text-foreground font-medium">{formatCurrency(selectedPayroll?.deduction ?? 0)}</p>
+                    <p className="text-foreground font-medium">
+                      {formatCurrency(selectedPayroll?.deduction ?? 0)}
+                    </p>
                   </div>
                   <div className="flex items-center justify-between pt-4 font-bold">
                     <p className="text-success">Net Pay</p>
-                    <p className="text-success">{formatCurrency(selectedPayroll?.netPay ?? 0)}</p>
+                    <p className="text-success">
+                      {formatCurrency(selectedPayroll?.netPay ?? 0)}
+                    </p>
                   </div>
                 </section>
                 <section>
                   <h1 className="text-xl font-bold">Approvers</h1>
                   <section className="bg-muted space-y-4 rounded-lg p-4">
                     {isApprovalsLoading ? (
-                      <div className="text-muted-foreground text-sm">Loading approvers...</div>
+                      <div className="text-muted-foreground text-sm">
+                        Loading approvers...
+                      </div>
                     ) : approvals.length === 0 ? (
-                      <div className="text-muted-foreground text-sm">No approvers configured for this payroll.</div>
+                      <div className="text-muted-foreground text-sm">
+                        No approvers configured for this payroll.
+                      </div>
                     ) : (
                       approvals.map((approval) => {
                         const name = approval.employee.name ?? 'Approver';
-                        const role = (approval.approverRole as ReactNode) ?? <></>;
+                        const role = (approval.approverRole as ReactNode) ?? (
+                          <></>
+                        );
                         const initials =
                           name
                             .split(' ')
@@ -331,31 +430,47 @@ export const SchedulePayrollDrawer = () => {
                             .slice(0, 2) || 'AP';
                         const statusLabel =
                           approval.status && approval.status.length > 0
-                            ? approval.status.charAt(0).toUpperCase() + approval.status.slice(1)
+                            ? approval.status.charAt(0).toUpperCase() +
+                              approval.status.slice(1)
                             : 'Pending';
 
                         return (
-                          <section key={approval.payrollId} className="flex items-center justify-between">
+                          <section
+                            key={approval.payrollId}
+                            className="flex items-center justify-between"
+                          >
                             <div className="flex items-center gap-2">
                               <Avatar>
                                 <AvatarImage
-                                  src={approval.employee.avatar ?? 'https://github.com/shadcn.png'}
+                                  src={
+                                    approval.employee.avatar ??
+                                    'https://github.com/shadcn.png'
+                                  }
                                   alt={name}
                                 />
                                 <AvatarFallback>{initials}</AvatarFallback>
                               </Avatar>
                               <div>
-                                <p className="text-foreground text-sm font-medium">{name}</p>
-                                {role ? <p className="text-xs text-gray-500">{role}</p> : null}
+                                <p className="text-foreground text-sm font-medium">
+                                  {name}
+                                </p>
+                                {role ? (
+                                  <p className="text-xs text-gray-500">
+                                    {role}
+                                  </p>
+                                ) : null}
                               </div>
                             </div>
                             {status && (
                               <Badge
                                 className={cn(
                                   `rounded-full px-4 py-2`,
-                                  statusLabel === 'Pending' && 'bg-warning-50 text-warning',
-                                  statusLabel === 'Approved' && 'bg-success-50 text-success',
-                                  statusLabel === 'Declined' && 'bg-destructive-50 text-destructive'
+                                  statusLabel === 'Pending' &&
+                                    'bg-warning-50 text-warning',
+                                  statusLabel === 'Approved' &&
+                                    'bg-success-50 text-success',
+                                  statusLabel === 'Declined' &&
+                                    'bg-destructive-50 text-destructive'
                                 )}
                               >
                                 {statusLabel}

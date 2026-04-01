@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import ExportAction from "@/components/shared/export-action";
-import { Skeleton } from "@workspace/ui/components/skeleton";
-import { ComboBox } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { Add } from "iconsax-reactjs";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
+import ExportAction from '@/components/shared/export-action';
+import { Skeleton } from '@workspace/ui/components/skeleton';
+import { ComboBox } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 export const DashboardHeader = () => {
   const { data: session, status } = useSession();
@@ -14,7 +14,7 @@ export const DashboardHeader = () => {
   return (
     <div className="flex flex-col items-center justify-between pb-6 lg:flex-row">
       <div className="min-h-[88px] py-3">
-        {status === "loading" ? (
+        {status === 'loading' ? (
           <>
             <Skeleton className="mb-2 h-8 w-48" />
             <Skeleton className="h-5 w-64" />
@@ -37,7 +37,11 @@ export const DashboardHeader = () => {
 
         <ExportAction />
         <Link href="/admin/employees/add-employee">
-          <MainButton variant="primary" isLeftIconVisible={true} icon={<Add />}>
+          <MainButton
+            variant="primary"
+            isLeftIconVisible={true}
+            icon={<Icon name="Add" />}
+          >
             Add Employee
           </MainButton>
         </Link>

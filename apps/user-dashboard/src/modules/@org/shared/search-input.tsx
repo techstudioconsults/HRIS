@@ -1,11 +1,15 @@
 'use client';
 
 import { Input } from '@workspace/ui/components/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@workspace/ui/components/popover';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@workspace/ui/components/popover';
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { EmptyState } from '@workspace/ui/lib';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 import { cn } from '@workspace/ui/lib/utils';
-import { Clock, Loader2, Search, SearchIcon, TrendingUp, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
@@ -33,7 +37,11 @@ export const SearchInput = ({
 
   return (
     <div className={`relative ${className}`}>
-      <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform" />
+      <Icon
+        name="SearchIcon"
+        size={16}
+        className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2 transform"
+      />
       <Input
         disabled={isDisabled}
         type="search"
@@ -126,7 +134,9 @@ export function GlobalSearchInput({
     switch (event.key) {
       case 'ArrowDown': {
         event.preventDefault();
-        setSelectedIndex((previous) => (previous < totalResults - 1 ? previous + 1 : previous));
+        setSelectedIndex((previous) =>
+          previous < totalResults - 1 ? previous + 1 : previous
+        );
         break;
       }
       case 'ArrowUp': {
@@ -151,7 +161,8 @@ export function GlobalSearchInput({
     }
   };
 
-  const showDropdown = open && (searchQuery.trim() !== '' || recentSearches.length > 0);
+  const showDropdown =
+    open && (searchQuery.trim() !== '' || recentSearches.length > 0);
   const hasResults = results.length > 0;
   const showRecent = searchQuery.trim() === '' && recentSearches.length > 0;
 
@@ -166,7 +177,11 @@ export function GlobalSearchInput({
             className
           )}
         >
-          <Search className="text-muted-foreground h-4 w-4 shrink-0" />
+          <Icon
+            name="Search"
+            size={16}
+            className="text-muted-foreground shrink-0"
+          />
           <Input
             ref={inputReference}
             type="text"
@@ -179,7 +194,13 @@ export function GlobalSearchInput({
             className="placeholder:text-muted-foreground h-full flex-1 border-none bg-transparent p-0
             text-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none"
           />
-          {isLoading && <Loader2 className="text-muted-foreground h-4 w-4 shrink-0 animate-spin" />}
+          {isLoading && (
+            <Icon
+              name="Loader2"
+              size={16}
+              className="text-muted-foreground shrink-0 animate-spin"
+            />
+          )}
           {searchQuery && !isLoading && (
             <button
               type="button"
@@ -189,7 +210,7 @@ export function GlobalSearchInput({
               }}
               className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
             >
-              <X className="h-4 w-4" />
+              <Icon name="X" size={16} />
             </button>
           )}
         </div>
@@ -204,7 +225,9 @@ export function GlobalSearchInput({
           {showRecent && (
             <div className="p-2">
               <div className="flex items-center justify-between px-2 py-1.5">
-                <span className="text-muted-foreground text-xs font-medium">Recent Searches</span>
+                <span className="text-muted-foreground text-xs font-medium">
+                  Recent Searches
+                </span>
                 {onClearRecent && (
                   <button
                     type="button"
@@ -224,7 +247,11 @@ export function GlobalSearchInput({
                     className="hover:bg-accent flex w-full items-center gap-2 rounded-sm px-2 py-2 text-left text-sm
                     transition-colors"
                   >
-                    <Clock className="text-muted-foreground h-4 w-4 shrink-0" />
+                    <Icon
+                      name="Clock"
+                      size={16}
+                      className="text-muted-foreground shrink-0"
+                    />
                     <span className="flex-1 truncate">{query}</span>
                   </button>
                 ))}
@@ -235,7 +262,7 @@ export function GlobalSearchInput({
           {searchQuery.trim() && !isLoading && !hasResults && (
             <EmptyState
               className="text-primary"
-              icon={<Search className="text-primary" />}
+              icon={<Icon name="Search" className="text-primary" />}
               title="No results found."
               description={emptyMessage}
             />
@@ -256,9 +283,15 @@ export function GlobalSearchInput({
                     )}
                   >
                     {result.icon ? (
-                      <div className="text-muted-foreground mt-0.5 shrink-0">{result.icon}</div>
+                      <div className="text-muted-foreground mt-0.5 shrink-0">
+                        {result.icon}
+                      </div>
                     ) : (
-                      <TrendingUp className="text-muted-foreground mt-0.5 h-4 w-4 shrink-0" />
+                      <Icon
+                        name="TrendingUp"
+                        size={16}
+                        className="text-muted-foreground mt-0.5 shrink-0"
+                      />
                     )}
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center gap-2">

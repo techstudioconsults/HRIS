@@ -1,6 +1,6 @@
 # Animation Utilities (Wave + Page Transitions)
 
-Source: [src/lib/animation/index.tsx](src/lib/animation/index.tsx) — exports [useWaveAnimation()](src/lib/animation/index.tsx:25), [PageWrapper()](src/lib/animation/index.tsx:110), [PageSection()](src/lib/animation/index.tsx:140), [PageTransition()](src/lib/animation/index.tsx:246).
+Source: [src/lib/animation/index.ts](src/lib/animation/index.tsx) — exports [useWaveAnimation()](src/lib/animation/index.tsx:25), [PageWrapper()](src/lib/animation/index.tsx:110), [PageSection()](src/lib/animation/index.tsx:140), [PageTransition()](src/lib/animation/index.tsx:246).
 
 This guide shows how to:
 
@@ -21,32 +21,36 @@ Notes:
 Example: animate a list of cards as they enter the viewport.
 
 ```tsx
-"use client";
+'use client';
 
-import { useWaveAnimation } from "@/lib/animation";
-import { cn } from "@/lib/utils";
+import { useWaveAnimation } from '@/lib/animation';
+import { cn } from '@/lib/utils';
 
 export function WaveListDemo() {
   const items = Array.from({ length: 6 }, (_, i) => i + 1);
 
-  const { containerReference, getItemStyle, getItemClassName } = useWaveAnimation({
-    threshold: 0.1, // IntersectionObserver threshold
-    rootMargin: "50px", // When to start observing
-    staggerDelay: 70, // ms between siblings
-    duration: 500, // ms per item
-  });
+  const { containerReference, getItemStyle, getItemClassName } =
+    useWaveAnimation({
+      threshold: 0.1, // IntersectionObserver threshold
+      rootMargin: '50px', // When to start observing
+      staggerDelay: 70, // ms between siblings
+      duration: 500, // ms per item
+    });
 
   return (
-    <div ref={containerReference} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div
+      ref={containerReference}
+      className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+    >
       {items.map((n, index) => (
         <div
           key={n}
           style={getItemStyle(index)}
           className={getItemClassName(
             cn(
-              "bg-card rounded-lg border p-6 shadow-sm",
+              'bg-card rounded-lg border p-6 shadow-sm'
               // Base classes are merged with the animation classes internally
-            ),
+            )
           )}
         >
           <div className="text-muted-foreground text-sm">Card #{n}</div>
@@ -63,24 +67,35 @@ export function WaveListDemo() {
 This removes the need to manually pass index and classes; each child section gets staggered styles and classes.
 
 ```tsx
-"use client";
+'use client';
 
-import { PageSection, PageWrapper } from "@/lib/animation";
+import { PageSection, PageWrapper } from '@/lib/animation';
 
 export function SectionedContent() {
   return (
     <PageWrapper staggerDelay={80} duration={600} className="space-y-6">
-      <PageSection index={0} className="bg-card rounded-lg border p-6 shadow-sm">
+      <PageSection
+        index={0}
+        className="bg-card rounded-lg border p-6 shadow-sm"
+      >
         <h2 className="text-xl font-semibold">Intro</h2>
         <p className="text-muted-foreground">First block fades/slides in.</p>
       </PageSection>
 
-      <PageSection index={1} className="bg-card rounded-lg border p-6 shadow-sm">
+      <PageSection
+        index={1}
+        className="bg-card rounded-lg border p-6 shadow-sm"
+      >
         <h2 className="text-xl font-semibold">Details</h2>
-        <p className="text-muted-foreground">Second block follows with delay.</p>
+        <p className="text-muted-foreground">
+          Second block follows with delay.
+        </p>
       </PageSection>
 
-      <PageSection index={2} className="bg-card rounded-lg border p-6 shadow-sm">
+      <PageSection
+        index={2}
+        className="bg-card rounded-lg border p-6 shadow-sm"
+      >
         <h2 className="text-xl font-semibold">More</h2>
         <p className="text-muted-foreground">Third block, and so on…</p>
       </PageSection>
@@ -106,12 +121,12 @@ Wrap your app/layout.tsx children with [PageTransition()](src/lib/animation/inde
 
 ```tsx
 // app/layout.tsx
-"use client";
+'use client';
 
-import { PageTransition } from "@/lib/animation";
-import type { ReactNode } from "react";
+import { PageTransition } from '@/lib/animation';
+import type { ReactNode } from 'react';
 
-import "./globals.css";
+import './globals.css';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -154,7 +169,10 @@ When variant="wipe", an overlay sweeps across the viewport while the content als
 ### Lifecycle callbacks
 
 ```tsx
-<PageTransition onStart={() => console.log("enter start")} onEnd={() => console.log("enter end")}>
+<PageTransition
+  onStart={() => console.log('enter start')}
+  onEnd={() => console.log('enter end')}
+>
   {children}
 </PageTransition>
 ```
@@ -166,7 +184,15 @@ If the user has prefers-reduced-motion, transitions minimize motion and fall bac
 ### Props reference
 
 ```ts
-type PageTransitionVariant = "none" | "fade" | "slideUp" | "slideDown" | "slideLeft" | "slideRight" | "scale" | "wipe";
+type PageTransitionVariant =
+  | 'none'
+  | 'fade'
+  | 'slideUp'
+  | 'slideDown'
+  | 'slideLeft'
+  | 'slideRight'
+  | 'scale'
+  | 'wipe';
 
 interface PageTransitionProps {
   children: React.ReactNode;

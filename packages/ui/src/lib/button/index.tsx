@@ -2,7 +2,14 @@
 
 import { LucideLoader, LucidePlus } from 'lucide-react';
 import Link from 'next/link';
-import { cloneElement, forwardRef, MouseEventHandler, ReactElement, ReactNode, useState } from 'react';
+import {
+  cloneElement,
+  forwardRef,
+  MouseEventHandler,
+  ReactElement,
+  ReactNode,
+  useState,
+} from 'react';
 import { cn } from '../utils';
 import { Button } from '@workspace/ui/components/button';
 
@@ -29,7 +36,7 @@ interface ButtonProperties extends React.ButtonHTMLAttributes<HTMLButtonElement>
   /** Specifies the size of the button */
   size?: Size;
   /** Icon to be displayed inside the button */
-  icon?: ReactNode;
+  icon?: ReactNode | ReactElement;
   /** Text or elements to be displayed inside the button */
   children?: ReactNode;
   /** Indicates if the button is in a loading state */
@@ -96,7 +103,12 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
     const buttonContent = (
       <>
         {isLeftIconVisible && !isLoading && modifiedIcon}
-        {isLoading && <LucideLoader className="h-[1rem] w-[1rem] animate-spin" data-testid="loading-spinner" />}
+        {isLoading && (
+          <LucideLoader
+            className="h-[1rem] w-[1rem] animate-spin"
+            data-testid="loading-spinner"
+          />
+        )}
         {isIconOnly && !isLoading && modifiedIcon}
         {!isIconOnly && children}
         {!isIconOnly && !children && isLoading && 'Loading'}
@@ -136,7 +148,12 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
 
       if (isExternal) {
         return (
-          <a href={href} target="_blank" rel="noopener noreferrer" aria-label={ariaLabel}>
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={ariaLabel}
+          >
             <Button
               type={type}
               variant={variant}

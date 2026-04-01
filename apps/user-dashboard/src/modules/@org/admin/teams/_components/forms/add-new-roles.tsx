@@ -1,16 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // components/forms/RolesAndPermission.tsx
-"use client";
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card";
-import { Checkbox } from "@workspace/ui/components/checkbox";
-import { BatchProgress, FormField } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { InfoCircle, Trash } from "iconsax-reactjs";
-import { Plus } from "lucide-react";
-import { FormEvent, useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import { toast } from "sonner";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@workspace/ui/components/card';
+import { Checkbox } from '@workspace/ui/components/checkbox';
+import { BatchProgress, FormField } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { FormEvent, useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 interface FormRole {
   name: string;
@@ -27,10 +31,22 @@ interface RolesAndPermissionProperties {
   isSubmitting?: boolean;
 }
 
-const modules = ["company", "employee", "team", "role", "payroll", "leave", "attendance"] as const;
-const actions = ["read", "create", "update", "delete", "manage"] as const;
+const modules = [
+  'company',
+  'employee',
+  'team',
+  'role',
+  'payroll',
+  'leave',
+  'attendance',
+] as const;
+const actions = ['read', 'create', 'update', 'delete', 'manage'] as const;
 
-const handleManageChange = (module: string, checked: boolean, currentPermissions: string[]) => {
+const handleManageChange = (
+  module: string,
+  checked: boolean,
+  currentPermissions: string[]
+) => {
   if (checked) {
     // If manage is checked, add all permissions for this module
     const newPermissions = [
@@ -48,7 +64,12 @@ const handleManageChange = (module: string, checked: boolean, currentPermissions
   }
 };
 
-const handlePermissionChange = (module: string, action: string, checked: boolean, currentPermissions: string[]) => {
+const handlePermissionChange = (
+  module: string,
+  action: string,
+  checked: boolean,
+  currentPermissions: string[]
+) => {
   const permissionString = `${module}:${action}`;
   let newPermissions = [...currentPermissions];
 
@@ -60,7 +81,7 @@ const handlePermissionChange = (module: string, action: string, checked: boolean
 
     // If all non-manage permissions are checked, also check manage
     if (
-      action !== "manage" &&
+      action !== 'manage' &&
       newPermissions.includes(`${module}:read`) &&
       newPermissions.includes(`${module}:create`) &&
       newPermissions.includes(`${module}:update`) &&
@@ -74,7 +95,7 @@ const handlePermissionChange = (module: string, action: string, checked: boolean
     newPermissions = newPermissions.filter((p) => p !== permissionString);
 
     // If manage was checked and any sub-permission is unchecked, uncheck manage
-    if (action !== "manage" && newPermissions.includes(`${module}:manage`)) {
+    if (action !== 'manage' && newPermissions.includes(`${module}:manage`)) {
       newPermissions = newPermissions.filter((p) => p !== `${module}:manage`);
     }
   }
@@ -92,31 +113,41 @@ export const RolesAndPermission = ({
   isSubmitting = false,
 }: RolesAndPermissionProperties) => {
   const [isDeleting, setIsDeleting] = useState(false);
-  const [roles, setRoles] = useState<FormRole[]>([{ name: "", permissions: [] }]);
+  const [roles, setRoles] = useState<FormRole[]>([
+    { name: '', permissions: [] },
+  ]);
   const [openPermissions, setOpenPermissions] = useState<boolean[]>([false]);
   const [isSubmittingRoles, setIsSubmittingRoles] = useState(false);
   const [submissionProgress, setSubmissionProgress] = useState(0);
   const [currentSubmittingRole, setCurrentSubmittingRole] = useState(0);
-  const [submissionStatus, setSubmissionStatus] = useState<string>("");
+  const [submissionStatus, setSubmissionStatus] = useState<string>('');
 
   const addNewRole = () => {
-    setRoles((previous) => [...previous, { name: "", permissions: [] }]);
+    setRoles((previous) => [...previous, { name: '', permissions: [] }]);
     setOpenPermissions((previous) => [...previous, false]);
   };
 
   const removeRole = (index: number) => {
     if (roles.length > 1) {
       setRoles((previous) => previous.filter((_, index_) => index_ !== index));
-      setOpenPermissions((previous) => previous.filter((_, index_) => index_ !== index));
+      setOpenPermissions((previous) =>
+        previous.filter((_, index_) => index_ !== index)
+      );
     }
   };
 
   const updateRole = (index: number, field: keyof FormRole, value: any) => {
-    setRoles((previous) => previous.map((role, index_) => (index_ === index ? { ...role, [field]: value } : role)));
+    setRoles((previous) =>
+      previous.map((role, index_) =>
+        index_ === index ? { ...role, [field]: value } : role
+      )
+    );
   };
 
   const togglePermissions = (index: number) => {
-    setOpenPermissions((previous) => previous.map((isOpen, index_) => (index_ === index ? !isOpen : isOpen)));
+    setOpenPermissions((previous) =>
+      previous.map((isOpen, index_) => (index_ === index ? !isOpen : isOpen))
+    );
   };
 
   // Keep openPermissions array in sync with roles array
@@ -128,12 +159,14 @@ export const RolesAndPermission = ({
 
   const methods = useForm({
     defaultValues: {
-      roles: [{ name: "", permissions: [] }],
+      roles: [{ name: '', permissions: [] }],
     },
   });
 
   // Check if all roles have valid names and at least one permission
-  const allRolesValid = roles.every((role) => role.name.trim().length > 0 && role.permissions.length > 0);
+  const allRolesValid = roles.every(
+    (role) => role.name.trim().length > 0 && role.permissions.length > 0
+  );
 
   const handleSubmitForm = async () => {
     if (isSubmittingRoles) return;
@@ -141,13 +174,15 @@ export const RolesAndPermission = ({
     setIsSubmittingRoles(true);
     setSubmissionProgress(0);
     setCurrentSubmittingRole(0);
-    setSubmissionStatus("Preparing to create roles...");
+    setSubmissionStatus('Preparing to create roles...');
 
-    const validRoles = roles.filter((role) => role.name.trim() && role.permissions.length > 0);
+    const validRoles = roles.filter(
+      (role) => role.name.trim() && role.permissions.length > 0
+    );
     const totalRoles = validRoles.length;
 
     if (totalRoles === 0) {
-      toast.error("Please add at least one valid role with permissions");
+      toast.error('Please add at least one valid role with permissions');
       setIsSubmittingRoles(false);
       return;
     }
@@ -183,18 +218,19 @@ export const RolesAndPermission = ({
           }
         } catch (error) {
           failedRoles.push(role.name);
-          const errorMessage = error instanceof Error ? error.message : "Unknown error";
+          const errorMessage =
+            error instanceof Error ? error.message : 'Unknown error';
           toast.error(`Failed to create role "${role.name}": ${errorMessage}`);
         }
       }
 
       // Show final summary
       if (successCount === totalRoles) {
-        setSubmissionStatus("All roles created successfully!");
+        setSubmissionStatus('All roles created successfully!');
         const message =
           totalRoles === 1
             ? `Role "${validRoles[0].name}" created successfully!`
-            : `Successfully created ${successCount} role${successCount > 1 ? "s" : ""}!`;
+            : `Successfully created ${successCount} role${successCount > 1 ? 's' : ''}!`;
         toast.success(message, { duration: 3000 });
 
         // Close modal and trigger completion after showing success
@@ -202,30 +238,36 @@ export const RolesAndPermission = ({
           if (onComplete) {
             onComplete();
           } else {
-            onCancel(new Event("submit") as any);
+            onCancel(new Event('submit') as any);
           }
         }, 1000);
       } else if (successCount > 0) {
         setSubmissionStatus(`Completed with ${failedRoles.length} error(s)`);
-        toast.warning(`Created ${successCount} of ${totalRoles} roles. Failed: ${failedRoles.join(", ")}`, {
-          duration: 5000,
-        });
+        toast.warning(
+          `Created ${successCount} of ${totalRoles} roles. Failed: ${failedRoles.join(', ')}`,
+          {
+            duration: 5000,
+          }
+        );
 
         // Still close modal after partial success
         setTimeout(() => {
           if (onComplete) {
             onComplete();
           } else {
-            onCancel(new Event("submit") as any);
+            onCancel(new Event('submit') as any);
           }
         }, 2000);
       } else {
-        setSubmissionStatus("Failed to create roles");
-        toast.error("Failed to create any roles. Please try again.", { duration: 4000 });
+        setSubmissionStatus('Failed to create roles');
+        toast.error('Failed to create any roles. Please try again.', {
+          duration: 4000,
+        });
       }
     } catch (error) {
-      setSubmissionStatus("An unexpected error occurred");
-      const errorMessage = error instanceof Error ? error.message : "Failed to create roles";
+      setSubmissionStatus('An unexpected error occurred');
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to create roles';
       toast.error(errorMessage, { duration: 4000 });
     } finally {
       // Reset submission state after a delay
@@ -263,30 +305,41 @@ export const RolesAndPermission = ({
           className="space-y-4"
         >
           {/* Progress Bar - Shows during submission */}
-          <BatchProgress progress={submissionProgress} status={submissionStatus} show={isSubmittingRoles} size="sm" />
+          <BatchProgress
+            progress={submissionProgress}
+            status={submissionStatus}
+            show={isSubmittingRoles}
+            size="sm"
+          />
 
           <section className="flex items-center justify-between">
             <p className="text-lg font-semibold">Add New Role(s) to Team</p>
-            <p className="text-primary flex cursor-pointer items-center gap-1 text-sm font-medium" onClick={addNewRole}>
-              <Plus className="h-4 w-4" /> Add New Role
+            <p
+              className="text-primary flex cursor-pointer items-center gap-1 text-sm font-medium"
+              onClick={addNewRole}
+            >
+              <Icon name="Plus" size={16} /> Add New Role
             </p>
           </section>
 
           <section className="max-h-[50vh] space-y-4 overflow-y-auto">
             {[...roles].reverse().map((role, originalIndex) => {
               const index = roles.length - 1 - originalIndex; // Calculate original index for state updates
-              const isRoleValid = role.name.trim().length > 0 && role.permissions.length > 0;
+              const isRoleValid =
+                role.name.trim().length > 0 && role.permissions.length > 0;
               return (
                 <section
                   key={index}
-                  className={`space-y-4 rounded-lg p-4 ${isRoleValid ? "bg-primary/5" : "bg-destructive/5 border-destructive/20 border"}`}
+                  className={`space-y-4 rounded-lg p-4 ${isRoleValid ? 'bg-primary/5' : 'bg-destructive/5 border-destructive/20 border'}`}
                 >
                   <section className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <p className="text-lg font-semibold">Role {index + 1}</p>
                       {!isRoleValid && (
                         <span className="text-destructive bg-destructive/10 rounded px-2 py-1 text-xs">
-                          {role.name.trim().length === 0 ? "Name required" : "Permissions required"}
+                          {role.name.trim().length === 0
+                            ? 'Name required'
+                            : 'Permissions required'}
                         </span>
                       )}
                     </div>
@@ -295,20 +348,27 @@ export const RolesAndPermission = ({
                         className="text-destructive flex cursor-pointer items-center gap-1 text-xs font-medium"
                         onClick={() => removeRole(index)}
                       >
-                        <Trash className="size-4" /> Remove
+                        <Icon name="Trash" size={16} /> Remove
                       </p>
                     )}
                   </section>
                   {isEdit ? (
                     <>
-                      <div className={`bg-warning-50 text-warning-200 rounded-lg p-4 text-sm`}>
+                      <div
+                        className={`bg-warning-50 text-warning-200 rounded-lg p-4 text-sm`}
+                      >
                         <div className={`flex items-start gap-2`}>
                           <div>
-                            <InfoCircle size={12} className={`mt-1 text-sm`} />
+                            <Icon
+                              name="InfoCircle"
+                              size={12}
+                              className={`mt-1 text-sm`}
+                            />
                           </div>
                           <p>
-                            You can tailor what this employee can view or manage on the platform. These permissions
-                            apply only to this employee and can be changed later.
+                            You can tailor what this employee can view or manage
+                            on the platform. These permissions apply only to
+                            this employee and can be changed later.
                           </p>
                         </div>
                       </div>
@@ -322,7 +382,9 @@ export const RolesAndPermission = ({
                       />
                     </>
                   ) : (
-                    <Card className={`border-none bg-transparent p-0 shadow-none`}>
+                    <Card
+                      className={`border-none bg-transparent p-0 shadow-none`}
+                    >
                       <CardContent className={`p-0`}>
                         <input
                           name={`role_${index}_name`}
@@ -330,7 +392,9 @@ export const RolesAndPermission = ({
                           placeholder="Enter role name"
                           className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring h-[48px] w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                           value={role.name}
-                          onChange={(event) => updateRole(index, "name", event.target.value)}
+                          onChange={(event) =>
+                            updateRole(index, 'name', event.target.value)
+                          }
                         />
                       </CardContent>
                     </Card>
@@ -339,15 +403,22 @@ export const RolesAndPermission = ({
                     onClick={() => togglePermissions(index)}
                     className="text-primary hover:text-primary/80 cursor-pointer text-sm font-medium transition-colors"
                   >
-                    {openPermissions[index] ? "Hide permissions" : "Assign permissions for this role"}
+                    {openPermissions[index]
+                      ? 'Hide permissions'
+                      : 'Assign permissions for this role'}
                   </p>
                   {/* Claims Matrix Table */}
                   {openPermissions[index] && (
-                    <Card className={`border-none bg-transparent p-0 shadow-none`}>
+                    <Card
+                      className={`border-none bg-transparent p-0 shadow-none`}
+                    >
                       <CardHeader className={`p-0`}>
-                        <CardTitle className="text-lg">Assign Module Permissions (Claims)</CardTitle>
+                        <CardTitle className="text-lg">
+                          Assign Module Permissions (Claims)
+                        </CardTitle>
                         <p className="text-muted-foreground text-sm">
-                          Select the areas this role should access and define their level of control.
+                          Select the areas this role should access and define
+                          their level of control.
                         </p>
                       </CardHeader>
                       <CardContent className={`p-0`}>
@@ -355,7 +426,9 @@ export const RolesAndPermission = ({
                           <table className="w-full border-collapse">
                             <thead className={`bg-primary/10`}>
                               <tr className="">
-                                <th className="border-r px-4 py-2 text-left text-sm">Module</th>
+                                <th className="border-r px-4 py-2 text-left text-sm">
+                                  Module
+                                </th>
                                 {actions.map((action) => (
                                   <th
                                     key={action}
@@ -368,26 +441,54 @@ export const RolesAndPermission = ({
                             </thead>
                             <tbody>
                               {modules.map((module) => (
-                                <tr key={module} className="border-border/50 border-b">
-                                  <td className="border-r px-4 py-2 text-sm capitalize">{module}</td>
+                                <tr
+                                  key={module}
+                                  className="border-border/50 border-b"
+                                >
+                                  <td className="border-r px-4 py-2 text-sm capitalize">
+                                    {module}
+                                  </td>
                                   {actions.map((action) => (
-                                    <td key={`${module}-${action}`} className="border-r px-4 py-2 text-center">
+                                    <td
+                                      key={`${module}-${action}`}
+                                      className="border-r px-4 py-2 text-center"
+                                    >
                                       <div className="flex justify-center">
                                         <Checkbox
                                           className={`border-primary/30 data-[state=checked]:border-primary data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary`}
                                           checked={
-                                            role.permissions?.includes(`${module}:${action}`) ||
-                                            (action !== "manage" && role.permissions?.includes(`${module}:manage`))
+                                            role.permissions?.includes(
+                                              `${module}:${action}`
+                                            ) ||
+                                            (action !== 'manage' &&
+                                              role.permissions?.includes(
+                                                `${module}:manage`
+                                              ))
                                           }
                                           onCheckedChange={(checked) => {
-                                            let newPermissions = [...(role.permissions || [])];
+                                            let newPermissions = [
+                                              ...(role.permissions || []),
+                                            ];
 
                                             newPermissions =
-                                              action === "manage"
-                                                ? handleManageChange(module, !!checked, newPermissions)
-                                                : handlePermissionChange(module, action, !!checked, newPermissions);
+                                              action === 'manage'
+                                                ? handleManageChange(
+                                                    module,
+                                                    !!checked,
+                                                    newPermissions
+                                                  )
+                                                : handlePermissionChange(
+                                                    module,
+                                                    action,
+                                                    !!checked,
+                                                    newPermissions
+                                                  );
 
-                                            updateRole(index, "permissions", newPermissions);
+                                            updateRole(
+                                              index,
+                                              'permissions',
+                                              newPermissions
+                                            );
                                           }}
                                           aria-label={`${module} ${action} permission`}
                                         />
@@ -411,9 +512,10 @@ export const RolesAndPermission = ({
           {!allRolesValid && (
             <div className="bg-warning/10 border-warning/20 rounded-lg border p-4">
               <div className="flex items-start gap-2">
-                <InfoCircle className="text-warning h-4 w-4" />
+                <Icon name="InfoCircle" size={16} className="text-warning" />
                 <p className="text-muted-foreground text-xs">
-                  Please complete all roles by adding a name and selecting at least one permission for each role.
+                  Please complete all roles by adding a name and selecting at
+                  least one permission for each role.
                 </p>
               </div>
             </div>
@@ -428,10 +530,10 @@ export const RolesAndPermission = ({
                 onClick={handleDelete}
                 isDisabled={isSubmitting || isDeleting}
                 className="w-full sm:w-auto"
-                icon={<Trash className="mr-2 h-4 w-4" />}
+                icon={<Icon name="Trash" size={16} className="mr-2" />}
                 isLeftIconVisible
               >
-                {isDeleting ? "Deleting..." : "Delete Role"}
+                {isDeleting ? 'Deleting...' : 'Delete Role'}
               </MainButton>
             )}
             <MainButton
@@ -446,16 +548,21 @@ export const RolesAndPermission = ({
             <MainButton
               type="submit"
               variant={`primary`}
-              isDisabled={isSubmitting || isDeleting || !allRolesValid || isSubmittingRoles}
+              isDisabled={
+                isSubmitting ||
+                isDeleting ||
+                !allRolesValid ||
+                isSubmittingRoles
+              }
               className="w-full"
             >
               {isSubmittingRoles
                 ? `Creating Role ${currentSubmittingRole}...`
                 : isSubmitting
-                  ? "Saving..."
+                  ? 'Saving...'
                   : isEdit
-                    ? "Update Role"
-                    : `Create ${roles.length} Role${roles.length > 1 ? "s" : ""}`}
+                    ? 'Update Role'
+                    : `Create ${roles.length} Role${roles.length > 1 ? 's' : ''}`}
             </MainButton>
           </div>
         </form>

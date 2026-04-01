@@ -1,22 +1,29 @@
-"use client";
+'use client';
 
-import { formatCurrency } from "@/lib/formatters";
-import { Button } from "@workspace/ui/components/button";
+import { formatCurrency } from '@/lib/formatters';
+import { Button } from '@workspace/ui/components/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@workspace/ui/components/table";
-import { MainButton } from "@workspace/ui/lib/button";
-import { cn } from "@workspace/ui/lib/utils";
-import { MoreHorizontal, Plus } from "lucide-react";
+} from '@workspace/ui/components/dropdown-menu';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@workspace/ui/components/table';
+import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { cn } from '@workspace/ui/lib/utils';
 
-import { BonusDeductionTableProperties } from "../types";
+import { BonusDeductionTableProperties } from '../types';
 
-const formatValue = (value: number, valueType: "percentage" | "fixed") => {
-  if (valueType === "percentage") {
+const formatValue = (value: number, valueType: 'percentage' | 'fixed') => {
+  if (valueType === 'percentage') {
     return `${value}%`;
   }
   return formatCurrency(value);
@@ -30,15 +37,18 @@ export function BonusDeductionTable({
   onDelete,
   onToggleStatus,
 }: BonusDeductionTableProperties) {
-  const getStatusBadge = (status: "active" | "inactive") => {
+  const getStatusBadge = (status: 'active' | 'inactive') => {
     return (
       <span
-        className={cn("inline-flex items-center rounded-full px-3 py-1 text-xs font-medium", {
-          "bg-green-100 text-green-800": status === "active",
-          "bg-red-100 text-red-800": status === "inactive",
-        })}
+        className={cn(
+          'inline-flex items-center rounded-full px-3 py-1 text-xs font-medium',
+          {
+            'bg-green-100 text-green-800': status === 'active',
+            'bg-red-100 text-red-800': status === 'inactive',
+          }
+        )}
       >
-        {status === "active" ? "Active" : "Inactive"}
+        {status === 'active' ? 'Active' : 'Inactive'}
       </span>
     );
   };
@@ -63,7 +73,10 @@ export function BonusDeductionTable({
           <TableBody>
             {items.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="py-8 text-center text-gray-500">
+                <TableCell
+                  colSpan={5}
+                  className="py-8 text-center text-gray-500"
+                >
                   No {type}s added yet
                 </TableCell>
               </TableRow>
@@ -72,13 +85,15 @@ export function BonusDeductionTable({
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.name}</TableCell>
                   <TableCell className="capitalize">{item.valueType}</TableCell>
-                  <TableCell>{formatValue(item.value, item.valueType ?? "fixed")}</TableCell>
+                  <TableCell>
+                    {formatValue(item.value, item.valueType ?? 'fixed')}
+                  </TableCell>
                   <TableCell>{getStatusBadge(item.status)}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
-                          <MoreHorizontal className="h-4 w-4" />
+                          <Icon name="MoreHorizontal" size={16} />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
@@ -86,19 +101,24 @@ export function BonusDeductionTable({
                           onClick={() =>
                             onEdit(item.id, {
                               name: item.name,
-                              valueType: item.valueType ?? "fixed",
+                              valueType: item.valueType ?? 'fixed',
                               value: item.value,
-                              status: item.status === "active",
+                              status: item.status === 'active',
                               type: item.type,
                             })
                           }
                         >
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onToggleStatus(item.id)}>
-                          {item.status === "active" ? "Deactivate" : "Activate"}
+                        <DropdownMenuItem
+                          onClick={() => onToggleStatus(item.id)}
+                        >
+                          {item.status === 'active' ? 'Deactivate' : 'Activate'}
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onDelete(item.id)} className="text-red-600">
+                        <DropdownMenuItem
+                          onClick={() => onDelete(item.id)}
+                          className="text-red-600"
+                        >
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -110,7 +130,13 @@ export function BonusDeductionTable({
           </TableBody>
         </Table>
       </div>
-      <MainButton icon={<Plus className="h-4 w-4" />} isLeftIconVisible variant="link" size="sm" onClick={onAdd}>
+      <MainButton
+        icon={<Icon name="Plus" size={16} />}
+        isLeftIconVisible
+        variant="link"
+        size="sm"
+        onClick={onAdd}
+      >
         Add {type}
       </MainButton>
     </div>

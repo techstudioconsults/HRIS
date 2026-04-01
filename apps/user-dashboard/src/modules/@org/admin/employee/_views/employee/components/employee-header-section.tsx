@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client';
 
-import ExportAction from "@/components/shared/export-action";
-import { SearchInput } from "@/modules/@org/shared/search-input";
-import { Button } from "@workspace/ui/components/button";
-import { DashboardHeader, GenericDropdown } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { Add, Filter } from "iconsax-reactjs";
-import { useCallback } from "react";
+import ExportAction from '@/components/shared/export-action';
+import { SearchInput } from '@/modules/@org/shared/search-input';
+import { Button } from '@workspace/ui/components/button';
+import { DashboardHeader, GenericDropdown } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { useCallback } from 'react';
 
-import { FilterForm } from "../../../_components/forms/filter-form";
-import { useEmployeeService } from "../../../services/use-service";
+import { FilterForm } from '../../../_components/forms/filter-form';
+import { useEmployeeService } from '../../../services/use-service';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 
 interface EmployeeHeaderSectionProperties {
   search: string | null;
@@ -37,7 +37,8 @@ export const EmployeeHeaderSection = ({
   onSearchChange,
   onFilterChange,
 }: EmployeeHeaderSectionProperties) => {
-  const { useGetAllTeams, useGetAllEmployees, useDownloadEmployees } = useEmployeeService();
+  const { useGetAllTeams, useGetAllEmployees, useDownloadEmployees } =
+    useEmployeeService();
   const { mutateAsync: downloadEmployees } = useDownloadEmployees();
   const { data: teams = [] } = useGetAllTeams();
   const { data: employeeData } = useGetAllEmployees(apiFilters);
@@ -46,14 +47,14 @@ export const EmployeeHeaderSection = ({
     (newFilters: any) => {
       onFilterChange(newFilters);
     },
-    [onFilterChange],
+    [onFilterChange]
   );
 
   const handleSearchChange = useCallback(
     (query: string) => {
       onSearchChange(query);
     },
-    [onSearchChange],
+    [onSearchChange]
   );
 
   return (
@@ -75,7 +76,7 @@ export const EmployeeHeaderSection = ({
                   className="data-[state=open]:border-border data-[state=open]:text-gray h-10 rounded-md border px-3"
                   variant="primaryOutline"
                 >
-                  <Filter className="size-4" />
+                  <Icon name={`Filter`} />
                   Filter
                 </Button>
               }
@@ -106,7 +107,12 @@ export const EmployeeHeaderSection = ({
               buttonText="Export Employees"
               fileName="employees"
             />
-            <MainButton href="/admin/employees/add-employee" variant="primary" isLeftIconVisible icon={<Add />}>
+            <MainButton
+              href="/admin/employees/add-employee"
+              variant="primary"
+              isLeftIconVisible
+              icon={<Icon name={`Add`} />}
+            >
               Add Employee
             </MainButton>
           </div>

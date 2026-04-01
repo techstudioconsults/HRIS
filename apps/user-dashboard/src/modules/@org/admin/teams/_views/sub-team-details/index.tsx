@@ -10,7 +10,7 @@ import {
   ReusableDialog,
 } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
-import { Plus } from 'lucide-react';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -70,7 +70,10 @@ const SubTeamDetailsHeader = ({
         <BreadCrumb
           items={[
             { label: 'Teams', href: '/admin/teams' },
-            { label: parentName || 'Parent Team', href: `/admin/teams/${parentId}` },
+            {
+              label: parentName || 'Parent Team',
+              href: `/admin/teams/${parentId}`,
+            },
             { label: teamData?.name || '', href: `/admin/teams/${teamId}` },
           ]}
         />
@@ -80,7 +83,7 @@ const SubTeamDetailsHeader = ({
           variant="primary"
           size="lg"
           isLeftIconVisible
-          icon={<Plus />}
+          icon={<Icon name="Plus" />}
           onClick={onAddMemberClick}
         >
           Add Member
@@ -113,7 +116,10 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
     ) {
       return (payload as { data: { items: Employee[] } }).data.items;
     }
-    if (hasItems(payload) && isEmployeeArray((payload as { items: unknown[] }).items)) {
+    if (
+      hasItems(payload) &&
+      isEmployeeArray((payload as { items: unknown[] }).items)
+    ) {
       return (payload as { items: Employee[] }).items;
     }
     if (isEmployeeArray(payload)) {
@@ -123,11 +129,15 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
   }, [employeesResp]);
 
   const members: Employee[] = useMemo(
-    () => allEmployees.filter((employee) => employee?.employmentDetails?.team?.id === teamId),
+    () =>
+      allEmployees.filter(
+        (employee) => employee?.employmentDetails?.team?.id === teamId
+      ),
     [allEmployees, teamId]
   );
 
-  const { getRowActions, DeleteConfirmationModal, setActiveEmployee } = useEmployeeRowActions();
+  const { getRowActions, DeleteConfirmationModal, setActiveEmployee } =
+    useEmployeeRowActions();
   const columns = useMemo<IColumnDefinition<Employee>[]>(
     () => [
       {
@@ -142,7 +152,8 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
           >
             <Image
               src={
-                typeof employee.avatar === 'string' && employee.avatar.length > 0
+                typeof employee.avatar === 'string' &&
+                employee.avatar.length > 0
                   ? employee.avatar
                   : 'https://res.cloudinary.com/kingsleysolomon/image/upload/v1742989662/byte-alley/fisnolvvuvfiebxskgbs.svg'
               }
@@ -168,7 +179,9 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
         header: 'Role',
         accessorKey: 'email',
         render: (_, employee: Employee) => (
-          <span className="text-sm">{employee?.employmentDetails?.role?.name || 'N/A'}</span>
+          <span className="text-sm">
+            {employee?.employmentDetails?.role?.name || 'N/A'}
+          </span>
         ),
       },
       {
@@ -214,7 +227,11 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
         />
         <DashboardCard
           title="Team Manager"
-          value={<p className="text-base">{teamData?.manager || `Ifijeh Kingsley`}</p>}
+          value={
+            <p className="text-base">
+              {teamData?.manager || `Ifijeh Kingsley`}
+            </p>
+          }
           className="flex flex-col items-center justify-center gap-4 text-center"
         />
         <DashboardCard
@@ -250,7 +267,14 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
         ) : (
           <EmptyState
             className="bg-background"
-            images={[{ src: empty1.src, alt: 'No team member', width: 100, height: 100 }]}
+            images={[
+              {
+                src: empty1.src,
+                alt: 'No team member',
+                width: 100,
+                height: 100,
+              },
+            ]}
             title="No team member yet."
             description="Add members to this team to collaborate and assign roles."
             button={{
@@ -270,8 +294,13 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
           <AddNewMembers
             parentTeamId={(() => {
               const t = teamData as Team | undefined;
-              const parent: unknown = (t as unknown as { parent?: unknown })?.parent;
-              if (parent && typeof parent === 'object' && (parent as { id?: string }).id) {
+              const parent: unknown = (t as unknown as { parent?: unknown })
+                ?.parent;
+              if (
+                parent &&
+                typeof parent === 'object' &&
+                (parent as { id?: string }).id
+              ) {
                 return (parent as { id: string }).id;
               }
               if (typeof parent === 'string') return parent;
@@ -298,7 +327,10 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
   return (
     <>
       <section className="space-y-8">
-        <SubTeamDetailsHeader teamId={id} onAddMemberClick={() => setIsAddMemberDialogOpen(true)} />
+        <SubTeamDetailsHeader
+          teamId={id}
+          onAddMemberClick={() => setIsAddMemberDialogOpen(true)}
+        />
         <SubTeamDetailsContent teamId={id} />
       </section>
 
@@ -313,8 +345,13 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
         <AddNewMembers
           parentTeamId={(() => {
             const t = teamData as Team | undefined;
-            const parent: unknown = (t as unknown as { parent?: unknown })?.parent;
-            if (parent && typeof parent === 'object' && (parent as { id?: string }).id) {
+            const parent: unknown = (t as unknown as { parent?: unknown })
+              ?.parent;
+            if (
+              parent &&
+              typeof parent === 'object' &&
+              (parent as { id?: string }).id
+            ) {
               return (parent as { id: string }).id;
             }
             if (typeof parent === 'string') return parent;

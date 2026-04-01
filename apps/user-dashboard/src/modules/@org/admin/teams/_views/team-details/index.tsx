@@ -1,14 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client';
 
-import { queryKeys } from "@/lib/react-query/query-keys";
-import type { Team as TeamFormType } from "@/modules/@org/onboarding/_components/forms/schema";
-import { TeamForm } from "@/modules/@org/onboarding/_components/forms/team/team-form";
-import { useOnboardingService } from "@/modules/@org/onboarding/services/use-onboarding-service";
-import { useQueryClient } from "@tanstack/react-query";
-import { Avatar, AvatarFallback, AvatarImage } from "@workspace/ui/components/avatar";
-import { DropdownMenuItem } from "@workspace/ui/components/dropdown-menu";
-import { Separator } from "@workspace/ui/components/separator";
+import { queryKeys } from '@/lib/react-query/query-keys';
+import type { Team as TeamFormType } from '@/modules/@org/onboarding/_components/forms/schema';
+import { TeamForm } from '@/modules/@org/onboarding/_components/forms/team/team-form';
+import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onboarding-service';
+import { useQueryClient } from '@tanstack/react-query';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@workspace/ui/components/avatar';
+import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
+import { Separator } from '@workspace/ui/components/separator';
 import {
   AdvancedDataTable,
   AlertModal,
@@ -18,22 +22,21 @@ import {
   ErrorEmptyState,
   GenericDropdown,
   ReusableDialog,
-} from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { AxiosError } from "axios";
-import { More, Trash } from "iconsax-reactjs";
-import { Edit, Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
+} from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
-import empty1 from "~/images/empty-state.svg";
-import { CardGroup } from "../../../dashboard/_components/card-group";
-import { DashboardCard } from "../../../dashboard/_components/dashboard-card";
-import { useTeamService } from "../../services/use-service";
-import { subTeamColumn, useSubTeamRowActions } from "../table-data";
-import { TeamDetailsSkeleton } from "./skeleton";
-import { formatDate } from "@/lib/formatters";
+import empty1 from '~/images/empty-state.svg';
+import { CardGroup } from '../../../dashboard/_components/card-group';
+import { DashboardCard } from '../../../dashboard/_components/dashboard-card';
+import { useTeamService } from '../../services/use-service';
+import { subTeamColumn, useSubTeamRowActions } from '../table-data';
+import { TeamDetailsSkeleton } from './skeleton';
+import { formatDate } from '@/lib/formatters';
 
 // Team Details Header Component
 const TeamDetailsHeader = ({
@@ -56,21 +59,26 @@ const TeamDetailsHeader = ({
       subtitle={
         <BreadCrumb
           items={[
-            { label: "Teams", href: "/admin/teams" },
-            { label: teamData?.name || "", href: `/admin/teams/${teamId}` },
+            { label: 'Teams', href: '/admin/teams' },
+            { label: teamData?.name || '', href: `/admin/teams/${teamId}` },
           ]}
         />
       }
       actionComponent={
         <div className="flex items-center gap-5">
-          <MainButton variant="primary" isLeftIconVisible icon={<Plus />} onClick={onAddSubTeam}>
+          <MainButton
+            variant="primary"
+            isLeftIconVisible
+            icon={<Icon name="Plus" />}
+            onClick={onAddSubTeam}
+          >
             Add Sub-team
           </MainButton>
           <GenericDropdown
             align="end"
             trigger={
               <div className="bg-background border-border flex size-10 items-center justify-center rounded-md shadow">
-                <More className="size-5" />
+                <Icon name="More" size={20} />
               </div>
             }
           >
@@ -82,14 +90,21 @@ const TeamDetailsHeader = ({
               }}
             >
               <span>
-                <Edit className="mr-2 size-4" />
+                <Icon name="Edit" size={16} className="mr-2" />
               </span>
               Edit Team&apos;s Name
             </DropdownMenuItem>
             <Separator className="bg-border/40" />
-            <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={onDeleteTeam}>
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onClick={onDeleteTeam}
+            >
               <span>
-                <Trash className="text-destructive mr-2 size-4" />
+                <Icon
+                  name="Trash"
+                  size={16}
+                  className="text-destructive mr-2"
+                />
               </span>
               Delete Team
             </DropdownMenuItem>
@@ -101,7 +116,13 @@ const TeamDetailsHeader = ({
 };
 
 // Team Details Content Component
-const TeamDetailsContent = ({ teamId, onEditSubTeam }: { teamId: string; onEditSubTeam: (team: Team) => void }) => {
+const TeamDetailsContent = ({
+  teamId,
+  onEditSubTeam,
+}: {
+  teamId: string;
+  onEditSubTeam: (team: Team) => void;
+}) => {
   const router = useRouter();
   const { useGetTeamsById } = useTeamService();
   const {
@@ -110,7 +131,10 @@ const TeamDetailsContent = ({ teamId, onEditSubTeam }: { teamId: string; onEditS
     isError: isErrorTeam,
     refetch,
   } = useGetTeamsById(teamId, { enabled: !!teamId });
-  const { getRowActions, DeleteConfirmationModal } = useSubTeamRowActions(onEditSubTeam, teamId);
+  const { getRowActions, DeleteConfirmationModal } = useSubTeamRowActions(
+    onEditSubTeam,
+    teamId
+  );
 
   type TeamWithSubteams = Team & { subteams?: Team[] };
   const subTeams: Team[] = (teamData as TeamWithSubteams)?.subteams ?? [];
@@ -136,22 +160,31 @@ const TeamDetailsContent = ({ teamId, onEditSubTeam }: { teamId: string; onEditS
           value={
             <div className="flex items-center gap-4">
               <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                <AvatarImage
+                  src="https://github.com/shadcn.png"
+                  alt="@shadcn"
+                />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
-              <span className="text-base">{teamData?.manager || `Ifijeh Kingsley`}</span>
+              <span className="text-base">
+                {teamData?.manager || `Ifijeh Kingsley`}
+              </span>
             </div>
           }
           className="flex flex-col items-center justify-center gap-4 text-center"
         />
         <DashboardCard
           title="Sub teams"
-          value={<span className="text-base">{teamData?.subteams?.length}</span>}
+          value={
+            <span className="text-base">{teamData?.subteams?.length}</span>
+          }
           className="flex flex-col items-center justify-center text-center"
         />
         <DashboardCard
           title="Created On"
-          value={<span className="text-base">{formatDate(teamData?.createdAt)}</span>}
+          value={
+            <span className="text-base">{formatDate(teamData?.createdAt)}</span>
+          }
           className="flex flex-col items-center justify-center text-center"
         />
       </CardGroup>
@@ -178,7 +211,9 @@ const TeamDetailsContent = ({ teamId, onEditSubTeam }: { teamId: string; onEditS
         ) : (
           <EmptyState
             className="bg-background"
-            images={[{ src: empty1.src, alt: "No sub-team", width: 100, height: 100 }]}
+            images={[
+              { src: empty1.src, alt: 'No sub-team', width: 100, height: 100 },
+            ]}
             title="No sub-team yet."
             description="Create sub-teams to better organize your team, assign leads, and manage roles."
           />
@@ -227,21 +262,25 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
           const errorMessage =
             error instanceof AxiosError && error.response?.data?.message
               ? error.response?.data?.message
-              : "Failed to update team name";
+              : 'Failed to update team name';
           toast.error(errorMessage);
         },
         onSuccess: () => {
           // Invalidate list and both affected detail queries (parent & edited team if different)
           queryClient.invalidateQueries({ queryKey: queryKeys.team.list() });
-          queryClient.invalidateQueries({ queryKey: queryKeys.team.details(targetId) });
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.team.details(targetId),
+          });
           if (editingTeam && editingTeam.id !== id) {
-            queryClient.invalidateQueries({ queryKey: queryKeys.team.details(id) });
+            queryClient.invalidateQueries({
+              queryKey: queryKeys.team.details(id),
+            });
           }
           toast.success(`Team name updated successfully!`);
           setIsEditDialogOpen(false);
           setEditingTeam(null);
         },
-      },
+      }
     );
   };
 
@@ -254,16 +293,18 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
           const errorMessage =
             error instanceof AxiosError && error.response?.data?.message
               ? error.response?.data?.message
-              : "Failed to create sub-team";
+              : 'Failed to create sub-team';
           toast.error(errorMessage);
         },
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: queryKeys.team.list() });
-          queryClient.invalidateQueries({ queryKey: queryKeys.team.details(id) });
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.team.details(id),
+          });
           toast.success(`Sub-team "${data.name}" created successfully!`);
           setIsAddSubTeamDialogOpen(false);
         },
-      },
+      }
     );
   };
 
@@ -274,13 +315,13 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
         const errorMessage =
           error instanceof AxiosError && error.response?.data?.message
             ? error.response?.data?.message
-            : "Failed to delete team";
+            : 'Failed to delete team';
         toast.error(errorMessage);
       },
       onSuccess: (response) => {
         if (response?.success) {
           toast.success(`Team "${teamData?.name}" deleted successfully!`);
-          router.push("/admin/teams");
+          router.push('/admin/teams');
         }
       },
     });
@@ -320,9 +361,17 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
         <TeamForm
           initialData={
             editingTeam
-              ? ({ id: editingTeam.id, name: editingTeam.name, roles: [] } as TeamFormType)
+              ? ({
+                  id: editingTeam.id,
+                  name: editingTeam.name,
+                  roles: [],
+                } as TeamFormType)
               : teamData
-                ? ({ id: teamData.id, name: teamData.name, roles: [] } as TeamFormType)
+                ? ({
+                    id: teamData.id,
+                    name: teamData.name,
+                    roles: [],
+                  } as TeamFormType)
                 : undefined
           }
           onSubmit={handleUpdateTeamName}
@@ -362,7 +411,7 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
         type="warning"
         title="Delete Team"
         description={`Are you sure you want to delete "${teamData?.name}"? This action cannot be undone.`}
-        confirmText={isDeleting ? "Deleting..." : "Delete Team"}
+        confirmText={isDeleting ? 'Deleting...' : 'Delete Team'}
         cancelText="Cancel"
       />
     </>

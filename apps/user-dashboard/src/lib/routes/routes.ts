@@ -1,6 +1,6 @@
-import { ACCESS_LEVELS, MODULE_PERMISSIONS } from '../auth-types';
-
 // Define route patterns with access control
+import { ACCESS_LEVELS, MODULE_PERMISSIONS } from '@/lib/auth-types';
+
 export const ROUTE_CONFIGS = [
   // Public routes - accessible to everyone
   {
@@ -84,32 +84,50 @@ export const ROUTE_CONFIGS = [
   {
     path: '/employees',
     accessLevel: ACCESS_LEVELS.PERMISSION_BASED,
-    requiredPermissions: [MODULE_PERMISSIONS.EMPLOYEE_READ, MODULE_PERMISSIONS.EMPLOYEE_MANAGE],
+    requiredPermissions: [
+      MODULE_PERMISSIONS.EMPLOYEE_READ,
+      MODULE_PERMISSIONS.EMPLOYEE_MANAGE,
+    ],
   },
   {
     path: '/payroll',
     accessLevel: ACCESS_LEVELS.PERMISSION_BASED,
-    requiredPermissions: [MODULE_PERMISSIONS.PAYROLL_READ, MODULE_PERMISSIONS.PAYROLL_MANAGE],
+    requiredPermissions: [
+      MODULE_PERMISSIONS.PAYROLL_READ,
+      MODULE_PERMISSIONS.PAYROLL_MANAGE,
+    ],
   },
   {
     path: '/leave',
     accessLevel: ACCESS_LEVELS.PERMISSION_BASED,
-    requiredPermissions: [MODULE_PERMISSIONS.LEAVE_READ, MODULE_PERMISSIONS.LEAVE_MANAGE],
+    requiredPermissions: [
+      MODULE_PERMISSIONS.LEAVE_READ,
+      MODULE_PERMISSIONS.LEAVE_MANAGE,
+    ],
   },
   {
     path: '/attendance',
     accessLevel: ACCESS_LEVELS.PERMISSION_BASED,
-    requiredPermissions: [MODULE_PERMISSIONS.ATTENDANCE_READ, MODULE_PERMISSIONS.ATTENDANCE_MANAGE],
+    requiredPermissions: [
+      MODULE_PERMISSIONS.ATTENDANCE_READ,
+      MODULE_PERMISSIONS.ATTENDANCE_MANAGE,
+    ],
   },
   {
     path: '/teams',
     accessLevel: ACCESS_LEVELS.PERMISSION_BASED,
-    requiredPermissions: [MODULE_PERMISSIONS.TEAMS_READ, MODULE_PERMISSIONS.TEAMS_MANAGE],
+    requiredPermissions: [
+      MODULE_PERMISSIONS.TEAMS_READ,
+      MODULE_PERMISSIONS.TEAMS_MANAGE,
+    ],
   },
   {
     path: '/company',
     accessLevel: ACCESS_LEVELS.PERMISSION_BASED,
-    requiredPermissions: [MODULE_PERMISSIONS.COMPANY_READ, MODULE_PERMISSIONS.COMPANY_MANAGE],
+    requiredPermissions: [
+      MODULE_PERMISSIONS.COMPANY_READ,
+      MODULE_PERMISSIONS.COMPANY_MANAGE,
+    ],
   },
 ] as const;
 
@@ -125,13 +143,13 @@ export const getRouteConfig = (path: string) => {
 };
 
 // Legacy route arrays for backward compatibility
-export const PUBLIC_ROUTES = ROUTE_CONFIGS.filter((config) => config.accessLevel === ACCESS_LEVELS.PUBLIC).map(
-  (config) => config.path
-);
+export const PUBLIC_ROUTES = ROUTE_CONFIGS.filter(
+  (config) => config.accessLevel === ACCESS_LEVELS.PUBLIC
+).map((config) => config.path);
 
-export const ADMIN_ROUTES = ROUTE_CONFIGS.filter((config) => config.accessLevel === ACCESS_LEVELS.OWNER_ONLY).map(
-  (config) => config.path
-);
+export const ADMIN_ROUTES = ROUTE_CONFIGS.filter(
+  (config) => config.accessLevel === ACCESS_LEVELS.OWNER_ONLY
+).map((config) => config.path);
 
 export const AUTHENTICATED_ROUTES = ROUTE_CONFIGS.filter(
   (config) => config.accessLevel === ACCESS_LEVELS.AUTHENTICATED

@@ -2,14 +2,22 @@
 
 import { formatCurrency, formatDate } from '@/lib/formatters';
 import { CalendarModal } from '@/modules/@org/admin/payroll/_components/calendar-modal';
-import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@workspace/ui/components/avatar';
 import { Badge } from '@workspace/ui/components/badge';
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@workspace/ui/components/drawer';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@workspace/ui/components/drawer';
 import { AlertModal, BackButton } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 import { cn } from '@workspace/ui/lib/utils';
-import { Eye, EyeSlash } from 'iconsax-reactjs';
-import { CalendarIcon, Info } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useState } from 'react';
@@ -37,24 +45,31 @@ export const GenerateRunPayrollDrawer = ({
 }: SchedulePayrollDrawerProperties) => {
   const [isNetPayVisible, setIsNetPayVisible] = useState(false);
   const [isChangeDateModalOpen, setIsChangeDateModalOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    new Date()
+  );
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isRunSubmittedAlertOpen, setIsRunSubmittedAlertOpen] = useState(false);
-  const { setHideNotificationBanner, setPayrollSelectedDate } = usePayrollStore();
+  const { setHideNotificationBanner, setPayrollSelectedDate } =
+    usePayrollStore();
 
   const { useRunPayroll, useGetPayrollApprovals } = usePayrollService();
-  const { mutateAsync: runPayroll, isPending: isRunningPayroll } = useRunPayroll();
+  const { mutateAsync: runPayroll, isPending: isRunningPayroll } =
+    useRunPayroll();
 
   const payrollIdForApprovals = payrollId ?? '';
-  const { data: approvalsResponse, isLoading: isApprovalsLoading } = useGetPayrollApprovals(payrollIdForApprovals, {
-    enabled: !!payrollIdForApprovals,
-  });
+  const { data: approvalsResponse, isLoading: isApprovalsLoading } =
+    useGetPayrollApprovals(payrollIdForApprovals, {
+      enabled: !!payrollIdForApprovals,
+    });
   const approvals = (approvalsResponse?.data ?? []) as PayrollApproval[];
 
   const totalEmployees = summary?.employeesInPayroll ?? 0;
   const totalPayroll = summary?.netPay ?? 0;
   const walletBalance = Number(summary?.walletBalance ?? 0);
-  const paymentDateLabel = summary?.paymentDate ? formatDate(summary.paymentDate) : '';
+  const paymentDateLabel = summary?.paymentDate
+    ? formatDate(summary.paymentDate)
+    : '';
   const processingCharges = 0;
   const totalAmount = totalPayroll + processingCharges;
   const status = summary?.status !== `idle`;
@@ -87,7 +102,9 @@ export const GenerateRunPayrollDrawer = ({
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: (error: any) => {
-          const message = error?.response?.data?.message ?? 'Failed to run payroll. Please try again.';
+          const message =
+            error?.response?.data?.message ??
+            'Failed to run payroll. Please try again.';
           toast.error('Something went wrong. ', {
             description: message,
           });
@@ -110,11 +127,16 @@ export const GenerateRunPayrollDrawer = ({
               <BackButton />
               <div className="flex items-center gap-4">
                 <div className="flex size-10 items-center justify-center rounded-lg bg-blue-100">
-                  <CalendarIcon className="size-5 text-blue-600" />
+                  <Icon
+                    name="CalendarIcon"
+                    size={20}
+                    className="text-blue-600"
+                  />
                 </div>
                 <div>
                   <DrawerTitle className="text-lg font-semibold">
-                    Payroll Review{paymentDateLabel ? ` (${paymentDateLabel})` : ''}
+                    Payroll Review
+                    {paymentDateLabel ? ` (${paymentDateLabel})` : ''}
                   </DrawerTitle>
                   {/* <DrawerDescription>Set up automated payroll processing</DrawerDescription> */}
                 </div>
@@ -135,17 +157,25 @@ export const GenerateRunPayrollDrawer = ({
                 value={
                   <div className="flex items-center gap-4">
                     <p className="text-base text-white">
-                      {isNetPayVisible ? formatCurrency(Number(walletBalance)) : '••••••••'}
+                      {isNetPayVisible
+                        ? formatCurrency(Number(walletBalance))
+                        : '••••••••'}
                     </p>
                     <button
                       onClick={() => setIsNetPayVisible(!isNetPayVisible)}
                       className="text-white transition-colors hover:text-gray-300"
-                      aria-label={isNetPayVisible ? 'Hide net pay' : 'Show net pay'}
+                      aria-label={
+                        isNetPayVisible ? 'Hide net pay' : 'Show net pay'
+                      }
                     >
                       {isNetPayVisible ? (
-                        <EyeSlash className="text-white" size={30} />
+                        <Icon
+                          name="EyeSlash"
+                          size={30}
+                          className="text-white"
+                        />
                       ) : (
-                        <Eye className="text-white" size={30} />
+                        <Icon name="Eye" size={30} className="text-white" />
                       )}
                     </button>
                   </div>
@@ -157,11 +187,15 @@ export const GenerateRunPayrollDrawer = ({
             <section className="bg-muted space-y-4 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <p className="text-base">Total Payroll</p>
-                <p className="text-foreground font-medium">{formatCurrency(totalPayroll)}</p>
+                <p className="text-foreground font-medium">
+                  {formatCurrency(totalPayroll)}
+                </p>
               </div>
               <div className="flex items-center justify-between">
                 <p className="text-base">Processing Charges</p>
-                <p className="text-foreground font-medium">{formatCurrency(processingCharges)}</p>
+                <p className="text-foreground font-medium">
+                  {formatCurrency(processingCharges)}
+                </p>
               </div>
               <div className="flex items-center justify-between font-semibold">
                 <p className="text-success">Total Amount</p>
@@ -175,10 +209,11 @@ export const GenerateRunPayrollDrawer = ({
               )}
             >
               <div className="size-8">
-                <Info size={20} />
+                <Icon name="Info" size={20} />
               </div>
               <p>
-                Your current wallet balance is insufficient to complete this payroll. Please{' '}
+                Your current wallet balance is insufficient to complete this
+                payroll. Please{' '}
                 <Link href={'/'} className="font-semibold underline">
                   top up your wallet
                 </Link>{' '}
@@ -190,13 +225,19 @@ export const GenerateRunPayrollDrawer = ({
               <section className="bg-muted space-y-4 rounded-lg p-4">
                 {payrollId ? (
                   isApprovalsLoading ? (
-                    <div className="text-muted-foreground text-sm">Loading approvers...</div>
+                    <div className="text-muted-foreground text-sm">
+                      Loading approvers...
+                    </div>
                   ) : approvals.length === 0 ? (
-                    <div className="text-muted-foreground text-sm">No approvers configured for this payroll.</div>
+                    <div className="text-muted-foreground text-sm">
+                      No approvers configured for this payroll.
+                    </div>
                   ) : (
                     approvals.map((approval) => {
                       const name = approval.employee.name ?? 'Approver';
-                      const role = (approval.approverRole as ReactNode) ?? <></>;
+                      const role = (approval.approverRole as ReactNode) ?? (
+                        <></>
+                      );
                       const initials =
                         name
                           .split(' ')
@@ -206,31 +247,45 @@ export const GenerateRunPayrollDrawer = ({
                           .slice(0, 2) || 'AP';
                       const statusLabel =
                         approval.status && approval.status.length > 0
-                          ? approval.status.charAt(0).toUpperCase() + approval.status.slice(1)
+                          ? approval.status.charAt(0).toUpperCase() +
+                            approval.status.slice(1)
                           : 'Pending';
 
                       return (
-                        <section key={approval.payrollId} className="flex items-center justify-between">
+                        <section
+                          key={approval.payrollId}
+                          className="flex items-center justify-between"
+                        >
                           <div className="flex items-center gap-2">
                             <Avatar>
                               <AvatarImage
-                                src={approval.employee.avatar ?? 'https://github.com/shadcn.png'}
+                                src={
+                                  approval.employee.avatar ??
+                                  'https://github.com/shadcn.png'
+                                }
                                 alt={name}
                               />
                               <AvatarFallback>{initials}</AvatarFallback>
                             </Avatar>
                             <div>
-                              <p className="text-foreground text-sm font-medium">{name}</p>
-                              {role ? <p className="text-xs text-gray-500">{role}</p> : null}
+                              <p className="text-foreground text-sm font-medium">
+                                {name}
+                              </p>
+                              {role ? (
+                                <p className="text-xs text-gray-500">{role}</p>
+                              ) : null}
                             </div>
                           </div>
                           {status && (
                             <Badge
                               className={cn(
                                 `rounded-full px-4 py-2`,
-                                statusLabel === 'Pending' && 'bg-warning-50 text-warning',
-                                statusLabel === 'Approved' && 'bg-success-50 text-success',
-                                statusLabel === 'Declined' && 'bg-destructive-50 text-destructive'
+                                statusLabel === 'Pending' &&
+                                  'bg-warning-50 text-warning',
+                                statusLabel === 'Approved' &&
+                                  'bg-success-50 text-success',
+                                statusLabel === 'Declined' &&
+                                  'bg-destructive-50 text-destructive'
                               )}
                             >
                               {statusLabel}
@@ -241,7 +296,9 @@ export const GenerateRunPayrollDrawer = ({
                     })
                   )
                 ) : (
-                  <div className="text-muted-foreground text-sm">Select a payroll to view approvers.</div>
+                  <div className="text-muted-foreground text-sm">
+                    Select a payroll to view approvers.
+                  </div>
                 )}
               </section>
             </section>

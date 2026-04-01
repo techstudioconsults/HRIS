@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormHeader } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
 import { AxiosError } from 'axios';
-import { User } from 'iconsax-reactjs';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { FormEvent } from 'react';
@@ -18,12 +17,14 @@ import { z } from 'zod';
 import { Employee } from '../../../_views/step-three';
 import { useOnboardingService } from '../../../services/use-onboarding-service';
 import { EmployeeConfig } from '../../accordions/employee-config';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 
 export const EmployeeSetupForm = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const { useOnboardEmployees } = useOnboardingService();
-  const { mutateAsync: onboardEmployees, isPending: isOnboarding } = useOnboardEmployees();
+  const { mutateAsync: onboardEmployees, isPending: isOnboarding } =
+    useOnboardEmployees();
   const methods = useForm<{ employees: Employee[] }>({
     resolver: zodResolver(
       z.object({
@@ -68,14 +69,20 @@ export const EmployeeSetupForm = () => {
         onError: (error) => {
           console.error('Onboarding failed:', error);
           toast.error(`Registration Failed`, {
-            description: error instanceof AxiosError ? error.response?.data?.message : 'An unknown error occurred',
+            description:
+              error instanceof AxiosError
+                ? error.response?.data?.message
+                : 'An unknown error occurred',
           });
         },
       });
     } catch (error) {
       console.error('Onboarding failed (unexpected):', error);
       toast.error(`Registration Failed`, {
-        description: error instanceof AxiosError ? error.response?.data?.message : 'An unknown error occurred',
+        description:
+          error instanceof AxiosError
+            ? error.response?.data?.message
+            : 'An unknown error occurred',
       });
     }
   };
@@ -83,7 +90,11 @@ export const EmployeeSetupForm = () => {
   return (
     <section className="rounded-[10px] border p-7" data-tour="employee-form">
       <div className={`mb-8 space-y-2`}>
-        <FormHeader icon={<User />} title="Onboard Employees" subTitle="Add your team members to get started" />
+        <FormHeader
+          icon={<Icon name={`User`} />}
+          title="Onboard Employees"
+          subTitle="Add your team members to get started"
+        />
       </div>
 
       <FormProvider {...methods}>
@@ -108,7 +119,13 @@ export const EmployeeSetupForm = () => {
             >
               Proceed to Dashboard
             </MainButton>
-            <MainButton href={`/admin/dashboard`} type="button" variant="link" className="w-full font-medium" size="xl">
+            <MainButton
+              href={`/admin/dashboard`}
+              type="button"
+              variant="link"
+              className="w-full font-medium"
+              size="xl"
+            >
               Skip for Later
             </MainButton>
           </div>

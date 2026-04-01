@@ -8,15 +8,22 @@ import {
   CommandList,
 } from '@workspace/ui/components/command';
 import { Input } from '@workspace/ui/components/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@workspace/ui/components/popover';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@workspace/ui/components/popover';
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { cn } from '@workspace/ui/lib/utils';
-import { CheckIcon, ChevronsUpDown } from 'lucide-react';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 import * as React from 'react';
 import * as RPNInput from 'react-phone-number-input';
 import flags from 'react-phone-number-input/flags';
 
-type PhoneInputProperties = Omit<React.ComponentProps<'input'>, 'onChange' | 'value' | 'ref'> &
+type PhoneInputProperties = Omit<
+  React.ComponentProps<'input'>,
+  'onChange' | 'value' | 'ref'
+> &
   Omit<RPNInput.Props<typeof RPNInput.default>, 'onChange'> & {
     /* Allow undefined during intermediate typing */
     onChange?: (value: RPNInput.Value | undefined) => void;
@@ -24,49 +31,68 @@ type PhoneInputProperties = Omit<React.ComponentProps<'input'>, 'onChange' | 'va
     buttonClassName?: string;
   };
 
-const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProperties> = React.forwardRef<
-  React.ElementRef<typeof RPNInput.default>,
-  PhoneInputProperties
->(({ className, onChange, value, inputClassName, buttonClassName, ...properties }, reference) => {
-  // Stable memoized wrappers prevent the input element from being recreated
-  // on every keystroke (which was causing focus loss).
-  const CountrySelectComponent = React.useCallback(
-    (countrySelectProperties: CountrySelectProperties) => (
-      <CountrySelect {...countrySelectProperties} buttonClassName={buttonClassName} />
-    ),
-    [buttonClassName]
-  );
+const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProperties> =
+  React.forwardRef<
+    React.ElementRef<typeof RPNInput.default>,
+    PhoneInputProperties
+  >(
+    (
+      {
+        className,
+        onChange,
+        value,
+        inputClassName,
+        buttonClassName,
+        ...properties
+      },
+      reference
+    ) => {
+      // Stable memoized wrappers prevent the input element from being recreated
+      // on every keystroke (which was causing focus loss).
+      const CountrySelectComponent = React.useCallback(
+        (countrySelectProperties: CountrySelectProperties) => (
+          <CountrySelect
+            {...countrySelectProperties}
+            buttonClassName={buttonClassName}
+          />
+        ),
+        [buttonClassName]
+      );
 
-  const InputFieldComponent = React.useCallback(
-    (inputProperties: React.ComponentProps<'input'>) => (
-      <InputComponent {...inputProperties} inputClassName={cn('shadow-none', inputClassName)} />
-    ),
-    [inputClassName]
-  );
+      const InputFieldComponent = React.useCallback(
+        (inputProperties: React.ComponentProps<'input'>) => (
+          <InputComponent
+            {...inputProperties}
+            inputClassName={cn('shadow-none', inputClassName)}
+          />
+        ),
+        [inputClassName]
+      );
 
-  return (
-    <RPNInput.default
-      ref={reference}
-      className={cn('flex shadow-none', className)}
-      flagComponent={FlagComponent}
-      countrySelectComponent={CountrySelectComponent}
-      inputComponent={InputFieldComponent}
-      smartCaret={false}
-      /* Pass the value directly; letting undefined represent an in-progress (incomplete) number.
+      return (
+        <RPNInput.default
+          ref={reference}
+          className={cn('flex shadow-none', className)}
+          flagComponent={FlagComponent}
+          countrySelectComponent={CountrySelectComponent}
+          inputComponent={InputFieldComponent}
+          smartCaret={false}
+          /* Pass the value directly; letting undefined represent an in-progress (incomplete) number.
         Avoid converting empty/intermediate states to '' which caused uncontrolled/controlled toggling */
-      value={value}
-      /**
-       * Handles the onChange event.
-       *
-       * react-phone-number-input might trigger the onChange event as undefined
-       * when a valid phone number is not entered. To prevent this,
-       * the value is coerced to an empty string.
-       */
-      onChange={(newValue) => onChange?.(newValue)}
-      {...properties}
-    />
+          value={value}
+          /**
+           * Handles the onChange event.
+           *
+           * react-phone-number-input might trigger the onChange event as undefined
+           * when a valid phone number is not entered. To prevent this,
+           * the value is coerced to an empty string.
+           */
+          onChange={(newValue) => onChange?.(newValue)}
+          {...properties}
+        />
+      );
+    }
   );
-});
 PhoneInput.displayName = 'PhoneInput';
 
 const InputComponent = React.forwardRef<
@@ -121,9 +147,17 @@ const CountrySelect = ({
           )}
           disabled={disabled}
         >
-          <FlagComponent country={selectedCountry} countryName={selectedCountry} />
-          <ChevronsUpDown
-            className={cn('-mr-2 size-4 opacity-50', disabled ? 'hidden' : 'opacity-100')}
+          <FlagComponent
+            country={selectedCountry}
+            countryName={selectedCountry}
+          />
+          <Icon
+            name="ChevronsUpDown"
+            size={16}
+            className={cn(
+              '-mr-2 opacity-50',
+              disabled ? 'hidden' : 'opacity-100'
+            )}
           />
         </Button>
       </PopoverTrigger>
@@ -135,9 +169,10 @@ const CountrySelect = ({
               setSearchValue(value);
               setTimeout(() => {
                 if (scrollAreaReference.current) {
-                  const viewportElement = scrollAreaReference.current.querySelector(
-                    '[data-radix-scroll-area-viewport]'
-                  );
+                  const viewportElement =
+                    scrollAreaReference.current.querySelector(
+                      '[data-radix-scroll-area-viewport]'
+                    );
                   if (viewportElement) {
                     viewportElement.scrollTop = 0;
                   }
@@ -194,8 +229,10 @@ const CountrySelectOption = ({
       <FlagComponent country={country} countryName={countryName} />
       <span className="flex-1 text-sm">{countryName}</span>
       <span className="text-foreground/50 text-sm">{`+${RPNInput.getCountryCallingCode(country)}`}</span>
-      <CheckIcon
-        className={`ml-auto size-4 ${country === selectedCountry ? 'opacity-100' : 'opacity-0'}`}
+      <Icon
+        name="Check"
+        size={16}
+        className={`ml-auto ${country === selectedCountry ? 'opacity-100' : 'opacity-0'}`}
       />
     </CommandItem>
   );

@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client';
 
-import ExportAction from "@/components/shared/export-action";
-import { MainButton } from "@workspace/ui/lib/button";
-import { Add, Filter } from "iconsax-reactjs";
-import { useCallback } from "react";
+import ExportAction from '@/components/shared/export-action';
+import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { useCallback } from 'react';
 
-import { FilterForm } from "../../../_components/forms/filter-form";
-import { useTeamService } from "../../../services/use-service";
-import { DashboardHeader, GenericDropdown } from "@workspace/ui/lib";
-import { SearchInput } from "@/modules/@org/shared/search-input";
-import { Button } from "@workspace/ui/components/button";
+import { FilterForm } from '../../../_components/forms/filter-form';
+import { useTeamService } from '../../../services/use-service';
+import { DashboardHeader, GenericDropdown } from '@workspace/ui/lib';
+import { SearchInput } from '@/modules/@org/shared/search-input';
+import { Button } from '@workspace/ui/components/button';
 
 interface TeamHeaderSectionProperties {
   search: string | null;
@@ -40,7 +40,7 @@ export const TeamHeaderSection = ({
     (newFilters: any) => {
       onFilterChange(newFilters);
     },
-    [onFilterChange],
+    [onFilterChange]
   );
 
   return (
@@ -58,10 +58,10 @@ export const TeamHeaderSection = ({
             contentClassName="bg-background"
             trigger={
               <Button
-                variant={"primaryOutline"}
+                variant={'primaryOutline'}
                 className="data-[state=open]:border-border data-[state=open]:text-gray h-10 rounded-md border px-3 shadow-none"
               >
-                <Filter className="size-4" />
+                <Icon name="Filter" size={16} />
                 Filter
               </Button>
             }
@@ -92,7 +92,12 @@ export const TeamHeaderSection = ({
             fileName="Teams"
             className="h-10 rounded-md border px-3"
           />
-          <MainButton variant="primary" isLeftIconVisible icon={<Add />} onClick={onAddTeamClick}>
+          <MainButton
+            variant="primary"
+            isLeftIconVisible
+            icon={<Icon name="Add" />}
+            onClick={onAddTeamClick}
+          >
             Add Team
           </MainButton>
         </div>

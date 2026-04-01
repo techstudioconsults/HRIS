@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormField } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
-import { Upload } from 'lucide-react';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useEffect } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
@@ -33,7 +33,12 @@ const LEAVE_TYPES = [
   { id: 'unpaid', name: 'Unpaid Leave', balance: 0, isPaid: false },
 ];
 
-export const RequestLeaveForm = ({ initialData, onSubmit, onCancel, isSubmitting = false }: RequestLeaveFormProps) => {
+export const RequestLeaveForm = ({
+  initialData,
+  onSubmit,
+  onCancel,
+  isSubmitting = false,
+}: RequestLeaveFormProps) => {
   const methods = useForm<RequestLeaveFormValues>({
     resolver: zodResolver(requestLeaveSchema),
     defaultValues: {
@@ -54,7 +59,9 @@ export const RequestLeaveForm = ({ initialData, onSubmit, onCancel, isSubmitting
 
   // Watch leave type for balance display
   const selectedLeaveTypeId = useWatch({ control, name: 'leaveType' });
-  const selectedLeaveType = LEAVE_TYPES.find((lt) => lt.id === selectedLeaveTypeId);
+  const selectedLeaveType = LEAVE_TYPES.find(
+    (lt) => lt.id === selectedLeaveTypeId
+  );
 
   useEffect(() => {
     reset({
@@ -78,8 +85,11 @@ export const RequestLeaveForm = ({ initialData, onSubmit, onCancel, isSubmitting
           label="Select Leave Type"
           name="leaveType"
           placeholder="Choose a leave type"
-          className="!h-14 w-full"
-          options={LEAVE_TYPES.map((type) => ({ value: type.id, label: type.name }))}
+          className="h-14! w-full"
+          options={LEAVE_TYPES.map((type) => ({
+            value: type.id,
+            label: type.name,
+          }))}
           required
         />
 
@@ -87,7 +97,8 @@ export const RequestLeaveForm = ({ initialData, onSubmit, onCancel, isSubmitting
         {selectedLeaveType && selectedLeaveType.isPaid && (
           <div className="bg-warning-50 rounded-md p-4">
             <p className="text-warning-400 text-sm font-medium">
-              You have a balance of {selectedLeaveType.balance} remaining {selectedLeaveType.name.toLowerCase()} days
+              You have a balance of {selectedLeaveType.balance} remaining{' '}
+              {selectedLeaveType.name.toLowerCase()} days
             </p>
           </div>
         )}
@@ -99,7 +110,7 @@ export const RequestLeaveForm = ({ initialData, onSubmit, onCancel, isSubmitting
             label="Start Date"
             name="startDate"
             placeholder="Select start date"
-            className="!h-14 w-full"
+            className="h-14! w-full"
             required
           />
 
@@ -108,7 +119,7 @@ export const RequestLeaveForm = ({ initialData, onSubmit, onCancel, isSubmitting
             label="End Date"
             name="endDate"
             placeholder="Select end date"
-            className="!h-14 w-full"
+            className="h-14! w-full"
             required
           />
         </div>
@@ -120,18 +131,25 @@ export const RequestLeaveForm = ({ initialData, onSubmit, onCancel, isSubmitting
           name="reason"
           placeholder="State your reason here..."
           className="min-h-[100px] w-full"
-          labelDetailedNode={<span className="text-muted-foreground">(Optional)</span>}
+          labelDetailedNode={
+            <span className="text-muted-foreground">(Optional)</span>
+          }
         />
 
         {/* File Upload - Simplified placeholder */}
         <div className="space-y-2">
           <label className="text-base font-medium">
-            Attach Supporting Document <span className="text-muted-foreground text-sm">(Optional)</span>
+            Attach Supporting Document{' '}
+            <span className="text-muted-foreground text-sm">(Optional)</span>
           </label>
           <div className="border-primary-300 bg-primary-50 flex flex-col items-center gap-2 rounded-md border border-dashed p-6 text-center">
-            <Upload className="text-primary-300 h-6 w-6" />
-            <p className="text-primary-300 text-sm font-medium">Browse files or drag and drop here</p>
-            <p className="text-muted-foreground text-xs">PDF, JPEG, or PNG (Max 5MB)</p>
+            <Icon name="Upload" size={24} className="text-primary-300" />
+            <p className="text-primary-300 text-sm font-medium">
+              Browse files or drag and drop here
+            </p>
+            <p className="text-muted-foreground text-xs">
+              PDF, JPEG, or PNG (Max 5MB)
+            </p>
           </div>
         </div>
 

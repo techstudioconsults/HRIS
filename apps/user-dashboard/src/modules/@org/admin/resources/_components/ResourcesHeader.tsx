@@ -1,14 +1,13 @@
-"use client";
+'use client';
 
-import { SearchInput } from "@/modules/@org/shared/search-input";
-import { DashboardHeader, ReusableDialog } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { Folder } from "iconsax-reactjs";
-import { useState } from "react";
-import { PiFileFill } from "react-icons/pi";
+import { SearchInput } from '@/modules/@org/shared/search-input';
+import { DashboardHeader, ReusableDialog } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { useState } from 'react';
 
-import { CreateFileForm } from "./forms/create-file";
-import { CreateFolderForm } from "./forms/create-folder";
+import { CreateFileForm } from './forms/create-file';
+import { CreateFolderForm } from './forms/create-folder';
 
 interface ResourcesHeaderProperties {
   onSearch?: (query: string) => void;
@@ -16,15 +15,15 @@ interface ResourcesHeaderProperties {
 
 export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogType, setDialogType] = useState<"folder" | "file">("folder");
+  const [dialogType, setDialogType] = useState<'folder' | 'file'>('folder');
 
   const handleOpenFolderDialog = () => {
-    setDialogType("folder");
+    setDialogType('folder');
     setDialogOpen(true);
   };
 
   const handleOpenFileDialog = () => {
-    setDialogType("file");
+    setDialogType('file');
     setDialogOpen(true);
   };
 
@@ -51,12 +50,17 @@ export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
             <MainButton
               variant="primaryOutline"
               isLeftIconVisible={true}
-              icon={<Folder />}
+              icon={<Icon name="Folder" />}
               onClick={handleOpenFolderDialog}
             >
               Create Folder
             </MainButton>
-            <MainButton variant="primary" isLeftIconVisible={true} icon={<PiFileFill />} onClick={handleOpenFileDialog}>
+            <MainButton
+              variant="primary"
+              isLeftIconVisible={true}
+              icon={<Icon name="FileText" />}
+              onClick={handleOpenFileDialog}
+            >
               Upload File
             </MainButton>
           </div>
@@ -65,7 +69,7 @@ export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
 
       {/* Create Folder Dialog */}
       <ReusableDialog
-        open={dialogOpen && dialogType === "folder"}
+        open={dialogOpen && dialogType === 'folder'}
         onOpenChange={setDialogOpen}
         title="Create New Folder"
         description="Add a new folder to organize your resources"
@@ -77,7 +81,7 @@ export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
 
       {/* Upload File Dialog */}
       <ReusableDialog
-        open={dialogOpen && dialogType === "file"}
+        open={dialogOpen && dialogType === 'file'}
         onOpenChange={setDialogOpen}
         title="Upload File"
         description="Upload a file to an existing folder"

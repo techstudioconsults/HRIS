@@ -1,5 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ChangeEventHandler, FocusEventHandler, HTMLAttributes, MouseEventHandler } from "react";
+import {
+  ChangeEventHandler,
+  FocusEventHandler,
+  HTMLAttributes,
+  MouseEventHandler,
+  ReactNode,
+} from 'react';
+import type { CarouselApi } from '@workspace/ui/components/carousel';
+import type { EmblaOptionsType } from 'embla-carousel';
 
 declare global {
   interface LogoProperties {
@@ -15,7 +23,7 @@ declare global {
   interface InputProperties {
     label?: string;
     isRequired?: boolean;
-    state?: "default" | "primary" | "error";
+    state?: 'default' | 'primary' | 'error';
     name?: string;
     placeholder: string;
     type?: string;
@@ -32,7 +40,7 @@ declare global {
     id: number;
     title: string;
     href: string;
-    type: "link" | "dropdown";
+    type: 'link' | 'dropdown';
     subLinks?: Array<{
       id: number;
       title: string;
@@ -42,47 +50,47 @@ declare global {
   }
 
   interface NavbarProperties extends HTMLAttributes<HTMLDivElement> {
-    logo?: React.ReactNode;
+    logo?: ReactNode;
     links?: NavLink[];
-    cta?: React.ReactNode;
-    user?: React.ReactNode;
+    cta?: ReactNode;
+    user?: ReactNode;
     sticky?: boolean;
     navbarStyle?: string;
   }
 
   interface FormFieldProperties {
     label?: string;
-    labelDetailedNode?: React.ReactNode;
+    labelDetailedNode?: ReactNode;
     name: string;
-    type?: "text" | "textarea" | "select" | "number" | "password" | "email";
+    type?: 'text' | 'textarea' | 'select' | 'number' | 'password' | 'email';
     placeholder?: string;
     required?: boolean;
     disabled?: boolean;
     options?: { value: string; label: string }[];
     className?: string;
     containerClassName?: string;
-    leftAddon?: React.ReactNode; // Add left icon or button
-    rightAddon?: React.ReactNode; // Add right icon or button
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    leftAddon?: ReactNode; // Add left icon or button
+    rightAddon?: ReactNode; // Add right icon or button
+    onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   }
 
   interface UniversalSwiperProperties {
     items: any[];
-    renderItem: (item: any, index: number) => React.ReactNode;
-    swiperOptions?: SwiperOptions;
+    renderItem: (item: any, index: number) => ReactNode;
+    swiperOptions?: EmblaOptionsType;
     showNavigation?: boolean;
     showPagination?: boolean;
     showScrollbar?: boolean;
-    navigationVariant?: "default" | "minimal" | "none";
+    navigationVariant?: 'default' | 'minimal' | 'none';
     navigationSize?: number;
     navigationOffset?: number;
     className?: string;
     swiperClassName?: string;
     slideClassName?: string;
-    thumbsSwiper?: SwiperType | null;
-    breakpoints?: SwiperBreakpoints;
+    thumbsSwiper?: null;
+    breakpoints?: Record<string | number, unknown>;
     freeMode?: boolean;
-    onSwiperInit?: (swiper: SwiperType) => void;
+    onSwiperInit?: (api: CarouselApi) => void;
   }
 
   interface AuthCarouselProperties {

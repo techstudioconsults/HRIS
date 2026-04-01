@@ -3,6 +3,14 @@
   "version": "0.0.0",
   "type": "module",
   "private": true,
+  "exports": {
+    "./globals.css": "./src/styles/global.css",
+    "./themes.css": "./src/styles/theme.css",
+    "./postcss.config": "./postcss.config.mjs",
+    "./lib/*": "./src/lib/*.ts",
+    "./components/*": "./src/components/*.tsx",
+    "./hooks/*": "./src/hooks/*.ts"
+  },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "test": "vitest run",
@@ -12,7 +20,6 @@
   },
   "peerDependencies": {
     "date-fns": ">=4",
-    "lucide-react": ">=0.445.0",
     "next": ">=14",
     "next-themes": ">=0.4.6",
     "nuqs": ">=2",
@@ -61,8 +68,10 @@
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "file-saver": "^2.0.5",
+    "iconsax-react": "^0.0.8",
     "iconsax-reactjs": "^0.0.8",
     "input-otp": "^1.4.2",
+    "lucide-react": "^1.7.0",
     "radix-ui": "^1.4.3",
     "react-day-picker": "8.10.1",
     "react-dropzone": "^14.3.8",
@@ -90,13 +99,5 @@
     "tailwindcss": "^4.1.11",
     "typescript": "^5.9.2",
     "vitest": "^2.1.8"
-  },
-  "exports": {
-    "./globals.css": "./src/styles/global.css",
-    "./themes.css": "./src/styles/theme.css",
-    "./postcss.config": "./postcss.config.mjs",
-    "./lib/*": "./src/lib/*.ts",
-    "./components/*": "./src/components/*.tsx",
-    "./hooks/*": "./src/hooks/*.ts"
   }
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { CheckCircle, XCircle, FileText, Clock } from 'lucide-react';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 import { formatDistanceToNow } from 'date-fns';
 import { ActivityType } from './home-types';
 
@@ -15,15 +15,15 @@ interface ActivityItemProps {
 const getIconByType = (type: ActivityType) => {
   switch (type) {
     case 'approved':
-      return <CheckCircle className="w-6 h-6 text-green-600" />;
+      return <Icon name="CheckCircle" size={24} className="text-green-600" />;
     case 'rejected':
-      return <XCircle className="w-6 h-6 text-red-600" />;
+      return <Icon name="XCircle" size={24} className="text-red-600" />;
     case 'available':
-      return <FileText className="w-6 h-6 text-blue-600" />;
+      return <Icon name="FileText" size={24} className="text-blue-600" />;
     case 'submitted':
-      return <Clock className="w-6 h-6 text-yellow-600" />;
+      return <Icon name="Clock" size={24} className="text-yellow-600" />;
     default:
-      return <FileText className="w-6 h-6 text-gray-600" />;
+      return <Icon name="FileText" size={24} className="text-gray-600" />;
   }
 };
 
@@ -63,7 +63,12 @@ const formatTimestamp = (date: Date | string): string => {
   return formatDistanceToNow(timestampDate, { addSuffix: true });
 };
 
-export const ActivityItem: React.FC<ActivityItemProps> = ({ type, title, message, timestamp }) => {
+export const ActivityItem: React.FC<ActivityItemProps> = ({
+  type,
+  title,
+  message,
+  timestamp,
+}) => {
   return (
     <div className="flex gap-[18px] py-[24px]">
       {/* Icon Container - 45.52px as per design */}
@@ -75,9 +80,15 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({ type, title, message
 
       {/* Content Section */}
       <div className="flex-1 min-w-0 flex flex-col gap-[3.34px]">
-        <h4 className="text-[20px] font-medium leading-[1.45] text-[#232323]">{title}</h4>
-        <p className="text-[16px] font-normal leading-[1.45] text-[#878789]">{message}</p>
-        <p className="text-[14px] font-normal leading-[1.45] text-[#878789]">{formatTimestamp(timestamp)}</p>
+        <h4 className="text-[20px] font-medium leading-[1.45] text-[#232323]">
+          {title}
+        </h4>
+        <p className="text-[16px] font-normal leading-[1.45] text-[#878789]">
+          {message}
+        </p>
+        <p className="text-[14px] font-normal leading-[1.45] text-[#878789]">
+          {formatTimestamp(timestamp)}
+        </p>
       </div>
     </div>
   );

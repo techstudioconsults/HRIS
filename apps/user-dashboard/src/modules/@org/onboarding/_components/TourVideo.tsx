@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { Logo } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { cn } from "@workspace/ui/lib/utils";
-import { Play } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Logo } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { cn } from '@workspace/ui/lib/utils';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export type TourSegment = {
   id: string;
@@ -22,13 +22,18 @@ interface TourVideoProperties {
 }
 
 const formatTime = (seconds: number): string => {
-  if (!Number.isFinite(seconds)) return "0:00";
+  if (!Number.isFinite(seconds)) return '0:00';
   const minutes = Math.floor(seconds / 60);
   const remainder = Math.floor(seconds % 60);
-  return `${minutes}:${remainder.toString().padStart(2, "0")}`;
+  return `${minutes}:${remainder.toString().padStart(2, '0')}`;
 };
 
-export const TourVideo = ({ src, poster, segments, className }: TourVideoProperties) => {
+export const TourVideo = ({
+  src,
+  poster,
+  segments,
+  className,
+}: TourVideoProperties) => {
   const videoReference = useRef<HTMLVideoElement | null>(null);
   const progressReference = useRef<HTMLDivElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -86,36 +91,43 @@ export const TourVideo = ({ src, poster, segments, className }: TourVideoPropert
     const handler = (event_: KeyboardEvent) => {
       if (!videoReference.current) return;
       switch (event_.key) {
-        case " ": {
+        case ' ': {
           event_.preventDefault();
           togglePlay();
           break;
         }
-        case "m": {
+        case 'm': {
           toggleMute();
           break;
         }
-        case "ArrowRight": {
+        case 'ArrowRight': {
           seekTo(Math.min(videoReference.current.currentTime + 5, duration));
           break;
         }
-        case "ArrowLeft": {
+        case 'ArrowLeft': {
           seekTo(Math.max(videoReference.current.currentTime - 5, 0));
           break;
         }
-        case "]": {
+        case ']': {
           handleRateChange(Math.min(playbackRate + 0.25, 2));
           break;
         }
-        case "[": {
+        case '[': {
           handleRateChange(Math.max(playbackRate - 0.25, 0.5));
           break;
         }
       }
     };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [togglePlay, toggleMute, seekTo, duration, playbackRate, handleRateChange]);
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [
+    togglePlay,
+    toggleMute,
+    seekTo,
+    duration,
+    playbackRate,
+    handleRateChange,
+  ]);
 
   // Attach time listeners
   useEffect(() => {
@@ -123,11 +135,11 @@ export const TourVideo = ({ src, poster, segments, className }: TourVideoPropert
     if (!v) return;
     const onLoaded = () => setDuration(v.duration);
     const onTime = () => setCurrentTime(v.currentTime);
-    v.addEventListener("loadedmetadata", onLoaded);
-    v.addEventListener("timeupdate", onTime);
+    v.addEventListener('loadedmetadata', onLoaded);
+    v.addEventListener('timeupdate', onTime);
     return () => {
-      v.removeEventListener("loadedmetadata", onLoaded);
-      v.removeEventListener("timeupdate", onTime);
+      v.removeEventListener('loadedmetadata', onLoaded);
+      v.removeEventListener('timeupdate', onTime);
     };
   }, []);
 
@@ -143,27 +155,38 @@ export const TourVideo = ({ src, poster, segments, className }: TourVideoPropert
   // NOTE: formatting moved to top-level helper `formatTime`.
 
   return (
-    <div className={cn("flex flex-col gap-4", className)} aria-label="Product tour video">
+    <div
+      className={cn('flex flex-col gap-4', className)}
+      aria-label="Product tour video"
+    >
       <div className="flex flex-col gap-6 lg:flex-row">
         {/* Video + controls */}
         <div className="flex-1 space-y-4">
           <article className="max-w-full">
             <Logo />
             <p className="text-muted-foreground mt-2 text-sm">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Necessitatibus provident hic repudiandae maxime
-              perferendis facilis, ducimus deserunt animi officiis nobis dolorem quod nostrum nemo quidem distinctio
-              vel! Dicta, delectus saepe.
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+              Necessitatibus provident hic repudiandae maxime perferendis
+              facilis, ducimus deserunt animi officiis nobis dolorem quod
+              nostrum nemo quidem distinctio vel! Dicta, delectus saepe.
             </p>
           </article>
           <div className="relative min-h-[372px] overflow-hidden rounded-xl bg-black shadow">
-            <video ref={videoReference} className="h-auto w-full" poster={poster} autoPlay playsInline muted={isMuted}>
+            <video
+              ref={videoReference}
+              className="h-auto w-full"
+              poster={poster}
+              autoPlay
+              playsInline
+              muted={isMuted}
+            >
               <source src={src} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
             {/* Overlay play button when paused */}
             {!isPlaying && (
               <MainButton
-                icon={<Play />}
+                icon={<Icon name="Play" />}
                 variant="primary"
                 isIconOnly
                 size="icon"
@@ -183,7 +206,9 @@ export const TourVideo = ({ src, poster, segments, className }: TourVideoPropert
             >
               <div
                 className="bg-primary absolute top-0 left-0 h-full rounded-full transition-all"
-                style={{ width: duration ? `${(currentTime / duration) * 100}%` : 0 }}
+                style={{
+                  width: duration ? `${(currentTime / duration) * 100}%` : 0,
+                }}
               />
               {/* Segment markers */}
               {segments.map((segment) => (
@@ -192,10 +217,12 @@ export const TourVideo = ({ src, poster, segments, className }: TourVideoPropert
                   title={segment.title}
                   aria-label={`Segment ${segment.title}`}
                   className={cn(
-                    "bg-primary/60 hover:bg-primary absolute top-0 h-full w-[2px]",
-                    currentTime >= segment.time && "bg-primary",
+                    'bg-primary/60 hover:bg-primary absolute top-0 h-full w-[2px]',
+                    currentTime >= segment.time && 'bg-primary'
                   )}
-                  style={{ left: duration ? `${(segment.time / duration) * 100}%` : 0 }}
+                  style={{
+                    left: duration ? `${(segment.time / duration) * 100}%` : 0,
+                  }}
                   onClick={(event_) => {
                     event_.stopPropagation();
                     seekTo(segment.time);
@@ -210,18 +237,18 @@ export const TourVideo = ({ src, poster, segments, className }: TourVideoPropert
                   variant="primary"
                   size="sm"
                   className="px-5"
-                  aria-label={isPlaying ? "Pause video" : "Play video"}
+                  aria-label={isPlaying ? 'Pause video' : 'Play video'}
                 >
-                  {isPlaying ? "Pause" : "Play"}
+                  {isPlaying ? 'Pause' : 'Play'}
                 </MainButton>
                 <MainButton
                   onClick={toggleMute}
                   variant="subtle"
                   size="sm"
                   className="px-5"
-                  aria-label={isMuted ? "Unmute video" : "Mute video"}
+                  aria-label={isMuted ? 'Unmute video' : 'Mute video'}
                 >
-                  {isMuted ? "Unmute" : "Mute"}
+                  {isMuted ? 'Unmute' : 'Mute'}
                 </MainButton>
                 {/* <select
                   aria-label="Playback speed"
@@ -250,7 +277,10 @@ export const TourVideo = ({ src, poster, segments, className }: TourVideoPropert
           </div>
         </div>
         {/* Segments sidebar */}
-        <aside className="flex w-full flex-col lg:w-72" aria-label="Tour segments">
+        <aside
+          className="flex w-full flex-col lg:w-72"
+          aria-label="Tour segments"
+        >
           <h2 className="text-lg font-semibold">Tour Overview</h2>
           <ol className="!max-h-[547px] flex-1 space-y-2 overflow-y-auto p-1">
             {segments.map((segment, segmentIndex) => {
@@ -260,21 +290,33 @@ export const TourVideo = ({ src, poster, segments, className }: TourVideoPropert
                   <button
                     onClick={() => seekTo(segment.time)}
                     className={cn(
-                      "bg-primary-50 w-full rounded-md border border-transparent px-3 py-2 text-left shadow transition",
-                      active ? "bg-primary-200 !text-white" : "hover:bg-primary/20 hover:shadow-none",
+                      'bg-primary-50 w-full rounded-md border border-transparent px-3 py-2 text-left shadow transition',
+                      active
+                        ? 'bg-primary-200 !text-white'
+                        : 'hover:bg-primary/20 hover:shadow-none'
                     )}
-                    aria-current={active ? "step" : undefined}
+                    aria-current={active ? 'step' : undefined}
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">
                         {segmentIndex + 1}. {segment.title}
                       </span>
-                      <span className={cn(active && `text-background`, "text-[10px] tabular-nums")}>
+                      <span
+                        className={cn(
+                          active && `text-background`,
+                          'text-[10px] tabular-nums'
+                        )}
+                      >
                         {formatTime(segment.time)}
                       </span>
                     </div>
                     {segment.description && (
-                      <p className={cn(active && `text-background`, "mt-1 line-clamp-2 text-[11px]")}>
+                      <p
+                        className={cn(
+                          active && `text-background`,
+                          'mt-1 line-clamp-2 text-[11px]'
+                        )}
+                      >
                         {segment.description}
                       </p>
                     )}
@@ -283,7 +325,9 @@ export const TourVideo = ({ src, poster, segments, className }: TourVideoPropert
               );
             })}
           </ol>
-          <i className="text-primary mt-2 text-[10px] italic">Shortcuts: Space (play/pause), M (mute), ←/→ (seek).</i>
+          <i className="text-primary mt-2 text-[10px] italic">
+            Shortcuts: Space (play/pause), M (mute), ←/→ (seek).
+          </i>
         </aside>
       </div>
       {/* Transcript */}

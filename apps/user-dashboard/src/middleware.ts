@@ -2,16 +2,25 @@
 import { getRouteConfig } from '@/lib/routes/routes';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
-
-import { ACCESS_LEVELS, MODULE_PERMISSIONS, PermissionCheckResult, ROLES } from './lib/auth-types';
+import {
+  ACCESS_LEVELS,
+  MODULE_PERMISSIONS,
+  PermissionCheckResult,
+  ROLES,
+} from '@/lib/auth-types';
 
 // Check if user has required permissions
-const checkPermissions = (userPermissions: string[], requiredPermissions: string[]): PermissionCheckResult => {
+const checkPermissions = (
+  userPermissions: string[],
+  requiredPermissions: string[]
+): PermissionCheckResult => {
   if (!requiredPermissions || requiredPermissions.length === 0) {
     return { hasAccess: true };
   }
 
-  const missingPermissions = requiredPermissions.filter((permission) => !userPermissions.includes(permission));
+  const missingPermissions = requiredPermissions.filter(
+    (permission) => !userPermissions.includes(permission)
+  );
 
   if (missingPermissions.length > 0) {
     return {
@@ -25,8 +34,14 @@ const checkPermissions = (userPermissions: string[], requiredPermissions: string
 };
 
 // Check if user has owner role and admin permission
-const isOwnerWithAdminPermission = (userRole: string, userPermissions: string[]): boolean => {
-  return userRole === ROLES.OWNER && userPermissions.includes(MODULE_PERMISSIONS.ADMIN);
+const isOwnerWithAdminPermission = (
+  userRole: string,
+  userPermissions: string[]
+): boolean => {
+  return (
+    userRole === ROLES.OWNER &&
+    userPermissions.includes(MODULE_PERMISSIONS.ADMIN)
+  );
 };
 
 export async function middleware(request: NextRequest) {
@@ -55,7 +70,8 @@ export async function middleware(request: NextRequest) {
   const isAuthenticated = !!token;
 
   // Extract user data from token
-  const userRole = (token?.employee as { role?: { name?: string } })?.role?.name || '';
+  const userRole =
+    (token?.employee as { role?: { name?: string } })?.role?.name || '';
   const userPermissions = (token?.permissions as string[]) || [];
 
   // Get route configuration
@@ -76,7 +92,11 @@ export async function middleware(request: NextRequest) {
   }
 
   // Prevent non-admins from accessing admin routes
-  if (isAuthenticated && !isAdminUser && pathWithoutLocale.startsWith('/admin')) {
+  if (
+    isAuthenticated &&
+    !isAdminUser &&
+    pathWithoutLocale.startsWith('/admin')
+  ) {
     const userDashboardUrl = new URL('/user/dashboard', request.url);
     return NextResponse.redirect(userDashboardUrl);
   }
@@ -95,7 +115,8 @@ export async function middleware(request: NextRequest) {
         loginUrl.searchParams.set('callbackUrl', pathname);
         // Preserve original query parameters
         if (request.nextUrl.search) {
-          loginUrl.search += (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
+          loginUrl.search +=
+            (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
         }
         return NextResponse.redirect(loginUrl);
       }
@@ -109,7 +130,8 @@ export async function middleware(request: NextRequest) {
         loginUrl.searchParams.set('callbackUrl', pathname);
         // Preserve original query parameters
         if (request.nextUrl.search) {
-          loginUrl.search += (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
+          loginUrl.search +=
+            (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
         }
         return NextResponse.redirect(loginUrl);
       }
@@ -119,7 +141,8 @@ export async function middleware(request: NextRequest) {
         const loginUrl = new URL(`/login`, request.url);
         // Preserve original query parameters
         if (request.nextUrl.search) {
-          loginUrl.search += (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
+          loginUrl.search +=
+            (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
         }
         return NextResponse.redirect(loginUrl);
       }
@@ -134,7 +157,8 @@ export async function middleware(request: NextRequest) {
         loginUrl.searchParams.set('callbackUrl', pathname);
         // Preserve original query parameters
         if (request.nextUrl.search) {
-          loginUrl.search += (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
+          loginUrl.search +=
+            (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
         }
         return NextResponse.redirect(loginUrl);
       }
@@ -150,7 +174,8 @@ export async function middleware(request: NextRequest) {
         const loginUrl = new URL(`/login`, request.url);
         // Preserve original query parameters
         if (request.nextUrl.search) {
-          loginUrl.search += (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
+          loginUrl.search +=
+            (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
         }
         return NextResponse.redirect(loginUrl);
       }
@@ -163,7 +188,8 @@ export async function middleware(request: NextRequest) {
       const loginUrl = new URL(`/login`, request.url);
       // Preserve original query parameters
       if (request.nextUrl.search) {
-        loginUrl.search += (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
+        loginUrl.search +=
+          (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
       }
       return NextResponse.redirect(loginUrl);
     }

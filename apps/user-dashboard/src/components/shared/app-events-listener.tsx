@@ -1,22 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client';
 
-import { useQueryClient } from "@tanstack/react-query";
-import { Wrapper } from "@workspace/ui/components/core/layout/wrapper/index";
-import { MainButton, ReusableDialog } from "@workspace/ui/lib/index";
-import { cn } from "@workspace/ui/lib/utils";
-import { AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
-import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { PiInfoFill } from "react-icons/pi";
-import { toast } from "sonner";
+import { useQueryClient } from '@tanstack/react-query';
+import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
+import { MainButton, ReusableDialog } from '@workspace/ui/lib';
+import { cn } from '@workspace/ui/lib/utils';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { usePathname } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
-import { useSSE } from "../../context/sse-provider";
-import { queryKeys } from "../../lib/react-query/query-keys";
-import { EventRegistry, INotificationPayload } from "../../lib/sse/use-notifications";
-import { usePayrollService } from "../../modules/@org/admin/payroll/services/use-service";
+import { useSSE } from '@/context/sse-provider';
+import { queryKeys } from '@/lib/react-query/query-keys';
+import {
+  EventRegistry,
+  INotificationPayload,
+} from '@/lib/sse/use-notifications';
+import { usePayrollService } from '@/modules/@org/admin/payroll/services/use-service';
 
-type RenderType = "toast" | "banner" | "modal";
+type RenderType = 'toast' | 'banner' | 'modal';
 
 interface BaseNotification {
   id: string;
@@ -24,10 +26,10 @@ interface BaseNotification {
   title: string;
   body: string;
   render: RenderType;
-  severity?: "info" | "success" | "warning" | "error";
+  severity?: 'info' | 'success' | 'warning' | 'error';
   actions?: Array<{
     label: string;
-    variant?: "primary" | "outline" | "destructive" | "default";
+    variant?: 'primary' | 'outline' | 'destructive' | 'default';
     onClick: () => void;
   }>;
   dismissible?: boolean;
@@ -45,27 +47,31 @@ function createId() {
 }
 
 // Map incoming SSE event -> UI notification config
-function mapEventToNotification(payload: INotificationPayload, inPayrollRoute: boolean): BaseNotification | null {
+function mapEventToNotification(
+  payload: INotificationPayload,
+  inPayrollRoute: boolean
+): BaseNotification | null {
   const { type: eventType, data } = payload;
   const meta = data?.metadata as PayrollMetadata | undefined;
-  const payrollId: string | undefined = meta?.payrollId ?? meta?.id ?? meta?.payroll_id;
+  const payrollId: string | undefined =
+    meta?.payrollId ?? meta?.id ?? meta?.payroll_id;
 
-  const base: Omit<BaseNotification, "id" | "render"> = {
+  const base: Omit<BaseNotification, 'id' | 'render'> = {
     event: eventType,
     title: data?.title ? String(data.title) : eventType,
-    body: data?.body ? String(data.body) : "",
+    body: data?.body ? String(data.body) : '',
     payrollId,
   };
 
   // Determine render type based on route
-  const renderType: RenderType = inPayrollRoute ? "banner" : "toast";
+  const renderType: RenderType = inPayrollRoute ? 'banner' : 'toast';
 
   switch (eventType) {
     case EventRegistry.WALLET_CREATED_SUCCESS: {
       return {
         id: createId(),
         render: renderType,
-        severity: "info",
+        severity: 'info',
         dismissible: true,
         ...base,
       };
@@ -74,11 +80,11 @@ function mapEventToNotification(payload: INotificationPayload, inPayrollRoute: b
       return {
         id: createId(),
         render: renderType,
-        severity: "info",
+        severity: 'info',
         dismissible: true,
         actions: [
           {
-            label: "View",
+            label: 'View',
             onClick: () => {
               window.location.href = `/admin/payroll`;
             },
@@ -91,17 +97,17 @@ function mapEventToNotification(payload: INotificationPayload, inPayrollRoute: b
       return {
         id: createId(),
         render: renderType,
-        severity: "info",
+        severity: 'info',
         dismissible: true,
         actions: [
           {
-            label: "Approve Payroll",
-            variant: "primary",
+            label: 'Approve Payroll',
+            variant: 'primary',
             onClick: () => {}, // Will be wired in component
           },
           {
-            label: "Decline Payroll",
-            variant: "destructive",
+            label: 'Decline Payroll',
+            variant: 'destructive',
             onClick: () => {}, // Will be wired in component
           },
         ],
@@ -112,7 +118,7 @@ function mapEventToNotification(payload: INotificationPayload, inPayrollRoute: b
       return {
         id: createId(),
         render: renderType,
-        severity: "info",
+        severity: 'info',
         dismissible: true,
         ...base,
       };
@@ -121,7 +127,7 @@ function mapEventToNotification(payload: INotificationPayload, inPayrollRoute: b
       return {
         id: createId(),
         render: renderType,
-        severity: "info",
+        severity: 'info',
         dismissible: true,
         ...base,
       };
@@ -130,7 +136,7 @@ function mapEventToNotification(payload: INotificationPayload, inPayrollRoute: b
       return {
         id: createId(),
         render: renderType,
-        severity: "error",
+        severity: 'error',
         dismissible: true,
         ...base,
       };
@@ -139,7 +145,7 @@ function mapEventToNotification(payload: INotificationPayload, inPayrollRoute: b
       return {
         id: createId(),
         render: renderType,
-        severity: "info",
+        severity: 'info',
         dismissible: true,
         ...base,
       };
@@ -148,7 +154,7 @@ function mapEventToNotification(payload: INotificationPayload, inPayrollRoute: b
       return {
         id: createId(),
         render: renderType,
-        severity: "info",
+        severity: 'info',
         dismissible: true,
         ...base,
       };
@@ -162,13 +168,14 @@ function mapEventToNotification(payload: INotificationPayload, inPayrollRoute: b
 export const AppEventsListener = () => {
   const { on } = useSSE();
   const pathname = usePathname();
-  const inPayrollRoute = pathname.includes("/admin/payroll");
+  const inPayrollRoute = pathname.includes('/admin/payroll');
 
   const [banners, setBanners] = useState<BaseNotification[]>([]);
   const [modal, setModal] = useState<BaseNotification | null>(null);
   const queryClient = useQueryClient();
   const { useDecidePayrollApproval } = usePayrollService();
-  const { mutateAsync: decideApproval, isPending: isDeciding } = useDecidePayrollApproval();
+  const { mutateAsync: decideApproval, isPending: isDeciding } =
+    useDecidePayrollApproval();
 
   const dismissBanner = useCallback((id: string) => {
     setBanners((previous) => previous.filter((b) => b.id !== id));
@@ -177,43 +184,57 @@ export const AppEventsListener = () => {
   const handleApprovePayroll = useCallback(
     async (payrollId: string, bannerId: string) => {
       if (!payrollId) {
-        toast.error("Unable to approve", { description: "Payroll ID not found" });
+        toast.error('Unable to approve', {
+          description: 'Payroll ID not found',
+        });
         return;
       }
       try {
-        await decideApproval({ payrollId, status: "approved" });
-        toast.success("Payroll approved successfully");
+        await decideApproval({ payrollId, status: 'approved' });
+        toast.success('Payroll approved successfully');
         dismissBanner(bannerId);
-        queryClient.invalidateQueries({ queryKey: queryKeys.payroll.approvals(payrollId) });
-        queryClient.invalidateQueries({ queryKey: queryKeys.payroll.details(payrollId) });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.payroll.approvals(payrollId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.payroll.details(payrollId),
+        });
         queryClient.invalidateQueries({ queryKey: queryKeys.payroll.list({}) });
       } catch (error: any) {
-        const message = error?.response?.data?.message ?? "Failed to approve payroll";
-        toast.error("Approval failed", { description: message });
+        const message =
+          error?.response?.data?.message ?? 'Failed to approve payroll';
+        toast.error('Approval failed', { description: message });
       }
     },
-    [decideApproval, dismissBanner, queryClient],
+    [decideApproval, dismissBanner, queryClient]
   );
 
   const handleDeclinePayroll = useCallback(
     async (payrollId: string, bannerId: string) => {
       if (!payrollId) {
-        toast.error("Unable to decline", { description: "Payroll ID not found" });
+        toast.error('Unable to decline', {
+          description: 'Payroll ID not found',
+        });
         return;
       }
       try {
-        await decideApproval({ payrollId, status: "declined" });
-        toast.success("Payroll declined");
+        await decideApproval({ payrollId, status: 'declined' });
+        toast.success('Payroll declined');
         dismissBanner(bannerId);
-        queryClient.invalidateQueries({ queryKey: queryKeys.payroll.approvals(payrollId) });
-        queryClient.invalidateQueries({ queryKey: queryKeys.payroll.details(payrollId) });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.payroll.approvals(payrollId),
+        });
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.payroll.details(payrollId),
+        });
         queryClient.invalidateQueries({ queryKey: queryKeys.payroll.list({}) });
       } catch (error: any) {
-        const message = error?.response?.data?.message ?? "Failed to decline payroll";
-        toast.error("Decline failed", { description: message });
+        const message =
+          error?.response?.data?.message ?? 'Failed to decline payroll';
+        toast.error('Decline failed', { description: message });
       }
     },
-    [decideApproval, dismissBanner, queryClient],
+    [decideApproval, dismissBanner, queryClient]
   );
 
   const handleNotification = useCallback(
@@ -222,29 +243,37 @@ export const AppEventsListener = () => {
       if (!mapped) return;
 
       const meta = payload?.data?.metadata as PayrollMetadata | undefined;
-      const payrollId: string | undefined = meta?.payrollId ?? meta?.id ?? meta?.payroll_id;
+      const payrollId: string | undefined =
+        meta?.payrollId ?? meta?.id ?? meta?.payroll_id;
 
       // Helper to invalidate a set of payroll-related queries
       const invalidatePayrollQueries = (withApprovals: boolean) => {
         queryClient.invalidateQueries({ queryKey: queryKeys.payroll.list({}) });
         if (payrollId) {
-          queryClient.invalidateQueries({ queryKey: queryKeys.payroll.details(payrollId) });
+          queryClient.invalidateQueries({
+            queryKey: queryKeys.payroll.details(payrollId),
+          });
           if (withApprovals) {
-            queryClient.invalidateQueries({ queryKey: queryKeys.payroll.approvals(payrollId) });
+            queryClient.invalidateQueries({
+              queryKey: queryKeys.payroll.approvals(payrollId),
+            });
           }
           // Invalidate payslips for this payroll (any filter variant)
           queryClient.invalidateQueries({
             predicate: (q) =>
               Array.isArray(q.queryKey) &&
-              q.queryKey[0] === "payrolls" &&
-              q.queryKey[1] === "payslips" &&
+              q.queryKey[0] === 'payrolls' &&
+              q.queryKey[1] === 'payslips' &&
               q.queryKey[2] === payrollId,
           });
         }
       };
 
       // Wallet events -> refresh wallet + perhaps payroll list (balances may affect UI state)
-      if (payload.type === EventRegistry.WALLET_TOP_SUCCESS || payload.type === EventRegistry.WALLET_CREATED_SUCCESS) {
+      if (
+        payload.type === EventRegistry.WALLET_TOP_SUCCESS ||
+        payload.type === EventRegistry.WALLET_CREATED_SUCCESS
+      ) {
         queryClient.invalidateQueries({ queryKey: queryKeys.payroll.wallet() });
         queryClient.invalidateQueries({ queryKey: queryKeys.payroll.list({}) });
       }
@@ -268,63 +297,70 @@ export const AppEventsListener = () => {
         invalidatePayrollQueries(false);
       }
 
-      if (mapped.render === "toast") {
-        const message = mapped.title && mapped.body ? `${mapped.title} - ${mapped.body}` : mapped.title || mapped.body;
+      if (mapped.render === 'toast') {
+        const message =
+          mapped.title && mapped.body
+            ? `${mapped.title} - ${mapped.body}`
+            : mapped.title || mapped.body;
         switch (mapped.severity) {
-          case "info": {
-            toast.info("Notification", {
+          case 'info': {
+            toast.info('Notification', {
               description: message,
               action: mapped.actions?.[0],
               actionButtonStyle: {
-                backgroundColor: "var(--primary)",
+                backgroundColor: 'var(--primary)',
               },
             });
             break;
           }
-          case "success": {
-            toast.success("Notification", { description: message });
+          case 'success': {
+            toast.success('Notification', { description: message });
             break;
           }
-          case "error": {
-            toast.error("Notification", { description: message });
+          case 'error': {
+            toast.error('Notification', { description: message });
             break;
           }
-          case "warning": {
+          case 'warning': {
             // Fallback to generic toast if warning variant absent
-            const potential: unknown = (toast as unknown as Record<string, unknown>).warning;
-            if (typeof potential === "function") {
+            const potential: unknown = (
+              toast as unknown as Record<string, unknown>
+            ).warning;
+            if (typeof potential === 'function') {
               (potential as (message_: string) => void)(message);
             } else {
-              toast("Notification", { description: message });
+              toast('Notification', { description: message });
             }
             break;
           }
           default: {
-            toast("Notification", { description: message });
+            toast('Notification', { description: message });
           }
         }
         return;
       }
 
-      if (mapped.render === "modal") {
+      if (mapped.render === 'modal') {
         setModal(mapped);
         return;
       }
 
-      if (mapped.render === "banner") {
+      if (mapped.render === 'banner') {
         setBanners((previous) => {
-          const exists = previous.some((b) => b.event === mapped.event && b.body === mapped.body);
+          const exists = previous.some(
+            (b) => b.event === mapped.event && b.body === mapped.body
+          );
           if (exists) return previous;
           return [mapped, ...previous];
         });
       }
     },
-    [queryClient, inPayrollRoute],
+    [queryClient, inPayrollRoute]
   );
 
   useEffect(() => {
     // Wildcard subscription to capture any future events without explicit mapping at registration
-    const offAll = on("*", (payload: any) => handleNotification(payload));
+    const offAll = on('*', (payload: any) => handleNotification(payload));
     return () => offAll();
   }, [on, handleNotification]);
 
@@ -345,45 +381,48 @@ export const AppEventsListener = () => {
       {/* Banners Stack */}
       <div className="space-y-4">
         {banners.map((banner) => {
-          const Icon =
-            banner.severity === "success"
-              ? CheckCircle2
-              : banner.severity === "error"
-                ? XCircle
-                : banner.severity === "warning"
-                  ? AlertTriangle
-                  : PiInfoFill;
+          const iconName =
+            banner.severity === 'success'
+              ? 'CheckCircle'
+              : banner.severity === 'error'
+                ? 'XCircle'
+                : banner.severity === 'warning'
+                  ? 'AlertTriangle'
+                  : 'Info';
           return (
             <Wrapper
               key={banner.id}
               className={cn(
-                "bg-background border-primary-75 animate-entrance pointer-events-auto mx-auto mt-10 flex w-full items-center justify-between border-y p-2",
-                banner.severity === "success" && "border-success/20",
-                banner.severity === "error" && "border-destructive/20",
-                banner.severity === "warning" && "border-warning/20",
-                banner.severity === "info" && "text-primary bg-primary-50",
+                'bg-background border-primary-75 animate-entrance pointer-events-auto mx-auto mt-10 flex w-full items-center justify-between border-y p-2',
+                banner.severity === 'success' && 'border-success/20',
+                banner.severity === 'error' && 'border-destructive/20',
+                banner.severity === 'warning' && 'border-warning/20',
+                banner.severity === 'info' && 'text-primary bg-primary-50'
               )}
             >
               <div className="flex items-start gap-3">
                 <Icon
+                  name={iconName}
                   size={18}
                   className={cn(
-                    "mt-0.5",
-                    banner.severity === "success" && "text-success",
-                    banner.severity === "error" && "text-destructive",
-                    banner.severity === "warning" && "text-warning",
-                    banner.severity === "info" && "text-primary",
+                    'mt-0.5',
+                    banner.severity === 'success' && 'text-success',
+                    banner.severity === 'error' && 'text-destructive',
+                    banner.severity === 'warning' && 'text-warning',
+                    banner.severity === 'info' && 'text-primary'
                   )}
                 />
                 <div className="space-y-1">
                   {/* {banner.title ? <p className="text-sm font-medium">{banner.title}</p> : null} */}
-                  <p className="text-primary text-sm font-medium">{banner.body}</p>
+                  <p className="text-primary text-sm font-medium">
+                    {banner.body}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-10">
                 {banner.actions?.map((a) => {
-                  const isApprove = a.label === "Approve Payroll";
-                  const isDecline = a.label === "Decline Payroll";
+                  const isApprove = a.label === 'Approve Payroll';
+                  const isDecline = a.label === 'Decline Payroll';
                   const handleClick = () => {
                     if (isApprove && banner.payrollId) {
                       handleApprovePayroll(banner.payrollId, banner.id);
@@ -398,7 +437,7 @@ export const AppEventsListener = () => {
                       key={a.label}
                       className="px-8"
                       size="sm"
-                      variant={a.variant || "primary"}
+                      variant={a.variant || 'primary'}
                       onClick={handleClick}
                       isDisabled={isDeciding}
                     >
@@ -409,7 +448,7 @@ export const AppEventsListener = () => {
                 {banner.dismissible && (
                   <MainButton
                     aria-label="Dismiss notification"
-                    icon={<XCircle />}
+                    icon={<Icon name="XCircle" size={16} />}
                     isIconOnly
                     size="icon"
                     variant="ghost"
@@ -429,8 +468,8 @@ export const AppEventsListener = () => {
         onOpenChange={(open) => {
           if (!open) setModal(null);
         }}
-        title={modal?.title || "Notification"}
-        description={modal?.body || ""}
+        title={modal?.title || 'Notification'}
+        description={modal?.body || ''}
         trigger={<div />}
         className="min-w-md"
       >
@@ -439,7 +478,7 @@ export const AppEventsListener = () => {
             {modal?.actions?.map((a) => (
               <MainButton
                 key={a.label}
-                variant={a.variant || "primary"}
+                variant={a.variant || 'primary'}
                 onClick={() => {
                   a.onClick();
                   setModal(null);

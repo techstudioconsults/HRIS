@@ -1,6 +1,3 @@
-import { Calendar2, CardReceive, Element3, People, Profile2User, Setting2 } from 'iconsax-reactjs';
-import { Clock } from 'lucide-react';
-
 export const countries = [
   { value: 'afghanistan', label: '🇦🇫 Afghanistan' },
   { value: 'albania', label: '🇦🇱 Albania' },
@@ -226,48 +223,48 @@ export const adminNavItems = [
   {
     name: 'Dashboard',
     url: '/admin/dashboard',
-    icon: Element3,
+    icon: 'Element3',
   },
   {
     name: 'Employees',
     url: '/admin/employees',
-    icon: Profile2User,
+    icon: 'Profile2User',
   },
   {
     id: 'teams',
     name: 'Teams',
     url: '/admin/teams',
-    icon: People,
+    icon: 'People',
   },
   {
     id: 'resources',
     name: 'Resources',
     url: '/admin/resources',
-    icon: People,
+    icon: 'People',
   },
   {
     id: 'payroll',
     name: 'Payroll',
     url: '/admin/payroll',
-    icon: CardReceive,
+    icon: 'CardReceive',
   },
   {
     id: 'leave',
     name: 'Leave Hub',
     url: '/admin/leave',
-    icon: Calendar2,
+    icon: 'Calendar2',
   },
   {
     id: 'attendance',
     name: 'Attendance',
     url: '/admin/attendance',
-    icon: Clock,
+    icon: 'Clock',
   },
   {
     id: 'settings',
     name: 'Settings',
     url: '/admin/settings',
-    icon: Setting2,
+    icon: 'Setting2',
   },
 ];
 
@@ -275,25 +272,25 @@ export const userNavItems = [
   {
     name: 'Dashboard',
     url: '/user/dashboard',
-    icon: Element3,
+    icon: 'Element3',
   },
   {
     id: 'leave',
     name: 'Leave',
     url: '/user/leave',
-    icon: Calendar2,
+    icon: 'Calendar2',
   },
   {
     id: 'attendance',
     name: 'Attendance',
     url: '/user/attendance',
-    icon: Clock,
+    icon: 'Clock',
   },
   {
     id: 'payslip',
     name: 'Payslip',
     url: '/user/payslip',
-    icon: CardReceive,
+    icon: 'CardReceive',
   },
 ];
 

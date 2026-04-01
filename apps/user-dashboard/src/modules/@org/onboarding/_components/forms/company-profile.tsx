@@ -1,26 +1,28 @@
-"use client";
+'use client';
 
-import { industryOptions, sizeOptions } from "@/lib/tools/constants";
-import { CompanyProfileFormData, companyProfileSchema } from "@/schemas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useLocationData } from "@workspace/ui/hooks";
-import { ComboBox, FormField, FormHeader } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { cn } from "@workspace/ui/lib/utils";
-import { AxiosError } from "axios";
-import { Building2 } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { Controller, FormProvider, useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { industryOptions, sizeOptions } from '@/lib/tools/constants';
+import { CompanyProfileFormData, companyProfileSchema } from '@/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useLocationData } from '@workspace/ui/hooks';
+import { ComboBox, FormField, FormHeader } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { cn } from '@workspace/ui/lib/utils';
+import { AxiosError } from 'axios';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
-import { useOnboardingService } from "../../services/use-onboarding-service";
+import { useOnboardingService } from '../../services/use-onboarding-service';
 
 export const CompanyProfile = () => {
-  const { useGetCompanyProfile, useUpdateCompanyProfile } = useOnboardingService();
+  const { useGetCompanyProfile, useUpdateCompanyProfile } =
+    useOnboardingService();
   const { data: companyProfile, isPending } = useGetCompanyProfile();
-  const { mutateAsync: updateCompanyProfile, isPending: isUpdatePending } = useUpdateCompanyProfile();
+  const { mutateAsync: updateCompanyProfile, isPending: isUpdatePending } =
+    useUpdateCompanyProfile();
   const router = useRouter();
 
   const {
@@ -40,15 +42,15 @@ export const CompanyProfile = () => {
     resolver: zodResolver(companyProfileSchema),
     defaultValues: {
       // domain: "",
-      name: "",
-      industry: "",
-      size: "",
-      addressLine1: "",
-      addressLine2: ".",
-      city: "",
-      state: "",
-      country: "",
-      postcode: "",
+      name: '',
+      industry: '',
+      size: '',
+      addressLine1: '',
+      addressLine2: '.',
+      city: '',
+      state: '',
+      country: '',
+      postcode: '',
     },
   });
 
@@ -59,8 +61,8 @@ export const CompanyProfile = () => {
     watch,
   } = methods;
 
-  const countryValue = watch("country");
-  const stateValue = watch("state");
+  const countryValue = watch('country');
+  const stateValue = watch('state');
 
   useEffect(() => {
     if (countryValue !== selectedCountry) {
@@ -83,8 +85,11 @@ export const CompanyProfile = () => {
         router.push(`/onboarding/step-2`);
       },
       onError: (error) => {
-        toast.error("Failed to save company profile", {
-          description: error instanceof AxiosError ? error.response?.data?.message : "An unknown error occurred",
+        toast.error('Failed to save company profile', {
+          description:
+            error instanceof AxiosError
+              ? error.response?.data?.message
+              : 'An unknown error occurred',
         });
       },
     });
@@ -94,24 +99,27 @@ export const CompanyProfile = () => {
     if (companyProfile) {
       reset({
         // domain: companyProfile?.data.domain || "",
-        name: companyProfile?.name || "",
-        industry: companyProfile?.industry || "",
-        size: companyProfile?.size || "",
-        addressLine1: companyProfile?.address?.addressLine1 || "",
-        addressLine2: companyProfile?.address?.addressLine2 || ".",
-        city: companyProfile?.address?.city || "",
-        state: companyProfile?.address?.state || "",
-        country: companyProfile?.address?.country || "",
-        postcode: companyProfile?.address?.postcode || "",
+        name: companyProfile?.name || '',
+        industry: companyProfile?.industry || '',
+        size: companyProfile?.size || '',
+        addressLine1: companyProfile?.address?.addressLine1 || '',
+        addressLine2: companyProfile?.address?.addressLine2 || '.',
+        city: companyProfile?.address?.city || '',
+        state: companyProfile?.address?.state || '',
+        country: companyProfile?.address?.country || '',
+        postcode: companyProfile?.address?.postcode || '',
       });
     }
   }, [companyProfile, reset]);
 
   return (
-    <section data-tour="company-form" className="border-border rounded-[10px] border p-7">
+    <section
+      data-tour="company-form"
+      className="border-border rounded-[10px] border p-7"
+    >
       <div className={`mb-8 space-y-2`}>
         <FormHeader
-          icon={<Building2 />}
+          icon={<Icon name="Building2" />}
           title="Set up your company profile"
           subTitle="Complete your company information to get started"
         />
@@ -119,10 +127,16 @@ export const CompanyProfile = () => {
 
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(handleSubmitForm)}>
-          <section className={`hide-scrollba max-h-[500px] space-y-4 overflow-auto px-1`}>
+          <section
+            className={`hide-scrollba max-h-[500px] space-y-4 overflow-auto px-1`}
+          >
             <div>
               <FormField
-                placeholder={isPending ? `Getting company's profile` : `"Enter company name"`}
+                placeholder={
+                  isPending
+                    ? `Getting company's profile`
+                    : `"Enter company name"`
+                }
                 className="h-12 w-full"
                 label="Company's Name"
                 name="name"
@@ -133,7 +147,9 @@ export const CompanyProfile = () => {
             <div>
               <FormField
                 type="select"
-                placeholder={isPending ? `Getting company's profile` : `Select industry`}
+                placeholder={
+                  isPending ? `Getting company's profile` : `Select industry`
+                }
                 className="!h-12 w-full"
                 label="Industry"
                 name="industry"
@@ -145,7 +161,9 @@ export const CompanyProfile = () => {
             <div>
               <FormField
                 type="select"
-                placeholder={isPending ? `Getting company's profile` : `Select size`}
+                placeholder={
+                  isPending ? `Getting company's profile` : `Select size`
+                }
                 className="!h-12 w-full"
                 label="Company Size"
                 name="size"
@@ -156,7 +174,11 @@ export const CompanyProfile = () => {
 
             <div>
               <FormField
-                placeholder={isPending ? `Getting company's profile` : `Enter address line 1`}
+                placeholder={
+                  isPending
+                    ? `Getting company's profile`
+                    : `Enter address line 1`
+                }
                 className="h-12 w-full"
                 label="Address Line 1"
                 name="addressLine1"
@@ -165,7 +187,11 @@ export const CompanyProfile = () => {
             </div>
 
             <FormField
-              placeholder={isPending ? `Getting company's profile` : `Enter address line 2 (optional)`}
+              placeholder={
+                isPending
+                  ? `Getting company's profile`
+                  : `Enter address line 2 (optional)`
+              }
               className="h-12 w-full"
               label="Address Line 2"
               name="addressLine2"
@@ -188,13 +214,16 @@ export const CompanyProfile = () => {
                     onValueChange={field.onChange}
                     placeholder={
                       countriesLoading
-                        ? "Loading countries..."
+                        ? 'Loading countries...'
                         : isPending
                           ? `Getting company's profile`
                           : `Select your country`
                     }
                     disabled={isPending || countriesLoading}
-                    className={cn(`h-12`, fieldState.error && "border-destructive")}
+                    className={cn(
+                      `h-12`,
+                      fieldState.error && 'border-destructive'
+                    )}
                   />
                 )}
               />
@@ -217,15 +246,18 @@ export const CompanyProfile = () => {
                     onValueChange={field.onChange}
                     placeholder={
                       statesLoading
-                        ? "Loading states..."
+                        ? 'Loading states...'
                         : countryValue
                           ? isPending
                             ? `Getting company's profile`
                             : `Select state`
-                          : "Select a country first"
+                          : 'Select a country first'
                     }
                     disabled={isPending || statesLoading || !countryValue}
-                    className={cn(`h-12`, fieldState.error && "border-destructive")}
+                    className={cn(
+                      `h-12`,
+                      fieldState.error && 'border-destructive'
+                    )}
                   />
                 )}
               />
@@ -248,22 +280,27 @@ export const CompanyProfile = () => {
                     onValueChange={field.onChange}
                     placeholder={
                       citiesLoading
-                        ? "Loading cities..."
+                        ? 'Loading cities...'
                         : countryValue
                           ? isPending
                             ? `Getting company's profile`
                             : `Select city`
-                          : "Select a country first"
+                          : 'Select a country first'
                     }
                     disabled={isPending || citiesLoading || !countryValue}
-                    className={cn(`h-12`, fieldState.error && "border-destructive")}
+                    className={cn(
+                      `h-12`,
+                      fieldState.error && 'border-destructive'
+                    )}
                   />
                 )}
               />
             </div>
 
             <FormField
-              placeholder={isPending ? `Getting company's profile` : `Enter postal code`}
+              placeholder={
+                isPending ? `Getting company's profile` : `Enter postal code`
+              }
               className="!h-12 w-full"
               label="Postal Code"
               name="postcode"

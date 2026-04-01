@@ -1,154 +1,104 @@
-"use client";
+'use client';
 
-import { MainButton } from "@workspace/ui/lib/button";
-import { cn } from "@workspace/ui/lib/utils";
-// Import Swiper styles
-// import "swiper/css";
-// import "swiper/css/pagination";
-// import "swiper/css/navigation";
-// import "swiper/css/scrollbar";
-// import "swiper/css/free-mode";
-// import "swiper/css/thumbs";
+import { useEffect, useMemo, useState } from 'react';
 
-// import { Icons } from "@/components/core/miscellaneous/icons";
-
-import { ChevronLeftCircle, ChevronRightCircle } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { A11y, Autoplay, FreeMode, Navigation, Pagination, Scrollbar, Thumbs } from "swiper/modules";
-import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
-import type { Swiper as SwiperType } from "swiper/types";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from '@workspace/ui/components/carousel';
+import { cn } from '@workspace/ui/lib/utils';
 
 export const UniversalSwiper = ({
   items,
   renderItem,
-  swiperOptions = {},
+  swiperOptions,
   showNavigation = false,
   showPagination = false,
-  showScrollbar = false,
-  navigationSize = 24,
-  navigationOffset = 0,
   className,
   swiperClassName,
   slideClassName,
-  thumbsSwiper,
-  breakpoints,
-  freeMode = false,
   onSwiperInit,
 }: UniversalSwiperProperties) => {
-  const [isMounted, setIsMounted] = useState(false);
-  const swiperReference = useRef<SwiperType | null>(null);
+  const [api, setApi] = useState<CarouselApi>();
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const totalSlides = items?.length ?? 0;
+  const shouldShowControls = totalSlides > 1;
 
   useEffect(() => {
-    setIsMounted(true);
-    return () => {
-      // Cleanup Swiper instance on unmount
-      if (swiperReference.current) {
-        swiperReference.current.destroy(true, true);
-      }
+    if (!api) return;
+
+    const updateActiveSlide = () => {
+      setActiveIndex(api.selectedScrollSnap());
     };
-  }, []);
 
-  if (!isMounted || !items?.length) return null;
+    updateActiveSlide();
+    api.on('select', updateActiveSlide);
+    api.on('reInit', updateActiveSlide);
 
-  const modules = [
-    ...(showNavigation ? [Navigation] : []),
-    ...(showPagination ? [Pagination] : []),
-    ...(showScrollbar ? [Scrollbar] : []),
-    ...(freeMode ? [FreeMode] : []),
-    ...(thumbsSwiper ? [Thumbs] : []),
-    Autoplay,
-    A11y,
-  ];
+    return () => {
+      api.off('select', updateActiveSlide);
+      api.off('reInit', updateActiveSlide);
+    };
+  }, [api]);
+
+  const carouselOptions = useMemo(
+    () => ({
+      loop: shouldShowControls,
+      ...(swiperOptions ?? {}),
+    }),
+    [shouldShowControls, swiperOptions]
+  );
+
+  if (!totalSlides) return null;
 
   return (
-    <div className={cn(className)}>
-      <Swiper
-        {...swiperOptions}
-        autoplay={{
-          delay: 3000,
-          disableOnInteraction: false,
-          pauseOnMouseEnter: true,
-        }}
-        modules={modules}
-        thumbs={{ swiper: thumbsSwiper }}
-        breakpoints={breakpoints}
-        freeMode={freeMode}
-        className={cn(swiperClassName)}
-        onSwiper={(swiper) => {
-          swiperReference.current = swiper;
-          onSwiperInit?.(swiper);
+    <section className={cn('relative', className)}>
+      <Carousel
+        className={cn('w-full', swiperClassName)}
+        opts={carouselOptions}
+        setApi={(nextApi) => {
+          setApi(nextApi);
+          onSwiperInit?.(nextApi);
         }}
       >
-        {items.map((item, index) => (
-          <SwiperSlide key={index} className={cn(slideClassName)}>
-            {renderItem(item, index)}
-          </SwiperSlide>
-        ))}
-        {showNavigation && <CustomNavigation iconSize={navigationSize} offset={navigationOffset} />}
-      </Swiper>
-    </div>
-  );
-};
+        <CarouselContent>
+          {items.map((item, index) => (
+            <CarouselItem key={`slide-${index}`} className={cn(slideClassName)}>
+              {renderItem(item, index)}
+            </CarouselItem>
+          ))}
+        </CarouselContent>
 
-type CustomNavigationProperties = {
-  variant?: "default" | "minimal";
-  iconSize?: number;
-  offset?: number;
-  className?: string;
-};
+        {showNavigation && shouldShowControls ? (
+          <>
+            <CarouselPrevious className="top-auto bottom-5 left-4 z-10 border-white/30 bg-black/45 text-white hover:bg-black/60" />
+            <CarouselNext className="top-auto right-4 bottom-5 z-10 border-white/30 bg-black/45 text-white hover:bg-black/60" />
+          </>
+        ) : null}
+      </Carousel>
 
-export const CustomNavigation = ({ iconSize = 24, className }: CustomNavigationProperties) => {
-  const swiper = useSwiper();
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isEnd, setIsEnd] = useState(false);
-
-  useEffect(() => {
-    const handleSlideChange = (swiper: SwiperType) => {
-      setIsBeginning(swiper.isBeginning);
-      setIsEnd(swiper.isEnd);
-    };
-
-    swiper.on("slideChange", handleSlideChange);
-
-    return () => {
-      swiper.off("slideChange", handleSlideChange);
-    };
-  }, [swiper]);
-
-  return (
-    <div className={cn("absolute inset-0 right-10 bottom-10 flex items-end justify-end gap-4", className)}>
-      <MainButton
-        onClick={(event) => {
-          event.stopPropagation();
-          swiper.slidePrev();
-        }}
-        isDisabled={isBeginning}
-        isIconOnly
-        icon={<ChevronLeftCircle size={iconSize} />}
-        variant="outline"
-        size="circle"
-        aria-label="Previous slide"
-        className={cn(
-          "hover:bg-primary z-10 size-10 bg-black/50 text-white hover:text-white",
-          // isBeginning ? "hidden" : "block",
-        )}
-      />
-      <MainButton
-        onClick={(event) => {
-          event.stopPropagation();
-          swiper.slideNext();
-        }}
-        isDisabled={isEnd}
-        isIconOnly
-        icon={<ChevronRightCircle size={iconSize} />}
-        variant="outline"
-        size="circle"
-        aria-label="Next slide"
-        className={cn(
-          "hover:bg-primary z-10 bg-black/50 text-white hover:text-white",
-          // isEnd ? "hidden" : "block"
-        )}
-      />
-    </div>
+      {showPagination && shouldShowControls ? (
+        <div className="pointer-events-none absolute right-0 bottom-6 left-0 z-10 flex items-center justify-center gap-2">
+          {items.map((_, index) => (
+            <button
+              key={`dot-${index}`}
+              type="button"
+              className={cn(
+                'pointer-events-auto h-2 w-2 rounded-full bg-white/45 transition-all',
+                activeIndex === index && 'w-6 bg-white'
+              )}
+              aria-label={`Go to slide ${index + 1}`}
+              aria-current={activeIndex === index}
+              onClick={() => api?.scrollTo(index)}
+            />
+          ))}
+        </div>
+      ) : null}
+    </section>
   );
 };

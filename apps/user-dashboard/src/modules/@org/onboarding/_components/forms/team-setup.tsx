@@ -1,32 +1,41 @@
-"use client";
+'use client';
 
-import { FormHeader } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
+import { FormHeader } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 // import { Skeleton } from "@/components/ui/skeleton";
-import { People } from "iconsax-reactjs";
-import Link from "next/link";
+import Link from 'next/link';
 
-import { TeamConfig } from "../accordions/team-config";
+import { TeamConfig } from '../accordions/team-config';
 
 export const TeamSetupForm = () => {
   return (
     <section className="rounded-[10px] border p-7" data-tour="team-form">
       <div className="">
         <FormHeader
-          icon={<People />}
+          icon={<Icon name="People" />}
           title="Set up your team"
           subTitle="Configure teams and roles with specific permissions for your organization"
         />
       </div>
 
       <section>
-        <section className="hide-scrollbar max-h-[500px] space-y-4 overflow-auto" data-tour="team-accordion">
+        <section
+          className="hide-scrollbar max-h-[500px] space-y-4 overflow-auto"
+          data-tour="team-accordion"
+        >
           <TeamConfig />
         </section>
 
         <div className="mt-8">
           <div>
-            <MainButton href={`/onboarding/step-3`} type="button" variant="primary" className="w-full" size="xl">
+            <MainButton
+              href={`/onboarding/step-3`}
+              type="button"
+              variant="primary"
+              className="w-full"
+              size="xl"
+            >
               Continue
             </MainButton>
           </div>

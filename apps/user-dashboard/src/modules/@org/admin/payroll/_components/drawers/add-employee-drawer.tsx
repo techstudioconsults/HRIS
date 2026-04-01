@@ -20,7 +20,7 @@ import {
   GenericDropdown,
 } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
-import { Filter } from 'iconsax-reactjs';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useCallback, useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
@@ -52,8 +52,12 @@ interface AddEmployeeDrawerProperties {
   hasPayslips: boolean;
 }
 
-export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerProperties) => {
-  const { showAddEmployeeToPayrollModal, setShowAddEmployeeModal } = usePayrollStore();
+export const AddEmployeeDrawer = ({
+  payrollId,
+  hasPayslips,
+}: AddEmployeeDrawerProperties) => {
+  const { showAddEmployeeToPayrollModal, setShowAddEmployeeModal } =
+    usePayrollStore();
   const {
     page,
     search,
@@ -79,7 +83,9 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
 
   const [isSuccessAlertOpen, setIsSuccessAlertOpen] = useState(false);
   const [addedEmployee, setAddedEmployee] = useState<Employee | null>(null);
-  const [loadingEmployeeId, setLoadingEmployeeId] = useState<string | null>(null);
+  const [loadingEmployeeId, setLoadingEmployeeId] = useState<string | null>(
+    null
+  );
 
   const { useCreatePayslip } = usePayrollService();
   const { mutateAsync: createPayslip } = useCreatePayslip({
@@ -99,11 +105,14 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
       ];
     },
   });
-  const { useGetSuspendedEmployeesByPayroll, useGetAllTeams } = useEmployeeService();
+  const { useGetSuspendedEmployeesByPayroll, useGetAllTeams } =
+    useEmployeeService();
   const { data: teams = [] } = useGetAllTeams();
 
   useEffect(() => {
-    setSearch(debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : null);
+    setSearch(
+      debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : null
+    );
     resetToFirstPage();
   }, [debouncedSearch, setSearch, resetToFirstPage]);
 
@@ -131,7 +140,9 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
     (newFilters: FilterValues) => {
       setTeamId(newFilters.teamId ?? null);
       setRoleId(newFilters.roleId ?? null);
-      setStatus((newFilters.status as 'all' | 'active' | 'inactive' | 'pending') ?? null);
+      setStatus(
+        (newFilters.status as 'all' | 'active' | 'inactive' | 'pending') ?? null
+      );
       setSortBy(newFilters.sortBy ?? null);
       if (newFilters.limit != null) setLimit(Number(newFilters.limit));
       resetToFirstPage();
@@ -235,8 +246,8 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
                   Excluded Employees - Performance Bonus
                 </DrawerTitle>
                 <DrawerDescription>
-                  These employees are currently excluded from receiving the Performance Bonus. You
-                  can re-include them anytime.
+                  These employees are currently excluded from receiving the
+                  Performance Bonus. You can re-include them anytime.
                 </DrawerDescription>
               </div>
             </div>
@@ -260,7 +271,7 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
                       className="border-border bg-background flex h-12.5 items-center rounded-md border px-3 text-black shadow dark:text-white"
                       size="lg"
                     >
-                      <Filter className="size-4" />
+                      <Icon name="Filter" size={16} />
                       <span>Filter</span>
                     </Button>
                   }
@@ -286,7 +297,10 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
 
             <div className="rounded-lg">
               {isLoading ? (
-                <Loading text={`Loading employees...`} className={`w-fill h-fit p-20`} />
+                <Loading
+                  text={`Loading employees...`}
+                  className={`w-fill h-fit p-20`}
+                />
               ) : (
                 <section className="overflow-y-auto">
                   {employeesData?.data?.items.length ? (
@@ -296,7 +310,9 @@ export const AddEmployeeDrawer = ({ payrollId, hasPayslips }: AddEmployeeDrawerP
                       currentPage={employeesData.data.metadata.page}
                       totalPages={employeesData.data.metadata.totalPages}
                       itemsPerPage={employeesData.data.metadata.limit}
-                      hasPreviousPage={employeesData.data.metadata.hasPreviousPage}
+                      hasPreviousPage={
+                        employeesData.data.metadata.hasPreviousPage
+                      }
                       hasNextPage={employeesData.data.metadata.hasNextPage}
                       onPageChange={handlePageChange}
                       showPagination={true}

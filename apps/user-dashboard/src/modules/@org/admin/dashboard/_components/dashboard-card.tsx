@@ -1,10 +1,10 @@
-import { cn } from "@workspace/ui/lib/utils";
-import { Diagram } from "iconsax-reactjs";
-import Link from "next/link";
+import { cn } from '@workspace/ui/lib/utils';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import Link from 'next/link';
 
 // Type definitions
-type IconVariant = "success" | "primary" | "warning" | "purple-500";
-type TrendDirection = "up" | "down";
+type IconVariant = 'success' | 'primary' | 'warning' | 'purple-500';
+type TrendDirection = 'up' | 'down';
 
 interface DashboardCardProperties {
   title: string;
@@ -27,16 +27,16 @@ interface DashboardCardProperties {
 
 // Icon variant styles mapping for better maintainability
 const ICON_VARIANT_STYLES: Record<IconVariant, string> = {
-  success: "bg-success/10 text-success",
-  primary: "bg-primary/10 text-primary",
-  warning: "bg-warning/10 text-warning",
-  "purple-500": "bg-purple-500/10 text-purple-500",
+  success: 'bg-success/10 text-success',
+  primary: 'bg-primary/10 text-primary',
+  warning: 'bg-warning/10 text-warning',
+  'purple-500': 'bg-purple-500/10 text-purple-500',
 } as const;
 
 // Trend styles mapping
 const TREND_STYLES: Record<TrendDirection, string> = {
-  up: "text-success",
-  down: "text-danger",
+  up: 'text-success',
+  down: 'text-danger',
 } as const;
 
 /**
@@ -65,20 +65,20 @@ export function DashboardCard({
   value,
   percentage,
   icon,
-  iconVariant = "primary",
+  iconVariant = 'primary',
   className,
   actionText,
   actionHref,
   onAction,
   showTrendIcon = false,
-  trend = "up",
+  trend = 'up',
   titleColor,
   valueColor,
   percentageColor,
   actionTextColor,
 }: DashboardCardProperties) {
   // Determine if percentage indicates positive change
-  const isPositiveChange = percentage?.startsWith("+");
+  const isPositiveChange = percentage?.startsWith('+');
 
   // Check if footer section should be rendered
   const hasFooterContent = showTrendIcon || percentage || actionText;
@@ -92,9 +92,10 @@ export function DashboardCard({
     return (
       <div className="flex items-center gap-2">
         {showTrendIcon && (
-          <Diagram
+          <Icon
+            name="Diagram"
             size={16}
-            variant={trend === "up" ? "Bold" : "Broken"}
+            variant={trend === 'up' ? 'Bold' : 'Broken'}
             className={TREND_STYLES[trend]}
             aria-label={`Trend ${trend}`}
           />
@@ -102,8 +103,12 @@ export function DashboardCard({
         {percentage && (
           <p
             className={cn(
-              "text-sm font-medium",
-              percentageColor ? "" : isPositiveChange ? "text-success" : "text-danger",
+              'text-sm font-medium',
+              percentageColor
+                ? ''
+                : isPositiveChange
+                  ? 'text-success'
+                  : 'text-danger'
             )}
             style={percentageColor ? { color: percentageColor } : undefined}
           >
@@ -121,11 +126,13 @@ export function DashboardCard({
     if (!actionText) return null;
 
     const actionClasses = cn(
-      "text-sm font-medium transition-colors hover:underline",
-      actionTextColor ? "" : "text-primary hover:text-primary/80",
+      'text-sm font-medium transition-colors hover:underline',
+      actionTextColor ? '' : 'text-primary hover:text-primary/80'
     );
 
-    const actionStyle = actionTextColor ? { color: actionTextColor } : undefined;
+    const actionStyle = actionTextColor
+      ? { color: actionTextColor }
+      : undefined;
 
     // If href is provided, use Link component
     if (actionHref) {
@@ -139,7 +146,12 @@ export function DashboardCard({
     // Otherwise, use button with onClick
     if (onAction) {
       return (
-        <button onClick={onAction} className={actionClasses} style={actionStyle} type="button">
+        <button
+          onClick={onAction}
+          className={actionClasses}
+          style={actionStyle}
+          type="button"
+        >
           {actionText}
         </button>
       );
@@ -154,18 +166,34 @@ export function DashboardCard({
   };
 
   return (
-    <div className={cn("bg-background min-h-[156px] rounded-xl p-6 shadow", className)}>
+    <div
+      className={cn(
+        'bg-background min-h-[156px] rounded-xl p-6 shadow',
+        className
+      )}
+    >
       {/* Card Header */}
-      <h3 className={cn("text-muted-foreground mb-2 text-sm font-medium", titleColor)}>{title}</h3>
+      <h3
+        className={cn(
+          'text-muted-foreground mb-2 text-sm font-medium',
+          titleColor
+        )}
+      >
+        {title}
+      </h3>
 
       {/* Card Body */}
       <div className="flex items-center justify-between">
-        <div className={cn("text-foreground text-3xl font-semibold", valueColor)}>{value}</div>
+        <div
+          className={cn('text-foreground text-3xl font-semibold', valueColor)}
+        >
+          {value}
+        </div>
         {icon && (
           <div
             className={cn(
-              "flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full",
-              ICON_VARIANT_STYLES[iconVariant],
+              'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full',
+              ICON_VARIANT_STYLES[iconVariant]
             )}
             aria-label={`${title} icon`}
           >

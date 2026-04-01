@@ -4,8 +4,7 @@ import { queryKeys } from '@/lib/react-query/query-keys';
 
 import { useQueryClient } from '@tanstack/react-query';
 import type { IColumnDefinition, IRowAction } from '@workspace/ui/lib/table';
-import { Trash } from 'iconsax-reactjs';
-import { Edit, Eye } from 'lucide-react';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -19,20 +18,26 @@ export const teamColumn: IColumnDefinition<Team>[] = [
   {
     header: 'Team Name',
     accessorKey: 'name',
-    render: (_value: unknown, team: Team) => <span className="text-sm font-medium">{team.name}</span>,
+    render: (_value: unknown, team: Team) => (
+      <span className="text-sm font-medium">{team.name}</span>
+    ),
   },
   {
     header: 'Team Lead',
     accessorKey: 'manager',
     render: (_value: unknown, team: Team) => (
-      <span className="text-sm text-gray-600 dark:text-gray-400">{team.manager || 'Not assigned'}</span>
+      <span className="text-sm text-gray-600 dark:text-gray-400">
+        {team.manager || 'Not assigned'}
+      </span>
     ),
   },
   {
     header: 'Team Members',
     accessorKey: 'members',
     render: (_value: unknown, team: Team) => (
-      <span className="text-primary font-medium">{team.members || 0} members</span>
+      <span className="text-primary font-medium">
+        {team.members || 0} members
+      </span>
     ),
   },
   {
@@ -41,7 +46,10 @@ export const teamColumn: IColumnDefinition<Team>[] = [
     render: (_value: unknown, team: Team) => {
       const status = team.status || 'active';
       return (
-        <Badge variant={status === 'active' ? 'success' : 'destructive'} className="min-w-fit">
+        <Badge
+          variant={status === 'active' ? 'success' : 'destructive'}
+          className="min-w-fit"
+        >
           {status as string}
         </Badge>
       );
@@ -51,7 +59,9 @@ export const teamColumn: IColumnDefinition<Team>[] = [
     header: 'Created on',
     accessorKey: 'createdAt',
     render: (_value: unknown, team: Team) => (
-      <span className="text-sm text-gray-600 dark:text-gray-400">{formatDate(team.createdAt as string)}</span>
+      <span className="text-sm text-gray-600 dark:text-gray-400">
+        {formatDate(team.createdAt as string)}
+      </span>
     ),
   },
 ];
@@ -81,27 +91,39 @@ const useTeamRowActionsBase = (
     try {
       const response = await deleteTeam(teamToDelete.id);
       if (response?.success) {
-        await queryClient.invalidateQueries({ queryKey: queryKeys.team.list() });
-        await queryClient.invalidateQueries({ queryKey: queryKeys.team.details(parentId!) });
-        toast.success(`${teamType === 'sub-team' ? 'Sub-team' : 'Team'} "${teamToDelete.name}" deleted successfully!`);
+        await queryClient.invalidateQueries({
+          queryKey: queryKeys.team.list(),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: queryKeys.team.details(parentId!),
+        });
+        toast.success(
+          `${teamType === 'sub-team' ? 'Sub-team' : 'Team'} "${teamToDelete.name}" deleted successfully!`
+        );
         setIsDeleteModalOpen(false);
         setTeamToDelete(null);
       }
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : `Failed to delete ${teamType}. Please try again.`;
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : `Failed to delete ${teamType}. Please try again.`;
       toast.error(errorMessage);
     }
   }, [teamToDelete, deleteTeam, queryClient, parentId, teamType]);
 
   const getRowActions = useCallback(
     (team: Team) => {
-      const viewPath = teamType === 'sub-team' ? `/admin/teams/sub-team/${team.id}` : `/admin/teams/${team.id}`;
+      const viewPath =
+        teamType === 'sub-team'
+          ? `/admin/teams/sub-team/${team.id}`
+          : `/admin/teams/${team.id}`;
 
       const baseActions: IRowAction<Team>[] = [
         {
           label: 'View team',
           // kbd: "Ctrl+V",
-          icon: <Eye className="h-4 w-4" aria-hidden="true" />,
+          icon: <Icon name={`Eye`} size={4} aria-hidden="true" />,
           onClick: async () => {
             setActiveTeam(team);
             router.push(viewPath);
@@ -110,7 +132,7 @@ const useTeamRowActionsBase = (
         {
           label: 'Edit team',
           // kbd: "Ctrl+E",
-          icon: <Edit className="h-4 w-4" aria-hidden="true" />,
+          icon: <Icon name={`Edit`} size={4} aria-hidden="true" />,
           onClick: () => {
             setActiveTeam(team);
             if (onEditTeam) {
@@ -120,7 +142,9 @@ const useTeamRowActionsBase = (
             }
           },
         },
-        ...(onAddRole && teamType === 'team' ? [{ type: 'separator' } as IRowAction<Team>] : []),
+        ...(onAddRole && teamType === 'team'
+          ? [{ type: 'separator' } as IRowAction<Team>]
+          : []),
         ...(onAddRole && teamType === 'team'
           ? [
               {
@@ -148,7 +172,13 @@ const useTeamRowActionsBase = (
           label: 'Delete team',
           // kbd: "Ctrl+Del",
           variant: 'destructive',
-          icon: <Trash className="text-destructive h-4 w-4" aria-hidden="true" />,
+          icon: (
+            <Icon
+              name={`Trash`}
+              className={`text-destructive`}
+              aria-hidden="true"
+            />
+          ),
           onClick: () => {
             setActiveTeam(team);
             setTeamToDelete(team);
@@ -170,7 +200,8 @@ const useTeamRowActionsBase = (
       setIsDeleteModalOpen(true);
     };
     window.addEventListener('team:request-delete', onDeleteRequest);
-    return () => window.removeEventListener('team:request-delete', onDeleteRequest);
+    return () =>
+      window.removeEventListener('team:request-delete', onDeleteRequest);
   }, [activeTeam]);
 
   const DeleteConfirmationModal = useCallback(
@@ -192,7 +223,13 @@ const useTeamRowActionsBase = (
         cancelText="Cancel"
       />
     ),
-    [isDeleteModalOpen, isPending, handleDeleteTeam, teamType, teamToDelete?.name]
+    [
+      isDeleteModalOpen,
+      isPending,
+      handleDeleteTeam,
+      teamType,
+      teamToDelete?.name,
+    ]
   );
 
   return { getRowActions, DeleteConfirmationModal, setActiveTeam };
@@ -210,25 +247,42 @@ export const subTeamColumn: IColumnDefinition<Team>[] = [
   {
     header: 'Sub-team Name',
     accessorKey: 'name',
-    render: (_value: unknown, team: Team) => <span className="text-sm">{team.name}</span>,
+    render: (_value: unknown, team: Team) => (
+      <span className="text-sm">{team.name}</span>
+    ),
   },
   {
     header: 'Team Lead',
     accessorKey: 'manager',
-    render: (_value: unknown, team: Team) => <span className="text-sm">{team.manager || `N/A`}</span>,
+    render: (_value: unknown, team: Team) => (
+      <span className="text-sm">{team.manager || `N/A`}</span>
+    ),
   },
   {
     header: 'Team Members',
     accessorKey: 'members',
-    render: (_value: unknown, team: Team) => <Badge variant={`primary`}>{team.members}</Badge>,
+    render: (_value: unknown, team: Team) => (
+      <Badge variant={`primary`}>{team.members}</Badge>
+    ),
   },
   {
     header: 'Created on',
     accessorKey: 'createdAt',
-    render: (_value: unknown, team: Team) => <span className="text-sm">{formatDate(team.createdAt as string)}</span>,
+    render: (_value: unknown, team: Team) => (
+      <span className="text-sm">{formatDate(team.createdAt as string)}</span>
+    ),
   },
 ];
 
-export const useSubTeamRowActions = (onEditTeam?: (team: Team) => void, id?: string) => {
-  return useTeamRowActionsBase('sub-team', undefined, onEditTeam, undefined, id);
+export const useSubTeamRowActions = (
+  onEditTeam?: (team: Team) => void,
+  id?: string
+) => {
+  return useTeamRowActionsBase(
+    'sub-team',
+    undefined,
+    onEditTeam,
+    undefined,
+    id
+  );
 };

@@ -1,7 +1,6 @@
-import { Briefcase, Calendar, Clock, People } from "iconsax-reactjs";
-
-import { CardGroup } from "./card-group";
-import { DashboardCard } from "./dashboard-card";
+import { CardGroup } from './card-group';
+import { DashboardCard } from './dashboard-card';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 
 export const CardSection = () => {
   return (
@@ -12,7 +11,7 @@ export const CardSection = () => {
         percentage="8%"
         showTrendIcon={true}
         trend="up"
-        icon={<People size={20} />}
+        icon={<Icon name="People" />}
         iconVariant="success"
         titleColor=""
       />
@@ -22,7 +21,7 @@ export const CardSection = () => {
         value={8}
         actionText="View all"
         //   onAction={() => console.log("View all clicked")}
-        icon={<Calendar size={20} />}
+        icon={<Icon name="Calendar" />}
         iconVariant="primary"
       />
 
@@ -30,11 +29,16 @@ export const CardSection = () => {
         title="Payroll Summary"
         value="N5.5M"
         //   percentage="94%"
-        icon={<Briefcase size={20} />}
+        icon={<Icon name="Briefcase" />}
         iconVariant="warning"
       />
 
-      <DashboardCard title="Click-In Summary" value="98%" icon={<Clock size={20} />} iconVariant="purple-500" />
+      <DashboardCard
+        title="Click-In Summary"
+        value="98%"
+        icon={<Icon name="Clock" />}
+        iconVariant="purple-500"
+      />
     </CardGroup>
   );
 };

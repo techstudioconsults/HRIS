@@ -1,12 +1,7 @@
 import { HelpArticle, Section } from '../../constants/help-center';
 import { Button } from '@workspace/ui/components/button';
-import {
-  LucideAlertTriangle,
-  LucideInfo,
-  LucideThumbsDown,
-  LucideThumbsUp,
-} from 'lucide-react';
 import { cn } from '@workspace/ui/lib/utils';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 
 interface HelpArticleContentProps {
   article: HelpArticle;
@@ -73,7 +68,7 @@ export const HelpArticleContent = ({
 
   const renderImportant = (important: { title: string; items: string[] }) => (
     <div className="bg-[#F0F9FF] border border-[#E0F2FE] rounded-xl p-5 md:p-8 flex gap-2 md:gap-4 mt-2">
-      <LucideInfo className="text-[#0284C7] shrink-0" size={24} />
+      <Icon name={`LucideInfo`} />
       <div className="flex flex-col gap-2 w-full">
         <h4 className="text-xl font-semibold text-[#0369A1]">
           {important.title}
@@ -148,7 +143,8 @@ export const HelpArticleContent = ({
 
         {article.caution && (
           <div className="bg-[#FFF7ED] border border-[#FFEDD5] rounded-xl p-5 md:p-6 flex gap-2 md:gap-4">
-            <LucideAlertTriangle
+            <Icon
+              name={`LucideAlertTriangle`}
               className="text-[#F97316] shrink-0"
               size={24}
             />
@@ -202,12 +198,12 @@ export const HelpArticleContent = ({
           Was this article helpful?
         </p>
         <div className="flex items-center gap-4">
-          <Button className="bg-primary hover:bg-primary/80 text-white px-8 h-[56px] flex gap-3">
-            <LucideThumbsUp size={22} />
+          <Button className="bg-primary hover:bg-primary/80 text-white px-8 h-14 flex gap-3">
+            <Icon name={`LucideThumbsUp`} />
             Yes
           </Button>
-          <Button className="bg-[#F8FAFC] hover:bg-gray-100 text-[#64748B] px-8 h-[56px] flex gap-3 border border-gray-100 shadow-none">
-            <LucideThumbsDown size={22} />
+          <Button className="bg-[#F8FAFC] hover:bg-gray-100 text-[#64748B] px-8 h-14 flex gap-3 border border-gray-100 shadow-none">
+            <Icon name={`LucideThumbsDown`} size={22} />
             No
           </Button>
         </div>

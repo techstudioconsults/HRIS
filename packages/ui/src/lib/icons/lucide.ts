@@ -38,4 +38,9 @@ export {
   TrendingUp,
   Upload,
   FolderOpen,
+  LucideSparkles,
+  LucideAlertTriangle,
+  LucideInfo,
+  LucideThumbsDown,
+  LucideThumbsUp,
 } from 'lucide-react';

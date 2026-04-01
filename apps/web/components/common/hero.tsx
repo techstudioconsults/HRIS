@@ -1,4 +1,4 @@
-import { LucideSearch } from 'lucide-react';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 
 interface HeroProperties {
   title: string;
@@ -20,7 +20,8 @@ export const Hero = ({
         {showSearch && (
           <div className="w-full max-w-2xl relative group bg-white rounded-lg">
             <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
-              <LucideSearch
+              <Icon
+                name={`SearchIcon`}
                 className="text-gray-400 group-focus-within:text-blue-500 transition-colors"
                 size={22}
               />

@@ -1,4 +1,4 @@
-// middleware.ts
+// proxy.ts
 import { getRouteConfig } from '@/lib/routes/routes';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
@@ -44,10 +44,10 @@ const isOwnerWithAdminPermission = (
   );
 };
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip middleware for static files and API routes
+  // Skip proxy for static files and API routes
   if (
     pathname.startsWith('/_next/') ||
     pathname.startsWith('/api/') ||

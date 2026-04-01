@@ -65,7 +65,7 @@ Route `page.tsx` files **only import from `index.ts`**, never from internal fold
 - Auth is NextAuth v5 (`src/lib/next-auth/auth.ts`). Never implement custom session logic.
 - Permissions are strings from `MODULE_PERMISSIONS` in `src/lib/auth-types.ts` (e.g. `"admin"`, `"leave:read"`).
 - Route protection is declared in `src/lib/routes/routes.ts` via `ROUTE_CONFIGS` — add entries there, never guard routes inline.
-- Users with `admin` permission → `/admin/*`. Users without → `/user/*`. The middleware handles the redirect automatically.
+- Users with `admin` permission → `/admin/*`. Users without → `/user/*`. The proxy handles the redirect automatically.
 
 ## URL State (Tables & Filters)
 

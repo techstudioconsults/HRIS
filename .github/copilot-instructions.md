@@ -42,7 +42,7 @@ hris-repo/
 │   │       ├── stores/          # Zustand stores
 │   │       ├── styles/
 │   │       ├── types/           # Global TypeScript types
-│   │       └── middleware.ts    # Auth + RBAC middleware
+│   │       └── proxy.ts    # Auth + RBAC proxy
 │   └── web/                     # Marketing/landing app (port 3002)
 └── packages/
     ├── ui/                      # @workspace/ui — shared UI primitives (shadcn-based)
@@ -204,7 +204,7 @@ Pattern: `<module>:<action>` — e.g. `leave:read`, `payroll:manage`, `admin`.
 Key: Users with `admin` permission → **admin dashboard** (`/admin/*`).  
 Users without `admin` permission → **user dashboard** (`/user/*`).
 
-### Middleware (`src/middleware.ts`)
+### Middleware (`src/proxy.ts`)
 
 - Reads `next-auth` JWT → extracts `role` + `permissions`.
 - Redirects admins away from `/user/*` → `/admin/dashboard`.
@@ -277,7 +277,7 @@ export const useMyFeatureSearchParameters = () => {
 
 | Variable                           | Used in                                    |
 | ---------------------------------- | ------------------------------------------ |
-| `AUTH_SECRET`                      | NextAuth, middleware                       |
+| `AUTH_SECRET`                      | NextAuth, proxy                            |
 | `NEXT_PUBLIC_BASE_URL`             | Axios base URL, auth login                 |
 | `BACKEND_URL`                      | Server-side proxy (`/api/proxy/[...path]`) |
 | `NEXT_PUBLIC_SSE_PROGRESS_CHANNEL` | SSE client                                 |
@@ -376,7 +376,7 @@ pnpm test:e2e         # Playwright (auto-starts user-dashboard on 3000)
 | Auth config (NextAuth v5)      | `src/lib/next-auth/auth.ts`                |
 | RBAC types & permissions       | `src/lib/auth-types.ts`                    |
 | Route access control map       | `src/lib/routes/routes.ts`                 |
-| Auth + RBAC middleware         | `src/middleware.ts`                        |
+| Auth + RBAC proxy              | `src/proxy.ts`                             |
 | SSE notifications hook         | `src/lib/sse/use-notifications.ts`         |
 | App-wide providers             | `src/app/layout.tsx`                       |
 | Proxy to backend (server-side) | `src/app/api/proxy/[...path]/route.ts`     |

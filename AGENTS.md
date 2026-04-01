@@ -9,9 +9,9 @@
 ## Big Picture Architecture
 
 - UI primitives live in `packages/ui` and are consumed by both apps via `@workspace/ui` (`transpilePackages` in each app config).
-- `apps/user-dashboard` uses route groups `src/app/(public)` and `src/app/(private)` with auth and RBAC enforced in `src/middleware.ts`.
+- `apps/user-dashboard` uses route groups `src/app/(public)` and `src/app/(private)` with auth and RBAC enforced in `src/proxy.ts`.
 - Onboarding is page-routed in App Router under `src/app/(public)/onboarding/*`; `/onboarding` redirects to `/onboarding/welcome` (see `src/modules/@org/onboarding/README.md`).
-- RBAC source of truth is `src/lib/routes/routes.ts` + `src/lib/auth-types.ts`; middleware redirects by role/permission (admin vs user dashboards).
+- RBAC source of truth is `src/lib/routes/routes.ts` + `src/lib/auth-types.ts`; proxy redirects by role/permission (admin vs user dashboards).
 - Data access pattern in `user-dashboard`: feature services -> `HttpAdapter` -> Axios instance with token interceptors (`src/lib/http/*`).
 - Service wiring uses a lightweight DI container in `src/lib/tools/dependencies.ts`; React Query hooks are generated via `createServiceHooks` in `src/lib/react-query/use-service-query.ts` (`useServiceQuery`, `useSuspenseServiceQuery`, and mutation `invalidateQueries` support).
 - Feature pages should import from module barrels (for example `@/modules/@org/admin/leave`) instead of reaching into feature internals from route files.

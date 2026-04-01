@@ -1,12 +1,11 @@
-/** @type {import('next').NextConfig} */
-
 import bundleAnalyzer from '@next/bundle-analyzer';
+import type { NextConfig } from 'next';
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
-});
+}) as (config: NextConfig) => NextConfig;
 
-export default withBundleAnalyzer({
+const nextConfig = {
   transpilePackages: ['@workspace/ui'],
   turbopack: {
     rules: {
@@ -27,4 +26,8 @@ export default withBundleAnalyzer({
       { hostname: 'res.cloudinary.com' },
     ],
   },
-});
+};
+
+const finalConfig: NextConfig = withBundleAnalyzer(nextConfig);
+
+export default finalConfig;

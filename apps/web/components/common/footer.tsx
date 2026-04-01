@@ -1,7 +1,8 @@
 import { Logo } from '@workspace/ui/lib/logo';
 import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
-import Image from 'next/image';
+import FooterLogo from '~/images/footer-logo.svg';
+import { FooterSvgMorph } from '../micro-interactions/footer-svg-morph';
 
 export const Footer = () => {
   const footerLinks = [
@@ -109,15 +110,13 @@ export const Footer = () => {
         </p>
       </div>
 
-      <div className="w-full flex justify-center pointer-events-none select-none overflow-hidden h-[100px] md:h-[150px] items-end">
-        <Image
-          src="/images/TechStudioHR-footer.svg"
-          alt="hr "
-          width={1200}
-          height={150}
-          className="w-full max-w-[1200px] object-contain object-bottom lg:translate-y-4"
-        />
+      <div
+        data-footer-svg-stage
+        className={`lg:scale-[0.6] origin-bottom translate-y-2 lg:translate-y-3`}
+      >
+        <FooterLogo />
       </div>
+      <FooterSvgMorph />
     </footer>
   );
 };

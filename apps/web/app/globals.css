@@ -78,6 +78,7 @@ svg {
     @apply -translate-x-2.5 sm:translate-x-[-150px] lg:-translate-x-2.5;
 }
 
+
 .stepper-track {
     --stepper-indicator-top: 0px;
     --stepper-indicator-height: 0px;
@@ -126,6 +127,6 @@ svg {
     overflow: hidden;
 }
 
-/*[data-header-text] h1 {*/
-/*    @apply translate-y-20;*/
-/*}*/
+.footer-logo-svg {
+    overflow: hidden;
+}

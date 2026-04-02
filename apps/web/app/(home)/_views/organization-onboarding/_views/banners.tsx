@@ -21,13 +21,6 @@ const BlurImage = dynamic(
     loading: () => <SuspenseLoading />,
   }
 );
-// const Phones = dynamic(
-//   () => import('~/images/home/phones.svg').then((module) => module.default),
-//   {
-//     ssr: false,
-//     loading: () => <SuspenseLoading />,
-//   }
-// );
 
 export const TourBanner = () => {
   return (

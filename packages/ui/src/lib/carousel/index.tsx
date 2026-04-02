@@ -16,6 +16,7 @@ import {
   CarouselPrevious,
 } from '@workspace/ui/components/carousel';
 import { cn } from '@workspace/ui/lib/utils';
+import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 
 export type TestimonialCarouselItem = {
   quote: string;
@@ -85,17 +86,14 @@ export const TestimonialCarousel = ({
         }}
         plugins={mergedPlugins}
         setApi={setApi}
-        className="mx-auto w-full max-w-[980px] pb-16 md:pb-0"
+        className="mx-auto w-full max-w-[980px] pb-16 overflow-visible! md:pb-0"
       >
         <CarouselContent>
           {items.map((item, index) => {
             const fallback = getFallback(item);
 
             return (
-              <CarouselItem
-                className={`lg:pb-32`}
-                key={`${item.name}-${index}`}
-              >
+              <CarouselItem className={``} key={`${item.name}-${index}`}>
                 <article
                   className={cn(
                     'relative mx-auto w-full max-w-[780px] overflow-hidden ' +
@@ -149,13 +147,13 @@ export const TestimonialCarousel = ({
         {showControls ? (
           <>
             <CarouselPrevious
-              className="top-full bottom-auto left-1/2 size-12
+              className="top-full z-20 bottom-auto left-1/2 size-12
               -translate-x-[calc(100%+0.375rem)] -my-12 -translate-y-0 border-zinc-200
               bg-white text-zinc-700 hover:bg-white
                cc-shadow md:top-1/2 md:bottom-auto md:left-0 md:mt-0 md:-translate-x-0 md:-translate-y-1/2"
             />
             <CarouselNext
-              className="top-full bottom-auto left-1/2 size-12
+              className="top-full z-20 bottom-auto left-1/2 size-12
               translate-x-[0.375rem] -translate-y-0 border-zinc-200 bg-white text-zinc-700
               -my-12 hover:bg-white cc-shadow md:top-1/2
               md:right-0 md:left-auto md:mt-0 md:translate-x-0 md:-translate-y-1/2"
@@ -163,6 +161,8 @@ export const TestimonialCarousel = ({
           </>
         ) : null}
       </Carousel>
+      <GradientMask direction={`left`} className={` lg:translate-x-35`} />
+      <GradientMask direction={`right`} className={` lg:-translate-x-35`} />
     </div>
   );
 };

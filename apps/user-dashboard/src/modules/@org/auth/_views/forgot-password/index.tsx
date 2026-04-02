@@ -3,9 +3,8 @@
 import { PageSection, PageWrapper } from '@/lib/animation';
 import { ForgotPasswordData, forgotPasswordSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormField, FormHeader } from '@workspace/ui/lib';
+import { BackButton, FormField, FormHeader } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
-import { Icon } from '@workspace/ui/lib/icons/icon';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -57,16 +56,7 @@ export const ForgotPassword = () => {
         className="bg-background mx-auto max-w-[589px] rounded-xl p-8 shadow"
       >
         <div>
-          <MainButton
-            isIconOnly
-            icon={<Icon name="ArrowLeft" />}
-            size={`icon`}
-            className={`hover:bg-primary mb-2 size-10 bg-gray-50 hover:text-white`}
-            variant={`default`}
-            onClick={() => {
-              router.back();
-            }}
-          />
+          <BackButton size={32} />
           <FormHeader
             title="Forgot Password"
             subTitle="Enter your email address to reset your password"

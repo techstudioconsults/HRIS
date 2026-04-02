@@ -26,4 +26,13 @@ export {
   InfoCircle,
   MessageNotif,
   Trash,
+  ArrowSquareLeft,
+  ArrowLeft2,
+  Buildings,
+  SearchNormal1,
+  SearchStatus,
+  Notification,
+  Profile,
+  ArrowDown2,
+  LogoutCurve,
 } from 'iconsax-react';

@@ -1,20 +1,21 @@
-"use client";
+'use client';
 
-import { Bell, BellOff, Check, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Check, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 
-import { EmptyState } from "../empty-state";
-import { NotificationItem } from "./notification-item";
-import { NotificationWidgetProperties } from "./types";
+import { EmptyState } from '@workspace/ui/lib';
+import { NotificationItem } from '@workspace/ui/lib';
+import { NotificationWidgetProperties } from '@workspace/ui/lib';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@workspace/ui/components/popover";
-import { Button } from "@workspace/ui/components/button";
-import { ScrollArea } from "@workspace/ui/components/scroll-area";
-import { cn } from "../utils";
-import { Separator } from "@workspace/ui/components/separator";
+} from '@workspace/ui/components/popover';
+import { Button } from '@workspace/ui/components/button';
+import { ScrollArea } from '@workspace/ui/components/scroll-area';
+import { cn } from '../utils';
+import { Separator } from '@workspace/ui/components/separator';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 
 export function NotificationWidget({
   notifications,
@@ -22,11 +23,11 @@ export function NotificationWidget({
   onMarkAsRead,
   onMarkAllAsRead,
   onClearAll,
-  maxHeight = "500px",
+  maxHeight = '500px',
 }: NotificationWidgetProperties) {
   const [open, setOpen] = useState(false);
   const unreadCount = notifications.filter((n) => !n.read).length;
-  const displayCount = unreadCount > 99 ? "99+" : unreadCount;
+  const displayCount = unreadCount > 99 ? '99+' : unreadCount;
 
   const handleMarkAllAsRead = () => {
     onMarkAllAsRead?.();
@@ -46,7 +47,7 @@ export function NotificationWidget({
           className="hover:bg-primary-75 relative rounded-full"
           aria-label="Notifications"
         >
-          <Bell className="size-6" />
+          <Icon name={`Notification`} size={32} />
           {unreadCount > 0 && (
             <span className="bg-destructive absolute -top-1 -right-1 flex size-5 items-center justify-center rounded-full text-[10px] font-bold text-white">
               {displayCount}
@@ -99,12 +100,12 @@ export function NotificationWidget({
         {notifications.length === 0 ? (
           <EmptyState
             className="text-primary"
-            icon={<BellOff className="text-primary" />}
+            icon={<Icon name={`BellOff`} className="text-primary" />}
             title="No notifications."
             description="You have no notifications at the moment."
           />
         ) : (
-          <ScrollArea className={cn("overflow-y-auto")} style={{ maxHeight }}>
+          <ScrollArea className={cn('overflow-y-auto')} style={{ maxHeight }}>
             <div className="flex flex-col gap-2 p-2">
               {notifications.map((notification) => (
                 <NotificationItem
@@ -141,4 +142,4 @@ export function NotificationWidget({
   );
 }
 
-export * from "./types";
+export * from './types';

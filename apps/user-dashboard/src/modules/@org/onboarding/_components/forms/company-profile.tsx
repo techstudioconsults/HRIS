@@ -119,7 +119,7 @@ export const CompanyProfile = () => {
     >
       <div className={`mb-8 space-y-2`}>
         <FormHeader
-          icon={<Icon name="Building2" />}
+          icon={<Icon name="Buildings" size={32} />}
           title="Set up your company profile"
           subTitle="Complete your company information to get started"
         />
@@ -127,9 +127,7 @@ export const CompanyProfile = () => {
 
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(handleSubmitForm)}>
-          <section
-            className={`hide-scrollba max-h-[500px] space-y-4 overflow-auto px-1`}
-          >
+          <section className={` max-h-[500px] space-y-4 overflow-auto px-1`}>
             <div>
               <FormField
                 placeholder={

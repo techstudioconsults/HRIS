@@ -43,4 +43,5 @@ export {
   LucideInfo,
   LucideThumbsDown,
   LucideThumbsUp,
+  BellOff,
 } from 'lucide-react';

@@ -7,7 +7,7 @@ import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { useTour } from '../../context/tour-context';
+import { useTour } from '@workspace/ui/context/tour-context';
 import { useOnboardingService } from '../../services/use-onboarding-service';
 import { RolesAndPermission } from '../forms/roles&permission';
 import { Role, Team } from '../forms/schema';

@@ -1,6 +1,6 @@
 'use client';
 
-import { Logo } from '@workspace/ui/lib';
+import { Logo } from '@workspace/ui/lib/logo';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { cn } from '@workspace/ui/lib/utils';
@@ -13,12 +13,12 @@ export type TourSegment = {
   description?: string;
 };
 
-interface TourVideoProperties {
+export interface TourVideoProperties {
   src: string;
   poster?: string;
   segments: TourSegment[];
   className?: string;
-  transcript?: string[]; // optional transcript lines
+  transcript?: string[];
 }
 
 const formatTime = (seconds: number): string => {
@@ -36,12 +36,11 @@ export const TourVideo = ({
 }: TourVideoProperties) => {
   const videoReference = useRef<HTMLVideoElement | null>(null);
   const progressReference = useRef<HTMLDivElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
-  //   const [showTranscript, setShowTranscript] = useState(false);
 
   // Derive active segment
   const activeSegmentIndex = useMemo(() => {
@@ -151,9 +150,6 @@ export const TourVideo = ({
     seekTo(ratio * duration);
   };
 
-  // Format helper
-  // NOTE: formatting moved to top-level helper `formatTime`.
-
   return (
     <div
       className={cn('flex flex-col gap-4', className)}
@@ -176,7 +172,7 @@ export const TourVideo = ({
               ref={videoReference}
               className="h-auto w-full"
               poster={poster}
-              autoPlay
+              // autoPlay
               playsInline
               muted={isMuted}
             >
@@ -250,29 +246,10 @@ export const TourVideo = ({
                 >
                   {isMuted ? 'Unmute' : 'Mute'}
                 </MainButton>
-                {/* <select
-                  aria-label="Playback speed"
-                  value={playbackRate}
-                  onChange={(event_) => handleRateChange(Number(event_.target.value))}
-                  className="bg-background rounded-md border px-2 py-1"
-                >
-                  {[0.5, 0.75, 1, 1.25, 1.5, 2].map((r) => (
-                    <option key={r} value={r}>
-                      {r}x
-                    </option>
-                  ))}
-                </select> */}
               </div>
               <span className="text-muted-foreground tabular-nums">
                 {formatTime(currentTime)} / {formatTime(duration)}
               </span>
-              {/* <button
-                onClick={() => setShowTranscript((p) => !p)}
-                aria-expanded={showTranscript}
-                className="bg-secondary rounded-md px-3 py-1"
-              >
-              {showTranscript ? "Hide Transcript" : "Show Transcript"}
-              </button> */}
             </div>
           </div>
         </div>
@@ -330,19 +307,6 @@ export const TourVideo = ({
           </i>
         </aside>
       </div>
-      {/* Transcript */}
-      {/* {showTranscript && transcript && transcript.length > 0 && (
-        <div
-          className="bg-muted/30 max-h-[300px] space-y-2 overflow-y-auto rounded-lg border p-4"
-          aria-label="Video transcript"
-        >
-          {transcript.map((line, index) => (
-            <p key={index} className="text-sm leading-relaxed">
-              {line}
-            </p>
-          ))}
-        </div>
-      )} */}
     </div>
   );
 };

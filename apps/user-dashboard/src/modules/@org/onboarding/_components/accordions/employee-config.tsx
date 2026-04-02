@@ -1,29 +1,34 @@
-import { MainButton } from "@workspace/ui/lib/button";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import { MainButton } from '@workspace/ui/lib/button';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import { Employee } from "../../_views/step-three";
-import { useTour } from "../../context/tour-context";
-import { SingleEmployeeForm } from "../forms/employee/single-employee";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@workspace/ui/components/accordion";
+import { Employee } from '../../_views/step-three';
+import { useTour } from '@workspace/ui/context/tour-context';
+import { SingleEmployeeForm } from '../forms/employee/single-employee';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@workspace/ui/components/accordion';
 
 export const EmployeeConfig = () => {
   const { stopTour } = useTour();
   const { control } = useFormContext<{ employees: Employee[] }>();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "employees",
+    name: 'employees',
   });
 
   const addTeamMember = () => {
     stopTour();
     append({
-      firstName: "",
-      lastName: "",
-      email: "",
-      phoneNumber: "",
-      password: "PleaseSetAdefaultHere1.",
-      teamId: "",
-      roleId: "",
+      firstName: '',
+      lastName: '',
+      email: '',
+      phoneNumber: '',
+      password: 'PleaseSetAdefaultHere1.',
+      teamId: '',
+      roleId: '',
     });
   };
 
@@ -41,11 +46,17 @@ export const EmployeeConfig = () => {
           defaultValue={fields.map((field) => `member-${field.id}`)}
         >
           {fields.map((field, index) => (
-            <AccordionItem key={field.id} value={`member-${field.id}`} className="relative">
+            <AccordionItem
+              key={field.id}
+              value={`member-${field.id}`}
+              className="relative"
+            >
               <AccordionTrigger className="cursor-pointer p-4 text-left text-sm lg:text-lg">
                 <div className="flex w-full items-center justify-between">
                   <p className="font-semibold">
-                    {field.firstName ? `${field.firstName} ${field.lastName}` : `Team Member ${index + 1}`}
+                    {field.firstName
+                      ? `${field.firstName} ${field.lastName}`
+                      : `Team Member ${index + 1}`}
                   </p>
                   {fields.length > 1 && (
                     <span

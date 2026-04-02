@@ -6,6 +6,11 @@ import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 import { MainButton } from '@workspace/ui/lib/button';
 import { SuspenseLoading } from '@workspace/ui/lib/loading';
 import dynamic from 'next/dynamic';
+import {
+  tourSegments,
+  transcriptLines,
+} from '@workspace/ui/lib/video-player/tour-modal/constant';
+import { TourModalButton } from '@workspace/ui/lib/video-player/tour-modal';
 const BlurImage = dynamic(
   () =>
     import('@workspace/ui/components/core/miscellaneous/blur-image').then(
@@ -57,9 +62,17 @@ export const TourBanner = () => {
             className="mx-auto flex w-full max-w-md flex-col items-center
           gap-3 sm:max-w-none sm:flex-row sm:gap-4 lg:gap-5"
           >
-            <MainButton variant={'primary'} className="w-full sm:w-auto">
-              Take Quick Tour
-            </MainButton>
+            <TourModalButton
+              buttonLabel="Take a Quick Tour"
+              buttonClassName="w-full lg:w-fit"
+              buttonVariant="primary"
+              dataTour="take-tour-button"
+              src="/video/trees.mp4"
+              poster="/images/onboarding/video-poster.png"
+              segments={tourSegments}
+              transcript={transcriptLines}
+              modalClassName="py-2"
+            />
             <MainButton
               variant={'primaryOutline'}
               className="w-full bg-background sm:w-auto"

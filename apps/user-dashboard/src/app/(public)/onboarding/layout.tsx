@@ -1,6 +1,6 @@
 'use client';
 
-import { TourProvider } from '@/modules/@org/onboarding/context/tour-context';
+import { TourProvider } from '@workspace/ui/context/tour-context';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 import { Logo } from '@workspace/ui/lib';
 

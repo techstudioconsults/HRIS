@@ -93,12 +93,16 @@ export const TestimonialCarousel = ({
             const fallback = getFallback(item);
 
             return (
-              <CarouselItem className={``} key={`${item.name}-${index}`}>
+              <CarouselItem
+                className={`lg:pb-32`}
+                key={`${item.name}-${index}`}
+              >
                 <article
                   className={cn(
-                    'relative mx-auto w-full max-w-[780px] overflow-hidden ' +
-                      'rounded-xl lg:border border-[#CDE2FF] border-t-6! border-t-primary bg-background' +
-                      'px-6 py-7 sm:px-10 sm:py-9 cc-shadow',
+                    'relative cc-shadow mx-auto w-full max-w-[780px] overflow-hidden ' +
+                      'rounded-xl lg:border border-[#CDE2FF] border-t-6! ' +
+                      'border-t-primary bg-background' +
+                      'px-6 py-7 sm:px-10 sm:py-9',
                     cardClassName
                   )}
                 >
@@ -112,7 +116,14 @@ export const TestimonialCarousel = ({
                     className="mb-4 text-[#C6DCFF]"
                   >
                     <path
-                      d="M0 32V19.556C0 14.963 1.037 11.022 3.111 7.733 5.185 4.444 8.444 1.926 12.889 0.178L15.111 3.911C12.741 4.889 10.963 6.222 9.778 7.911 8.593 9.6 7.926 11.763 7.778 14.4H15.111V32H0ZM24.889 32V19.556C24.889 14.963 25.926 11.022 28 7.733 30.074 4.444 33.333 1.926 37.778 0.178L40 3.911C37.63 4.889 35.852 6.222 34.667 7.911 33.481 9.6 32.815 11.763 32.667 14.4H40V32H24.889Z"
+                      d="M0 32V19.556C0 14.963 1.037 11.022 3.111
+                      7.733 5.185 4.444 8.444 1.926 12.889 0.178L15.111
+                      3.911C12.741 4.889 10.963 6.222 9.778 7.911 8.593
+                      9.6 7.926 11.763 7.778 14.4H15.111V32H0ZM24.889
+                      32V19.556C24.889 14.963 25.926 11.022 28 7.733 30.074
+                      4.444 33.333 1.926 37.778 0.178L40 3.911C37.63 4.889 35.852
+                       6.222 34.667 7.911 33.481 9.6 32.815 11.763 32.667
+                       14.4H40V32H24.889Z"
                       fill="currentColor"
                     />
                   </svg>
@@ -161,8 +172,14 @@ export const TestimonialCarousel = ({
           </>
         ) : null}
       </Carousel>
-      <GradientMask direction={`left`} className={` lg:translate-x-35`} />
-      <GradientMask direction={`right`} className={` lg:-translate-x-35`} />
+      <GradientMask
+        direction={`left`}
+        className={`w-10 h-[70%] lg:h-full lg:translate-y-0 translate-y-1/4 lg:w-[144px] lg:translate-x-35`}
+      />
+      <GradientMask
+        direction={`right`}
+        className={`w-10 h-[70%] lg:h-full lg:translate-y-0 translate-y-1/4 lg-[144px] lg:-translate-x-35`}
+      />
     </div>
   );
 };

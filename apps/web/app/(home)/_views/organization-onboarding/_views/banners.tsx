@@ -51,10 +51,7 @@ export const TourBanner = () => {
             Automate salary processing, deductions, and payslips with a payroll
             system built for modern African businesses.
           </p>
-          <div
-            className="mx-auto flex w-full max-w-md flex-col items-center
-          gap-3 sm:max-w-none sm:flex-row sm:gap-4 lg:gap-5"
-          >
+          <div className="flex flex-col lg:flex-row gap-3">
             <TourModalButton
               buttonLabel="Take a Quick Tour"
               buttonClassName="w-full lg:w-fit"
@@ -68,7 +65,7 @@ export const TourBanner = () => {
             />
             <MainButton
               variant={'primaryOutline'}
-              className="w-full bg-background sm:w-auto"
+              className="w-full bg-background"
               href={`/login`}
             >
               Login
@@ -120,10 +117,7 @@ export const EmployeeBanner = () => {
             Give your team easy access to payslips, attendance, and essential HR
             tools, all in one seamless experience, wherever they work.
           </p>
-          <div
-            className="mx-auto flex w-full max-w-md flex-col items-center
-          gap-3 sm:max-w-none sm:flex-row sm:gap-4 lg:gap-5"
-          >
+          <div className="mx-auto flex flex-col lg:flex-row gap-3 ">
             <MainButton
               isExternal
               href={'/register'}

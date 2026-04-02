@@ -41,19 +41,19 @@ export const CTA = ({
             )}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center gap-4 mt-6 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row lg:items-center gap-4 mt-6 w-full sm:w-auto">
             <MainButton
               isExternal
               variant={`primary`}
               size={`2xl`}
               href={primaryButtonHref}
-              className={`font-bold`}
+              className={`font-bold w-full`}
             >
               {primaryButtonText}
             </MainButton>
             {showSecondaryButton && (
               <MainButton
-                className={`font-bold`}
+                className={`font-bold w-full`}
                 size={`2xl`}
                 href={secondaryButtonHref}
               >

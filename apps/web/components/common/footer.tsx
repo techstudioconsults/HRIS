@@ -1,8 +1,8 @@
 import { Logo } from '@workspace/ui/lib/logo';
-import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
 import FooterLogo from '~/images/footer-logo.svg';
 import { FooterSvgMorph } from '../micro-interactions/footer-svg-morph';
+import { MainButton } from '@workspace/ui/lib';
 
 export const Footer = () => {
   const footerLinks = [
@@ -55,7 +55,7 @@ export const Footer = () => {
             </p>
           </div>
 
-          <div className="flex flex-col gap-4 w-full max-w-md">
+          <div className="flex flex-col gap-4 w-full">
             <h4 className="font-semibold text-black text-[18px]">
               Subscribe for Our Newsletter
             </h4>
@@ -67,11 +67,11 @@ export const Footer = () => {
                 autoComplete="email"
                 inputMode="email"
                 placeholder="Email address"
-                className="bg-white border-none rounded-[6px] h-[52px] px-5 text-black w-full"
+                className="bg-white border-none min-h-[52px] rounded-[6px] px-5 text-black w-full"
               />
-              <Button className="rounded-[6px] bg-[#0066F3] hover:bg-blue-600 text-white px-8 h-[52px] font-bold w-full sm:w-auto shrink-0">
+              <MainButton variant={`primary`} size={`xl`}>
                 Subscribe
-              </Button>
+              </MainButton>
             </div>
           </div>
         </div>

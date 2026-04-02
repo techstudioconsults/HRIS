@@ -1,5 +1,5 @@
 // Define tour segments (timestamps must match actual video length)
-import { TourSegment } from '@/lib/video-player/tour-modal/TourVideo';
+import { TourSegment } from '@workspace/ui/lib/video-player/tour-modal/TourVideo';
 
 export const tourSegments: TourSegment[] = [
   {

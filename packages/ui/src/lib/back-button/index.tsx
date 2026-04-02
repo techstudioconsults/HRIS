@@ -3,7 +3,7 @@
 import React from 'react';
 import { cn } from '../utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { AnyIconName } from '@/lib/icons/types';
+import { AnyIconName } from '@workspace/ui/lib/icons/types';
 import { IconProps } from 'iconsax-react';
 
 interface BackButtonProperties {

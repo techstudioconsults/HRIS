@@ -33,59 +33,60 @@ export const OnboardingBannersParallax = () => {
 
           const media = gsap.matchMedia();
 
-          media.add('(prefers-reduced-motion: no-preference)', () => {
-            if (!window.matchMedia('(min-width: 1024px)').matches) return;
+          media.add(
+            '(prefers-reduced-motion: no-preference) and (min-width: 768px)',
+            () => {
+              const section = getBannersSection();
+              if (!section) return;
 
-            const section = getBannersSection();
-            if (!section) return;
+              const stage = section.querySelector<HTMLElement>(
+                '[data-onboarding-banners-stage]'
+              );
 
-            const stage = section.querySelector<HTMLElement>(
-              '[data-onboarding-banners-stage]'
-            );
+              const tourBanner =
+                section.querySelector<HTMLElement>('[data-tour-banner]');
+              const employeeBanner = section.querySelector<HTMLElement>(
+                '[data-employee-banner]'
+              );
 
-            const tourBanner =
-              section.querySelector<HTMLElement>('[data-tour-banner]');
-            const employeeBanner = section.querySelector<HTMLElement>(
-              '[data-employee-banner]'
-            );
+              if (!tourBanner || !employeeBanner || !stage) return;
 
-            if (!tourBanner || !employeeBanner || !stage) return;
+              gsap.set(employeeBanner, { yPercent: 105 });
 
-            gsap.set(employeeBanner, { yPercent: 105 });
-
-            const stagePinTrigger = ScrollTrigger.create({
-              trigger: stage,
-              start: 'center center',
-              endTrigger: section,
-              end: 'bottom center',
-              pin: stage,
-              pinSpacing: true,
-              anticipatePin: 1,
-              invalidateOnRefresh: true,
-            });
-
-            const employeeMotion = gsap.to(employeeBanner, {
-              yPercent: 0,
-              ease: 'none',
-              scrollTrigger: {
+              const stagePinTrigger = ScrollTrigger.create({
                 trigger: stage,
                 start: 'center center',
-                // Finish overlap early so content is fully visible before section exits.
-                end: '+=45%',
-                scrub: true,
+                endTrigger: section,
+                end: 'bottom center',
+                pin: stage,
+                pinSpacing: true,
+                anticipatePin: 1,
                 invalidateOnRefresh: true,
-              },
-            });
+              });
 
-            ScrollTrigger.refresh();
+              const employeeMotion = gsap.to(employeeBanner, {
+                yPercent: 0,
+                ease: 'none',
+                scrollTrigger: {
+                  trigger: stage,
+                  start: 'center center',
+                  // Finish overlap early so content is fully visible before section exits.
+                  end: '+=45%',
+                  scrub: true,
+                  invalidateOnRefresh: true,
+                },
+              });
 
-            return () => {
-              employeeMotion.scrollTrigger?.kill();
-              employeeMotion.kill();
-              stagePinTrigger.kill();
-              gsap.set(employeeBanner, { clearProps: 'transform' });
-            };
-          });
+              ScrollTrigger.refresh();
+
+              return () => {
+                employeeMotion.scrollTrigger?.kill();
+                employeeMotion.kill();
+                stagePinTrigger.kill();
+                gsap.set(employeeBanner, { clearProps: 'transform' });
+              };
+            }
+          );
 
           disposeAnimations = () => {
             media.revert();

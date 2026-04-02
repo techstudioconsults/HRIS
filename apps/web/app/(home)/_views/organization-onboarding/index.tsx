@@ -15,11 +15,11 @@ export const OrganizationOnboarding = () => {
       <Wrapper className="my-0! max-w-full relative overflow-visible">
         <div
           data-home-organization-onboarding-banners
-          className="relative overflow-visible lg:min-h-[170vh]"
+          className="relative overflow-visible md:min-h-[155vh] lg:min-h-[170vh]"
         >
           <div
             data-onboarding-banners-stage
-            className="relative overflow-hidden rounded-[18px] lg:h-[601.72px]"
+            className="relative overflow-visible rounded-[18px] md:h-[560px] md:overflow-hidden lg:h-[601.72px]"
           >
             <TourBanner />
             <EmployeeBanner />

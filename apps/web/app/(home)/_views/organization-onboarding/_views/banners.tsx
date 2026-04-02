@@ -95,7 +95,7 @@ export const EmployeeBanner = () => {
   return (
     <Wrapper
       data-employee-banner
-      className="bg-[#F7F9FC] relative z-20 h-full lg:absolute lg:inset-0 py-4 lg:py-[66px] lg:px-[58px]! my-0! rounded-[18px]"
+      className="bg-[#F7F9FC] relative z-20 h-full md:absolute md:inset-0 py-4 lg:py-[66px] lg:px-[58px]! my-0! rounded-[18px]"
     >
       <div className="flex justify-center flex-col-reverse md:flex-row-reverse items-center gap-5 lg:gap-10">
         <div className="flex-1 space-y-10">

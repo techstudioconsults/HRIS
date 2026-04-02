@@ -4,6 +4,7 @@ import { HeroCopy } from './_components/hero-copy';
 import { HeroPreview } from './_components/hero-preview';
 import { HeroActions } from './_components/hero-actions';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
+import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 
 export const Hero = () => {
   return (
@@ -35,10 +36,7 @@ export const Hero = () => {
           <HeroPreview />
         </div>
       </Wrapper>
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-24
-        bg-linear-to-t from-background via-background/70 to-transparent sm:h-32 lg:h-44"
-      />
+      <GradientMask direction="bottom" className="h-16" />
     </main>
   );
 };

@@ -1,4 +1,3 @@
-import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
 import { cn } from '@workspace/ui/lib/utils';
 import { Logo } from '@workspace/ui/lib/logo';
@@ -6,6 +5,7 @@ import { NavbarMobileMenu } from './navbar-mobile-menu';
 import { NavbarScrollState } from './navbar-scroll-state';
 import { NAV_LINKS } from './navbar-links';
 import { Icon } from '@workspace/ui/lib/icons/icon';
+import { MainButton } from '@workspace/ui/lib';
 
 export const Navbar = () => {
   return (
@@ -58,18 +58,17 @@ export const Navbar = () => {
         </div>
 
         <div className="hidden lg:flex items-center gap-8">
-          <Link
+          <MainButton
+            isExternal
             href="/login"
-            className="text-[#1E293B] hover:text-[#0052CC] font-semibold text-sm transition-colors"
+            variant={`default`}
+            className="hover:text-primary font-semibold text-sm transition-colors"
           >
             Login
-          </Link>
-          <Button
-            className="rounded-md bg-[#0066F3] hover:bg-[#0052CC] text-white px-6 h-11 font-bold"
-            asChild
-          >
-            <Link href="/register">Start Free Trial</Link>
-          </Button>
+          </MainButton>
+          <MainButton isExternal href="/register" variant={`primary`}>
+            Start Free Trial
+          </MainButton>
         </div>
 
         <NavbarMobileMenu links={NAV_LINKS} />

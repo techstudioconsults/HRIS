@@ -76,6 +76,7 @@ export const TourBanner = () => {
             <MainButton
               variant={'primaryOutline'}
               className="w-full bg-background sm:w-auto"
+              href={`/login`}
             >
               Login
             </MainButton>
@@ -130,12 +131,19 @@ export const EmployeeBanner = () => {
             className="mx-auto flex w-full max-w-md flex-col items-center
           gap-3 sm:max-w-none sm:flex-row sm:gap-4 lg:gap-5"
           >
-            <MainButton variant={'primary'} className="w-full sm:w-auto">
+            <MainButton
+              isExternal
+              href={'/register'}
+              variant={'primary'}
+              className="w-full sm:w-auto"
+            >
               Start free Trial
             </MainButton>
             <MainButton
+              isExternal
               variant={'primaryOutline'}
               className="w-full bg-background sm:w-auto"
+              href={'/login'}
             >
               Login
             </MainButton>
@@ -145,7 +153,8 @@ export const EmployeeBanner = () => {
           {/*<Phones />*/}
           <BlurImage
             src={
-              'https://res.cloudinary.com/kingsleysolomon/image/upload/f_auto,q_auto,w_1000/v1774766845/techstudio/hris-repo/y6xgs9npgb9xvscim2fq.webp'
+              'https://res.cloudinary.com/kingsleysolomon/image/upload/f_auto,q_auto,w_1000/' +
+              'v1774766845/techstudio/hris-repo/y6xgs9npgb9xvscim2fq.webp'
             }
             alt={'phones-img'}
             width={514}

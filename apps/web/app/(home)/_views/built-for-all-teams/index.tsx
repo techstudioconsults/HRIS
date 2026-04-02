@@ -6,6 +6,7 @@ import { SuspenseLoading } from '@workspace/ui/lib/loading';
 import { teamCards } from './constants';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 import { cn } from '@workspace/ui/lib/utils';
+import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 
 const TeamCard = dynamic(
   () => import('./_components/team-card').then((module) => module.TeamCard),
@@ -20,8 +21,8 @@ export const BuiltForAllTeams = () => {
     <section
       data-home-built-for-all-teams
       className={cn(
-        'relative bg-[#F7F9FC] overflow-hidden bg-[url(/images/home/techstudio-text.svg)]' +
-          ' bg-fixed bg-contain bg-bottom\n' +
+        'relative bg-[#F7F9FC] overflow-hidden min-h-[800px] bg-[url(/images/home/techstudio-text.svg)]' +
+          ' bg-fixed bg-contain bg-bottom' +
           '      bg-no-repeat py-5 lg:py-10',
         `before:pointer-events-none before:absolute before:top-0 before:left-0
          before:right-0 before:h-full before:w-full before:bg-[#F7F9FC]
@@ -43,6 +44,7 @@ export const BuiltForAllTeams = () => {
           ))}
         </div>
       </Wrapper>
+      <GradientMask direction="bottom" className="h-16!" />
     </section>
   );
 };

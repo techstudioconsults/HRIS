@@ -12,15 +12,15 @@ export function BlurImage(properties: ComponentProps<typeof Image>) {
       {...properties}
       alt={properties.alt}
       className={cn(
-        'duration-700 ease-in-out',
-        isLoading ? 'scale-105 blur-lg' : 'blur-0 scale-100',
+        // 'duration-700 ease-in-out',
+        // isLoading ? 'scale-105 blur-lg' : 'blur-0 scale-100',
         properties.className
       )}
-      onLoad={() => {
-        setTimeout(() => {
-          setLoading(false);
-        }, 500);
-      }}
+      // onLoad={() => {
+      //   setTimeout(() => {
+      //     setLoading(false);
+      //   }, 500);
+      // }}
     />
   );
 }

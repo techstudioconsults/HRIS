@@ -29,7 +29,8 @@ export const FAQs = () => {
           <header>
             <h2
               data-header-text
-              className="text-3xl font-semibold tracking-[-0.02em] text-zinc-800 sm:text-4xl lg:text-[40px] lg:leading-[1.2] xl:text-[48px]"
+              className="text-3xl font-semibold tracking-[-0.02em] text-zinc-800
+              sm:text-4xl lg:text-[40px] lg:leading-[1.2] xl:text-[48px]"
             >
               <span data-h1 className="inline-block">
                 Frequently Asked
@@ -37,20 +38,25 @@ export const FAQs = () => {
             </h2>
             <h2
               data-header-text
-              className="text-3xl font-semibold tracking-[-0.02em] text-zinc-800 sm:text-4xl lg:text-[40px] lg:leading-[1.2] xl:text-[48px]"
+              className="text-3xl font-semibold tracking-[-0.02em] text-zinc-800
+              sm:text-4xl lg:text-[40px] lg:leading-[1.2] xl:text-[48px]"
             >
               <span data-h1 className="inline-block">
                 <Emphasis>Questions</Emphasis>
               </span>
             </h2>
           </header>
-          <p className="text-sm leading-relaxed text-balance text-zinc-500 sm:text-base lg:text-[15px] xl:text-lg">
+          <p
+            className="text-sm leading-relaxed text-balance text-zinc-500
+          sm:text-base lg:text-[15px] xl:text-lg"
+          >
             Learn more about Techstudio HR. If you can&apos;t find what
             you&apos;re looking for, our support team is always here to help.
           </p>
           <MainButton
             variant="primaryOutline"
             className="w-full bg-background sm:w-auto"
+            href={`/help-center`}
           >
             Contact Support
           </MainButton>

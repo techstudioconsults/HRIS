@@ -91,7 +91,7 @@ export const Footer = () => {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-black/70 hover:text-[#0066F3] text-lg transition-colors inline-block"
+                      className="text-black/70 hover:text-primary text-lg transition-colors inline-block"
                     >
                       {link.name}
                     </Link>

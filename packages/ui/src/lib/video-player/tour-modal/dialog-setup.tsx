@@ -1,10 +1,7 @@
 'use client';
 
 import { ReusableDialog } from '@workspace/ui/lib/dialog/Dialog';
-import { TourVideo } from './TourVideo';
-// import type { TourSegment } from '@/lib';
-
-// export type { TourSegment };
+import { TourVideo, type TourSegment } from './TourVideo';
 
 export interface TourModalProperties {
   /** Controlled open state */
@@ -16,31 +13,13 @@ export interface TourModalProperties {
   /** Optional poster image shown before the video plays */
   poster?: string;
   /** Ordered list of named segments with timestamps */
-  segments: any[];
-  // segments: TourSegment[];
+  segments: TourSegment[];
   /** Optional transcript lines displayed below the video */
   transcript?: string[];
   /** Extra class names forwarded to TourVideo */
   className?: string;
 }
 
-/**
- * TourModal
- *
- * A self-contained, shareable dialog that wraps TourVideo.
- * Drop it into any app — supply your own open/onOpenChange state,
- * video src, segments, and optional transcript.
- *
- * @example
- * <TourModal
- *   open={dialogOpen}
- *   onOpenChange={setDialogOpen}
- *   src="/video/product-tour.mp4"
- *   poster="/images/poster.png"
- *   segments={segments}
- *   transcript={lines}
- * />
- */
 export const TourModal = ({
   open,
   onOpenChange,
@@ -54,10 +33,11 @@ export const TourModal = ({
     <ReusableDialog
       trigger={null}
       open={open}
-      className="max-w-5xl!"
+      className="min-w-0! w-[calc(100vw-1.25rem)] max-w-[calc(100vw-1.25rem)] rounded-xl p-3 sm:w-[calc(100vw-2rem)] sm:max-w-[calc(100vw-2rem)] sm:p-4 md:p-5 lg:w-full lg:max-w-5xl! lg:p-6 max-h-[92dvh] overflow-y-auto"
       onOpenChange={onOpenChange}
     >
       <TourVideo
+        logo={'/images/logo.png'}
         src={src}
         poster={poster}
         segments={segments}

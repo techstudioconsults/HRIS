@@ -14,6 +14,7 @@ export type TourSegment = {
 };
 
 export interface TourVideoProperties {
+  logo: string;
   src: string;
   poster?: string;
   segments: TourSegment[];
@@ -33,6 +34,7 @@ export const TourVideo = ({
   poster,
   segments,
   className,
+  logo,
 }: TourVideoProperties) => {
   const videoReference = useRef<HTMLVideoElement | null>(null);
   const progressReference = useRef<HTMLDivElement | null>(null);
@@ -45,11 +47,11 @@ export const TourVideo = ({
   // Derive active segment
   const activeSegmentIndex = useMemo(() => {
     if (segments.length === 0) return -1;
-    const indexOfActive = segments.findIndex((segment, segmentIndex) => {
+
+    return segments.findIndex((segment, segmentIndex) => {
       const nextTime = segments[segmentIndex + 1]?.time ?? duration + 1;
       return currentTime >= segment.time && currentTime < nextTime;
     });
-    return indexOfActive;
   }, [segments, currentTime, duration]);
 
   const togglePlay = useCallback(() => {
@@ -157,9 +159,9 @@ export const TourVideo = ({
     >
       <div className="flex flex-col gap-6 lg:flex-row">
         {/* Video + controls */}
-        <div className="flex-1 space-y-4">
+        <div className="flex-1 space-y-4 min-w-0">
           <article className="max-w-full">
-            <Logo />
+            <Logo className={`size-10`} logo={logo} />
             <p className="text-muted-foreground mt-2 text-sm">
               Lorem ipsum, dolor sit amet consectetur adipisicing elit.
               Necessitatibus provident hic repudiandae maxime perferendis
@@ -167,10 +169,10 @@ export const TourVideo = ({
               nostrum nemo quidem distinctio vel! Dicta, delectus saepe.
             </p>
           </article>
-          <div className="relative min-h-[372px] overflow-hidden rounded-xl bg-black shadow">
+          <div className="relative w-full aspect-video overflow-hidden rounded-xl bg-black shadow">
             <video
               ref={videoReference}
-              className="h-auto w-full"
+              className="h-full w-full object-cover"
               poster={poster}
               // autoPlay
               playsInline
@@ -226,8 +228,8 @@ export const TourVideo = ({
                 />
               ))}
             </div>
-            <div className="flex items-center justify-between gap-4 text-sm">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 text-sm">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <MainButton
                   onClick={togglePlay}
                   variant="primary"
@@ -259,7 +261,7 @@ export const TourVideo = ({
           aria-label="Tour segments"
         >
           <h2 className="text-lg font-semibold">Tour Overview</h2>
-          <ol className="!max-h-[547px] flex-1 space-y-2 overflow-y-auto p-1">
+          <ol className="max-h-[30dvh] flex-1 space-y-2 overflow-y-auto p-1 sm:max-h-[35dvh] lg:max-h-[60dvh]">
             {segments.map((segment, segmentIndex) => {
               const active = segmentIndex === activeSegmentIndex;
               return (
@@ -269,7 +271,7 @@ export const TourVideo = ({
                     className={cn(
                       'bg-primary-50 w-full rounded-md border border-transparent px-3 py-2 text-left shadow transition',
                       active
-                        ? 'bg-primary-200 !text-white'
+                        ? 'bg-primary-200 text-white!'
                         : 'hover:bg-primary/20 hover:shadow-none'
                     )}
                     aria-current={active ? 'step' : undefined}

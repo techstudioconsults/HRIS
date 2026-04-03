@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Emphasis } from '../../../_components/Emphasis';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 import { MainButton } from '@workspace/ui/lib/button';
@@ -10,11 +10,20 @@ import {
   tourSegments,
   transcriptLines,
 } from '@workspace/ui/lib/video-player/tour-modal/constant';
-import { TourModalButton } from '@workspace/ui/lib/video-player/tour-modal';
 const BlurImage = dynamic(
   () =>
     import('@workspace/ui/components/core/miscellaneous/blur-image').then(
       (module) => module.BlurImage
+    ),
+  {
+    ssr: false,
+    loading: () => <SuspenseLoading />,
+  }
+);
+const TourModalButton = dynamic(
+  () =>
+    import('@workspace/ui/lib/video-player/tour-modal').then(
+      (module) => module.TourModalButton
     ),
   {
     ssr: false,
@@ -55,17 +64,19 @@ export const TourBanner = () => {
             system built for modern African businesses.
           </p>
           <div className="flex flex-col lg:flex-row gap-3">
-            <TourModalButton
-              buttonLabel="Take a Quick Tour"
-              buttonClassName="w-full lg:w-fit"
-              buttonVariant="primary"
-              dataTour="take-tour-button"
-              src="/video/trees.mp4"
-              poster="/images/onboarding/video-poster.png"
-              segments={tourSegments}
-              transcript={transcriptLines}
-              modalClassName="py-2"
-            />
+            <Suspense>
+              <TourModalButton
+                buttonLabel="Take a Quick Tour"
+                buttonClassName="w-full lg:w-fit"
+                buttonVariant="primary"
+                dataTour="take-tour-button"
+                src="/video/trees.mp4"
+                poster="/images/onboarding/video-poster.png"
+                segments={tourSegments}
+                transcript={transcriptLines}
+                modalClassName="py-2"
+              />
+            </Suspense>
             <MainButton
               variant={'primaryOutline'}
               className="w-full bg-background"

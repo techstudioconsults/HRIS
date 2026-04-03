@@ -51,12 +51,12 @@ export const OnboardingBannersParallax = () => {
 
               if (!tourBanner || !employeeBanner || !stage) return;
 
-              gsap.set(employeeBanner, { yPercent: 105 });
+              gsap.set(employeeBanner, { yPercent: 100 });
 
               const stagePinTrigger = ScrollTrigger.create({
                 trigger: stage,
                 start: 'center center',
-                endTrigger: section,
+                endTrigger: section, //this is the container
                 end: 'bottom center',
                 pin: stage,
                 pinSpacing: true,
@@ -71,7 +71,7 @@ export const OnboardingBannersParallax = () => {
                   trigger: stage,
                   start: 'center center',
                   // Finish overlap early so content is fully visible before section exits.
-                  end: '+=45%',
+                  end: '+=30%',
                   scrub: true,
                   invalidateOnRefresh: true,
                 },

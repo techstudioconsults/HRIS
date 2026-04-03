@@ -168,11 +168,11 @@ export function GlobalSearchInput({
 
   return (
     <Popover open={showDropdown} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+      <PopoverTrigger>
         <div
           className={cn(
-            'bg-background border-border focus-within:ring-ring relative flex h-10 w-full min-w-[500px] ' +
-              'items-center gap-2 rounded-md px-3 transition-colors focus-within:ring-2 focus-within:ring-offset-0',
+            'bg-background relative flex h-10 w-full min-w-[500px] ' +
+              'items-center gap-2 rounded-md px-3 focus:border-none! focus:ring-0',
             disabled && 'cursor-not-allowed opacity-50',
             className
           )}
@@ -187,8 +187,8 @@ export function GlobalSearchInput({
             onKeyDown={handleKeyDown}
             onFocus={() => setOpen(true)}
             disabled={disabled}
-            className="placeholder:text-primary/75 h-full flex-1 border-none bg-transparent p-0
-            text-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none"
+            className="h-full flex-1 border-none bg-transparent p-0
+            text-sm"
           />
           {isLoading && (
             <Icon

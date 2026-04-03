@@ -79,7 +79,9 @@ export default function TopBar({
         {/* Search Input */}
         <div className="relative hidden w-fit items-center gap-4 md:flex">
           <SidebarTrigger className="absolute top-14 -left-[30px] bg-[#1F2666] text-white shadow-none" />
-          <GlobalSearchInput className={`bg-primary/10`} />
+          <GlobalSearchInput
+            className={`border border-primary/25 placeholder:text-primary/25 shadow-none`}
+          />
         </div>
 
         {/* Right Section */}

@@ -9,9 +9,8 @@ export const HeaderEntrance = () => {
 
     const init = async () => {
       try {
-        const [{ default: gsap }, { ScrollTrigger }] = await Promise.all([
-          import('gsap'),
-          import('gsap/ScrollTrigger'),
+        const [{ gsap, ScrollTrigger }] = await Promise.all([
+          import('../../lib/gsap/gsap'),
         ]);
 
         if (!isMounted) return;

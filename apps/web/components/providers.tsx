@@ -9,9 +9,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <NextThemesProvider
       attribute="class"
       defaultTheme="light"
-      enableSystem
-      disableTransitionOnChange
-      enableColorScheme
+      // enableSystem
+      // disableTransitionOnChange
+      // enableColorScheme
     >
       <SmoothScrollInit />
       {children}

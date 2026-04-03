@@ -3,7 +3,7 @@ import { Playfair_Display, Work_Sans } from 'next/font/google';
 import './globals.css';
 import { ReactNode } from 'react';
 import { Providers } from '../components/providers';
-import { Footer, GlobalPageLoader, Navbar } from '../components/common';
+import { Navbar } from '../components/common';
 
 const fontSans = Work_Sans({
   subsets: ['latin'],
@@ -25,13 +25,12 @@ export default function RootLayout({
       <body
         className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
       >
-        <GlobalPageLoader />
         <Providers>
-          <Navbar />
           <div id="smooth-wrapper">
             <div id="smooth-content">
+              <Navbar />
               {children}
-              <Footer />
+              {/*<Footer />*/}
             </div>
           </div>
         </Providers>

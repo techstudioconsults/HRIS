@@ -12,14 +12,11 @@ export const FooterSvgMorph = () => {
 
     const init = async () => {
       try {
-        const [{ default: gsap }, { MorphSVGPlugin }] = await Promise.all([
-          import('gsap'),
-          import('gsap/MorphSVGPlugin'),
+        const [{ gsap, MorphSVGPlugin }] = await Promise.all([
+          import('../../lib/gsap/gsap'),
         ]);
 
         if (!isMounted) return;
-
-        gsap.registerPlugin(MorphSVGPlugin);
 
         const media = gsap.matchMedia();
 

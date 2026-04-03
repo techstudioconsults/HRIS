@@ -17,19 +17,13 @@ export const CardTransitions = () => {
       hasInitialized = true;
 
       try {
-        const [
-          { default: gsap },
-          { ScrollTrigger },
-          { createPayrollCardAnimation },
-        ] = await Promise.all([
-          import('gsap'),
-          import('gsap/ScrollTrigger'),
-          import('./payroll-card-animation'),
-        ]);
+        const [{ gsap, ScrollTrigger }, { createPayrollCardAnimation }] =
+          await Promise.all([
+            import('../../lib/gsap/gsap'),
+            import('./payroll-card-animation'),
+          ]);
 
         if (!isMounted) return;
-
-        gsap.registerPlugin(ScrollTrigger);
 
         rafId = requestAnimationFrame(() => {
           if (!isMounted) return;

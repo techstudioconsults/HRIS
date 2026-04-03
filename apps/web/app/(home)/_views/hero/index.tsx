@@ -13,7 +13,6 @@ export const Hero = () => {
       className="relative flex min-h-svh flex-col items-center overflow-hidden bg-primary/5 sm:min-h-[108svh]
        lg:min-h-[120vh]"
     >
-      {/*<HeroEntrance />*/}
       <HeroBackground />
       <Wrapper
         className="z-1 mx-auto w-full max-w-6xl pt-30 my-0! text-center sm:pt-28 md:pt-32 lg:pt-[20vh]

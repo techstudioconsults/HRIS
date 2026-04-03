@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client';
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@workspace/ui/components/collapsible";
+} from '@workspace/ui/components/collapsible';
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -15,10 +15,11 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@workspace/ui/components/sidebar";
-import { ChevronRight } from "lucide-react";
-import Link from "next/link";
-import { cn } from "../../utils";
+} from '@workspace/ui/components/sidebar';
+import { ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+import { cn } from '../../utils';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 
 export function NavMain({
   title,
@@ -59,12 +60,13 @@ export function NavMain({
                   <Link href={item.url}>
                     <SidebarMenuButton
                       className={cn(
-                        "w-full p-6 transition-colors",
+                        'w-full p-6 transition-colors',
                         item.isActive &&
-                          "border-primary/70 text-primary border-2 font-medium shadow-[0px_0px_0px_2px_#0266F333]",
+                          'border-primary/70 text-primary border-2 font-medium shadow-[0px_0px_0px_2px_#0266F333]'
                       )}
                     >
-                      {item.icon && <item.icon className={cn("h-4 w-4")} />}
+                      {/*{item.icon && <item.icon className={cn('h-4 w-4')} />}*/}
+                      {item.icon && <Icon name={item.icon} />}
                       <span>{item.name}</span>
                       {item.subItems && (
                         <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -79,9 +81,9 @@ export function NavMain({
                         <SidebarMenuSubButton
                           asChild
                           className={cn(
-                            "w-full transition-colors",
+                            'w-full transition-colors',
                             subItem.isActive &&
-                              "bg-accent text-accent-foreground font-medium",
+                              'bg-accent text-accent-foreground font-medium'
                           )}
                         >
                           <Link href={subItem.url}>

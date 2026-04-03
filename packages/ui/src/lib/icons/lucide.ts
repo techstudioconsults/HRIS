@@ -1,6 +1,5 @@
 export {
   Home,
-  Edit,
   Settings,
   Search,
   SearchIcon,
@@ -43,4 +42,5 @@ export {
   LucideInfo,
   LucideThumbsDown,
   LucideThumbsUp,
+  BellOff,
 } from 'lucide-react';

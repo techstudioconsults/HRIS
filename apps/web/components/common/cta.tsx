@@ -1,7 +1,6 @@
-import { Button } from '@workspace/ui/components/button';
-import Link from 'next/link';
 import { cn } from '@workspace/ui/lib/utils';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
+import { MainButton } from '@workspace/ui/lib';
 
 interface CTAProps {
   title?: string;
@@ -42,20 +41,24 @@ export const CTA = ({
             )}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center gap-4 mt-6 w-full sm:w-auto">
-            <Button
-              className="bg-primary hover:bg-primary/80 text-white w-full sm:w-auto px-8 h-14 text-base font-bold rounded-[10px]"
-              asChild
+          <div className="flex flex-col sm:flex-row lg:items-center gap-4 mt-6 w-full sm:w-auto">
+            <MainButton
+              isExternal
+              variant={`primary`}
+              size={`2xl`}
+              href={primaryButtonHref}
+              className={`font-bold w-full`}
             >
-              <Link href={primaryButtonHref}>{primaryButtonText}</Link>
-            </Button>
+              {primaryButtonText}
+            </MainButton>
             {showSecondaryButton && (
-              <Button
-                className="bg-white hover:bg-white/80 text-primary w-full sm:w-auto px-8 h-14 text-base font-bold rounded-[10px]"
-                asChild
+              <MainButton
+                className={`font-bold w-full`}
+                size={`2xl`}
+                href={secondaryButtonHref}
               >
-                <Link href={secondaryButtonHref}>{secondaryButtonText}</Link>
-              </Button>
+                {secondaryButtonText}
+              </MainButton>
             )}
           </div>
         </div>

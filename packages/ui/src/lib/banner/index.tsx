@@ -1,7 +1,7 @@
-import { Badge } from "@workspace/ui/components/badge";
-import Image from "next/image";
-import { FC, HtmlHTMLAttributes, ReactNode } from "react";
-import { cn } from "../utils";
+import { Badge } from '@workspace/ui/components/badge';
+import Image from 'next/image';
+import { FC, HtmlHTMLAttributes, ReactNode } from 'react';
+import { cn } from '../utils';
 
 interface BannerProperties extends HtmlHTMLAttributes<HTMLDivElement> {
   tagTitle?: string;
@@ -25,10 +25,11 @@ export const ReusableBanner: FC<BannerProperties> = ({
   return (
     <section
       className={cn(
-        `bg-primary/10 relative flex flex-col-reverse items-center justify-between gap-4 rounded-lg px-4 py-8`, // Mobile padding
+        `bg-primary/10 relative flex flex-col-reverse items-center 
+        justify-between gap-4 rounded-lg px-4 py-8`, // Mobile padding
         `md:px-8 md:py-10`, // Tablet padding
         `lg:flex-row lg:px-15 lg:py-13`, // Desktop layout (matches your original)
-        className,
+        className
       )}
     >
       {/* Content - remains unchanged from your original */}
@@ -43,13 +44,13 @@ export const ReusableBanner: FC<BannerProperties> = ({
           >
             {tagTitle}
           </Badge>
-          <h1 className="mt-4 text-2xl md:text-3xl lg:text-4xl">{title}</h1>{" "}
+          <h1 className="mt-4 text-2xl md:text-3xl lg:text-4xl">{title}</h1>{' '}
           {/* Responsive text */}
           <p
             className={`text-high-grey-II my-[22px] text-lg font-[300] md:text-xl lg:text-2xl`}
           >
             {description}
-          </p>{" "}
+          </p>{' '}
           {/* Responsive text */}
           {action}
         </div>
@@ -60,11 +61,11 @@ export const ReusableBanner: FC<BannerProperties> = ({
         className={cn(
           `relative mb-4 hidden h-48 w-full lg:block`, // Mobile styles
           `md:mb-6 md:h-64`, // Tablet
-          `lg:absolute lg:right-0 lg:bottom-0 lg:mb-0 lg:h-[447px] lg:w-[557px]`, // Exactly your original desktop layout
+          `lg:absolute lg:right-0 lg:bottom-0 lg:mb-0 lg:h-[447px] lg:w-[557px]` // Exactly your original desktop layout
         )}
       >
         <Image
-          src={image || ""}
+          src={image || ''}
           alt="wheel"
           fill
           className="object-contain"

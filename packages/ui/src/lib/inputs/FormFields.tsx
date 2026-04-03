@@ -1,29 +1,30 @@
-'use client'
+'use client';
 
-import { Label } from '@workspace/ui/components/label'
-import { Textarea } from '@workspace/ui/components/textarea'
-import { Eye, EyeOff } from 'lucide-react'
-import Image from 'next/image'
-import { useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { cn } from '../utils'
+import { Label } from '@workspace/ui/components/label';
+import { Textarea } from '@workspace/ui/components/textarea';
+import { Eye, EyeOff } from 'lucide-react';
+import Image from 'next/image';
+import { ChangeEvent, ReactNode, useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
+import { cn } from '../utils';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@workspace/ui/components/select'
-import { Input } from '@workspace/ui/components/input'
-import { BlurImage } from '@workspace/ui/components/core/miscellaneous/blur-image'
-import { Checkbox } from '@workspace/ui/components/checkbox'
-import { Badge } from '@workspace/ui/components/badge'
-import { Switch } from '@workspace/ui/components/switch'
+} from '@workspace/ui/components/select';
+import { Input } from '@workspace/ui/components/input';
+import { BlurImage } from '@workspace/ui/components/core/miscellaneous/blur-image';
+import { Checkbox } from '@workspace/ui/components/checkbox';
+import { Badge } from '@workspace/ui/components/badge';
+import { Switch } from '@workspace/ui/components/switch';
+import { Icon } from '../icons/icon';
 
 interface FormFieldProperties {
-  label?: string
-  labelDetailedNode?: React.ReactNode
-  name: string
+  label?: string;
+  labelDetailedNode?: ReactNode;
+  name: string;
   type?:
     | 'text'
     | 'textarea'
@@ -31,18 +32,18 @@ interface FormFieldProperties {
     | 'number'
     | 'password'
     | 'email'
-    | 'date'
-  placeholder?: string
-  required?: boolean
-  disabled?: boolean
-  readOnly?: boolean
-  options?: { value: string; label: string }[]
-  className?: string
-  containerClassName?: string
-  leftAddon?: React.ReactNode // Add left icon or button
-  rightAddon?: React.ReactNode // Add right icon or button
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
-  [key: string]: unknown // Allow any additional props like data-tour
+    | 'date';
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
+  options?: { value: string; label: string }[];
+  className?: string;
+  containerClassName?: string;
+  leftAddon?: ReactNode; // Add left icon or button
+  rightAddon?: ReactNode; // Add right icon or button
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  [key: string]: unknown; // Allow any additional props like data-tour
 }
 
 export function FormField({
@@ -65,24 +66,24 @@ export function FormField({
   const {
     control,
     formState: { errors },
-  } = useFormContext()
-  const error = errors[name]
-  const [showPassword, setShowPassword] = useState(false)
+  } = useFormContext();
+  const error = errors[name];
+  const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
-    setShowPassword((previous) => !previous)
-  }
+    setShowPassword((previous) => !previous);
+  };
 
   return (
-    <div className='space-y-2'>
+    <div className="space-y-2">
       {label && (
         <div>
-          <Label className='text-[16px] font-medium'>
+          <Label className="text-[16px] font-medium">
             {label}
-            {required && <span className='text-destructive -ml-1'>*</span>}
+            {required && <span className="text-destructive -ml-1">*</span>}
           </Label>
           {labelDetailedNode && (
-            <div className='text-mid-grey-II text-xs'>{labelDetailedNode}</div>
+            <div className="text-mid-grey-II text-xs">{labelDetailedNode}</div>
           )}
         </div>
       )}
@@ -94,8 +95,8 @@ export function FormField({
           const inputClassName = cn(
             'flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-gray-200 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:cursor-not-allowed disabled:opacity-50 transition-all shadow-none',
             error && 'border-destructive',
-            className,
-          )
+            className
+          );
 
           const inputWithAddons = (
             <div
@@ -103,7 +104,7 @@ export function FormField({
               {...rest}
             >
               {leftAddon && (
-                <div className='flex items-center'>{leftAddon}</div>
+                <div className="flex items-center">{leftAddon}</div>
               )}
               {type === 'textarea' ? (
                 <Textarea
@@ -116,8 +117,8 @@ export function FormField({
               ) : type === 'select' ? (
                 (() => {
                   const selectValue =
-                    field.value == null ? '' : String(field.value)
-                  const selectKey = `${options.map((o) => o.value).join('|')}::${selectValue}`
+                    field.value == null ? '' : String(field.value);
+                  const selectKey = `${options.map((o) => o.value).join('|')}::${selectValue}`;
                   return (
                     <Select
                       key={selectKey}
@@ -130,31 +131,31 @@ export function FormField({
                           readOnly &&
                             'pointer-events-none cursor-not-allowed opacity-100',
                           inputClassName,
-                          'w-full shadow-none',
+                          'w-full shadow-none'
                         )}
                       >
                         <SelectValue
                           placeholder={placeholder || 'Select a value'}
                         />
                       </SelectTrigger>
-                      <SelectContent className='bg-background shadow-none'>
+                      <SelectContent className="bg-background shadow-none">
                         {options.map((option) => (
                           <SelectItem
                             key={option.value}
                             value={option.value}
-                            className='hover:bg-gray-50'
+                            className="hover:bg-gray-50"
                           >
                             {option.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                  )
+                  );
                 })()
               ) : type === 'number' ? (
                 <Input
                   {...field}
-                  type='number'
+                  type="number"
                   placeholder={placeholder}
                   disabled={disabled}
                   readOnly={readOnly}
@@ -165,7 +166,7 @@ export function FormField({
                   }
                 />
               ) : type === 'password' ? (
-                <div className='relative w-full'>
+                <div className="relative w-full">
                   <Input
                     {...field}
                     type={showPassword ? 'text' : 'password'}
@@ -175,17 +176,21 @@ export function FormField({
                     className={inputClassName}
                     onChange={(event) => {
                       // Ensure we store the actual string value, not the event object
-                      const value = event.target.value
-                      field.onChange(value)
-                      onChange?.(event)
+                      const value = event.target.value;
+                      field.onChange(value);
+                      onChange?.(event);
                     }}
                   />
                   <button
-                    type='button'
+                    type="button"
                     onClick={togglePasswordVisibility}
-                    className='text-primary hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 hover:cursor-pointer'
+                    className="text-primary hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 hover:cursor-pointer"
                   >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {showPassword ? (
+                      <Icon name={`EyeSlash`} />
+                    ) : (
+                      <Icon name={`Eye`} />
+                    )}
                   </button>
                 </div>
               ) : type === 'date' ? (
@@ -198,11 +203,11 @@ export function FormField({
                   className={cn(inputClassName, 'cursor-pointer pr-10')}
                   onClick={(event) => {
                     // Prevent the click from being handled by the input itself
-                    event.preventDefault()
+                    event.preventDefault();
                     // Trigger the date picker by focusing and then clicking
-                    const input = event.target as HTMLInputElement
-                    input.focus()
-                    input.showPicker?.()
+                    const input = event.target as HTMLInputElement;
+                    input.focus();
+                    input.showPicker?.();
                   }}
                 />
               ) : (
@@ -216,20 +221,20 @@ export function FormField({
                 />
               )}
               {rightAddon && (
-                <div className='flex items-center'>{rightAddon}</div>
+                <div className="flex items-center">{rightAddon}</div>
               )}
             </div>
-          )
+          );
 
-          return inputWithAddons
+          return inputWithAddons;
         }}
       />
 
       {error && (
-        <p className='text-destructive text-sm'>{error.message?.toString()}</p>
+        <p className="text-destructive text-sm">{error.message?.toString()}</p>
       )}
     </div>
-  )
+  );
 }
 
 export function MultiSelect({
@@ -243,28 +248,28 @@ export function MultiSelect({
   className = '',
   ...rest
 }: {
-  label?: string
-  name: string
-  options: { value: string; label: string; thumbnail?: string | File | null }[]
-  placeholder?: string
-  required?: boolean
-  disabled?: boolean
-  readOnly?: boolean
-  className?: string
-  [key: string]: unknown
+  label?: string;
+  name: string;
+  options: { value: string; label: string; thumbnail?: string | File | null }[];
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
+  className?: string;
+  [key: string]: unknown;
 }) {
   const {
     control,
     formState: { errors },
-  } = useFormContext()
-  const error = errors[name]
+  } = useFormContext();
+  const error = errors[name];
 
   return (
-    <div className='space-y-2'>
+    <div className="space-y-2">
       {label && (
-        <Label className='text-[16px] font-medium'>
+        <Label className="text-[16px] font-medium">
           {label}
-          {required && <span className='text-destructive ml-1'>*</span>}
+          {required && <span className="text-destructive ml-1">*</span>}
         </Label>
       )}
 
@@ -272,19 +277,19 @@ export function MultiSelect({
         name={name}
         control={control}
         render={({ field }) => {
-          const selectedValues = field.value || []
+          const selectedValues = field.value || [];
           const placeholderText =
             selectedValues.length > 0
               ? `${selectedValues.length} selected`
-              : placeholder
+              : placeholder;
 
           const handleSelect = (value: string) => {
-            if (disabled || readOnly) return
+            if (disabled || readOnly) return;
             const newSelectedValues = selectedValues.includes(value)
               ? selectedValues.filter((v: string) => v !== value) // Deselect if already selected
-              : [...selectedValues, value] // Select if not already selected
-            field.onChange(newSelectedValues)
-          }
+              : [...selectedValues, value]; // Select if not already selected
+            field.onChange(newSelectedValues);
+          };
 
           return (
             <>
@@ -300,10 +305,10 @@ export function MultiSelect({
                   {options.map((option) => (
                     <section
                       key={option.value}
-                      className='flex items-center justify-between space-x-2 p-2'
+                      className="flex items-center justify-between space-x-2 p-2"
                       onClick={() => handleSelect(option.value)}
                     >
-                      <div className='flex items-center space-x-2'>
+                      <div className="flex items-center space-x-2">
                         {option.thumbnail && (
                           <BlurImage
                             src={
@@ -314,11 +319,11 @@ export function MultiSelect({
                             alt={option.label}
                             width={40}
                             height={40}
-                            className='h-5 w-5 rounded-full object-cover'
+                            className="h-5 w-5 rounded-full object-cover"
                           />
                         )}
 
-                        <label className='text-sm'>{option.label}</label>
+                        <label className="text-sm">{option.label}</label>
                       </div>
                       <Checkbox
                         checked={selectedValues.includes(option.value)}
@@ -332,13 +337,13 @@ export function MultiSelect({
 
               {/* Display selected values below the input */}
               {selectedValues.length > 0 && (
-                <div className='mt-2 flex flex-wrap gap-2'>
+                <div className="mt-2 flex flex-wrap gap-2">
                   {selectedValues.map((value: string) => {
                     const selectedOption = options.find(
-                      (opt) => opt.value === value,
-                    )
+                      (opt) => opt.value === value
+                    );
                     return selectedOption ? (
-                      <Badge key={value} className='text-xs'>
+                      <Badge key={value} className="text-xs">
                         {selectedOption.thumbnail && (
                           <Image
                             src={
@@ -349,25 +354,25 @@ export function MultiSelect({
                             alt={selectedOption.label}
                             width={40}
                             height={40}
-                            className='mr-1 h-5 w-5 rounded-full object-cover'
+                            className="mr-1 h-5 w-5 rounded-full object-cover"
                           />
                         )}
                         {selectedOption.label}
                       </Badge>
-                    ) : null
+                    ) : null;
                   })}
                 </div>
               )}
             </>
-          )
+          );
         }}
       />
 
       {error && (
-        <p className='text-destructive text-sm'>{error.message?.toString()}</p>
+        <p className="text-destructive text-sm">{error.message?.toString()}</p>
       )}
     </div>
-  )
+  );
 }
 
 export function SwitchField({
@@ -381,21 +386,21 @@ export function SwitchField({
   className = '',
   onChange, // Add an onChange prop
 }: {
-  label?: string | React.ReactNode
-  labelClassname?: string
-  name: string
-  required?: boolean
-  disabled?: boolean
-  readOnly?: boolean
-  className?: string
-  description?: string
-  onChange?: (checked: boolean) => void // Callback function to handle switch toggle
+  label?: string | ReactNode;
+  labelClassname?: string;
+  name: string;
+  required?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
+  className?: string;
+  description?: string;
+  onChange?: (checked: boolean) => void; // Callback function to handle switch toggle
 }) {
   const {
     control,
     formState: { errors },
-  } = useFormContext()
-  const error = errors[name]
+  } = useFormContext();
+  const error = errors[name];
 
   return (
     <div>
@@ -404,7 +409,7 @@ export function SwitchField({
           <div className={`space-y-1`}>
             <Label className={cn('h-fit font-medium', labelClassname)}>
               {label}
-              {required && <span className='text-destructive ml-1'>*</span>}
+              {required && <span className="text-destructive ml-1">*</span>}
             </Label>
             <p className={`text-gray text-xs`}>{description}</p>
           </div>
@@ -417,10 +422,10 @@ export function SwitchField({
             <Switch
               checked={field.value}
               onCheckedChange={(checked) => {
-                if (readOnly) return
-                field.onChange(checked) // Update the form state
+                if (readOnly) return;
+                field.onChange(checked); // Update the form state
                 if (onChange) {
-                  onChange(checked) // Trigger the onChange callback
+                  onChange(checked); // Trigger the onChange callback
                 }
               }}
               disabled={disabled || readOnly}
@@ -430,7 +435,7 @@ export function SwitchField({
                 // Make the switch "knot" (thumb) blue instead of white
                 '[&_[data-slot=switch-thumb]]:bg-primary',
                 error && 'border-destructive',
-                'mt-0',
+                'mt-0'
               )}
             />
           )}
@@ -438,57 +443,57 @@ export function SwitchField({
       </div>
 
       {error && (
-        <p className='text-destructive text-sm'>{error.message?.toString()}</p>
+        <p className="text-destructive text-sm">{error.message?.toString()}</p>
       )}
     </div>
-  )
+  );
 }
 
 export const PasswordValidation = ({ password }: { password: string }) => {
-  const hasMinLength = password.length >= 8
-  const hasUppercase = /[A-Z]/.test(password)
-  const hasNumber = /\d/.test(password)
-  const hasSpecialChar = /[#$%&@^]/.test(password)
+  const hasMinLength = password.length >= 8;
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasNumber = /\d/.test(password);
+  const hasSpecialChar = /[#$%&@^]/.test(password);
 
   return (
-    <div className='mt-2 space-y-2'>
-      <div className='flex items-center space-x-2'>
+    <div className="mt-2 space-y-2">
+      <div className="flex items-center space-x-2">
         <Checkbox
           className={`rounded-full border-black px-px`}
           checked={hasMinLength}
         />
-        <span className='text-mid-grey-II text-[10px]'>
+        <span className="text-mid-grey-II text-[10px]">
           Password should be at least 8 characters long
         </span>
       </div>
-      <div className='flex items-center space-x-2'>
+      <div className="flex items-center space-x-2">
         <Checkbox
           className={`rounded-full border-black px-px`}
           checked={hasUppercase}
         />
-        <span className='text-mid-grey-II text-[10px]'>
+        <span className="text-mid-grey-II text-[10px]">
           Password should contain at least one uppercase letter
         </span>
       </div>
-      <div className='flex items-center space-x-2'>
+      <div className="flex items-center space-x-2">
         <Checkbox
           className={`rounded-full border-black px-px`}
           checked={hasNumber}
         />
-        <span className='text-mid-grey-II text-[10px]'>
+        <span className="text-mid-grey-II text-[10px]">
           Password should contain at least one number
         </span>
       </div>
-      <div className='flex items-center space-x-2'>
+      <div className="flex items-center space-x-2">
         <Checkbox
           className={`rounded-full border-black px-px`}
           checked={hasSpecialChar}
         />
-        <span className='text-mid-grey-II text-[10px]'>
+        <span className="text-mid-grey-II text-[10px]">
           Password should contain at least one special character (@#$%^&)
         </span>
       </div>
     </div>
-  )
-}
+  );
+};
 // export {};

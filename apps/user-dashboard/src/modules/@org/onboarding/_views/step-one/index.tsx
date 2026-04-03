@@ -1,10 +1,10 @@
-import { PageSection, PageWrapper } from "@/lib/animation";
-import { MainButton } from "@workspace/ui/lib/button";
-import { useCallback, useEffect } from "react";
+import { PageSection, PageWrapper } from '@/lib/animation';
+import { MainButton } from '@workspace/ui/lib/button';
+import { useCallback, useEffect } from 'react';
 
-import { CompanyProfile } from "../../_components/forms/company-profile";
-import { stepOneTourSteps } from "../../config/tour-steps";
-import { useTour } from "../../context/tour-context";
+import { CompanyProfile } from '../../_components/forms/company-profile';
+import { stepOneTourSteps } from '../../config/tour-steps';
+import { useTour } from '@workspace/ui/context/tour-context';
 
 export const StepOne = () => {
   const { startTour } = useTour();
@@ -18,7 +18,9 @@ export const StepOne = () => {
   }, [handleStartTour]);
 
   return (
-    <PageWrapper className={`flex flex-col items-center justify-between gap-8 lg:flex-row`}>
+    <PageWrapper
+      className={`flex flex-col items-center justify-between gap-8 lg:flex-row`}
+    >
       <section className={`max-w-[646px] flex-1 space-y-[41px]`}>
         <PageSection index={0} className={`space-y-4`}>
           <p>Step 1 of 3</p>
@@ -31,10 +33,13 @@ export const StepOne = () => {
           </div>
         </PageSection>
         <PageSection index={1} className={`space-y-[24px]`}>
-          <h1 className={`text-3xl font-semibold`}>Tell us a bit about your company to get started</h1>
+          <h1 className={`text-3xl font-semibold`}>
+            Tell us a bit about your company to get started
+          </h1>
           <p className={`text-lg`}>
-            Let&apos;s set the stage for your HR setup. Just a few quick details about your company and you&apos;ll be
-            ready to manage your team with ease.
+            Let&apos;s set the stage for your HR setup. Just a few quick details
+            about your company and you&apos;ll be ready to manage your team with
+            ease.
           </p>
         </PageSection>
         <PageSection index={2} className="flex gap-4">

@@ -11,6 +11,7 @@ import { onboardingSteps } from '../constants';
 import { OnboardingStepCard } from '../_components/onboarding-step-card';
 import dynamic from 'next/dynamic';
 import { SuspenseLoading } from '@workspace/ui/lib/loading';
+import { useIntersectionObserver } from '@workspace/ui/hooks';
 const OnboardingStepPreview = dynamic(
   () =>
     import('../_components/onboarding-step-preview').then(
@@ -30,11 +31,18 @@ export const OnboardingStepper = () => {
   const sectionReference = useRef<HTMLDivElement | null>(null);
   const stepListReference = useRef<HTMLDivElement | null>(null);
   const intervalReference = useRef<number | null>(null);
+  const { isIntersecting: isSectionVisible } = useIntersectionObserver(
+    sectionReference,
+    {
+      threshold: 0.2,
+      fallbackInView: true,
+    }
+  );
 
   const activeStep = onboardingSteps[activeStepIndex] ?? onboardingSteps[0];
 
   useEffect(() => {
-    if (onboardingSteps.length <= 1) return;
+    if (onboardingSteps.length <= 1 || !isSectionVisible) return;
 
     const clearAutoAdvanceInterval = () => {
       if (intervalReference.current === null) return;
@@ -53,34 +61,12 @@ export const OnboardingStepper = () => {
       }, STEP_AUTO_ADVANCE_INTERVAL_MS);
     };
 
-    if (typeof IntersectionObserver === 'undefined') {
-      startAutoAdvanceInterval();
-      return () => clearAutoAdvanceInterval();
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          startAutoAdvanceInterval();
-          return;
-        }
-
-        clearAutoAdvanceInterval();
-      },
-      {
-        threshold: 0.2,
-      }
-    );
-
-    if (sectionReference.current) {
-      observer.observe(sectionReference.current);
-    }
+    startAutoAdvanceInterval();
 
     return () => {
-      observer.disconnect();
       clearAutoAdvanceInterval();
     };
-  }, []);
+  }, [isSectionVisible]);
 
   useLayoutEffect(() => {
     const updateIndicator = () => {

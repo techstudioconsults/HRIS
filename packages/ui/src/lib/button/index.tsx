@@ -57,6 +57,8 @@ interface ButtonProperties extends React.ButtonHTMLAttributes<HTMLButtonElement>
   className?: string;
   /** Click event handler for the button */
   onClick?: MouseEventHandler<HTMLButtonElement>;
+
+  isExternal?: boolean | false;
 }
 
 /**
@@ -82,6 +84,7 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
       href,
       className,
       onClick,
+      isExternal,
       ...properties
     },
     reference
@@ -144,12 +147,16 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
     };
 
     if (href) {
-      const isExternal = /^https?:\/\//.test(href);
+      const external = /^https?:\/\//.test(href) || isExternal;
 
-      if (isExternal) {
+      if (external) {
         return (
           <a
-            href={href}
+            href={cn(
+              process.env.NODE_ENV === `production`
+                ? `https://techstudiohr.com${href}`
+                : `http://localhost:3000${href}`
+            )}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={ariaLabel}

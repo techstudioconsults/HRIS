@@ -1,14 +1,17 @@
-"use client";
+'use client';
 
-import { AppEventsListener } from "@/components/shared/app-events-listener";
-import { GlobalSearchInput } from "@/modules/@org/shared/search-input";
-import { SidebarTrigger } from "@workspace/ui/components/sidebar";
-import { NotificationWidget, type Notification } from "@workspace/ui/lib/notification-widget";
-import { UserMenu } from "@workspace/ui/lib/user-menu";
-import { cn } from "@workspace/ui/lib/utils";
-import { signOut } from "next-auth/react";
-import { useState } from "react";
-import { toast } from "sonner";
+import { AppEventsListener } from '@/components/shared/app-events-listener';
+import { GlobalSearchInput } from '@/modules/@org/shared/search-input';
+import { SidebarTrigger } from '@workspace/ui/components/sidebar';
+import {
+  NotificationWidget,
+  type Notification,
+} from '@workspace/ui/lib/notification-widget';
+import { UserMenu } from '@workspace/ui/lib/user-menu';
+import { cn } from '@workspace/ui/lib/utils';
+import { signOut } from 'next-auth/react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 type TopBarProperties = {
   adminName: string;
@@ -36,10 +39,11 @@ export default function TopBar({
   adminAvatar,
   adminRole,
   notifications = [],
-  className = "",
+  className = '',
 }: TopBarProperties) {
   // locales removed; use root paths
-  const [notificationsList, setNotificationsList] = useState<Notification[]>(notifications);
+  const [notificationsList, setNotificationsList] =
+    useState<Notification[]>(notifications);
 
   const handleNotificationClick = (notification: Notification) => {
     // Navigate to notification action URL if available
@@ -49,11 +53,15 @@ export default function TopBar({
   };
 
   const handleMarkAsRead = (notificationId: string) => {
-    setNotificationsList((previous) => previous.map((n) => (n.id === notificationId ? { ...n, read: true } : n)));
+    setNotificationsList((previous) =>
+      previous.map((n) => (n.id === notificationId ? { ...n, read: true } : n))
+    );
   };
 
   const handleMarkAllAsRead = () => {
-    setNotificationsList((previous) => previous.map((n) => ({ ...n, read: true })));
+    setNotificationsList((previous) =>
+      previous.map((n) => ({ ...n, read: true }))
+    );
   };
 
   const handleClearAll = () => {
@@ -64,14 +72,16 @@ export default function TopBar({
     <>
       <header
         className={cn(
-          "bg-background sticky top-0 z-1 flex h-16 items-center justify-between gap-4 px-6 shadow lg:px-4",
-          className,
+          'bg-background sticky top-0 z-2 flex h-16 items-center justify-between gap-4 px-6 shadow lg:px-4',
+          className
         )}
       >
         {/* Search Input */}
         <div className="relative hidden w-fit items-center gap-4 md:flex">
           <SidebarTrigger className="absolute top-14 -left-[30px] bg-[#1F2666] text-white shadow-none" />
-          <GlobalSearchInput />
+          <GlobalSearchInput
+            className={`border border-primary/25 placeholder:text-primary/25 shadow-none`}
+          />
         </div>
 
         {/* Right Section */}

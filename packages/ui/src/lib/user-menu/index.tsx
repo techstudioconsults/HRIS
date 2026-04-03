@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   DropdownMenu,
@@ -8,14 +8,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
-import { ChevronDown, LogOut, Settings, User } from "lucide-react";
-import { cn } from "../utils";
+} from '@workspace/ui/components/dropdown-menu';
+import { cn } from '../utils';
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@workspace/ui/components/avatar";
+} from '@workspace/ui/components/avatar';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 
 export interface UserMenuProperties {
   userName: string;
@@ -39,9 +39,9 @@ export function UserMenu({
   className,
 }: UserMenuProperties) {
   const initials = userName
-    .split(" ")
+    .split(' ')
     .map((n) => n[0])
-    .join("")
+    .join('')
     .toUpperCase()
     .slice(0, 2);
 
@@ -49,8 +49,9 @@ export function UserMenu({
     <DropdownMenu>
       <DropdownMenuTrigger
         className={cn(
-          "focus-visible:ring-ring flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors focus:outline-none focus-visible:ring-2",
-          className,
+          'focus-visible:ring-ring flex items-center gap-2 rounded-lg px-2 py-1.5 ' +
+            'transition-colors focus:outline-none focus-visible:ring-2',
+          className
         )}
       >
         <Avatar className="size-8">
@@ -67,7 +68,10 @@ export function UserMenu({
             </p>
           )}
         </div>
-        <ChevronDown className="text-muted-foreground size-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+        <Icon
+          name={`ArrowDown2`}
+          className="size-4 transition-transform text-primary/75 duration-200 group-data-[state=open]:rotate-180"
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         sideOffset={14}
@@ -87,14 +91,14 @@ export function UserMenu({
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={onProfileClick} className="cursor-pointer">
-            <User className="mr-2 size-4" />
+            <Icon name={`User`} className="mr-2 text-primary/75 size-4" />
             <span>My Profile</span>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={onSettingsClick}
             className="cursor-pointer"
           >
-            <Settings className="mr-2 size-4" />
+            <Icon name={`Setting2`} className="mr-2 size-4 text-primary/75" />
             <span>Account Settings</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
@@ -104,7 +108,7 @@ export function UserMenu({
           className="text-destructive focus:text-destructive cursor-pointer"
           variant="destructive"
         >
-          <LogOut className="mr-2 size-4" />
+          <Icon name={`LogoutCurve`} className="mr-2 size-4" />
           <span>Logout</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

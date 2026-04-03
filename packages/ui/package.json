@@ -25,7 +25,8 @@
     "nuqs": ">=2",
     "react": ">=18",
     "react-dom": ">=18",
-    "react-hook-form": ">=7"
+    "react-hook-form": ">=7",
+    "driver.js": "^1.4.0"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

@@ -1,6 +1,6 @@
 'use client';
 
-import { Logo } from '@workspace/ui/lib';
+import { Logo } from '@workspace/ui/lib/logo';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { cn } from '@workspace/ui/lib/utils';
@@ -13,12 +13,13 @@ export type TourSegment = {
   description?: string;
 };
 
-interface TourVideoProperties {
+export interface TourVideoProperties {
+  logo: string;
   src: string;
   poster?: string;
   segments: TourSegment[];
   className?: string;
-  transcript?: string[]; // optional transcript lines
+  transcript?: string[];
 }
 
 const formatTime = (seconds: number): string => {
@@ -33,24 +34,24 @@ export const TourVideo = ({
   poster,
   segments,
   className,
+  logo,
 }: TourVideoProperties) => {
   const videoReference = useRef<HTMLVideoElement | null>(null);
   const progressReference = useRef<HTMLDivElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1);
-  //   const [showTranscript, setShowTranscript] = useState(false);
 
   // Derive active segment
   const activeSegmentIndex = useMemo(() => {
     if (segments.length === 0) return -1;
-    const indexOfActive = segments.findIndex((segment, segmentIndex) => {
+
+    return segments.findIndex((segment, segmentIndex) => {
       const nextTime = segments[segmentIndex + 1]?.time ?? duration + 1;
       return currentTime >= segment.time && currentTime < nextTime;
     });
-    return indexOfActive;
   }, [segments, currentTime, duration]);
 
   const togglePlay = useCallback(() => {
@@ -151,9 +152,6 @@ export const TourVideo = ({
     seekTo(ratio * duration);
   };
 
-  // Format helper
-  // NOTE: formatting moved to top-level helper `formatTime`.
-
   return (
     <div
       className={cn('flex flex-col gap-4', className)}
@@ -161,9 +159,9 @@ export const TourVideo = ({
     >
       <div className="flex flex-col gap-6 lg:flex-row">
         {/* Video + controls */}
-        <div className="flex-1 space-y-4">
+        <div className="flex-1 space-y-4 min-w-0">
           <article className="max-w-full">
-            <Logo />
+            <Logo className={`size-10`} logo={logo} />
             <p className="text-muted-foreground mt-2 text-sm">
               Lorem ipsum, dolor sit amet consectetur adipisicing elit.
               Necessitatibus provident hic repudiandae maxime perferendis
@@ -171,12 +169,12 @@ export const TourVideo = ({
               nostrum nemo quidem distinctio vel! Dicta, delectus saepe.
             </p>
           </article>
-          <div className="relative min-h-[372px] overflow-hidden rounded-xl bg-black shadow">
+          <div className="relative w-full aspect-video overflow-hidden rounded-xl bg-black shadow">
             <video
               ref={videoReference}
-              className="h-auto w-full"
+              className="h-full w-full object-cover"
               poster={poster}
-              autoPlay
+              // autoPlay
               playsInline
               muted={isMuted}
             >
@@ -230,8 +228,8 @@ export const TourVideo = ({
                 />
               ))}
             </div>
-            <div className="flex items-center justify-between gap-4 text-sm">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 text-sm">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <MainButton
                   onClick={togglePlay}
                   variant="primary"
@@ -250,29 +248,10 @@ export const TourVideo = ({
                 >
                   {isMuted ? 'Unmute' : 'Mute'}
                 </MainButton>
-                {/* <select
-                  aria-label="Playback speed"
-                  value={playbackRate}
-                  onChange={(event_) => handleRateChange(Number(event_.target.value))}
-                  className="bg-background rounded-md border px-2 py-1"
-                >
-                  {[0.5, 0.75, 1, 1.25, 1.5, 2].map((r) => (
-                    <option key={r} value={r}>
-                      {r}x
-                    </option>
-                  ))}
-                </select> */}
               </div>
               <span className="text-muted-foreground tabular-nums">
                 {formatTime(currentTime)} / {formatTime(duration)}
               </span>
-              {/* <button
-                onClick={() => setShowTranscript((p) => !p)}
-                aria-expanded={showTranscript}
-                className="bg-secondary rounded-md px-3 py-1"
-              >
-              {showTranscript ? "Hide Transcript" : "Show Transcript"}
-              </button> */}
             </div>
           </div>
         </div>
@@ -282,7 +261,7 @@ export const TourVideo = ({
           aria-label="Tour segments"
         >
           <h2 className="text-lg font-semibold">Tour Overview</h2>
-          <ol className="!max-h-[547px] flex-1 space-y-2 overflow-y-auto p-1">
+          <ol className="max-h-[30dvh] flex-1 space-y-2 overflow-y-auto p-1 sm:max-h-[35dvh] lg:max-h-[60dvh]">
             {segments.map((segment, segmentIndex) => {
               const active = segmentIndex === activeSegmentIndex;
               return (
@@ -292,7 +271,7 @@ export const TourVideo = ({
                     className={cn(
                       'bg-primary-50 w-full rounded-md border border-transparent px-3 py-2 text-left shadow transition',
                       active
-                        ? 'bg-primary-200 !text-white'
+                        ? 'bg-primary-200 text-white!'
                         : 'hover:bg-primary/20 hover:shadow-none'
                     )}
                     aria-current={active ? 'step' : undefined}
@@ -330,19 +309,6 @@ export const TourVideo = ({
           </i>
         </aside>
       </div>
-      {/* Transcript */}
-      {/* {showTranscript && transcript && transcript.length > 0 && (
-        <div
-          className="bg-muted/30 max-h-[300px] space-y-2 overflow-y-auto rounded-lg border p-4"
-          aria-label="Video transcript"
-        >
-          {transcript.map((line, index) => (
-            <p key={index} className="text-sm leading-relaxed">
-              {line}
-            </p>
-          ))}
-        </div>
-      )} */}
     </div>
   );
 };

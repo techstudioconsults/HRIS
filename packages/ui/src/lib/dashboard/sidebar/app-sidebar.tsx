@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use client'
+'use client';
 
 import {
   BookOpen,
@@ -9,72 +9,73 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
-} from 'lucide-react'
-import * as React from 'react'
+} from 'lucide-react';
+import * as React from 'react';
 
-import { NavMain } from '../components/nav-main'
-import { NavProjects } from '../components/nav-projects'
-import { NavUser } from '../components/nav-user'
-import { TeamSwitcher } from '../components/team-switcher'
+import { NavMain } from '../components/nav-main';
+import { NavProjects } from '../components/nav-projects';
+import { NavUser } from '../components/nav-user';
+import { TeamSwitcher } from '../components/team-switcher';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from '@workspace/ui/components/sidebar'
-import { useActiveNavigation } from '@workspace/ui/hooks'
+  useSidebar,
+} from '@workspace/ui/components/sidebar';
+import { useActiveNavigation } from '@workspace/ui/hooks';
 
 /**
  * Reusable Dashboard Sidebar Types
  */
 export type DashboardUser = {
-  name: string
-  email: string
-  avatar: string
-}
+  name: string;
+  email: string;
+  avatar: string;
+};
 
 export type DashboardTeam = {
-  name: string
-  logo: React.ReactNode
+  name: string;
+  logo: React.ReactNode;
   // logo: React.ReactNode | React.ElementType | string;
-  plan: string
-}
+  plan: string;
+};
 
 export type DashboardNavItem = {
-  name: string
-  url: string
-  icon?: any
-  isActive?: boolean
+  name: string;
+  url: string;
+  icon?: any;
+  isActive?: boolean;
   items?: {
-    name: string
-    url: string
-  }[]
-}
+    name: string;
+    url: string;
+  }[];
+};
 
 export type DashboardProject = {
-  name: string
-  url: string
-  icon?: any
-}
+  name: string;
+  url: string;
+  icon?: any;
+};
 
 export interface AppSidebarProperties extends React.ComponentProps<
   typeof Sidebar
 > {
-  theme: any
-  user?: DashboardUser
-  teams?: DashboardTeam[]
-  navMain?: DashboardNavItem[]
-  navSecondary?: DashboardProject[]
-  navMainTitle?: string
-  secondaryTitle?: string
+  theme: any;
+  user?: DashboardUser;
+  teams?: DashboardTeam[];
+  navMain?: DashboardNavItem[];
+  navSecondary?: DashboardProject[];
+  navMainTitle?: string;
+  secondaryTitle?: string;
 }
 
 const defaultData: {
-  user: DashboardUser
-  teams: DashboardTeam[]
-  navMain: DashboardNavItem[]
-  projects: DashboardProject[]
+  user: DashboardUser;
+  teams: DashboardTeam[];
+  navMain: DashboardNavItem[];
+  projects: DashboardProject[];
 } = {
   user: {
     name: 'Admin',
@@ -148,7 +149,7 @@ const defaultData: {
     { name: 'Sales & Marketing', url: '#', icon: PieChart },
     { name: 'Travel', url: '#', icon: Map },
   ],
-}
+};
 
 export function AppSidebar({
   theme,
@@ -160,6 +161,7 @@ export function AppSidebar({
   secondaryTitle,
   ...properties
 }: AppSidebarProperties) {
+  const { state } = useSidebar();
   const resolved = {
     user: user ?? defaultData.user,
     teams: teams ?? defaultData.teams,
@@ -167,15 +169,15 @@ export function AppSidebar({
     projects: navSecondary ?? defaultData.projects,
     mainTitle: navMainTitle,
     secondaryTitle: secondaryTitle,
-  }
+  };
 
   // Use active navigation hook to determine active states
-  const activeNavItems = useActiveNavigation(resolved.navMain)
-  const projectNavItems = useActiveNavigation(resolved.projects)
+  const activeNavItems = useActiveNavigation(resolved.navMain);
+  const projectNavItems = useActiveNavigation(resolved.projects);
 
   return (
-    <Sidebar collapsible='icon' {...properties}>
-      <SidebarHeader>
+    <Sidebar collapsible="icon" {...properties}>
+      <SidebarHeader className={`px-0`}>
         <TeamSwitcher teams={resolved.teams} />
       </SidebarHeader>
       <SidebarContent>
@@ -188,13 +190,13 @@ export function AppSidebar({
             projects={projectNavItems}
           />
         ) : (
-          <NavProjects projects={projectNavItems} />
+          <NavProjects title={`ADMIN`} projects={projectNavItems} />
         )}
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className={`px-`}>
         <NavUser theme={theme} user={resolved.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

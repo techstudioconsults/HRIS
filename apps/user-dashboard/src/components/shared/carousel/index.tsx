@@ -76,8 +76,14 @@ export const UniversalSwiper = ({
 
         {showNavigation && shouldShowControls ? (
           <>
-            <CarouselPrevious className="top-auto bottom-5 left-4 z-10 border-white/30 bg-black/45 text-white hover:bg-black/60" />
-            <CarouselNext className="top-auto right-4 bottom-5 z-10 border-white/30 bg-black/45 text-white hover:bg-black/60" />
+            <CarouselPrevious
+              className="top-auto bottom-5 left-4 z-10 border-white/30
+            bg-black/45 text-white hover:bg-black/60"
+            />
+            <CarouselNext
+              className="top-auto right-4 bottom-5 z-10 border-white/30
+            bg-black/45 text-white hover:bg-black/60"
+            />
           </>
         ) : null}
       </Carousel>

@@ -16,10 +16,10 @@ interface IconProps {
 export function Icon({
   name,
   provider,
-  size = 40,
+  size = 20,
   className,
   color,
-  variant = 'Linear',
+  variant = 'Bulk',
   strokeWidth,
   ...props
 }: IconProps) {
@@ -40,7 +40,7 @@ export function Icon({
   }
 
   const sharedProps: Record<string, unknown> = {
-    className: cn('shrink-0', className),
+    className: cn('text-primary/75 shrink-0', className),
     ...props,
   };
 

@@ -1,13 +1,19 @@
-"use client";
+'use client';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
-import { cn } from "@workspace/ui/lib/utils";
-import { HRSettingsGeneralRulesTab } from "./hr-settings/hr-settings-general-rules-tab";
-import { HRSettingsLeaveTab } from "./hr-settings/hr-settings-leave-tab";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@workspace/ui/components/tabs';
+import { cn } from '@workspace/ui/lib/utils';
+import { HRSettingsGeneralRulesTab } from './hr-settings/hr-settings-general-rules-tab';
+import { HRSettingsLeaveTab } from './hr-settings/hr-settings-leave-tab';
+import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 
 const subTabTriggerClassName = cn(
-  "text-muted-foreground rounded-none border-none bg-transparent px-0 py-2 text-xs sm:text-sm",
-  "data-[state=active]:text-primary data-[state=active]:border-primary data-[state=active]:border-b",
+  'text-muted-foreground rounded-none border-none bg-transparent px-0 py-2 text-xs sm:text-sm',
+  'data-[state=active]:text-primary data-[state=active]:border-primary data-[state=active]:border-b'
 );
 
 export const HRSettingsTab = () => {
@@ -18,7 +24,15 @@ export const HRSettingsTab = () => {
       </div>
 
       <Tabs defaultValue="leave" className="w-full">
-        <TabsList className="flex h-auto w-fit flex-wrap items-center gap-10 bg-transparent p-0">
+        <TabsList className="relative flex h-auto w-fit flex-wrap items-center gap-10 bg-transparent pb-2">
+          <GradientMask
+            direction={`left`}
+            className={`from-[#F8F8F9] h-6 z-1 translate-y-9`}
+          />
+          <GradientMask
+            direction={`right`}
+            className={`from-[#F8F8F9] h-6 z-1 translate-y-9`}
+          />
           <TabsTrigger value="leave" className={subTabTriggerClassName}>
             Leave
           </TabsTrigger>
@@ -36,7 +50,9 @@ export const HRSettingsTab = () => {
 
         <TabsContent value="attendance" className="mt-6">
           <div className="bg-background border-border rounded-lg border p-6 shadow-sm">
-            <p className="text-muted-foreground text-sm">Attendance settings is not implemented yet.</p>
+            <p className="text-muted-foreground text-sm">
+              Attendance settings is not implemented yet.
+            </p>
           </div>
         </TabsContent>
 

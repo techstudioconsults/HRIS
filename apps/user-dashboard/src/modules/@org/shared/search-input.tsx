@@ -168,20 +168,16 @@ export function GlobalSearchInput({
 
   return (
     <Popover open={showDropdown} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+      <PopoverTrigger>
         <div
           className={cn(
-            'bg-background border-border focus-within:ring-ring relative flex h-10 w-full min-w-[500px] ' +
-              'items-center gap-2 rounded-md border px-3 transition-colors focus-within:ring-2 focus-within:ring-offset-0',
+            'bg-background relative flex h-10 w-full min-w-[500px] ' +
+              'items-center gap-2 rounded-md px-3 focus:border-none! focus:ring-0',
             disabled && 'cursor-not-allowed opacity-50',
             className
           )}
         >
-          <Icon
-            name="Search"
-            size={16}
-            className="text-muted-foreground shrink-0"
-          />
+          <Icon name="SearchNormal1" size={16} className={`text-primary/75`} />
           <Input
             ref={inputReference}
             type="text"
@@ -191,8 +187,8 @@ export function GlobalSearchInput({
             onKeyDown={handleKeyDown}
             onFocus={() => setOpen(true)}
             disabled={disabled}
-            className="placeholder:text-muted-foreground h-full flex-1 border-none bg-transparent p-0
-            text-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-none"
+            className="h-full flex-1 border-none bg-transparent p-0
+            text-sm"
           />
           {isLoading && (
             <Icon
@@ -262,7 +258,7 @@ export function GlobalSearchInput({
           {searchQuery.trim() && !isLoading && !hasResults && (
             <EmptyState
               className="text-primary"
-              icon={<Icon name="Search" className="text-primary" />}
+              icon={<Icon name="SearchStatus" className="text-primary/75" />}
               title="No results found."
               description={emptyMessage}
             />

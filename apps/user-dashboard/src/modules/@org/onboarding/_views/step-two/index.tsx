@@ -1,10 +1,10 @@
-import { PageSection, PageWrapper } from "@/lib/animation";
-import { MainButton } from "@workspace/ui/lib/button";
-import { useCallback, useEffect } from "react";
+import { PageSection, PageWrapper } from '@/lib/animation';
+import { MainButton } from '@workspace/ui/lib/button';
+import { useCallback, useEffect } from 'react';
 
-import { TeamSetupForm } from "../../_components/forms/team-setup";
-import { stepTwoTourSteps } from "../../config/tour-steps";
-import { useTour } from "../../context/tour-context";
+import { TeamSetupForm } from '../../_components/forms/team-setup';
+import { stepTwoTourSteps } from '../../config/tour-steps';
+import { useTour } from '@workspace/ui/context/tour-context';
 
 export const TeamSetupPage = () => {
   const { startTour } = useTour();
@@ -31,10 +31,13 @@ export const TeamSetupPage = () => {
           </div>
         </PageSection>
         <PageSection index={1} className="space-y-[24px]">
-          <h1 className="text-3xl font-semibold">Structure your team with the right access</h1>
+          <h1 className="text-3xl font-semibold">
+            Structure your team with the right access
+          </h1>
           <p className="text-lg">
-            Start with suggested departments and tailor them to fit your organization. Add custom roles under each
-            department and control what they can access.
+            Start with suggested departments and tailor them to fit your
+            organization. Add custom roles under each department and control
+            what they can access.
           </p>
         </PageSection>
         <PageSection index={2} className="flex gap-4">

@@ -565,6 +565,9 @@ importers:
       date-fns:
         specifier: '>=4'
         version: 4.1.0
+      driver.js:
+        specifier: ^1.4.0
+        version: 1.4.0
       embla-carousel-autoplay:
         specifier: ^8.6.0
         version: 8.6.0(embla-carousel@8.6.0)

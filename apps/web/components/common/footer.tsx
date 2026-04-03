@@ -1,8 +1,9 @@
 import { Logo } from '@workspace/ui/lib/logo';
-import { Button } from '@workspace/ui/components/button';
 import Link from 'next/link';
 import FooterLogo from '~/images/footer-logo.svg';
 import { FooterSvgMorph } from '../micro-interactions/footer-svg-morph';
+import { MainButton } from '@workspace/ui/lib';
+import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 
 export const Footer = () => {
   const footerLinks = [
@@ -55,7 +56,7 @@ export const Footer = () => {
             </p>
           </div>
 
-          <div className="flex flex-col gap-4 w-full max-w-md">
+          <div className="flex flex-col gap-4 w-full">
             <h4 className="font-semibold text-black text-[18px]">
               Subscribe for Our Newsletter
             </h4>
@@ -67,11 +68,11 @@ export const Footer = () => {
                 autoComplete="email"
                 inputMode="email"
                 placeholder="Email address"
-                className="bg-white border-none rounded-[6px] h-[52px] px-5 text-black w-full"
+                className="bg-white border-none min-h-[52px] rounded-[6px] px-5 text-black w-full"
               />
-              <Button className="rounded-[6px] bg-[#0066F3] hover:bg-blue-600 text-white px-8 h-[52px] font-bold w-full sm:w-auto shrink-0">
+              <MainButton variant={`primary`} size={`xl`}>
                 Subscribe
-              </Button>
+              </MainButton>
             </div>
           </div>
         </div>
@@ -91,7 +92,7 @@ export const Footer = () => {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-black/70 hover:text-[#0066F3] text-lg transition-colors inline-block"
+                      className="text-black/70 hover:text-primary text-lg transition-colors inline-block"
                     >
                       {link.name}
                     </Link>
@@ -102,21 +103,34 @@ export const Footer = () => {
           ))}
         </div>
       </div>
-      <hr className="border-black/10 mb-4" />
+      <div className={`relative`}>
+        <hr className="border-primary/50 mb-4" />
+        <GradientMask
+          direction={`left`}
+          className={`from-[#E6F0FE] w-[20%]!`}
+        />
+        <GradientMask
+          direction={`right`}
+          className={`from-[#E6F0FE] w-[20%]!`}
+        />
+      </div>
 
       <div className="max-w-7xl mx-auto pb-2 flex flex-col md:flex-row items-center justify-center relative z-10">
-        <p className="text-black/50 text-[14px]">
-          © {new Date().getFullYear()} Techstudio HR — All rights reserved.
+        <p className="text-gray text-sm">
+          <span className={`font-semibold text-primary/50`}>
+            © {new Date().getFullYear()}{' '}
+          </span>{' '}
+          Techstudio HR — All rights reserved.
         </p>
       </div>
 
       <div
         data-footer-svg-stage
-        className={`lg:scale-[0.6] origin-bottom translate-y-2 lg:translate-y-3`}
+        className={`scale-[0.8] lg:scale-[0.3] lg:-mt-32 origin-bottom translate-y-1 lg:translate-y-2`}
       >
         <FooterLogo />
+        <FooterSvgMorph />
       </div>
-      <FooterSvgMorph />
     </footer>
   );
 };

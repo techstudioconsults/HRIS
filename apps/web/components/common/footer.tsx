@@ -3,6 +3,7 @@ import Link from 'next/link';
 import FooterLogo from '~/images/footer-logo.svg';
 import { FooterSvgMorph } from '../micro-interactions/footer-svg-morph';
 import { MainButton } from '@workspace/ui/lib';
+import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 
 export const Footer = () => {
   const footerLinks = [
@@ -102,21 +103,34 @@ export const Footer = () => {
           ))}
         </div>
       </div>
-      <hr className="border-black/10 mb-4" />
+      <div className={`relative`}>
+        <hr className="border-primary/50 mb-4" />
+        <GradientMask
+          direction={`left`}
+          className={`from-[#E6F0FE] w-[20%]!`}
+        />
+        <GradientMask
+          direction={`right`}
+          className={`from-[#E6F0FE] w-[20%]!`}
+        />
+      </div>
 
       <div className="max-w-7xl mx-auto pb-2 flex flex-col md:flex-row items-center justify-center relative z-10">
-        <p className="text-black/50 text-[14px]">
-          © {new Date().getFullYear()} Techstudio HR — All rights reserved.
+        <p className="text-gray text-sm">
+          <span className={`font-semibold text-primary/50`}>
+            © {new Date().getFullYear()}{' '}
+          </span>{' '}
+          Techstudio HR — All rights reserved.
         </p>
       </div>
 
       <div
         data-footer-svg-stage
-        className={`lg:scale-[0.6] origin-bottom translate-y-2 lg:translate-y-3`}
+        className={`scale-[0.8] lg:scale-[0.3] lg:-mt-32 origin-bottom translate-y-1 lg:translate-y-2`}
       >
         <FooterLogo />
+        <FooterSvgMorph />
       </div>
-      <FooterSvgMorph />
     </footer>
   );
 };

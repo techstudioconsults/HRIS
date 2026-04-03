@@ -19,7 +19,7 @@ export const OrganizationOnboarding = () => {
         >
           <Wrapper
             data-onboarding-banners-stage
-            className="relative overflow-hidden my-0!"
+            className="relative overflow-hidden p-0 my-0!"
           >
             <TourBanner />
             <EmployeeBanner />

@@ -27,7 +27,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               adminEmail={session?.user.employee.email || ''}
               notifications={[]}
             />
-            <Wrapper className="max-w-[1440px] px-4! my-0! py-10">
+            {/*<GradientMask*/}
+            {/*  direction={`top`}*/}
+            {/*  className={`from-[rgb(248,248,249)] z-1 fixed h-20! -translate-y-6 top-[55px]`}*/}
+            {/*/>*/}
+            <Wrapper className="relative max-w-[1440px] px-4! space-y-0 my-0! py-10">
               {children}
             </Wrapper>
           </ActiveTargetProvider>

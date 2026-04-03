@@ -18,7 +18,7 @@ export function AppSideBar() {
       navMain={[]}
       navSecondary={adminNavItems}
       className={cn(
-        'z-1 bg-[#1F2666] text-background',
+        'z-2 bg-[#1F2666] text-background!',
         state === `collapsed` ? `px-0` : `px-6`
       )}
       teams={[

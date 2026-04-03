@@ -78,7 +78,12 @@ const TeamDetailsHeader = ({
             align="end"
             trigger={
               <div className="bg-background border-border flex size-10 items-center justify-center rounded-md shadow">
-                <Icon name="More" size={20} />
+                <Icon
+                  name="More"
+                  size={20}
+                  variant={`Linear`}
+                  className={`text-primary/75`}
+                />
               </div>
             }
           >

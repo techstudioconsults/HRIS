@@ -44,12 +44,15 @@ export function NotificationWidget({
         <Button
           variant="ghost"
           size="icon"
-          className="hover:bg-primary-75 relative rounded-full"
+          className="hover:bg-primary-50 relative rounded-full"
           aria-label="Notifications"
         >
           <Icon name={`Notification`} size={32} />
           {unreadCount > 0 && (
-            <span className="bg-destructive absolute -top-1 -right-1 flex size-5 items-center justify-center rounded-full text-[10px] font-bold text-white">
+            <span
+              className="bg-destructive absolute -top-1 -right-1 flex size-5
+             items-center justify-center rounded-full text-[10px] font-bold text-white"
+            >
               {displayCount}
             </span>
           )}

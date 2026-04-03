@@ -3,6 +3,7 @@ export {
   User,
   Diagram,
   Eye,
+  Edit,
   EyeSlash,
   Aave,
   Setting2,

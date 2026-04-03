@@ -1,6 +1,5 @@
 export {
   Home,
-  Edit,
   Settings,
   Search,
   SearchIcon,

@@ -1,32 +1,59 @@
-"use client";
+'use client';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
-import { DashboardHeader } from "@workspace/ui/lib";
-import { cn } from "@workspace/ui/lib/utils";
-import { useState } from "react";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@workspace/ui/components/tabs';
+import { DashboardHeader } from '@workspace/ui/lib';
+import { cn } from '@workspace/ui/lib/utils';
+import { useState } from 'react';
 
-import { AccountSettingsTab } from "./tabs/account-settings-tab";
-import { HRSettingsTab } from "./tabs/hr-settings-tab";
-import { NotificationSettingsTab } from "./tabs/notification-settings-tab";
-import { RolesManagementTab } from "./tabs/roles-management-tab";
-import { SecuritySettingsTab } from "./tabs/security-settings-tab";
+import { AccountSettingsTab } from './tabs/account-settings-tab';
+import { HRSettingsTab } from './tabs/hr-settings-tab';
+import { NotificationSettingsTab } from './tabs/notification-settings-tab';
+import { RolesManagementTab } from './tabs/roles-management-tab';
+import { SecuritySettingsTab } from './tabs/security-settings-tab';
+import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 
-type SettingsTab = "account" | "roles" | "hr" | "payroll" | "notifications" | "security";
+type SettingsTab =
+  | 'account'
+  | 'roles'
+  | 'hr'
+  | 'payroll'
+  | 'notifications'
+  | 'security';
 
 const tabTriggerClassName = cn(
-  "text-muted-foreground rounded-none border-none bg-transparent px-0 py-2 text-sm",
-  "data-[state=active]:text-primary",
+  'text-muted-foreground rounded-none border-none bg-transparent px-0 py-2 text-sm',
+  'data-[state=active]:text-primary'
 );
 
 export const SettingsView = () => {
-  const [tab, setTab] = useState<SettingsTab>("account");
+  const [tab, setTab] = useState<SettingsTab>('account');
 
   return (
     <section className="space-y-6">
-      <DashboardHeader title="Settings" subtitle="Manage your organization settings" />
+      <DashboardHeader
+        title="Settings"
+        subtitle="Manage your organization settings"
+      />
 
-      <Tabs value={tab} onValueChange={(value) => setTab(value as SettingsTab)} className="w-full">
-        <TabsList className="flex h-auto w-full flex-wrap items-center gap-6 bg-transparent p-0">
+      <Tabs
+        value={tab}
+        onValueChange={(value) => setTab(value as SettingsTab)}
+        className="w-full"
+      >
+        <TabsList className="flex relative h-auto w-full flex-wrap items-center gap-6 bg-transparent pb-6">
+          <GradientMask
+            direction={`left`}
+            className={`from-[#F8F8F9] z-1 translate-y-8`}
+          />
+          <GradientMask
+            direction={`right`}
+            className={`from-[#F8F8F9] z-1 translate-y-8`}
+          />
           <TabsTrigger value="account" className={tabTriggerClassName}>
             Account
           </TabsTrigger>

@@ -154,7 +154,7 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
           <a
             href={cn(
               process.env.NODE_ENV === `production`
-                ? `https://techstudiohr.com${href}`
+                ? `https://dashboard.techstudiohr.com${href}`
                 : `http://localhost:3000${href}`
             )}
             target="_blank"

@@ -3,6 +3,13 @@
 export default {
   multipass: true,
   plugins: [
+    'removeDimensions',
+    'removeMetadata',
+    'removeEditorsNSData',
+    'cleanupAttrs',
+    'convertStyleToAttrs',
+    'removeUselessDefs',
+    'collapseGroups',
     {
       name: 'preset-default',
       params: {
@@ -27,6 +34,12 @@ export default {
     {
       name: 'removeDimensions',
       active: true,
+    },
+    {
+      name: 'convertPathData',
+      params: {
+        floatPrecision: 2,
+      },
     },
   ],
 };

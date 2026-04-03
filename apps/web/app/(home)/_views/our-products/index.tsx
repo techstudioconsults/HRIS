@@ -23,9 +23,9 @@ export const OurProducts = () => {
           <OurProductsSectionHeader />
           <div className="space-y-7">
             <div className="grid gap-[37px] md:grid-cols-2 xl:grid-cols-3">
-              {productCardsTopRow.map((card) => (
-                <OurProductCard key={card.title} card={card} />
-              ))}
+              <OurProductCard card={productCardsTopRow[0]} />
+              <OurProductCard card={productCardsTopRow[1]} />
+              <OurProductCard card={productCardsTopRow[2]} />
             </div>
 
             <div className="grid gap-[37px] lg:grid-cols-12">

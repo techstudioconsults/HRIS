@@ -1,9 +1,17 @@
 import { Logo } from '@workspace/ui/lib/logo';
 import Link from 'next/link';
 import FooterLogo from '~/images/footer-logo.svg';
-import { FooterSvgMorph } from '../micro-interactions/footer-svg-morph';
 import { MainButton } from '@workspace/ui/lib';
 import { GradientMask } from '@workspace/ui/lib/gradient-mask';
+// import dynamic from 'next/dynamic';
+import { FooterSvgMorph } from '../micro-interactions/footer-svg-morph';
+// const FooterSvgMorph = dynamic(
+//   () =>
+//     import('../micro-interactions/footer-svg-morph').then(
+//       (module) => module.FooterSvgMorph
+//     ),
+//   { ssr: false }
+// );
 
 export const Footer = () => {
   const footerLinks = [

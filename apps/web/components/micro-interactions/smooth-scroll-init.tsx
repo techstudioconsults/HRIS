@@ -42,12 +42,9 @@ export const SmoothScrollInit = () => {
       }
 
       try {
-        const [{ default: gsap }, { ScrollTrigger }, { ScrollSmoother }] =
-          await Promise.all([
-            import('gsap'),
-            import('gsap/ScrollTrigger'),
-            import('gsap/ScrollSmoother'),
-          ]);
+        const [{ gsap, ScrollTrigger, ScrollSmoother }] = await Promise.all([
+          import('../../lib/gsap/gsap'),
+        ]);
 
         if (!mounted) {
           return;

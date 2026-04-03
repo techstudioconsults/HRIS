@@ -1,11 +1,10 @@
 import Link from 'next/link';
 import { cn } from '@workspace/ui/lib/utils';
-import { Logo } from '@workspace/ui/lib/logo';
 import { NavbarMobileMenu } from './navbar-mobile-menu';
-import { NavbarScrollState } from './navbar-scroll-state';
 import { NAV_LINKS } from './navbar-links';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { MainButton } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import Logo from '~/images/home/logo.svg';
 
 export const Navbar = () => {
   return (
@@ -18,7 +17,6 @@ export const Navbar = () => {
         'py-8 data-[scrolled=true]:pt-2 data-[scrolled=true]:md:pt-4'
       )}
     >
-      <NavbarScrollState />
       <div
         id="site-navbar-panel"
         data-scrolled="false"
@@ -29,11 +27,8 @@ export const Navbar = () => {
           'shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)] data-[scrolled=true]:shadow-xl'
         )}
       >
-        <Link href={`/`} className="flex items-center gap-1">
-          <Logo logo="/images/logo.png" width={25} height={25} />
-          <span className="font-extrabold text-lg transition-colors ">
-            TechStudioHR
-          </span>
+        <Link href={`/`} className="w-30">
+          <Logo />
         </Link>
 
         {/* Desktop Nav */}

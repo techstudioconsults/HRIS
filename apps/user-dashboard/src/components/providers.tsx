@@ -10,6 +10,7 @@ import { NuqsAdapter } from 'nuqs/adapters/next';
 import { TooltipProvider } from '@workspace/ui/components/tooltip';
 import { Toast } from '@workspace/ui/lib/Toast';
 import { KBarProviderWrapper } from '@/lib/kbar/kbar-provider';
+import { Suspense } from 'react';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -28,7 +29,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
               <TooltipProvider>
                 <Toast />
                 {/* <NetworkStatusModal /> */}
-                <KBarProviderWrapper>{children}</KBarProviderWrapper>
+                <KBarProviderWrapper>
+                  <Suspense>{children}</Suspense>
+                </KBarProviderWrapper>
               </TooltipProvider>
             </NuqsAdapter>
           </ReactQueryProvider>

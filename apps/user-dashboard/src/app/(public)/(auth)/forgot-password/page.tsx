@@ -12,9 +12,9 @@ const Page = () => {
   };
 
   return (
-    <main className="flex h-[calc(35rem)] items-center justify-center">
-      {getCurrentView()}
-    </main>
+    // <main className="flex h-[calc(35rem)] items-center justify-center">
+    <>{getCurrentView()}</>
+    // </main>
   );
 };
 

@@ -51,7 +51,7 @@ export const ForgotPassword = () => {
   return (
     <section>
       <div className="bg-background mx-auto max-w-[589px] rounded-xl p-8 shadow">
-        <div>
+        <div className={`space-y-4`}>
           <BackButton size={32} />
           <FormHeader
             title="Forgot Password"

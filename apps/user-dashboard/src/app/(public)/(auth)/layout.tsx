@@ -26,10 +26,10 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
         )}
       >
         <section
-          style={{
-            background: 'url(/images/auth/bg-img.svg) no-repeat',
-            backgroundSize: 'cover',
-          }}
+          // style={{
+          //   background: 'url(/images/auth/bg-img.svg) no-repeat',
+          //   backgroundSize: 'cover',
+          // }}
           className="hide-scrollbar lg:col-span-7 max-h-dvh overflow-y-auto px-4 py-12"
         >
           <div

@@ -10,6 +10,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { useAuthService } from '../../services/use-auth-service';
+import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 
 export const OTPLogin = () => {
   const router = useRouter();
@@ -79,14 +80,18 @@ export const OTPLogin = () => {
           </div>
         </form>
 
-        <div className="relative my-6">
+        <section className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t"></div>
+            <GradientMask direction={`left`} />
+            <GradientMask direction={`right`} />
+            <div className="w-full border border-primary/50" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="text-muted-foreground bg-background px-2">OR</span>
+            <span className="text-muted-foreground rounded-full bg-background p-2">
+              OR
+            </span>
           </div>
-        </div>
+        </section>
 
         <div>
           <MainButton

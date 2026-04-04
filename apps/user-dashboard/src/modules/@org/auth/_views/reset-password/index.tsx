@@ -61,12 +61,12 @@ export const ResetPassword = () => {
   };
 
   return (
-    <section className="mx-auto max-w-[589px] rounded-xl bg-white p-8 shadow-2xl shadow-gray-100">
+    <section className="mx-auto max-w-[589px] rounded-xl bg-white p-8 shadow shadow-gray-100">
       <div className={`mb-8 space-y-2`}>
-        <h3 className="text-[32px]/[120%] font-[600] tracking-[-2%] text-black">
+        <h3 className="text-[32px]/[120%] font-semibold tracking-[-2%] text-black">
           Reset Password
         </h3>
-        <p className={`text-gray text-lg`}>
+        <p className={`text-gray`}>
           Enter your new password to reset your password
         </p>
       </div>
@@ -103,9 +103,13 @@ export const ResetPassword = () => {
           </div>
         </form>
 
-        <span className="text-grey-500 text-primary mt-4 flex items-center justify-center gap-2 text-center text-sm">
-          <Icon name="ArrowLeft" size={16} />
-          <Link href="/register" className="font-medium hover:underline">
+        <span className={`flex items-center justify-center`}>
+          <Link
+            href="/register"
+            className="text-grey-500 font-medium hover:underline text-primary w-fit mt-4
+          flex items-center justify-center gap-2 text-sm"
+          >
+            <Icon name="ArrowLeft2" size={24} />
             Back to Sign In
           </Link>
         </span>

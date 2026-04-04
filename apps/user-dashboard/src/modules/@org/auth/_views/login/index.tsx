@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 
 export const Login = () => {
   const router = useRouter();
@@ -114,10 +115,14 @@ export const Login = () => {
 
         <section className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t"></div>
+            <GradientMask direction={`left`} />
+            <GradientMask direction={`right`} />
+            <div className="w-full border border-primary/50" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="text-muted-foreground bg-background px-2">OR</span>
+            <span className="text-muted-foreground rounded-full bg-background p-2">
+              OR
+            </span>
           </div>
         </section>
 

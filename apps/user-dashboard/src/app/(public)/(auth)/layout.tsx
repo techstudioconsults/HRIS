@@ -4,6 +4,7 @@ import { Logo } from '@workspace/ui/lib';
 import { cn } from '@workspace/ui/lib/utils';
 import { usePathname } from 'next/navigation';
 import { AuthCarousel } from '@/modules/@org/auth';
+import Image from 'next/image';
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -21,21 +22,15 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
       <section
         className={cn(
           'grid min-h-dvh grid-cols-1',
-          !shouldHideCarousel && 'md:grid-cols-2'
+          !shouldHideCarousel && 'lg:grid-cols-12'
         )}
       >
-        {/* Content Section (Left on desktop, top on mobile) */}
         <section
-          style={
-            // shouldHideCarousel
-            // ?
-            {
-              background: 'url(/images/auth/bg-img.svg) no-repeat',
-              backgroundSize: 'cover',
-            }
-            // : {}
-          }
-          className="hide-scrollbar max-h-dvh overflow-y-auto px-4 py-12"
+          style={{
+            background: 'url(/images/auth/bg-img.svg) no-repeat',
+            backgroundSize: 'cover',
+          }}
+          className="hide-scrollbar lg:col-span-7 max-h-dvh overflow-y-auto px-4 py-12"
         >
           <div
             className={cn(
@@ -49,7 +44,19 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
         </section>
         {/* Carousel Section (Right on desktop, hidden on mobile and specific routes) */}
         {!shouldHideCarousel && (
-          <div className="hidden max-h-dvh md:block">
+          <div className="hidden relative lg:flex lg:col-span-5 items-end">
+            <Image
+              src={cn(
+                pathname.includes(`/login`)
+                  ? `https://res.cloudinary.com/kingsleysolomon/image/upload/q_auto/f_auto/v1775329718/techstudio/hris-repo/t7vh85tq67fb7x6m6uhu.png`
+                  : `https://res.cloudinary.com/kingsleysolomon/image/upload/q_auto/f_auto/v1775329814/techstudio/hris-repo/xd6dkhstewf5lkfbmfsr.png`
+              )}
+              alt={`name`}
+              fill
+              className={cn('object-cover')}
+              quality={500}
+              priority={true}
+            />
             <AuthCarousel />
           </div>
         )}

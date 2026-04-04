@@ -359,29 +359,24 @@ export const roleOptions = [
 export const testimonials = [
   {
     id: 1,
-    image: '/images/auth/register-img.svg',
+    image:
+      'https://res.cloudinary.com/kingsleysolomon/image/upload/q_auto/f_auto/v1775329718/techstudio/hris-repo/t7vh85tq67fb7x6m6uhu.webp',
     name: 'John Doe',
     position: 'Designer',
     message:
-      '“TechstudioHR has completely transformed how we manage payroll and employee records. What used to take hours now happens in minutes.”',
+      '“TechstudioHR has completely transformed how we manage payroll and ' +
+      'employee records. What used to take hours now happens in minutes.”',
     rating: 5,
   },
   {
     id: 2,
-    image: '/images/auth/login-img.svg',
+    image:
+      'https://res.cloudinary.com/kingsleysolomon/image/upload/q_auto/f_auto/v1775329814/techstudio/hris-repo/xd6dkhstewf5lkfbmfsr.png',
     name: 'Jane Doe',
     position: 'Developer',
     message:
-      '“TechstudioHR has completely transformed how we manage payroll and employee records. What used to take hours now happens in minutes.”',
+      '“TechstudioHR has completely transformed how we manage payroll and ' +
+      'employee records. What used to take hours now happens in minutes.”',
     rating: 2,
-  },
-  {
-    id: 3,
-    image: '/images/auth/register-img.svg',
-    name: 'James Doe',
-    position: 'Customer Service',
-    message:
-      '“TechstudioHR has completely transformed how we manage payroll and employee records. What used to take hours now happens in minutes.”',
-    rating: 4,
   },
 ];

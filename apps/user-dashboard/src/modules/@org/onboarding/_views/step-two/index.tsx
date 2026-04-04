@@ -1,4 +1,5 @@
-import { PageSection, PageWrapper } from '@/lib/animation';
+'use client';
+
 import { MainButton } from '@workspace/ui/lib/button';
 import { useCallback, useEffect } from 'react';
 
@@ -18,9 +19,9 @@ export const TeamSetupPage = () => {
   }, [handleStartTour]);
 
   return (
-    <PageWrapper className="flex flex-col items-center justify-between gap-8 lg:flex-row">
+    <section className="flex flex-col items-center justify-between gap-8 lg:flex-row">
       <section className="max-w-[646px] flex-1 space-y-[41px]">
-        <PageSection index={0} className="space-y-4">
+        <div className="space-y-4">
           <p>Step 2 of 3</p>
           <div>
             <div className="flex items-center gap-2">
@@ -29,8 +30,8 @@ export const TeamSetupPage = () => {
               <div className="h-2 w-16 rounded-full bg-gray-300" />
             </div>
           </div>
-        </PageSection>
-        <PageSection index={1} className="space-y-[24px]">
+        </div>
+        <div className="space-y-6">
           <h1 className="text-3xl font-semibold">
             Structure your team with the right access
           </h1>
@@ -39,16 +40,16 @@ export const TeamSetupPage = () => {
             organization. Add custom roles under each department and control
             what they can access.
           </p>
-        </PageSection>
-        <PageSection index={2} className="flex gap-4">
+        </div>
+        <div className="flex gap-4">
           <MainButton href="/onboarding/step-1" variant="primaryOutline">
             Back
           </MainButton>
-        </PageSection>
+        </div>
       </section>
       <section className="flex-1 md:scale-85">
         <TeamSetupForm />
       </section>
-    </PageWrapper>
+    </section>
   );
 };

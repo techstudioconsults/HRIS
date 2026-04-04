@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { useTour } from "@/modules/@org/onboarding";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertModal, FormField, ReusableDialog } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import { z } from "zod";
+import { useTour } from '@/modules/@org/onboarding';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { AlertModal, FormField, ReusableDialog } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { generatePayrollTourStep } from "../../config/tour-steps";
-import { usePayrollService } from "../../services/use-service";
-import { usePayrollStore } from "../../stores/payroll-store";
+import { generatePayrollTourStep } from '../../config/tour-steps';
+import { usePayrollService } from '../../services/use-service';
+import { usePayrollStore } from '../../stores/payroll-store';
 
 const fundWalletSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Please enter a valid email address"),
-  phoneNumber: z.string().min(1, "Phone number is required"),
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  email: z.string().email('Please enter a valid email address'),
+  phoneNumber: z.string().min(1, 'Phone number is required'),
 });
 
 export interface FundWalletFormData {
@@ -35,7 +35,10 @@ interface FundWalletFormModalProperties {
   isGeneratePayrollBannerShowing?: boolean;
 }
 
-export function FundWalletFormModal({ initialData, isGeneratePayrollBannerShowing }: FundWalletFormModalProperties) {
+export function FundWalletFormModal({
+  initialData,
+  isGeneratePayrollBannerShowing,
+}: FundWalletFormModalProperties) {
   const {
     setShowFundWalletAccountModal,
     showFundWalletFormModal,
@@ -53,10 +56,10 @@ export function FundWalletFormModal({ initialData, isGeneratePayrollBannerShowin
   const methods = useForm<FundWalletFormData>({
     resolver: zodResolver(fundWalletSchema),
     defaultValues: initialData || {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phoneNumber: "",
+      firstName: '',
+      lastName: '',
+      email: '',
+      phoneNumber: '',
     },
   });
 
@@ -105,7 +108,7 @@ export function FundWalletFormModal({ initialData, isGeneratePayrollBannerShowin
   return (
     <>
       <ReusableDialog
-        trigger={""}
+        trigger={''}
         open={showFundWalletFormModal}
         onOpenChange={setShowFundWalletFormModal}
         title="Set up Payroll Wallet"
@@ -125,7 +128,7 @@ export function FundWalletFormModal({ initialData, isGeneratePayrollBannerShowin
                 label="First Name"
                 placeholder="Enter name"
                 type="text"
-                className="!h-12 w-full"
+                className="h-12! w-full"
               />
 
               <FormField
@@ -133,7 +136,7 @@ export function FundWalletFormModal({ initialData, isGeneratePayrollBannerShowin
                 label="Last Name"
                 placeholder="Enter name"
                 type="text"
-                className="!h-12 w-full"
+                className="h-12! w-full"
               />
 
               <FormField
@@ -141,7 +144,7 @@ export function FundWalletFormModal({ initialData, isGeneratePayrollBannerShowin
                 label="Email Address"
                 placeholder="Enter address"
                 type="email"
-                className="!h-12 w-full"
+                className="h-12! w-full"
               />
 
               <FormField
@@ -149,7 +152,7 @@ export function FundWalletFormModal({ initialData, isGeneratePayrollBannerShowin
                 label="Phone Number"
                 placeholder="Enter phone number"
                 type="text"
-                className="!h-12 w-full"
+                className="h-12! w-full"
               />
             </div>
 
@@ -170,7 +173,7 @@ export function FundWalletFormModal({ initialData, isGeneratePayrollBannerShowin
                 isLoading={isPending}
                 isDisabled={isPending}
               >
-                {isPending ? "Saving..." : "Save & Continue"}
+                {isPending ? 'Saving...' : 'Save & Continue'}
               </MainButton>
             </div>
           </form>

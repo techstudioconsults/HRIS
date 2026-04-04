@@ -1,13 +1,8 @@
-"use client";
+'use client';
 
-import { PageWrapper } from "@/lib/animation";
-import { InputOtpCard } from "@/modules/@org/auth";
+import { InputOtpCard } from '@/modules/@org/auth';
 
 const LoginOtpPage = () => {
-  return (
-    <PageWrapper>
-      <InputOtpCard />
-    </PageWrapper>
-  );
+  return <InputOtpCard />;
 };
 export default LoginOtpPage;

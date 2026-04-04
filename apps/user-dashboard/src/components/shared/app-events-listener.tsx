@@ -379,7 +379,7 @@ export const AppEventsListener = () => {
   return (
     <>
       {/* Banners Stack */}
-      <div className="space-y-4">
+      <div className="space-y-4 bg-red-500">
         {banners.map((banner) => {
           const iconName =
             banner.severity === 'success'
@@ -393,7 +393,8 @@ export const AppEventsListener = () => {
             <Wrapper
               key={banner.id}
               className={cn(
-                'bg-background border-primary-75 animate-entrance pointer-events-auto mx-auto mt-10 flex w-full items-center justify-between border-y p-2',
+                'bg-background border-primary-75 animate-entrance ' +
+                  'pointer-events-auto mx-auto mt-10 flex w-full items-center justify-between border-y p-2',
                 banner.severity === 'success' && 'border-success/20',
                 banner.severity === 'error' && 'border-destructive/20',
                 banner.severity === 'warning' && 'border-warning/20',

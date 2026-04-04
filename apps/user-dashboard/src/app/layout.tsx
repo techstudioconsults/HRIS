@@ -1,21 +1,12 @@
-import { KBarProviderWrapper } from '@/lib/kbar/kbar-provider';
-import { fontVariables } from '@/lib/tools/font';
 import type { Metadata, Viewport } from 'next';
-import { cookies } from 'next/headers';
-import NextTopLoader from 'nextjs-toploader';
-import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import './globals.css';
 import '@workspace/ui/themes.css';
 
-import { SessionProvider } from '@/components/SessionProvider';
-import { SSEProvider } from '@/context/sse-provider';
-import { ReactQueryProvider } from '@/lib/react-query/query-provider';
-import { TooltipProvider } from '@workspace/ui/components/tooltip';
-import { Toast } from '@workspace/ui/lib';
 import { cn } from '@workspace/ui/lib/utils';
-import { ThemeProvider } from 'next-themes';
 import React from 'react';
+import { Providers } from '@/components/providers';
+import { Playfair_Display, Work_Sans } from 'next/font/google';
 
 const META_THEME_COLORS = {
   light: '#ffffff',
@@ -31,52 +22,31 @@ export const viewport: Viewport = {
   themeColor: META_THEME_COLORS.light,
 };
 
-const INNER_HTML = {
-  __html: `
-              try {
-                if (localStorage.theme === 'dark' || ((!('theme' in localStorage) || localStorage.theme === 'system') 
-                && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                  document.querySelector('meta[name="theme-color"]').setAttribute('content', '${META_THEME_COLORS.dark}')
-                }
-              } catch (_) {}
-            `,
-};
+const fontSans = Work_Sans({
+  subsets: ['latin'],
+  variable: '--font-sans',
+});
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies();
-  const activeThemeValue = cookieStore.get('active_theme')?.value;
-  const isScaled = activeThemeValue?.endsWith('-scaled');
+const fontMono = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-mono',
+});
 
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <title></title>
-        <script dangerouslySetInnerHTML={INNER_HTML} />
-      </head>
       <body
         className={cn(
-          'bg-background font-sans antialiased',
-          activeThemeValue ? `theme-${activeThemeValue}` : '',
-          isScaled ? 'theme-scaled' : '',
-          fontVariables
+          fontSans.variable,
+          fontMono.variable,
+          `font-sans antialiased`
         )}
       >
-        <SessionProvider>
-          <SSEProvider>
-            <NextTopLoader showSpinner={false} />
-            <ReactQueryProvider>
-              <NuqsAdapter>
-                <TooltipProvider>
-                  <ThemeProvider>
-                    <Toast />
-                    {/* <NetworkStatusModal /> */}
-                    <KBarProviderWrapper>{children}</KBarProviderWrapper>
-                  </ThemeProvider>
-                </TooltipProvider>
-              </NuqsAdapter>
-            </ReactQueryProvider>
-          </SSEProvider>
-        </SessionProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

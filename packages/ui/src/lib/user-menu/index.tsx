@@ -91,14 +91,22 @@ export function UserMenu({
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={onProfileClick} className="cursor-pointer">
-            <Icon name={`User`} className="mr-2 text-primary/75 size-4" />
+            <Icon
+              name={`User`}
+              className="mr-2 text-primary size-4"
+              variant={`Outline`}
+            />
             <span>My Profile</span>
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={onSettingsClick}
             className="cursor-pointer"
           >
-            <Icon name={`Setting2`} className="mr-2 size-4 text-primary/75" />
+            <Icon
+              name={`Setting2`}
+              variant={`Outline`}
+              className="mr-2 size-4 text-primary"
+            />
             <span>Account Settings</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
@@ -108,7 +116,11 @@ export function UserMenu({
           className="text-destructive focus:text-destructive cursor-pointer"
           variant="destructive"
         >
-          <Icon name={`LogoutCurve`} className="mr-2 size-4" />
+          <Icon
+            name={`LogoutCurve`}
+            variant={`Outline`}
+            className="mr-2 size-4"
+          />
           <span>Logout</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

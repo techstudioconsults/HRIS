@@ -69,7 +69,7 @@ const TeamDetailsHeader = ({
           <MainButton
             variant="primary"
             isLeftIconVisible
-            icon={<Icon name="Plus" />}
+            icon={<Icon name="Add" variant={`Bold`} />}
             onClick={onAddSubTeam}
           >
             Add Sub-team
@@ -77,7 +77,10 @@ const TeamDetailsHeader = ({
           <GenericDropdown
             align="end"
             trigger={
-              <div className="bg-background border-border flex size-10 items-center justify-center rounded-md shadow">
+              <div
+                className="bg-background border-border flex size-10
+               items-center justify-center rounded-md shadow"
+              >
                 <Icon
                   name="More"
                   size={20}
@@ -95,7 +98,12 @@ const TeamDetailsHeader = ({
               }}
             >
               <span>
-                <Icon name="Edit" size={16} className="mr-2" />
+                <Icon
+                  name="Edit"
+                  size={16}
+                  className="mr-2"
+                  variant={`Outline`}
+                />
               </span>
               Edit Team&apos;s Name
             </DropdownMenuItem>
@@ -109,6 +117,7 @@ const TeamDetailsHeader = ({
                   name="Trash"
                   size={16}
                   className="text-destructive mr-2"
+                  variant={`Outline`}
                 />
               </span>
               Delete Team

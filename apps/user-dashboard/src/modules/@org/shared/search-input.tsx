@@ -38,9 +38,10 @@ export const SearchInput = ({
   return (
     <div className={`relative ${className}`}>
       <Icon
-        name="SearchIcon"
+        name="SearchNormal1"
         size={16}
-        className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2 transform"
+        className="absolute text-primary top-1/2 left-3 -translate-y-1/2 transform"
+        variant={`Outline`}
       />
       <Input
         disabled={isDisabled}
@@ -177,7 +178,12 @@ export function GlobalSearchInput({
             className
           )}
         >
-          <Icon name="SearchNormal1" size={16} className={`text-primary/75`} />
+          <Icon
+            name="SearchNormal1"
+            size={16}
+            className={`text-primary`}
+            variant={`Outline`}
+          />
           <Input
             ref={inputReference}
             type="text"

@@ -285,7 +285,9 @@ export const AddNewEmployees = ({
           )}
 
           <section className="flex items-center justify-between">
-            <p className="text-lg font-semibold">Add Employee(s) to Team</p>
+            <p className="text-sm lg:text-lg font-semibold">
+              Add Employee(s) to Team
+            </p>
             <button
               type="button"
               className="text-primary flex cursor-pointer items-center gap-1 text-sm font-medium"

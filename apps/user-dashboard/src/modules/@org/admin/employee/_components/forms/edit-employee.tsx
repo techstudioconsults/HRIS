@@ -428,7 +428,7 @@ export const EditEmployeeForm = () => {
                           onChange={(value_) => {
                             onChange(value_ || '');
                           }}
-                          defaultCountry="US"
+                          defaultCountry="NG"
                           placeholder="Enter phone number"
                           inputClassName="border-border h-14!"
                           buttonClassName="border-border h-14!"

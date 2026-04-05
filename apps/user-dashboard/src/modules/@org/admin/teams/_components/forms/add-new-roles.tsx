@@ -313,12 +313,14 @@ export const RolesAndPermission = ({
           />
 
           <section className="flex items-center justify-between">
-            <p className="text-lg font-semibold">Add New Role(s) to Team</p>
+            <p className="text-sm lg:text-lg font-semibold">
+              Add New Role(s) to Team
+            </p>
             <p
               className="text-primary flex cursor-pointer items-center gap-1 text-sm font-medium"
               onClick={addNewRole}
             >
-              <Icon name="Plus" size={16} /> Add New Role
+              <Icon name="Add" size={16} /> Add New Role
             </p>
           </section>
 
@@ -327,6 +329,31 @@ export const RolesAndPermission = ({
               const index = roles.length - 1 - originalIndex; // Calculate original index for state updates
               const isRoleValid =
                 role.name.trim().length > 0 && role.permissions.length > 0;
+              const isPermissionChecked = (module: string, action: string) =>
+                role.permissions?.includes(`${module}:${action}`) ||
+                (action !== 'manage' &&
+                  role.permissions?.includes(`${module}:manage`));
+
+              const updatePermission = (
+                module: string,
+                action: string,
+                checked: boolean
+              ) => {
+                let newPermissions = [...(role.permissions || [])];
+
+                newPermissions =
+                  action === 'manage'
+                    ? handleManageChange(module, checked, newPermissions)
+                    : handlePermissionChange(
+                        module,
+                        action,
+                        checked,
+                        newPermissions
+                      );
+
+                updateRole(index, 'permissions', newPermissions);
+              };
+
               return (
                 <section
                   key={index}
@@ -378,7 +405,7 @@ export const RolesAndPermission = ({
                         label="Role Name"
                         type="text"
                         placeholder="Enter role name"
-                        className="h-[48px] w-full shadow-none"
+                        className="h-12 w-full shadow-none"
                       />
                     </>
                   ) : (
@@ -422,83 +449,106 @@ export const RolesAndPermission = ({
                         </p>
                       </CardHeader>
                       <CardContent className={`p-0`}>
-                        <div className="overflow-x-auto rounded-md border">
-                          <table className="w-full border-collapse">
-                            <thead className={`bg-primary/10`}>
-                              <tr className="">
-                                <th className="border-r px-4 py-2 text-left text-sm">
-                                  Module
-                                </th>
-                                {actions.map((action) => (
-                                  <th
-                                    key={action}
-                                    className="divide-x px-4 py-2 text-center text-sm font-medium capitalize"
-                                  >
-                                    {action}
-                                  </th>
-                                ))}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {modules.map((module) => (
-                                <tr
-                                  key={module}
-                                  className="border-border/50 border-b"
-                                >
-                                  <td className="border-r px-4 py-2 text-sm capitalize">
-                                    {module}
-                                  </td>
+                        <div className="space-y-4">
+                          <div className="space-y-3 md:hidden">
+                            {modules.map((module) => (
+                              <div
+                                key={`mobile-${module}`}
+                                className="border-border/60 bg-background rounded-md border p-3"
+                              >
+                                <p className="text-sm font-semibold capitalize">
+                                  {module}
+                                </p>
+                                <div className="mt-3 grid grid-cols-2 gap-2">
                                   {actions.map((action) => (
-                                    <td
-                                      key={`${module}-${action}`}
-                                      className="border-r px-4 py-2 text-center"
+                                    <label
+                                      key={`mobile-${module}-${action}`}
+                                      className="border-border/60 bg-muted/20 flex items-center justify-between rounded-md border px-2 py-2"
                                     >
-                                      <div className="flex justify-center">
-                                        <Checkbox
-                                          className={`border-primary/30 data-[state=checked]:border-primary data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary`}
-                                          checked={
-                                            role.permissions?.includes(
-                                              `${module}:${action}`
-                                            ) ||
-                                            (action !== 'manage' &&
-                                              role.permissions?.includes(
-                                                `${module}:manage`
-                                              ))
-                                          }
-                                          onCheckedChange={(checked) => {
-                                            let newPermissions = [
-                                              ...(role.permissions || []),
-                                            ];
-
-                                            newPermissions =
-                                              action === 'manage'
-                                                ? handleManageChange(
-                                                    module,
-                                                    !!checked,
-                                                    newPermissions
-                                                  )
-                                                : handlePermissionChange(
-                                                    module,
-                                                    action,
-                                                    !!checked,
-                                                    newPermissions
-                                                  );
-
-                                            updateRole(
-                                              index,
-                                              'permissions',
-                                              newPermissions
-                                            );
-                                          }}
-                                          aria-label={`${module} ${action} permission`}
-                                        />
-                                      </div>
-                                    </td>
+                                      <span className="text-xs font-medium capitalize">
+                                        {action}
+                                      </span>
+                                      <Checkbox
+                                        className={`border-primary/30 data-[state=checked]:border-primary
+                                           data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary`}
+                                        checked={isPermissionChecked(
+                                          module,
+                                          action
+                                        )}
+                                        onCheckedChange={(checked) =>
+                                          updatePermission(
+                                            module,
+                                            action,
+                                            !!checked
+                                          )
+                                        }
+                                        aria-label={`${module} ${action} permission`}
+                                      />
+                                    </label>
                                   ))}
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          <div className="hidden md:block">
+                            <div className="overflow-x-auto rounded-md border">
+                              <table className="w-full border-collapse">
+                                <thead className={`bg-primary/10`}>
+                                  <tr className="">
+                                    <th className="border-r px-4 py-2 text-left text-sm">
+                                      Module
+                                    </th>
+                                    {actions.map((action) => (
+                                      <th
+                                        key={action}
+                                        className="divide-x px-4 py-2 text-center text-sm font-medium capitalize"
+                                      >
+                                        {action}
+                                      </th>
+                                    ))}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {modules.map((module) => (
+                                    <tr
+                                      key={module}
+                                      className="border-border/50 border-b"
+                                    >
+                                      <td className="border-r px-4 py-2 text-sm capitalize">
+                                        {module}
+                                      </td>
+                                      {actions.map((action) => (
+                                        <td
+                                          key={`${module}-${action}`}
+                                          className="border-r px-4 py-2 text-center"
+                                        >
+                                          <div className="flex justify-center">
+                                            <Checkbox
+                                              className={`border-primary/30 data-[state=checked]:border-primary
+                                           data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary`}
+                                              checked={isPermissionChecked(
+                                                module,
+                                                action
+                                              )}
+                                              onCheckedChange={(checked) =>
+                                                updatePermission(
+                                                  module,
+                                                  action,
+                                                  !!checked
+                                                )
+                                              }
+                                              aria-label={`${module} ${action} permission`}
+                                            />
+                                          </div>
+                                        </td>
+                                      ))}
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>

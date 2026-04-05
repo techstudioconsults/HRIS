@@ -298,7 +298,7 @@ export const AddEmployeeForm = () => {
                           onChange={(value_) => {
                             onChange(value_ || '');
                           }}
-                          defaultCountry="US"
+                          defaultCountry="NG"
                           placeholder={
                             loadingTeams
                               ? 'Loading phone number...'

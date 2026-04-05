@@ -40,7 +40,11 @@ export function ReusableDialog({
   icon,
   onOpenChange,
 }: ReusableDialogProperties) {
-  const hasTrigger = trigger !== null && trigger !== undefined && trigger !== false && trigger !== '';
+  const hasTrigger =
+    trigger !== null &&
+    trigger !== undefined &&
+    trigger !== false &&
+    trigger !== '';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -51,17 +55,29 @@ export function ReusableDialog({
           <DialogTrigger>{trigger}</DialogTrigger>
         )
       ) : null}
-      <DialogContent hideClose={hideClose} className={cn('border-default min-w-2xl items-center', className)}>
+
+      <DialogContent
+        hideClose={hideClose}
+        className={cn('border-default items-center scale-[0.93]', className)}
+      >
         <DialogHeader className={cn('h-fit', wrapperClassName)}>
           {img &&
             (img.startsWith('http') || img.startsWith('/') ? (
-              <Image width={100} height={100} src={img} alt="icon" className="h-[100px] w-[100px]" />
+              <Image
+                width={100}
+                height={100}
+                src={img}
+                alt="icon"
+                className="h-[100px] w-[100px]"
+              />
             ) : (
               <div className="flex h-[100px] w-[100px] items-center justify-center rounded-full bg-orange-100 text-6xl">
                 {img}
               </div>
             ))}
-          <DialogTitle className={cn('flex items-center gap-2 text-2xl', headerClassName)}>
+          <DialogTitle
+            className={cn('flex items-center gap-2 text-2xl', headerClassName)}
+          >
             <span>{icon}</span>
             {title}
           </DialogTitle>

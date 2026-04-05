@@ -123,7 +123,14 @@ const useTeamRowActionsBase = (
         {
           label: 'View team',
           // kbd: "Ctrl+V",
-          icon: <Icon name={`Eye`} size={4} aria-hidden="true" />,
+          icon: (
+            <Icon
+              variant={'Outline'}
+              name={`Eye`}
+              size={4}
+              aria-hidden="true"
+            />
+          ),
           onClick: async () => {
             setActiveTeam(team);
             router.push(viewPath);
@@ -132,7 +139,14 @@ const useTeamRowActionsBase = (
         {
           label: 'Edit team',
           // kbd: "Ctrl+E",
-          icon: <Icon name={`Edit`} size={4} aria-hidden="true" />,
+          icon: (
+            <Icon
+              variant={'Outline'}
+              name={`Edit`}
+              size={4}
+              aria-hidden="true"
+            />
+          ),
           onClick: () => {
             setActiveTeam(team);
             if (onEditTeam) {
@@ -174,6 +188,7 @@ const useTeamRowActionsBase = (
           variant: 'destructive',
           icon: (
             <Icon
+              variant={'Outline'}
               name={`Trash`}
               className={`text-destructive`}
               aria-hidden="true"

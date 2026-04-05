@@ -68,13 +68,7 @@ export const useEmployeeRowActions = () => {
           label: 'View employee',
           // kbd: "Ctrl+V",
           icon: (
-            <Icon
-              name="Eye"
-              size={16}
-              aria-hidden="true"
-              variant={`Outline`}
-              className={`text-primary`}
-            />
+            <Icon name="Eye" size={16} aria-hidden="true" variant={`Outline`} />
           ),
           onClick: () => {
             setActiveEmployee(employee);
@@ -92,7 +86,6 @@ export const useEmployeeRowActions = () => {
               size={16}
               aria-hidden="true"
               variant={`Outline`}
-              className={`text-primary`}
             />
           ),
           onClick: () => {

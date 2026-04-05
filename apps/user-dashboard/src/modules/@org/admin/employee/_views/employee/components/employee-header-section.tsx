@@ -64,7 +64,7 @@ export const EmployeeHeaderSection = ({
       actionComponent={
         <div className="flex flex-col lg:flex-row lg:items-center gap-2">
           <div
-            className={`flex flex-row-reverse lg:flex-row items-center gap-2`}
+            className={`flex flex-1 flex-row-reverse lg:flex-row items-center gap-2`}
           >
             <SearchInput
               className="border-border h-10 rounded-md border w-full"
@@ -101,7 +101,9 @@ export const EmployeeHeaderSection = ({
               </section>
             </GenericDropdown>
           </div>
-          <div className={`flex items-center justify-between gap-2 w-full`}>
+          <div
+            className={`flex flex-1 items-center justify-between gap-2 w-full`}
+          >
             <ExportAction
               isDisabled={!employeeData?.data?.items?.length}
               downloadMutation={async () => {

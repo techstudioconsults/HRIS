@@ -50,7 +50,7 @@ export const TeamHeaderSection = ({
       actionComponent={
         <div className="flex flex-col lg:flex-row lg:items-center gap-2">
           <div
-            className={`flex flex-row-reverse lg:flex-row items-center gap-2`}
+            className={`flex flex-1 flex-row-reverse lg:flex-row items-center gap-2`}
           >
             <SearchInput
               className="border-border h-10 rounded-md border w-full"
@@ -83,7 +83,7 @@ export const TeamHeaderSection = ({
               </section>
             </GenericDropdown>
           </div>
-          <div className={`flex items-center gap-2`}>
+          <div className={`flex flex-1 items-center gap-2`}>
             <ExportAction
               isDisabled
               downloadMutation={async (filters) => {

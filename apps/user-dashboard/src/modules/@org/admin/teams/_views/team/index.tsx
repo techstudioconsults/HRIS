@@ -1,26 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client';
 
-import { useTeamsSearchParameters } from "@/lib/nuqs/use-teams-search-parameters";
-import { useTeamWorkflowStore } from "@/modules/@org/admin/teams/store/team-store";
-import type { Role as FormRole, Team as TeamFormType } from "@/modules/@org/onboarding/_components/forms/schema";
-import { TeamForm } from "@/modules/@org/onboarding/_components/forms/team/team-form";
-import { useOnboardingService } from "@/modules/@org/onboarding/services/use-onboarding-service";
-import { useQueryClient } from "@tanstack/react-query";
-import { ReusableDialog } from "@workspace/ui/lib";
-import { AxiosError } from "axios";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
-import { useDebounce } from "use-debounce";
+import { useTeamsSearchParameters } from '@/lib/nuqs/use-teams-search-parameters';
+import { useTeamWorkflowStore } from '@/modules/@org/admin/teams/store/team-store';
+import type {
+  Role as FormRole,
+  Team as TeamFormType,
+} from '@/modules/@org/onboarding/_components/forms/schema';
+import { TeamForm } from '@/modules/@org/onboarding/_components/forms/team/team-form';
+import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onboarding-service';
+import { useQueryClient } from '@tanstack/react-query';
+import { ReusableDialog } from '@workspace/ui/lib';
+import { AxiosError } from 'axios';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
+import { useDebounce } from 'use-debounce';
 
-import { AddNewEmployees } from "../../_components/forms/add-new-employees";
-import { RolesAndPermission } from "../../_components/forms/add-new-roles";
-import { useTeamEditing } from "../../_hooks/use-team-editing";
-import { useEmployeeService } from "../../../employee/services/use-service";
-import { useTeamService } from "../../services/use-service";
-import { useTeamRowActions } from "../table-data";
-import { TeamHeaderSection } from "./components/team-header-section";
-import { TeamTableSection } from "./components/team-table-section";
+import { AddNewEmployees } from '../../_components/forms/add-new-employees';
+import { RolesAndPermission } from '../../_components/forms/add-new-roles';
+import { useTeamEditing } from '../../_hooks/use-team-editing';
+import { useEmployeeService } from '../../../employee/services/use-service';
+import { useTeamService } from '../../services/use-service';
+import { useTeamRowActions } from '../table-data';
+import { TeamHeaderSection } from './components/team-header-section';
+import { TeamTableSection } from './components/team-table-section';
 
 export const AllTeams = () => {
   const {
@@ -40,7 +43,7 @@ export const AllTeams = () => {
   } = useTeamsSearchParameters();
 
   // Local input state (debounced) to throttle URL updates via nuqs
-  const [searchInput, setSearchInput] = useState(search || "");
+  const [searchInput, setSearchInput] = useState(search || '');
   const [debouncedSearch] = useDebounce(searchInput, 300);
 
   const handleOpenEmployeeDialog = (team: Team) => {
@@ -54,7 +57,7 @@ export const AllTeams = () => {
     openEmployeeDialog(formTeam);
 
     // Force refetch roles for this team
-    queryClient.invalidateQueries({ queryKey: ["roles", team.id] });
+    queryClient.invalidateQueries({ queryKey: ['roles', team.id] });
   };
 
   const handleOpenEditDialog = (team: Team) => {
@@ -77,7 +80,7 @@ export const AllTeams = () => {
     openRoleDialog(formTeam, null);
 
     // Force refetch roles for this team
-    queryClient.invalidateQueries({ queryKey: ["roles", team.id] });
+    queryClient.invalidateQueries({ queryKey: ['roles', team.id] });
   };
 
   // Team editing hook
@@ -93,7 +96,7 @@ export const AllTeams = () => {
   const { getRowActions, DeleteConfirmationModal } = useTeamRowActions(
     handleOpenEmployeeDialog,
     handleOpenEditDialog,
-    handleOpenRoleDialog,
+    handleOpenRoleDialog
   );
   const {
     dialog,
@@ -113,7 +116,7 @@ export const AllTeams = () => {
   } = useTeamWorkflowStore();
 
   const handleOpenTeamDialog = (team?: TeamFormType) => {
-    openTeamDialog(team || null, team ? "edit" : "create");
+    openTeamDialog(team || null, team ? 'edit' : 'create');
   };
 
   const { useGetRoles, useCreateRole, useUpdateRole } = useTeamService();
@@ -122,9 +125,14 @@ export const AllTeams = () => {
 
   // Apply debounced search to URL (nuqs) and reset page to 1
   useEffect(() => {
-    setSearch(debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : null);
-    resetToFirstPage();
-  }, [debouncedSearch, setSearch, resetToFirstPage]);
+    const trimmedSearch =
+      debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : null;
+    // Only update if value actually changed to prevent render loop
+    if (search !== trimmedSearch) {
+      setSearch(trimmedSearch);
+      resetToFirstPage();
+    }
+  }, [debouncedSearch, search, setSearch, resetToFirstPage]);
 
   // Build API filters from URL state (nuqs)
   const apiFilters = useMemo(() => getApiFilters(), [getApiFilters]);
@@ -137,14 +145,14 @@ export const AllTeams = () => {
       if (newFilters.limit != null) setLimit(Number(newFilters.limit));
       resetToFirstPage();
     },
-    [setStatus, setSortBy, setLimit, resetToFirstPage],
+    [setStatus, setSortBy, setLimit, resetToFirstPage]
   );
 
   const handlePageChange = useCallback(
     (newPage: number) => {
       setPage(newPage);
     },
-    [setPage],
+    [setPage]
   );
 
   const handleSearchChange = useCallback((query: string) => {
@@ -152,7 +160,7 @@ export const AllTeams = () => {
   }, []);
 
   const handleResetFilters = useCallback(() => {
-    setSearchInput("");
+    setSearchInput('');
     resetFilters();
   }, [resetFilters]);
 
@@ -160,8 +168,8 @@ export const AllTeams = () => {
   const { data: employeesData } = useGetAllEmployees({ page: 1 });
 
   // Fetch roles for current team - only when employee dialog is open
-  const { data: rolesData } = useGetRoles(currentTeam?.id || "", {
-    enabled: !!currentTeam?.id && dialog === "employee",
+  const { data: rolesData } = useGetRoles(currentTeam?.id || '', {
+    enabled: !!currentTeam?.id && dialog === 'employee',
   });
 
   const queryClient = useQueryClient();
@@ -180,13 +188,16 @@ export const AllTeams = () => {
         {
           onSuccess: () => {
             toast.success(`Team "${name}" created successfully!`);
-            queryClient.invalidateQueries({ queryKey: ["teams"] });
+            queryClient.invalidateQueries({ queryKey: ['teams'] });
           },
           onError: (error) => {
-            const message = error instanceof AxiosError ? error.response?.data.message : "An unexpected error occurred";
-            toast.error("Failed to create team", { description: message });
+            const message =
+              error instanceof AxiosError
+                ? error.response?.data.message
+                : 'An unexpected error occurred';
+            toast.error('Failed to create team', { description: message });
           },
-        },
+        }
       );
       const formTeam: TeamFormType = {
         id: (newTeam as Team)?.id,
@@ -208,7 +219,10 @@ export const AllTeams = () => {
         openRoleDialog(formTeam, null);
       }, 500);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to create team. Please try again.";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to create team. Please try again.';
       toast.error(errorMessage);
       throw error;
     } finally {
@@ -227,18 +241,24 @@ export const AllTeams = () => {
         },
         {
           onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["teams"] });
-            queryClient.invalidateQueries({ queryKey: ["roles", teamId] });
+            queryClient.invalidateQueries({ queryKey: ['teams'] });
+            queryClient.invalidateQueries({ queryKey: ['roles', teamId] });
             closeDialog();
           },
           onError: (error) => {
-            const message = error instanceof AxiosError ? error.response?.data.message : "An unexpected error occurred";
-            toast.error("Failed to create role", { description: message });
+            const message =
+              error instanceof AxiosError
+                ? error.response?.data.message
+                : 'An unexpected error occurred';
+            toast.error('Failed to create role', { description: message });
           },
-        },
+        }
       );
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to create role. Please try again.";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to create role. Please try again.';
       toast.error(errorMessage);
       throw error;
     } finally {
@@ -264,12 +284,15 @@ export const AllTeams = () => {
         name: data.name,
         permissions: data.permissions,
       });
-      await queryClient.invalidateQueries({ queryKey: ["teams"] });
+      await queryClient.invalidateQueries({ queryKey: ['teams'] });
       toast.success(`Role "${data.name}" updated successfully!`);
       closeDialog();
       setCurrentRole(null);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to update role. Please try again.";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to update role. Please try again.';
       toast.error(errorMessage);
       throw error;
     } finally {
@@ -277,25 +300,31 @@ export const AllTeams = () => {
     }
   };
 
-  const handleAssignEmployee = async (data: { employeeId: string; roleId: string; customPermissions?: string[] }) => {
+  const handleAssignEmployee = async (data: {
+    employeeId: string;
+    roleId: string;
+    customPermissions?: string[];
+  }) => {
     if (!currentTeam?.id) {
-      toast.error("No team selected. Please try again.");
-      throw new Error("No team selected");
+      toast.error('No team selected. Please try again.');
+      throw new Error('No team selected');
     }
 
     try {
       // Find the full employee data from the available employees
-      const selectedEmployee = employeesData?.data?.items?.find((emp: Employee) => emp.id === data.employeeId);
+      const selectedEmployee = employeesData?.data?.items?.find(
+        (emp: Employee) => emp.id === data.employeeId
+      );
 
       if (!selectedEmployee) {
-        toast.error("Employee not found. Please try again.");
-        throw new Error("Employee not found");
+        toast.error('Employee not found. Please try again.');
+        throw new Error('Employee not found');
       }
 
       // Build FormData with ONLY fields being reassigned/changed
       const formData = new FormData();
-      formData.append("teamId", currentTeam.id);
-      formData.append("roleId", data.roleId);
+      formData.append('teamId', currentTeam.id);
+      formData.append('roleId', data.roleId);
       if (data.customPermissions && data.customPermissions.length > 0) {
         let index = 0;
         for (const perm of data.customPermissions) {
@@ -308,12 +337,15 @@ export const AllTeams = () => {
       await updateEmployee({ id: selectedEmployee.id, data: formData });
 
       // Invalidate queries to refresh the UI
-      await queryClient.invalidateQueries({ queryKey: ["teams"] });
-      await queryClient.invalidateQueries({ queryKey: ["employee", "list"] });
+      await queryClient.invalidateQueries({ queryKey: ['teams'] });
+      await queryClient.invalidateQueries({ queryKey: ['employee', 'list'] });
 
-      toast.success("Employee assigned successfully!");
+      toast.success('Employee assigned successfully!');
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to assign employee. Please try again.";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Failed to assign employee. Please try again.';
       toast.error(errorMessage);
       throw error;
     }
@@ -346,18 +378,18 @@ export const AllTeams = () => {
       </section>
 
       <ReusableDialog
-        open={dialog === "team"}
+        open={dialog === 'team'}
         onOpenChange={(open) => {
           if (!open) {
             closeDialog();
             setSkipToNextStep(false);
           }
         }}
-        title={workflowMode === "edit" ? "Edit Team" : "Add New Team"}
+        title={workflowMode === 'edit' ? 'Edit Team' : 'Add New Team'}
         description={
-          workflowMode === "edit"
-            ? "Modify the team details"
-            : "Create a new team for your organization. You can add roles and employees later."
+          workflowMode === 'edit'
+            ? 'Modify the team details'
+            : 'Create a new team for your organization. You can add roles and employees later.'
         }
         trigger={<span />}
         className="min-w-2xl"
@@ -365,7 +397,9 @@ export const AllTeams = () => {
         <TeamForm
           initialData={currentTeam}
           onSubmit={async (data) => {
-            return workflowMode === "edit" ? handleUpdateTeam({ name: data.name }) : handleAddTeam(data.name);
+            return workflowMode === 'edit'
+              ? handleUpdateTeam({ name: data.name })
+              : handleAddTeam(data.name);
           }}
           onCancel={() => {
             closeDialog();
@@ -376,20 +410,20 @@ export const AllTeams = () => {
       </ReusableDialog>
 
       <ReusableDialog
-        open={dialog === "role"}
+        open={dialog === 'role'}
         onOpenChange={(open) => {
           if (!open) {
             closeDialog();
             setSkipToNextStep(false);
           }
         }}
-        title={currentRole ? "Edit Role" : "Create Roles"}
+        title={currentRole ? 'Edit Role' : 'Create Roles'}
         description={
           currentRole
-            ? "Modify the role details"
+            ? 'Modify the role details'
             : skipToNextStep
               ? `Add roles to "${currentTeam?.name}" to define permissions. You can skip this and add roles later.`
-              : "Create new roles for this team"
+              : 'Create new roles for this team'
         }
         className={`!max-w-2xl`}
         trigger={<span />}
@@ -398,12 +432,16 @@ export const AllTeams = () => {
           <RolesAndPermission
             initialData={currentRole}
             onSubmit={async (data) => {
-              return currentRole ? handleUpdateRole(currentRole.id!, data) : handleAddRole(currentTeam.id!, data);
+              return currentRole
+                ? handleUpdateRole(currentRole.id!, data)
+                : handleAddRole(currentTeam.id!, data);
             }}
             onCancel={(event) => {
               event?.preventDefault?.();
               if (skipToNextStep) {
-                toast.info("Role creation skipped. You can add roles later from the team details page.");
+                toast.info(
+                  'Role creation skipped. You can add roles later from the team details page.'
+                );
               }
               closeDialog();
               setSkipToNextStep(false);
@@ -415,7 +453,7 @@ export const AllTeams = () => {
       </ReusableDialog>
 
       <ReusableDialog
-        open={dialog === "employee"}
+        open={dialog === 'employee'}
         onOpenChange={(open) => {
           if (!open) {
             closeDialog();
@@ -426,7 +464,7 @@ export const AllTeams = () => {
         description={
           skipToNextStep
             ? `Assign employees to "${currentTeam?.name}". You can skip this and add employees later.`
-            : "Assign employees to this team and customize their roles"
+            : 'Assign employees to this team and customize their roles'
         }
         className={`!max-w-2xl`}
         trigger={<span />}
@@ -437,18 +475,26 @@ export const AllTeams = () => {
             onCancel={(event) => {
               event?.preventDefault?.();
               if (skipToNextStep) {
-                toast.info("Employee assignment skipped. Your team has been created successfully!");
+                toast.info(
+                  'Employee assignment skipped. Your team has been created successfully!'
+                );
               }
               closeDialog();
               setSkipToNextStep(false);
             }}
             isSubmitting={isSubmitting}
             availableRoles={
-              rolesData?.map((role: { id: any; name: any; permissions: string | any[] }) => ({
-                id: role.id,
-                name: role.name,
-                description: `Role with ${role.permissions.length} permissions`,
-              })) || []
+              rolesData?.map(
+                (role: {
+                  id: any;
+                  name: any;
+                  permissions: string | any[];
+                }) => ({
+                  id: role.id,
+                  name: role.name,
+                  description: `Role with ${role.permissions.length} permissions`,
+                })
+              ) || []
             }
             availableEmployees={
               employeesData?.data?.items?.map((employee: Employee) => ({

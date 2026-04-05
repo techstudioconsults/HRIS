@@ -638,7 +638,7 @@ const PayrollView = () => {
             </div>
           }
           className={cn(
-            'flex flex-col items-center justify-center gap-4 bg-gradient-to-r from-[#013E94] to-[#00132E] text-center'
+            'flex flex-col items-center justify-center gap-4 bg-linear-to-r from-[#013E94] to-[#00132E] text-center'
           )}
           titleColor="text-white"
         />

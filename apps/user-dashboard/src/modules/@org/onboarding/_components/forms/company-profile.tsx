@@ -115,7 +115,7 @@ export const CompanyProfile = () => {
   return (
     <section
       data-tour="company-form"
-      className="border-border rounded-[10px] border p-7"
+      className="border-border rounded-[10px] border px-4 py-7 lg:px-7"
     >
       <div className={`mb-8 space-y-2`}>
         <FormHeader
@@ -127,7 +127,9 @@ export const CompanyProfile = () => {
 
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(handleSubmitForm)}>
-          <section className={` max-h-[500px] space-y-4 overflow-auto px-1`}>
+          <section
+            className={`max-h-[500px] grid md:grid-cols-2 lg:grid-cols-1 gap-4 overflow-auto px-1`}
+          >
             <div>
               <FormField
                 placeholder={
@@ -148,7 +150,7 @@ export const CompanyProfile = () => {
                 placeholder={
                   isPending ? `Getting company's profile` : `Select industry`
                 }
-                className="!h-12 w-full"
+                className="h-12! w-full"
                 label="Industry"
                 name="industry"
                 options={industryOptions}

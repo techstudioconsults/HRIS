@@ -32,10 +32,10 @@ export const TeamSetupPage = () => {
           </div>
         </div>
         <div className="space-y-6">
-          <h1 className="text-3xl font-semibold">
+          <h1 className={`text-xl lg:text-2xl xl:text-3xl font-semibold`}>
             Structure your team with the right access
           </h1>
-          <p className="text-lg">
+          <p className="xl:text-lg">
             Start with suggested departments and tailor them to fit your
             organization. Add custom roles under each department and control
             what they can access.

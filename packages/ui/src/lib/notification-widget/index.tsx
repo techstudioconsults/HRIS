@@ -3,7 +3,7 @@
 import { Check, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-import { EmptyState } from '@workspace/ui/lib';
+import { EmptyState, MainButton } from '@workspace/ui/lib';
 import { NotificationItem } from '@workspace/ui/lib';
 import { NotificationWidgetProperties } from '@workspace/ui/lib';
 import {
@@ -40,14 +40,14 @@ export function NotificationWidget({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+      <PopoverTrigger className={`hover:bg-primary-50`} asChild>
         <Button
           variant="ghost"
           size="icon"
-          className="hover:bg-primary-50 relative rounded-full"
+          className=" relative rounded-full"
           aria-label="Notifications"
         >
-          <Icon name={`Notification`} size={32} />
+          <Icon name={`Notification`} className={`text-primary`} />
           {unreadCount > 0 && (
             <span
               className="bg-destructive absolute -top-1 -right-1 flex size-5
@@ -59,9 +59,8 @@ export function NotificationWidget({
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className="min-w-[500px] p-0 shadow-none"
-        align="end"
-        sideOffset={16}
+        className="min-w-screen md:min-w-[500px] p-0 shadow-none"
+        sideOffset={18}
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b px-4 py-3">

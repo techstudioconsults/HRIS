@@ -10,10 +10,13 @@ import { TeamConfig } from '../accordions/team-config';
 
 export const TeamSetupForm = () => {
   return (
-    <section className="rounded-[10px] border p-7" data-tour="team-form">
+    <section
+      className="rounded-[10px] border px-4 py-7 lg:px-7"
+      data-tour="team-form"
+    >
       <div className="">
         <FormHeader
-          icon={<Icon name="People" />}
+          icon={<Icon name="People" size={32} />}
           title="Set up your team"
           subTitle="Configure teams and roles with specific permissions for your organization"
         />

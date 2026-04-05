@@ -1,25 +1,15 @@
-import type { Metadata, Viewport } from 'next';
+import type { Metadata } from 'next';
 
 import './globals.css';
-import '@workspace/ui/themes.css';
 
 import { cn } from '@workspace/ui/lib/utils';
 import React from 'react';
 import { Providers } from '@/components/providers';
 import { Playfair_Display, Work_Sans } from 'next/font/google';
 
-const META_THEME_COLORS = {
-  light: '#ffffff',
-  dark: '#09090b',
-};
-
 export const metadata: Metadata = {
   title: 'HRIS',
   description: 'A New HR System by Techstudio Academy',
-};
-
-export const viewport: Viewport = {
-  themeColor: META_THEME_COLORS.light,
 };
 
 const fontSans = Work_Sans({

@@ -168,10 +168,10 @@ export function GlobalSearchInput({
 
   return (
     <Popover open={showDropdown} onOpenChange={setOpen}>
-      <PopoverTrigger>
+      <PopoverTrigger className={`w-full`}>
         <div
           className={cn(
-            'bg-background relative flex h-10 w-full min-w-[500px] ' +
+            'bg-background relative flex h-10 ' +
               'items-center gap-2 rounded-md px-3 focus:border-none! focus:ring-0',
             disabled && 'cursor-not-allowed opacity-50',
             className
@@ -212,9 +212,9 @@ export function GlobalSearchInput({
         </div>
       </PopoverTrigger>
       <PopoverContent
-        sideOffset={16}
+        // sideOffset={16}
         align="start"
-        className="min-w-[500px] p-0"
+        className="min-w-screen md:min-w-[500px]"
         onOpenAutoFocus={(event) => event.preventDefault()}
       >
         <ScrollArea className="max-h-[400px]">

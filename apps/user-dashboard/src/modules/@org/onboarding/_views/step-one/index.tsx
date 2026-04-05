@@ -20,7 +20,7 @@ export const StepOne = () => {
 
   return (
     <section
-      className={`flex flex-col items-center justify-between gap-8 lg:flex-row`}
+      className={`flex flex-col lg:items-center justify-between gap-8 lg:flex-row`}
     >
       <section className={`max-w-[646px] flex-1 space-y-[41px]`}>
         <div className={`space-y-4`}>
@@ -34,10 +34,10 @@ export const StepOne = () => {
           </div>
         </div>
         <div className={`space-y-6`}>
-          <h1 className={`text-3xl font-semibold`}>
+          <h1 className={`text-xl lg:text-2xl xl:text-3xl font-semibold`}>
             Tell us a bit about your company to get started
           </h1>
-          <p className={`text-lg`}>
+          <p className={`xl:text-lg`}>
             Let&apos;s set the stage for your HR setup. Just a few quick details
             about your company and you&apos;ll be ready to manage your team with
             ease.

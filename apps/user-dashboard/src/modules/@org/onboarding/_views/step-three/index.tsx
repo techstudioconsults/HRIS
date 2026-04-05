@@ -35,7 +35,7 @@ export const EmployeeSetup = () => {
 
   return (
     <section
-      className={`flex flex-col items-center justify-between gap-8 lg:flex-row`}
+      className={`flex flex-col lg:items-center justify-between gap-8 lg:flex-row`}
     >
       <section className={`max-w-[646px] flex-1 space-y-[41px]`}>
         <div className={`space-y-4`}>
@@ -49,15 +49,17 @@ export const EmployeeSetup = () => {
           </div>
         </div>
         <div className={`space-y-6`}>
-          <h1 className={`text-3xl font-semibold`}>Bring your team onboard</h1>
-          <p className={`text-lg`}>
+          <h1 className={`text-xl lg:text-2xl xl:text-3xl font-semibold`}>
+            Bring your team onboard
+          </h1>
+          <p className={`xl:text-lg`}>
             Start with suggested departments and tailor them to fit your
             organization. Add custom roles under each department and control
             what they can access.
           </p>
         </div>
         <div className="flex gap-4">
-          <MainButton href="/onboarding/step-2" variant="outline">
+          <MainButton href="/onboarding/step-2" variant="primaryOutline">
             Back
           </MainButton>
         </div>

@@ -36,4 +36,5 @@ export {
   Profile,
   ArrowDown2,
   LogoutCurve,
+  WalletMoney,
 } from 'iconsax-react';

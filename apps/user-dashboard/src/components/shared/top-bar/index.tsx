@@ -14,7 +14,7 @@ import { signOut } from 'next-auth/react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { MainButton } from '@workspace/ui/lib';
+import { Button } from '@workspace/ui/components/button';
 
 type TopBarProperties = {
   adminName: string;
@@ -90,13 +90,19 @@ export default function TopBar({
           </div>
 
           <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2 md:gap-3">
-            <MainButton
-              isIconOnly
-              size={`icon`}
-              icon={<Icon name={`SearchNormal1`} />}
-              className={`rounded-full text-primary lg:hidden size-9 hover:bg-primary-50`}
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`rounded-full text-primary lg:hidden hover:bg-primary-50`}
+              aria-label="search"
               onClick={() => setHideMobileSearch((previous) => !previous)}
-            />
+            >
+              <Icon
+                name={`SearchNormal1`}
+                className={`text-primary`}
+                size={22}
+              />
+            </Button>
             <NotificationWidget
               notifications={notificationsList}
               onNotificationClick={handleNotificationClick}

@@ -1,8 +1,5 @@
 import { useActiveTarget } from '@/context/active-target';
-import {
-  IColumnDefinition,
-  IRowAction,
-} from '@/modules/@org/admin/_components/table/table';
+import type { IColumnDefinition, IRowAction } from '@workspace/ui/lib/table';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   Avatar,
@@ -70,7 +67,15 @@ export const useEmployeeRowActions = () => {
         {
           label: 'View employee',
           // kbd: "Ctrl+V",
-          icon: <Icon name="Eye" size={16} aria-hidden="true" />,
+          icon: (
+            <Icon
+              name="Eye"
+              size={16}
+              aria-hidden="true"
+              variant={`Outline`}
+              className={`text-primary`}
+            />
+          ),
           onClick: () => {
             setActiveEmployee(employee);
             router.push(`/admin/employees/${employee.id}`);
@@ -81,7 +86,15 @@ export const useEmployeeRowActions = () => {
         {
           label: 'Edit employee',
           // kbd: "Ctrl+E",
-          icon: <Icon name="Edit" size={16} aria-hidden="true" />,
+          icon: (
+            <Icon
+              name="Edit"
+              size={16}
+              aria-hidden="true"
+              variant={`Outline`}
+              className={`text-primary`}
+            />
+          ),
           onClick: () => {
             setActiveEmployee(employee);
             router.push(

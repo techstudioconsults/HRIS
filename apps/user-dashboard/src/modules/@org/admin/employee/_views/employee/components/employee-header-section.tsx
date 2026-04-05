@@ -111,7 +111,7 @@ export const EmployeeHeaderSection = ({
               href="/admin/employees/add-employee"
               variant="primary"
               isLeftIconVisible
-              icon={<Icon name={`Add`} />}
+              icon={<Icon name={`Add`} variant={`Bold`} />}
             >
               Add Employee
             </MainButton>

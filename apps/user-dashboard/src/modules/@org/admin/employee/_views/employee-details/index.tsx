@@ -14,74 +14,352 @@ import {
   GenericDropdown,
 } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 import Image from 'next/image';
 
 import { useEmployeeService } from '../../services/use-service';
 import { EmployeeDetailsSkeleton } from './loader';
 import { formatDate } from '@/lib/formatters';
-import { Icon } from '@workspace/ui/lib/icons/icon';
+import { GradientMask } from '@workspace/ui/lib/gradient-mask';
+import { AnyIconName } from '@workspace/ui/lib/icons/types';
 
-// Employee Header Component
-const EmployeeDetailsHeader = ({ employeeId }: { employeeId: string }) => {
-  const { useGetEmployeeById } = useEmployeeService();
-  const { data: employeeData } = useGetEmployeeById(employeeId);
+const getInitials = (firstName?: string, lastName?: string) => {
+  const fullName = `${firstName ?? ''} ${lastName ?? ''}`.trim();
+  if (!fullName) return 'NA';
+  return fullName
+    .split(' ')
+    .slice(0, 2)
+    .map((name) => name.charAt(0))
+    .join('')
+    .toUpperCase();
+};
 
-  return (
-    <DashboardHeader
-      title="Employee Details"
-      subtitle={
-        <BreadCrumb
-          items={[
-            { label: 'Employee', href: `/admin/employees` },
-            {
-              label: employeeData?.firstName || '',
-              href: `/admin/employees/${employeeData?.id}`,
-            },
-          ]}
-          showHome={true}
-        />
-      }
-      actionComponent={
-        <div className="flex items-center gap-5">
+const getStatusClassName = (status?: string) => {
+  switch ((status ?? '').toLowerCase()) {
+    case 'active':
+      return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300';
+    case 'inactive':
+      return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
+    case 'suspended':
+      return 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300';
+    default:
+      return 'bg-muted text-muted-foreground';
+  }
+};
+
+const DetailsItem = ({
+  label,
+  value,
+  icon,
+}: {
+  label: string;
+  value?: string;
+  icon?: React.ReactNode;
+}) => (
+  <div className="flex items-start gap-3">
+    {icon && <span className="text-muted-foreground shrink-0">{icon}</span>}
+    <div className="min-w-0 flex-1">
+      <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+        {label}
+      </p>
+      <p className="text-foreground truncate text-sm font-medium">
+        {value || 'N/A'}
+      </p>
+    </div>
+  </div>
+);
+
+const DetailsFieldset = ({
+  legend,
+  children,
+  className = '',
+  icon,
+}: {
+  legend: string;
+  children: React.ReactNode;
+  className?: string;
+  icon?: AnyIconName;
+}) => (
+  <fieldset className={`space-y-4 ${className}`}>
+    <legend className="text-base mb-10 flex text-muted-foreground items-center gap-2 font-semibold">
+      {icon ? (
+        <span
+          className={`size-8 flex items-center justify-center bg-primary-50 rounded-md`}
+        >
+          <Icon name={icon} className="text-primary" />
+        </span>
+      ) : null}
+      {legend}
+    </legend>
+    <div className="space-y-3">{children}</div>
+  </fieldset>
+);
+
+const EmployeeDetailsHeader = ({
+  employeeId,
+  employeeName,
+}: {
+  employeeId?: string;
+  employeeName?: string;
+}) => (
+  <DashboardHeader
+    title="Employee Details"
+    subtitle={
+      <BreadCrumb
+        items={[
+          { label: 'Employees', href: '/admin/employees' },
+          {
+            label: employeeName || 'Employee Profile',
+            href: employeeId
+              ? `/admin/employees/${employeeId}`
+              : '/admin/employees',
+          },
+        ]}
+        showHome={true}
+      />
+    }
+    actionComponent={
+      <div className="flex gap-2 justify-between items-center sm:gap-3">
+        <div className={`w-full`}>
           <MainButton
             isLeftIconVisible
-            icon={<Icon name="Edit" />}
-            href={`/admin/employees/edit-employee?employeeid=${employeeData?.id}`}
+            icon={<Icon name="Edit" variant={`Bold`} />}
+            href={
+              employeeId
+                ? `/admin/employees/edit-employee?employeeid=${employeeId}`
+                : '/admin/employees/edit-employee'
+            }
             variant="primary"
+            className="w-full sm:w-auto"
           >
             Edit Employee
           </MainButton>
-          <GenericDropdown
-            align={`end`}
-            trigger={
-              <div
-                className={`bg-background border-border flex size-10 items-center
-                 justify-center rounded-md shadow`}
-              >
-                <Icon name="More" />
-              </div>
-            }
-          >
-            <DropdownMenuItem disabled>Download Profile PDF</DropdownMenuItem>
-            <DropdownMenuItem disabled>Reset Password</DropdownMenuItem>
-            <DropdownMenuItem disabled>Suspend Employee</DropdownMenuItem>
-            <DropdownMenuItem disabled>Terminate Employee</DropdownMenuItem>
-          </GenericDropdown>
         </div>
-      }
-    />
+        <GenericDropdown
+          align="end"
+          trigger={
+            <div
+              className="bg-background border-border flex size-10 items-center
+             justify-center rounded-md shadow-sm transition-colors hover:bg-muted"
+            >
+              <Icon name="More" variant="Outline" className="text-primary" />
+            </div>
+          }
+        >
+          <DropdownMenuItem disabled>Download Profile PDF</DropdownMenuItem>
+          <DropdownMenuItem disabled>Reset Password</DropdownMenuItem>
+          <DropdownMenuItem disabled>Suspend Employee</DropdownMenuItem>
+          <DropdownMenuItem disabled>Terminate Employee</DropdownMenuItem>
+        </GenericDropdown>
+      </div>
+    }
+  />
+);
+
+const EmployeeDetailsContent = ({ employeeData }: { employeeData: any }) => {
+  const fullName =
+    `${employeeData?.firstName ?? ''} ${employeeData?.lastName ?? ''}`.trim();
+  const employeeStatus = employeeData?.status || 'Unknown';
+
+  return (
+    <section className="space-y-6 py-5">
+      {/* Sticky Sidebar + Main Content Grid */}
+      <div className="grid gap-6 lg:grid-cols-12">
+        {/* Employee Profile Card - Sticky on Desktop */}
+        <Card
+          className="border-border space-y-6 bg-linear-to-b from-background to-muted/20 p-6
+        shadow-sm lg:col-span-4 lg:sticky lg:top-20 lg:h-fit md:p-8"
+        >
+          <div className="flex flex-col items-center text-center">
+            <Avatar className="border-primary/20 bg-muted size-32 border shadow-lg">
+              <AvatarImage src={employeeData?.avatar || ''} />
+              <AvatarFallback className=" bg-primary-50 text-2xl font-bold text-primary-75">
+                {getInitials(employeeData?.firstName, employeeData?.lastName)}
+              </AvatarFallback>
+            </Avatar>
+
+            <h2 className="mt-6 text-2xl font-bold">{fullName || 'N/A'}</h2>
+            <p className="text-muted-foreground mt-2 text-base">
+              {employeeData?.employmentDetails?.role?.name ||
+                'No role assigned'}
+            </p>
+            <span
+              className={`mt-4 inline-flex items-center rounded-full px-4 py-1 text-xs font-bold ${getStatusClassName(employeeStatus)}`}
+            >
+              {employeeStatus.toUpperCase()}
+            </span>
+          </div>
+
+          <div className="h-0.5 relative bg-primary/50">
+            <GradientMask direction={`left`} />
+            <GradientMask direction={`right`} />
+          </div>
+
+          <fieldset className="space-y-4">
+            <legend className="text-sm font-semibold text-foreground">
+              Quick Contact
+            </legend>
+            <DetailsItem
+              icon={<Icon className={`text-primary`} name="Sms" />}
+              label="Email"
+              value={employeeData?.email}
+            />
+            <DetailsItem
+              icon={<Icon className={`text-primary`} name="Call" />}
+              label="Phone"
+              value={employeeData?.phoneNumber}
+            />
+          </fieldset>
+
+          <div className="h-0.5 relative bg-primary/50">
+            <GradientMask direction={`left`} />
+            <GradientMask direction={`right`} />
+          </div>
+
+          <fieldset className="space-y-4">
+            <legend className="text-sm font-semibold text-foreground">
+              Employment Summary
+            </legend>
+            <DetailsItem
+              label="Department"
+              value={employeeData?.employmentDetails?.team?.name}
+            />
+            <DetailsItem
+              label="Work Mode"
+              value={employeeData?.employmentDetails?.workMode}
+            />
+            <DetailsItem
+              label="Employment Type"
+              value={employeeData?.employmentDetails?.employmentType}
+            />
+          </fieldset>
+        </Card>
+
+        {/* Main Content - Scrollable */}
+        <div className="space-y-6 lg:col-span-8">
+          {/* Personal Information */}
+          <Card className="border-border bg-background p-6 shadow-sm md:p-8">
+            <DetailsFieldset icon={`Profile`} legend="Personal Information">
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                <DetailsItem label="Full Name" value={fullName} />
+                <DetailsItem
+                  label="Date of Birth"
+                  value={
+                    employeeData?.dateOfBirth
+                      ? formatDate(employeeData.dateOfBirth)
+                      : 'N/A'
+                  }
+                />
+                <DetailsItem label="Gender" value={employeeData?.gender} />
+                <DetailsItem label="Work Email" value={employeeData?.email} />
+                <DetailsItem
+                  label="Phone Number"
+                  value={employeeData?.phoneNumber}
+                />
+              </div>
+            </DetailsFieldset>
+          </Card>
+
+          {/* Employment Details */}
+          <Card className="border-border bg-background p-6 shadow-sm md:p-8">
+            <DetailsFieldset icon={`Buildings`} legend="Employment Details">
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                <DetailsItem
+                  label="Start Date"
+                  value={
+                    employeeData?.employmentDetails?.startDate
+                      ? formatDate(employeeData.employmentDetails.startDate)
+                      : 'N/A'
+                  }
+                />
+                <DetailsItem
+                  label="Employment Type"
+                  value={employeeData?.employmentDetails?.employmentType}
+                />
+                <DetailsItem
+                  label="Work Mode"
+                  value={employeeData?.employmentDetails?.workMode}
+                />
+                <DetailsItem
+                  label="Department"
+                  value={employeeData?.employmentDetails?.team?.name}
+                />
+                <DetailsItem
+                  label="Role"
+                  value={employeeData?.employmentDetails?.role?.name}
+                />
+              </div>
+            </DetailsFieldset>
+          </Card>
+
+          {/* Salary and Payroll */}
+          <Card className="border-border bg-background p-6 shadow-sm md:p-8">
+            <DetailsFieldset
+              icon={`WalletMoney`}
+              legend="Salary and Payroll Details"
+            >
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                <DetailsItem
+                  label="Monthly Gross Salary"
+                  value={employeeData?.payProfile?.grossSalary?.toString()}
+                />
+                <DetailsItem
+                  label="Bank Name"
+                  value={employeeData?.payProfile?.bankName}
+                />
+                <DetailsItem
+                  label="Account Number"
+                  value={employeeData?.payProfile?.accountNumber}
+                />
+                <DetailsItem
+                  label="Account Name"
+                  value={employeeData?.payProfile?.accountName}
+                />
+              </div>
+            </DetailsFieldset>
+          </Card>
+
+          {/* Employee Documents */}
+          {employeeData?.document && (
+            <Card className="border-border bg-background p-6 shadow-sm md:p-8">
+              <fieldset className="space-y-4">
+                <legend className="text-base font-semibold text-foreground">
+                  Employee Documents
+                </legend>
+                <div className="border-border flex w-full flex-col gap-4 rounded-lg border bg-muted/30 p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-3">
+                    <Image
+                      src="/images/pdf-icon.svg"
+                      width={32}
+                      height={44}
+                      alt="PDF Icon"
+                    />
+                    <div>
+                      <p className="text-sm font-semibold">Employment Letter</p>
+                      <p className="text-muted-foreground text-xs">
+                        Uploaded on Jan 12, 2024 - 245 KB
+                      </p>
+                    </div>
+                  </div>
+                  <Icon name="More" className="rotate-90" />
+                </div>
+              </fieldset>
+            </Card>
+          )}
+        </div>
+      </div>
+    </section>
   );
 };
 
-// Employee Content Component
-const EmployeeDetailsContent = ({ employeeId }: { employeeId: string }) => {
+export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
   const { useGetEmployeeById } = useEmployeeService();
   const {
     data: employeeData,
     isLoading: isLoadingEmployee,
     isError: isErrorEmployee,
     refetch,
-  } = useGetEmployeeById(employeeId);
+  } = useGetEmployeeById(params.id);
 
   if (isLoadingEmployee) {
     return <EmployeeDetailsSkeleton />;
@@ -91,210 +369,16 @@ const EmployeeDetailsContent = ({ employeeId }: { employeeId: string }) => {
     return <ErrorEmptyState onRetry={refetch} />;
   }
 
-  return (
-    <section className="grid min-h-[70dvh] grid-cols-1 gap-5 py-5 lg:grid-cols-3">
-      {/* Employee summary */}
-      <Card className="bg-background p-6 shadow lg:p-8">
-        <div className="flex flex-col items-center justify-between text-center">
-          <Avatar className="border-primary bg-primary size-32">
-            <AvatarImage src={employeeData?.avatar || ''} />
-            <AvatarFallback className="rounded-lg bg-transparent text-2xl text-white">
-              {`${employeeData?.firstName} ${employeeData?.lastName}`
-                .slice(0, 2)
-                .toUpperCase() || 'CN'}
-            </AvatarFallback>
-          </Avatar>
-          <h2 className="text-xl font-semibold">{employeeData?.firstName}</h2>
-          <p className="text-muted-foreground">
-            {employeeData?.employmentDetails?.role?.name}
-          </p>
-          <span className="mt-2 inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
-            {employeeData?.status}
-          </span>
-        </div>
+  const employeeName =
+    `${employeeData?.firstName ?? ''} ${employeeData?.lastName ?? ''}`.trim();
 
-        <div className="mt-6 grid grid-cols-1 gap-8">
-          <div className="grid grid-cols-1 gap-5 border-t border-b py-5">
-            <div className="flex items-center gap-4">
-              <span>
-                <Icon name="Call" />
-              </span>
-              <p className="font-medium">{employeeData?.phoneNumber || ``}</p>
-            </div>
-            <div className="flex items-start gap-4">
-              <span>
-                <Icon name="Sms" />
-              </span>
-              <p className="w-[85%] text-base font-medium wrap-break-word">
-                {employeeData?.email}
-              </p>
-            </div>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Department</p>
-            <p className="font-medium">
-              {employeeData?.employmentDetails?.team?.name}
-            </p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Team Manager</p>
-            <p className="font-medium">
-              {employeeData?.employmentDetails?.team?.name}
-            </p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Work Mode</p>
-            <p className="font-medium">
-              {employeeData?.employmentDetails?.workMode || `N/A`}
-            </p>
-          </div>
-          <div className="w-full">
-            <MainButton
-              href={`/admin/employees/edit-employee?employeeid=${employeeData?.id}`}
-              variant="primary"
-              size="lg"
-              className="w-full"
-              isLeftIconVisible
-              icon={<Icon name="Edit" />}
-            >
-              Edit Employee
-            </MainButton>
-          </div>
-        </div>
-      </Card>
-
-      <section className="col-span-2 space-y-6">
-        {/* Personal Information Section */}
-        <Card className="bg-background min-h-[277px] p-8 shadow">
-          <h2 className="mb-4 text-lg font-semibold">Personal Information</h2>
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            <div>
-              <p className="text-muted-foreground">Full Name</p>
-              <p className="font-medium">{`${employeeData?.firstName} ${employeeData?.lastName}`}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Date of Birth</p>
-              <p className="font-medium">
-                {formatDate(employeeData?.dateOfBirth || '')}
-              </p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Gender</p>
-              <p className="font-medium">{employeeData?.gender}</p>
-            </div>
-            <div className={`col-span-2 w-fit`}>
-              <p className="text-muted-foreground">Work Email</p>
-              <p className="font-medium">{employeeData?.email}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Phone Number</p>
-              <p className="font-medium">{employeeData?.phoneNumber}</p>
-            </div>
-          </div>
-        </Card>
-
-        {/* Employment Details Section */}
-        <Card className="bg-background min-h-[277px p-6 shadow">
-          <h2 className="mb-4 text-lg font-semibold">Employment Details</h2>
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            <div>
-              <p className="text-muted-foreground">Start Date</p>
-              <p className="font-medium">
-                {formatDate(employeeData?.employmentDetails?.startDate || '')}
-              </p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Employment Type</p>
-              <p className="font-medium">
-                {employeeData?.employmentDetails?.employmentType || 'N/A'}
-              </p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Work Mode</p>
-              <p className="font-medium">
-                {employeeData?.employmentDetails?.workMode || 'N/A'}
-              </p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Department</p>
-              <p className="font-medium">
-                {employeeData?.employmentDetails?.team?.name}
-              </p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Role</p>
-              <p className="font-medium">
-                {employeeData?.employmentDetails?.role?.name}
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        {/* Salary & Payroll Details */}
-        <Card className="bg-background min-h-[277px] p-6 shadow">
-          <h2 className="mb-4 text-lg font-semibold">
-            Salary & Payroll Details
-          </h2>
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-            <div>
-              <p className="text-muted-foreground">Monthly Gross Salary</p>
-              <p className="font-medium">
-                {employeeData?.payProfile?.grossSalary}
-              </p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Bank Name</p>
-              <p className="font-medium">
-                {employeeData?.payProfile?.bankName || `N/A`}
-              </p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Account Number</p>
-              <p className="font-medium">
-                {employeeData?.payProfile?.accountNumber || `N/A`}
-              </p>
-            </div>
-            <div className="md:col-span-3">
-              <p className="text-muted-foreground">Account Name</p>
-              <p className="font-medium">
-                {employeeData?.payProfile?.accountName || `N/A`}
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        {employeeData?.document && (
-          <div className="bg-white p-6 dark:bg-black">
-            <h2 className="mb-4 text-lg font-semibold">Employee Documents</h2>
-            <div className="border-gray-75 flex w-1/2 items-center justify-between rounded-lg border p-4">
-              <div className="flex items-center gap-4">
-                <Image
-                  src="/images/pdf-icon.svg"
-                  width="32"
-                  height="44"
-                  alt="PDF Icon"
-                />
-                <div>
-                  <p className="font-medium">Employment Letter</p>
-                  <p className="text-muted-foreground text-sm">
-                    Uploaded on Jan 12, 2024 - 245 KB
-                  </p>
-                </div>
-              </div>
-              <Icon name="More" className={`rotate-90`} />
-            </div>
-          </div>
-        )}
-      </section>
-    </section>
-  );
-};
-
-export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
   return (
     <section className="space-y-6">
-      <EmployeeDetailsHeader employeeId={params.id} />
-      <EmployeeDetailsContent employeeId={params.id} />
+      <EmployeeDetailsHeader
+        employeeId={employeeData?.id}
+        employeeName={employeeName}
+      />
+      <EmployeeDetailsContent employeeData={employeeData} />
     </section>
   );
 };

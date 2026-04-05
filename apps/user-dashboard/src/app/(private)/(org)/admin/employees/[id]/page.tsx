@@ -1,16 +1,13 @@
-// import { AddEmployeeForm } from "@/modules/@org/admin/employee/_components/forms/add-employee";
-import { EmployeeDetails } from "@/modules/@org/admin/employee";
+import { EmployeeDetails } from '@/modules/@org/admin/employee';
 
-const page = async ({ params }: { params: { id: string } }) => {
-  const { id } = params;
-  return (
-    <>
-      <EmployeeDetails
-        params={{
-          id,
-        }}
-      />
-    </>
-  );
+type PageProps = {
+  params: Promise<{ id: string }>;
 };
-export default page;
+
+const Page = async ({ params }: PageProps) => {
+  const { id } = await params;
+
+  return <EmployeeDetails params={{ id }} />;
+};
+
+export default Page;

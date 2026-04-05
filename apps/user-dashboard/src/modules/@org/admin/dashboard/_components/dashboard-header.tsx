@@ -37,7 +37,7 @@ export const DashboardHeader = () => {
         <MainButton
           variant="primary"
           isLeftIconVisible={true}
-          icon={<Icon name="Add" />}
+          icon={<Icon variant={`Bold`} name="Add" />}
           href="/admin/employees/add-employee"
           className={`w-full`}
         >

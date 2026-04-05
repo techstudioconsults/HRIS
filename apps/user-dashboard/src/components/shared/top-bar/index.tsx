@@ -94,7 +94,7 @@ export default function TopBar({
               isIconOnly
               size={`icon`}
               icon={<Icon name={`SearchNormal1`} />}
-              className={`rounded-full lg:hidden size-9 hover:bg-primary-50`}
+              className={`rounded-full text-primary lg:hidden size-9 hover:bg-primary-50`}
               onClick={() => setHideMobileSearch((previous) => !previous)}
             />
             <NotificationWidget

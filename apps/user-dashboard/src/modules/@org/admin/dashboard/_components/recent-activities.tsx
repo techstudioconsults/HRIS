@@ -66,23 +66,23 @@ export function RecentActivities() {
 
   return (
     <Card className="bg-background w-full rounded-xl">
-      <div className="border-b p-4">
+      <div className="border-b p-6 py-0">
         <h3 className="text-lg font-semibold">Recent Activities</h3>
       </div>
 
-      <div className="divide-y">
+      <div className="divide-y px-6">
         {activities.map((activity) => (
           <div
             key={activity.id}
-            className="hover:bg-muted/50 flex items-start gap-3 border-0 p-3 transition-colors"
+            className="hover:bg-muted/50 flex items-start gap-3 border-0 py-3 transition-colors"
           >
-            <div className="mt-1 flex-shrink-0">
+            <div className="mt-1 shrink-0">
               {getActivityIcon(activity.type)}
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="font-medium">{activity.action}</p>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-sm font-medium">{activity.action}</p>
+              <p className="text-muted-foreground text-xs">
                 {activity.timestamp}
               </p>
             </div>

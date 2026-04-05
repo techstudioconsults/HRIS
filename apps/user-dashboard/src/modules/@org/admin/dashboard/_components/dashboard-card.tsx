@@ -166,40 +166,42 @@ export function DashboardCard({
   };
 
   return (
-    <div
+    <section
       className={cn(
-        'bg-background min-h-[156px] rounded-xl p-6 shadow',
+        'bg-background flex flex-col justify-between rounded-xl p-6 shadow',
         className
       )}
     >
-      {/* Card Header */}
-      <h3
-        className={cn(
-          'text-muted-foreground mb-2 text-sm font-medium',
-          titleColor
-        )}
-      >
-        {title}
-      </h3>
-
-      {/* Card Body */}
-      <div className="flex items-center justify-between">
-        <div
-          className={cn('text-foreground text-3xl font-semibold', valueColor)}
+      <div>
+        {/* Card Header */}
+        <h3
+          className={cn(
+            'text-muted-foreground mb-2 text-sm font-medium',
+            titleColor
+          )}
         >
-          {value}
-        </div>
-        {icon && (
+          {title}
+        </h3>
+
+        {/* Card Body */}
+        <div className="flex items-center justify-between">
           <div
-            className={cn(
-              'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full',
-              ICON_VARIANT_STYLES[iconVariant]
-            )}
-            aria-label={`${title} icon`}
+            className={cn('text-foreground text-3xl font-semibold', valueColor)}
           >
-            {icon}
+            {value}
           </div>
-        )}
+          {icon && (
+            <div
+              className={cn(
+                'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
+                ICON_VARIANT_STYLES[iconVariant]
+              )}
+              aria-label={`${title} icon`}
+            >
+              {icon}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Card Footer */}
@@ -209,6 +211,6 @@ export function DashboardCard({
           {renderAction()}
         </div>
       )}
-    </div>
+    </section>
   );
 }

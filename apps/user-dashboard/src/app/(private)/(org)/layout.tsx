@@ -27,7 +27,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               adminEmail={session?.user.employee.email || ''}
               notifications={[]}
             />
-            <Wrapper className="relative max-w-[1440px] px-4! space-y-0 my-0! py-10">
+            <Wrapper className="relative max-w-[1440px] px-4! space-y-0 my-0! py-5 lg:py-10">
               {children}
             </Wrapper>
           </ActiveTargetProvider>

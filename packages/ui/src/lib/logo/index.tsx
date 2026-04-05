@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { FC } from 'react';
 
 type LogoProperties = {
@@ -9,10 +8,11 @@ type LogoProperties = {
   width?: number;
   height?: number;
   className?: string;
+  whiteLogo?: boolean;
 };
 
 export const Logo: FC<LogoProperties> = ({
-  logo = '/images/logo.svg',
+  logo = '/images/logo.png',
   width = 89,
   height = 60,
   className,

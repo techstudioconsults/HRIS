@@ -12,9 +12,9 @@ import {
 } from 'lucide-react';
 import * as React from 'react';
 
-import { NavMain } from '../components/nav-main';
-import { NavProjects } from '../components/nav-projects';
-import { NavUser } from '../components/nav-user';
+import { NavMain } from '@workspace/ui/lib';
+import { NavProjects } from '@workspace/ui/lib';
+import { NavUser } from '@workspace/ui/lib';
 import { TeamSwitcher } from '../components/team-switcher';
 import {
   Sidebar,
@@ -25,6 +25,8 @@ import {
   useSidebar,
 } from '@workspace/ui/components/sidebar';
 import { useActiveNavigation } from '@workspace/ui/hooks';
+import { Logo } from '@workspace/ui/lib';
+import { cn } from '@workspace/ui/lib/utils';
 
 /**
  * Reusable Dashboard Sidebar Types
@@ -177,7 +179,7 @@ export function AppSidebar({
 
   return (
     <Sidebar collapsible="icon" {...properties}>
-      <SidebarHeader className={`px-0`}>
+      <SidebarHeader className={`mt-2`}>
         <TeamSwitcher teams={resolved.teams} />
       </SidebarHeader>
       <SidebarContent>

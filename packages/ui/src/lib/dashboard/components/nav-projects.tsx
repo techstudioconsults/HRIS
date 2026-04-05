@@ -25,7 +25,13 @@ export function NavProjects({
     isActive?: boolean;
   }[];
 }) {
-  const { state } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
+
+  const handleNavigate = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
 
   return (
     <SidebarGroup className="px-0">
@@ -40,7 +46,7 @@ export function NavProjects({
             )}
             key={item.name}
           >
-            <Link href={item.url}>
+            <Link href={item.url} onClick={handleNavigate}>
               <SidebarMenuButton
                 className={cn(
                   'hover:bg-primary/10 w-full cursor-pointer p-6 transition-all duration-75',

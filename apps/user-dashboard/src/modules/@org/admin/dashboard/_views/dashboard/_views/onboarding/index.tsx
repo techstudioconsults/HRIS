@@ -1,11 +1,12 @@
-"use client";
+'use client';
 
-import { cn } from "@workspace/ui/lib/utils";
+import { cn } from '@workspace/ui/lib/utils';
 
-import onboardingImage from "~/images/dashboard/banner_illustration.svg";
-import { ActionBanner } from "../../_components/action-banner";
-import { DashboardBanner } from "../../_components/home-banner";
-import { OnboardingHeader } from "./onboarding-header";
+import onboardingImage from '~/images/dashboard/banner_illustration.svg';
+import { ActionBanner } from '../../_components/action-banner';
+import { DashboardBanner } from '../../_components/home-banner';
+import { OnboardingHeader } from './onboarding-header';
+import { useSession } from 'next-auth/react';
 
 interface OnboardingProperties {
   steps: OnboardingStep[];
@@ -13,16 +14,19 @@ interface OnboardingProperties {
 
 export const Onboarding = ({ steps }: OnboardingProperties) => {
   const completedSteps = steps.filter((step) => step.isCompleted).length || 4;
-
+  const { data: session } = useSession();
   return (
     <div>
       <DashboardBanner
         img={onboardingImage.src}
-        title="Welcome, Tosin"
+        title={`Welcome, ${session?.user.employee.fullName}`}
         desc="Complete your company profile to unlock the full experience and get started with your HR setup."
       />
       <div className="my-4">
-        <OnboardingHeader completedSteps={completedSteps} totalSteps={steps.length} />
+        <OnboardingHeader
+          completedSteps={completedSteps}
+          totalSteps={steps.length}
+        />
       </div>
       <div className="flex flex-col gap-4">
         {steps.map((step) => (
@@ -36,7 +40,7 @@ export const Onboarding = ({ steps }: OnboardingProperties) => {
             }}
             icon={step.icon}
             isCompleted={step.isCompleted}
-            className={cn(step.isCompleted && "hidden")}
+            className={cn(step.isCompleted && 'hidden')}
           />
         ))}
       </div>

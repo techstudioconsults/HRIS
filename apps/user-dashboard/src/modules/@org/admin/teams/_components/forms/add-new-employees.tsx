@@ -58,6 +58,9 @@ interface AddNewEmployeesProperties {
   availableEmployees?: Employee[];
 }
 
+type FormEmployeeField = keyof FormEmployee;
+type FormEmployeeValue = string | string[] | undefined;
+
 export const AddNewEmployees = ({
   isEdit,
   initialData,
@@ -83,6 +86,12 @@ export const AddNewEmployees = ({
   // State for comboboxes
   const [openEmployeeCombos, setOpenEmployeeCombos] = useState<boolean[]>([]);
   const [openRoleCombos, setOpenRoleCombos] = useState<boolean[]>([]);
+
+  const selectedEmployeeIds = new Set(
+    employees
+      .map((employee) => employee.employeeId.trim())
+      .filter((employeeId) => employeeId.length > 0)
+  );
 
   const addNewEmployee = () => {
     setEmployees((previous) => [
@@ -113,8 +122,8 @@ export const AddNewEmployees = ({
 
   const updateEmployee = (
     index: number,
-    field: keyof FormEmployee,
-    value: any
+    field: FormEmployeeField,
+    value: FormEmployeeValue
   ) => {
     setEmployees((previous) =>
       previous.map((employee, index_) =>
@@ -127,15 +136,15 @@ export const AddNewEmployees = ({
   //   setOpenCustomPermissions((previous) => previous.map((isOpen, index_) => (index_ === index ? !isOpen : isOpen)));
   // };
 
-  const toggleEmployeeCombo = (index: number) => {
+  const setEmployeeComboOpen = (index: number, isOpen: boolean) => {
     setOpenEmployeeCombos((previous) =>
-      previous.map((isOpen, index_) => (index_ === index ? !isOpen : isOpen))
+      previous.map((item, index_) => (index_ === index ? isOpen : item))
     );
   };
 
-  const toggleRoleCombo = (index: number) => {
+  const setRoleComboOpen = (index: number, isOpen: boolean) => {
     setOpenRoleCombos((previous) =>
-      previous.map((isOpen, index_) => (index_ === index ? !isOpen : isOpen))
+      previous.map((item, index_) => (index_ === index ? isOpen : item))
     );
   };
 
@@ -168,6 +177,9 @@ export const AddNewEmployees = ({
     (employee) =>
       employee.employeeId.trim().length > 0 && employee.roleId.trim().length > 0
   );
+  const validEmployeesCount = employees.filter(
+    (employee) => employee.employeeId.trim() && employee.roleId.trim()
+  ).length;
 
   const handleSubmitForm = async () => {
     if (isSubmittingEmployees) return;
@@ -245,20 +257,21 @@ export const AddNewEmployees = ({
             handleSubmitForm();
           }}
           className="space-y-4"
+          aria-busy={isSubmittingEmployees}
         >
           {/* Progress Bar - Shows during submission */}
           {isSubmittingEmployees && (
-            <div className="bg-primary/5 border-primary/20 space-y-3 rounded-lg border p-4">
+            <div
+              className="bg-primary/5 border-primary/20 space-y-3 rounded-lg border p-4"
+              role="status"
+              aria-live="polite"
+            >
               <div className="flex items-center justify-between">
                 <span className="text-primary text-sm font-medium">
                   Assigning Employees
                 </span>
                 <span className="text-muted-foreground text-sm">
-                  {currentSubmittingEmployee} of{' '}
-                  {
-                    employees.filter((employee) => employee.employeeId.trim())
-                      .length
-                  }
+                  {currentSubmittingEmployee} of {validEmployeesCount}
                 </span>
               </div>
               <div className="space-y-2">
@@ -273,12 +286,14 @@ export const AddNewEmployees = ({
 
           <section className="flex items-center justify-between">
             <p className="text-lg font-semibold">Add Employee(s) to Team</p>
-            <p
+            <button
+              type="button"
               className="text-primary flex cursor-pointer items-center gap-1 text-sm font-medium"
               onClick={addNewEmployee}
+              disabled={isSubmittingEmployees || isSubmitting || isDeleting}
             >
               <Icon name="Plus" size={16} /> Add New Employee
-            </p>
+            </button>
           </section>
 
           <section className="max-h-[50vh] space-y-4 overflow-y-auto">
@@ -306,12 +321,14 @@ export const AddNewEmployees = ({
                       )}
                     </div>
                     {employees.length > 1 && (
-                      <p
+                      <button
+                        type="button"
                         className="text-destructive flex cursor-pointer items-center gap-1 text-xs font-medium"
                         onClick={() => removeEmployee(index)}
+                        disabled={isSubmittingEmployees}
                       >
                         <Icon name="Trash" size={16} /> Remove
-                      </p>
+                      </button>
                     )}
                   </section>
 
@@ -359,16 +376,26 @@ export const AddNewEmployees = ({
                         <CardContent className={`p-0`}>
                           <div className="space-y-4">
                             <div>
-                              <label className="mb-2 block text-sm font-medium text-gray-700">
+                              <label
+                                htmlFor={`employee-select-${index}`}
+                                className="mb-2 block text-sm font-medium text-gray-700"
+                              >
                                 Search Employee
                               </label>
                               <Popover
                                 open={openEmployeeCombos[index]}
-                                onOpenChange={() => toggleEmployeeCombo(index)}
+                                onOpenChange={(isOpen) =>
+                                  setEmployeeComboOpen(index, isOpen)
+                                }
                               >
                                 <PopoverTrigger asChild>
                                   <button
                                     type="button"
+                                    id={`employee-select-${index}`}
+                                    aria-label={`Search Employee ${index + 1}`}
+                                    aria-invalid={
+                                      employee.employeeId.trim().length === 0
+                                    }
                                     className={cn(
                                       'border-input bg-background ring-offset-background focus-visible:ring-ring flex h-[48px] w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
                                       !employee.employeeId &&
@@ -396,39 +423,57 @@ export const AddNewEmployees = ({
                                         No employees found.
                                       </CommandEmpty>
                                       <CommandGroup>
-                                        {availableEmployees.map((emp) => (
-                                          <CommandItem
-                                            key={emp.id}
-                                            value={`${emp.name} ${emp.email}`}
-                                            onSelect={() => {
-                                              updateEmployee(
-                                                index,
-                                                'employeeId',
-                                                emp.id
-                                              );
-                                              toggleEmployeeCombo(index);
-                                            }}
-                                          >
-                                            <Icon
-                                              name="Check"
-                                              size={16}
-                                              className={cn(
-                                                'mr-2',
-                                                employee.employeeId === emp.id
-                                                  ? 'opacity-100'
-                                                  : 'opacity-0'
-                                              )}
-                                            />
-                                            <div>
-                                              <div className="font-medium">
-                                                {emp.name}
+                                        {availableEmployees.map((emp) => {
+                                          const isSelectedInAnotherRow =
+                                            emp.id !== employee.employeeId &&
+                                            selectedEmployeeIds.has(emp.id);
+
+                                          return (
+                                            <CommandItem
+                                              key={emp.id}
+                                              value={`${emp.name} ${emp.email}`}
+                                              disabled={isSelectedInAnotherRow}
+                                              onSelect={() => {
+                                                if (isSelectedInAnotherRow)
+                                                  return;
+
+                                                updateEmployee(
+                                                  index,
+                                                  'employeeId',
+                                                  emp.id
+                                                );
+                                                setEmployeeComboOpen(
+                                                  index,
+                                                  false
+                                                );
+                                              }}
+                                            >
+                                              <Icon
+                                                name="Check"
+                                                size={16}
+                                                className={cn(
+                                                  'mr-2',
+                                                  employee.employeeId === emp.id
+                                                    ? 'opacity-100'
+                                                    : 'opacity-0'
+                                                )}
+                                              />
+                                              <div>
+                                                <div className="font-medium">
+                                                  {emp.name}
+                                                </div>
+                                                <div className="text-muted-foreground text-sm">
+                                                  {emp.email}
+                                                </div>
+                                                {isSelectedInAnotherRow && (
+                                                  <div className="text-muted-foreground text-xs">
+                                                    Already selected
+                                                  </div>
+                                                )}
                                               </div>
-                                              <div className="text-muted-foreground text-sm">
-                                                {emp.email}
-                                              </div>
-                                            </div>
-                                          </CommandItem>
-                                        ))}
+                                            </CommandItem>
+                                          );
+                                        })}
                                       </CommandGroup>
                                     </CommandList>
                                   </Command>
@@ -436,16 +481,26 @@ export const AddNewEmployees = ({
                               </Popover>
                             </div>
                             <div>
-                              <label className="mb-2 block text-sm font-medium text-gray-700">
+                              <label
+                                htmlFor={`role-select-${index}`}
+                                className="mb-2 block text-sm font-medium text-gray-700"
+                              >
                                 Assign to Role
                               </label>
                               <Popover
                                 open={openRoleCombos[index]}
-                                onOpenChange={() => toggleRoleCombo(index)}
+                                onOpenChange={(isOpen) =>
+                                  setRoleComboOpen(index, isOpen)
+                                }
                               >
                                 <PopoverTrigger asChild>
                                   <button
                                     type="button"
+                                    id={`role-select-${index}`}
+                                    aria-label={`Assign Role ${index + 1}`}
+                                    aria-invalid={
+                                      employee.roleId.trim().length === 0
+                                    }
                                     className={cn(
                                       'border-input bg-background ring-offset-background focus-visible:ring-ring flex h-[48px] w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
                                       !employee.roleId &&
@@ -483,7 +538,7 @@ export const AddNewEmployees = ({
                                                 'roleId',
                                                 role.id
                                               );
-                                              toggleRoleCombo(index);
+                                              setRoleComboOpen(index, false);
                                             }}
                                           >
                                             <Icon
@@ -565,7 +620,11 @@ export const AddNewEmployees = ({
 
           {/* Validation Summary */}
           {!allEmployeesValid && (
-            <div className="bg-warning/10 border-warning/20 rounded-lg border p-4">
+            <div
+              className="bg-warning/10 border-warning/20 rounded-lg border p-4"
+              role="alert"
+              aria-live="polite"
+            >
               <div className="flex items-start gap-2">
                 <Icon name="InfoCircle" size={16} className="text-warning" />
                 <p className="text-muted-foreground text-xs">

@@ -75,7 +75,7 @@ export default function TopBar({
     <>
       <header
         className={cn(
-          'bg-background/95 sticky top-0 z-20 w-full border-b supports-backdrop-filter:bg-background/80',
+          'bg-background sticky top-0 z-20 w-full border-b',
           className
         )}
       >

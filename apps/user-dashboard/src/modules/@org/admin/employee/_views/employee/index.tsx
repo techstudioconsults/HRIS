@@ -38,9 +38,14 @@ export const AllEmployees = () => {
 
   // Apply debounced search to URL (nuqs) and reset page to 1
   useEffect(() => {
-    setSearch(debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : null);
-    resetToFirstPage();
-  }, [debouncedSearch, setSearch, resetToFirstPage]);
+    const trimmedSearch =
+      debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : null;
+    // Only update if value actually changed to prevent render loop
+    if (search !== trimmedSearch) {
+      setSearch(trimmedSearch);
+      resetToFirstPage();
+    }
+  }, [debouncedSearch, search, setSearch, resetToFirstPage]);
 
   // Build API filters from URL state (nuqs)
   const apiFilters = useMemo(() => getApiFilters(), [getApiFilters]);

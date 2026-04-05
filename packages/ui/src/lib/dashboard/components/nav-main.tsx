@@ -15,6 +15,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from '@workspace/ui/components/sidebar';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
@@ -38,6 +39,14 @@ export function NavMain({
     }[];
   }[];
 }) {
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  const handleNavigate = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>{title}</SidebarGroupLabel>
@@ -57,7 +66,7 @@ export function NavMain({
             >
               <SidebarMenuItem className="flex items-center justify-center">
                 <CollapsibleTrigger asChild>
-                  <Link href={item.url}>
+                  <Link href={item.url} onClick={handleNavigate}>
                     <SidebarMenuButton
                       className={cn(
                         'w-full p-6 transition-colors',
@@ -86,7 +95,7 @@ export function NavMain({
                               'bg-accent text-accent-foreground font-medium'
                           )}
                         >
-                          <Link href={subItem.url}>
+                          <Link href={subItem.url} onClick={handleNavigate}>
                             <span>{subItem.name}</span>
                           </Link>
                         </SidebarMenuSubButton>

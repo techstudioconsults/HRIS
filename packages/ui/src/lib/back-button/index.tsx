@@ -5,6 +5,7 @@ import { cn } from '../utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { AnyIconName } from '@workspace/ui/lib/icons/types';
 import { IconProps } from 'iconsax-react';
+import { MainButton } from '@workspace/ui/lib/button';
 
 interface BackButtonProperties {
   href?: string;
@@ -27,8 +28,14 @@ export const BackButton: React.FC<BackButtonProperties> = ({
   size,
 }) => {
   return (
-    <span onClick={handleBack} className={cn(`cursor-pointer`, iconClassName)}>
+    <div
+      onClick={handleBack}
+      className={cn(
+        `cursor-pointer w-fit bg-primary-50 rounded-lg`,
+        iconClassName
+      )}
+    >
       <Icon size={size} name={icon || 'ArrowLeft2'} />
-    </span>
+    </div>
   );
 };

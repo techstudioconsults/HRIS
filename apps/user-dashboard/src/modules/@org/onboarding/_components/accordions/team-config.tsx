@@ -251,7 +251,12 @@ export const TeamConfig = () => {
                       handleOpenTeamDialog(team);
                     }}
                   >
-                    <Icon name="Pencil" size={16} className="mr-2" />
+                    <Icon
+                      variant={`Outline`}
+                      name="Edit"
+                      size={16}
+                      className="mr-2"
+                    />
                     Edit
                   </span>
                   <span
@@ -264,12 +269,18 @@ export const TeamConfig = () => {
                   >
                     {isDeletingTeam && deletingTeamId === team.id ? (
                       <Icon
+                        variant={`Outline`}
                         name="Loader2"
                         size={16}
                         className="mr-2 animate-spin"
                       />
                     ) : (
-                      <Icon name="Trash2" size={16} className="mr-2" />
+                      <Icon
+                        variant={`Outline`}
+                        name="Trash"
+                        size={16}
+                        className="mr-2 text-danger"
+                      />
                     )}
                     {isDeletingTeam && deletingTeamId === team.id
                       ? 'Deleting...'
@@ -291,7 +302,12 @@ export const TeamConfig = () => {
                         className="flex cursor-pointer items-center text-gray-600 hover:text-gray-900"
                         onClick={() => handleOpenRoleDialog(team, role)}
                       >
-                        <Icon name="Pencil" size={16} className="mr-2" />
+                        <Icon
+                          variant={`Outline`}
+                          name="Edit"
+                          size={16}
+                          className="mr-2"
+                        />
                         {/* Edit */}
                       </span>
                       <span
@@ -303,12 +319,18 @@ export const TeamConfig = () => {
                       >
                         {isDeletingRole && deletingRoleId === role.id ? (
                           <Icon
+                            variant={`Outline`}
                             name="Loader2"
                             size={16}
                             className="mr-2 animate-spin"
                           />
                         ) : (
-                          <Icon name="Trash2" size={16} className="mr-2" />
+                          <Icon
+                            variant={`Outline`}
+                            name="Trash"
+                            size={16}
+                            className="mr-2 text-danger"
+                          />
                         )}
                         {/* {isDeletingRole && deletingRoleId === role.id ? "Deleting..." : "Delete"} */}
                       </span>
@@ -324,7 +346,7 @@ export const TeamConfig = () => {
                   className="text-primary flex cursor-pointer items-center gap-1 font-medium"
                   onClick={() => handleOpenRoleDialog(team)}
                 >
-                  <Icon name="Plus" size={16} />
+                  <Icon variant={`Outline`} name="Add" size={16} />
                   Add New Role
                 </span>
               </div>
@@ -338,7 +360,9 @@ export const TeamConfig = () => {
           type="button"
           variant="default"
           className="text-primary h-fit rounded-none p-0"
-          icon={<Icon name="Plus" size={16} className="mr-2" />}
+          icon={
+            <Icon variant={`Outline`} name="Add" size={16} className="mr-2" />
+          }
           isLeftIconVisible
           onClick={() => handleOpenTeamDialog()}
         >

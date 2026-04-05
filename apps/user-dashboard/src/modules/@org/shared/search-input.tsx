@@ -38,9 +38,10 @@ export const SearchInput = ({
   return (
     <div className={`relative ${className}`}>
       <Icon
-        name="SearchIcon"
+        name="SearchNormal1"
         size={16}
-        className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2 transform"
+        className="absolute text-primary top-1/2 left-3 -translate-y-1/2 transform"
+        variant={`Outline`}
       />
       <Input
         disabled={isDisabled}
@@ -168,16 +169,21 @@ export function GlobalSearchInput({
 
   return (
     <Popover open={showDropdown} onOpenChange={setOpen}>
-      <PopoverTrigger>
+      <PopoverTrigger className={`w-full`}>
         <div
           className={cn(
-            'bg-background relative flex h-10 w-full min-w-[500px] ' +
+            'bg-background relative flex h-10 ' +
               'items-center gap-2 rounded-md px-3 focus:border-none! focus:ring-0',
             disabled && 'cursor-not-allowed opacity-50',
             className
           )}
         >
-          <Icon name="SearchNormal1" size={16} className={`text-primary/75`} />
+          <Icon
+            name="SearchNormal1"
+            size={16}
+            className={`text-primary`}
+            variant={`Outline`}
+          />
           <Input
             ref={inputReference}
             type="text"
@@ -212,9 +218,9 @@ export function GlobalSearchInput({
         </div>
       </PopoverTrigger>
       <PopoverContent
-        sideOffset={16}
+        // sideOffset={16}
         align="start"
-        className="min-w-[500px] p-0"
+        className="min-w-screen md:min-w-[500px]"
         onOpenAutoFocus={(event) => event.preventDefault()}
       >
         <ScrollArea className="max-h-[400px]">

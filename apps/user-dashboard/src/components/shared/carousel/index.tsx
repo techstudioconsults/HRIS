@@ -59,7 +59,7 @@ export const UniversalSwiper = ({
   return (
     <section className={cn('relative', className)}>
       <Carousel
-        className={cn('w-full', swiperClassName)}
+        className={cn('w-full z-12', swiperClassName)}
         opts={carouselOptions}
         setApi={(nextApi) => {
           setApi(nextApi);
@@ -73,30 +73,23 @@ export const UniversalSwiper = ({
             </CarouselItem>
           ))}
         </CarouselContent>
-
         {showNavigation && shouldShowControls ? (
-          <>
-            <CarouselPrevious
-              className="top-auto bottom-5 left-4 z-10 border-white/30
-            bg-black/45 text-white hover:bg-black/60"
-            />
-            <CarouselNext
-              className="top-auto right-4 bottom-5 z-10 border-white/30
-            bg-black/45 text-white hover:bg-black/60"
-            />
-          </>
+          <div className={`absolute right-10 bottom-10 space-x-5`}>
+            <CarouselPrevious className="border-background text-background rounded-full" />
+            <CarouselNext className="border-background text-background rounded-full" />
+          </div>
         ) : null}
       </Carousel>
 
       {showPagination && shouldShowControls ? (
-        <div className="pointer-events-none absolute right-0 bottom-6 left-0 z-10 flex items-center justify-center gap-2">
+        <div className="pointer-events-none py-2  right-0 bottom-6 left-0 z-10 flex items-center justify-center gap-2">
           {items.map((_, index) => (
             <button
               key={`dot-${index}`}
               type="button"
               className={cn(
                 'pointer-events-auto h-2 w-2 rounded-full bg-white/45 transition-all',
-                activeIndex === index && 'w-6 bg-white'
+                activeIndex === index && 'w-6 bg-primary'
               )}
               aria-label={`Go to slide ${index + 1}`}
               aria-current={activeIndex === index}

@@ -29,7 +29,7 @@ export function TeamSwitcher({
     plan: string;
   }[];
 }) {
-  const { isMobile } = useSidebar();
+  const { isMobile, state } = useSidebar();
   const [activeTeam, setActiveTeam] = React.useState(teams[0]);
 
   if (!activeTeam) {
@@ -51,16 +51,16 @@ export function TeamSwitcher({
               <span className={`w-[208px]`}>
                 {activeTeam.logo as React.ReactNode}
               </span>
-              <span>
-                <ChevronsUpDown className="ml- size-3" />
+              <span className={cn(state === `collapsed` && `hidden`)}>
+                <ChevronsUpDown className="size-3" />
               </span>
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            className="w-(--radix-dropdown-menu-trigger-width) lg:min-w-xs rounded-lg"
             align="start"
             side={isMobile ? 'bottom' : 'right'}
-            sideOffset={28}
+            sideOffset={38}
           >
             <DropdownMenuLabel className="text-muted-foreground text-xs">
               Teams
@@ -74,7 +74,8 @@ export function TeamSwitcher({
                     className="gap-2 p-2"
                   >
                     <div className="flex size-6 items-center justify-center rounded-md border">
-                      {team.logo as React.ReactNode}
+                      {/*{team.logo as React.ReactNode}*/}
+                      <Logo logo={`/images/logo.png`} />
                     </div>
                     {team.name as React.ReactNode}
                     <DropdownMenuShortcut>

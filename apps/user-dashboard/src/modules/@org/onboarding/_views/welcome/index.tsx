@@ -1,6 +1,5 @@
 'use client';
 
-import { PageSection, PageWrapper } from '@/lib/animation';
 import { useTour } from '@/modules/@org/onboarding';
 import { TourModalButton } from '@workspace/ui/lib/video-player/tour-modal';
 import { BlurImage } from '@workspace/ui/components/core/miscellaneous/blur-image';
@@ -21,16 +20,12 @@ export const Welcome = () => {
   }, [startTour]);
 
   return (
-    <PageWrapper>
+    <section>
       <section
         className={`flex flex-col-reverse items-center justify-between gap-8 lg:flex-row`}
       >
         <section className={`max-w-[646px]`}>
-          <PageSection
-            index={1}
-            className={`space-y-6`}
-            data-tour="welcome-heading"
-          >
+          <div className={`space-y-6`} data-tour="welcome-heading">
             <h1 className={`text-4xl font-semibold`}>
               Welcome to TechstudioHR,
             </h1>
@@ -39,11 +34,8 @@ export const Welcome = () => {
               understand how Techstudio HR works or you can jump straight in and
               begin set up.
             </p>
-          </PageSection>
-          <PageSection
-            index={1}
-            className={`mt-9 flex flex-col gap-7 lg:flex-row`}
-          >
+          </div>
+          <div className={`mt-9 flex flex-col gap-7 lg:flex-row`}>
             <TourModalButton
               buttonLabel="Take a Quick Tour"
               buttonClassName="w-full lg:w-fit"
@@ -66,7 +58,7 @@ export const Welcome = () => {
                 Skip Tour & Continue
               </MainButton>
             </div>
-          </PageSection>
+          </div>
         </section>
 
         <BlurImage
@@ -77,6 +69,6 @@ export const Welcome = () => {
           className={`max-h-[561px] w-[500px] rounded-2xl bg-gray-50 object-cover shadow`}
         />
       </section>
-    </PageWrapper>
+    </section>
   );
 };

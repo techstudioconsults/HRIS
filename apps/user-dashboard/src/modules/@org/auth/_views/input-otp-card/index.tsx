@@ -1,23 +1,22 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client';
 
-import { PageSection } from "@/lib/animation";
-import { LoginOTPFormData, loginOTPSchema } from "@/schemas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useDecodedSearchParameters } from "@workspace/ui/hooks";
-import { MainButton } from "@workspace/ui/lib/button";
-import { signIn } from "next-auth/react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FormProvider, useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { LoginOTPFormData, loginOTPSchema } from '@/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useDecodedSearchParameters } from '@workspace/ui/hooks';
+import { MainButton } from '@workspace/ui/lib/button';
+import { signIn } from 'next-auth/react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
-import { OTPInput } from "../../_components/input-otp";
-import { useAuthService } from "../../services/use-auth-service";
+import { OTPInput } from '../../_components/input-otp';
+import { useAuthService } from '../../services/use-auth-service';
 
 export const InputOtpCard = () => {
-  const email = useDecodedSearchParameters("email");
+  const email = useDecodedSearchParameters('email');
   const router = useRouter();
   const { useRequestOTP } = useAuthService();
   const { mutateAsync: requestOTP, isPending: otpPending } = useRequestOTP();
@@ -25,8 +24,8 @@ export const InputOtpCard = () => {
   const methods = useForm<LoginOTPFormData>({
     resolver: zodResolver(loginOTPSchema),
     defaultValues: {
-      email: email || "",
-      password: "",
+      email: email || '',
+      password: '',
     },
   });
 
@@ -41,7 +40,7 @@ export const InputOtpCard = () => {
   const handleSubmitForm = async (data: LoginOTPFormData) => {
     try {
       // Directly call signIn with the OTP provider
-      const result = await signIn("otp", {
+      const result = await signIn('otp', {
         email: data.email,
         otp: data.password,
         redirect: false,
@@ -52,17 +51,17 @@ export const InputOtpCard = () => {
       }
 
       if (result?.ok) {
-        toast.success("Login Successful", {
-          description: "Redirecting to dashboard...",
+        toast.success('Login Successful', {
+          description: 'Redirecting to dashboard...',
         });
-        router.push("/onboarding");
+        router.push('/onboarding');
       }
     } catch (error: any) {
-      console.error("Login error:", error);
-      toast.error("Login Failed", {
-        description: error.message || "An error occurred during login",
+      console.error('Login error:', error);
+      toast.error('Login Failed', {
+        description: error.message || 'An error occurred during login',
       });
-      setError("password", { message: error.message || "Invalid OTP" });
+      setError('password', { message: error.message || 'Invalid OTP' });
     }
   };
 
@@ -72,8 +71,8 @@ export const InputOtpCard = () => {
         { email },
         {
           onError: (error) => {
-            toast.error("Request Failed", {
-              description: error instanceof Error ? error.message : "An unknown error occurred",
+            toast.error('Request Failed', {
+              description: error.message,
             });
           },
           onSuccess: (response) => {
@@ -83,17 +82,23 @@ export const InputOtpCard = () => {
               });
             }
           },
-        },
+        }
       );
     }
   };
 
   return (
-    <PageSection index={0} className="bg-background mx-auto max-w-[589px] rounded-md p-8 shadow shadow-gray-100">
+    <section
+      index={0}
+      className="bg-background mx-auto max-w-[589px] rounded-md p-8 shadow shadow-gray-100"
+    >
       <div className={`mb-8 space-y-2`}>
-        <h3 className="text-[32px]/[120%] font-[600] tracking-[-2%] text-black">Enter the 6-digit Code</h3>
+        <h3 className="text-[32px]/[120%] font-semibold tracking-[-2%] text-black">
+          Enter the 6-digit Code
+        </h3>
         <p className={`text-gray text-lg`}>
-          A verification code has been sent to <span className={`font-bold`}>{email}</span>
+          A verification code has been sent to{' '}
+          <span className={`font-bold`}>{email}</span>
         </p>
       </div>
 
@@ -101,8 +106,10 @@ export const InputOtpCard = () => {
         <form onSubmit={handleSubmit(handleSubmitForm)}>
           <section>
             <OTPInput
-              value={watch("password")}
-              onChange={(value: string) => setValue("password", value, { shouldValidate: true })}
+              value={watch('password')}
+              onChange={(value: string) =>
+                setValue('password', value, { shouldValidate: true })
+              }
             />
           </section>
           <div className={`mt-10`}>
@@ -117,20 +124,26 @@ export const InputOtpCard = () => {
               Login
             </MainButton>
             <p className="text-grey-500 mt-4 text-center text-sm">
-              Didn&apos;t receive the code?{" "}
-              <span onClick={resendOTP} className="text-primary cursor-pointer font-medium hover:underline">
-                {otpPending ? "Sent" : "Resend"}
+              Didn&apos;t receive the code?{' '}
+              <span
+                onClick={resendOTP}
+                className="text-primary cursor-pointer font-medium hover:underline"
+              >
+                {otpPending ? 'Sent' : 'Resend'}
               </span>
             </p>
             <p className="text-grey-500 mt-4 text-center text-sm">
-              Wrong email?{" "}
-              <Link href="/login/otp" className="text-primary font-medium hover:underline">
+              Wrong email?{' '}
+              <Link
+                href="/login/otp"
+                className="text-primary font-medium hover:underline"
+              >
                 Change email
               </Link>
             </p>
           </div>
         </form>
       </FormProvider>
-    </PageSection>
+    </section>
   );
 };

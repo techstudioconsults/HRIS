@@ -39,7 +39,8 @@ import { payrollColumn, usePayrollRowActions } from './table-data';
 const LOW_BALANCE_LIMIT = 0; // 0M NGN
 
 const GET_SCHEDULE_MESSAGE = (date: string | Date): ReactNode => {
-  return `Your next payroll has been scheduled for ${date}. You can edit the schedule date or cancel the payroll before the set date here.`;
+  return `Your next payroll has been scheduled for ${date}. You can edit the schedule date or cancel the 
+  payroll before the set date here.`;
 };
 
 const PAYROLL_RUN_MESSAGE = (
@@ -638,7 +639,7 @@ const PayrollView = () => {
             </div>
           }
           className={cn(
-            'flex flex-col items-center justify-center gap-4 bg-gradient-to-r from-[#013E94] to-[#00132E] text-center'
+            'flex flex-col items-center justify-center gap-4 bg-linear-to-r from-[#013E94] to-[#00132E] text-center'
           )}
           titleColor="text-white"
         />
@@ -721,7 +722,7 @@ const PayrollView = () => {
         isApprovalsLoading={isApprovalsLoading}
       />
 
-      {/* Add Employee Modal */}
+      {/*/!* Add Employee Modal *!/*/}
       <AddEmployeeDrawer
         payrollId={selectedPayrollId || null}
         hasPayslips={hasPayslipsForSelectedPayroll}

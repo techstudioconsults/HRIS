@@ -9,9 +9,12 @@ import {
 } from '@workspace/ui/lib/notification-widget';
 import { UserMenu } from '@workspace/ui/lib/user-menu';
 import { cn } from '@workspace/ui/lib/utils';
+import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { Button } from '@workspace/ui/components/button';
 
 type TopBarProperties = {
   adminName: string;
@@ -41,14 +44,14 @@ export default function TopBar({
   notifications = [],
   className = '',
 }: TopBarProperties) {
-  // locales removed; use root paths
+  const [hideMobileSearch, setHideMobileSearch] = useState(true);
+  const router = useRouter();
   const [notificationsList, setNotificationsList] =
     useState<Notification[]>(notifications);
 
   const handleNotificationClick = (notification: Notification) => {
-    // Navigate to notification action URL if available
     if (notification.actionUrl) {
-      window.location.href = notification.actionUrl;
+      router.push(notification.actionUrl);
     }
   };
 
@@ -72,44 +75,61 @@ export default function TopBar({
     <>
       <header
         className={cn(
-          'bg-background sticky top-0 z-2 flex h-16 items-center justify-between gap-4 px-6 shadow lg:px-4',
+          'bg-background sticky top-0 z-20 w-full border-b',
           className
         )}
       >
-        {/* Search Input */}
-        <div className="relative hidden w-fit items-center gap-4 md:flex">
-          <SidebarTrigger className="absolute top-14 -left-[30px] bg-[#1F2666] text-white shadow-none" />
-          <GlobalSearchInput
-            className={`border border-primary/25 placeholder:text-primary/25 shadow-none`}
-          />
+        <div className="flex min-h-16 w-full flex-wrap items-center gap-2 px-3 py-2 sm:px-4 md:flex-nowrap md:gap-4 lg:px-6">
+          <SidebarTrigger className="bg-primary-50 text-primary shadow-none hover:bg-primary-75" />
+
+          <div className={`hidden lg:block`}>
+            <GlobalSearchInput
+              className="border border-primary/25 sm:min-w-[320px] md:min-w-[500px]
+            placeholder:text-primary/25 shadow-none md:max-w-[640px]"
+            />
+          </div>
+
+          <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2 md:gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              className={`rounded-full text-primary lg:hidden hover:bg-primary-50`}
+              aria-label="search"
+              onClick={() => setHideMobileSearch((previous) => !previous)}
+            >
+              <Icon
+                name={`SearchNormal1`}
+                className={`text-primary`}
+                size={22}
+              />
+            </Button>
+            <NotificationWidget
+              notifications={notificationsList}
+              onNotificationClick={handleNotificationClick}
+              onMarkAsRead={handleMarkAsRead}
+              onMarkAllAsRead={handleMarkAllAsRead}
+              onClearAll={handleClearAll}
+            />
+            <UserMenu
+              userName={adminName}
+              userEmail={adminEmail}
+              userAvatar={adminAvatar}
+              userRole={adminRole}
+              onProfileClick={() => router.push('/profile')}
+              onSettingsClick={() => router.push('/settings')}
+              onLogout={handleLogout}
+            />
+          </div>
         </div>
-
-        {/* Right Section */}
-        <div className="flex items-center justify-end gap-2 md:gap-4">
-          {/* Notification Widget */}
-          <NotificationWidget
-            notifications={notificationsList}
-            onNotificationClick={handleNotificationClick}
-            onMarkAsRead={handleMarkAsRead}
-            onMarkAllAsRead={handleMarkAllAsRead}
-            onClearAll={handleClearAll}
-          />
-
-          {/* User Menu */}
-          <UserMenu
-            userName={adminName}
-            userEmail={adminEmail}
-            userAvatar={adminAvatar}
-            userRole={adminRole}
-            onProfileClick={() => {
-              // Navigate to profile page
-              window.location.href = `/profile`;
-            }}
-            onSettingsClick={() => {
-              // Navigate to settings page
-              window.location.href = `/settings`;
-            }}
-            onLogout={handleLogout}
+        <div
+          className={cn(
+            `hidden transition-all duration-300`,
+            !hideMobileSearch && `block lg:hidden`
+          )}
+        >
+          <GlobalSearchInput
+            className="border-none
+            placeholder:text-primary/25 bg-primary/5 rounded-none shadow-none"
           />
         </div>
       </header>

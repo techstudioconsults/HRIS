@@ -52,7 +52,6 @@ export * from './progress/batch-progress';
 export * from './ratings';
 export * from './select-dropdown';
 export * from './select-dropdown/combo-box';
-export * from './sidebar/sidebar';
 export * from './Toast';
 export * from './tooltip';
 export * from './user-menu';

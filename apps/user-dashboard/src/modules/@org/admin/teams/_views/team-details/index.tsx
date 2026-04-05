@@ -37,6 +37,7 @@ import { useTeamService } from '../../services/use-service';
 import { subTeamColumn, useSubTeamRowActions } from '../table-data';
 import { TeamDetailsSkeleton } from './skeleton';
 import { formatDate } from '@/lib/formatters';
+import { Button } from '@workspace/ui/components/button';
 
 // Team Details Header Component
 const TeamDetailsHeader = ({
@@ -69,22 +70,23 @@ const TeamDetailsHeader = ({
           <MainButton
             variant="primary"
             isLeftIconVisible
-            icon={<Icon name="Plus" />}
+            icon={<Icon name="Add" variant={`Bold`} />}
             onClick={onAddSubTeam}
+            className={`w-full`}
           >
             Add Sub-team
           </MainButton>
           <GenericDropdown
             align="end"
             trigger={
-              <div className="bg-background border-border flex size-10 items-center justify-center rounded-md shadow">
+              <Button size={`icon`} className={`shadow rounded-md`}>
                 <Icon
                   name="More"
                   size={20}
-                  variant={`Linear`}
-                  className={`text-primary/75`}
+                  variant={`Outline`}
+                  className={`text-primary`}
                 />
-              </div>
+              </Button>
             }
           >
             <DropdownMenuItem
@@ -95,7 +97,12 @@ const TeamDetailsHeader = ({
               }}
             >
               <span>
-                <Icon name="Edit" size={16} className="mr-2" />
+                <Icon
+                  name="Edit"
+                  size={16}
+                  className="mr-2"
+                  variant={`Outline`}
+                />
               </span>
               Edit Team&apos;s Name
             </DropdownMenuItem>
@@ -109,6 +116,7 @@ const TeamDetailsHeader = ({
                   name="Trash"
                   size={16}
                   className="text-destructive mr-2"
+                  variant={`Outline`}
                 />
               </span>
               Delete Team
@@ -164,14 +172,14 @@ const TeamDetailsContent = ({
           title="Team Manager"
           value={
             <div className="flex items-center gap-4">
-              <Avatar>
+              <Avatar className={`size-5 lg:size-8`}>
                 <AvatarImage
                   src="https://github.com/shadcn.png"
                   alt="@shadcn"
                 />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
-              <span className="text-base">
+              <span className="text-sm lg:text-base text-balance">
                 {teamData?.manager || `Ifijeh Kingsley`}
               </span>
             </div>

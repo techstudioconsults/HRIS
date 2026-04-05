@@ -40,7 +40,7 @@ export function Icon({
   }
 
   const sharedProps: Record<string, unknown> = {
-    className: cn('text-primary/75 shrink-0', className),
+    className: cn('shrink-0', className),
     ...props,
   };
 

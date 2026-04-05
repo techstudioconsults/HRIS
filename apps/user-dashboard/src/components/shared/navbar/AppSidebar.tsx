@@ -14,21 +14,22 @@ export function AppSideBar() {
 
   return (
     <Sidebar
+      key={state}
       theme={theme}
       navMain={[]}
       navSecondary={adminNavItems}
       className={cn(
-        'z-2 bg-[#1F2666] text-background!',
-        state === `collapsed` ? `px-0` : `px-6`
+        'z-50 bg-[#1F2666] text-background!',
+        state === `collapsed` ? `px-4 md:px-0` : `px-4 md:px-6`
       )}
       teams={[
         {
           name: companyProfile?.name || '',
           logo:
-            state === `collapsed` ? (
-              <Logo className={`w-full`} logo={cn('/images/logo.png')} />
+            state === 'collapsed' ? (
+              <Logo logo={'/images/logo.png'} />
             ) : (
-              <Logo className={`w-full`} logo={cn('/images/logo-white.svg')} />
+              <Logo logo={'/images/logo-white.svg'} className={`w-50`} />
             ),
           plan: companyProfile?.domain || '',
         },

@@ -62,10 +62,12 @@ export const EmployeeHeaderSection = ({
       title="Employee"
       subtitle="All Employees"
       actionComponent={
-        <div>
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col lg:flex-row lg:items-center gap-2">
+          <div
+            className={`flex flex-1 flex-row-reverse lg:flex-row items-center gap-2`}
+          >
             <SearchInput
-              className="border-border h-10 rounded-md border"
+              className="border-border h-10 rounded-md border w-full"
               placeholder="Search employee..."
               onSearch={handleSearchChange}
             />
@@ -73,15 +75,16 @@ export const EmployeeHeaderSection = ({
               contentClassName="bg-background"
               trigger={
                 <Button
-                  className="data-[state=open]:border-border data-[state=open]:text-gray h-10 rounded-md border px-3"
+                  className="data-[state=open]:border-border
+                  data-[state=open]:text-gray h-10 rounded-md border px-3"
                   variant="primaryOutline"
                 >
-                  <Icon name={`Filter`} />
-                  Filter
+                  <Icon name="Filter" size={16} />
+                  <span className={`hidden lg:block`}>Filter</span>
                 </Button>
               }
             >
-              <section className="min-w-sm">
+              <section className="min-w-screen sm:min-w-sm">
                 <FilterForm
                   initialFilters={{
                     search: search || undefined,
@@ -97,6 +100,10 @@ export const EmployeeHeaderSection = ({
                 />
               </section>
             </GenericDropdown>
+          </div>
+          <div
+            className={`flex flex-1 items-center justify-between gap-2 w-full`}
+          >
             <ExportAction
               isDisabled={!employeeData?.data?.items?.length}
               downloadMutation={async () => {
@@ -106,12 +113,15 @@ export const EmployeeHeaderSection = ({
               currentPage={employeeData?.data?.metadata.page}
               buttonText="Export Employees"
               fileName="employees"
+              className="h-10 rounded-md w-fit px-2.5 lg:px-6"
+              size={`icon`}
             />
             <MainButton
               href="/admin/employees/add-employee"
               variant="primary"
               isLeftIconVisible
-              icon={<Icon name={`Add`} />}
+              icon={<Icon name={`Add`} variant={`Bold`} />}
+              className={`w-full!`}
             >
               Add Employee
             </MainButton>

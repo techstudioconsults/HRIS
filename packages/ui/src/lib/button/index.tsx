@@ -121,22 +121,9 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
 
     const buttonClasses = cn(
       'transition-all duration-300 ease-in-out rounded-md',
-      // isDisabled
-      //   ? "opacity-50 cursor-not-allowed"
-      //   : isPressed
-      //     ? "shadow-none hover:cursor-pointer"
-      //     : "hover:shadow-xl hover:cursor-pointer",
+      isDisabled && '',
       className
     );
-    //  const buttonClasses = cn(
-    //   "transition-all duration-300 ease-in-out rounded-md",
-    //   isDisabled
-    //     ? "opacity-50 cursor-not-allowed"
-    //     : isPressed
-    //       ? "shadow-none hover:cursor-pointer"
-    //       : "hover:shadow-xl hover:cursor-pointer",
-    //   className,
-    // );
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
       if (!isDisabled) {

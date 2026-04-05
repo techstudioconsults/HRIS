@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-"use client";
+'use client';
 
-import { AlertTriangle, Info } from "lucide-react";
+import { AlertTriangle, Info } from 'lucide-react';
 
 // import { useEffect, useState } from "react";
 
-import { MainButton } from "../button";
-import { Dialog, DialogContent } from "@workspace/ui/components/dialog";
+import { MainButton } from '../button';
+import { Dialog, DialogContent } from '@workspace/ui/components/dialog';
 
-export type AlertType = "success" | "error" | "warning" | "info";
+export type AlertType = 'success' | 'error' | 'warning' | 'info';
 
 interface AlertModalProperties {
   isOpen: boolean;
@@ -39,30 +39,30 @@ interface AlertModalProperties {
    * "outline" | "secondary" | "ghost" | "link" | "accent"
    */
   confirmVariant?:
-    | "default"
-    | "primary"
-    | "destructive"
-    | "subtle"
-    | "loading"
-    | "outline"
-    | "secondary"
-    | "ghost"
-    | "link"
-    | "accent";
+    | 'default'
+    | 'primary'
+    | 'destructive'
+    | 'subtle'
+    | 'loading'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link'
+    | 'accent';
   /**
    * Override the cancel button variant. Defaults to "outline".
    */
   cancelVariant?:
-    | "default"
-    | "primary"
-    | "destructive"
-    | "subtle"
-    | "loading"
-    | "outline"
-    | "secondary"
-    | "ghost"
-    | "link"
-    | "accent";
+    | 'default'
+    | 'primary'
+    | 'destructive'
+    | 'subtle'
+    | 'loading'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link'
+    | 'accent';
 }
 
 const SuccessIcon = () => (
@@ -98,31 +98,31 @@ const ErrorIcon = () => (
 const alertConfig = {
   success: {
     icon: SuccessIcon,
-    iconColor: "text-green-600",
-    bgColor: "bg-green-100",
-    borderColor: "border-green-500",
-    buttonVariant: "primary" as const,
+    iconColor: 'text-green-600',
+    bgColor: 'bg-green-100',
+    borderColor: 'border-green-500',
+    buttonVariant: 'primary' as const,
   },
   error: {
     icon: ErrorIcon,
-    iconColor: "text-red-600",
-    bgColor: "bg-red-100",
-    borderColor: "border-red-500",
-    buttonVariant: "destructive" as const,
+    iconColor: 'text-red-600',
+    bgColor: 'bg-red-100',
+    borderColor: 'border-red-500',
+    buttonVariant: 'destructive' as const,
   },
   warning: {
     icon: AlertTriangle,
-    iconColor: "text-yellow-600",
-    bgColor: "bg-yellow-100",
-    borderColor: "border-yellow-500",
-    buttonVariant: "destructive" as const,
+    iconColor: 'text-yellow-600',
+    bgColor: 'bg-yellow-100',
+    borderColor: 'border-yellow-500',
+    buttonVariant: 'destructive' as const,
   },
   info: {
     icon: Info,
-    iconColor: "text-blue-600",
-    bgColor: "bg-blue-100",
-    borderColor: "border-blue-500",
-    buttonVariant: "default" as const,
+    iconColor: 'text-blue-600',
+    bgColor: 'bg-blue-100',
+    borderColor: 'border-blue-500',
+    buttonVariant: 'default' as const,
   },
 };
 
@@ -134,8 +134,8 @@ export const AlertModal: React.FC<AlertModalProperties> = ({
   type,
   title,
   description,
-  confirmText = "Continue",
-  cancelText = "Cancel",
+  confirmText = 'Continue',
+  cancelText = 'Cancel',
   showCancelButton = true,
   autoClose = false,
   autoCloseDelay = 3000,
@@ -173,7 +173,7 @@ export const AlertModal: React.FC<AlertModalProperties> = ({
 
   const config = alertConfig[type];
   const resolvedConfirmVariant = confirmVariant ?? config.buttonVariant;
-  const resolvedCancelVariant = cancelVariant ?? "outline";
+  const resolvedCancelVariant = cancelVariant ?? 'outline';
 
   const onChange = (open: boolean) => {
     if (!open) {
@@ -184,41 +184,42 @@ export const AlertModal: React.FC<AlertModalProperties> = ({
   return (
     <Dialog open={isOpen} onOpenChange={onChange}>
       <DialogContent
-        className={`flex flex-col items-center gap-6 py-8 ${containerClassName ?? ""}`}
+        className={`flex flex-col items-center gap-6 py-8 ${containerClassName ?? ''}`}
       >
         {/* Icon */}
         <div
-          className={`flex h-16 w-16 items-center justify-center rounded-full border-2 ${config.borderColor} ${config.bgColor} ${iconContainerClassName ?? ""}`}
+          className={`flex h-16 w-16 items-center justify-center rounded-full border-2
+           ${config.borderColor} ${config.bgColor} ${iconContainerClassName ?? ''}`}
         >
-          {type === "success" || type === "error" ? (
+          {type === 'success' || type === 'error' ? (
             <config.icon />
           ) : (
             <config.icon
-              className={`h-8 w-8 ${config.iconColor} ${iconClassName ?? ""}`}
+              className={`h-8 w-8 ${config.iconColor} ${iconClassName ?? ''}`}
             />
           )}
         </div>
 
         {/* Content */}
-        <div className={`space-y-2 text-center ${contentClassName ?? ""}`}>
+        <div className={`space-y-2 text-center ${contentClassName ?? ''}`}>
           <h3
-            className={`text-xl font-bold text-gray-900 ${titleClassName ?? ""}`}
+            className={`text-xl font-bold text-gray-900 ${titleClassName ?? ''}`}
           >
             {title}
           </h3>
-          <p className={`text-sm text-gray-600 ${descriptionClassName ?? ""}`}>
+          <p className={`text-sm text-gray-600 ${descriptionClassName ?? ''}`}>
             {description}
           </p>
         </div>
 
         {/* Buttons */}
-        <div className={`flex w-full gap-3 ${actionsClassName ?? ""}`}>
+        <div className={`flex w-full gap-3 ${actionsClassName ?? ''}`}>
           {showCancelButton && (
             <MainButton
               isDisabled={loading}
               variant={resolvedCancelVariant}
               onClick={onClose}
-              className={`flex-1 ${cancelButtonClassName ?? ""}`}
+              className={`flex-1 ${cancelButtonClassName ?? ''}`}
             >
               {cancelText}
             </MainButton>
@@ -227,7 +228,7 @@ export const AlertModal: React.FC<AlertModalProperties> = ({
             isDisabled={loading}
             variant={resolvedConfirmVariant}
             onClick={onConfirm ?? onClose}
-            className={`flex-1 ${confirmButtonClassName ?? ""}`}
+            className={`flex-1 ${confirmButtonClassName ?? ''}`}
             isLoading={loading}
           >
             {confirmText}

@@ -1,6 +1,5 @@
 'use client';
 
-import { PageSection, PageWrapper } from '@/lib/animation';
 import { ForgotPasswordData, forgotPasswordSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BackButton, FormField, FormHeader } from '@workspace/ui/lib';
@@ -50,12 +49,9 @@ export const ForgotPassword = () => {
   };
 
   return (
-    <PageWrapper>
-      <PageSection
-        index={0}
-        className="bg-background mx-auto max-w-[589px] rounded-xl p-8 shadow"
-      >
-        <div>
+    <section>
+      <div className="bg-background mx-auto max-w-[589px] rounded-xl p-8 shadow">
+        <div className={`space-y-4`}>
           <BackButton size={32} />
           <FormHeader
             title="Forgot Password"
@@ -95,7 +91,7 @@ export const ForgotPassword = () => {
             </Link>
           </p>
         </FormProvider>
-      </PageSection>
-    </PageWrapper>
+      </div>
+    </section>
   );
 };

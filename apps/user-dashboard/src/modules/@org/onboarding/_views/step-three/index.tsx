@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { PageSection, PageWrapper } from '@/lib/animation';
 import { MainButton } from '@workspace/ui/lib/button';
 import { useCallback, useEffect } from 'react';
 
@@ -35,11 +34,11 @@ export const EmployeeSetup = () => {
   }, [handleStartTour]);
 
   return (
-    <PageWrapper
-      className={`flex flex-col items-center justify-between gap-8 lg:flex-row`}
+    <section
+      className={`flex flex-col lg:items-center justify-between gap-8 lg:flex-row`}
     >
       <section className={`max-w-[646px] flex-1 space-y-[41px]`}>
-        <PageSection index={0} className={`space-y-4`}>
+        <div className={`space-y-4`}>
           <p>Step 3 of 3</p>
           <div>
             <div className={`flex items-center gap-2`}>
@@ -48,25 +47,27 @@ export const EmployeeSetup = () => {
               <div className={`bg-primary h-2 w-16 rounded-full`} />
             </div>
           </div>
-        </PageSection>
-        <PageSection index={1} className={`space-y-[24px]`}>
-          <h1 className={`text-3xl font-semibold`}>Bring your team onboard</h1>
-          <p className={`text-lg`}>
+        </div>
+        <div className={`space-y-6`}>
+          <h1 className={`text-xl lg:text-2xl xl:text-3xl font-semibold`}>
+            Bring your team onboard
+          </h1>
+          <p className={`xl:text-lg`}>
             Start with suggested departments and tailor them to fit your
             organization. Add custom roles under each department and control
             what they can access.
           </p>
-        </PageSection>
-        <PageSection index={2} className="flex gap-4">
-          <MainButton href="/onboarding/step-2" variant="outline">
+        </div>
+        <div className="flex gap-4">
+          <MainButton href="/onboarding/step-2" variant="primaryOutline">
             Back
           </MainButton>
-        </PageSection>
+        </div>
       </section>
       <section className={`flex-1 md:scale-85`}>
         <EmployeeSetupForm />
       </section>
-    </PageWrapper>
+    </section>
   );
 };
 // No HOC dependency injection; hooks are used inside forms directly.

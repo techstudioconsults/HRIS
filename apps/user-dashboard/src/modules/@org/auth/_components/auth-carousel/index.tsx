@@ -1,40 +1,34 @@
 'use client';
 
 import { testimonials } from '@/lib/tools/constants';
-import { cn } from '@workspace/ui/lib/utils';
-import Image from 'next/image';
 import { UniversalSwiper } from '@/components/shared/carousel';
+import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 
 export const AuthCarousel = () => {
   return (
-    <UniversalSwiper
-      className="overflow-hidden"
-      items={testimonials}
-      renderItem={(testimonial: AuthCarouselProperties) => (
-        <section className="relative flex h-dvh items-end justify-center p-9">
-          <Image
-            src={testimonial.image}
-            alt={testimonial.name}
-            fill
-            className={cn('object-cover')}
-            quality={500}
-            priority={true}
-          />
-          <article className="relative z-10 space-y-12">
-            <p
-              className={`text-3xl/[120%] font-medium tracking-tighter text-white`}
-            >
-              {testimonial.message}
-            </p>
-            <div className={`text-white`}>
-              <p className={`text-white`}>{testimonial.name}</p>
-              <p className={`text-white`}>{testimonial.position}</p>
-            </div>
-          </article>
-        </section>
-      )}
-      showPagination
-      showNavigation
-    />
+    <>
+      <UniversalSwiper
+        className="overflow-hidden"
+        items={testimonials}
+        renderItem={(testimonial: AuthCarouselProperties) => (
+          <section className="relative flex items-end justify-center p-9">
+            <article className="relative z-10 space-y-12">
+              <p
+                className={`text-xl/[120%] font-medium tracking-tighter text-white`}
+              >
+                {testimonial.message}
+              </p>
+              <div className={`text-white`}>
+                <p className={`text-white`}>{testimonial.name}</p>
+                <p className={`text-white`}>{testimonial.position}</p>
+              </div>
+            </article>
+          </section>
+        )}
+        showPagination
+        showNavigation
+      />
+      <GradientMask className={` h-[50%]! via-black/80 from-black`} />
+    </>
   );
 };

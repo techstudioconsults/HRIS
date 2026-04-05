@@ -20,7 +20,7 @@ interface ExportActionProperties<
   buttonText?: string;
   additionalParameters?: Omit<T, 'page' | 'start_date' | 'end_date' | 'status'>;
   fileName?: string;
-  size?: 'xs' | 'lg' | 'xl';
+  size?: 'xs' | 'lg' | 'xl' | 'icon';
 }
 
 const ExportAction = <T extends object>({
@@ -61,15 +61,17 @@ const ExportAction = <T extends object>({
     <MainButton
       isDisabled={isDisabled}
       variant="primaryOutline"
-      className={cn('w-full lg:w-auto', className)}
-      size={size as 'lg' | 'xl'}
-      isLeftIconVisible={true}
-      icon={<Icon name="DocumentDownload" />}
+      className={cn('w-full lg:w-auto disabled:border-muted', className)}
+      size={size as 'lg' | 'xl' | `icon`}
+      ariaLabel={buttonText}
       onClick={handleDownload}
       isLoading={isPending}
       // isIconOnly={true}
     >
-      {buttonText}
+      <span className="inline-flex lg:hidden" aria-hidden="true">
+        <Icon name="DocumentDownload" />
+      </span>
+      <span className="hidden lg:inline">{buttonText}</span>
     </MainButton>
   );
 };

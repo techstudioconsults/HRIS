@@ -88,10 +88,13 @@ export const EmployeeSetupForm = () => {
   };
 
   return (
-    <section className="rounded-[10px] border p-7" data-tour="employee-form">
+    <section
+      className="rounded-[10px] border px-4 py-7 lg:px-7"
+      data-tour="employee-form"
+    >
       <div className={`mb-8 space-y-2`}>
         <FormHeader
-          icon={<Icon name={`User`} />}
+          icon={<Icon name={`User`} size={32} />}
           title="Onboard Employees"
           subTitle="Add your team members to get started"
         />

@@ -3,7 +3,7 @@
 
 import { FormField } from '@workspace/ui/lib';
 import { useEffect, useRef } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
 
 interface FilterValues {
@@ -22,18 +22,22 @@ export const FilterForm = ({
   teams = [],
 }: {
   initialFilters: FilterValues;
+  // @ts-ignore
   onFilterChange: (filters: FilterValues) => void;
   teams: Team[];
 }) => {
   const methods = useForm<FilterValues>({
     defaultValues: initialFilters,
   });
-  const [debouncedFilters] = useDebounce(methods.watch(), 300);
+  const watchedFilters = useWatch({ control: methods.control });
+  const [debouncedFilters] = useDebounce(watchedFilters, 300);
   // Skip the next debounced effect when we trigger an immediate refresh
   const skipNextDebouncedEffect = useRef(false);
+  const onFilterChangeRef = useRef(onFilterChange);
+  const lastEmittedFiltersRef = useRef('');
 
   // Get roles for the selected team
-  const selectedTeamId = methods.watch('teamId');
+  const selectedTeamId = useWatch({ control: methods.control, name: 'teamId' });
   const roles: any =
     teams.find((team) => team.id === selectedTeamId)?.roles || [];
 
@@ -43,18 +47,27 @@ export const FilterForm = ({
   }, [initialFilters, methods]);
 
   useEffect(() => {
+    onFilterChangeRef.current = onFilterChange;
+  }, [onFilterChange]);
+
+  useEffect(() => {
     if (skipNextDebouncedEffect.current) {
       skipNextDebouncedEffect.current = false;
       return; // avoid duplicate refresh after immediate change
     }
     // Normalize: drop keys with undefined, empty string, or sentinel 'all'
     const normalized: FilterValues = {};
-    for (const [key, value] of Object.entries(debouncedFilters)) {
+    for (const [key, value] of Object.entries(debouncedFilters ?? {})) {
       if (value === undefined || value === '' || value === 'all') continue;
       (normalized as any)[key] = value;
     }
-    onFilterChange(normalized);
-  }, [debouncedFilters, onFilterChange]);
+
+    const serializedFilters = JSON.stringify(normalized);
+    if (serializedFilters === lastEmittedFiltersRef.current) return;
+
+    lastEmittedFiltersRef.current = serializedFilters;
+    onFilterChangeRef.current(normalized);
+  }, [debouncedFilters]);
 
   const handleTeamChange = (value: string) => {
     const isAll = value === 'all'; // 'all' sentinel from select options
@@ -70,7 +83,9 @@ export const FilterForm = ({
       methods.reset(resetFilters);
       const nextFilters = { ...resetFilters } as Record<string, unknown>;
       delete nextFilters.teamId; // omit teamId entirely
-      onFilterChange(nextFilters as FilterValues);
+      const normalizedNextFilters = nextFilters as FilterValues;
+      lastEmittedFiltersRef.current = JSON.stringify(normalizedNextFilters);
+      onFilterChangeRef.current(normalizedNextFilters);
       return;
     }
     // Otherwise, apply team normally and clear role

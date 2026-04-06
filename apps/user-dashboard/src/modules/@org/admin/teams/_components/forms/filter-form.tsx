@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { FormField } from "@workspace/ui/lib";
-import { cn } from "@workspace/ui/lib/utils";
-import { useEffect } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import { useDebounce } from "use-debounce";
+import { FormField } from '@workspace/ui/lib';
+import { cn } from '@workspace/ui/lib/utils';
+import { useEffect, useRef } from 'react';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { useDebounce } from 'use-debounce';
 
 interface FilterValues {
   search?: string;
@@ -22,18 +22,18 @@ type FilterOption = {
 export const FilterForm = ({
   initialFilters,
   onFilterChange,
-  title = "Filter Teams",
+  title = 'Filter Teams',
   hideTitle = false,
   containerClassName,
   statusOptions,
   sortOptions,
   limitOptions,
-  statusLabel = "Status",
-  statusPlaceholder = "All Statuses",
-  sortByLabel = "Sort By",
-  sortByPlaceholder = "Default",
-  limitLabel = "Items Per Page",
-  limitPlaceholder = "10",
+  statusLabel = 'Status',
+  statusPlaceholder = 'All Statuses',
+  sortByLabel = 'Sort By',
+  sortByPlaceholder = 'Default',
+  limitLabel = 'Items Per Page',
+  limitPlaceholder = '10',
   showStatus = true,
   showSortBy = true,
   showLimit = true,
@@ -59,7 +59,10 @@ export const FilterForm = ({
   const methods = useForm<FilterValues>({
     defaultValues: initialFilters,
   });
-  const [debouncedFilters] = useDebounce(methods.watch(), 300);
+  const watchedFilters = useWatch({ control: methods.control });
+  const [debouncedFilters] = useDebounce(watchedFilters, 300);
+  const onFilterChangeRef = useRef(onFilterChange);
+  const lastEmittedFiltersRef = useRef('');
 
   // Sync form with parent's filter state when it changes (e.g., on reset)
   useEffect(() => {
@@ -67,18 +70,34 @@ export const FilterForm = ({
   }, [initialFilters, methods]);
 
   useEffect(() => {
-    onFilterChange(debouncedFilters);
-  }, [debouncedFilters, onFilterChange]);
+    onFilterChangeRef.current = onFilterChange;
+  }, [onFilterChange]);
+
+  useEffect(() => {
+    const normalizedFilters: FilterValues = {
+      search: debouncedFilters?.search,
+      status: debouncedFilters?.status,
+      sortBy: debouncedFilters?.sortBy,
+      limit: debouncedFilters?.limit,
+      page: debouncedFilters?.page,
+    };
+    const serializedFilters = JSON.stringify(normalizedFilters);
+
+    if (serializedFilters === lastEmittedFiltersRef.current) return;
+
+    lastEmittedFiltersRef.current = serializedFilters;
+    onFilterChangeRef.current(normalizedFilters);
+  }, [debouncedFilters]);
 
   const handleFilterChange = (name: keyof FilterValues, value: string) => {
-    const actualValue = value === "all" ? undefined : value;
+    const actualValue = value === 'all' ? undefined : value;
     methods.setValue(name, actualValue);
-    methods.setValue("page", "1"); // Reset to first page on filter change
+    methods.setValue('page', '1'); // Reset to first page on filter change
   };
 
   return (
     <FormProvider {...methods}>
-      <section className={cn("mx-auto max-w-[527px] p-7", containerClassName)}>
+      <section className={cn('mx-auto max-w-[527px] p-7', containerClassName)}>
         {!hideTitle && <h5 className="mb-4 text-xl">{title}</h5>}
         <div className="space-y-4">
           {/* Status Dropdown */}
@@ -90,12 +109,14 @@ export const FilterForm = ({
               placeholder={statusPlaceholder}
               options={
                 statusOptions ?? [
-                  { value: "all", label: "All Statuses" },
-                  { value: "active", label: "Active" },
-                  { value: "inactive", label: "Inactive" },
+                  { value: 'all', label: 'All Statuses' },
+                  { value: 'active', label: 'Active' },
+                  { value: 'inactive', label: 'Inactive' },
                 ]
               }
-              onChange={(event) => handleFilterChange("status", event.target.value)}
+              onChange={(event) =>
+                handleFilterChange('status', event.target.value)
+              }
               className="!h-12"
             />
           )}
@@ -109,16 +130,18 @@ export const FilterForm = ({
               placeholder={sortByPlaceholder}
               options={
                 sortOptions ?? [
-                  { value: "all", label: "Default" },
-                  { value: "name_asc", label: "Name (A-Z)" },
-                  { value: "name_desc", label: "Name (Z-A)" },
-                  { value: "created_at_asc", label: "Created Date (Oldest)" },
-                  { value: "created_at_desc", label: "Created Date (Newest)" },
-                  { value: "members_asc", label: "Members (Fewest)" },
-                  { value: "members_desc", label: "Members (Most)" },
+                  { value: 'all', label: 'Default' },
+                  { value: 'name_asc', label: 'Name (A-Z)' },
+                  { value: 'name_desc', label: 'Name (Z-A)' },
+                  { value: 'created_at_asc', label: 'Created Date (Oldest)' },
+                  { value: 'created_at_desc', label: 'Created Date (Newest)' },
+                  { value: 'members_asc', label: 'Members (Fewest)' },
+                  { value: 'members_desc', label: 'Members (Most)' },
                 ]
               }
-              onChange={(event) => handleFilterChange("sortBy", event.target.value)}
+              onChange={(event) =>
+                handleFilterChange('sortBy', event.target.value)
+              }
               className="!h-12"
             />
           )}
@@ -132,13 +155,15 @@ export const FilterForm = ({
               placeholder={limitPlaceholder}
               options={
                 limitOptions ?? [
-                  { value: "5", label: "5" },
-                  { value: "10", label: "10" },
-                  { value: "20", label: "20" },
-                  { value: "50", label: "50" },
+                  { value: '5', label: '5' },
+                  { value: '10', label: '10' },
+                  { value: '20', label: '20' },
+                  { value: '50', label: '50' },
                 ]
               }
-              onChange={(event) => handleFilterChange("limit", event.target.value)}
+              onChange={(event) =>
+                handleFilterChange('limit', event.target.value)
+              }
               className="!h-12"
             />
           )}

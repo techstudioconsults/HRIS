@@ -38,7 +38,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
               !shouldHideCarousel && 'max-w-[527px]'
             )}
           >
-            <Logo width={214} />
+            <Logo logo={`/images/logo.svg`} width={214} />
           </div>
           {children}
         </section>

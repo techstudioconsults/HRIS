@@ -43,15 +43,19 @@ export const CardSection = () => {
           iconVariant="purple-500"
         />
       </CardGroup>
-      <div className={`lg:hidden space-y-4`}>
-        <ExportAction />
-        <ComboBox
-          options={[]}
-          value={undefined}
-          onValueChange={() => {}}
-          placeholder="Select overview period"
-          className="border-border h-10 border"
-        />
+      <div className={` flex items-center gap-2 lg:hidden`}>
+        <div>
+          <ExportAction className={`p-3`} />
+        </div>
+        <div className={`w-full`}>
+          <ComboBox
+            options={[]}
+            value={undefined}
+            onValueChange={() => {}}
+            placeholder="Select overview period"
+            className="border-border h-10 border w-full!"
+          />
+        </div>
       </div>
     </>
   );

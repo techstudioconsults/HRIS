@@ -41,28 +41,32 @@ export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
         title="Resources"
         subtitle="All Resources available in the organization"
         actionComponent={
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col lg:flex-row items-center gap-2">
             <SearchInput
-              className="border-border h-10 rounded-md border"
+              className="h-10 rounded-md border w-full lg:w-fit"
               placeholder="Search resources..."
               onSearch={handleSearch}
             />
-            <MainButton
-              variant="primaryOutline"
-              isLeftIconVisible={true}
-              icon={<Icon name="Folder" />}
-              onClick={handleOpenFolderDialog}
-            >
-              Create Folder
-            </MainButton>
-            <MainButton
-              variant="primary"
-              isLeftIconVisible={true}
-              icon={<Icon name="FileText" />}
-              onClick={handleOpenFileDialog}
-            >
-              Upload File
-            </MainButton>
+            <div className={`flex items-center w-full lg:w-auto gap-2`}>
+              <MainButton
+                variant="primaryOutline"
+                isLeftIconVisible={true}
+                icon={<Icon name="FolderAdd" variant={`Outline`} />}
+                onClick={handleOpenFolderDialog}
+                className={`w-full`}
+              >
+                Create Folder
+              </MainButton>
+              <MainButton
+                variant="primary"
+                isLeftIconVisible={true}
+                icon={<Icon name="DocumentText" variant={`Bold`} />}
+                onClick={handleOpenFileDialog}
+                className={`w-full`}
+              >
+                Upload File
+              </MainButton>
+            </div>
           </div>
         }
       />
@@ -73,7 +77,7 @@ export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
         onOpenChange={setDialogOpen}
         title="Create New Folder"
         description="Add a new folder to organize your resources"
-        className="min-w-xl"
+        className="lg:min-w-xl"
         trigger={null}
       >
         <CreateFolderForm onClose={handleCloseDialog} />
@@ -85,7 +89,7 @@ export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
         onOpenChange={setDialogOpen}
         title="Upload File"
         description="Upload a file to an existing folder"
-        className="min-w-xl"
+        className="lg:min-w-xl"
         trigger={null}
       >
         <CreateFileForm onClose={handleCloseDialog} />

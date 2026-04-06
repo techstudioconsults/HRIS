@@ -37,4 +37,7 @@ export {
   ArrowDown2,
   LogoutCurve,
   WalletMoney,
+  DocumentText,
+  FolderAdd,
+  FolderOpen,
 } from 'iconsax-react';

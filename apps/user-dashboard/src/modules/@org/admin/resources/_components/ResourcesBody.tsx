@@ -1,19 +1,27 @@
-"use client";
+'use client';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
-import { ErrorEmptyState } from "@workspace/ui/lib";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@workspace/ui/components/tabs';
+import { ErrorEmptyState } from '@workspace/ui/lib';
 
-import { useResourceService } from "../services/use-service";
-import { FilesSkeleton } from "./FilesSkeleton";
-import { FilesTab } from "./tabs/FilesTab";
-import { FoldersTab } from "./tabs/FoldersTab";
+import { useResourceService } from '../services/use-service';
+import { FilesSkeleton } from './FilesSkeleton';
+import { FilesTab } from './tabs/FilesTab';
+import { FoldersTab } from './tabs/FoldersTab';
 
 interface ResourcesBodyProperties {
-  defaultView?: "folders" | "files";
+  defaultView?: 'folders' | 'files';
   searchQuery?: string;
 }
 
-export const ResourcesBody = ({ defaultView = "files", searchQuery = "" }: ResourcesBodyProperties) => {
+export const ResourcesBody = ({
+  defaultView = 'files',
+  searchQuery = '',
+}: ResourcesBodyProperties) => {
   const { useGetAllFolders, useGetAllFiles } = useResourceService();
 
   // Build query parameters
@@ -45,14 +53,21 @@ export const ResourcesBody = ({ defaultView = "files", searchQuery = "" }: Resou
   // Loading and error states
   const isLoading = foldersLoading || filesLoading;
   const hasError = isFoldersError || isFilesError;
-  const errorMessage = isFoldersError ? foldersError?.message : filesError?.message;
+  const errorMessage = isFoldersError
+    ? foldersError?.message
+    : filesError?.message;
 
   if (isLoading) {
     return <FilesSkeleton />;
   }
 
   if (hasError) {
-    return <ErrorEmptyState description={errorMessage} onRetry={refetchFiles || refetchFolders} />;
+    return (
+      <ErrorEmptyState
+        description={errorMessage}
+        onRetry={refetchFiles || refetchFolders}
+      />
+    );
   }
 
   return (

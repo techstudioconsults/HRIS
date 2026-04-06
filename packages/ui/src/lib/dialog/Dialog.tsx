@@ -58,7 +58,10 @@ export function ReusableDialog({
 
       <DialogContent
         hideClose={hideClose}
-        className={cn('border-default items-center scale-[0.93]', className)}
+        className={cn(
+          'items-center min-w-screen lg:min-w-2xl scale-[0.93]',
+          className
+        )}
       >
         <DialogHeader className={cn('h-fit', wrapperClassName)}>
           {img &&

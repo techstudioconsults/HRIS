@@ -79,7 +79,7 @@ export const EmployeeHeaderSection = ({
                   data-[state=open]:text-gray h-10 rounded-md border px-3"
                   variant="primaryOutline"
                 >
-                  <Icon name="Filter" size={16} />
+                  <Icon name="Filter" size={16} variant={`Outline`} />
                   <span className={`hidden lg:block`}>Filter</span>
                 </Button>
               }

@@ -392,7 +392,7 @@ export const AllTeams = () => {
             : 'Create a new team for your organization. You can add roles and employees later.'
         }
         trigger={<span />}
-        className="min-w-screen lg:min-w-2xl"
+        className="lg:min-w-2xl"
         wrapperClassName={`text-left`}
       >
         <TeamForm
@@ -426,7 +426,7 @@ export const AllTeams = () => {
               ? `Add roles to "${currentTeam?.name}" to define permissions. You can skip this and add roles later.`
               : 'Create new roles for this team'
         }
-        className="min-w-screen lg:min-w-2xl"
+        className=" lg:min-w-2xl"
         wrapperClassName={`text-left`}
         trigger={<span />}
       >
@@ -468,7 +468,7 @@ export const AllTeams = () => {
             ? `Assign employees to "${currentTeam?.name}". You can skip this and add employees later.`
             : 'Assign employees to this team and customize their roles'
         }
-        className="min-w-screen lg:min-w-2xl"
+        className=" lg:min-w-2xl"
         wrapperClassName={`text-left`}
         trigger={<span />}
       >
@@ -520,7 +520,8 @@ export const AllTeams = () => {
         }}
         title="Edit Team"
         description="Update team information and settings"
-        className="min-w-2xl"
+        className="lg:min-w-2xl"
+        wrapperClassName={`text-left`}
         trigger={<span />}
       >
         {editingTeam && (

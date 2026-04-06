@@ -68,8 +68,8 @@ const ExportAction = <T extends object>({
       isLoading={isPending}
       // isIconOnly={true}
     >
-      <span className="inline-flex lg:hidden" aria-hidden="true">
-        <Icon name="DocumentDownload" />
+      <span className="inline-flex" aria-hidden="true">
+        <Icon name="DocumentDownload" variant={`Outline`} />
       </span>
       <span className="hidden lg:inline">{buttonText}</span>
     </MainButton>

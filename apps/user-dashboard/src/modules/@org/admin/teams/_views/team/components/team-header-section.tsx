@@ -64,7 +64,7 @@ export const TeamHeaderSection = ({
                   variant={'primaryOutline'}
                   className="data-[state=open]:border-border data-[state=open]:text-gray h-10 rounded-md border px-3 shadow-none"
                 >
-                  <Icon name="Filter" size={16} />
+                  <Icon name="Filter" size={16} variant={`Outline`} />
                   <span className={`hidden lg:block`}>Filter</span>
                 </Button>
               }

@@ -2,7 +2,6 @@
 
 import { Label } from '@workspace/ui/components/label';
 import { Textarea } from '@workspace/ui/components/textarea';
-import { Eye, EyeOff } from 'lucide-react';
 import Image from 'next/image';
 import { ChangeEvent, ReactNode, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -78,7 +77,7 @@ export function FormField({
     <div className="space-y-2">
       {label && (
         <div>
-          <Label className="text-[16px] font-medium">
+          <Label className="text-sm lg:text-[16px] font-medium">
             {label}
             {required && <span className="text-destructive -ml-1">*</span>}
           </Label>
@@ -93,12 +92,15 @@ export function FormField({
         control={control}
         render={({ field }) => {
           const inputClassName = cn(
-            'flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-gray-200 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:cursor-not-allowed disabled:opacity-50 transition-all shadow-none',
+            'flex h-10 w-full rounded-md border border-border' +
+              ' bg-background px-3 py-2 text-sm placeholder:text-gray-200 ' +
+              'focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary' +
+              ' disabled:cursor-not-allowed disabled:opacity-50 transition-all shadow-none',
             error && 'border-destructive',
             className
           );
 
-          const inputWithAddons = (
+          return (
             <div
               className={cn(`flex items-center gap-2`, containerClassName)}
               {...rest}
@@ -225,8 +227,6 @@ export function FormField({
               )}
             </div>
           );
-
-          return inputWithAddons;
         }}
       />
 
@@ -431,9 +431,10 @@ export function SwitchField({
               disabled={disabled || readOnly}
               className={cn(
                 // Match checkbox styling (soft primary background + primary border)
-                'border-primary/30 data-[state=checked]:border-primary data-[state=checked]:bg-primary/10 data-[state=unchecked]:bg-background',
+                'border-primary/30 data-[state=checked]:border-primary ' +
+                  'data-[state=checked]:bg-primary/10 data-[state=unchecked]:bg-background',
                 // Make the switch "knot" (thumb) blue instead of white
-                '[&_[data-slot=switch-thumb]]:bg-primary',
+                '**:data-[slot=switch-thumb]:bg-primary',
                 error && 'border-destructive',
                 'mt-0'
               )}

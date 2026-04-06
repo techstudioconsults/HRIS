@@ -31,9 +31,9 @@ export default function RootLayout({
         )}
       >
         <Providers>
+          <Navbar />
           <div id="smooth-wrapper">
             <div id="smooth-content">
-              <Navbar />
               {children}
               <Footer />
             </div>

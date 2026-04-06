@@ -50,9 +50,9 @@ export const NavbarMobileMenu = ({ links }: NavbarMobileMenuProps) => {
           className="lg:hidden"
           icon={
             isOpen ? (
-              <Icon name={`X`} size={18} />
+              <Icon name={`X`} variant={`Outline`} size={18} />
             ) : (
-              <Icon name={`Menu`} size={18} />
+              <Icon name={`Menu`} variant={`Outline`} size={18} />
             )
           }
         />

@@ -78,6 +78,7 @@ export const TourBanner = () => {
               />
             </Suspense>
             <MainButton
+              isExternal
               variant={'primaryOutline'}
               className="w-full bg-background"
               href={`/login`}

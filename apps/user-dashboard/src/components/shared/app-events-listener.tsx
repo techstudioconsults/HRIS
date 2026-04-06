@@ -179,34 +179,34 @@ export const AppEventsListener = () => {
     useDecidePayrollApproval();
 
   // Temporary dev-only preview to make banner styles visible without waiting for SSE events.
-  const previewBanner: BaseNotification = {
-    id: 'preview-banner',
-    event: 'PREVIEW',
-    title: 'Preview Notification',
-    body: 'This is a temporary preview banner for styling.',
-    render: 'banner',
-    severity: 'info',
-    dismissible: false,
-    actions: [
-      {
-        label: 'Approve Payroll',
-        variant: 'primary',
-        icon: `Check`,
-        onClick: () => {},
-      },
-      {
-        label: 'Decline Payroll',
-        variant: 'destructiveOutline',
-        icon: `X`,
-        onClick: () => {},
-      },
-    ],
-  };
+  // const previewBanner: BaseNotification = {
+  //   id: 'preview-banner',
+  //   event: 'PREVIEW',
+  //   title: 'Preview Notification',
+  //   body: 'This is a temporary preview banner for styling.',
+  //   render: 'banner',
+  //   severity: 'info',
+  //   dismissible: false,
+  //   actions: [
+  //     {
+  //       label: 'Approve Payroll',
+  //       variant: 'primary',
+  //       icon: `Check`,
+  //       onClick: () => {},
+  //     },
+  //     {
+  //       label: 'Decline Payroll',
+  //       variant: 'destructiveOutline',
+  //       icon: `X`,
+  //       onClick: () => {},
+  //     },
+  //   ],
+  // };
 
-  const bannersToRender =
-    process.env.NODE_ENV !== 'production' && banners.length === 0
-      ? [previewBanner]
-      : banners;
+  const bannersToRender = banners;
+  // process.env.NODE_ENV !== 'production' && banners.length === 0
+  //   ? [previewBanner]
+  //   : banners;
 
   const dismissBanner = useCallback((id: string) => {
     setBanners((previous) => previous.filter((b) => b.id !== id));

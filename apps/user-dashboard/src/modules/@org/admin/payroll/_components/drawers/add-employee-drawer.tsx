@@ -6,6 +6,7 @@ import { SearchInput } from '@/modules/@org/shared/search-input';
 import { Button } from '@workspace/ui/components/button';
 import {
   Drawer,
+  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
@@ -14,7 +15,6 @@ import {
 import {
   AdvancedDataTable,
   AlertModal,
-  BackButton,
   EmptyState,
   FilteredEmptyState,
   GenericDropdown,
@@ -241,10 +241,9 @@ export const AddEmployeeDrawer = ({
         onOpenChange={setShowAddEmployeeModal}
         direction="right"
       >
-        <DrawerContent className="h-full w-full p-4 sm:!max-w-3xl">
+        <DrawerContent className="h-full w-full! p-4 sm:max-w-3xl!">
           <DrawerHeader className="border-b pb-4">
             <div className="flex items-center gap-10">
-              <BackButton />
               <div>
                 <DrawerTitle className="text-xl font-semibold">
                   Excluded Employees - Performance Bonus
@@ -254,6 +253,9 @@ export const AddEmployeeDrawer = ({
                   Performance Bonus. You can re-include them anytime.
                 </DrawerDescription>
               </div>
+              <DrawerClose className={`text-primary`} asChild>
+                <Icon name={`CloseCircle`} />
+              </DrawerClose>
             </div>
           </DrawerHeader>
 

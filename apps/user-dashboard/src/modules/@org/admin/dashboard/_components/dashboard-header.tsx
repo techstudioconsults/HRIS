@@ -1,17 +1,24 @@
 'use client';
 
 import ExportAction from '@/components/shared/export-action';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@workspace/ui/components/dropdown-menu';
 import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ComboBox } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 export const DashboardHeader = () => {
   const { data: session, status } = useSession();
 
   return (
-    <div className="flex flex-col xl:items-center justify-between xl:pb-6 xl:flex-row">
+    <div className="flex lg:items-center flex-col lg:flex-row lg:justify-between xl:pb-6 ">
       <div className="min-h-[88px] py-3">
         {status === 'loading' ? (
           <>
@@ -25,24 +32,57 @@ export const DashboardHeader = () => {
           </>
         ) : null}
       </div>
-      <div className="lg:items-center gap-4 flex flex-col lg:flex-row">
+      <div className="flex justify-between items-center gap-4">
         <ComboBox
           options={[]}
           value={undefined}
           onValueChange={() => {}}
           placeholder="Select overview period"
-          className="border-border h-10 w-[20rem] border hidden lg:flex"
+          className="h-10 lg:w-[20rem] w-full"
         />
-        <ExportAction className={`hidden lg:flex`} />
+
+        {/* Desktop CTAs — hidden on mobile */}
+        <ExportAction className="hidden lg:flex" />
         <MainButton
           variant="primary"
           isLeftIconVisible={true}
-          icon={<Icon variant={`Bold`} name="Add" />}
+          icon={<Icon variant="Bold" name="Add" />}
           href="/admin/employees/add-employee"
-          className={`w-full`}
+          className="hidden lg:flex w-full"
         >
           Add Employee
         </MainButton>
+
+        {/* Mobile CTA dropdown — hidden on desktop */}
+        <div className="flex lg:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <MainButton
+                variant="outline"
+                size="icon"
+                isIconOnly={true}
+                icon={<Icon name="More" variant={`Outline`} />}
+                ariaLabel="More actions"
+                className={`size-10`}
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="bg-background shadow-none flex flex-col gap-2 p-3 w-52"
+            >
+              {/*<DropdownMenuItem asChild>*/}
+              {/*  <ExportAction className={`w-fit`}/>*/}
+              {/*</DropdownMenuItem>*/}
+              {/*<DropdownMenuSeparator />*/}
+              <DropdownMenuItem asChild>
+                <Link href="/admin/employees/add-employee">
+                  <Icon name={'Add'} />
+                  Add Employee
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </div>
   );

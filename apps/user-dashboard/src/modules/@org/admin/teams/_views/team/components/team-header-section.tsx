@@ -11,6 +11,7 @@ import { useTeamService } from '../../../services/use-service';
 import { DashboardHeader, GenericDropdown } from '@workspace/ui/lib';
 import { SearchInput } from '@/modules/@org/shared/search-input';
 import { Button } from '@workspace/ui/components/button';
+import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
 
 interface TeamHeaderSectionProperties {
   search: string | null;
@@ -52,6 +53,35 @@ export const TeamHeaderSection = ({
           <div
             className={`flex flex-1 flex-row-reverse lg:flex-row items-center gap-2`}
           >
+            {/* Mobile CTA dropdown — first in DOM so it sits rightmost with flex-row-reverse */}
+            <div className="flex lg:hidden">
+              <GenericDropdown
+                align="end"
+                trigger={
+                  <Button
+                    size="icon"
+                    className="shadow rounded-md p-2.5"
+                    variant="default"
+                  >
+                    <Icon
+                      name="More"
+                      size={20}
+                      variant="Outline"
+                      className="text-primary rotate-90"
+                    />
+                  </Button>
+                }
+              >
+                <DropdownMenuItem disabled>
+                  <Icon name="DocumentDownload" variant="Outline" />
+                  Export Teams
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onAddTeamClick}>
+                  <Icon name="Add" variant="Bold" />
+                  Add Team
+                </DropdownMenuItem>
+              </GenericDropdown>
+            </div>
             <SearchInput
               className="border-border h-10 rounded-md border w-full"
               placeholder="Search teams..."
@@ -64,7 +94,7 @@ export const TeamHeaderSection = ({
                   variant={'primaryOutline'}
                   className="data-[state=open]:border-border data-[state=open]:text-gray h-10 rounded-md border px-3 shadow-none"
                 >
-                  <Icon name="Filter" size={16} />
+                  <Icon name="Filter" size={16} variant={`Outline`} />
                   <span className={`hidden lg:block`}>Filter</span>
                 </Button>
               }
@@ -83,7 +113,8 @@ export const TeamHeaderSection = ({
               </section>
             </GenericDropdown>
           </div>
-          <div className={`flex flex-1 items-center gap-2`}>
+          {/* Desktop CTAs — hidden on mobile */}
+          <div className={`hidden lg:flex flex-1 items-center gap-2`}>
             <ExportAction
               isDisabled
               downloadMutation={async (filters) => {

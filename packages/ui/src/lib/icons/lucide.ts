@@ -36,7 +36,6 @@ export {
   Trash2,
   TrendingUp,
   Upload,
-  FolderOpen,
   LucideSparkles,
   LucideAlertTriangle,
   LucideInfo,

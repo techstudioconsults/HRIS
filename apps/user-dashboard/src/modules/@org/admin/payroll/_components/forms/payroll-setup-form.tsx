@@ -1,23 +1,28 @@
-"use client";
+'use client';
 
-import { useEmployeeService } from "@/modules/@org/admin/employee/services/use-service";
-import { useTour } from "@/modules/@org/onboarding";
-import { AlertModal, BreadCrumb, FormField, MultiSelect } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { cn } from "@workspace/ui/lib/utils";
-import { AxiosError } from "axios";
-import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
-import type React from "react";
+import { useEmployeeService } from '@/modules/@org/admin/employee/services/use-service';
+import { useTour } from '@/modules/@org/onboarding';
+import {
+  AlertModal,
+  BreadCrumb,
+  FormField,
+  MultiSelect,
+} from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { cn } from '@workspace/ui/lib/utils';
+import { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
+import { useMemo, useState } from 'react';
+import type React from 'react';
 // import { zodResolver } from "@hookform/resolvers/zod";
-import { FormProvider, useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
-import { payrollSetupTourStep } from "../../config/tour-steps";
-import { usePayrollService } from "../../services/use-service";
-import { usePayrollStore } from "../../stores/payroll-store";
-import type { CompanyPayrollPolicy, PayrollBonusDeduction } from "../../types";
-import { BonusDeductionManager } from "../bonus-deduction-manager";
+import { payrollSetupTourStep } from '../../config/tour-steps';
+import { usePayrollService } from '../../services/use-service';
+import { usePayrollStore } from '../../stores/payroll-store';
+import type { CompanyPayrollPolicy, PayrollBonusDeduction } from '../../types';
+import { BonusDeductionManager } from '../bonus-deduction-manager';
 
 // Extend API bonus/deduction type to cover backend field variants without using any
 type APIBonusDeduction = PayrollBonusDeduction & {
@@ -34,14 +39,25 @@ type PayrollSetupFormValues = {
   approvers: string[];
 };
 
+const sectionClassName =
+  'space-y-4 rounded-xl border border-border/60 bg-background/60 px-4 pb-4 pt-3 md:px-5 md:pb-5 md:pt-4';
+const legendClassName =
+  'text-foreground block w-fit bg-background px-2 text-lg font-semibold leading-6 tracking-tight';
+const sectionHintClassName =
+  'text-muted-foreground -mt-1 text-sm flex items-center gap-2';
+
 export const PayrollSetupForm = () => {
   const router = useRouter();
   const [isSubmittedAlertOpen, setIsSubmittedAlertOpen] = useState(false);
-  const { setHasCompletedPayrollPolicySetupForm, setShowPayrollSettingsSetupModal } = usePayrollStore();
+  const {
+    setHasCompletedPayrollPolicySetupForm,
+    setShowPayrollSettingsSetupModal,
+  } = usePayrollStore();
   const { startTour } = useTour();
 
   // Fetch company payroll policy (needed to set form values directly via useForm)
-  const { useGetCompanyPayrollPolicy, useUpdateCompanyPayrollPolicy } = usePayrollService();
+  const { useGetCompanyPayrollPolicy, useUpdateCompanyPayrollPolicy } =
+    usePayrollService();
   const { data: policyData } = useGetCompanyPayrollPolicy({
     staleTime: 0,
     refetchOnMount: true,
@@ -54,21 +70,23 @@ export const PayrollSetupForm = () => {
     Array.isArray(array)
       ? array
           .map((v) =>
-            typeof v === "string"
+            typeof v === 'string'
               ? v
-              : v && typeof v === "object" && "id" in (v as Record<string, unknown>)
+              : v &&
+                  typeof v === 'object' &&
+                  'id' in (v as Record<string, unknown>)
                 ? String((v as Record<string, unknown>).id)
-                : String(v),
+                : String(v)
           )
-          .filter((v) => typeof v === "string" && v.length > 0)
+          .filter((v) => typeof v === 'string' && v.length > 0)
       : [];
 
   const methods = useForm<PayrollSetupFormValues>({
     // resolver: zodResolver(schema),
     values: {
-      payday: String(policy?.payday ?? "0"),
-      frequency: policy?.frequency ?? "",
-      currency: policy?.currency ?? "",
+      payday: String(policy?.payday ?? '0'),
+      frequency: policy?.frequency ?? '',
+      currency: policy?.currency ?? '',
       approvers: normalizeIds(policy?.approvers ?? []),
     },
   });
@@ -76,26 +94,27 @@ export const PayrollSetupForm = () => {
   // Fetch employees for approval dropdown
   const { useGetAllEmployees } = useEmployeeService();
   const { data: employeesData } = useGetAllEmployees(
-    { permission: "admin,payroll:read" },
+    { permission: 'admin,payroll:read' },
     {
       staleTime: 0,
       refetchOnMount: true,
-    },
+    }
   );
 
   // Build select options ensuring the current policy values exist so the value renders
   const frequencyOptions = useMemo(() => {
     const base = [
-      { value: "weekly", label: "Weekly" },
-      { value: "bi-weekly", label: "Bi-weekly" },
-      { value: "monthly", label: "Monthly" },
+      { value: 'weekly', label: 'Weekly' },
+      { value: 'bi-weekly', label: 'Bi-weekly' },
+      { value: 'monthly', label: 'Monthly' },
     ];
-    const current = (policyData?.data as CompanyPayrollPolicy | undefined)?.frequency;
+    const current = (policyData?.data as CompanyPayrollPolicy | undefined)
+      ?.frequency;
     if (current && !base.some((o) => o.value === current)) {
       const titleCased = current
-        .split(" ")
+        .split(' ')
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
+        .join(' ');
       return [{ value: current, label: titleCased }, ...base];
     }
     return base;
@@ -103,12 +122,13 @@ export const PayrollSetupForm = () => {
 
   const currencyOptions = useMemo(() => {
     const base = [
-      { value: "USD", label: "USD" },
-      { value: "EUR", label: "EUR" },
-      { value: "NGN", label: "NGN" },
-      { value: "GBP", label: "GBP" },
+      { value: 'USD', label: 'USD' },
+      { value: 'EUR', label: 'EUR' },
+      { value: 'NGN', label: 'NGN' },
+      { value: 'GBP', label: 'GBP' },
     ];
-    const current = (policyData?.data as CompanyPayrollPolicy | undefined)?.currency;
+    const current = (policyData?.data as CompanyPayrollPolicy | undefined)
+      ?.currency;
     if (current && !base.some((o) => o.value === current)) {
       return [{ value: current, label: current }, ...base];
     }
@@ -116,10 +136,15 @@ export const PayrollSetupForm = () => {
   }, [policyData]);
 
   const paydayOptions = useMemo(() => {
-    const days = Array.from({ length: 31 }, (_, index) => ({ value: String(index + 1), label: String(index + 1) }));
+    const days = Array.from({ length: 31 }, (_, index) => ({
+      value: String(index + 1),
+      label: String(index + 1),
+    }));
     // 0 often represents "End of month" or a special rule; include so current value displays
-    const withZero = [{ value: "0", label: "End of month" }, ...days];
-    const current = String((policyData?.data as CompanyPayrollPolicy | undefined)?.payday ?? "");
+    const withZero = [{ value: '0', label: 'End of month' }, ...days];
+    const current = String(
+      (policyData?.data as CompanyPayrollPolicy | undefined)?.payday ?? ''
+    );
     if (current && !withZero.some((o) => o.value === current)) {
       return [{ value: current, label: current }, ...withZero];
     }
@@ -128,7 +153,8 @@ export const PayrollSetupForm = () => {
 
   // Transform employees to select options
   const employeeOptions = useMemo(() => {
-    if (!employeesData?.data?.items || !Array.isArray(employeesData.data.items)) return [];
+    if (!employeesData?.data?.items || !Array.isArray(employeesData.data.items))
+      return [];
 
     return employeesData.data.items.map((employee: Employee) => ({
       value: employee.id,
@@ -136,7 +162,8 @@ export const PayrollSetupForm = () => {
     }));
   }, [employeesData]);
 
-  const { mutateAsync: updatePolicy, isPending } = useUpdateCompanyPayrollPolicy();
+  const { mutateAsync: updatePolicy, isPending } =
+    useUpdateCompanyPayrollPolicy();
 
   const onSubmit = async (data: PayrollSetupFormValues) => {
     const payload = {
@@ -156,7 +183,7 @@ export const PayrollSetupForm = () => {
           description:
             error instanceof AxiosError
               ? error.response?.data.message
-              : "An unexpected error occurred. Please try again.",
+              : 'An unexpected error occurred. Please try again.',
         });
       },
     });
@@ -165,19 +192,28 @@ export const PayrollSetupForm = () => {
   return (
     <section>
       <h1 className="text-2xl font-bold">Payroll Setup</h1>
-      <BreadCrumb items={[{ label: "Payroll", href: "/admin/payroll" }, { label: "Setup Payroll" }]} className="mb-6" />
+      <BreadCrumb
+        items={[
+          { label: 'Payroll', href: '/admin/payroll' },
+          { label: 'Setup Payroll' },
+        ]}
+        className="mb-6"
+      />
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="space-y-10">
-            <section className="" data-tour="payroll-general-setup">
-              <h2 className="mb-4 text-lg font-semibold">General payroll setup</h2>
+            <fieldset
+              className={sectionClassName}
+              data-tour="payroll-general-setup"
+            >
+              <legend className={legendClassName}>General payroll setup</legend>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
                 <FormField
                   name="frequency"
                   label="Payroll Frequency"
                   placeholder="Select payroll frequency"
                   type="select"
-                  className="!h-14 w-full"
+                  className="h-14! w-full"
                   options={frequencyOptions}
                 />
                 <FormField
@@ -185,7 +221,7 @@ export const PayrollSetupForm = () => {
                   label="Payday"
                   placeholder="Select payday"
                   type="select"
-                  className="!h-14 w-full"
+                  className="h-14! w-full"
                   options={paydayOptions}
                 />
                 <FormField
@@ -194,65 +230,98 @@ export const PayrollSetupForm = () => {
                   label="Currency"
                   placeholder="Select currency"
                   type="select"
-                  className={cn("!h-14 w-full")}
+                  className={cn('h-14! w-full')}
                   options={currencyOptions}
                 />
                 <MultiSelect
                   name="approvers"
                   label="Approval for payroll disbursement"
                   placeholder="Select Employee(s)"
-                  className="border-border bg-background !h-14 w-full border"
+                  className="border-border bg-background h-14! w-full border"
                   options={employeeOptions}
                   required
                 />
               </div>
-            </section>
+            </fieldset>
 
-            <section data-tour="payroll-bonuses-deductions">
-              <h2 className="mb-6 text-lg font-semibold">Global Bonuses & Deductions</h2>
+            <fieldset
+              className={sectionClassName}
+              data-tour="payroll-bonuses-deductions"
+            >
+              <legend className={legendClassName}>
+                Global Bonuses & Deductions
+              </legend>
 
               {/* Bonuses Section */}
-              <div className="mb-8" data-tour="payroll-bonuses">
+              <fieldset
+                className="m-0 mb-8 border-0 p-0"
+                data-tour="payroll-bonuses"
+              >
+                <legend className="mb-4 text-base font-medium">Bonuses</legend>
                 <BonusDeductionManager
                   key={`bonuses-${(policyData?.data as CompanyPayrollPolicy | undefined)?.bonuses?.length ?? 0}`}
                   type="bonus"
-                  policyId={(policyData?.data as CompanyPayrollPolicy | undefined)?.id}
+                  policyId={
+                    (policyData?.data as CompanyPayrollPolicy | undefined)?.id
+                  }
                   initialItems={
-                    (policyData?.data as CompanyPayrollPolicy | undefined)?.bonuses?.map((b: APIBonusDeduction) => ({
+                    (
+                      policyData?.data as CompanyPayrollPolicy | undefined
+                    )?.bonuses?.map((b: APIBonusDeduction) => ({
                       id: b.id ?? Math.random().toString(36).slice(2, 11),
                       name: b.name,
-                      valueType: b.type === "percentage" ? "percentage" : "fixed",
+                      valueType:
+                        b.type === 'percentage' ? 'percentage' : 'fixed',
                       value: Number(b.amount ?? b.value ?? 0),
                       status: b.status,
-                      type: "bonus" as const,
-                      createdAt: b.createdAt ? new Date(b.createdAt) : new Date(),
-                      updatedAt: b.updatedAt ? new Date(b.updatedAt) : new Date(),
+                      type: 'bonus' as const,
+                      createdAt: b.createdAt
+                        ? new Date(b.createdAt)
+                        : new Date(),
+                      updatedAt: b.updatedAt
+                        ? new Date(b.updatedAt)
+                        : new Date(),
                     })) ?? []
                   }
                 />
-              </div>
+              </fieldset>
 
               {/* Deductions Section */}
-              <div data-tour="payroll-deductions">
+              <fieldset
+                className="m-0 border-0 p-0"
+                data-tour="payroll-deductions"
+              >
+                <legend className="mb-4 text-base font-medium">
+                  Deductions
+                </legend>
                 <BonusDeductionManager
                   key={`deductions-${(policyData?.data as CompanyPayrollPolicy | undefined)?.deductions?.length ?? 0}`}
                   type="deduction"
-                  policyId={(policyData?.data as CompanyPayrollPolicy | undefined)?.id}
+                  policyId={
+                    (policyData?.data as CompanyPayrollPolicy | undefined)?.id
+                  }
                   initialItems={
-                    (policyData?.data as CompanyPayrollPolicy | undefined)?.deductions?.map((d: APIBonusDeduction) => ({
+                    (
+                      policyData?.data as CompanyPayrollPolicy | undefined
+                    )?.deductions?.map((d: APIBonusDeduction) => ({
                       id: d.id ?? Math.random().toString(36).slice(2, 11),
                       name: d.name,
-                      valueType: d.type === "percentage" ? "percentage" : "fixed",
+                      valueType:
+                        d.type === 'percentage' ? 'percentage' : 'fixed',
                       value: Number(d.amount ?? d.value ?? 0),
                       status: d.status,
-                      type: "deduction" as const,
-                      createdAt: d.createdAt ? new Date(d.createdAt) : new Date(),
-                      updatedAt: d.updatedAt ? new Date(d.updatedAt) : new Date(),
+                      type: 'deduction' as const,
+                      createdAt: d.createdAt
+                        ? new Date(d.createdAt)
+                        : new Date(),
+                      updatedAt: d.updatedAt
+                        ? new Date(d.updatedAt)
+                        : new Date(),
                     })) ?? []
                   }
                 />
-              </div>
-            </section>
+              </fieldset>
+            </fieldset>
           </div>
 
           <div className="flex w-full items-center gap-4 pt-4">
@@ -268,7 +337,13 @@ export const PayrollSetupForm = () => {
             >
               Back
             </MainButton>
-            <MainButton type="submit" variant="primary" className="w-50" isLoading={isPending} isDisabled={isPending}>
+            <MainButton
+              type="submit"
+              variant="primary"
+              className="w-50"
+              isLoading={isPending}
+              isDisabled={isPending}
+            >
               Save & Continue
             </MainButton>
           </div>
@@ -280,7 +355,7 @@ export const PayrollSetupForm = () => {
         onClose={() => setIsSubmittedAlertOpen(false)}
         onConfirm={() => {
           setIsSubmittedAlertOpen(false);
-          router.push("/admin/payroll");
+          router.push('/admin/payroll');
           if (policy?.status === `incomplete`) {
             startTour(payrollSetupTourStep);
           }

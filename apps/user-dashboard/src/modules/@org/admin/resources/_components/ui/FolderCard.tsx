@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@workspace/ui/components/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,7 +7,12 @@ import {
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 import { Separator } from '@workspace/ui/components/separator';
-import { AlertModal, EmptyState, ReusableDialog } from '@workspace/ui/lib';
+import {
+  AlertModal,
+  EmptyState,
+  MainButton,
+  ReusableDialog,
+} from '@workspace/ui/lib';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useState } from 'react';
 
@@ -80,22 +84,19 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
   return (
     <>
       <div
-        className="group bg-background min-w-md cursor-pointer rounded-lg p-4 shadow transition-all hover:shadow-md"
+        className="group bg-background cursor-pointer rounded-lg p-4 shadow transition-all hover:shadow-md"
         onClick={handleFolderClick}
       >
         <div className="flex items-start justify-between">
           <div className="flex min-w-0 flex-1 items-start gap-3">
             <span>
-              <Icon name="Folder" size={48} className="text-primary" />
+              <Icon name="Folder" size={20} className="text-primary" />
             </span>
             <div className="min-w-0 flex-1">
-              <h6
-                className="truncate text-base font-medium"
-                title={folder.name}
-              >
+              <h6 className="truncate text-sm font-medium" title={folder.name}>
                 {folder.name}
               </h6>
-              <p className="text-muted-foreground mt-1 text-xs">
+              <p className="text-muted-foreground mt-1 text-[8px] lg:text-xs">
                 {folder.fileCount || 0} files • {formatDate(folder.createdAt)}
               </p>
             </div>
@@ -105,13 +106,14 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
               asChild
               onClick={(event) => event.stopPropagation()}
             >
-              <Button
+              <MainButton
                 variant="ghost"
-                className="h-8 w-8 p-0"
+                className="size-8 rotate-90 p-0"
                 aria-label="Folder actions menu"
-              >
-                <Icon name="More" size={16} className="rotate-90" />
-              </Button>
+                icon={<Icon name="More" size={16} variant={`Outline`} />}
+                isIconOnly
+                size={`icon`}
+              />
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
@@ -119,11 +121,21 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
               onClick={(event) => event.stopPropagation()}
             >
               <DropdownMenuItem onClick={handleFolderClick}>
-                <Icon name="Eye" size={16} className="mr-2" />
+                <Icon
+                  name="Eye"
+                  size={16}
+                  className="mr-2"
+                  variant={`Outline`}
+                />
                 {isFetchingFolderFiles ? 'Loading...' : 'View Folder'}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleRenameClick}>
-                <Icon name="Edit" size={16} className="mr-2" />
+                <Icon
+                  name="Edit"
+                  size={16}
+                  className="mr-2"
+                  variant={`Outline`}
+                />
                 Rename Folder
               </DropdownMenuItem>
               <Separator className="bg-border/40 my-1" />
@@ -135,6 +147,7 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
                   name="Trash"
                   size={16}
                   className="text-destructive mr-2"
+                  variant={`Outline`}
                 />
                 Delete Folder
               </DropdownMenuItem>
@@ -164,7 +177,8 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
         description={isLoadingFiles ? 'Loading files...' : undefined}
         trigger={null}
         icon={<Icon name="FolderOpen" size={32} className="text-primary" />}
-        className="min-w-5xl"
+        className="lg:min-w-5xl"
+        wrapperClassName={`text-left`}
       >
         {isLoadingFiles ? (
           <div className="text-muted-foreground py-6 text-sm">
@@ -182,7 +196,7 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
             />
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="grid gap-2 lg:gap-3 grid-cols-2">
             {files.map((f) => (
               <FileCard key={f.id} file={f} />
             ))}
@@ -196,8 +210,9 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
         onOpenChange={setRenameFolderDialog}
         title="Rename Folder"
         description="Enter a new name for this folder"
+        wrapperClassName={`text-left`}
         trigger={null}
-        className="min-w-2xl"
+        className="lg:min-w-2xl"
       >
         <EditFolderForm
           folderId={folder.id}

@@ -5,6 +5,7 @@ import { Button } from '@workspace/ui/components/button';
 import { Card, CardContent, CardFooter } from '@workspace/ui/components/card';
 import {
   Drawer,
+  DrawerClose,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
@@ -30,7 +31,6 @@ import {
   TabsList,
   TabsTrigger,
 } from '@workspace/ui/components/tabs';
-import { BackButton } from '@workspace/ui/lib';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 
 import Loading from '../../../../../../../note/loading';
@@ -88,10 +88,9 @@ export const EmployeeInformationDrawer = ({
         onOpenChange={setShowEmployeeInformationDrawer}
         direction="right"
       >
-        <DrawerContent className="h-full !w-full sm:!max-w-xl md:!max-w-3xl">
+        <DrawerContent className="h-full w-full! sm:max-w-xl! md:max-w-3xl!">
           <DrawerHeader className="border-b pb-4">
             <div className="flex items-center gap-10">
-              <BackButton />
               <div className="flex items-center gap-4">
                 <div className="flex size-10 items-center justify-center rounded-lg bg-blue-100">
                   <Icon name="User" size={20} className="text-blue-600" />
@@ -103,6 +102,9 @@ export const EmployeeInformationDrawer = ({
                   {/* <DrawerDescription>Set up automated payroll processing</DrawerDescription> */}
                 </div>
               </div>
+              <DrawerClose className={`text-primary`} asChild>
+                <Icon name={`CloseCircle`} />
+              </DrawerClose>
             </div>
           </DrawerHeader>
 

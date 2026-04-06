@@ -10,11 +10,12 @@ import {
 import { Badge } from '@workspace/ui/components/badge';
 import {
   Drawer,
+  DrawerClose,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
 } from '@workspace/ui/components/drawer';
-import { AlertModal, BackButton } from '@workspace/ui/lib';
+import { AlertModal } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { cn } from '@workspace/ui/lib/utils';
@@ -121,17 +122,12 @@ export const GenerateRunPayrollDrawer = ({
   return (
     <>
       <Drawer open={open} onOpenChange={onOpenChange} direction="right">
-        <DrawerContent className="h-full w-full sm:!max-w-xl">
+        <DrawerContent className="h-full w-full! sm:max-w-xl!">
           <DrawerHeader className="border-b pb-4">
-            <div className="flex items-center gap-10">
-              <BackButton />
+            <div className="flex items-center justify-between gap-10">
               <div className="flex items-center gap-4">
                 <div className="flex size-10 items-center justify-center rounded-lg bg-blue-100">
-                  <Icon
-                    name="CalendarIcon"
-                    size={20}
-                    className="text-blue-600"
-                  />
+                  <Icon name="Calendar" size={20} className="text-primary" />
                 </div>
                 <div>
                   <DrawerTitle className="text-lg font-semibold">
@@ -141,6 +137,9 @@ export const GenerateRunPayrollDrawer = ({
                   {/* <DrawerDescription>Set up automated payroll processing</DrawerDescription> */}
                 </div>
               </div>
+              <DrawerClose className={`text-primary`} asChild>
+                <Icon name={`CloseCircle`} />
+              </DrawerClose>
             </div>
           </DrawerHeader>
 

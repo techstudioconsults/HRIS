@@ -4,13 +4,16 @@
 import ExportAction from '@/components/shared/export-action';
 import { SearchInput } from '@/modules/@org/shared/search-input';
 import { Button } from '@workspace/ui/components/button';
+import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
 import { DashboardHeader, GenericDropdown } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
-import { useCallback } from 'react';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { saveAs } from 'file-saver';
+import Link from 'next/link';
+import { useCallback, useTransition } from 'react';
 
 import { FilterForm } from '../../../_components/forms/filter-form';
 import { useEmployeeService } from '../../../services/use-service';
-import { Icon } from '@workspace/ui/lib/icons/icon';
 
 interface EmployeeHeaderSectionProperties {
   search: string | null;
@@ -42,6 +45,18 @@ export const EmployeeHeaderSection = ({
   const { mutateAsync: downloadEmployees } = useDownloadEmployees();
   const { data: teams = [] } = useGetAllTeams();
   const { data: employeeData } = useGetAllEmployees(apiFilters);
+  const [isExporting, startExport] = useTransition();
+  const isExportDisabled = !employeeData?.data?.items?.length;
+
+  const handleMobileExport = () => {
+    startExport(async () => {
+      const fileData = await downloadEmployees(apiFilters);
+      const blob = new Blob([fileData as unknown as File], {
+        type: 'text/csv',
+      });
+      saveAs(blob, `employees.csv`);
+    });
+  };
 
   const handleFilterChange = useCallback(
     (newFilters: any) => {
@@ -66,6 +81,40 @@ export const EmployeeHeaderSection = ({
           <div
             className={`flex flex-1 flex-row-reverse lg:flex-row items-center gap-2`}
           >
+            {/* Mobile CTA dropdown — first in DOM so it sits rightmost with flex-row-reverse */}
+            <div className="flex lg:hidden">
+              <GenericDropdown
+                align="end"
+                trigger={
+                  <Button
+                    size="icon"
+                    className="shadow rounded-md p-2.5"
+                    variant="default"
+                  >
+                    <Icon
+                      name="More"
+                      size={20}
+                      variant="Outline"
+                      className="text-primary rotate-90"
+                    />
+                  </Button>
+                }
+              >
+                <DropdownMenuItem
+                  onClick={handleMobileExport}
+                  disabled={isExportDisabled || isExporting}
+                >
+                  <Icon name="DocumentDownload" variant="Outline" />
+                  {isExporting ? 'Exporting...' : 'Export Employees'}
+                </DropdownMenuItem>
+                <Link href="/admin/employees/add-employee">
+                  <DropdownMenuItem>
+                    <Icon name="Add" variant="Bold" />
+                    Add Employee
+                  </DropdownMenuItem>
+                </Link>
+              </GenericDropdown>
+            </div>
             <SearchInput
               className="border-border h-10 rounded-md border w-full"
               placeholder="Search employee..."
@@ -79,7 +128,7 @@ export const EmployeeHeaderSection = ({
                   data-[state=open]:text-gray h-10 rounded-md border px-3"
                   variant="primaryOutline"
                 >
-                  <Icon name="Filter" size={16} />
+                  <Icon name="Filter" size={16} variant={`Outline`} />
                   <span className={`hidden lg:block`}>Filter</span>
                 </Button>
               }
@@ -101,11 +150,12 @@ export const EmployeeHeaderSection = ({
               </section>
             </GenericDropdown>
           </div>
+          {/* Desktop CTAs — hidden on mobile */}
           <div
-            className={`flex flex-1 items-center justify-between gap-2 w-full`}
+            className={`hidden lg:flex flex-1 items-center justify-between gap-2 w-full`}
           >
             <ExportAction
-              isDisabled={!employeeData?.data?.items?.length}
+              isDisabled={isExportDisabled}
               downloadMutation={async () => {
                 const fileData = await downloadEmployees(apiFilters);
                 return fileData as unknown as Blob;

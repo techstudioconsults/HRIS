@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client';
 
-import { FormField } from "@workspace/ui/lib";
-import { useEffect, useRef } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import { useDebounce } from "use-debounce";
+import { FormField } from '@workspace/ui/lib';
+import { useEffect, useRef } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useDebounce } from 'use-debounce';
 
 interface FilterValues {
   search?: string;
@@ -33,8 +33,9 @@ export const FilterForm = ({
   const skipNextDebouncedEffect = useRef(false);
 
   // Get roles for the selected team
-  const selectedTeamId = methods.watch("teamId");
-  const roles: any = teams.find((team) => team.id === selectedTeamId)?.roles || [];
+  const selectedTeamId = methods.watch('teamId');
+  const roles: any =
+    teams.find((team) => team.id === selectedTeamId)?.roles || [];
 
   // Sync form with parent's filter state when it changes (e.g., on reset)
   useEffect(() => {
@@ -49,14 +50,14 @@ export const FilterForm = ({
     // Normalize: drop keys with undefined, empty string, or sentinel 'all'
     const normalized: FilterValues = {};
     for (const [key, value] of Object.entries(debouncedFilters)) {
-      if (value === undefined || value === "" || value === "all") continue;
+      if (value === undefined || value === '' || value === 'all') continue;
       (normalized as any)[key] = value;
     }
     onFilterChange(normalized);
   }, [debouncedFilters, onFilterChange]);
 
   const handleTeamChange = (value: string) => {
-    const isAll = value === "all"; // 'all' sentinel from select options
+    const isAll = value === 'all'; // 'all' sentinel from select options
     // If "All Departments" selected, reset to initial state and omit teamId entirely
     if (isAll) {
       skipNextDebouncedEffect.current = true;
@@ -64,7 +65,7 @@ export const FilterForm = ({
         ...initialFilters,
         teamId: undefined,
         roleId: undefined,
-        page: "1",
+        page: '1',
       };
       methods.reset(resetFilters);
       const nextFilters = { ...resetFilters } as Record<string, unknown>;
@@ -73,15 +74,15 @@ export const FilterForm = ({
       return;
     }
     // Otherwise, apply team normally and clear role
-    methods.setValue("teamId", value);
-    methods.setValue("roleId", undefined);
-    methods.setValue("page", "1");
+    methods.setValue('teamId', value);
+    methods.setValue('roleId', undefined);
+    methods.setValue('page', '1');
   };
 
   const handleFilterChange = (name: keyof FilterValues, value: string) => {
-    const actualValue = value === "all" ? undefined : value;
+    const actualValue = value === 'all' ? undefined : value;
     methods.setValue(name, actualValue);
-    methods.setValue("page", "1"); // Reset to first page on filter change
+    methods.setValue('page', '1'); // Reset to first page on filter change
   };
 
   return (
@@ -96,11 +97,11 @@ export const FilterForm = ({
             type="select"
             placeholder="All Departments"
             options={[
-              { value: "all", label: "All Departments" },
+              { value: 'all', label: 'All Departments' },
               ...teams.map((team) => ({ value: team.id, label: team.name })),
             ]}
             onChange={(event) => handleTeamChange(event.target.value)}
-            className="border-border !h-10"
+            className="border-border h-10!"
           />
 
           {/* Role Dropdown */}
@@ -111,11 +112,16 @@ export const FilterForm = ({
             placeholder="All Roles"
             disabled={!selectedTeamId}
             options={[
-              { value: "all", label: "All Roles" },
-              ...roles.map((role: Role) => ({ value: role.id, label: role.name })),
+              { value: 'all', label: 'All Roles' },
+              ...roles.map((role: Role) => ({
+                value: role.id,
+                label: role.name,
+              })),
             ]}
-            onChange={(event) => handleFilterChange("roleId", event.target.value)}
-            className="border-border !h-10"
+            onChange={(event) =>
+              handleFilterChange('roleId', event.target.value)
+            }
+            className="border-border h-10!"
           />
 
           {/* Status Dropdown */}
@@ -125,13 +131,15 @@ export const FilterForm = ({
             type="select"
             placeholder="All Statuses"
             options={[
-              { value: "all", label: "All Statuses" },
-              { value: "active", label: "Active" },
-              { value: "inactive", label: "Inactive" },
-              { value: "on_leave", label: "On Leave" },
+              { value: 'all', label: 'All Statuses' },
+              { value: 'active', label: 'Active' },
+              { value: 'inactive', label: 'Inactive' },
+              { value: 'on_leave', label: 'On Leave' },
             ]}
-            onChange={(event) => handleFilterChange("status", event.target.value)}
-            className="border-border !h-10"
+            onChange={(event) =>
+              handleFilterChange('status', event.target.value)
+            }
+            className="border-border h-10!"
           />
 
           {/* Sort By Dropdown */}
@@ -141,12 +149,14 @@ export const FilterForm = ({
             type="select"
             placeholder="Default"
             options={[
-              { value: "all", label: "Default" },
-              { value: "asc", label: "Ascending" },
-              { value: "desc", label: "Descending" },
+              { value: 'all', label: 'Default' },
+              { value: 'asc', label: 'Ascending' },
+              { value: 'desc', label: 'Descending' },
             ]}
-            onChange={(event) => handleFilterChange("sortBy", event.target.value)}
-            className="border-border !h-10"
+            onChange={(event) =>
+              handleFilterChange('sortBy', event.target.value)
+            }
+            className="border-border h-10!"
           />
         </div>
       </section>

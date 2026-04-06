@@ -145,6 +145,8 @@ interface IAdvancedTableProperties<
   onTabChange?: (tab: string) => void;
   // Mobile responsive
   mobileCardView?: boolean;
+  desktopTableClassname?: string;
+  mobileTableClassname?: string;
   // Custom renderers
   customRowRenderer?: (row: Row<T>) => React.ReactNode;
   customHeaderRenderer?: () => React.ReactNode;
@@ -396,6 +398,8 @@ export function AdvancedDataTable<T extends DataItem>({
   defaultTab = 'primaryOutline',
   onTabChange,
   mobileCardView = true,
+  desktopTableClassname,
+  mobileTableClassname,
   customRowRenderer: _customRowRenderer, // eslint-disable-line @typescript-eslint/no-unused-vars
   customHeaderRenderer,
   customFooterRenderer,
@@ -519,11 +523,7 @@ export function AdvancedDataTable<T extends DataItem>({
     if (value === null || value === undefined) {
       return 'N/A';
     }
-    if (
-      typeof value === 'string' ||
-      typeof value === 'number' ||
-      typeof value === 'boolean'
-    ) {
+    if (typeof value === 'string' || typeof value === 'number') {
       return String(value);
     }
     return 'N/A';
@@ -557,7 +557,10 @@ export function AdvancedDataTable<T extends DataItem>({
                 ))}
               </SelectContent>
             </Select>
-            <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
+            <TabsList
+              className="**:data-[slot=badge]:bg-muted-foreground/30 hidden
+            **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex"
+            >
               {tabs.map((tab) => (
                 <TabsTrigger key={tab.value} value={tab.value}>
                   {tab.label}
@@ -593,7 +596,7 @@ export function AdvancedDataTable<T extends DataItem>({
                         className="capitalize"
                         checked={column.getIsVisible()}
                         onCheckedChange={(value) =>
-                          column.toggleVisibility(!!value)
+                          column.toggleVisibility(value)
                         }
                       >
                         {column.id}
@@ -624,7 +627,12 @@ export function AdvancedDataTable<T extends DataItem>({
       <div>
         {renderHeader()}
         {/* Desktop Table View */}
-        <div className="bg-background hidden h-full overflow-auto rounded-lg shadow md:block">
+        <div
+          className={cn(
+            'bg-background hidden h-full overflow-auto rounded-lg shadow lg:block',
+            desktopTableClassname
+          )}
+        >
           {enableDragAndDrop ? (
             <DndContext
               collisionDetection={closestCenter}
@@ -799,7 +807,12 @@ export function AdvancedDataTable<T extends DataItem>({
 
         {/* Mobile Card View */}
         {mobileCardView && (
-          <div className="grid grid-cols-1 gap-4 md:hidden">
+          <div
+            className={cn(
+              'grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden',
+              mobileTableClassname
+            )}
+          >
             {data.map((item, index) => (
               <div
                 key={index}

@@ -2,7 +2,6 @@
 'use client';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 import { MainButton, ReusableDialog } from '@workspace/ui/lib';
 import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
@@ -17,6 +16,7 @@ import {
   INotificationPayload,
 } from '@/lib/sse/use-notifications';
 import { usePayrollService } from '@/modules/@org/admin/payroll/services/use-service';
+import { AnyIconName } from '@workspace/ui/lib/icons/types';
 
 type RenderType = 'toast' | 'banner' | 'modal';
 
@@ -29,7 +29,8 @@ interface BaseNotification {
   severity?: 'info' | 'success' | 'warning' | 'error';
   actions?: Array<{
     label: string;
-    variant?: 'primary' | 'outline' | 'destructive' | 'default';
+    variant?: 'primary' | 'outline' | 'destructiveOutline' | 'default';
+    icon?: AnyIconName;
     onClick: () => void;
   }>;
   dismissible?: boolean;
@@ -107,7 +108,7 @@ function mapEventToNotification(
           },
           {
             label: 'Decline Payroll',
-            variant: 'destructive',
+            variant: 'destructiveOutline',
             onClick: () => {}, // Will be wired in component
           },
         ],
@@ -177,64 +178,114 @@ export const AppEventsListener = () => {
   const { mutateAsync: decideApproval, isPending: isDeciding } =
     useDecidePayrollApproval();
 
+  // Temporary dev-only preview to make banner styles visible without waiting for SSE events.
+  const previewBanner: BaseNotification = {
+    id: 'preview-banner',
+    event: 'PREVIEW',
+    title: 'Preview Notification',
+    body: 'This is a temporary preview banner for styling.',
+    render: 'banner',
+    severity: 'info',
+    dismissible: false,
+    actions: [
+      {
+        label: 'Approve Payroll',
+        variant: 'primary',
+        icon: `Check`,
+        onClick: () => {},
+      },
+      {
+        label: 'Decline Payroll',
+        variant: 'destructiveOutline',
+        icon: `X`,
+        onClick: () => {},
+      },
+    ],
+  };
+
+  const bannersToRender =
+    process.env.NODE_ENV !== 'production' && banners.length === 0
+      ? [previewBanner]
+      : banners;
+
   const dismissBanner = useCallback((id: string) => {
     setBanners((previous) => previous.filter((b) => b.id !== id));
   }, []);
 
-  const handleApprovePayroll = useCallback(
-    async (payrollId: string, bannerId: string) => {
+  const handlePayrollDecision = useCallback(
+    async ({
+      payrollId,
+      bannerId,
+      status,
+      pendingTitle,
+      successTitle,
+      failedTitle,
+      failedFallback,
+    }: {
+      payrollId: string;
+      bannerId: string;
+      status: 'approved' | 'declined';
+      pendingTitle: string;
+      successTitle: string;
+      failedTitle: string;
+      failedFallback: string;
+    }) => {
       if (!payrollId) {
-        toast.error('Unable to approve', {
+        toast.error(pendingTitle, {
           description: 'Payroll ID not found',
         });
         return;
       }
+
       try {
-        await decideApproval({ payrollId, status: 'approved' });
-        toast.success('Payroll approved successfully');
+        await decideApproval({ payrollId, status });
+        toast.success(successTitle);
         dismissBanner(bannerId);
-        queryClient.invalidateQueries({
+        await queryClient.invalidateQueries({
           queryKey: queryKeys.payroll.approvals(payrollId),
         });
-        queryClient.invalidateQueries({
+        await queryClient.invalidateQueries({
           queryKey: queryKeys.payroll.details(payrollId),
         });
-        queryClient.invalidateQueries({ queryKey: queryKeys.payroll.list({}) });
+        await queryClient.invalidateQueries({
+          queryKey: queryKeys.payroll.list({}),
+        });
       } catch (error: any) {
-        const message =
-          error?.response?.data?.message ?? 'Failed to approve payroll';
-        toast.error('Approval failed', { description: message });
+        const message = error?.response?.data?.message ?? failedFallback;
+        toast.error(failedTitle, { description: message });
       }
     },
     [decideApproval, dismissBanner, queryClient]
   );
 
+  const handleApprovePayroll = useCallback(
+    async (payrollId: string, bannerId: string) => {
+      await handlePayrollDecision({
+        payrollId,
+        bannerId,
+        status: 'approved',
+        pendingTitle: 'Unable to approve',
+        successTitle: 'Payroll approved successfully',
+        failedTitle: 'Approval failed',
+        failedFallback: 'Failed to approve payroll',
+      });
+    },
+    [handlePayrollDecision]
+  );
+
   const handleDeclinePayroll = useCallback(
     async (payrollId: string, bannerId: string) => {
-      if (!payrollId) {
-        toast.error('Unable to decline', {
-          description: 'Payroll ID not found',
-        });
-        return;
-      }
-      try {
-        await decideApproval({ payrollId, status: 'declined' });
-        toast.success('Payroll declined');
-        dismissBanner(bannerId);
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.payroll.approvals(payrollId),
-        });
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.payroll.details(payrollId),
-        });
-        queryClient.invalidateQueries({ queryKey: queryKeys.payroll.list({}) });
-      } catch (error: any) {
-        const message =
-          error?.response?.data?.message ?? 'Failed to decline payroll';
-        toast.error('Decline failed', { description: message });
-      }
+      await handlePayrollDecision({
+        payrollId,
+        bannerId,
+        status: 'declined',
+        pendingTitle: 'Unable to decline',
+        successTitle: 'Payroll declined',
+        failedTitle: 'Decline failed',
+        failedFallback: 'Failed to decline payroll',
+      });
     },
-    [decideApproval, dismissBanner, queryClient]
+    [handlePayrollDecision]
   );
 
   const handleNotification = useCallback(
@@ -379,8 +430,8 @@ export const AppEventsListener = () => {
   return (
     <>
       {/* Banners Stack */}
-      <div className="space-y-4 bg-red-500">
-        {banners.map((banner) => {
+      <section className="">
+        {bannersToRender.map((banner) => {
           const iconName =
             banner.severity === 'success'
               ? 'CheckCircle'
@@ -390,18 +441,18 @@ export const AppEventsListener = () => {
                   ? 'AlertTriangle'
                   : 'Info';
           return (
-            <Wrapper
+            <section
               key={banner.id}
               className={cn(
-                'bg-background border-primary-75 animate-entrance ' +
-                  'pointer-events-auto mx-auto mt-10 flex w-full items-center justify-between border-y p-2',
+                'bg-background p-4 border-none border-primary-75 gap-2 animate-entrance min-w-screen' +
+                  'pointer-events-auto flex w-full items-center justify-between border-y',
                 banner.severity === 'success' && 'border-success/20',
                 banner.severity === 'error' && 'border-destructive/20',
                 banner.severity === 'warning' && 'border-warning/20',
                 banner.severity === 'info' && 'text-primary bg-primary-50'
               )}
             >
-              <div className="flex items-start gap-3">
+              <div className="flex items-center gap-3">
                 <Icon
                   name={iconName}
                   size={18}
@@ -415,12 +466,12 @@ export const AppEventsListener = () => {
                 />
                 <div className="space-y-1">
                   {/* {banner.title ? <p className="text-sm font-medium">{banner.title}</p> : null} */}
-                  <p className="text-primary text-sm font-medium">
+                  <p className="text-primary text-balance wrap-break-word text-sm font-medium">
                     {banner.body}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-10">
+              <div className="flex items-center gap-5 lg:gap-10">
                 {banner.actions?.map((a) => {
                   const isApprove = a.label === 'Approve Payroll';
                   const isDecline = a.label === 'Decline Payroll';
@@ -434,16 +485,28 @@ export const AppEventsListener = () => {
                     }
                   };
                   return (
-                    <MainButton
-                      key={a.label}
-                      className="px-8"
-                      size="sm"
-                      variant={a.variant || 'primary'}
-                      onClick={handleClick}
-                      isDisabled={isDeciding}
-                    >
-                      {a.label}
-                    </MainButton>
+                    <div key={a.label}>
+                      <MainButton
+                        className="hidden lg:block"
+                        size="lg"
+                        variant={a.variant || 'primary'}
+                        onClick={handleClick}
+                        isDisabled={isDeciding}
+                      >
+                        {a.label}
+                      </MainButton>
+                      <MainButton
+                        className="lg:hidden"
+                        isIconOnly
+                        icon={<Icon name={a.icon as AnyIconName} />}
+                        size="icon"
+                        variant={a.variant || 'primary'}
+                        onClick={handleClick}
+                        isDisabled={isDeciding}
+                      >
+                        {a.label}
+                      </MainButton>
+                    </div>
                   );
                 })}
                 {banner.dismissible && (
@@ -458,10 +521,10 @@ export const AppEventsListener = () => {
                   />
                 )}
               </div>
-            </Wrapper>
+            </section>
           );
         })}
-      </div>
+      </section>
 
       {/* Modal Notification */}
       <ReusableDialog
@@ -472,7 +535,7 @@ export const AppEventsListener = () => {
         title={modal?.title || 'Notification'}
         description={modal?.body || ''}
         trigger={<div />}
-        className="min-w-md"
+        className="lg:min-w-md"
       >
         <div className="flex flex-col gap-4">
           <div className="flex gap-2">

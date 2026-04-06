@@ -41,4 +41,5 @@ export {
   FolderAdd,
   FolderOpen,
   MoneyTime,
+  Wallet,
 } from 'iconsax-react';

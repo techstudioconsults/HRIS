@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable unused-imports/no-unused-vars */
 'use client';
 
 import { formatCurrency, formatDate } from '@/lib/formatters';
@@ -17,7 +15,7 @@ import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 
 import Link from 'next/link';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import empty1 from '~/images/empty-state.svg';
@@ -29,39 +27,13 @@ import { SchedulePayrollDrawer } from '../_components/drawers/schedule-payroll-d
 import { FundWalletFormModal } from '../_components/forms/fund-wallet-form-modal';
 import { FundWalletAccountModal } from '../_components/fund-wallet-account-modal';
 import { PayrollSetupSettingsModal } from '../_components/payroll-setup-modal';
-import Loading from '../../../../../../note/loading';
+import { PayrollNotificationBanner } from '../_components/payroll-notification-banner/banner';
 import { DashboardCard } from '../../dashboard/_components/dashboard-card';
 import { usePayrollService } from '../services/use-service';
 import { usePayrollStore } from '../stores/payroll-store';
 import type { Payroll, PayrollApproval } from '../types';
 import { payrollColumn, usePayrollRowActions } from './table-data';
 import { Button } from '@workspace/ui/components/button';
-
-const LOW_BALANCE_LIMIT = 0; // 0M NGN
-
-const GET_SCHEDULE_MESSAGE = (date: string | Date): ReactNode => {
-  return `Your next payroll has been scheduled for ${date}. You can edit the schedule date or cancel the 
-  payroll before the set date here.`;
-};
-
-const PAYROLL_RUN_MESSAGE = (
-  dateLabel: string,
-  onOpenApprovalProgress: () => void
-): ReactNode => (
-  <>
-    Your payroll for {dateLabel} is now in progress. It will be disbursed once
-    all designated approvers have reviewed and approved the payment. You can
-    track approval progress{' '}
-    <button
-      type="button"
-      className="underline"
-      onClick={onOpenApprovalProgress}
-    >
-      here
-    </button>
-    .
-  </>
-);
 
 export const PayrollView = () => {
   const { getRowActions, DeleteConfirmationModal } = usePayrollRowActions();
@@ -304,15 +276,6 @@ export const PayrollView = () => {
     setShowNoPayrollBanner(false);
   };
 
-  const handleCheckPayrollAvailability = () => {
-    // Check if there are no payrolls available
-    const hasPayrolls =
-      Array.isArray(allPayrolls?.data) && allPayrolls.data.length > 0;
-    if (!hasPayrolls) {
-      setShowNoPayrollBanner(true);
-    }
-  };
-
   useEffect(() => {
     if (
       payrollPolicy?.data?.payday &&
@@ -394,19 +357,18 @@ export const PayrollView = () => {
     }
   }, [allPayrolls, companyWallet?.data?.balance, loadingPayrolls]);
 
-  if (loadingPayrolls) {
-    return <Loading text="Initializing Payroll Interface" />;
-  }
+  // if (loadingPayrolls) {
+  //   return null;
+  // }
 
   return (
     <section className="space-y-10">
-      {/* Notifications via SSEProvider/useSSE */}
       <DashboardHeader
         title="Payroll Overview"
         subtitle="Payroll"
         actionComponent={
-          <section className="flex flex-wrap lg:flex-nowrap items-center gap-2">
-            <div className={`w-full`}>
+          <section className="flex items-center gap-2">
+            <div className={`w-full lg:flex-1`}>
               <ComboBox
                 options={payrollOptions}
                 value={selectedPayrollId}
@@ -415,7 +377,8 @@ export const PayrollView = () => {
                 className="h-10 lg:w-80 border w-full"
               />
             </div>
-            <div className={`flex items-center w-full justify-between gap-2`}>
+            {/* Desktop Layout - Show individual buttons */}
+            <div className={`hidden 2xl:flex items-center gap-2`}>
               <MainButton
                 isDisabled={isFundWalletDisabled}
                 onClick={handleFundWallet}
@@ -480,132 +443,102 @@ export const PayrollView = () => {
                 </GenericDropdown>
               </div>
             </div>
+            {/* Mobile Layout - All actions in dropdown */}
+            <div className={`flex 2xl:hidden justify-end`}>
+              <GenericDropdown
+                align={`end`}
+                trigger={
+                  <Button
+                    size={`icon`}
+                    className={`shadow rounded-md p-2.5`}
+                    variant="default"
+                  >
+                    <Icon
+                      name="More"
+                      size={20}
+                      variant={`Outline`}
+                      className={`text-primary rotate-90`}
+                    />
+                  </Button>
+                }
+              >
+                <DropdownMenuItem
+                  onClick={handleFundWallet}
+                  disabled={isFundWalletDisabled}
+                >
+                  <Icon name={`WalletMoney`} variant={`Outline`} />
+                  Fund Wallet
+                </DropdownMenuItem>
+
+                {showRunPayrollButton && (
+                  <DropdownMenuItem
+                    onClick={handleRunPayroll}
+                    disabled={isCompleted}
+                  >
+                    <Icon name={`Play`} variant={`Outline`} />
+                    Run Payroll
+                  </DropdownMenuItem>
+                )}
+
+                {showGeneratePayslipButton && (
+                  <DropdownMenuItem
+                    onClick={() => {}}
+                    disabled={payrollPolicyStatus || loadingPayslips}
+                  >
+                    <Icon name={`Plus`} />
+                    {loadingPayslips
+                      ? 'Generating Payroll...'
+                      : 'Generate Payroll'}
+                  </DropdownMenuItem>
+                )}
+
+                {shouldShowApprovalProgressButton && (
+                  <DropdownMenuItem
+                    onClick={() => setIsApprovalProgressOpen(true)}
+                  >
+                    <Icon name={`Eye`} variant={`Outline`} />
+                    View Approval Progress
+                  </DropdownMenuItem>
+                )}
+
+                <DropdownMenuItem
+                  onClick={() => setShowSchedulePayrollDrawer(true)}
+                >
+                  <Icon name={`MoneyTime`} variant={`Outline`} />
+                  Schedule Payroll
+                </DropdownMenuItem>
+
+                <Link href={`/admin/payroll/setup`}>
+                  <DropdownMenuItem>
+                    <Icon name={`Setting2`} variant={`Outline`} />
+                    Payroll Settings
+                  </DropdownMenuItem>
+                </Link>
+              </GenericDropdown>
+            </div>
           </section>
         }
       />
 
-      {/* Setup almost complete banner (policy done but wallet not yet set up) */}
-      <section
-        data-tour="payroll-setup-wallet"
-        className={cn(
-          'border-warning/50 bg-warning-50 hidden rounded-lg border p-4',
-          hasCompletedPayrollPolicySetupForm && payrollPolicyStatus && `block`
-        )}
-      >
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-start gap-3">
-            <Icon name="InfoCircle" size={18} className="text-warning mt-0.5" />
-            <p className="text-muted-foreground text-sm">
-              Payroll setup almost complete. Create and fund your company wallet
-              to finish setup and enable payroll generation.
-            </p>
-          </div>
-          <div className="flex items-start gap-5">
-            <MainButton onClick={handleSetupWallet} variant="primary">
-              Set up Wallet
-            </MainButton>
-          </div>
-        </div>
-      </section>
-
-      {/* No Payroll Available Banner */}
-      <section
-        data-tour="generate-payroll"
-        className={cn(
-          'hidden rounded-lg border border-blue-200 bg-blue-50 p-4',
-          showNoPayrollBanner &&
-            (!payrollPolicyStatus || walletSetupCompleted) &&
-            `block`
-        )}
-      >
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-start gap-3">
-            <Icon
-              name="AlertTriangle"
-              size={18}
-              className="mt-0.5 text-blue-600"
-            />
-            <p className="text-sm text-blue-800">
-              No payroll found for this month. Generate a payroll to start
-              processing employee payments.
-            </p>
-          </div>
-          <div className="flex items-start gap-5">
-            <MainButton
-              variant="primary"
-              onClick={handleGeneratePayroll}
-              isLoading={isCreatingPayroll}
-              isDisabled={isCreatingPayroll}
-            >
-              {isCreatingPayroll ? 'Generating...' : 'Generate Payroll'}
-            </MainButton>
-            <button
-              onClick={handleDismissNoPayrollBanner}
-              aria-label="Dismiss no payroll banner"
-              className="text-blue-700 transition-colors hover:text-blue-900"
-            >
-              <Icon name="CloseCircle" size={18} />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <section
-        hidden={LOW_BALANCE_LIMIT <= payrollData.walletBalance}
-        className="rounded-lg border border-red-200 bg-red-50 p-4"
-      >
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-start gap-3">
-            <Icon
-              name="AlertTriangle"
-              size={18}
-              className="mt-0.5 text-red-600"
-            />
-            <p className="text-sm text-red-800">
-              Your wallet balance {formatCurrency(payrollData.walletBalance)} is
-              below the recommended minimum of{' '}
-              {formatCurrency(LOW_BALANCE_LIMIT)}. Fund your wallet to generate
-              or run payroll.
-            </p>
-          </div>
-          <div className="flex items-start gap-5">
-            {!payrollPolicyStatus && (
-              <MainButton variant="outline" onClick={handleFundWallet}>
-                Fund Wallet
-              </MainButton>
-            )}
-            <button
-              aria-label="Dismiss low balance banner"
-              className="text-red-700 transition-colors hover:text-red-900"
-            >
-              <Icon name="CloseCircle" size={18} />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <section
-        className={cn('rounded-lg', showPayrollBanner ? `block` : `hidden`)}
-      >
-        <div className="bg-primary-500 text-background relative rounded-lg p-5 shadow">
-          <p className="text-background max-w-4xl text-sm">
-            {shouldShowApprovalProgressBanner
-              ? PAYROLL_RUN_MESSAGE(approvalBannerDateLabel ?? '', () =>
-                  setIsApprovalProgressOpen(true)
-                )
-              : isDisbursed
-                ? nextScheduledPayroll
-                  ? GET_SCHEDULE_MESSAGE(
-                      formatDate(nextScheduledPayroll.paymentDate, {
-                        month: 'long',
-                        year: 'numeric',
-                      })
-                    )
-                  : 'Payroll is currently being disbursed.'
-                : GET_SCHEDULE_MESSAGE(payrollData.paymentDate)}
-          </p>
-        </div>
-      </section>
+      <PayrollNotificationBanner
+        hasCompletedPayrollPolicySetupForm={hasCompletedPayrollPolicySetupForm}
+        payrollPolicyStatus={payrollPolicyStatus}
+        walletSetupCompleted={walletSetupCompleted}
+        showNoPayrollBanner={showNoPayrollBanner}
+        isCreatingPayroll={isCreatingPayroll}
+        onSetupWallet={handleSetupWallet}
+        onFundWallet={handleFundWallet}
+        onGeneratePayroll={handleGeneratePayroll}
+        onDismissNoPayrollBanner={handleDismissNoPayrollBanner}
+        showPayrollBanner={showPayrollBanner}
+        shouldShowApprovalProgressBanner={shouldShowApprovalProgressBanner}
+        approvalBannerDateLabel={approvalBannerDateLabel ?? ''}
+        isDisbursed={isDisbursed}
+        nextScheduledPayroll={nextScheduledPayroll}
+        payrollDataPaymentDate={payrollData.paymentDate}
+        walletBalance={payrollData.walletBalance}
+        onOpenApprovalProgress={() => setIsApprovalProgressOpen(true)}
+      />
 
       {/* Payroll Table Placeholder */}
       <section className="grid grid-cols-2 gap-4 md:grid-cols-3">
@@ -665,6 +598,7 @@ export const PayrollView = () => {
               variant="primary"
               isLeftIconVisible
               onClick={() => setShowAddEmployeeModal(true)}
+              icon={<Icon name={`Add`} variant={`Bold`} />}
               isDisabled={
                 isCompleted ||
                 !payslipsData?.data.items ||
@@ -700,6 +634,8 @@ export const PayrollView = () => {
             enableFiltering={false}
             mobileCardView={true}
             showColumnCustomization={false}
+            desktopTableClassname={`xl:block!`}
+            mobileTableClassname={`xl:hidden!`}
           />
         )}
       </section>

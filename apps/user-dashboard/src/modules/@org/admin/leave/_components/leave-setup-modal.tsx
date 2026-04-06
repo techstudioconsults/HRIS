@@ -25,18 +25,20 @@ export const LeaveSetupModal = () => {
       trigger={null}
       title="Set up Leave Types"
       description="Create at least one leave type (e.g., Annual Leave) to begin managing leave in your organization."
-      className="min-w-md"
+      className="md:min-w-sm!"
     >
       <div className="space-y-6">
         <div className="bg-primary/10 border-primary-75 rounded-lg border p-5">
-          <h6 className="mb-2 font-semibold text-gray-900">What you&apos;ll do:</h6>
+          <h6 className="mb-2 font-semibold text-gray-900">
+            What you&apos;ll do:
+          </h6>
           <ul className="ml-4 space-y-2 text-sm text-gray-700">
             <li className="flex items-center">
-              <span className="mr-2 size-1 flex-shrink-0 rounded-full bg-gray-400" />
+              <span className="mr-2 size-1 shrink-0 rounded-full bg-gray-400" />
               Create leave types with cycles and day limits
             </li>
             <li className="flex items-center">
-              <span className="mr-2 size-1 flex-shrink-0 rounded-full bg-gray-400" />
+              <span className="mr-2 size-1 shrink-0 rounded-full bg-gray-400" />
               View employee leave requests in the Leave Hub
             </li>
           </ul>

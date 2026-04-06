@@ -44,7 +44,7 @@ const handleManageChange = (
 ) => {
   if (checked) {
     // If manage is checked, add all permissions for this module
-    const newPermissions = [
+    return [
       ...currentPermissions.filter((p) => !p.startsWith(`${module}:`)),
       `${module}:read`,
       `${module}:create`,
@@ -52,7 +52,6 @@ const handleManageChange = (
       `${module}:delete`,
       `${module}:manage`,
     ];
-    return newPermissions;
   } else {
     // If manage is unchecked, remove all permissions for this module
     return currentPermissions.filter((p) => !p.startsWith(`${module}:`));
@@ -170,7 +169,7 @@ export const RolesAndPermission = ({
               label="Role Name"
               type="text"
               placeholder="Enter role name"
-              className="h-[48px] w-full shadow-none"
+              className="h-12 w-full shadow-none"
             />
           </>
         ) : (
@@ -181,7 +180,7 @@ export const RolesAndPermission = ({
                 label="Role Name"
                 type="text"
                 placeholder="Enter role name"
-                className="h-[48px] w-full shadow-none"
+                className="h-12 w-full shadow-none"
               />
             </CardContent>
           </Card>
@@ -199,85 +198,132 @@ export const RolesAndPermission = ({
             </p>
           </CardHeader>
           <CardContent className={`p-0`}>
-            <div className="overflow-x-auto rounded-md border">
-              <table className="w-full border-collapse">
-                <thead className={`bg-primary/10`}>
-                  <tr className="">
-                    <th className="border-r px-4 py-2 text-left text-sm">
-                      Module
-                    </th>
-                    {actions.map((action) => (
-                      <th
-                        key={action}
-                        className="divide-x px-4 py-2 text-center text-sm font-medium capitalize"
-                      >
-                        {action}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {modules.map((module) => (
-                    <tr key={module} className="border-border/50 border-b">
-                      <td className="border-r px-4 py-2 text-sm capitalize">
-                        {module}
-                      </td>
-                      {actions.map((action) => (
-                        <td
-                          key={`${module}-${action}`}
-                          className="border-r px-4 py-2 text-center"
+            <Controller
+              name="permissions"
+              control={methods.control}
+              render={({ field }) => {
+                const currentPermissions = field.value || [];
+                const isPermissionChecked = (module: string, action: string) =>
+                  currentPermissions.includes(`${module}:${action}`) ||
+                  (action !== 'manage' &&
+                    currentPermissions.includes(`${module}:manage`));
+
+                const updatePermission = (
+                  module: string,
+                  action: string,
+                  checked: boolean
+                ) => {
+                  const updatedPermissions =
+                    action === 'manage'
+                      ? handleManageChange(module, checked, currentPermissions)
+                      : handlePermissionChange(
+                          module,
+                          action,
+                          checked,
+                          currentPermissions
+                        );
+
+                  field.onChange(updatedPermissions);
+                };
+
+                return (
+                  <div className="space-y-4">
+                    <div className="max-h-[40svh] space-y-3 overflow-y-auto pr-1 md:hidden">
+                      {modules.map((module) => (
+                        <div
+                          key={`mobile-${module}`}
+                          className="border-border/60 bg-background rounded-md border p-3"
                         >
-                          <Controller
-                            name="permissions"
-                            control={methods.control}
-                            render={({ field }) => {
-                              const permissionString = `${module}:${action}`;
-                              const hasManagePermission = field.value?.includes(
-                                `${module}:manage`
-                              );
-                              const isChecked =
-                                field.value?.includes(permissionString) ||
-                                (action !== 'manage' && hasManagePermission);
-
-                              return (
-                                <div className="flex justify-center">
-                                  <Checkbox
-                                    className={`border-primary/30 data-[state=checked]:border-primary data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary`}
-                                    checked={isChecked}
-                                    onCheckedChange={(checked) => {
-                                      let newPermissions = [
-                                        ...(field.value || []),
-                                      ];
-
-                                      newPermissions =
-                                        action === 'manage'
-                                          ? handleManageChange(
-                                              module,
-                                              !!checked,
-                                              newPermissions
-                                            )
-                                          : handlePermissionChange(
-                                              module,
-                                              action,
-                                              !!checked,
-                                              newPermissions
-                                            );
-
-                                      field.onChange(newPermissions);
-                                    }}
-                                    aria-label={`${module} ${action} permission`}
-                                  />
-                                </div>
-                              );
-                            }}
-                          />
-                        </td>
+                          <p className="text-sm font-semibold capitalize">
+                            {module}
+                          </p>
+                          <div className="mt-3 grid grid-cols-2 gap-2">
+                            {actions.map((action) => (
+                              <label
+                                key={`mobile-${module}-${action}`}
+                                className="border-border/60 bg-muted/20 flex items-center justify-between rounded-md border px-2 py-2"
+                              >
+                                <span className="text-xs font-medium capitalize">
+                                  {action}
+                                </span>
+                                <Checkbox
+                                  className={`border-primary/30 data-[state=checked]:border-primary
+                                    data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary`}
+                                  checked={isPermissionChecked(module, action)}
+                                  onCheckedChange={(checked) =>
+                                    updatePermission(module, action, !!checked)
+                                  }
+                                  aria-label={`${module} ${action} permission`}
+                                />
+                              </label>
+                            ))}
+                          </div>
+                        </div>
                       ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                    </div>
+
+                    <div className="hidden md:block">
+                      <div className="overflow-x-auto rounded-md border">
+                        <table className="w-full border-collapse">
+                          <thead className={`bg-primary/10`}>
+                            <tr className="">
+                              <th className="border-r px-4 py-2 text-left text-sm">
+                                Module
+                              </th>
+                              {actions.map((action) => (
+                                <th
+                                  key={action}
+                                  className="divide-x px-4 py-2 text-center text-sm font-medium capitalize"
+                                >
+                                  {action}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {modules.map((module) => (
+                              <tr
+                                key={module}
+                                className="border-border/50 border-b"
+                              >
+                                <td className="border-r px-4 py-2 text-sm capitalize">
+                                  {module}
+                                </td>
+                                {actions.map((action) => (
+                                  <td
+                                    key={`${module}-${action}`}
+                                    className="border-r px-4 py-2 text-center"
+                                  >
+                                    <div className="flex justify-center">
+                                      <Checkbox
+                                        className={`border-primary/30 data-[state=checked]:border-primary
+                                          data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary`}
+                                        checked={isPermissionChecked(
+                                          module,
+                                          action
+                                        )}
+                                        onCheckedChange={(checked) =>
+                                          updatePermission(
+                                            module,
+                                            action,
+                                            !!checked
+                                          )
+                                        }
+                                        aria-label={`${module} ${action} permission`}
+                                      />
+                                    </div>
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }}
+            />
           </CardContent>
         </Card>
 

@@ -71,22 +71,34 @@ const leaveTypeColumns: IColumnDefinition<LeaveType>[] = [
     accessorKey: 'carryOver',
     header: 'Eligibility',
     render: (_value: unknown, row: LeaveType) => (
-      <span className="text-sm text-gray-600">{row.carryOver ? 'Yes' : 'No'}</span>
+      <span className="text-sm text-gray-600">
+        {row.carryOver ? 'Yes' : 'No'}
+      </span>
     ),
   },
 ];
 
 const LeaveTypesView = () => {
-  const { useGetLeaveTypes, useGetLeaveTypeById, useDeleteLeaveType } = useLeaveService();
+  const { useGetLeaveTypes, useGetLeaveTypeById, useDeleteLeaveType } =
+    useLeaveService();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedLeaveType, setSelectedLeaveType] = useState<LeaveType | null>(null);
+  const [selectedLeaveType, setSelectedLeaveType] = useState<LeaveType | null>(
+    null
+  );
 
-  const { data: leaveTypesResponse, isLoading, isError, error, refetch } = useGetLeaveTypes();
-  const { mutateAsync: deleteLeaveType, isPending: isDeleting } = useDeleteLeaveType();
+  const {
+    data: leaveTypesResponse,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useGetLeaveTypes();
+  const { mutateAsync: deleteLeaveType, isPending: isDeleting } =
+    useDeleteLeaveType();
 
   const selectedLeaveTypeId = selectedLeaveType?.id ?? '';
   const {
@@ -109,7 +121,10 @@ const LeaveTypesView = () => {
     hasToastedLoadErrorReference.current = true;
 
     toast.error('Failed to load leave types', {
-      description: getApiErrorMessage(error, 'Could not fetch leave types from the server.'),
+      description: getApiErrorMessage(
+        error,
+        'Could not fetch leave types from the server.'
+      ),
     });
   }, [isError, error]);
 
@@ -119,8 +134,9 @@ const LeaveTypesView = () => {
     if (Array.isArray(leaveTypesResponse)) return leaveTypesResponse;
     const maybeItems = leaveTypesResponse;
     if (Array.isArray(maybeItems)) return maybeItems;
-    const nestedItems = (leaveTypesResponse as { data?: { items?: LeaveType[] } } | undefined)?.data
-      ?.items;
+    const nestedItems = (
+      leaveTypesResponse as { data?: { items?: LeaveType[] } } | undefined
+    )?.data?.items;
     if (Array.isArray(nestedItems)) return nestedItems;
     return [];
   })();
@@ -174,7 +190,10 @@ const LeaveTypesView = () => {
       },
       onError: (error_) => {
         toast.error('Failed to delete leave type', {
-          description: getApiErrorMessage(error_, 'Unable to delete leave type. Please try again.'),
+          description: getApiErrorMessage(
+            error_,
+            'Unable to delete leave type. Please try again.'
+          ),
         });
       },
     });
@@ -186,7 +205,10 @@ const LeaveTypesView = () => {
 
   if (isError) {
     return (
-      <ErrorEmptyState description={(error as Error | undefined)?.message} onRetry={refetch} />
+      <ErrorEmptyState
+        description={(error as Error | undefined)?.message}
+        onRetry={refetch}
+      />
     );
   }
 
@@ -201,14 +223,19 @@ const LeaveTypesView = () => {
           title="Leave Types"
           subtitle="Create and manage all leave types"
           actionComponent={
-            <MainButton variant="primary" onClick={() => setCreateDialogOpen(true)}>
+            <MainButton
+              variant="primary"
+              onClick={() => setCreateDialogOpen(true)}
+            >
               Add Leave Type
             </MainButton>
           }
         />
         <EmptyState
           className="bg-background"
-          images={[{ src: empty1.src, alt: 'No leave types', width: 100, height: 100 }]}
+          images={[
+            { src: empty1.src, alt: 'No leave types', width: 100, height: 100 },
+          ]}
           title="No leave types yet."
           description="Create your first leave type (e.g., Annual Leave) to get started."
           button={{
@@ -244,7 +271,10 @@ const LeaveTypesView = () => {
               placeholder="Search leave types..."
               className="border-border bg-background h-10 w-[260px] rounded-md border px-3 text-sm"
             />
-            <MainButton variant="primary" onClick={() => setCreateDialogOpen(true)}>
+            <MainButton
+              variant="primary"
+              onClick={() => setCreateDialogOpen(true)}
+            >
               Add Leave Type
             </MainButton>
           </div>
@@ -280,7 +310,8 @@ const LeaveTypesView = () => {
         onOpenChange={setCreateDialogOpen}
         title="Create Leave Type"
         description="Add a new leave type to your organization"
-        className="min-w-3xl"
+        wrapperClassName={`text-left`}
+        className="lg:min-w-3xl"
         trigger={null}
       >
         <CreateLeaveTypeForm onClose={() => setCreateDialogOpen(false)} />
@@ -291,7 +322,8 @@ const LeaveTypesView = () => {
         onOpenChange={setEditDialogOpen}
         title="Edit Leave Type"
         description="Update leave type details"
-        className="min-w-2xl"
+        wrapperClassName={`text-left`}
+        className="lg:min-w-3xl"
         trigger={null}
       >
         {selectedLeaveType && (
@@ -307,7 +339,9 @@ const LeaveTypesView = () => {
             )}
             {!isLoadingSelectedLeaveType && !isSelectedLeaveTypeError && (
               <EditLeaveTypeForm
-                leaveType={(selectedLeaveTypeDetails ?? selectedLeaveType) as LeaveType}
+                leaveType={
+                  (selectedLeaveTypeDetails ?? selectedLeaveType) as LeaveType
+                }
                 onClose={() => setEditDialogOpen(false)}
               />
             )}

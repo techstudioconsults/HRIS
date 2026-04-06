@@ -375,6 +375,7 @@ export const TeamConfig = () => {
         open={dialogOpen && dialogType === 'team'}
         onOpenChange={setDialogOpen}
         title={currentTeam ? 'Edit Team' : 'Add New Team'}
+        wrapperClassName={`text-left`}
         description={
           currentTeam
             ? 'Modify the team details'
@@ -399,12 +400,12 @@ export const TeamConfig = () => {
         open={dialogOpen && dialogType === 'role'}
         onOpenChange={setDialogOpen}
         title={currentRole ? 'Edit Role' : 'Add New Role'}
+        wrapperClassName={`text-left`}
         description={
           currentRole
             ? 'Modify the role details'
             : 'Create a new role for this team'
         }
-        className="!max-w-2xl"
         trigger={undefined}
       >
         {currentTeam && (

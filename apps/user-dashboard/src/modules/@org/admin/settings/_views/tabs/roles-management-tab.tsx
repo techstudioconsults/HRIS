@@ -10,6 +10,7 @@ import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onb
 import { SearchInput } from '@/modules/@org/shared/search-input';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@workspace/ui/components/button';
+import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
 import { ComboBox, GenericDropdown, ReusableDialog } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
 import { AlertModal } from '@workspace/ui/lib/dialog';
@@ -115,11 +116,14 @@ export const RolesManagementTab = () => {
 
   // Apply debounced search to URL (nuqs) and reset page to 1
   useEffect(() => {
-    setSearch(
-      debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : null
-    );
-    resetToFirstPage();
-  }, [debouncedSearch, setSearch, resetToFirstPage]);
+    const trimmedSearch =
+      debouncedSearch && debouncedSearch.trim() ? debouncedSearch.trim() : null;
+    // Only update if value actually changed to prevent render loop
+    if (search !== trimmedSearch) {
+      setSearch(trimmedSearch);
+      resetToFirstPage();
+    }
+  }, [debouncedSearch, search, setSearch, resetToFirstPage]);
 
   // If the URL comes in with rolesTeamId=all, treat it as "no department filter" and clean the URL.
   useEffect(() => {
@@ -375,65 +379,94 @@ export const RolesManagementTab = () => {
           <h2 className="text-base font-semibold">Roles Management</h2>
         </div>
 
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
-          <SearchInput
-            className="border-border h-10 w-full rounded-md border sm:w-[220px]"
-            placeholder="Search role name..."
-            delay={0}
-            onSearch={(query) => setSearchInput(query)}
-          />
-
-          <GenericDropdown
-            contentClassName="bg-background"
-            trigger={
-              <Button
-                variant={'primaryOutline'}
-                className="data-[state=open]:border-border data-[state=open]:text-gray h-10 w-full justify-center rounded-md border px-3 shadow-none sm:w-auto"
+        <div className="flex flex-col w-full lg:w-2xl gap-2 lg:flex-row items-center">
+          <div className="flex flex-1 w-full flex-row-reverse items-center gap-2 lg:flex-row">
+            {/* Mobile CTA dropdown sits rightmost via flex-row-reverse. */}
+            <div className="flex lg:hidden">
+              <GenericDropdown
+                align="end"
+                trigger={
+                  <Button
+                    size="icon"
+                    className="shadow rounded-md p-2.5"
+                    variant="default"
+                  >
+                    <Icon
+                      name="More"
+                      size={20}
+                      variant="Outline"
+                      className="text-primary rotate-90"
+                    />
+                  </Button>
+                }
               >
-                <Icon name="Filter" size={16} />
-                Filter
-              </Button>
-            }
-          >
-            <section className="min-w-sm">
-              <FilterForm
-                title="Filter Roles"
-                statusLabel="Department"
-                statusPlaceholder="All Departments"
-                statusOptions={[
-                  { value: 'all', label: 'All Departments' },
-                  ...teamOptions,
-                ]}
-                sortOptions={[
-                  { value: 'all', label: 'Default' },
-                  { value: 'name_asc', label: 'Role Name (A-Z)' },
-                  { value: 'name_desc', label: 'Role Name (Z-A)' },
-                ]}
-                initialFilters={{
-                  search: search || undefined,
-                  status: effectiveTeamId || undefined,
-                  sortBy: sortBy || undefined,
-                  limit: limit ? String(limit) : undefined,
-                  page: pageSafe ? String(pageSafe) : undefined,
-                }}
-                onFilterChange={handleFilterChange}
-                // Roles tab doesn't need the teams status filter values; we map it to Department.
-                showStatus
-                showSortBy
-                showLimit
-              />
-            </section>
-          </GenericDropdown>
+                <DropdownMenuItem onClick={openCreateDialog}>
+                  <Icon name="Plus" size={16} />
+                  Create New Role
+                </DropdownMenuItem>
+              </GenericDropdown>
+            </div>
+            <SearchInput
+              className="border-border h-10 w-full rounded-md border"
+              placeholder="Search role name..."
+              delay={0}
+              onSearch={(query) => setSearchInput(query)}
+            />
 
-          <MainButton
-            variant="primary"
-            isLeftIconVisible
-            icon={<Icon name="Plus" size={16} />}
-            className="w-full sm:w-auto"
-            onClick={openCreateDialog}
-          >
-            Create New Role
-          </MainButton>
+            <GenericDropdown
+              contentClassName="bg-background"
+              trigger={
+                <Button
+                  variant={'primaryOutline'}
+                  className="data-[state=open]:border-border data-[state=open]:text-gray h-10 rounded-md border px-3 shadow-none"
+                >
+                  <Icon name="Filter" size={16} />
+                  <span className="hidden lg:block">Filter</span>
+                </Button>
+              }
+            >
+              <section className="min-w-sm">
+                <FilterForm
+                  title="Filter Roles"
+                  statusLabel="Department"
+                  statusPlaceholder="All Departments"
+                  statusOptions={[
+                    { value: 'all', label: 'All Departments' },
+                    ...teamOptions,
+                  ]}
+                  sortOptions={[
+                    { value: 'all', label: 'Default' },
+                    { value: 'name_asc', label: 'Role Name (A-Z)' },
+                    { value: 'name_desc', label: 'Role Name (Z-A)' },
+                  ]}
+                  initialFilters={{
+                    search: search || undefined,
+                    status: effectiveTeamId || undefined,
+                    sortBy: sortBy || undefined,
+                    limit: limit ? String(limit) : undefined,
+                    page: pageSafe ? String(pageSafe) : undefined,
+                  }}
+                  onFilterChange={handleFilterChange}
+                  // Roles tab doesn't need the teams status filter values; we map it to Department.
+                  showStatus
+                  showSortBy
+                  showLimit
+                />
+              </section>
+            </GenericDropdown>
+          </div>
+
+          <div className="hidden lg:flex">
+            <MainButton
+              variant="primary"
+              isLeftIconVisible
+              icon={<Icon name="Plus" size={16} />}
+              className="w-full"
+              onClick={openCreateDialog}
+            >
+              Create New Role
+            </MainButton>
+          </div>
         </div>
       </div>
 
@@ -555,7 +588,7 @@ export const RolesManagementTab = () => {
             : 'Create New Role'
         }
         description="Create roles and assign permissions"
-        className="min-w-2xl"
+        className="md:min-w-2xl"
         trigger={null}
       >
         <div className="space-y-4">

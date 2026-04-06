@@ -35,13 +35,14 @@ export const leaveColumns: IColumnDefinition<LeaveRequest>[] = [
       return (
         <div className="flex items-center gap-3">
           {request.employeeAvatar && (
-            <Image
-              src={request.employeeAvatar}
-              alt={request.employeeName}
-              width={32}
-              height={32}
-              className="size-8 rounded-full object-cover"
-            />
+            <div className={`size-10 relative`}>
+              <Image
+                src={request.employeeAvatar}
+                alt={request.employeeName}
+                fill
+                className="rounded-full object-cover"
+              />
+            </div>
           )}
           <span className="font-medium">{request.employeeName}</span>
         </div>
@@ -52,28 +53,28 @@ export const leaveColumns: IColumnDefinition<LeaveRequest>[] = [
     header: 'Leave Type',
     accessorKey: 'leaveTypeName',
     render: (_value, row) => (
-      <span className="text-sm">{row.leaveTypeName}</span>
+      <span className="text-sm truncate">{row.leaveTypeName}</span>
     ),
   },
   {
     header: 'Start Date',
     accessorKey: 'startDate',
     render: (_value, row) => (
-      <span className="text-sm">{formatDate(row.startDate)}</span>
+      <span className="text-sm truncate">{formatDate(row.startDate)}</span>
     ),
   },
   {
     header: 'End Date',
     accessorKey: 'endDate',
     render: (_value, row) => (
-      <span className="text-sm">{formatDate(row.endDate)}</span>
+      <span className="text-sm truncate">{formatDate(row.endDate)}</span>
     ),
   },
   {
     header: 'Days',
     accessorKey: 'days',
     render: (_value, row) => (
-      <span className="text-sm font-medium">{row.days}</span>
+      <span className="text-sm truncate font-medium">{row.days}</span>
     ),
   },
   {
@@ -84,10 +85,10 @@ export const leaveColumns: IColumnDefinition<LeaveRequest>[] = [
       return (
         <Badge
           className={cn(
-            'rounded-full px-3 py-1 text-xs',
+            'rounded-full py-1 text-xs',
             status === 'pending' && 'bg-warning-50 text-warning',
             status === 'approved' && 'bg-success-50 text-success',
-            status === 'declined' && 'bg-destructive-50 text-destructive'
+            status === 'declined' && 'bg-destructive/10 text-destructive'
           )}
         >
           {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -99,7 +100,9 @@ export const leaveColumns: IColumnDefinition<LeaveRequest>[] = [
     header: 'Requested On',
     accessorKey: 'createdAt',
     render: (_value, row) => (
-      <span className="text-sm text-gray-500">{formatDate(row.createdAt)}</span>
+      <span className="text-sm truncate text-gray-500">
+        {formatDate(row.createdAt)}
+      </span>
     ),
   },
 ];

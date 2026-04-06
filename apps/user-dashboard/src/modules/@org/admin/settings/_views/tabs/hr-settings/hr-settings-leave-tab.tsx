@@ -167,9 +167,9 @@ export function HRSettingsLeaveTab() {
           <h4 className="text-sm font-semibold">Leave Type</h4>
         </div>
 
-        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+        <div className="flex w-full flex-col gap-4 md:gap-2 sm:w-auto sm:flex-row sm:items-center">
           <SearchInput
-            className="border-border h-10 w-full rounded-md border sm:w-[240px]"
+            className="border-border h-10 w-full rounded-md border sm:w-60"
             placeholder="Search leave type..."
             onSearch={(query) => {
               setSearch(query);
@@ -179,7 +179,7 @@ export function HRSettingsLeaveTab() {
           <MainButton
             variant="primary"
             isLeftIconVisible
-            icon={<Icon name="Add" />}
+            icon={<Icon name="Add" variant={`Bold`} />}
             className="w-full sm:w-auto"
             onClick={() => setCreateDialogOpen(true)}
           >
@@ -198,6 +198,7 @@ export function HRSettingsLeaveTab() {
           rowActions={(row): IRowAction<LeaveType>[] => [
             {
               label: 'Edit',
+              icon: <Icon name={`Edit`} variant={`Outline`} />,
               onClick: () => {
                 setSelectedLeaveType(row);
                 setEditDialogOpen(true);
@@ -206,6 +207,13 @@ export function HRSettingsLeaveTab() {
             { type: 'separator' },
             {
               label: 'Delete',
+              icon: (
+                <Icon
+                  name={`Trash`}
+                  variant={`Outline`}
+                  className={`text-danger`}
+                />
+              ),
               variant: 'destructive',
               onClick: () => {
                 setSelectedLeaveType(row);
@@ -230,7 +238,7 @@ export function HRSettingsLeaveTab() {
           showColumnCustomization={false}
           enableSorting={false}
           enableFiltering={false}
-          mobileCardView={false}
+          mobileCardView={true}
         />
       )}
 
@@ -240,7 +248,7 @@ export function HRSettingsLeaveTab() {
         onOpenChange={setCreateDialogOpen}
         title="Create Leave Type"
         description="Add a new leave type to your organization"
-        className="min-w-3xl"
+        className="lg:min-w-3xl"
         trigger={null}
       >
         <CreateLeaveTypeForm onClose={() => setCreateDialogOpen(false)} />
@@ -255,7 +263,7 @@ export function HRSettingsLeaveTab() {
         }}
         title="Edit Leave Type"
         description="Update leave type details"
-        className="min-w-2xl"
+        className="lg:min-w-3xl"
         trigger={null}
       >
         {selectedLeaveType ? (
@@ -285,7 +293,8 @@ export function HRSettingsLeaveTab() {
         }}
         title="Delete Leave Type"
         description={`You're about to delete "${selectedLeaveType?.name ?? 'this leave type'}". This action cannot be undone.`}
-        className="min-w-xl"
+        wrapperClassName={`text-left`}
+        className="lg:min-w-xl"
         trigger={null}
       >
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">

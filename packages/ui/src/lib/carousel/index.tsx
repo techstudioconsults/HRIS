@@ -75,9 +75,7 @@ export const TestimonialCarousel = ({
   if (!items.length) return null;
 
   return (
-    <div
-      className={cn('relative w-full px-4 py-8 sm:px-8 lg:px-12', className)}
-    >
+    <div className={cn('w-full px-0 py-8 sm:px-8 lg:px-12', className)}>
       <Carousel
         opts={{
           align: 'start',
@@ -86,24 +84,21 @@ export const TestimonialCarousel = ({
         }}
         plugins={mergedPlugins}
         setApi={setApi}
-        className="mx-auto w-full max-w-[980px] pb-16 overflow-visible! md:pb-0"
+        className="mx-auto w-full max-w-[980px] overflow-visible! md:pb-0"
       >
-        <CarouselContent>
+        <CarouselContent className={`pb-32`}>
           {items.map((item, index) => {
             const fallback = getFallback(item);
 
             return (
-              <CarouselItem
-                className={`lg:pb-32`}
-                key={`${item.name}-${index}`}
-              >
+              <CarouselItem className={``} key={`${item.name}-${index}`}>
                 <article
                   className={cn(
+                    'px-6 py-7 sm:px-10 sm:py-9',
                     'relative cc-shadow mx-auto w-full max-w-[780px] overflow-hidden ' +
                       'rounded-xl lg:border border-[#CDE2FF] border-t-6! ' +
                       'border-t-primary bg-background' +
-                      'px-6 py-7 sm:px-10 sm:py-9',
-                    cardClassName
+                      cardClassName
                   )}
                 >
                   <svg
@@ -158,28 +153,24 @@ export const TestimonialCarousel = ({
         {showControls ? (
           <>
             <CarouselPrevious
-              className="top-full z-20 bottom-auto left-1/2 size-12
-              -translate-x-[calc(100%+0.375rem)] -my-12 -translate-y-0 border-zinc-200
-              bg-white text-zinc-700 hover:bg-white
-               cc-shadow md:top-1/2 md:bottom-auto md:left-0 md:mt-0 md:-translate-x-0 md:-translate-y-1/2"
+              className="absolute bg-background size-12 bottom-1/6
+            lg:top-1/3 left-1/3 lg:left-0 rounded-full border text-primary z-20"
             />
             <CarouselNext
-              className="top-full z-20 bottom-auto left-1/2 size-12
-              translate-x-[0.375rem] -translate-y-0 border-zinc-200 bg-white text-zinc-700
-              -my-12 hover:bg-white cc-shadow md:top-1/2
-              md:right-0 md:left-auto md:mt-0 md:translate-x-0 md:-translate-y-1/2"
+              className="absolute bg-background size-12 bottom-1/6
+            lg:top-1/3 right-1/3 lg:right-0 rounded-full border text-primary z-20"
             />
           </>
         ) : null}
+        <GradientMask
+          direction={`left`}
+          className={`w-10 h-[70%] hidden lg:block absolute left-0 lg:h-full lg:translate-y-0 translate-y-1/4 lg:w-[144px]`}
+        />
+        <GradientMask
+          direction={`right`}
+          className={`w-10 h-[70%] lg:h-full hidden lg:block lg:translate-y-0 translate-y-1/4 lg-[144px] absolute right-0`}
+        />
       </Carousel>
-      <GradientMask
-        direction={`left`}
-        className={`w-10 h-[70%] lg:h-full lg:translate-y-0 translate-y-1/4 lg:w-[144px] lg:translate-x-35`}
-      />
-      <GradientMask
-        direction={`right`}
-        className={`w-10 h-[70%] lg:h-full lg:translate-y-0 translate-y-1/4 lg-[144px] lg:-translate-x-35`}
-      />
     </div>
   );
 };

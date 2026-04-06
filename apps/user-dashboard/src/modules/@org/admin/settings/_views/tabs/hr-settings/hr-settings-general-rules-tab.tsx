@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { FormField, SwitchField } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { AlertModal } from "@workspace/ui/lib/dialog";
-import { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormField, SwitchField } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { AlertModal } from '@workspace/ui/lib/dialog';
+import { useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 
 type GeneralHRRulesFormValues = {
   probationLength: string;
@@ -16,7 +16,7 @@ type GeneralHRRulesFormValues = {
 };
 
 const DEFAULT_VALUES: GeneralHRRulesFormValues = {
-  probationLength: "",
+  probationLength: '',
   autoConfirmAfterProbation: true,
   requireManualConfirmationReview: false,
   minimumNoticePeriodDays: undefined,
@@ -25,10 +25,10 @@ const DEFAULT_VALUES: GeneralHRRulesFormValues = {
 };
 
 const probationLengthOptions = [
-  { value: "1_month", label: "1 Month" },
-  { value: "3_months", label: "3 Months" },
-  { value: "6_months", label: "6 Months" },
-  { value: "12_months", label: "12 Months" },
+  { value: '1_month', label: '1 Month' },
+  { value: '3_months', label: '3 Months' },
+  { value: '6_months', label: '6 Months' },
+  { value: '12_months', label: '12 Months' },
 ];
 
 export function HRSettingsGeneralRulesTab() {
@@ -45,7 +45,10 @@ export function HRSettingsGeneralRulesTab() {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)} className="rounded-lg p-4 sm:p-6">
+      <form
+        onSubmit={methods.handleSubmit(onSubmit)}
+        className="rounded-lg p-4 sm:p-6"
+      >
         <div className="space-y-1">
           <h4 className="text-base font-semibold">Rules &amp; Governance</h4>
         </div>
@@ -54,7 +57,9 @@ export function HRSettingsGeneralRulesTab() {
           {/* Probation & Confirmation */}
           <div className="grid gap-6 md:grid-cols-[580px_1fr]">
             <div>
-              <h5 className="text-muted-foreground text-base font-semibold">Probation &amp; Confirmation</h5>
+              <h5 className="text-muted-foreground text-base font-semibold">
+                Probation &amp; Confirmation
+              </h5>
             </div>
             <div className="space-y-4">
               <FormField
@@ -63,7 +68,7 @@ export function HRSettingsGeneralRulesTab() {
                 type="select"
                 options={probationLengthOptions}
                 placeholder="Select probation length"
-                className="!h-14"
+                className="h-14!"
               />
 
               <SwitchField
@@ -83,7 +88,9 @@ export function HRSettingsGeneralRulesTab() {
           {/* Resignation Notice Period */}
           <div className="mt-20 grid gap-6 md:grid-cols-[580px_1fr]">
             <div>
-              <h5 className="text-muted-foreground text-base font-semibold">Resignation Notice Period</h5>
+              <h5 className="text-muted-foreground text-base font-semibold">
+                Resignation Notice Period
+              </h5>
             </div>
             <div>
               <FormField
@@ -99,7 +106,9 @@ export function HRSettingsGeneralRulesTab() {
           {/* Reminders & Milestones */}
           <div className="grid gap-6 md:grid-cols-[580px_1fr]">
             <div>
-              <h5 className="text-muted-foreground text-base font-semibold">Reminders &amp; Milestones</h5>
+              <h5 className="text-muted-foreground text-base font-semibold">
+                Reminders &amp; Milestones
+              </h5>
             </div>
             <div className="space-y-4">
               <SwitchField
@@ -116,8 +125,7 @@ export function HRSettingsGeneralRulesTab() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-[580px_1fr]">
-            <div />
-            <div className="space-x-4">
+            <div className="gap-4 flex items-center">
               <MainButton
                 variant="outline"
                 type="button"
@@ -126,7 +134,11 @@ export function HRSettingsGeneralRulesTab() {
               >
                 Cancel
               </MainButton>
-              <MainButton variant="primary" type="submit" className="w-full sm:w-[137px]">
+              <MainButton
+                variant="primary"
+                type="submit"
+                className="w-full sm:w-[137px]"
+              >
                 Save Changes
               </MainButton>
             </div>

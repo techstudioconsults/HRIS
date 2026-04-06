@@ -22,6 +22,7 @@ import { EmployeeDetailsSkeleton } from './loader';
 import { formatDate } from '@/lib/formatters';
 import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 import { AnyIconName } from '@workspace/ui/lib/icons/types';
+import { Button } from '@workspace/ui/components/button';
 
 const getInitials = (firstName?: string, lastName?: string) => {
   const fullName = `${firstName ?? ''} ${lastName ?? ''}`.trim();
@@ -138,12 +139,14 @@ const EmployeeDetailsHeader = ({
         <GenericDropdown
           align="end"
           trigger={
-            <div
-              className="bg-background border-border flex size-10 items-center
-             justify-center rounded-md shadow-sm transition-colors hover:bg-muted"
-            >
-              <Icon name="More" variant="Outline" className="text-primary" />
-            </div>
+            <Button size={`icon`} className={`shadow rounded-md p-2.5`}>
+              <Icon
+                name="More"
+                size={20}
+                variant={`Outline`}
+                className={`text-primary rotate-90`}
+              />
+            </Button>
           }
         >
           <DropdownMenuItem disabled>Download Profile PDF</DropdownMenuItem>

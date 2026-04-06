@@ -35,6 +35,7 @@ import { usePayrollService } from '../services/use-service';
 import { usePayrollStore } from '../stores/payroll-store';
 import type { Payroll, PayrollApproval } from '../types';
 import { payrollColumn, usePayrollRowActions } from './table-data';
+import { Button } from '@workspace/ui/components/button';
 
 const LOW_BALANCE_LIMIT = 0; // 0M NGN
 
@@ -62,7 +63,7 @@ const PAYROLL_RUN_MESSAGE = (
   </>
 );
 
-const PayrollView = () => {
+export const PayrollView = () => {
   const { getRowActions, DeleteConfirmationModal } = usePayrollRowActions();
   const {
     hasCompletedPayrollPolicySetupForm,
@@ -404,70 +405,82 @@ const PayrollView = () => {
         title="Payroll Overview"
         subtitle="Payroll"
         actionComponent={
-          <div className="flex items-center gap-2">
-            <ComboBox
-              options={payrollOptions}
-              value={selectedPayrollId}
-              onValueChange={handlePayrollSelection}
-              placeholder="Select payroll period"
-              className="border-border h-10 w-64 border"
-            />
-            <MainButton
-              isDisabled={isFundWalletDisabled}
-              onClick={handleFundWallet}
-              className="border-primary"
-              variant="primaryOutline"
-            >
-              Fund Wallet
-            </MainButton>
-            {showRunPayrollButton ? (
-              <MainButton
-                onClick={handleRunPayroll}
-                // isDisabled={payrollPolicyStatus || !canRunSelectedPayroll || isCompleted}
-                isDisabled={isCompleted}
-                variant="primary"
-              >
-                Run Payroll
-              </MainButton>
-            ) : showGeneratePayslipButton ? (
-              <MainButton
-                onClick={() => {}}
-                isDisabled={payrollPolicyStatus || loadingPayslips}
-                isLoading={loadingPayslips}
-                variant="primary"
-              >
-                {loadingPayslips ? 'Generating Payroll...' : 'Generate Payroll'}
-              </MainButton>
-            ) : null}
-            <MainButton
-              className={cn(shouldShowApprovalProgressButton ? '' : 'hidden')}
-              variant="primary"
-              onClick={() => setIsApprovalProgressOpen(true)}
-            >
-              View Approval Progress
-            </MainButton>
-            <div>
-              <GenericDropdown
-                align={`end`}
-                trigger={
-                  <div
-                    className={`bg-background border-border flex size-10 items-center justify-center rounded-md border shadow`}
-                  >
-                    <Icon name="MoreVertical" size={16} />
-                  </div>
-                }
-              >
-                <DropdownMenuItem
-                  onClick={() => setShowSchedulePayrollDrawer(true)}
-                >
-                  Schedule Payroll
-                </DropdownMenuItem>
-                <Link href={`/admin/payroll/setup`}>
-                  <DropdownMenuItem>Payroll Settings</DropdownMenuItem>
-                </Link>
-              </GenericDropdown>
+          <section className="flex flex-wrap lg:flex-nowrap items-center gap-2">
+            <div className={`w-full`}>
+              <ComboBox
+                options={payrollOptions}
+                value={selectedPayrollId}
+                onValueChange={handlePayrollSelection}
+                placeholder="Select payroll period"
+                className="h-10 lg:w-80 border w-full"
+              />
             </div>
-          </div>
+            <div className={`flex items-center w-full justify-between gap-2`}>
+              <MainButton
+                isDisabled={isFundWalletDisabled}
+                onClick={handleFundWallet}
+                variant="primaryOutline"
+              >
+                Fund Wallet
+              </MainButton>
+              {showRunPayrollButton ? (
+                <MainButton
+                  onClick={handleRunPayroll}
+                  // isDisabled={payrollPolicyStatus || !canRunSelectedPayroll || isCompleted}
+                  isDisabled={isCompleted}
+                  variant="primary"
+                >
+                  Run Payroll
+                </MainButton>
+              ) : showGeneratePayslipButton ? (
+                <MainButton
+                  onClick={() => {}}
+                  isDisabled={payrollPolicyStatus || loadingPayslips}
+                  isLoading={loadingPayslips}
+                  variant="primary"
+                >
+                  {loadingPayslips
+                    ? 'Generating Payroll...'
+                    : 'Generate Payroll'}
+                </MainButton>
+              ) : null}
+              <MainButton
+                className={cn(shouldShowApprovalProgressButton ? '' : 'hidden')}
+                variant="primary"
+                onClick={() => setIsApprovalProgressOpen(true)}
+              >
+                View Approval Progress
+              </MainButton>
+              <div>
+                <GenericDropdown
+                  align={`end`}
+                  trigger={
+                    <Button size={`icon`} className={`shadow rounded-md p-2.5`}>
+                      <Icon
+                        name="More"
+                        size={20}
+                        variant={`Outline`}
+                        className={`text-primary rotate-90`}
+                      />
+                    </Button>
+                  }
+                >
+                  <DropdownMenuItem
+                    onClick={() => setShowSchedulePayrollDrawer(true)}
+                  >
+                    <Icon name={`MoneyTime`} variant={`Outline`} />
+                    Schedule Payroll
+                  </DropdownMenuItem>
+                  <Link href={`/admin/payroll/setup`}>
+                    <DropdownMenuItem>
+                      <Icon name={`Setting2`} variant={`Outline`} />
+                      Payroll Settings
+                    </DropdownMenuItem>
+                  </Link>
+                </GenericDropdown>
+              </div>
+            </div>
+          </section>
         }
       />
 
@@ -595,7 +608,7 @@ const PayrollView = () => {
       </section>
 
       {/* Payroll Table Placeholder */}
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <section className="grid grid-cols-2 gap-4 md:grid-cols-3">
         <DashboardCard
           title="Estimated Net Pay"
           value={
@@ -639,7 +652,7 @@ const PayrollView = () => {
             </div>
           }
           className={cn(
-            'flex flex-col items-center justify-center gap-4 bg-linear-to-r from-[#013E94] to-[#00132E] text-center'
+            'flex flex-col col-span-2 md:col-span-1 items-center justify-center gap-4 bg-linear-to-r from-[#013E94] to-[#00132E] text-center'
           )}
           titleColor="text-white"
         />
@@ -734,5 +747,3 @@ const PayrollView = () => {
     </section>
   );
 };
-
-export { PayrollView };

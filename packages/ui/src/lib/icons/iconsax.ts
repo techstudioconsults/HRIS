@@ -40,4 +40,5 @@ export {
   DocumentText,
   FolderAdd,
   FolderOpen,
+  MoneyTime,
 } from 'iconsax-react';

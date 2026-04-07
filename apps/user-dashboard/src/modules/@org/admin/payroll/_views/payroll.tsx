@@ -13,6 +13,8 @@ import {
 import { MainButton } from '@workspace/ui/lib/button';
 import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
+import { Button } from '@workspace/ui/components/button';
+import { AxiosError } from 'axios';
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -20,6 +22,7 @@ import { toast } from 'sonner';
 
 import empty1 from '~/images/empty-state.svg';
 import { ApprovalProgressModal } from '../_components/approval-progress-modal';
+import { DevApprovalActionsModal } from '../_components/dev-approval-actions-modal';
 import { AddEmployeeDrawer } from '../_components/drawers/add-employee-drawer';
 import { EmployeeInformationDrawer } from '../_components/drawers/employee-infomation-drawer';
 import { GenerateRunPayrollDrawer } from '../_components/drawers/generate-run-payroll-drawer';
@@ -33,7 +36,6 @@ import { usePayrollService } from '../services/use-service';
 import { usePayrollStore } from '../stores/payroll-store';
 import type { Payroll, PayrollApproval } from '../types';
 import { payrollColumn, usePayrollRowActions } from './table-data';
-import { Button } from '@workspace/ui/components/button';
 
 export const PayrollView = () => {
   const { getRowActions, DeleteConfirmationModal } = usePayrollRowActions();
@@ -58,6 +60,7 @@ export const PayrollView = () => {
     useGetCompanyWallet,
     useGetPayrollApprovals,
     useGetPayrollByID,
+    useRetryPayroll,
   } = usePayrollService();
   const { data: companyWallet } = useGetCompanyWallet();
   const { data: payrollPolicy } = useGetCompanyPayrollPolicy();
@@ -72,6 +75,12 @@ export const PayrollView = () => {
   const [showNoPayrollBanner, setShowNoPayrollBanner] = useState(false);
   const [selectedPayrollId, setSelectedPayrollId] = useState<string>('');
   const [isApprovalProgressOpen, setIsApprovalProgressOpen] = useState(false);
+  const [isDevApprovalActionsOpen, setIsDevApprovalActionsOpen] =
+    useState(false);
+  const isDevelopmentMode = process.env.NODE_ENV !== 'production';
+
+  const { mutateAsync: retryPayroll, isPending: isRetryingPayroll } =
+    useRetryPayroll();
   const [payrollData, setPayrollData] = useState({
     id: '',
     status: '',
@@ -105,6 +114,11 @@ export const PayrollView = () => {
     Array.isArray(payslipsData.data.items) &&
     payslipsData.data.items.length > 0
   );
+
+  const failedPayslipIds =
+    payslipsData?.data?.items
+      ?.filter((payslip) => payslip.status === 'failed')
+      .map((payslip) => payslip.id) ?? [];
 
   // Approval progress data for the selected payroll
   const payrollIdForApprovals = selectedPayrollId || '';
@@ -276,6 +290,33 @@ export const PayrollView = () => {
     setShowNoPayrollBanner(false);
   };
 
+  const handleRetryFailedPayslips = async () => {
+    if (failedPayslipIds.length === 0) {
+      toast.error('No failed payslips available for retry.');
+      return;
+    }
+
+    await retryPayroll(
+      { payslipIds: failedPayslipIds },
+      {
+        onSuccess: () => {
+          toast.success(
+            `Retry has been queued for ${failedPayslipIds.length} failed payslip${
+              failedPayslipIds.length > 1 ? 's' : ''
+            }.`
+          );
+        },
+        onError: (error) => {
+          const message =
+            error instanceof AxiosError
+              ? error.response?.data.message
+              : 'Failed to retry payslips. Please try again.';
+          toast.error(message);
+        },
+      }
+    );
+  };
+
   useEffect(() => {
     if (
       payrollPolicy?.data?.payday &&
@@ -414,6 +455,14 @@ export const PayrollView = () => {
               >
                 View Approval Progress
               </MainButton>
+              {isDevelopmentMode ? (
+                <MainButton
+                  variant="primaryOutline"
+                  onClick={() => setIsDevApprovalActionsOpen(true)}
+                >
+                  Dev: Approval Actions
+                </MainButton>
+              ) : null}
               <div>
                 <GenericDropdown
                   align={`end`}
@@ -498,6 +547,15 @@ export const PayrollView = () => {
                   >
                     <Icon name={`Eye`} variant={`Outline`} />
                     View Approval Progress
+                  </DropdownMenuItem>
+                )}
+
+                {isDevelopmentMode && (
+                  <DropdownMenuItem
+                    onClick={() => setIsDevApprovalActionsOpen(true)}
+                  >
+                    <Icon name={`Setting2`} variant={`Outline`} />
+                    Dev: Approval Actions
                   </DropdownMenuItem>
                 )}
 
@@ -595,6 +653,16 @@ export const PayrollView = () => {
           <h1 className="text-xl font-bold">Employee Payroll Summary</h1>
           <div className="flex items-center gap-2">
             <MainButton
+              variant="primaryOutline"
+              isDisabled={failedPayslipIds.length === 0 || isRetryingPayroll}
+              isLoading={isRetryingPayroll}
+              onClick={() => {
+                void handleRetryFailedPayslips();
+              }}
+            >
+              Retry Failed ({failedPayslipIds.length})
+            </MainButton>
+            <MainButton
               variant="primary"
               isLeftIconVisible
               onClick={() => setShowAddEmployeeModal(true)}
@@ -670,6 +738,14 @@ export const PayrollView = () => {
         approvals={approvals}
         isApprovalsLoading={isApprovalsLoading}
       />
+
+      {isDevelopmentMode ? (
+        <DevApprovalActionsModal
+          open={isDevApprovalActionsOpen}
+          onOpenChange={setIsDevApprovalActionsOpen}
+          selectedPayrollId={selectedPayrollId}
+        />
+      ) : null}
 
       {/*/!* Add Employee Modal *!/*/}
       <AddEmployeeDrawer

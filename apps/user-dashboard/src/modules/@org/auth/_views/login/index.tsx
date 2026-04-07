@@ -56,11 +56,7 @@ export const Login = () => {
       toast.success('Login Successful', {
         description: 'Redirecting to dashboard...',
       });
-
-      // Get the session to determine redirect path based on role
-      // Note: Session might not be immediately available, so we'll redirect to onboarding
-      // which will then redirect to the appropriate dashboard
-      router.push('/onboarding');
+      router.push('/login/continue');
     }
   };
 

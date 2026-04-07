@@ -11,35 +11,27 @@ import { CompanyProfileFormData } from '@/schemas';
 import { CompanyProfile } from '../types';
 
 export interface OnboardingSetupStatus {
-  resetPassword: boolean;
-  reviewProfileDetails: boolean;
-  acknowledgePolicy: boolean;
-  reviewPayrollInfo: boolean;
-  takenTour: boolean;
+  resetPassword?: boolean;
+  reviewProfileDetails?: boolean;
+  acknowledgePolicy?: boolean;
+  reviewPayrollInfo?: boolean;
+  takenTour?: boolean;
 }
 
 type OnboardingSetupStatusApi = Omit<OnboardingSetupStatus, 'takenTour'> & {
   takenTour?: boolean;
-  takeTour?: boolean;
 };
 
 const normalizeSetupStatus = (
   setupStatus: OnboardingSetupStatusApi
 ): OnboardingSetupStatus => ({
   ...setupStatus,
-  takenTour: setupStatus.takenTour ?? setupStatus.takeTour ?? false,
+  takenTour: setupStatus.takenTour ?? false,
 });
 
 export const isOnboardingSetupComplete = (
   setupStatus?: Partial<OnboardingSetupStatus> | null
-): boolean =>
-  Boolean(
-    setupStatus?.resetPassword &&
-    setupStatus.reviewProfileDetails &&
-    setupStatus.acknowledgePolicy &&
-    setupStatus.reviewPayrollInfo &&
-    setupStatus.takenTour
-  );
+): boolean => Boolean(setupStatus?.takenTour);
 
 export class OnboardingService {
   private readonly http: HttpAdapter;

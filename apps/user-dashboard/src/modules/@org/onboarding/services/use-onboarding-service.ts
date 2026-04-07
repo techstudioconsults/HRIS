@@ -165,11 +165,11 @@ export const useOnboardingService = () => {
         }: {
           employeeId: string;
           setupInput: {
-            resetPassword: boolean;
-            reviewProfileDetails: boolean;
-            acknowledgePolicy: boolean;
-            reviewPayrollInfo: boolean;
-            takenTour: boolean;
+            resetPassword?: boolean;
+            reviewProfileDetails?: boolean;
+            acknowledgePolicy?: boolean;
+            reviewPayrollInfo?: boolean;
+            takenTour?: boolean;
           };
         }
       ) => service.setSetupStatus(employeeId, setupInput),

@@ -3,6 +3,7 @@ export { StepOne } from './_views/step-one';
 export { TeamSetupPage } from './_views/step-two';
 export { EmployeeSetup } from './_views/step-three';
 export { OnboardingRouteGuard } from './_components/onboarding-route-guard';
+export { MarkOnboardingCompleteOnDashboardVisit } from './_components/mark-onboarding-complete-on-dashboard-visit';
 
 // Tour Guide exports
 export { TourProvider, useTour } from '@workspace/ui/context/tour-context';

@@ -1,12 +1,10 @@
 'use client';
 
 import { useTour } from '@/modules/@org/onboarding';
-import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onboarding-service';
 import { TourModalButton } from '@workspace/ui/lib/video-player/tour-modal';
 import { BlurImage } from '@workspace/ui/components/core/miscellaneous/blur-image';
 import { MainButton } from '@workspace/ui/lib/button';
-import { useSession } from 'next-auth/react';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { welcomeTourSteps } from '../../config/tour-steps';
 import {
@@ -16,35 +14,10 @@ import {
 
 export const Welcome = () => {
   const { startTour, stopTour } = useTour();
-  const { data: session } = useSession();
-  const employeeId = session?.user?.employee?.id;
-  const { useGetSetupStatus, useSetSetupStatus } = useOnboardingService();
-  const { data: setupStatusResponse } = useGetSetupStatus(employeeId ?? '', {
-    enabled: Boolean(employeeId),
-  });
-  const { mutate: setSetupStatus } = useSetSetupStatus();
-
-  const setupStatus = setupStatusResponse?.data;
 
   useEffect(() => {
     startTour(welcomeTourSteps);
   }, [startTour]);
-
-  const handleTourClose = useCallback(() => {
-    stopTour();
-
-    if (!employeeId || !setupStatus || setupStatus.takenTour) {
-      return;
-    }
-
-    setSetupStatus({
-      employeeId,
-      setupInput: {
-        ...setupStatus,
-        takenTour: true,
-      },
-    });
-  }, [employeeId, setSetupStatus, setupStatus, stopTour]);
 
   return (
     <section>
@@ -74,7 +47,7 @@ export const Welcome = () => {
               transcript={transcriptLines}
               modalClassName="py-2"
               onOpen={stopTour}
-              onClose={handleTourClose}
+              onClose={stopTour}
             />
             <div data-tour="skip-tour-button">
               <MainButton

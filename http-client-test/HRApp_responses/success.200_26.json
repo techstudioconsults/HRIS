@@ -1,0 +1,18 @@
+{
+  "success": true,
+  "data": {
+    "id": "1d48a10e-631e-48ac-a3c0-3c30ca0dccea",
+    "name": "Maternity Leave",
+    "days": 90,
+    "cycle": "yearly",
+    "maxLeaveDaysPerRequest": 90,
+    "eligibility": "3",
+    "eligibleEmployees": [
+      {
+        "id": "1d2f2e6d-d2a6-42d7-bbe0-1dd1f8e9e681",
+        "name": "Tobin Sawayn"
+      }
+    ],
+    "createdAt": "2025-07-28T15:32:57.814Z"
+  }
+}

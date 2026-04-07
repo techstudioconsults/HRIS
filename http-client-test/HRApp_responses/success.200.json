@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "data": {
+    "employee": {
+      "id": "3638e988-2ab6-4caf-af41-0a66a87d5367",
+      "fullName": "Tobi Olanitori",
+      "email": "tobi.olanitori@techstudioacademy.com",
+      "role": {
+        "id": "7162c85c-e982-453d-9444-f03babefa454",
+        "name": "owner"
+      }
+    },
+    "tokens": {
+      "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRvYmkub2xhbml0b3JpQHRlY2hzdHVkaW9hY2FkZW15LmNvbSIsInN1YiI6IjM2MzhlOTg4LTJhYjYtNGNhZi1hZjQxLTBhNjZhODdkNTM2NyIsInBlcm1pc3Npb25zIjpbImFkbWluIl0sImlhdCI6MTc1MDA5OTkyMCwiZXhwIjoxNzUwMTg2MzIwfQ.Lf9EHwiFszA9d1yqVmkSz_Mo_C5-8HrpJCUe5Hn456w",
+      "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRvYmkub2xhbml0b3JpQHRlY2hzdHVkaW9hY2FkZW15LmNvbSIsInN1YiI6IjM2MzhlOTg4LTJhYjYtNGNhZi1hZjQxLTBhNjZhODdkNTM2NyIsInBlcm1pc3Npb25zIjpbImFkbWluIl0sImlhdCI6MTc1MDA5OTkyMCwiZXhwIjoxNzUyNjkxOTIwfQ.uiK0FuMzzigX71QYoqzaAavhH8rNGOSpu2h_mXp7nMU"
+    },
+    "permissions": ["admin"]
+  }
+}

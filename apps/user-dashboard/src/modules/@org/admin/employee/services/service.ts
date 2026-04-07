@@ -1,5 +1,8 @@
-import { HttpAdapter } from "@/lib/http/http-adapter";
-import { getTeamsWithRoles, getRoles as sharedGetRoles } from "@/modules/@org/shared/organization-service";
+import { HttpAdapter } from '@/lib/http/http-adapter';
+import {
+  getTeamsWithRoles,
+  getRoles as sharedGetRoles,
+} from '@/modules/@org/shared/organization-service';
 
 export interface CreateEmployeeDto {
   firstName: string;
@@ -30,26 +33,36 @@ export class EmployeeService {
   }
 
   async createEmployee(data: FormData) {
-    const headers = { "Content-Type": "multipart/form-data" };
-    const response = await this.http.post<ApiResponse<Employee>>("/employees", data, headers);
+    const headers = { 'Content-Type': 'multipart/form-data' };
+    const response = await this.http.post<ApiResponse<Employee>>(
+      '/employees',
+      data,
+      headers
+    );
     if (response?.status === 201) {
       return response.data.data;
     }
   }
 
   async getAllEmployees(filters: Filters) {
-    const response = await this.http.get<PaginatedApiResponse<Employee>>(`/employees`, {
-      ...filters,
-    });
+    const response = await this.http.get<PaginatedApiResponse<Employee>>(
+      `/employees`,
+      {
+        ...filters,
+      }
+    );
     if (response?.status === 200) {
       return response.data;
     }
   }
 
   async getSuspendedEmployeesByPayroll(payrollId: string, filters: Filters) {
-    const response = await this.http.get<PaginatedApiResponse<Employee>>(`/employees/payrolls/${payrollId}/absent`, {
-      ...filters,
-    });
+    const response = await this.http.get<PaginatedApiResponse<Employee>>(
+      `/employees/payrolls/${payrollId}/absent`,
+      {
+        ...filters,
+      }
+    );
 
     if (response?.status === 200) {
       return response.data;
@@ -57,21 +70,28 @@ export class EmployeeService {
   }
 
   async getEmployeeById(id: string | null) {
-    const response = await this.http.get<ApiResponse<Employee>>(`/employees/${id}`);
+    const response = await this.http.get<ApiResponse<Employee>>(
+      `/employees/${id}`
+    );
     if (response?.status === 200) {
       return response.data.data;
     }
   }
 
   async updateEmployee(id: string, data: FormData) {
-    const response = await this.http.patch<ApiResponse<Employee>>(`/employees/${id}`, data);
+    const response = await this.http.patch<ApiResponse<Employee>>(
+      `/employees/${id}`,
+      data
+    );
     if (response?.status === 200) {
       return response.data.data;
     }
   }
 
   async deleteEmployee(id: string) {
-    const response = await this.http.delete<{ success: boolean }>(`/employees/${id}`);
+    const response = await this.http.delete<{ success: boolean }>(
+      `/employees/${id}`
+    );
     if (response?.status === 200) {
       return response.data;
     }

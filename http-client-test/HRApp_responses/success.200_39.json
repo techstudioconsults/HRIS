@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "data": {
+    "id": "34b675bb-d072-4d25-a6ce-588f6bc84534",
+    "name": "Food for thought",
+    "amount": 10000,
+    "type": "fixed",
+    "status": "active",
+    "excluded": [
+      {
+        "id": "629bfcfe-8f31-4a08-a0cb-f7ca830accbe",
+        "name": "Marketing staff 1",
+        "avatar": "",
+        "payProfileId": "ece24d2d-474b-4755-ad00-e39a375ed162"
+      }
+    ],
+    "createdAt": "2025-08-23T05:55:32.291Z"
+  }
+}

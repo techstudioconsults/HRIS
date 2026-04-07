@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "data": {
+    "resetPassword": false,
+    "reviewProfileDetails": false,
+    "acknowledgePolicy": false,
+    "reviewPayrollInfo": false,
+    "takenTour": false
+  }
+}

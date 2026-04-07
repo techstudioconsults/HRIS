@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "data": {
+    "id": "d3b9a821-9a8a-4a4c-96bb-15b239afce7d",
+    "status": "idle",
+    "policyId": "241bb823-4000-4091-a754-996871c23a52",
+    "netPay": 2049000,
+    "employeesInPayroll": 16,
+    "paymentDate": "2025-08-25T04:09:19.568Z"
+  }
+}

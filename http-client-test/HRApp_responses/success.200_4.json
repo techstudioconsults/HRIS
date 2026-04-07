@@ -1,0 +1,7 @@
+{
+  "success": true,
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRvYmkub2xhbml0b3JpQHRlY2hzdHVkaW9hY2FkZW15LmNvbSIsInN1YiI6IjM2MzhlOTg4LTJhYjYtNGNhZi1hZjQxLTBhNjZhODdkNTM2NyIsInBlcm1pc3Npb25zIjpbImFkbWluIl0sImlhdCI6MTc1MDk2Mzk1MiwiZXhwIjoxNzUxMDUwMzUyfQ.z-hpwrkFlsUMT1idLYZlHje4lhIlir8C_jzgdwEG9i8",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRvYmkub2xhbml0b3JpQHRlY2hzdHVkaW9hY2FkZW15LmNvbSIsInN1YiI6IjM2MzhlOTg4LTJhYjYtNGNhZi1hZjQxLTBhNjZhODdkNTM2NyIsInBlcm1pc3Npb25zIjpbImFkbWluIl0sImlhdCI6MTc1MDk2Mzk1MiwiZXhwIjoxNzUzNTU1OTUyfQ.CEhWs1a2A6HbklYJ2Lhviwptce0uJ67DrMoC1-tCKl4"
+  }
+}

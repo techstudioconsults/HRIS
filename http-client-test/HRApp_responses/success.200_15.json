@@ -1,0 +1,39 @@
+{
+  "success": true,
+  "data": {
+    "id": "57ac4a56-4b70-4d3d-a876-c3db86f7630b",
+    "firstName": "Tosin",
+    "lastName": "Adesanya",
+    "email": "tosinadesanya@techstudioacademy.com",
+    "phoneNumber": "08148809628",
+    "status": "active",
+    "team": {
+      "id": "ac9a59e4-dd90-4003-b8de-f31993504498",
+      "name": "Human Resource"
+    },
+    "role": {
+      "id": "904f15f9-8d6c-4835-9024-cf7d683fe0ec",
+      "name": "HR Manager",
+      "permissions": [
+        "team:manage",
+        "role:manage",
+        "payroll:manage",
+        "attendance:manage"
+      ]
+    },
+    "dateOfBirth": null,
+    "gender": null,
+    "startDate": null,
+    "employmentType": null,
+    "monthlySalary": 0,
+    "pension": 0,
+    "healthInsurance": 0,
+    "otherDeductions": 0,
+    "bankName": null,
+    "accountName": null,
+    "accountNumber": null,
+    "document": null,
+    "createdAt": "2025-06-17T02:05:08.749Z",
+    "updatedAt": "2025-06-17T12:46:51.066Z"
+  }
+}

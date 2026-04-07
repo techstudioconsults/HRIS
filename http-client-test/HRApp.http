@@ -1,0 +1,1299 @@
+# HRApp
+
+###
+# group: auth
+# @name onboard
+POST {{base_url}}/auth/onboard
+Content-Type: application/json
+
+{
+    "companyName": "Techstudio Academy",
+    "domain": "techstudioacademy.com",
+    "firstName": "Tobi",
+    "lastName": "Olanitori",
+    "email": "tobi.olanitori@techstudioacademy.com",
+    "password": "AdminUserPassword6,",
+    "confirmPassword": "AdminUserPassword6,"
+}
+
+<> ./HRApp_responses/success.201.json
+// {{base_url}}/auth/onboard
+
+###
+# group: auth
+# @name Login with password
+POST {{base_url}}/auth/login/password
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "email": "tobi.olanitori@techstudioacademy.com",
+    "password": "AdminUserPassword6,"
+}
+
+<> ./HRApp_responses/success.200.json
+// {{base_url}}/auth/login/otp
+
+###
+# group: auth
+# @name Request Otp
+POST {{base_url}}/auth/login/requestotp
+Content-Type: application/json
+
+{
+    "email": "tobi.olanitori@techstudioacademy.com"
+}
+
+<> ./HRApp_responses/success.200_1.json
+// {{base_url}}/auth/login/requestotp
+
+###
+# group: auth
+# @name Login with otp
+POST {{base_url}}/auth/login/otp
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "email": "tobi.olanitori@techstudioacademy.com",
+    "password": "537072"
+}
+
+<> ./HRApp_responses/success.200.json
+// {{base_url}}/auth/login/otp
+
+###
+# group: auth
+# @name Forgot Password
+POST {{base_url}}/auth/forgotpassword
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "email": "tobiolanitori@gmail.com"
+}
+
+<> ./HRApp_responses/success.200_2.json
+// {{base_url}}/auth/forgotpassword
+
+###
+# group: auth
+# @name Reset Password
+POST {{base_url}}/auth/resetpassword
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "password": "Alicemojisola1.",
+    "confirmPassword": "Alicemojisola1.",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRvYmlvbGFuaXRvcmlAdGVjaHN0dWRpb2FjYWRlbXkuY29tIiwic3ViIjoiNTYxYjQyN2MtY2YzYy00MTFmLTgyZWUtYWNkOTg0MGE3MzU3IiwiaWF0IjoxNzQ4MTM2OTgxLCJleHAiOjE3NDgxNDA1ODF9._jvjaStPEhPzOlg4ZwtlT2Oo90mrpsuHeR_QMF2FPyc"
+}
+
+<> ./HRApp_responses/success.200_3.json
+// {{base_url}}/auth/resetpassword
+
+###
+# group: auth
+# @name Refresh Access Token
+POST {{base_url}}/auth/refresh
+Content-Type: application/json
+
+{
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRvYmkub2xhbml0b3JpQHRlY2hzdHVkaW9hY2FkZW15LmNvbSIsInN1YiI6IjM2MzhlOTg4LTJhYjYtNGNhZi1hZjQxLTBhNjZhODdkNTM2NyIsInBlcm1pc3Npb25zIjpbImFkbWluIl0sImlhdCI6MTc1MDk2MzY5NSwiZXhwIjoxNzUzNTU1Njk1fQ.YU5z3d1G90cU-JPEbNUXOutJiMVbVK8FtViik2BEeLo"
+}
+
+<> ./HRApp_responses/success.200_4.json
+// {{base_url}}/auth/refresh
+
+###
+# group: companies
+# @name update
+PATCH {{base_url}}/companies/current
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "industry": "Tech Education",
+    "size": "medium",
+    "addressLine1": "205",
+    "addressLine2": "lewsham rd",
+    "city": "Barking",
+    "state": "london",
+    "country": "united kingdom",
+    "postcode": "CR20 3NL"
+}
+
+<> ./HRApp_responses/success.200_5.json
+// {{base_url}}/companies/current?=
+
+###
+# group: companies
+# @name Get For Employee
+GET {{base_url}}/companies/current?
+    =
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_6.json
+// {{base_url}}/companies/current?=
+
+###
+# group: teams
+# @name create
+POST {{base_url}}/teams
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "Engineering"
+    // "parentId": "{{teamId}}"
+}
+
+<> ./HRApp_responses/success.201_1.json
+// {{base_url}}/teams
+
+###
+# group: teams
+# @name Read All
+GET {{base_url}}/teams
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_7.json
+// {{base_url}}/teams
+
+###
+# group: teams
+# @name Read By Id
+GET {{base_url}}/teams/{{teamId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_8.json
+// {{base_url}}/teams/{{teamId}}
+
+###
+# group: teams
+# @name Update
+PATCH {{base_url}}/teams/{{teamId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    // "name": "updated",
+    "managerId": "08fa20b7-544a-4d15-a53f-26867a2b3ec5"
+}
+
+<> ./HRApp_responses/success.200_9.json
+// {{base_url}}/teams/{{teamId}}
+
+###
+# group: teams
+# @name Delete
+DELETE {{base_url}}/teams/{{teamId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_10.json
+// {{base_url}}/teams/{{teamId}}
+
+###
+# group: roles
+# @name create
+POST {{base_url}}/roles
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "Manager",
+    "teamId": "{{teamId}}",
+    "permissions": [
+        "company:read",
+        "employee:manage",
+        "team:manage",
+        "role:manage",
+        "payroll:manage",
+        "attendance:manage",
+        "leave:manage"
+    ],
+    "notifications": [] // EMPLOYEE_ADDED, EMPLOYEE_TERMINATION_RESIGNATION, ROLE_CREATED, TEAM_CREATED, RESOURCE_UPLOADED, PROBATION_REVIEW_DUE, WALLET_TOP_UP, SALARY_DISBURSEMENT
+}
+
+<> ./HRApp_responses/success.201_2.json
+// {{base_url}}/roles
+
+###
+# group: roles
+# @name Read All
+GET {{base_url}}/roles?
+    teamId={{teamId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_11.json
+// {{base_url}}/roles?teamId={{teamId}}
+
+###
+# group: roles
+# @name Read By Id
+GET {{base_url}}/roles/{{roleId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_12.json
+// {{base_url}}/roles/{{roleId}}
+
+###
+# group: roles
+# @name update
+PATCH {{base_url}}/roles/{{roleId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "permissions": [
+        "team:manage",
+        "employee:read"
+    ],
+    "notifications": [] // EMPLOYEE_ADDED, EMPLOYEE_TERMINATION_RESIGNATION, ROLE_CREATED, TEAM_CREATED, RESOURCE_UPLOADED, PROBATION_REVIEW_DUE, WALLET_TOP_UP, SALARY_DISBURSEMENT
+}
+
+<> ./HRApp_responses/success.200_13.json
+// {{base_url}}/roles/{{roleId}}
+
+###
+# group: roles
+# @name Delete
+DELETE {{base_url}}/roles/{{roleId}}?
+    =
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_14.json
+// {{base_url}}/roles/{{roleId}}?=null
+
+###
+# group: employees
+# @name onboard
+POST {{base_url}}/employees/onboard
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "employees": [
+        {
+            "firstName": "Tosin",
+            "lastName": "Adesanya",
+            "email": "tobiolanitori@gmail.com",
+            "phoneNumber": "08148809621",
+            "password": "PleaseSetAdefaultHere1.",
+            "teamId": "113e4802-3d19-4fac-9538-2e2dc9b7a84b",
+            "roleId": "bbc6da4b-c4d6-480e-a11a-62d27c010d89",
+            "permissions": []
+        },
+        {
+            "firstName": "HR",
+            "lastName": "staff 1",
+            "email": "tobiolanitori+1@gmail.com",
+            "phoneNumber": "08148809622",
+            "password": "PleaseSetAdefaultHere1.",
+            "teamId": "113e4802-3d19-4fac-9538-2e2dc9b7a84b",
+            "roleId": "2e4e9782-ca06-4edf-8dc5-2f5bc9c6f0e0",
+            "permissions": []
+        },
+        {
+            "firstName": "HR",
+            "lastName": "staff 2",
+            "email": "tobiolanitori+2@gmail.com",
+            "phoneNumber": "08148809623",
+            "password": "PleaseSetAdefaultHere1.",
+            "teamId": "113e4802-3d19-4fac-9538-2e2dc9b7a84b",
+            "roleId": "cabc46f8-cacb-42fc-bc0e-475eeccaf4aa",
+            "permissions": []
+        },
+        {
+            "firstName": "engineering",
+            "lastName": "manager",
+            "email": "tobiolanitori1@gmail.com",
+            "phoneNumber": "08148809611",
+            "password": "PleaseSetAdefaultHere1.",
+            "teamId": "0580d645-7fb6-4f8a-af06-91969035a655",
+            "roleId": "82992ffa-bc2c-4f29-ba9e-c1f92dcc9e4c",
+            "permissions": []
+        },
+        {
+            "firstName": "engineering",
+            "lastName": "staff 1",
+            "email": "tobiolanitori1+1@gmail.com",
+            "phoneNumber": "08148809612",
+            "password": "PleaseSetAdefaultHere1.",
+            "teamId": "0580d645-7fb6-4f8a-af06-91969035a655",
+            "roleId": "dc0b2e3e-3a88-4e7d-ac65-baebe1da7b2a",
+            "permissions": []
+        },
+        {
+            "firstName": "engineering",
+            "lastName": "staff 2",
+            "email": "tobiolanitori1+2@gmail.com",
+            "phoneNumber": "08148809613",
+            "password": "PleaseSetAdefaultHere1.",
+            "teamId": "0580d645-7fb6-4f8a-af06-91969035a655",
+            "roleId": "5d076c1a-29be-43b4-bbd6-c29528cbd0c4",
+            "permissions": []
+        },
+        {
+            "firstName": "operations",
+            "lastName": "staff 2",
+            "email": "intunewears@gmail.com",
+            "phoneNumber": "08148809629",
+            "password": "PleaseSetAdefaultHere1.",
+            "teamId": "4a78acbc-d02a-4cc9-b974-f4d8cb356815",
+            "roleId": "f240050c-7bb7-4d00-911c-e90df2535518",
+            "permissions": []
+        },
+        {
+            "firstName": "operations",
+            "lastName": "staff 1",
+            "email": "intunewears+1@gmail.com",
+            "phoneNumber": "08148809628",
+            "password": "PleaseSetAdefaultHere1.",
+            "teamId": "4a78acbc-d02a-4cc9-b974-f4d8cb356815",
+            "roleId": "fb08d217-285d-44eb-bb9e-eb736a3ae369",
+            "permissions": []
+        },
+        {
+            "firstName": "operations",
+            "lastName": "manager",
+            "email": "intunewears+2@gmail.com",
+            "phoneNumber": "08148809653",
+            "password": "PleaseSetAdefaultHere1.",
+            "teamId": "4a78acbc-d02a-4cc9-b974-f4d8cb356815",
+            "roleId": "d4a9f5e9-6434-477e-851d-2f5dba251201",
+            "permissions": []
+        },
+        {
+            "firstName": "sales",
+            "lastName": "manager",
+            "email": "tobi.olanitori.binaryartinc@gmail.com",
+            "phoneNumber": "08148809631",
+            "password": "PleaseSetAdefaultHere1.",
+            "teamId": "6d9df8eb-d496-4318-998a-16e7c4d37a88",
+            "roleId": "a89b60e6-2dfb-4306-9976-25c9dd9eef3d",
+            "permissions": []
+        },
+        {
+            "firstName": "sales",
+            "lastName": "staff 1",
+            "email": "tobi.olanitori.binaryartinc+1@gmail.com",
+            "phoneNumber": "08148809632",
+            "password": "PleaseSetAdefaultHere1.",
+            "teamId": "6d9df8eb-d496-4318-998a-16e7c4d37a88",
+            "roleId": "ef909aa1-4d24-4a67-aeb9-30a1cd7184f9",
+            "permissions": []
+        },
+        {
+            "firstName": "sales",
+            "lastName": "staff 2",
+            "email": "tobi.olanitori.binaryartinc+2@gmail.com",
+            "phoneNumber": "08148809633",
+            "password": "PleaseSetAdefaultHere1.",
+            "teamId": "6d9df8eb-d496-4318-998a-16e7c4d37a88",
+            "roleId": "67db30ee-f959-4de0-8fc2-8e017db83130",
+            "permissions": []
+        },
+        {
+            "firstName": "Marketing",
+            "lastName": "staff 2",
+            "email": "binaryart.inc@gmail.com",
+            "phoneNumber": "08148809641",
+            "password": "PleaseSetAdefaultHere1.",
+            "teamId": "39ceaf4e-b7d2-4260-838d-cea8aa8c1827",
+            "roleId": "111f8706-2291-4f33-b525-3b79ca4c26ee",
+            "permissions": []
+        },
+        {
+            "firstName": "Marketing",
+            "lastName": "staff 1",
+            "email": "binaryart.inc+1@gmail.com",
+            "phoneNumber": "08148809642",
+            "password": "PleaseSetAdefaultHere1.",
+            "teamId": "39ceaf4e-b7d2-4260-838d-cea8aa8c1827",
+            "roleId": "36c2e94e-8d84-460d-9981-4bf9788041f1",
+            "permissions": []
+        },
+         {
+            "firstName": "Marketing",
+            "lastName": "manager",
+            "email": "binaryart.inc+2@gmail.com",
+            "phoneNumber": "08148809643",
+            "password": "PleaseSetAdefaultHere1.",
+            "teamId": "39ceaf4e-b7d2-4260-838d-cea8aa8c1827",
+            "roleId": "3d055785-f00a-4397-9647-d23844631fe6",
+            "permissions": []
+        }
+    ]
+}
+
+<> ./HRApp_responses/success.201_3.json
+// {{base_url}}/employees/onboard
+
+###
+# group: employees
+# @name update
+PATCH {{base_url}}/employees/{{employeeId}}
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="firstName"
+
+Seun
+--WebAppBoundary
+Content-Disposition: form-data; name="lastName"
+
+olanitori
+--WebAppBoundary
+Content-Disposition: form-data; name="email"
+
+seun.olanitori@techstudioacademy.com
+--WebAppBoundary
+Content-Disposition: form-data; name="phoneNumber"
+
+07986178921
+--WebAppBoundary
+Content-Disposition: form-data; name="password"
+
+PleaseSetAdefaultHere1.
+--WebAppBoundary
+Content-Disposition: form-data; name="teamId"
+
+{{teamId}}
+--WebAppBoundary
+Content-Disposition: form-data; name="roleId"
+
+{{roleId}}
+--WebAppBoundary
+Content-Disposition: form-data; name="dateOfBirth"
+
+2000-06-19T17:49:32.335Z
+--WebAppBoundary
+Content-Disposition: form-data; name="gender"
+
+male
+--WebAppBoundary
+Content-Disposition: form-data; name="startDate"
+
+2023-06-17T17:49:32.335Z
+--WebAppBoundary
+Content-Disposition: form-data; name="employmentType"
+
+full time
+--WebAppBoundary
+Content-Disposition: form-data; name="bankName"
+
+United Bank For Africa
+--WebAppBoundary
+Content-Disposition: form-data; name="accountName"
+
+Tobi olanitori
+--WebAppBoundary
+Content-Disposition: form-data; name="accountNumber"
+
+2079753003
+--WebAppBoundary
+Content-Disposition: form-data; name="baseSalary"
+
+20000
+--WebAppBoundary
+Content-Disposition: form-data; name="workMode"
+
+onsite
+--WebAppBoundary
+Content-Disposition: form-data; name="bankCode"
+
+033
+--WebAppBoundary
+Content-Disposition: form-data; name="document"; filename="Bytealley Documentation.pdf"
+
+< /C:/Users/tobio/Downloads/Bytealley Documentation.pdf
+--WebAppBoundary
+
+<> ./HRApp_responses/success.200_15.json
+// {{base_url}}/employees/{{employeeId}}
+
+###
+# group: employees
+# @name Find By Id
+GET {{base_url}}/employees/{{employeeId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_16.json
+// {{base_url}}/employees/{{employeeId}}
+
+###
+# group: employees
+# @name Find
+GET {{base_url}}/employees?
+    search=tobi&
+    teamId=&
+    roleId=&
+    status=&
+    sortBy=asc &
+    limit=10&
+    page=1&
+    permission=payroll:create, payroll:read, payroll:update, payroll:delete, payroll:manage, admin
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_17.json
+// {{base_url}}/employees?search=TO&teamId=&roleId=&status=&sortBy=asc &limit=10&page=1&permission=payroll:manage
+
+###
+# group: employees
+# @name create
+POST {{base_url}}/employees?
+    =
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="firstName"
+
+Seun
+--WebAppBoundary
+Content-Disposition: form-data; name="lastName"
+
+olanitori
+--WebAppBoundary
+Content-Disposition: form-data; name="email"
+
+seunolanitori@gmail.com
+--WebAppBoundary
+Content-Disposition: form-data; name="phoneNumber"
+
+07986178929
+--WebAppBoundary
+Content-Disposition: form-data; name="password"
+
+PleaseSetAdefaultHere1.
+--WebAppBoundary
+Content-Disposition: form-data; name="teamId"
+
+{{teamId}}
+--WebAppBoundary
+Content-Disposition: form-data; name="roleId"
+
+{{roleId}}
+--WebAppBoundary
+Content-Disposition: form-data; name="document"; filename="1f00a31d-3f26-49c0-b4d2-7feab593cdce"
+
+< postman-cloud:///1f00a31d-3f26-49c0-b4d2-7feab593cdce
+--WebAppBoundary
+Content-Disposition: form-data; name="dateOfBirth"
+
+2000-06-19T17:49:32.335Z
+--WebAppBoundary
+Content-Disposition: form-data; name="gender"
+
+male
+--WebAppBoundary
+Content-Disposition: form-data; name="startDate"
+
+2023-06-17T17:49:32.335Z
+--WebAppBoundary
+Content-Disposition: form-data; name="employmentType"
+
+full time
+--WebAppBoundary
+Content-Disposition: form-data; name="bankName"
+
+wema
+--WebAppBoundary
+Content-Disposition: form-data; name="accountName"
+
+seun olanitori
+--WebAppBoundary
+Content-Disposition: form-data; name="accountNumber"
+
+0232904127
+--WebAppBoundary
+Content-Disposition: form-data; name="baseSalary"
+
+50000
+--WebAppBoundary
+Content-Disposition: form-data; name="workMode"
+
+onsite
+--WebAppBoundary
+Content-Disposition: form-data; name="bankCode"
+
+035
+--WebAppBoundary
+Content-Disposition: form-data; name="permissions[0]"
+
+
+--WebAppBoundary
+Content-Disposition: form-data; name="permissions[1]"
+
+
+--WebAppBoundary
+
+<> ./HRApp_responses/success.201_4.json
+// {{base_url}}/employees?=
+
+###
+# group: employees
+# @name download
+GET {{base_url}}/employees/download?
+    search=tobi&
+    teamId=&
+    roleId=&
+    status=&
+    sortBy=asc &
+    limit=10&
+    page=1&
+    permission=payroll:manage
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200.csv
+// {{base_url}}/employees/download
+
+###
+# group: employees
+# @name Employes not in payroll
+GET {{base_url}}/employees/payrolls/{{payrollId}}/absent
+Authorization: Bearer {{token}}
+
+###
+# group: employees
+# @name Upload Avatar
+PATCH {{
+
+###
+# group: employees
+# @name Set setup
+PATCH {{base_url}}/employees/{{employeeId}}/setup?
+    =
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+        "resetPassword": true,
+        "reviewProfileDetails": false,
+        "acknowledgePolicy": false,
+        "reviewPayrollInfo": false,
+        "takenTour": false
+    }
+
+<> ./HRApp_responses/success.200_18.json
+// {{base_url}}/employees/{{employeeId}}/setup?=
+
+###
+# group: employees
+# @name Get Setup
+GET {{base_url}}/employees/{{employeeId}}/setup
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_19.json
+// {{base_url}}/employees/{{employeeId}}/setup
+
+###
+# group: files
+# @name create
+POST {{base_url}}/files
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="counties - counties.csv"
+
+< /C:/Users/tobio/Downloads/counties - counties.csv
+--WebAppBoundary
+Content-Disposition: form-data; name="folderId"
+
+{{folderId}}
+--WebAppBoundary
+
+<> ./HRApp_responses/success.201_5.json
+// {{base_url}}/files
+
+###
+# group: files
+# @name download
+GET {{base_url}}/files/{{fileId}}/download
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200.csv
+// {{base_url}}/files/{{fileId}}/download
+
+###
+# group: files
+# @name Read All
+GET {{base_url}}/files?
+    search=handbook&
+    folderId={{folderId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_20.json
+// {{base_url}}/files?search=handbook
+
+###
+# group: files
+# @name Delete
+DELETE {{base_url}}/files/{{fileId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_21.json
+// {{base_url}}/files/{{fileId}}
+
+###
+# group: folders
+# @name Create
+POST {{base_url}}/folders
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="name"
+
+Employees
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="employees-csv.csv"
+
+< /C:/Users/tobio/Downloads/employees-csv.csv
+--WebAppBoundary
+
+<> ./HRApp_responses/success.201_6.json
+// {{base_url}}/folders
+
+###
+# group: folders
+# @name Read All
+GET {{base_url}}/folders?
+    search=first
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_22.json
+// {{base_url}}/folders
+
+###
+# group: folders
+# @name Update
+PATCH {{base_url}}/folders/{{folderId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "Employee Details"
+}
+
+<> ./HRApp_responses/success.200_23.json
+// {{base_url}}/folders/{{folderId}}
+
+###
+# group: folders
+# @name Delete
+DELETE {{base_url}}/folders/{{folderId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_24.json
+// {{base_url}}/folders/{{folderId}}
+
+###
+# group: folders
+# @name Download
+GET {{base_url}}/folders/{{folderId}}/download
+Authorization: Bearer {{token}}
+
+###
+# group: leaves
+# @name create
+POST {{base_url}}/leaves
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "Annual Leave",
+    "days": 20,
+    "cycle": "yearly",
+    "maxLeaveDaysPerRequest": 10,
+    "eligibility": "12",
+    "maxNumberOfRollOver": 5
+}
+
+<> ./HRApp_responses/success.201_7.json
+// {{base_url}}/leaves
+
+###
+# group: leaves
+# @name find
+GET {{base_url}}/leaves
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_25.json
+// {{base_url}}/leaves
+
+###
+# group: leaves
+# @name find by id
+GET {{base_url}}/leaves/{{leaveId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_26.json
+// {{base_url}}/leaves/{{leaveId}}
+
+###
+# group: leaves
+# @name update
+PUT {{base_url}}/leaves/{{leaveId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "Annual Leave",
+    "days": 30,
+    "cycle": "yearly",
+    "maxLeaveDaysPerRequest": 10,
+    "eligibility": "12",
+    "maxNumberOfRollOver": 5
+}
+
+<> ./HRApp_responses/success.200_27.json
+// {{base_url}}/leaves/{{leaveId}}
+
+###
+# group: leaves
+# @name Delete
+DELETE {{base_url}}/leaves/{{leaveId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_28.json
+// {{base_url}}/leaves/{{leaveId}}
+
+###
+# group: payrolls / approvals
+# @name Find
+GET {{base_url}}/payrolls/{{payrollId}}/approvals
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_29.json
+// {{base_url}}/payrolls/{{payrollId}}/approvals
+
+###
+# group: payrolls / approvals
+# @name Decision
+POST {{base_url}}/payrolls/{{payrollId}}/approvals
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRvYmlvbGFuaXRvcmlAZ21haWwuY29tIiwic3ViIjoiMTE5NGVhM2ItMTBjMi00ZDM3LTk5NGEtYWI5ZDFjMDFjMDQyIiwicGVybWlzc2lvbnMiOlsiY29tcGFueTpyZWFkIiwiZW1wbG95ZWU6bWFuYWdlIiwidGVhbTptYW5hZ2UiLCJyb2xlOm1hbmFnZSIsInBheXJvbGw6bWFuYWdlIiwiYXR0ZW5kYW5jZTptYW5hZ2UiLCJsZWF2ZTptYW5hZ2UiXSwiaWF0IjoxNzU1OTQwOTMwLCJleHAiOjE3NTYwMjczMzB9.IjLu8jGbuqyq2HDEIcvEd6sHKZXLBRumoChdSF8awfU
+Content-Type: application/json
+
+{
+    "payrollId": "{{payrollId}}",
+    "status": "approved" // or declined
+}
+
+<> ./HRApp_responses/success.201_8.json
+// {{base_url}}/payrolls/{{payrollId}}/approvals
+
+###
+# group: payrolls / wallets
+# @name company
+GET {{base_url}}/wallets/company
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_30.json
+// {{base_url}}/wallets/company
+
+###
+# group: payrolls / wallets
+# @name setup
+PUT {{base_url}}/wallets/company
+Content-Type: application/json
+
+{
+    "firstName": "",
+    "lastName": "",
+    "email": "",
+    "phoneNumber": ""
+}
+
+###
+# group: payrolls / deductions
+# @name create
+POST {{base_url}}/deductions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "LIRS Tax",
+    "amount": 3,
+    // "payrollPolicyId": "{{payPolicyId}}",
+    "payProfileId": "{{payProfileId}}", // You can only have either payPolicyId or payProfileId
+    "status": "active", // or inactive
+    "type": "percentage" // or fixed
+}
+
+<> ./HRApp_responses/success.201_9.json
+// {{base_url}}/deductions
+
+###
+# group: payrolls / deductions
+# @name Find
+GET {{base_url}}/deductions?
+    payrollPolicyId={{payPolicyId}}&
+    payProfileId={{payProfileId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_31.json
+// {{base_url}}/deductions?payrollPolicyId={{payPolicyId}}&payProfileId={{payProfileId}}
+
+###
+# group: payrolls / deductions
+# @name Find By Id
+GET {{base_url}}/deductions/{{deductionId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_32.json
+// {{base_url}}/deductions/{{deductionId}}
+
+###
+# group: payrolls / deductions
+# @name Update
+PATCH {{base_url}}/deductions/{{deductionId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "edited"
+}
+
+<> ./HRApp_responses/success.200_33.json
+// {{base_url}}/deductions/{{deductionId}}
+
+###
+# group: payrolls / deductions
+# @name Delete
+DELETE {{base_url}}/deductions/{{deductionId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_34.json
+// {{base_url}}/deductions/{{deductionId}}
+
+###
+# group: payrolls / deductions
+# @name Remove employee from company deduction
+PATCH {{base_url}}/deductions/{{deductionId}}/remove
+Content-Type: application/json
+
+{
+    "payProfileId": "{{payProfileId}}"
+}
+
+###
+# group: payrolls / deductions
+# @name Add employee from company deduction
+PATCH {{base_url}}/deductions/{{deductionId}}/add
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "payProfileId": "{{payProfileId}}"
+}
+
+###
+# group: payrolls / bonuses
+# @name create
+POST {{base_url}}/bonuses
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "Transport Allowance",
+    "amount": 10000,
+    "payrollPolicyId": "{{payPolicyId}}",
+    // "payProfileId": "{{payProfileId}}", // You can only have either payPolicyId or payProfileId
+    "status": "active", // or inactive
+    "type": "fixed" // or percentage
+}
+
+<> ./HRApp_responses/success.201_10.json
+// {{base_url}}/bonuses
+
+###
+# group: payrolls / bonuses
+# @name Find
+GET {{base_url}}/bonuses?
+    payrollPolicyId={{payPolicyId}}&
+    payProfileId={{payProfileId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_35.json
+// {{base_url}}/bonuses?payrollPolicyId={{payPolicyId}}&payProfileId={{payProfileId}}
+
+###
+# group: payrolls / bonuses
+# @name Find By Id
+GET {{base_url}}/bonuses/{{bonusId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_36.json
+// {{base_url}}/bonuses/{{bonusId}}
+
+###
+# group: payrolls / bonuses
+# @name update
+PATCH {{base_url}}/bonuses/{{bonusId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "Travel Allowance",
+    "amount": 2000
+}
+
+<> ./HRApp_responses/success.200_37.json
+// {{base_url}}/bonuses/{{bonusId}}
+
+###
+# group: payrolls / bonuses
+# @name Delete
+DELETE {{base_url}}/bonuses/{{bonusId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_38.json
+// {{base_url}}/bonuses/{{bonusId}}
+
+###
+# group: payrolls / bonuses
+# @name Remove employee from company bonus
+PATCH {{base_url}}/bonuses/{{bonusId}}/remove
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "payProfileId": "{{payProfileId}}"
+}
+
+<> ./HRApp_responses/success.200_39.json
+// {{base_url}}/bonuses/{{bonusId}}/remove
+
+###
+# group: payrolls / bonuses
+# @name Add employee to general bonus
+PATCH {{base_url}}/bonuses/{{bonusId}}/add
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "payProfileId": "{{payProfileId}}"
+}
+
+###
+# group: payrolls / Payroll Policy
+# @name Company
+GET {{base_url}}/payroll-policy/company
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_40.json
+// {{base_url}}/payroll-policy/company
+
+###
+# group: payrolls / Payroll Policy
+# @name update
+PUT {{base_url}}/payroll-policy/company
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "frequency": "monthly",
+    "payday": 25,
+    "approvers": ["3db5d397-9461-420c-b466-a2cb55745fcc"]
+}
+
+<> ./HRApp_responses/success.200_41.json
+// {{base_url}}/payroll-policy/company
+
+###
+# group: payrolls
+# @name Find
+GET {{base_url}}/payrolls
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_42.json
+// {{base_url}}/payrolls
+
+###
+# group: payrolls
+# @name Find By Id
+GET {{base_url}}/payrolls/{{payrollId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_43.json
+// {{base_url}}/payrolls/{{payrollId}}
+
+###
+# group: payrolls
+# @name run
+//< {%
+    // TODO: migrate to HTTP Client Pre-request handler API
+    // var moment = require('moment');
+    
+    // pm.environment.set("date",moment().format('YYYY-MM-DD HH:mm:ss'));
+//%}
+POST {{base_url}}/payrolls/{{payrollId}}/run
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "date": "{{date}}"
+}
+
+<> ./HRApp_responses/success.201_11.json
+// {{base_url}}/payrolls/run
+
+###
+# group: payrolls
+# @name Get approved Banks
+GET {{base_url}}/payrolls/approved-banks
+
+<> ./HRApp_responses/success.200_44.json
+// {{base_url}}/payrolls/approved-banks
+
+###
+# group: payrolls
+# @name create
+POST {{base_url}}/payrolls
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "paymentDate": "2025-12-23 05:09:19.568956"
+}
+
+<> ./HRApp_responses/success.201_12.json
+// {{base_url}}/payrolls
+
+###
+# group: payrolls
+# @name retry
+POST {{base_url}}/payrolls/{{payrollId}}/retry
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRvYmlvbGFuaXRvcmlAZ21haWwuY29tIiwic3ViIjoiMTE5NGVhM2ItMTBjMi00ZDM3LTk5NGEtYWI5ZDFjMDFjMDQyIiwicGVybWlzc2lvbnMiOlsiY29tcGFueTpyZWFkIiwiZW1wbG95ZWU6bWFuYWdlIiwidGVhbTptYW5hZ2UiLCJyb2xlOm1hbmFnZSIsInBheXJvbGw6bWFuYWdlIiwiYXR0ZW5kYW5jZTptYW5hZ2UiLCJsZWF2ZTptYW5hZ2UiXSwiaWF0IjoxNzU1OTQwOTMwLCJleHAiOjE3NTYwMjczMzB9.IjLu8jGbuqyq2HDEIcvEd6sHKZXLBRumoChdSF8awfU
+Content-Type: application/json
+
+{
+    "payslipIds": ["ids"]
+}
+
+###
+# group: payrolls
+# @name Update
+PATCH {{base_url}}/payrolls/{{payrollId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "paymentDate": "2025-11-30T02:46:52.597Z"
+}
+
+<> ./HRApp_responses/success.200_45.json
+// {{base_url}}/payrolls/{{payrollId}}
+
+###
+# group: payrolls
+# @name Test Transfer
+POST https://developersandbox-api.flutterwave.com
+
+###
+# group: payslips
+# @name Find
+GET {{base_url}}/payslips?
+    page=1&
+    limit=10&
+    employeeId={{employeeId}}&
+    payrollId={{payrollId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_46.json
+// {{base_url}}/payslips?payrollId={{payrollId}}&page=1&limit=10&employeeId={{employeeId}}
+
+###
+# group: payslips
+# @name Find By Id
+GET {{base_url}}/payslips/{{payslipId}}
+Authorization: Bearer {{token}}
+
+<> ./HRApp_responses/success.200_47.json
+// {{base_url}}/payrolls/{{payrollId}}/payslips/{{payslipId}}
+
+###
+# group: payslips
+# @name delete
+DELETE {{base_url}}/payslips/{{payslipId}}
+Authorization: Bearer {{token}}
+
+###
+# group: payslips
+# @name Create
+POST {{base_url}}/payrolls/{{payrollId}}/payslips
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "employeeId": "{{employeeId}}",
+    "payrollId": "{{payrollId}}"
+}
+
+<> ./HRApp_responses/success.500.json
+// {{base_url}}/payrolls/{{payrollId}}/payslips
+
+###
+# group: Leave Requests
+# @name Create
+POST {{base_url}}/leave-requests
+
+###
+# group: flutterwave
+# @name Get Token
+POST https://idp.flutterwave.com/realms/flutterwave/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=02e5cfbc-064e-4bfa-941d-06520e9596c8&client_secret=Vyo7a4QhNqd9MOGulzHpZaSMIZspgwb4&grant_type=client_credentials
+
+<> ./HRApp_responses/success.200_48.json
+// https://idp.flutterwave.com/realms/flutterwave/protocol/openid-connect/token
+
+###
+# group: flutterwave
+# @name Test Transfer
+POST https://developersandbox-api.flutterwave.com/transfers
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ1Mk9OdTBoU1A3WGpPS0RDOHZoZ2FpLWdHYlMtWWJoMzZSLUM3M2ZRcWtnIn0.eyJleHAiOjE3NzA2NDU4OTgsImlhdCI6MTc3MDY0NTI5OCwianRpIjoiMzFlZGY4NjYtYTJhNi00OGRlLTk4Y2ItOTQ1ODQ1Zjk2YTI4IiwiaXNzIjoiaHR0cHM6Ly9pZHAuZmx1dHRlcndhdmUuY29tL3JlYWxtcy9mbHV0dGVyd2F2ZSIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiIzYzRmYmRhYi1jNTk1LTQ4NzktOGY3Yy1hNzJiYzg0MTE3MGEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiIwMmU1Y2ZiYy0wNjRlLTRiZmEtOTQxZC0wNjUyMGU5NTk2YzgiLCJhY3IiOiIxIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbInNhbmRib3hfdHJhbnNmZXJzX3JlYWQiLCJzYW5kYm94X2NoYXJnZXNfd3JpdGUiLCJzYW5kYm94X3BheW1lbnRfbWV0aG9kc19yZWFkIiwib2ZmbGluZV9hY2Nlc3MiLCJzYW5kYm94X2JhbGFuY2VzX3JlYWQiLCJkZWZhdWx0LXJvbGVzLWZsdXR0ZXJ3YXZlIiwidW1hX2F1dGhvcml6YXRpb24iLCJzYW5kYm94X3RyYW5zZmVyc193cml0ZSIsInNhbmRib3hfY2hhcmdlc19yZWFkIiwic2FuZGJveF9wYXltZW50X21ldGhvZHNfd3JpdGUiLCJzYW5kYm94X2N1c3RvbWVyc193cml0ZSIsInNhbmRib3hfY3VzdG9tZXJzX3JlYWQiXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImNsaWVudEhvc3QiOiIxMC4xLjEwNC44OCIsInByZWZlcnJlZF91c2VybmFtZSI6InNlcnZpY2UtYWNjb3VudC0wMmU1Y2ZiYy0wNjRlLTRiZmEtOTQxZC0wNjUyMGU5NTk2YzgiLCJwYXJ0eUlkIjoiN2MxYzQyM2ItNGU5ZS00YTBhLWJjODctNDczNGMzMzAzODhjIiwiY2xpZW50QWRkcmVzcyI6IjEwLjEuMTA0Ljg4IiwiY2xpZW50X2lkIjoiMDJlNWNmYmMtMDY0ZS00YmZhLTk0MWQtMDY1MjBlOTU5NmM4In0.i8-vizuWy3bjdD5XJ6l4J48dq0w7VlPExPq_ZfJgN0qTBNFMLTz25JHx5MvWH0hYYdeLh0Nwh_RQv-9XZHD7pbli7E93umA_iVwnYAynBnAD8I5au4q6-p-W0H-nsebCZjlvN6oM6bsfgV81aWzj-jvOZsD9LaHuhZmHacEbdmdMToqHORN_C19McCTU503gvtyK8tT5hkiG-Pf8EkWTAD74FFZf64GlqhuXUReblh1k-XbwIrT9dXzAiXLIu3-UJTBWs25X-uVYRo2vtveJ4-CY-ljfY-RciNQKwlAJ9mD3SxFWdnyDtznH2Vip7yULgVdieOub5G7zJOsvCY4JOQ
+X-Scenario-Key: scenario:successful
+X-Idempotency-Key: f7d2a3c9-4b81-4e1a-8d32-9f6e5a0b7c14
+Content-Type: application/json
+
+{
+    "action": "instant",
+    "reference": "f7d2a3c9-4b81-4e1a-8d32-9f6e5a0b7c14",
+    "narration": "Testing DVA funding",
+    "payment_instruction": {
+        "source_currency": "NGN",
+        "destination_currency": "NGN",
+        "amount": {
+            "applies_to": "destination_currency",
+            "value": 5000
+        },
+        "recipient_id": "rcb_euhXs8sGAf"
+    },
+    "callback_url": "https://d944mxlj-5000.uks1.devtunnels.ms/api/v1/webhooks/flutterwave"
+}
+
+###
+# group: flutterwave
+# @name Create DVA Recipient
+POST https://developersandbox-api.flutterwave.com/transfers/recipients
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ1Mk9OdTBoU1A3WGpPS0RDOHZoZ2FpLWdHYlMtWWJoMzZSLUM3M2ZRcWtnIn0.eyJleHAiOjE3NzA2NDQ4NDUsImlhdCI6MTc3MDY0NDI0NSwianRpIjoiNWJhNjRhNDgtZmY5My00YjU0LTgwNzYtMmVmM2QxODNiNWY4IiwiaXNzIjoiaHR0cHM6Ly9pZHAuZmx1dHRlcndhdmUuY29tL3JlYWxtcy9mbHV0dGVyd2F2ZSIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiIzYzRmYmRhYi1jNTk1LTQ4NzktOGY3Yy1hNzJiYzg0MTE3MGEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiIwMmU1Y2ZiYy0wNjRlLTRiZmEtOTQxZC0wNjUyMGU5NTk2YzgiLCJhY3IiOiIxIiwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbInNhbmRib3hfdHJhbnNmZXJzX3JlYWQiLCJzYW5kYm94X2NoYXJnZXNfd3JpdGUiLCJzYW5kYm94X3BheW1lbnRfbWV0aG9kc19yZWFkIiwib2ZmbGluZV9hY2Nlc3MiLCJzYW5kYm94X2JhbGFuY2VzX3JlYWQiLCJkZWZhdWx0LXJvbGVzLWZsdXR0ZXJ3YXZlIiwidW1hX2F1dGhvcml6YXRpb24iLCJzYW5kYm94X3RyYW5zZmVyc193cml0ZSIsInNhbmRib3hfY2hhcmdlc19yZWFkIiwic2FuZGJveF9wYXltZW50X21ldGhvZHNfd3JpdGUiLCJzYW5kYm94X2N1c3RvbWVyc193cml0ZSIsInNhbmRib3hfY3VzdG9tZXJzX3JlYWQiXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImNsaWVudEhvc3QiOiIxMC4xLjEyNy45NiIsInByZWZlcnJlZF91c2VybmFtZSI6InNlcnZpY2UtYWNjb3VudC0wMmU1Y2ZiYy0wNjRlLTRiZmEtOTQxZC0wNjUyMGU5NTk2YzgiLCJwYXJ0eUlkIjoiN2MxYzQyM2ItNGU5ZS00YTBhLWJjODctNDczNGMzMzAzODhjIiwiY2xpZW50QWRkcmVzcyI6IjEwLjEuMTI3Ljk2IiwiY2xpZW50X2lkIjoiMDJlNWNmYmMtMDY0ZS00YmZhLTk0MWQtMDY1MjBlOTU5NmM4In0.Re-HMn-07FPxhiWnxTMPO21DEdVOcC8VEkTQ_U4qB02_lYwttQHs5kpJUpcj60ZWvsSbG6XRKA8TuIaHw9Efp-VqwUjjy_E-YAFSxg0VQSkvGZS6FlztoQ6m3shW4V4h2o_4PkNygnUAHGvdtnyUzSBUxTp_IuK_KLH6eVriM2x-YTTX_U_qAwath92APhzDbimN1AYroH62x7l3uR0F5--wiwgEITTJy8oAjfbYAM6X7oJSLX6MWRSw2XL-3kEzJWqxUWHMT2_ce_EPhhfrNFonDvN6U5Dk4ql5JZ6JGheo0JjSVPSRUDwabx2EeNpXj1bCIWVpc1VAxlxe1YowMA
+X-Idempotency-Key: cb0e10d5-f5ju-424b-af44-65445ae4473b
+Content-Type: application/json
+
+{
+  "type": "bank_ngn",
+  "bank": {
+    "account_number": "1797801127",
+    "code": "044" 
+  }
+}
+
+
+<> ./HRApp_responses/success.201_13.json
+// https://developersandbox-api.flutterwave.com/transfers/recipients

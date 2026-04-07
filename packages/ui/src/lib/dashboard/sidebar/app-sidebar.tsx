@@ -191,9 +191,7 @@ export function AppSidebar({
             title={resolved.secondaryTitle}
             projects={projectNavItems}
           />
-        ) : (
-          <NavProjects title={`ADMIN`} projects={projectNavItems} />
-        )}
+        ) : null}
       </SidebarContent>
       <SidebarFooter className={`px-`}>
         <NavUser theme={theme} user={resolved.user} />

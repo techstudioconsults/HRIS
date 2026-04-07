@@ -39,7 +39,7 @@ export function NavMain({
     }[];
   }[];
 }) {
-  const { isMobile, setOpenMobile } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
 
   const handleNavigate = () => {
     if (isMobile) {
@@ -48,9 +48,11 @@ export function NavMain({
   };
 
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel>{title}</SidebarGroupLabel>
-      <SidebarMenu>
+    <SidebarGroup className={`px-0`}>
+      <SidebarGroupLabel className={`font-light mb-2 ml-5`}>
+        {title}
+      </SidebarGroupLabel>
+      <SidebarMenu className={`gap-5`}>
         {items.map((item) => {
           // Check if any sub-item is active to determine if collapsible should be open
           const hasActiveSubItem =
@@ -64,18 +66,32 @@ export function NavMain({
               defaultOpen={shouldBeOpen}
               className="group/collapsible"
             >
-              <SidebarMenuItem className="flex items-center justify-center">
+              <SidebarMenuItem
+                className={cn(
+                  state === 'collapsed' && 'flex items-center justify-center'
+                )}
+              >
                 <CollapsibleTrigger asChild>
                   <Link href={item.url} onClick={handleNavigate}>
                     <SidebarMenuButton
                       className={cn(
-                        'w-full p-6 transition-colors',
+                        'hover:bg-primary/10 w-full cursor-pointer p-6 transition-all duration-75',
                         item.isActive &&
-                          'border-primary/70 text-primary border-2 font-medium shadow-[0px_0px_0px_2px_#0266F333]'
+                          'border-primary bg-primary/40 border-3 font-medium shadow-[0px_0px_0px_2px_#0266F333]'
                       )}
                     >
                       {/*{item.icon && <item.icon className={cn('h-4 w-4')} />}*/}
-                      {item.icon && <Icon name={item.icon} />}
+                      {item.icon && (
+                        <Icon
+                          variant={item.isActive ? `Bulk` : `Linear`}
+                          name={item.icon}
+                          size={18}
+                          className={cn(
+                            `text-background`,
+                            item.isActive ? `-ml-1` : `-ml-0.5`
+                          )}
+                        />
+                      )}
                       <span>{item.name}</span>
                       {item.subItems && (
                         <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />

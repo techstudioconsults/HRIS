@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "data": {
+    "id": "bd78e2ba-e712-4a89-b0e5-9e3c0709e160",
+    "companyId": "67a26810-79dc-4ffc-a147-027b096eaeda",
+    "accountName": "TEST-MANAGED-ACCOUNT",
+    "accountNumber": "1238387438",
+    "bankName": "Test Bank",
+    "balance": 0
+  }
+}

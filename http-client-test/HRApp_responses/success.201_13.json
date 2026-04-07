@@ -1,0 +1,17 @@
+{
+  "status": "success",
+  "message": "Recipient created",
+  "data": {
+    "type": "bank",
+    "id": "rcb_euhXs8sGAf",
+    "name": {
+      "first": "Ajadi",
+      "last": "Jackson"
+    },
+    "currency": "NGN",
+    "bank": {
+      "account_number": "1797801127",
+      "code": "044"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "data": {
+    "id": "26347853-7257-448e-b546-e9f11cb53a64",
+    "name": "HR Manager",
+    "permissions": ["company:read", "team:editor", "role:editor"],
+    "createdAt": "2025-05-26T07:28:21.085Z",
+    "updatedAt": "2025-05-26T07:36:28.053Z"
+  }
+}

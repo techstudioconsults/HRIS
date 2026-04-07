@@ -1,0 +1,103 @@
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "a90dc3e1-a184-4fec-9ac7-1a6598170a91",
+        "name": "employees-csv..csv",
+        "size": 382,
+        "url": "https://hr-techstudio-app.nyc3.digitaloceanspaces.com/hr-techstudio-app/Techstudio Academy/resources/employees-csv..csv",
+        "mimetype": "text/csv",
+        "createdAt": "2025-07-07T18:39:31.226Z"
+      },
+      {
+        "id": "b3091a52-4148-43b9-b1fd-eb4291c45c86",
+        "name": "employees-csv.csv",
+        "size": 382,
+        "url": "https://hr-techstudio-app.nyc3.digitaloceanspaces.com/hr-techstudio-app/Techstudio Academy/resources/employees-csv.csv",
+        "mimetype": "text/csv",
+        "createdAt": "2025-07-07T18:44:28.091Z"
+      },
+      {
+        "id": "b115bd0e-5f1a-47ec-a8b5-122eda6c8e1c",
+        "name": "employees-csv.csv",
+        "size": 382,
+        "url": "https://hr-techstudio-app.nyc3.digitaloceanspaces.com/hr-techstudio-app/Techstudio Academy/resources/employees-csv.csv",
+        "mimetype": "text/csv",
+        "createdAt": "2025-07-07T18:51:38.991Z"
+      },
+      {
+        "id": "9e1377e7-ae8a-4e76-bf59-d8ab1eb5ce9e",
+        "name": "employees-csv.csv",
+        "size": 382,
+        "url": "https://hr-techstudio-app.nyc3.digitaloceanspaces.com/Techstudio Academy/resources/employees-csv.csv",
+        "mimetype": "text/csv",
+        "createdAt": "2025-07-07T18:54:46.452Z"
+      },
+      {
+        "id": "5a6d3bdd-6e31-48d2-9a08-53ef7079e1eb",
+        "name": "employees-csv.csv",
+        "size": 382,
+        "url": "https://hr-techstudio-app.nyc3.digitaloceanspaces.com/Techstudio Academy/resources/employees-csv.csv/hr-techstudio-app",
+        "mimetype": "text/csv",
+        "createdAt": "2025-07-07T18:57:45.098Z"
+      },
+      {
+        "id": "448b2bb0-fc7f-4cb8-9354-d58a58bdb025",
+        "name": "employees-csv.csv",
+        "size": 382,
+        "url": "https://hr-techstudio-app.nyc3.digitaloceanspaces.com/hr-techstudio-app/Techstudio Academy/resources/employees-csv.csv",
+        "mimetype": "text/csv",
+        "createdAt": "2025-07-07T18:58:24.333Z"
+      },
+      {
+        "id": "7a306a9a-33af-4f69-a5c5-29c673c84dde",
+        "name": "employees-csv.csv",
+        "size": 382,
+        "url": "https://hr-techstudio-app.nyc3.digitaloceanspaces.com/hr-techstudio-app/Techstudio Academy/resources/employees-csv.csv",
+        "mimetype": "text/csv",
+        "createdAt": "2025-07-07T19:04:21.706Z"
+      },
+      {
+        "id": "efac8385-9fad-49b1-bad4-83e5b73cd852",
+        "name": "employees-csv.csv",
+        "size": 382,
+        "url": "https://hr-techstudio-app.nyc3.digitaloceanspaces.com/hr-techstudio-app/Techstudio Academy/resources/employees-csv.csv",
+        "mimetype": "text/csv",
+        "createdAt": "2025-07-07T19:13:16.881Z"
+      },
+      {
+        "id": "98dac8e8-f179-4ba7-b513-984bcecdbf7c",
+        "name": "baseball-scoring-handbook-for-developers-pdf.pdf",
+        "size": 136373,
+        "url": "https://hr-techstudio-app.nyc3.digitaloceanspaces.com/hr-techstudio-app/Techstudio Academy/resources/baseball-scoring-handbook-for-developers-pdf.pdf",
+        "mimetype": "application/pdf",
+        "createdAt": "2025-07-07T19:49:58.739Z"
+      },
+      {
+        "id": "f9ee1ffe-c099-40de-bab7-65c7b087f349",
+        "name": "technical-decision-document--choosing-between-role-based-and-claim-based-authorization-pdf.pdf",
+        "size": 235480,
+        "url": "https://hr-techstudio-app.nyc3.digitaloceanspaces.com/hr-techstudio-app/Techstudio Academy/resources/technical-decision-document--choosing-between-role-based-and-claim-based-authorization-pdf.pdf",
+        "mimetype": "application/pdf",
+        "createdAt": "2025-07-07T19:50:39.345Z"
+      },
+      {
+        "id": "82fa99db-3400-43ca-aada-06f282ee1710",
+        "name": "backend-team-monthly-progress-report---june-2025-pdf.pdf",
+        "size": 99740,
+        "url": "https://hr-techstudio-app.nyc3.digitaloceanspaces.com/hr-techstudio-app/Techstudio Academy/resources/backend-team-monthly-progress-report---june-2025-pdf.pdf",
+        "mimetype": "application/pdf",
+        "createdAt": "2025-07-07T19:51:15.301Z"
+      }
+    ],
+    "metadata": {
+      "total": 11,
+      "page": 1,
+      "limit": 10,
+      "totalPages": 2,
+      "hasNextPage": true,
+      "hasPreviousPage": false
+    }
+  }
+}

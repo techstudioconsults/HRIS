@@ -86,6 +86,7 @@ function mapEventToNotification(
         actions: [
           {
             label: 'View',
+            icon: `Eye`,
             onClick: () => {
               window.location.href = `/admin/payroll`;
             },
@@ -104,12 +105,14 @@ function mapEventToNotification(
           {
             label: 'Approve Payroll',
             variant: 'primary',
-            onClick: () => {}, // Will be wired in component
+            icon: `Check`,
+            onClick: () => {},
           },
           {
             label: 'Decline Payroll',
             variant: 'destructiveOutline',
-            onClick: () => {}, // Will be wired in component
+            icon: `X`,
+            onClick: () => {},
           },
         ],
         ...base,
@@ -185,7 +188,7 @@ export const AppEventsListener = () => {
   //   title: 'Preview Notification',
   //   body: 'This is a temporary preview banner for styling.',
   //   render: 'banner',
-  //   severity: 'info',
+  //   severity: 'warning',
   //   dismissible: false,
   //   actions: [
   //     {
@@ -202,11 +205,12 @@ export const AppEventsListener = () => {
   //     },
   //   ],
   // };
+  // const bannersToRender =
+  //   process.env.NODE_ENV !== 'production' && banners.length === 0
+  //     ? [previewBanner]
+  //     : banners;
 
   const bannersToRender = banners;
-  // process.env.NODE_ENV !== 'production' && banners.length === 0
-  //   ? [previewBanner]
-  //   : banners;
 
   const dismissBanner = useCallback((id: string) => {
     setBanners((previous) => previous.filter((b) => b.id !== id));
@@ -446,9 +450,10 @@ export const AppEventsListener = () => {
               className={cn(
                 'bg-background p-4 border-none border-primary-75 gap-2 animate-entrance min-w-screen' +
                   'pointer-events-auto flex w-full items-center justify-between border-y',
-                banner.severity === 'success' && 'border-success/20',
-                banner.severity === 'error' && 'border-destructive/20',
-                banner.severity === 'warning' && 'border-warning/20',
+                banner.severity === 'success' && 'text-success bg-success/5',
+                banner.severity === 'error' && 'text-danger bg-destructive/5',
+                banner.severity === 'warning' &&
+                  'text-warning-400 bg-warning/5',
                 banner.severity === 'info' && 'text-primary bg-primary-50'
               )}
             >
@@ -460,15 +465,15 @@ export const AppEventsListener = () => {
                     'mt-0.5',
                     banner.severity === 'success' && 'text-success',
                     banner.severity === 'error' && 'text-destructive',
-                    banner.severity === 'warning' && 'text-warning',
+                    banner.severity === 'warning' && 'text-warning-400',
                     banner.severity === 'info' && 'text-primary'
                   )}
                 />
                 <div className="space-y-1">
                   {/* {banner.title ? <p className="text-sm font-medium">{banner.title}</p> : null} */}
-                  <p className="text-primary text-balance wrap-break-word text-sm font-medium">
+                  <span className="text-balance wrap-break-word text-sm font-medium">
                     {banner.body}
-                  </p>
+                  </span>
                 </div>
               </div>
               <div className="flex items-center gap-5 lg:gap-10">

@@ -1,0 +1,51 @@
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "5211ac12-bda0-47a7-a55e-07f86427388e",
+        "name": "executives",
+        "createdAt": "2025-05-24T07:37:52.080Z",
+        "updatedAt": "2025-05-24T07:37:52.080Z"
+      },
+      {
+        "id": "db826d22-8432-4e7a-a322-ab8c5eba2481",
+        "name": "Human Resources",
+        "createdAt": "2025-05-26T05:05:40.625Z",
+        "updatedAt": "2025-05-26T05:05:40.625Z"
+      },
+      {
+        "id": "c8937965-278c-4167-a5e8-af579c1c61f5",
+        "name": "Marketing",
+        "createdAt": "2025-05-26T05:08:35.684Z",
+        "updatedAt": "2025-05-26T05:08:35.684Z"
+      },
+      {
+        "id": "1a0cc863-4cc7-41c5-a4ac-5c6c609c43af",
+        "name": "Sales",
+        "createdAt": "2025-05-26T05:11:38.959Z",
+        "updatedAt": "2025-05-26T05:11:38.959Z"
+      },
+      {
+        "id": "09b77a1b-835a-4be4-bdf4-64436ce6715e",
+        "name": "Accounting",
+        "createdAt": "2025-05-26T05:13:23.932Z",
+        "updatedAt": "2025-05-26T05:13:23.932Z"
+      },
+      {
+        "id": "9e864aab-85c6-4b60-8e7c-b7d0952628e8",
+        "name": "Operations",
+        "createdAt": "2025-05-26T05:22:30.149Z",
+        "updatedAt": "2025-05-26T05:22:30.149Z"
+      }
+    ],
+    "metadata": {
+      "total": 6,
+      "page": 1,
+      "limit": 10,
+      "totalPages": 1,
+      "hasNextPage": false,
+      "hasPreviousPage": false
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "32da9e89-e924-4b3b-8c14-b9f16075c93c",
+        "name": "first",
+        "createdAt": "2025-07-07T20:27:15.817Z"
+      },
+      {
+        "id": "4b479ee5-869c-43fc-aa55-a17389e1ed79",
+        "name": "second",
+        "createdAt": "2025-07-07T20:30:09.565Z"
+      }
+    ],
+    "metadata": {
+      "total": 2,
+      "page": 1,
+      "limit": 10,
+      "totalPages": 1,
+      "hasNextPage": false,
+      "hasPreviousPage": false
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "data": {
+    "id": "90dba282-a76e-4da5-99f9-3cb7be6d3ab2",
+    "name": "HR Secetary",
+    "permissions": ["company:read", "team:read", "role:editor"],
+    "createdAt": "2025-05-26T07:31:27.362Z",
+    "updatedAt": "2025-05-26T07:31:27.362Z"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "data": {
+    "id": "3e6e4c3a-dea0-4e6e-9ca7-dc67683196af",
+    "name": "Loan",
+    "amount": 3,
+    "status": "active",
+    "type": "percentage",
+    "createdAt": "2025-08-11T04:54:31.933Z"
+  }
+}

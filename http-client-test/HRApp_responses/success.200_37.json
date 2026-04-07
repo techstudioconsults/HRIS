@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "data": {
+    "id": "bd152171-80e3-4940-a735-ad92addd61c9",
+    "name": "Travel Allowance",
+    "amount": 2000,
+    "type": "fixed",
+    "status": "active",
+    "createdAt": "2025-08-11T04:19:50.144Z"
+  }
+}

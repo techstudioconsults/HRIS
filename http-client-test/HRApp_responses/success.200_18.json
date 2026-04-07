@@ -1,0 +1,12 @@
+{
+  "success": true,
+  "data": {
+    "resetPassword": true,
+    "reviewProfileDetails": false,
+    "acknowledgePolicy": false,
+    "reviewPayrollInfo": false,
+    "takenTour": false,
+    "employeeId": "9f5cbd49-5607-4b09-977a-df53fa5fccfe",
+    "id": "5623bb80-1391-4f70-aa2a-0e34238f4783"
+  }
+}

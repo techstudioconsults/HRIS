@@ -1,14 +1,45 @@
-import { HttpAdapter } from "@/lib/http/http-adapter";
+import { HttpAdapter } from '@/lib/http/http-adapter';
 import {
   getTeamsWithRoles,
   createRole as sharedCreateRole,
   deleteRole as sharedDeleteRole,
   getRoles as sharedGetRoles,
   updateRole as sharedUpdateRole,
-} from "@/modules/@org/shared/organization-service";
-import { CompanyProfileFormData } from "@/schemas";
+} from '@/modules/@org/shared/organization-service';
+import { CompanyProfileFormData } from '@/schemas';
 
-import { CompanyProfile } from "../types";
+import { CompanyProfile } from '../types';
+
+export interface OnboardingSetupStatus {
+  resetPassword: boolean;
+  reviewProfileDetails: boolean;
+  acknowledgePolicy: boolean;
+  reviewPayrollInfo: boolean;
+  takenTour: boolean;
+}
+
+type OnboardingSetupStatusApi = Omit<OnboardingSetupStatus, 'takenTour'> & {
+  takenTour?: boolean;
+  takeTour?: boolean;
+};
+
+const normalizeSetupStatus = (
+  setupStatus: OnboardingSetupStatusApi
+): OnboardingSetupStatus => ({
+  ...setupStatus,
+  takenTour: setupStatus.takenTour ?? setupStatus.takeTour ?? false,
+});
+
+export const isOnboardingSetupComplete = (
+  setupStatus?: Partial<OnboardingSetupStatus> | null
+): boolean =>
+  Boolean(
+    setupStatus?.resetPassword &&
+    setupStatus.reviewProfileDetails &&
+    setupStatus.acknowledgePolicy &&
+    setupStatus.reviewPayrollInfo &&
+    setupStatus.takenTour
+  );
 
 export class OnboardingService {
   private readonly http: HttpAdapter;
@@ -18,7 +49,10 @@ export class OnboardingService {
   }
 
   async updateCompanyProfile(data: CompanyProfileFormData) {
-    const response = await this.http.patch<{ data: string; success: boolean }>(`/companies/current`, data);
+    const response = await this.http.patch<{ data: string; success: boolean }>(
+      `/companies/current`,
+      data
+    );
     if (response?.status === 200) {
       return response.data;
     }
@@ -37,7 +71,9 @@ export class OnboardingService {
   }
 
   async createTeam(data: { name: string; parentId?: string }) {
-    const response = await this.http.post(`/teams`, data);
+    const response = await this.http.post<
+      ApiResponse<{ id: string; name: string }>
+    >(`/teams`, data);
 
     if (response?.status === 201) {
       return {
@@ -46,11 +82,13 @@ export class OnboardingService {
         roles: [],
       };
     }
-    throw new Error("Failed to create team");
+    throw new Error('Failed to create team');
   }
 
   async updateTeam(teamId: string, name: string) {
-    const response = await this.http.patch(`/teams/${teamId}`, { name });
+    const response = await this.http.patch<
+      ApiResponse<{ id: string; name: string }>
+    >(`/teams/${teamId}`, { name });
     if (response?.status === 200) {
       // Get the updated team's roles to maintain consistency
       const roles = await this.getRoles(teamId);
@@ -60,7 +98,7 @@ export class OnboardingService {
         roles: roles,
       };
     }
-    throw new Error("Failed to update team");
+    throw new Error('Failed to update team');
   }
 
   async deleteTeam(teamId: string) {
@@ -73,24 +111,34 @@ export class OnboardingService {
   }
 
   async getRole(roleId: string) {
-    const response = await this.http.get(`/roles/${roleId}`);
+    const response = await this.http.get<ApiResponse<unknown>>(
+      `/roles/${roleId}`
+    );
     if (response?.status === 200) {
       return response.data.data;
     }
   }
 
   async getCompanyProfile() {
-    const response = await this.http.get<ApiResponse<CompanyProfile>>(`/companies/current`);
+    const response =
+      await this.http.get<ApiResponse<CompanyProfile>>(`/companies/current`);
     if (response?.status === 200) {
       return response.data.data;
     }
   }
 
-  async createRole(roleData: { name: string; teamId: string; permissions: string[] }) {
+  async createRole(roleData: {
+    name: string;
+    teamId: string;
+    permissions: string[];
+  }) {
     return sharedCreateRole(this.http, roleData);
   }
 
-  async updateRole(roleId: string, roleData: { name?: string; permissions?: string[] }) {
+  async updateRole(
+    roleId: string,
+    roleData: { name?: string; permissions?: string[] }
+  ) {
     return sharedUpdateRole(this.http, roleId, roleData);
   }
 
@@ -100,17 +148,49 @@ export class OnboardingService {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async onboardEmployees(data: { employees: any[] }) {
-    const response = await this.http.post<{
-      success: boolean;
-      data: {
+    const response = await this.http.post<
+      ApiResponse<{
         onboardedEmployees: number;
         failedEmployees: number;
-      };
-    }>("/employees/onboard", data);
+      }>
+    >('/employees/onboard', data);
 
     if (response?.status === 201) {
       return response.data;
     }
-    throw new Error("Failed to onboard employees");
+    throw new Error('Failed to onboard employees');
+  }
+
+  async getSetupStatus(employeeId: string) {
+    const response = await this.http.get<ApiResponse<OnboardingSetupStatusApi>>(
+      `/employees/${employeeId}/setup`
+    );
+    if (response?.status === 200) {
+      return {
+        ...response.data,
+        data: normalizeSetupStatus(response.data.data),
+      };
+    }
+  }
+
+  async setSetupStatus(
+    employeeId: string,
+    setupInput:
+      | OnboardingSetupStatus
+      | (Omit<OnboardingSetupStatus, 'takenTour'> & { takeTour: boolean })
+  ) {
+    const normalizedSetupInput = normalizeSetupStatus(setupInput);
+    const response = await this.http.patch<
+      ApiResponse<OnboardingSetupStatusApi & { employeeId: string; id: string }>
+    >(`/employees/${employeeId}/setup`, normalizedSetupInput);
+    if (response?.status === 200) {
+      return {
+        ...response.data,
+        data: {
+          ...response.data.data,
+          ...normalizeSetupStatus(response.data.data),
+        },
+      };
+    }
   }
 }

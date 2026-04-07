@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
+
 import { MainButton } from '@workspace/ui/lib/button';
 import { useCallback, useEffect } from 'react';
 

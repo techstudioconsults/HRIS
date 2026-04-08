@@ -73,7 +73,7 @@ export function FundWalletAccountModal({
       open={showFundWalletAccountModal}
       onOpenChange={setShowFundWalletAccountModal}
       title="Fund Wallet"
-      className="min-w-md"
+      className="md:min-w-sm!"
     >
       <div className="space-y-6">
         {/* Instructional text */}

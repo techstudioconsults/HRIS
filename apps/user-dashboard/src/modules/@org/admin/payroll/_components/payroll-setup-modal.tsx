@@ -59,7 +59,7 @@ export const PayrollSetupSettingsModal = () => {
       title="Let's Get Payroll Set Up"
       description="To begin processing payroll, you'll need to set your company's pay schedule.
       This includes how often you pay your team and on what date each cycle runs."
-      className="min-w-md"
+      className="md:min-w-md!"
     >
       <div className="space-y-6">
         <div className="bg-primary/10 border-primary-75 rounded-lg border p-5">

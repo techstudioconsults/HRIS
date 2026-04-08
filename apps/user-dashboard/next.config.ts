@@ -1,9 +1,16 @@
 import type { NextConfig } from 'next';
 import bundleAnalyzer from '@next/bundle-analyzer';
+import withSerwistInit from '@serwist/next';
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 }) as (config: NextConfig) => NextConfig;
+
+const withSerwist = withSerwistInit({
+  swSrc: 'src/sw.ts',
+  swDest: 'public/sw.js',
+  disable: process.env.DISABLE_PWA === 'true',
+});
 
 const nextConfig: NextConfig = {
   transpilePackages: ['@workspace/ui'],
@@ -25,6 +32,10 @@ const nextConfig: NextConfig = {
   },
 };
 
-const finalConfig: NextConfig = withBundleAnalyzer(nextConfig);
+const isProduction = process.env.NODE_ENV === 'production';
+
+const finalConfig: NextConfig = isProduction
+  ? withSerwist(withBundleAnalyzer(nextConfig))
+  : withBundleAnalyzer(nextConfig);
 
 export default finalConfig;

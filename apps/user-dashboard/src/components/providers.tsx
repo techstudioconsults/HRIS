@@ -11,6 +11,7 @@ import { TooltipProvider } from '@workspace/ui/components/tooltip';
 import { Toast } from '@workspace/ui/lib/Toast';
 import { KBarProviderWrapper } from '@/lib/kbar/kbar-provider';
 import { Suspense } from 'react';
+import { PwaRegistration } from '@/components/pwa/pwa-registration';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -30,6 +31,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 <Toast />
                 {/* <NetworkStatusModal /> */}
                 <KBarProviderWrapper>
+                  <PwaRegistration />
                   <Suspense>{children}</Suspense>
                 </KBarProviderWrapper>
               </TooltipProvider>

@@ -61,7 +61,7 @@ export const ResetPassword = () => {
   };
 
   return (
-    <section className="mx-auto max-w-[589px] rounded-xl bg-white p-8 shadow shadow-gray-100">
+    <section className="mx-auto max-w-[589px] w-full rounded-xl bg-background p-8 shadow">
       <div className={`mb-8 space-y-2`}>
         <h3 className="text-[32px]/[120%] font-semibold tracking-[-2%] text-black">
           Reset Password

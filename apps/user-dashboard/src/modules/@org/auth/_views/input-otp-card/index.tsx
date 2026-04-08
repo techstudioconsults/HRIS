@@ -88,15 +88,15 @@ export const InputOtpCard = () => {
   };
 
   return (
-    <section className="bg-background mx-auto max-w-[589px] rounded-md p-8 shadow shadow-gray-100">
-      <div className={`mb-8 space-y-2`}>
-        <h3 className="text-[32px]/[120%] font-semibold tracking-[-2%] text-black">
+    <section className="bg-background mx-auto w-full max-w-[589px] rounded-xl p-8 shadow">
+      <div className={`mb-8 text-center lg:text-left space-y-2`}>
+        <h3 className=" text-[24px] lg:text-[32px]/[120%] font-semibold tracking-[-2%] text-black">
           Enter the 6-digit Code
         </h3>
-        <p className={`text-gray text-lg`}>
-          A verification code has been sent to{' '}
-          <span className={`font-bold`}>{email}</span>
-        </p>
+        <div className={`mt-6`}>
+          <p className={``}> A verification code has been sent to </p>
+          <p className={`font-bold truncate text-gray text-lg!`}>{email}</p>
+        </div>
       </div>
 
       <FormProvider {...methods}>
@@ -121,7 +121,7 @@ export const InputOtpCard = () => {
               Login
             </MainButton>
             <p className="text-grey-500 mt-4 text-center text-sm">
-              Didn&apos;t receive the code?{' '}
+              Did not receive the code?{' '}
               <span
                 onClick={resendOTP}
                 className="text-primary cursor-pointer font-medium hover:underline"

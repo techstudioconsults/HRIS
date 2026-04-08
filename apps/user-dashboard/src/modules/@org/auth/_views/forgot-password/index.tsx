@@ -49,49 +49,47 @@ export const ForgotPassword = () => {
   };
 
   return (
-    <section>
-      <div className="bg-background mx-auto max-w-[589px] rounded-xl p-8 shadow">
-        <div className={`space-y-4`}>
-          <BackButton size={32} />
-          <FormHeader
-            title="Forgot Password"
-            subTitle="Enter your email address to reset your password"
-          />
-        </div>
-
-        <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(handleSubmitForm)} className="">
-            <section className={`space-y-4`}>
-              <FormField
-                placeholder={`Enter email address`}
-                className={`h-14 w-full`}
-                label={`Email Address`}
-                name={'email'}
-                type={`email`}
-              />
-            </section>
-            <div className="pt-8">
-              <MainButton
-                type="submit"
-                variant="primary"
-                isDisabled={isPending || !isValid}
-                isLoading={isPending}
-                className="w-full"
-                size="2xl"
-              >
-                Continue
-              </MainButton>
-            </div>
-          </form>
-
-          <p className="text-grey-500 mt-4 text-center text-sm">
-            Don&apos;t have an account?{' '}
-            <Link href="/register" className="text-primary hover:underline">
-              Sign Up
-            </Link>
-          </p>
-        </FormProvider>
+    <section className="bg-background mx-auto max-w-[589px] w-full rounded-xl p-8 shadow">
+      <div className={`space-y-4`}>
+        <BackButton size={32} />
+        <FormHeader
+          title="Forgot Password"
+          subTitle="Enter your email address to reset your password"
+        />
       </div>
+
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(handleSubmitForm)} className="">
+          <section className={`space-y-4`}>
+            <FormField
+              placeholder={`Enter email address`}
+              className={`h-14 w-full`}
+              label={`Email Address`}
+              name={'email'}
+              type={`email`}
+            />
+          </section>
+          <div className="pt-8">
+            <MainButton
+              type="submit"
+              variant="primary"
+              isDisabled={isPending || !isValid}
+              isLoading={isPending}
+              className="w-full"
+              size="2xl"
+            >
+              Continue
+            </MainButton>
+          </div>
+        </form>
+
+        <p className="text-grey-500 mt-4 text-center text-sm">
+          Don&apos;t have an account?{' '}
+          <Link href="/register" className="text-primary hover:underline">
+            Sign Up
+          </Link>
+        </p>
+      </FormProvider>
     </section>
   );
 };

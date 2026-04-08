@@ -11,11 +11,7 @@ const Page = () => {
     return <ForgotPassword />;
   };
 
-  return (
-    // <main className="flex h-[calc(35rem)] items-center justify-center">
-    <>{getCurrentView()}</>
-    // </main>
-  );
+  return getCurrentView();
 };
 
 export default Page;

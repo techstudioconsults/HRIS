@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 
 const Page = () => {
   useEffect(() => {
-    redirect('/dashboard');
+    redirect('/login');
   }, []);
   return (
     <section className={`flex h-dvh w-full items-center justify-center`}>

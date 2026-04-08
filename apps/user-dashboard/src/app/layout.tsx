@@ -10,11 +10,14 @@ import { Playfair_Display, Work_Sans } from 'next/font/google';
 export const metadata: Metadata = {
   title: 'HRIS',
   description: 'A New HR System by Techstudio Academy',
-  manifest: '/manifest.webmanifest',
+  manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: 'HRIS',
+  },
+  formatDetection: {
+    telephone: false,
   },
   icons: {
     icon: [
@@ -24,8 +27,8 @@ export const metadata: Metadata = {
     ],
     shortcut: [{ url: '/images/logo-mini.svg', type: 'image/svg+xml' }],
     apple: [
-      { url: '/images/logo-mini.svg', type: 'image/svg+xml' },
       { url: '/icons/icon-192.svg', sizes: '192x192', type: 'image/svg+xml' },
+      { url: '/icons/icon-512.svg', sizes: '512x512', type: 'image/svg+xml' },
     ],
   },
 };

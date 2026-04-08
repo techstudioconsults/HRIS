@@ -17,7 +17,7 @@ import { Button } from '@workspace/ui/components/button';
 import { AxiosError } from 'axios';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import empty1 from '~/images/empty-state.svg';
@@ -35,7 +35,7 @@ import { DashboardCard } from '../../dashboard/_components/dashboard-card';
 import { usePayrollService } from '../services/use-service';
 import { usePayrollStore } from '../stores/payroll-store';
 import type { Payroll, PayrollApproval } from '../types';
-import { payrollColumn, usePayrollRowActions } from './table-data';
+import { getPayrollColumns, usePayrollRowActions } from './table-data';
 
 export const PayrollView = () => {
   const { getRowActions, DeleteConfirmationModal } = usePayrollRowActions();
@@ -79,7 +79,7 @@ export const PayrollView = () => {
     useState(false);
   const isDevelopmentMode = process.env.NODE_ENV !== 'production';
 
-  const { mutateAsync: retryPayroll, isPending: isRetryingPayroll } =
+  const { mutateAsync: retryPayroll, isPending: isRetryingAllFailed } =
     useRetryPayroll();
   const [payrollData, setPayrollData] = useState({
     id: '',
@@ -300,11 +300,7 @@ export const PayrollView = () => {
       { payslipIds: failedPayslipIds },
       {
         onSuccess: () => {
-          toast.success(
-            `Retry has been queued for ${failedPayslipIds.length} failed payslip${
-              failedPayslipIds.length > 1 ? 's' : ''
-            }.`
-          );
+          toast.success('Retry has been queued for failed payslips.');
         },
         onError: (error) => {
           const message =
@@ -316,6 +312,8 @@ export const PayrollView = () => {
       }
     );
   };
+
+  const payrollColumns = useMemo(() => getPayrollColumns(), []);
 
   useEffect(() => {
     if (
@@ -654,13 +652,13 @@ export const PayrollView = () => {
           <div className="flex items-center gap-2">
             <MainButton
               variant="primaryOutline"
-              isDisabled={failedPayslipIds.length === 0 || isRetryingPayroll}
-              isLoading={isRetryingPayroll}
+              isDisabled={failedPayslipIds.length === 0 || isRetryingAllFailed}
+              isLoading={isRetryingAllFailed}
               onClick={() => {
                 void handleRetryFailedPayslips();
               }}
             >
-              Retry Failed ({failedPayslipIds.length})
+              Retry All Failed Payslips
             </MainButton>
             <MainButton
               variant="primary"
@@ -692,7 +690,7 @@ export const PayrollView = () => {
         ) : (
           <AdvancedDataTable
             data={payslipsData.data.items}
-            columns={payrollColumn}
+            columns={payrollColumns}
             rowActions={getRowActions}
             onPageChange={() => {}}
             showPagination={true}

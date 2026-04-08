@@ -99,7 +99,7 @@ export const usePayrollRowActions = () => {
           ...(payslip.status === 'failed'
             ? [
                 {
-                  label: 'Retry payroll for employee',
+                  label: 'Resend payslip',
                   onClick: () => {
                     void handleRetryPayslip(payslip);
                   },
@@ -149,11 +149,13 @@ export const usePayrollRowActions = () => {
     />
   );
 
-  return { getRowActions, DeleteConfirmationModal };
+  return {
+    getRowActions,
+    DeleteConfirmationModal,
+  };
 };
 
-// @ts-ignore
-export const payrollColumn: IColumnDefinition<Payslip>[] = [
+export const getPayrollColumns = (): IColumnDefinition<Payslip>[] => [
   {
     header: 'Name',
     accessorKey: 'id',

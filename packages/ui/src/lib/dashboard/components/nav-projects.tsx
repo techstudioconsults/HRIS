@@ -41,38 +41,34 @@ export function NavProjects({
       <SidebarMenu className="gap-5">
         {projects.map((item) => (
           <SidebarMenuItem
+            key={item.name}
             className={cn(
+              `px-1`,
               state === 'collapsed' && 'flex items-center justify-center'
             )}
-            key={item.name}
           >
-            <Link href={item.url} onClick={handleNavigate}>
-              <SidebarMenuButton
-                className={cn(
-                  'hover:bg-primary/10 w-full cursor-pointer p-6 transition-all duration-75',
-                  item.isActive &&
-                    'border-primary bg-primary/40 border-3 font-medium shadow-[0px_0px_0px_2px_#0266F333]'
+            <SidebarMenuButton
+              asChild
+              isActive={item.isActive}
+              className={cn(
+                'hover:bg-primary/10 border-transparent w-full cursor-pointer' +
+                  ' p-6 transition-all duration-75',
+                item.isActive &&
+                  'border-primary bg-primary/40 shadow-[0px_0px_0px_2px_#0057e6]'
+              )}
+            >
+              <Link href={item.url} onClick={handleNavigate}>
+                {item.icon && (
+                  <Icon
+                    variant={item.isActive ? `Bulk` : `Linear`}
+                    name={item.icon}
+                    size={18}
+                    className={cn(`text-background`)}
+                  />
                 )}
-              >
-                <div>
-                  {/*{item.icon && <item.icon className={cn("-ml-1 size-5!")} />}*/}
-                  {item.icon && (
-                    <Icon
-                      variant={item.isActive ? `Bulk` : `Linear`}
-                      name={item.icon}
-                      size={18}
-                      className={cn(
-                        `text-background`,
-                        item.isActive ? `-ml-1` : `-ml-0.5`
-                      )}
-                    />
-                  )}
-                </div>
-                <span className="group-data-[collapsible=icon]:hidden">
-                  {item.name}
-                </span>
-              </SidebarMenuButton>
-            </Link>
+                <span>{item.name}</span>
+              </Link>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
       </SidebarMenu>

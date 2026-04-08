@@ -4,12 +4,14 @@ import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { FC } from 'react';
 
-import { cn } from '../../../../../../packages/ui/src/lib/utils';
+import { cn } from '@workspace/ui/lib/utils';
 
 export const Footer: FC = () => {
   return (
     <footer
-      className={cn(`cc-border-u fixed bottom-0 z-10 w-full pl-4`)}
+      className={cn(
+        `cc-border-u safe-area-bottom safe-area-x fixed bottom-0 z-10 w-full pl-4`
+      )}
       role="footer"
     >
       <section className="flex w-full items-center justify-between">

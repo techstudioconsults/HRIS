@@ -13,6 +13,7 @@ import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { Button } from '@workspace/ui/components/button';
 
 export const DashboardHeader = () => {
   const { data: session, status } = useSession();
@@ -57,18 +58,22 @@ export const DashboardHeader = () => {
         <div className="flex lg:hidden">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <MainButton
-                variant="outline"
-                size="icon"
-                isIconOnly={true}
-                icon={<Icon name="More" variant={`Outline`} />}
-                ariaLabel="More actions"
-                className={`size-10`}
-              />
+              <Button
+                size={`icon`}
+                className={`shadow rounded-md p-2.5`}
+                variant="default"
+              >
+                <Icon
+                  name="More"
+                  size={20}
+                  variant={`Outline`}
+                  className={`text-primary rotate-90`}
+                />
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="bg-background shadow-none flex flex-col gap-2 p-3 w-52"
+              className="bg-background text-primary shadow-none flex flex-col gap-2 p-3 w-52"
             >
               {/*<DropdownMenuItem asChild>*/}
               {/*  <ExportAction className={`w-fit`}/>*/}
@@ -76,7 +81,11 @@ export const DashboardHeader = () => {
               {/*<DropdownMenuSeparator />*/}
               <DropdownMenuItem asChild>
                 <Link href="/admin/employees/add-employee">
-                  <Icon name={'Add'} />
+                  <Icon
+                    name={'Add'}
+                    variant={`Bold`}
+                    className={`text-primary`}
+                  />
                   Add Employee
                 </Link>
               </DropdownMenuItem>

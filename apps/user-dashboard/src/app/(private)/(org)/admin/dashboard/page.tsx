@@ -1,7 +1,13 @@
 import { DashboardHomePage } from '@/modules/@org/admin/dashboard';
+import { MarkOnboardingCompleteOnDashboardVisit } from '@/modules/@org/onboarding';
 
 const AdminDashboardPage = () => {
-  return <DashboardHomePage />;
+  return (
+    <>
+      <MarkOnboardingCompleteOnDashboardVisit />
+      <DashboardHomePage />
+    </>
+  );
 };
 
 export default AdminDashboardPage;

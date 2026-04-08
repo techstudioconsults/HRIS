@@ -54,7 +54,7 @@ export const InputOtpCard = () => {
         toast.success('Login Successful', {
           description: 'Redirecting to dashboard...',
         });
-        router.push('/onboarding');
+        router.push('/login/continue');
       }
     } catch (error: any) {
       console.error('Login error:', error);
@@ -88,10 +88,7 @@ export const InputOtpCard = () => {
   };
 
   return (
-    <section
-      index={0}
-      className="bg-background mx-auto max-w-[589px] rounded-md p-8 shadow shadow-gray-100"
-    >
+    <section className="bg-background mx-auto max-w-[589px] rounded-md p-8 shadow shadow-gray-100">
       <div className={`mb-8 space-y-2`}>
         <h3 className="text-[32px]/[120%] font-semibold tracking-[-2%] text-black">
           Enter the 6-digit Code

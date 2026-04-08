@@ -20,9 +20,11 @@ export const usePayrollRowActions = () => {
     setSelectedPayslipId,
     setEmployeeInformationActiveTab,
   } = usePayrollStore();
-  const { useDeletePayslip } = usePayrollService();
+  const { useDeletePayslip, useRetryPayroll } = usePayrollService();
   const { mutateAsync: deletePayslip, isPending: isDeleting } =
     useDeletePayslip();
+  const { mutateAsync: retryPayroll, isPending: isRetryingPayroll } =
+    useRetryPayroll();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [payslipToDelete, setPayslipToDelete] = useState<Payslip | null>(null);
@@ -56,6 +58,29 @@ export const usePayrollRowActions = () => {
     );
   }, [deletePayslip, isDeleting, payslipToDelete, resetModalState]);
 
+  const handleRetryPayslip = useCallback(
+    async (payslip: Payslip) => {
+      if (payslip.status !== 'failed' || isRetryingPayroll) return;
+
+      await retryPayroll(
+        { payslipIds: [payslip.id] },
+        {
+          onSuccess: () => {
+            toast.success('Payroll retry has been queued for this employee.');
+          },
+          onError: (error) => {
+            const message =
+              error instanceof AxiosError
+                ? error.response?.data.message
+                : 'Failed to retry payroll. Please try again.';
+            toast.error(message);
+          },
+        }
+      );
+    },
+    [isRetryingPayroll, retryPayroll]
+  );
+
   const getRowActions = (payslip: Payslip): IRowAction<Payslip>[] => [
     {
       label: 'View employee payroll details',
@@ -71,6 +96,17 @@ export const usePayrollRowActions = () => {
     ...(payslip?.status === 'paid'
       ? []
       : [
+          ...(payslip.status === 'failed'
+            ? [
+                {
+                  label: 'Retry payroll for employee',
+                  onClick: () => {
+                    void handleRetryPayslip(payslip);
+                  },
+                },
+                { type: 'separator' as const },
+              ]
+            : []),
           {
             label: 'Edit employee payroll',
             onClick: () => {

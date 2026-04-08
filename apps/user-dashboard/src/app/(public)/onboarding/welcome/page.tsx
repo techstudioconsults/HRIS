@@ -1,6 +1,4 @@
-"use client";
-
-import { Welcome } from "@/modules/@org/onboarding";
+import { Welcome } from '@/modules/@org/onboarding';
 
 const OnboardingWelcomePage = () => {
   return (

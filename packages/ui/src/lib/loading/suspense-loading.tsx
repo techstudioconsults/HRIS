@@ -1,6 +1,6 @@
 'use client';
 
-import { LucideLoader } from 'lucide-react';
+import Image from 'next/image';
 
 interface SuspenseLoadingProperties {
   text?: string;
@@ -17,7 +17,13 @@ export function SuspenseLoading({}: SuspenseLoadingProperties) {
 
   return (
     <div className="flex items-center justify-center w-full">
-      <LucideLoader className="text-primary size-4 animate-spin" />
+      <Image
+        src={`/images/logo.png`}
+        className="text-primary size-6 animate-spin"
+        alt={'techstudio-logo'}
+        width={100}
+        height={100}
+      />
     </div>
   );
 }

@@ -1,11 +1,16 @@
 'use client';
 
-// import { useSession } from "next-auth/react";
+import { Logo } from '@workspace/ui/lib/logo';
+import { useEffect } from 'react';
+import { redirect } from 'next/navigation';
 
 const Page = () => {
+  useEffect(() => {
+    redirect('/dashboard');
+  }, []);
   return (
-    <section className={`flex h-[100dvh] w-full items-center justify-center`}>
-      <p className={`text-primary-500`}>TECHSTUDIO HR</p>
+    <section className={`flex h-dvh w-full items-center justify-center`}>
+      <Logo />
     </section>
   );
 };

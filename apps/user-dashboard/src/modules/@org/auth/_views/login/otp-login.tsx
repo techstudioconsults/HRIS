@@ -47,7 +47,7 @@ export const OTPLogin = () => {
   };
 
   return (
-    <section className="mx-auto max-w-[527px]">
+    <section className="mx-auto w-full max-w-[527px]">
       <FormHeader
         title="Welcome Back, HR"
         subTitle=" Sign in with your work email to continue. We'll send a one-time passcode to your email to verify

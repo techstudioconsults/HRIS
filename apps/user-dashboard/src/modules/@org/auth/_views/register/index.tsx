@@ -4,7 +4,6 @@ import { RegisterFormData, registerSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormField, FormHeader } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
-import { Icon } from '@workspace/ui/lib/icons/icon';
 import { AxiosError } from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -63,7 +62,7 @@ export const Register = () => {
   };
 
   return (
-    <section className="mx-auto max-w-[527px]">
+    <section className="mx-auto w-full max-w-[527px]">
       <FormHeader
         title="Your HR, simplified and smarter."
         subTitle="Sign up to start managing everything HR, all in one place."
@@ -101,13 +100,13 @@ export const Register = () => {
                 name={'domain'}
                 required
               />
-              <p
-                className={`text-primary-200 flex items-start text-[11.5px] italic`}
-              >
-                <Icon name="Info" size={14} className="mt-1 mr-1 inline" /> Used
-                to identify your organization and help verify employee emails
-                (e.g., @techstudio.com).
-              </p>
+              {/*<p*/}
+              {/*  className={`text-primary-200 flex items-start text-[11.5px] italic`}*/}
+              {/*>*/}
+              {/*  <Icon name="Info" size={14} className="mt-1 mr-1 inline" /> Used*/}
+              {/*  to identify your organization and help verify employee emails*/}
+              {/*  (e.g., @techstudio.com).*/}
+              {/*</p>*/}
             </div>
             <FormField
               placeholder={`Enter email address`}
@@ -147,18 +146,18 @@ export const Register = () => {
             </div>
           </section>
           <div className="pt-8">
-            <div className="text-muted-foreground mb-4 text-sm">
-              <p>
-                By signing up, you&apos;re agreeing to TechstudioHR&apos;s{' '}
-                <Link href="/privacy" className="text-primary hover:underline">
-                  Privacy Policy
-                </Link>
-                , and{' '}
-                <Link href="/terms" className="text-primary hover:underline">
-                  Terms & Conditions.
-                </Link>
-              </p>
-            </div>
+            {/*<div className="text-muted-foreground mb-4 text-sm">*/}
+            {/*  <p>*/}
+            {/*    By signing up, you&apos;re agreeing to TechstudioHR&apos;s{' '}*/}
+            {/*    <Link href="/privacy" className="text-primary hover:underline">*/}
+            {/*      Privacy Policy*/}
+            {/*    </Link>*/}
+            {/*    , and{' '}*/}
+            {/*    <Link href="/terms" className="text-primary hover:underline">*/}
+            {/*      Terms & Conditions.*/}
+            {/*    </Link>*/}
+            {/*  </p>*/}
+            {/*</div>*/}
 
             <MainButton
               type="submit"

@@ -18,7 +18,7 @@ export const Logo: FC<LogoProperties> = ({
   className,
 }) => {
   return (
-    <div data-testid="logo" className="">
+    <div data-testid="logo" className="w-fit">
       {logo ? (
         <Image
           src={logo}

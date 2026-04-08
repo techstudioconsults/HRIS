@@ -25,22 +25,15 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
           !shouldHideCarousel && 'lg:grid-cols-12'
         )}
       >
-        <section
-          // style={{
-          //   background: 'url(/images/auth/bg-img.svg) no-repeat',
-          //   backgroundSize: 'cover',
-          // }}
-          className="hide-scrollbar lg:col-span-7 max-h-dvh overflow-y-auto px-4 py-12"
-        >
+        <section className="hide-scrollbar lg:col-span-7 max-h-dvh overflow-y-auto px-6">
           <div
-            className={cn(
-              'mx-auto mb-16 flex',
-              !shouldHideCarousel && 'max-w-[527px]'
-            )}
+            className={cn('mx-auto max-w-[527px] flex items-center min-h-40')}
           >
             <Logo logo={`/images/logo.svg`} width={214} />
           </div>
-          {children}
+          <div className="flex min-h-[calc(100dvh-160px)] w-full items-center pb-10">
+            {children}
+          </div>
         </section>
         {/* Carousel Section (Right on desktop, hidden on mobile and specific routes) */}
         {!shouldHideCarousel && (

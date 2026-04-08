@@ -61,7 +61,7 @@ export const Login = () => {
   };
 
   return (
-    <section className="mx-auto max-w-[527px]">
+    <section className="mx-auto w-full max-w-[527px]">
       <FormHeader
         title="Welcome Back, HR"
         subTitle="Login to access your HR dashboard, and simplify operations."

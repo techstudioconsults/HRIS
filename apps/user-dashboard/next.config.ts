@@ -9,9 +9,7 @@ const withBundleAnalyzer = bundleAnalyzer({
 const withSerwist = withSerwistInit({
   swSrc: 'src/sw.ts',
   swDest: 'public/sw.js',
-  disable:
-    process.env.NODE_ENV === 'development' ||
-    process.env.DISABLE_PWA === 'true',
+  disable: process.env.DISABLE_PWA === 'true',
 });
 
 const nextConfig: NextConfig = {
@@ -34,6 +32,10 @@ const nextConfig: NextConfig = {
   },
 };
 
-const finalConfig: NextConfig = withSerwist(withBundleAnalyzer(nextConfig));
+const isProduction = process.env.NODE_ENV === 'production';
+
+const finalConfig: NextConfig = isProduction
+  ? withSerwist(withBundleAnalyzer(nextConfig))
+  : withBundleAnalyzer(nextConfig);
 
 export default finalConfig;

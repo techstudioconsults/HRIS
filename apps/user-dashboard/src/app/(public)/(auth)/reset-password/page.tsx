@@ -1,11 +1,7 @@
-import { ResetPassword } from "@/modules/@org/auth";
+import { ResetPassword } from '@/modules/@org/auth';
 
 const page = () => {
-  return (
-    <section>
-      <ResetPassword />
-    </section>
-  );
+  return <ResetPassword />;
 };
 
 export default page;

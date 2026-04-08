@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Login } from "@/modules/@org/auth";
+import { Login } from '@/modules/@org/auth';
 
 const LoginPage = () => {
   return <Login />;

@@ -119,6 +119,8 @@ export const PayrollView = () => {
     payslipsData?.data?.items
       ?.filter((payslip) => payslip.status === 'failed')
       .map((payslip) => payslip.id) ?? [];
+  const isRetryAllDisabled =
+    failedPayslipIds.length === 0 || isRetryingAllFailed;
 
   // Approval progress data for the selected payroll
   const payrollIdForApprovals = selectedPayrollId || '';
@@ -164,6 +166,10 @@ export const PayrollView = () => {
   const isAwaitingApproval = normalizedStatus.includes('awaiting');
   const isDisbursed = normalizedStatus.includes('disbursed');
   const isCompleted = normalizedStatus.includes('completed');
+  const isAddEmployeeDisabled =
+    isCompleted ||
+    !payslipsData?.data.items ||
+    payslipsData.data.items.length === 0;
 
   // Show the banner if status is awaiting (ignore hide flag in this state),
   // otherwise show only when a run is in progress and the banner isn't hidden
@@ -649,10 +655,10 @@ export const PayrollView = () => {
       <section className="">
         <section className="mb-6 flex items-center justify-between">
           <h1 className="text-xl font-bold">Employee Payroll Summary</h1>
-          <div className="flex items-center gap-2">
+          <div className="hidden items-center gap-2 lg:flex">
             <MainButton
               variant="primaryOutline"
-              isDisabled={failedPayslipIds.length === 0 || isRetryingAllFailed}
+              isDisabled={isRetryAllDisabled}
               isLoading={isRetryingAllFailed}
               onClick={() => {
                 void handleRetryFailedPayslips();
@@ -665,14 +671,47 @@ export const PayrollView = () => {
               isLeftIconVisible
               onClick={() => setShowAddEmployeeModal(true)}
               icon={<Icon name={`Add`} variant={`Bold`} />}
-              isDisabled={
-                isCompleted ||
-                !payslipsData?.data.items ||
-                payslipsData.data.items.length === 0
-              }
+              isDisabled={isAddEmployeeDisabled}
             >
               Add Employee
             </MainButton>
+          </div>
+          <div className="flex lg:hidden">
+            <GenericDropdown
+              align={`end`}
+              trigger={
+                <Button
+                  size={`icon`}
+                  className={`shadow rounded-md p-2.5`}
+                  variant="default"
+                >
+                  <Icon
+                    name="More"
+                    size={20}
+                    variant={`Outline`}
+                    className={`text-primary rotate-90`}
+                  />
+                </Button>
+              }
+            >
+              <DropdownMenuItem
+                onClick={() => {
+                  void handleRetryFailedPayslips();
+                }}
+                disabled={isRetryAllDisabled}
+              >
+                {isRetryingAllFailed
+                  ? 'Retrying Failed Payslips...'
+                  : 'Retry All Failed Payslips'}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setShowAddEmployeeModal(true)}
+                disabled={isAddEmployeeDisabled}
+              >
+                <Icon name={`Add`} variant={`Bold`} />
+                Add Employee
+              </DropdownMenuItem>
+            </GenericDropdown>
           </div>
         </section>
         {loadingPayslips ? (

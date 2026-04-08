@@ -52,12 +52,50 @@ export function NavMain({
       <SidebarGroupLabel className={`font-light mb-2 ml-5`}>
         {title}
       </SidebarGroupLabel>
-      <SidebarMenu className={`gap-5`}>
+      <SidebarMenu className={`gap-3`}>
         {items.map((item) => {
+          const hasSubItems = Boolean(item.subItems?.length);
           // Check if any sub-item is active to determine if collapsible should be open
           const hasActiveSubItem =
             item.subItems?.some((subItem) => subItem.isActive) || false;
           const shouldBeOpen = item.isActive || hasActiveSubItem;
+          const parentIsActive = item.isActive || hasActiveSubItem;
+
+          if (!hasSubItems) {
+            return (
+              <SidebarMenuItem
+                key={item.name}
+                className={cn(
+                  `px-1`,
+                  state === 'collapsed' && 'flex items-center justify-center'
+                )}
+              >
+                <SidebarMenuButton
+                  asChild
+                  tooltip={item.name}
+                  isActive={item.isActive}
+                  className={cn(
+                    'hover:bg-primary/10 border-transparent w-full cursor-pointer' +
+                      ' p-6 transition-all duration-75',
+                    item.isActive &&
+                      'border-primary bg-primary/40 shadow-[0px_0px_0px_2px_#0057e6]'
+                  )}
+                >
+                  <Link href={item.url} onClick={handleNavigate}>
+                    {item.icon && (
+                      <Icon
+                        variant={item.isActive ? `Bulk` : `Linear`}
+                        name={item.icon}
+                        size={18}
+                        className={cn(`text-background`)}
+                      />
+                    )}
+                    <span>{item.name}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          }
 
           return (
             <Collapsible
@@ -72,32 +110,30 @@ export function NavMain({
                 )}
               >
                 <CollapsibleTrigger asChild>
-                  <Link href={item.url} onClick={handleNavigate}>
-                    <SidebarMenuButton
-                      className={cn(
-                        'hover:bg-primary/10 w-full cursor-pointer p-6 transition-all duration-75',
-                        item.isActive &&
-                          'border-primary bg-primary/40 border-3 font-medium shadow-[0px_0px_0px_2px_#0266F333]'
-                      )}
-                    >
-                      {/*{item.icon && <item.icon className={cn('h-4 w-4')} />}*/}
-                      {item.icon && (
-                        <Icon
-                          variant={item.isActive ? `Bulk` : `Linear`}
-                          name={item.icon}
-                          size={18}
-                          className={cn(
-                            `text-background`,
-                            item.isActive ? `-ml-1` : `-ml-0.5`
-                          )}
-                        />
-                      )}
-                      <span>{item.name}</span>
-                      {item.subItems && (
-                        <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                      )}
-                    </SidebarMenuButton>
-                  </Link>
+                  <SidebarMenuButton
+                    type="button"
+                    isActive={parentIsActive}
+                    className={cn(
+                      'hover:bg-primary/10 border-transparent w-full cursor-pointer' +
+                        ' p-6 transition-all duration-75',
+                      parentIsActive &&
+                        'border-primary bg-primary/40 shadow-[0px_0px_0px_2px_#0057e6]'
+                    )}
+                  >
+                    {item.icon && (
+                      <Icon
+                        variant={parentIsActive ? `Bulk` : `Linear`}
+                        name={item.icon}
+                        size={18}
+                        className={cn(`text-background`)}
+                      />
+                    )}
+                    <span>{item.name}</span>
+                    <ChevronRight
+                      className="ml-auto h-4 w-4 transition-transform
+                        duration-200 group-data-[state=open]/collapsible:rotate-90"
+                    />
+                  </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarMenuSub>

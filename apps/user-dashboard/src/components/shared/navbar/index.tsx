@@ -20,7 +20,9 @@ const Navbar = () => {
 
   return (
     <nav
-      className={cn(`fixed top-0 z-10 w-full pr-4 backdrop-blur-sm`)}
+      className={cn(
+        `safe-area-top safe-area-x fixed top-0 z-10 w-full pr-4 backdrop-blur-sm`
+      )}
       role="navbar"
     >
       <section className="flex w-full items-center justify-between">
@@ -55,7 +57,7 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div
           className={cn(
-            'fixed inset-x-0 z-40 w-full bg-white shadow-none lg:hidden'
+            'safe-area-top safe-area-x fixed inset-x-0 z-40 w-full bg-white shadow-none lg:hidden'
           )}
         >
           <div>

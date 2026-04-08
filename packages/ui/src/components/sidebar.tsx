@@ -4,10 +4,10 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, VariantProps } from 'class-variance-authority';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import * as React from 'react';
-import { cn } from '../lib/utils';
-import { useIsMobile } from '../hooks';
+import { cn } from '@workspace/ui/lib/utils';
+import { useIsMobile } from '@workspace/ui/hooks';
 import {
-  TooltipContent,
+  Root as TooltipRoot,
   TooltipProvider,
   TooltipTrigger,
 } from '@radix-ui/react-tooltip';
@@ -22,7 +22,7 @@ import { Separator } from '@radix-ui/react-context-menu';
 import { Input } from './input';
 import { Skeleton } from './skeleton';
 import { Button } from './button';
-import { Tooltip } from './tooltip';
+import { TooltipContent } from './tooltip';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state';
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -562,7 +562,7 @@ function SidebarMenuButton({
   }
 
   return (
-    <Tooltip content={undefined}>
+    <TooltipRoot>
       <TooltipTrigger asChild>{button}</TooltipTrigger>
       <TooltipContent
         side="right"
@@ -570,7 +570,7 @@ function SidebarMenuButton({
         hidden={state !== 'collapsed' || isMobile}
         {...tooltip}
       />
-    </Tooltip>
+    </TooltipRoot>
   );
 }
 
@@ -590,7 +590,9 @@ function SidebarMenuAction({
       data-slot="sidebar-menu-action"
       data-sidebar="menu-action"
       className={cn(
-        'text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer-hover/menu-button:text-sidebar-accent-foreground absolute top-1.5 right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0',
+        'text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent ' +
+          'hover:text-sidebar-accent-foreground peer-hover/menu-button:text-sidebar-accent-foreground ' +
+          'absolute top-1.5 right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0',
         // Increases the hit area of the button on mobile.
         'after:absolute after:-inset-2 md:after:hidden',
         'peer-data-[size=sm]/menu-button:top-1',

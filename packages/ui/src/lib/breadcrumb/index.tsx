@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Breadcrumb,
@@ -6,11 +6,11 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@workspace/ui/components/breadcrumb";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ReactNode } from "react";
-import { PiHouse } from "react-icons/pi";
+} from '@workspace/ui/components/breadcrumb';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { ReactNode } from 'react';
+import { PiHouse } from 'react-icons/pi';
 
 interface BreadcrumbItem {
   label: string;
@@ -30,10 +30,10 @@ interface BreadCrumbProperties {
 export const BreadCrumb = ({
   items,
   showHome = false,
-  className = "",
+  className = '',
   separator,
   homeIcon = <PiHouse size={16} />,
-  homeLabel = "Home",
+  homeLabel = 'Home',
 }: BreadCrumbProperties) => {
   const pathName = usePathname();
 
@@ -41,19 +41,19 @@ export const BreadCrumb = ({
   const generateBreadcrumbItems = (): BreadcrumbItem[] => {
     if (items) return items;
 
-    const pathSegments = pathName.split("/").filter(Boolean);
+    const pathSegments = pathName.split('/').filter(Boolean);
     const breadcrumbItems: BreadcrumbItem[] = [];
 
-    let currentPath = "";
+    let currentPath = '';
     for (const [index, segment] of pathSegments.entries()) {
       currentPath += `/${segment}`;
       const isLast = index === pathSegments.length - 1;
 
       breadcrumbItems.push({
         label: segment
-          .split("-")
+          .split('-')
           .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" "),
+          .join(' '),
         href: isLast ? undefined : currentPath,
       });
     }
@@ -71,7 +71,7 @@ export const BreadCrumb = ({
             <>
               <BreadcrumbItem>
                 <Link
-                  href="/"
+                  href="/admin/dashboard"
                   className="hover:text-primary flex items-center gap-1"
                 >
                   {homeIcon}
@@ -100,7 +100,7 @@ export const BreadCrumb = ({
                     </BreadcrumbPage>
                   ) : (
                     <Link
-                      href={item.href || "#"}
+                      href={item.href || '#'}
                       className="hover:text-primary flex items-center gap-1"
                     >
                       {item.icon}

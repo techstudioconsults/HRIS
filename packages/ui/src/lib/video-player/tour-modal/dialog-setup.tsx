@@ -37,7 +37,7 @@ export const TourModal = ({
       onOpenChange={onOpenChange}
     >
       <TourVideo
-        logo={'/images/logo.png'}
+        logo={'/images/icon-192.png'}
         src={src}
         poster={poster}
         segments={segments}

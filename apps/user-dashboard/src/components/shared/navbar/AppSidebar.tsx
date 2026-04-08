@@ -27,7 +27,7 @@ export function AppSideBar() {
         name: companyProfile?.name ?? '',
         logo:
           state === 'collapsed' ? (
-            <Logo logo={'/images/logo.png'} />
+            <Logo logo={'/images/icon-192.png'} />
           ) : (
             <Logo logo={'/images/logo-white.svg'} className="w-50" />
           ),

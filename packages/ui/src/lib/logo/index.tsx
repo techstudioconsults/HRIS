@@ -12,7 +12,7 @@ type LogoProperties = {
 };
 
 export const Logo: FC<LogoProperties> = ({
-  logo = '/images/logo.png',
+  logo = '/images/icon-192.png',
   width = 89,
   height = 60,
   className,

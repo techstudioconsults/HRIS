@@ -23,6 +23,7 @@ type TopBarProperties = {
   adminRole?: string;
   notifications?: Notification[];
   className?: string;
+  showSidebarTrigger?: boolean;
 };
 
 const handleLogout = async () => {
@@ -43,6 +44,7 @@ export default function TopBar({
   adminRole,
   notifications = [],
   className = '',
+  showSidebarTrigger = true,
 }: TopBarProperties) {
   const [hideMobileSearch, setHideMobileSearch] = useState(true);
   const router = useRouter();
@@ -80,9 +82,13 @@ export default function TopBar({
         )}
       >
         <div className="flex min-h-16 w-full flex-wrap items-center gap-2 px-3 py-2 sm:px-4 md:flex-nowrap md:gap-4 lg:px-6">
-          <SidebarTrigger className="bg-primary-50 text-primary shadow-none hover:bg-primary-75" />
+          {showSidebarTrigger && (
+            <SidebarTrigger className="bg-primary-50 text-primary shadow-none hover:bg-primary-75" />
+          )}
 
-          <div className={`hidden lg:block`}>
+          <div
+            className={cn('hidden lg:block', !showSidebarTrigger && 'lg:ml-0')}
+          >
             <GlobalSearchInput
               className="border border-primary/25 sm:min-w-[320px] md:min-w-[500px]
             placeholder:text-primary/25 shadow-none md:max-w-[640px]"

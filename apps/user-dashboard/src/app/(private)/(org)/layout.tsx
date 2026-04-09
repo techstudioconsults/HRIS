@@ -11,7 +11,8 @@ import {
 import { useSession } from 'next-auth/react';
 import { ReactNode } from 'react';
 import { AppSideBar } from '@/components/shared/navbar/AppSidebar';
-import { LayoutSelector } from '@/components/layouts';
+import { LayoutSelector, AppLayout } from '@/components/layouts';
+import { PWADockNav } from '@/components/shared/navbar/pwa-dock-nav';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
@@ -22,6 +23,16 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       adminRole={session?.user.employee.role?.name || ''}
       adminEmail={session?.user.employee.email || ''}
       notifications={[]}
+    />
+  );
+
+  const topBarPWA = (
+    <TopBar
+      adminName={session?.user.employee.fullName || ''}
+      adminRole={session?.user.employee.role?.name || ''}
+      adminEmail={session?.user.employee.email || ''}
+      notifications={[]}
+      showSidebarTrigger={false}
     />
   );
 
@@ -36,6 +47,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <ActiveTargetProvider>
         <LayoutSelector
           header={topBar}
+          renderPWA={({ children: layoutChildren }) => (
+            <AppLayout header={topBarPWA} nav={<PWADockNav />}>
+              {layoutChildren}
+            </AppLayout>
+          )}
           renderWeb={({ header, children: layoutChildren }) => (
             <SidebarProvider>
               <AppSideBar />

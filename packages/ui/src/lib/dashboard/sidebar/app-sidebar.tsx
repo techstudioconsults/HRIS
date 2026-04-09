@@ -179,7 +179,7 @@ export function AppSidebar({
 
   return (
     <Sidebar collapsible="icon" {...properties}>
-      <SidebarHeader className={`mt-2`}>
+      <SidebarHeader className={`mt-2 p-0`}>
         <TeamSwitcher teams={resolved.teams} />
       </SidebarHeader>
       <SidebarContent>

@@ -12,6 +12,7 @@ import { Toast } from '@workspace/ui/lib/Toast';
 import { KBarProviderWrapper } from '@/lib/kbar/kbar-provider';
 import { Suspense } from 'react';
 import { PwaRegistration } from '@/components/pwa/pwa-registration';
+import { PWAProvider } from '@/lib/pwa/pwa-provider';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -23,21 +24,23 @@ export function Providers({ children }: { children: React.ReactNode }) {
       enableColorScheme
     >
       <SessionProvider>
-        <SSEProvider>
-          <NextTopLoader showSpinner={false} />
-          <ReactQueryProvider>
-            <NuqsAdapter>
-              <TooltipProvider>
-                <Toast />
-                {/* <NetworkStatusModal /> */}
-                <KBarProviderWrapper>
-                  <PwaRegistration />
-                  <Suspense>{children}</Suspense>
-                </KBarProviderWrapper>
-              </TooltipProvider>
-            </NuqsAdapter>
-          </ReactQueryProvider>
-        </SSEProvider>
+        <PWAProvider>
+          <SSEProvider>
+            <NextTopLoader showSpinner={false} />
+            <ReactQueryProvider>
+              <NuqsAdapter>
+                <TooltipProvider>
+                  <Toast />
+                  {/* <NetworkStatusModal /> */}
+                  <KBarProviderWrapper>
+                    <PwaRegistration />
+                    <Suspense>{children}</Suspense>
+                  </KBarProviderWrapper>
+                </TooltipProvider>
+              </NuqsAdapter>
+            </ReactQueryProvider>
+          </SSEProvider>
+        </PWAProvider>
       </SessionProvider>
     </NextThemesProvider>
   );

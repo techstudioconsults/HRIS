@@ -47,7 +47,12 @@ export function NotificationWidget({
           className="relative rounded-full"
           aria-label="Notifications"
         >
-          <Icon name={`Notification`} className={`text-primary`} size={24} />
+          <Icon
+            name={`Notification`}
+            variant={`Outline`}
+            className={`text-primary`}
+            size={24}
+          />
           {unreadCount > 0 && (
             <span
               className="bg-destructive absolute -top-1 -right-1 flex size-5

@@ -10,6 +10,12 @@
   --safe-area-left: env(safe-area-inset-left, 0px);
 }
 
+/* ============================================================================
+ * Safe Area Utilities
+ * ============================================================================
+ * Apply iOS notch/safe area insets. Used primarily in PWA mode.
+ */
+
 .safe-area-top {
   padding-top: var(--safe-area-top);
 }
@@ -21,5 +27,111 @@
 .safe-area-x {
   padding-left: var(--safe-area-left);
   padding-right: var(--safe-area-right);
+}
+
+.safe-area-all {
+  padding: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom) var(--safe-area-left);
+}
+
+/* ============================================================================
+ * PWA Display Mode Media Queries
+ * ============================================================================
+ * Use these to apply PWA-specific or browser-specific styles.
+ */
+
+/* Standalone Mode (Installed PWA) */
+@media (display-mode: standalone) {
+  /* Tighter layout for installed PWA */
+  body.pwa {
+    --safe-area-top: env(safe-area-inset-top, 0px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Hide browser-only UI */
+  body.pwa .browser-only-ui {
+    display: none !important;
+  }
+
+  /* Adjust navbar for full screen */
+  body.pwa .navbar {
+    padding-top: calc(var(--safe-area-top) + 0.5rem);
+  }
+
+  /* Use more vertical space */
+  body.pwa main {
+    min-height: calc(100vh - var(--safe-area-top) - var(--safe-area-bottom));
+  }
+}
+
+/* Browser Mode (Regular Tab) */
+@media not (display-mode: standalone) {
+  /* Standard browser spacing */
+  body:not(.pwa) {
+    --safe-area-top: 0px;
+    --safe-area-bottom: 0px;
+  }
+
+  /* Show browser UI hints */
+  body:not(.pwa) .pwa-only-ui {
+    display: none !important;
+  }
+}
+
+/* ============================================================================
+ * iOS PWA Specific
+ * ============================================================================
+ * Additional styles for iOS standalone mode (navigator.standalone)
+ */
+
+@media (display-mode: standalone) and (max-width: 820px) {
+  /* Mobile PWA optimizations */
+  body.pwa {
+    /* Prevent bounce scroll */
+    overflow: hidden;
+  }
+
+  body.pwa main {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* iOS-specific: hide address bar interaction */
+  body.pwa .app-layout {
+    height: 100vh;
+    height: 100dvh; /* iOS 15+ dynamic viewport height */
+  }
+}
+
+/* ============================================================================
+ * Layout Composition Classes
+ * ============================================================================
+ * Utility classes for layout components
+ */
+
+.app-layout {
+  /* PWA optimized layout */
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh; /* iOS 15+ dynamic viewport height */
+}
+
+.app-layout > main {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+}
+
+.web-layout {
+  /* Browser optimized layout */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.web-layout > main {
+  overflow-y: auto;
+  flex: 1;
 }
 

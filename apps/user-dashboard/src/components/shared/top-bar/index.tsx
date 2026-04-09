@@ -98,6 +98,7 @@ export default function TopBar({
               onClick={() => setHideMobileSearch((previous) => !previous)}
             >
               <Icon
+                variant={`Outline`}
                 name={`SearchNormal1`}
                 className={`text-primary`}
                 size={22}

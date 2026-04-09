@@ -2134,11 +2134,11 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`);
     precacheEntries: [
       {
         revision: '7d57c21682f391f6f60bf47381e0f760',
-        url: '/_next/static/3vFgmm4xfFdOnGMHsG1zm/_buildManifest.js',
+        url: '/_next/static/Dvpkt2hmdbcSMR44fWwQI/_buildManifest.js',
       },
       {
         revision: 'b6652df95db52feb4daf4eca35380933',
-        url: '/_next/static/3vFgmm4xfFdOnGMHsG1zm/_ssgManifest.js',
+        url: '/_next/static/Dvpkt2hmdbcSMR44fWwQI/_ssgManifest.js',
       },
       {
         revision: null,
@@ -2185,7 +2185,7 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`);
       { revision: null, url: '/_next/static/chunks/8878-93794766408e7283.js' },
       { revision: null, url: '/_next/static/chunks/9329-f75a3887efa6be23.js' },
       { revision: null, url: '/_next/static/chunks/9358-9511fd91502a63bc.js' },
-      { revision: null, url: '/_next/static/chunks/940-06499320ef4bdf39.js' },
+      { revision: null, url: '/_next/static/chunks/940-f83fa18784ebe4bf.js' },
       {
         revision: null,
         url: '/_next/static/chunks/app/(private)/(org)/admin/dashboard/page-f735be47bafe5a51.js',
@@ -2256,7 +2256,7 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`);
       },
       {
         revision: null,
-        url: '/_next/static/chunks/app/(private)/(org)/layout-47d446cb86061c7d.js',
+        url: '/_next/static/chunks/app/(private)/(org)/layout-2c39ce1bdd0c1603.js',
       },
       {
         revision: null,
@@ -2380,7 +2380,7 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`);
       },
       {
         revision: null,
-        url: '/_next/static/chunks/app/layout-bdfe3059bc9e166e.js',
+        url: '/_next/static/chunks/app/layout-5fb48b32e061c742.js',
       },
       {
         revision: null,
@@ -2436,7 +2436,7 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`);
         url: '/_next/static/chunks/webpack-7cdd268959d1a90c.js',
       },
       { revision: null, url: '/_next/static/css/0c843c85c5e53ee0.css' },
-      { revision: null, url: '/_next/static/css/9e58e739008a6ba4.css' },
+      { revision: null, url: '/_next/static/css/4aace0926678a516.css' },
       { revision: null, url: '/_next/static/css/dae4ff1291381909.css' },
       {
         revision: '0b68fb45c615fdc8c195100b48cd88f9',

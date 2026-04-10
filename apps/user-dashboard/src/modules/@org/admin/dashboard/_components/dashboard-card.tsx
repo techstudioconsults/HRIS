@@ -176,7 +176,7 @@ export function DashboardCard({
         {/* Card Header */}
         <h3
           className={cn(
-            'text-muted-foreground mb-2 text-sm font-medium',
+            'text-muted-foreground truncate mb-2 text-sm font-medium',
             titleColor
           )}
         >

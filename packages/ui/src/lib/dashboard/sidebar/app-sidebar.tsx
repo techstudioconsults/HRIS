@@ -182,7 +182,7 @@ export function AppSidebar({
       <SidebarHeader className={`mt-2 p-0`}>
         <TeamSwitcher teams={resolved.teams} />
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className={`mt-12`}>
         {navMainTitle ? (
           <NavMain title={resolved.mainTitle} items={activeNavItems} />
         ) : null}

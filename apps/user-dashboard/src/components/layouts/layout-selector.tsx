@@ -60,7 +60,7 @@ export function LayoutSelector({
   };
 
   // Render based on context
-  if (isPWA) {
+  if (!isPWA) {
     if (renderPWA) {
       return <>{renderPWA(slots)}</>;
     }
@@ -72,9 +72,9 @@ export function LayoutSelector({
     );
   }
 
-  if (renderWeb) {
-    return <>{renderWeb(slots)}</>;
-  }
+  // if (renderWeb) {
+  //   return <>{renderWeb(slots)}</>;
+  // }
 
   return (
     <WebLayout header={header} footer={footer} sidebar={sidebar}>

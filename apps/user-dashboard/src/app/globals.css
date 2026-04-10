@@ -57,10 +57,6 @@
     padding-top: calc(var(--safe-area-top) + 0.5rem);
   }
 
-  /* Use more vertical space */
-  body.pwa main {
-    min-height: calc(100vh - var(--safe-area-top) - var(--safe-area-bottom));
-  }
 }
 
 /* Browser Mode (Regular Tab) */
@@ -90,15 +86,11 @@
     overflow: hidden;
   }
 
-  body.pwa main {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* iOS-specific: hide address bar interaction */
+  /* iOS-specific: keep one scroll container inside the app shell */
   body.pwa .app-layout {
-    height: 100vh;
+    min-height: 100svh;
     height: 100dvh; /* iOS 15+ dynamic viewport height */
+    overflow: hidden;
   }
 }
 
@@ -112,15 +104,24 @@
   /* PWA optimized layout */
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100svh;
   height: 100dvh; /* iOS 15+ dynamic viewport height */
+  overflow: hidden;
 }
 
-.app-layout > main {
+.app-layout__header,
+.app-layout__dock,
+.app-layout__footer {
+  flex-shrink: 0;
+}
+
+.app-layout__main {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   flex: 1;
+  overscroll-behavior: contain;
+  min-height: 0;
 }
 
 .web-layout {

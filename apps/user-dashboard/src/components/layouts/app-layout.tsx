@@ -20,23 +20,29 @@ export interface AppLayoutProps {
 
 export function AppLayout({ children, header, footer, nav }: AppLayoutProps) {
   return (
-    <div className="app-layout flex h-screen flex-col bg-background">
+    <div className="app-layout bg-background">
       {/* Header - with safe-area-top */}
       {header && (
-        <header className="safe-area-top bg-background">{header}</header>
+        <header className="app-layout__header safe-area-top bg-background">
+          {header}
+        </header>
       )}
 
-      {/* Main Content - flex-grow */}
-      <main className="flex-1 overflow-auto">
+      {/* Main Content - only scrollable region in the app shell */}
+      <main className="app-layout__main">
         <div className="safe-area-x">{children}</div>
       </main>
 
       {/* Bottom Navigation - with safe-area-bottom */}
-      {nav && <nav className="safe-area-bottom bg-background">{nav}</nav>}
+      {nav && (
+        <nav className="app-layout__dock safe-area-bottom bg-background">
+          {nav}
+        </nav>
+      )}
 
       {/* Footer */}
       {footer && (
-        <footer className="safe-area-bottom bg-muted/30 text-xs text-muted-foreground">
+        <footer className="app-layout__footer safe-area-bottom bg-muted/30 text-xs text-muted-foreground">
           {footer}
         </footer>
       )}

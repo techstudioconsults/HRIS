@@ -11,6 +11,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { useAuthService } from '../../services/use-auth-service';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 
 export const Register = () => {
   const router = useRouter();
@@ -100,13 +101,13 @@ export const Register = () => {
                 name={'domain'}
                 required
               />
-              {/*<p*/}
-              {/*  className={`text-primary-200 flex items-start text-[11.5px] italic`}*/}
-              {/*>*/}
-              {/*  <Icon name="Info" size={14} className="mt-1 mr-1 inline" /> Used*/}
-              {/*  to identify your organization and help verify employee emails*/}
-              {/*  (e.g., @techstudio.com).*/}
-              {/*</p>*/}
+              <p
+                className={`text-primary-200 flex items-start text-[11.5px] italic`}
+              >
+                <Icon name="Info" size={14} className="mt-1 mr-1 inline" /> Used
+                to identify your organization and help verify employee emails
+                (e.g., @techstudio.com).
+              </p>
             </div>
             <FormField
               placeholder={`Enter email address`}
@@ -146,18 +147,18 @@ export const Register = () => {
             </div>
           </section>
           <div className="pt-8">
-            {/*<div className="text-muted-foreground mb-4 text-sm">*/}
-            {/*  <p>*/}
-            {/*    By signing up, you&apos;re agreeing to TechstudioHR&apos;s{' '}*/}
-            {/*    <Link href="/privacy" className="text-primary hover:underline">*/}
-            {/*      Privacy Policy*/}
-            {/*    </Link>*/}
-            {/*    , and{' '}*/}
-            {/*    <Link href="/terms" className="text-primary hover:underline">*/}
-            {/*      Terms & Conditions.*/}
-            {/*    </Link>*/}
-            {/*  </p>*/}
-            {/*</div>*/}
+            <div className="text-muted-foreground mb-4 text-sm">
+              <p>
+                By signing up, you&apos;re agreeing to TechstudioHR&apos;s{' '}
+                <Link href="/privacy" className="text-primary hover:underline">
+                  Privacy Policy
+                </Link>
+                , and{' '}
+                <Link href="/terms" className="text-primary hover:underline">
+                  Terms & Conditions.
+                </Link>
+              </p>
+            </div>
 
             <MainButton
               type="submit"

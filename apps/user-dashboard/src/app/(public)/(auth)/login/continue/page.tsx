@@ -65,7 +65,7 @@ const PostLoginContinuePage = () => {
   ]);
 
   return (
-    <div className="bg-primary/10 w-full max-w-sm  mx-auto rounded-xl border p-8 text-center backdrop-blur">
+    <div className="bg-primary/10 w-full -mt-60 max-w-lg  mx-auto rounded-xl border p-8 text-center backdrop-blur">
       <SuspenseLoading />
       <p className="mt-3 text-sm font-medium text-black">
         Preparing your workspace...

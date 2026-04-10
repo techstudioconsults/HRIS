@@ -42,7 +42,7 @@ export function PWADockNav() {
 
   return (
     <nav
-      className="safe-area-bottom border-t border-border bg-background/95 backdrop-blur"
+      className="bg-background/95 backdrop-blur"
       aria-label="PWA dock navigation"
     >
       <div className="grid grid-cols-4 gap-1 px-2 py-2">

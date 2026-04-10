@@ -113,12 +113,10 @@ export const Login = () => {
           <div className="absolute inset-0 flex items-center">
             <GradientMask direction={`left`} />
             <GradientMask direction={`right`} />
-            <div className="w-full border border-primary/50" />
+            <hr className="w-full" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="text-muted-foreground rounded-full bg-background p-2">
-              OR
-            </span>
+            <span className=" rounded-full bg-background p-2">OR</span>
           </div>
         </section>
 

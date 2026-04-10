@@ -23,9 +23,7 @@ export function AppLayout({ children, header, footer, nav }: AppLayoutProps) {
     <div className="app-layout flex h-screen flex-col bg-background">
       {/* Header - with safe-area-top */}
       {header && (
-        <header className="safe-area-top border-b border-border bg-background">
-          {header}
-        </header>
+        <header className="safe-area-top bg-background">{header}</header>
       )}
 
       {/* Main Content - flex-grow */}
@@ -34,15 +32,11 @@ export function AppLayout({ children, header, footer, nav }: AppLayoutProps) {
       </main>
 
       {/* Bottom Navigation - with safe-area-bottom */}
-      {nav && (
-        <nav className="safe-area-bottom border-t border-border bg-background">
-          {nav}
-        </nav>
-      )}
+      {nav && <nav className="safe-area-bottom bg-background">{nav}</nav>}
 
       {/* Footer */}
       {footer && (
-        <footer className="safe-area-bottom border-t border-border bg-muted/30 text-xs text-muted-foreground">
+        <footer className="safe-area-bottom bg-muted/30 text-xs text-muted-foreground">
           {footer}
         </footer>
       )}

@@ -33,6 +33,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       adminEmail={session?.user.employee.email || ''}
       notifications={[]}
       showSidebarTrigger={false}
+      sticky={false}
     />
   );
 

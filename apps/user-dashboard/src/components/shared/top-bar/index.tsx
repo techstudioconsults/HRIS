@@ -24,6 +24,7 @@ type TopBarProperties = {
   notifications?: Notification[];
   className?: string;
   showSidebarTrigger?: boolean;
+  sticky?: boolean;
 };
 
 const handleLogout = async () => {
@@ -45,6 +46,7 @@ export default function TopBar({
   notifications = [],
   className = '',
   showSidebarTrigger = true,
+  sticky = true,
 }: TopBarProperties) {
   const [hideMobileSearch, setHideMobileSearch] = useState(true);
   const router = useRouter();
@@ -76,7 +78,11 @@ export default function TopBar({
   return (
     <>
       <header
-        className={cn('bg-background sticky top-0 z-20 w-full', className)}
+        className={cn(
+          'bg-background top-0 z-20 w-full',
+          sticky ? 'sticky' : 'static',
+          className
+        )}
       >
         <div className="flex min-h-16 w-full flex-wrap items-center gap-2 px-3 py-2 sm:px-4 md:flex-nowrap md:gap-4 lg:px-6">
           {showSidebarTrigger && (

@@ -6,6 +6,7 @@
 @import './base.css';
 @import './utilities.css';
 @import './animations.css';
+@plugin 'tailwindcss-animate';
 
 @source "../../../apps/**/*.{ts,tsx}";
 @source "../../../components/**/*.{ts,tsx}";

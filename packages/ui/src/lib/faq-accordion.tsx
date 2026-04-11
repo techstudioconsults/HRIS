@@ -38,7 +38,8 @@ export const FaqAccordion = ({
         <AccordionItem
           key={item.id}
           value={item.id}
-          className="rounded-lg border-0 bg-primary/10 px-4 sm:px-5 data-[state=open]:bg-[#EEF1F5]"
+          className="rounded-lg border-0 bg-primary/10 px-4 sm:px-5
+           data-[state=open]:bg-[#EEF1F5]"
         >
           <AccordionTrigger
             className="py-3.5 text-left text-sm font-medium

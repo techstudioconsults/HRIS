@@ -26,7 +26,6 @@ export {
   Loader,
   Loader2,
   CheckCircle,
-  MinusCircle,
   XCircle,
   AlertTriangle,
   MoreHorizontal,

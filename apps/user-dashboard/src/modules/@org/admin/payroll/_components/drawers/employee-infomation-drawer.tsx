@@ -90,7 +90,7 @@ export const EmployeeInformationDrawer = ({
       >
         <DrawerContent className="h-full w-full! sm:max-w-xl! md:max-w-3xl!">
           <DrawerHeader className="border-b pb-4">
-            <div className="flex items-center gap-10">
+            <div className="flex items-center justify-between gap-10">
               <div className="flex items-center gap-4">
                 <div className="flex size-10 items-center justify-center rounded-lg bg-blue-100">
                   <Icon name="User" size={20} className="text-blue-600" />

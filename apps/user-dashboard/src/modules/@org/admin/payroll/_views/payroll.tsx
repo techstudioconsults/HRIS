@@ -251,8 +251,9 @@ export const PayrollView = () => {
     try {
       // Get the current date for payment date
       const paymentDate = new Date().toISOString();
+      const payrollPolicyId = payrollPolicy?.data.id as string;
       await createPayroll(
-        { paymentDate },
+        { paymentDate, payrollPolicyId },
         {
           onSuccess: async (data) => {
             // Map response to payroll data (only affects dashboard cards)

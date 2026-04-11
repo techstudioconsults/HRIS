@@ -263,7 +263,7 @@ export const AddEmployeeDrawer = ({
             <div className="flex items-center gap-4">
               <div className="flex-1">
                 <SearchInput
-                  className="border-border h-12 w-full rounded-md border shadow"
+                  className="border-border h-12 w-full rounded-md border"
                   placeholder="Search employee..."
                   onSearch={handleSearchChange}
                 />
@@ -274,10 +274,10 @@ export const AddEmployeeDrawer = ({
                   trigger={
                     <Button
                       variant={'ghost'}
-                      className="border-border bg-background flex h-12.5 items-center rounded-md border px-3 text-black shadow dark:text-white"
+                      className="border-border bg-background flex h-12.5 items-center rounded-md border px-3 text-black dark:text-white"
                       size="lg"
                     >
-                      <Icon name="Filter" size={16} />
+                      <Icon name="Filter" size={16} variant={`Outline`} />
                       <span>Filter</span>
                     </Button>
                   }

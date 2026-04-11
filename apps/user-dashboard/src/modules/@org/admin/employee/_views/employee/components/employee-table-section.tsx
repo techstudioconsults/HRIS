@@ -68,7 +68,11 @@ export const EmployeeTableSection = ({
   }
 
   const hasActiveFilters =
-    (debouncedSearch && debouncedSearch.trim()) || teamId || roleId || (status && status !== 'all') || sortBy;
+    (debouncedSearch && debouncedSearch.trim()) ||
+    teamId ||
+    roleId ||
+    (status && status !== 'all') ||
+    sortBy;
 
   if (!employeeData?.data?.items.length) {
     if (hasActiveFilters) {
@@ -78,7 +82,9 @@ export const EmployeeTableSection = ({
     return (
       <EmptyState
         className="bg-background"
-        images={[{ src: empty1.src, alt: 'No employees', width: 100, height: 100 }]}
+        images={[
+          { src: empty1.src, alt: 'No employees', width: 100, height: 100 },
+        ]}
         title="No employee yet."
         description="Once you add team members, you'll see their details here, including department, role, work status, and more."
         button={{
@@ -101,11 +107,11 @@ export const EmployeeTableSection = ({
         hasNextPage={employeeData.data.metadata.hasNextPage}
         onPageChange={handlePageChange}
         rowActions={getRowActions}
-        onRowClick={(employee: any) => {
-          if (employee?.id) {
-            router.push(`/admin/employees/${employee.id}`);
-          }
-        }}
+        // onRowClick={(employee: any) => {
+        //   if (employee?.id) {
+        //     router.push(`/admin/employees/${employee.id}`);
+        //   }
+        // }}
         showPagination={true}
         enableRowSelection={true}
         enableColumnVisibility={true}

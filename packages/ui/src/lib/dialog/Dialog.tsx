@@ -59,7 +59,7 @@ export function ReusableDialog({
       <DialogContent
         hideClose={hideClose}
         className={cn(
-          'items-center min-w-screen lg:min-w-2xl scale-[0.93]',
+          'items-center animate-entrance! min-w-screen lg:min-w-2xl scale-[0.93]',
           className
         )}
       >

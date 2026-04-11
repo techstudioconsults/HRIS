@@ -91,7 +91,9 @@ export const usePayrollRowActions = () => {
         setEmployeeInformationActiveTab('employee-information');
         setShowEmployeeInformationDrawer(true);
       },
-      icon: <Icon name="MinusCircle" className="text-high-warning" />,
+      icon: (
+        <Icon name="Eye" className="text-high-warning" variant={`Outline`} />
+      ),
     },
     ...(payslip?.status === 'paid'
       ? []
@@ -114,7 +116,13 @@ export const usePayrollRowActions = () => {
               setEmployeeInformationActiveTab('salary-details');
               setShowEmployeeInformationDrawer(true);
             },
-            icon: <Icon name="Edit" className="text-high-primary" />,
+            icon: (
+              <Icon
+                name="Edit"
+                className="text-high-primary"
+                variant={`Outline`}
+              />
+            ),
           },
           { type: 'separator' as const },
           {
@@ -124,7 +132,13 @@ export const usePayrollRowActions = () => {
               setPayslipToDelete(payslip);
               setIsDeleteModalOpen(true);
             },
-            icon: <Icon name="Trash" className="text-destructive" />,
+            icon: (
+              <Icon
+                name="Trash"
+                className="text-destructive"
+                variant={`Outline`}
+              />
+            ),
           },
         ]),
   ];

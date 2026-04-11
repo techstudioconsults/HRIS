@@ -30,7 +30,28 @@ export function TeamSwitcher({
   }[];
 }) {
   const { isMobile, state } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
+  const [activeTeamName, setActiveTeamName] = React.useState(
+    teams[0]?.name ?? ''
+  );
+
+  React.useEffect(() => {
+    if (!teams.length) {
+      setActiveTeamName('');
+      return;
+    }
+
+    // Keep the same selected team if it still exists; otherwise fall back to first.
+    setActiveTeamName((currentName) =>
+      teams.some((team) => team.name === currentName)
+        ? currentName
+        : teams[0].name
+    );
+  }, [teams]);
+
+  const activeTeam = React.useMemo(
+    () => teams.find((team) => team.name === activeTeamName) ?? teams[0],
+    [teams, activeTeamName]
+  );
 
   if (!activeTeam) {
     return null;
@@ -70,7 +91,7 @@ export function TeamSwitcher({
                 (
                   <DropdownMenuItem
                     key={team.name}
-                    onClick={() => setActiveTeam(team)}
+                    onClick={() => setActiveTeamName(team.name)}
                     className="gap-2 p-2"
                   >
                     <div className="flex size-6 items-center justify-center rounded-md border">

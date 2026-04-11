@@ -21,7 +21,7 @@ export class PayrollService {
   // =============================
 
   // Create payroll (supports immediate or scheduled creation)
-  async createPayroll(data: { paymentDate: string }) {
+  async createPayroll(data: { paymentDate: string; payrollPolicyId: string }) {
     const response = await this.http.post<ApiResponse<Payroll>>(
       `/payrolls`,
       data

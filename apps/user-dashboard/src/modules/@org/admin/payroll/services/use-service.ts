@@ -44,7 +44,8 @@ export const usePayrollService = () => {
   // Payroll actions
   const useCreatePayroll = (options?: any) =>
     useServiceMutation(
-      (service, data: { paymentDate: string }) => service.createPayroll(data),
+      (service, data: { paymentDate: string; payrollPolicyId: string }) =>
+        service.createPayroll(data),
       options
     );
 

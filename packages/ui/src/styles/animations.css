@@ -8,15 +8,15 @@
 
 @utility animate-in {
     animation-name: ui-enter;
-    animation-duration: 300ms;
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-duration: var(--motion-normal);
+    animation-timing-function: var(--ease-standard);
     animation-fill-mode: both;
 }
 
 @utility animate-out {
     animation-name: ui-exit;
-    animation-duration: 300ms;
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-duration: var(--motion-normal);
+    animation-timing-function: var(--ease-standard);
     animation-fill-mode: both;
 }
 
@@ -85,21 +85,21 @@
 }
 
 @utility animate-accordion-down {
-    animation: accordion-down 200ms ease-in-out;
+    animation: accordion-down var(--motion-fast) var(--ease-standard);
 }
 
 @utility animate-accordion-up {
-    animation: accordion-up 200ms ease-in-out;
+    animation: accordion-up var(--motion-fast) var(--ease-standard);
 }
 
 @utility animate-entrance {
-    animation: fade-in 300ms ease-in-out, ui-slide-in-from-top 300ms ease-in-out;
+    animation: ui-slide-in-from-bottom var(--motion-normal) var(--ease-standard);
 }
 
 @layer base {
     :where(.animate-in, .animate-out) {
-        animation-duration: 300ms;
-        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+        animation-duration: var(--motion-normal);
+        animation-timing-function: var(--ease-standard);
     }
 }
 
@@ -124,17 +124,32 @@
     }
 }
 
+@keyframes ui-slide-in-from-bottom {
+    from {
+        transform: translateY(1rem);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 @keyframes ui-enter {
     from {
         opacity: var(--tw-enter-opacity, 1);
-        transform: translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0) scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1));
+        transform: translate3d(var(--tw-enter-translate-x, 0),
+        var(--tw-enter-translate-y, 0), 0) scale3d(var(--tw-enter-scale, 1),
+        var(--tw-enter-scale, 1), var(--tw-enter-scale, 1));
     }
 }
 
 @keyframes ui-exit {
     to {
         opacity: var(--tw-exit-opacity, 1);
-        transform: translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1));
+        transform: translate3d(var(--tw-exit-translate-x, 0),
+        var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1),
+        var(--tw-exit-scale, 1), var(--tw-exit-scale, 1));
     }
 }
 

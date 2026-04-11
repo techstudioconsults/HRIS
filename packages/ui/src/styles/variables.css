@@ -1,6 +1,13 @@
 /* CSS Variables - Theme Colors and Design Tokens */
 
 :root {
+    /* Transition Config */
+    --motion-fast: 0.25s;
+    --motion-normal: 0.5s;
+    --motion-slow: 1s;
+    --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
     /* Base colors */
     --background: oklch(1 0 0);
     --foreground: oklch(21.3% 0 0);
@@ -225,6 +232,14 @@
 /*}*/
 
 @theme inline {
+
+    /* Transition Config*/
+    --motion-fast: var(--motion-fast);
+    --motion-normal: var(--motion-normal);
+    --motion-slow: var(--motion-slow);
+    --ease-standard: var(--ease-standard);
+    --ease-emphasized: var(--ease-emphasized);
+
     /* primary */
     --color-primary: var(--primary);
     --color-primary-50: var(--primary-50);

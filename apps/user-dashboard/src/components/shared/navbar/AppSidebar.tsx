@@ -27,9 +27,13 @@ export function AppSideBar() {
         name: companyProfile?.name ?? '',
         logo:
           state === 'collapsed' ? (
-            <Logo logo={'/images/logo.png'} />
+            <Logo key="collapsed-logo" logo={'/images/logo.png'} />
           ) : (
-            <Logo logo={'/images/logo-white.svg'} className="w-50" />
+            <Logo
+              key="expanded-logo"
+              logo={'/images/logo-white.svg'}
+              className="w-50"
+            />
           ),
         plan: companyProfile?.domain ?? '',
       },
@@ -39,7 +43,6 @@ export function AppSideBar() {
 
   return (
     <Sidebar
-      key={state}
       theme={theme}
       navMainTitle={isOwner ? 'ADMIN' : ''}
       navMain={isOwner ? adminNavItems : EMPTY_NAV_ITEMS}

@@ -77,7 +77,7 @@ export function FundWalletAccountModal({
     >
       <div className="space-y-6">
         {/* Instructional text */}
-        <p className="text-sm text-gray-600">
+        <p className="text-sm ">
           To fund your payroll wallet, please make a transfer to the account
           below. Your wallet will be credited automatically once payment is
           confirmed.
@@ -90,15 +90,15 @@ export function FundWalletAccountModal({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="mb-1 text-xs text-gray-500">Bank Name</p>
-                <p className="font-semibold text-gray-900">
-                  {companyWalletData?.data?.bankName || 'Paystack-Titan'}
+                <p className="font-semibold">
+                  {companyWalletData?.data?.bankName || 'Pay-stack-Titan'}
                 </p>
               </div>
               <div className="flex flex-col items-end gap-2">
                 <div>
                   <p className="mb-1 text-xs text-gray-500">Account Number</p>
                   <div className="flex items-center gap-2">
-                    <p className="font-semibold text-gray-900">
+                    <p className="font-semibold">
                       {companyWalletData?.data?.accountNumber}
                     </p>
                     <button

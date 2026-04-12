@@ -3,7 +3,10 @@
 import { ReusableDialog } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+
+import { useLeaveService } from '../services/use-service';
+import type { LeaveType } from '../types';
 
 /**
  * Lightweight reminder modal for admin leave setup.
@@ -12,11 +15,55 @@ import { useEffect, useState } from 'react';
 export const LeaveSetupModal = () => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const hasEvaluatedVisibilityReference = useRef(false);
 
-  // Show modal on mount
+  const { useGetLeaveTypes } = useLeaveService();
+  const { data: leaveTypesResponse, isLoading, isError } = useGetLeaveTypes();
+
+  const leaveTypesCount = useMemo(() => {
+    if (Array.isArray(leaveTypesResponse)) {
+      return leaveTypesResponse.length;
+    }
+
+    const response = leaveTypesResponse as
+      | {
+          items?: LeaveType[];
+          data?: LeaveType[] | { items?: LeaveType[] };
+          metadata?: { total?: number };
+        }
+      | undefined;
+
+    if (typeof response?.metadata?.total === 'number') {
+      return response.metadata.total;
+    }
+
+    if (Array.isArray(response?.items)) {
+      return response.items.length;
+    }
+
+    if (Array.isArray(response?.data)) {
+      return response.data.length;
+    }
+
+    if (
+      response?.data &&
+      typeof response.data === 'object' &&
+      Array.isArray((response.data as { items?: LeaveType[] }).items)
+    ) {
+      return ((response.data as { items?: LeaveType[] }).items ?? []).length;
+    }
+
+    return 0;
+  }, [leaveTypesResponse]);
+
+  // Show setup modal only when no leave type exists.
   useEffect(() => {
-    setOpen(true);
-  }, []);
+    if (hasEvaluatedVisibilityReference.current) return;
+    if (isLoading || isError) return;
+
+    hasEvaluatedVisibilityReference.current = true;
+    setOpen(leaveTypesCount === 0);
+  }, [isError, isLoading, leaveTypesCount]);
 
   return (
     <ReusableDialog
@@ -29,10 +76,8 @@ export const LeaveSetupModal = () => {
     >
       <div className="space-y-6">
         <div className="bg-primary/10 border-primary-75 rounded-lg border p-5">
-          <h6 className="mb-2 font-semibold text-gray-900">
-            What you&apos;ll do:
-          </h6>
-          <ul className="ml-4 space-y-2 text-sm text-gray-700">
+          <h6 className="mb-2 font-semibold">What you&apos;ll do:</h6>
+          <ul className="ml-4 space-y-2 text-sm ">
             <li className="flex items-center">
               <span className="mr-2 size-1 shrink-0 rounded-full bg-gray-400" />
               Create leave types with cycles and day limits
@@ -58,7 +103,7 @@ export const LeaveSetupModal = () => {
 
           <MainButton
             onClick={() => setOpen(false)}
-            className="text-center text-sm text-gray-600 hover:text-gray-800 hover:underline"
+            className="text-center text-sm"
           >
             Remind me later
           </MainButton>

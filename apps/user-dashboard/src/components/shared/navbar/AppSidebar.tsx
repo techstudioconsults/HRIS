@@ -49,7 +49,7 @@ export function AppSideBar() {
       secondaryTitle={isDefault ? 'USER' : ''}
       navSecondary={isDefault ? adminNavItems : EMPTY_NAV_ITEMS}
       className={cn(
-        'z-50 bg-[#1F2666] text-background!',
+        'z-50 bg-[#1F2666] text-white',
         state === 'collapsed' ? 'px-4 md:px-0' : 'px-4 md:px-6'
       )}
       teams={teams}

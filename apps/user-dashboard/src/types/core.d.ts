@@ -98,7 +98,10 @@ declare global {
   }
 
   /** Dependency injector function type */
-  type DependencyInjector = (Component: React.ElementType, dependencies: Record<string, symbol>) => React.ElementType;
+  type DependencyInjector = (
+    Component: React.ElementType,
+    dependencies: Record<string, symbol>
+  ) => React.ElementType;
 
   /** Dependency resolution interface */
   interface ResolveDependencies {
@@ -138,6 +141,11 @@ declare global {
      * to scope results to a specific employee.
      */
     employeeId?: string;
+    /**
+     * Optional pay-profile identifier filter, used by payslip history queries
+     * to retrieve all payslips for a specific employee pay profile.
+     */
+    payProfileId?: string;
     permission?: string;
   }
 }

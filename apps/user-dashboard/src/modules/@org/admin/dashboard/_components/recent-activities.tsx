@@ -65,7 +65,7 @@ export function RecentActivities() {
   };
 
   return (
-    <Card className="bg-background w-full rounded-xl">
+    <Card className="w-full ">
       <div className="border-b p-6 py-0">
         <h3 className="text-lg font-semibold">Recent Activities</h3>
       </div>

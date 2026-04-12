@@ -39,9 +39,9 @@ const formatCurrency = (value: number) => {
 
 export function PayrollLineChart() {
   return (
-    <Card className="bg-background w-full shadow">
+    <Card className=" w-full shadow">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold text-gray-800">
+        <CardTitle className="text-lg font-semibold ">
           Monthly Payroll Summary
         </CardTitle>
         {/* <p className="text-sm text-gray-500">This year</p> */}
@@ -73,12 +73,13 @@ export function PayrollLineChart() {
                 dataKey="month"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: '#333333', fontSize: 12 }}
+                tick={{ fontSize: 12 }}
+                // className={`text-muted-foreground text-sm`}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: '#333333', fontSize: 12 }}
+                tick={{ fontSize: 12 }}
                 tickFormatter={(value) =>
                   formatCurrency(value).replace('₦', '')
                 }
@@ -87,7 +88,7 @@ export function PayrollLineChart() {
                 content={({ active, payload }) => {
                   if (active && payload && payload.length > 0) {
                     return (
-                      <div className="rounded-md border border-gray-200 bg-white p-3 shadow-md">
+                      <div className="rounded-md border border-gray-200 p-3 shadow-md">
                         <p className="font-semibold">
                           {payload[0].payload.month}
                         </p>

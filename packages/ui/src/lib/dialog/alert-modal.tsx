@@ -202,12 +202,10 @@ export const AlertModal: React.FC<AlertModalProperties> = ({
 
         {/* Content */}
         <div className={`space-y-2 text-center ${contentClassName ?? ''}`}>
-          <h3
-            className={`text-xl font-bold text-gray-900 ${titleClassName ?? ''}`}
-          >
+          <h3 className={`text-xl font-bold ${titleClassName ?? ''}`}>
             {title}
           </h3>
-          <p className={`text-sm text-gray-600 ${descriptionClassName ?? ''}`}>
+          <p className={`text-sm text-gray ${descriptionClassName ?? ''}`}>
             {description}
           </p>
         </div>

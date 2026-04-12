@@ -43,17 +43,17 @@ export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
         actionComponent={
           <div className="flex flex-col lg:flex-row items-center gap-2">
             <SearchInput
-              className="h-10 rounded-md border w-full lg:w-fit"
+              className="h-10 w-full lg:w-fit"
               placeholder="Search resources..."
               onSearch={handleSearch}
             />
             <div className={`flex items-center w-full lg:w-auto gap-2`}>
               <MainButton
-                variant="primaryOutline"
+                variant="default"
                 isLeftIconVisible={true}
                 icon={<Icon name="FolderAdd" variant={`Outline`} />}
                 onClick={handleOpenFolderDialog}
-                className={`w-full`}
+                className={`w-full bg-primary/10 text-primary`}
               >
                 Create Folder
               </MainButton>

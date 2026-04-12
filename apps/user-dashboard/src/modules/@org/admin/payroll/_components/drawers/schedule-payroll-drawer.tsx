@@ -17,7 +17,11 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@workspace/ui/components/drawer';
-import { EmptyState } from '@workspace/ui/lib';
+import {
+  AdvancedDataTable,
+  EmptyState,
+  type IColumnDefinition,
+} from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { cn } from '@workspace/ui/lib/utils';
@@ -141,6 +145,45 @@ export const SchedulePayrollDrawer = () => {
     return array;
   }, [payrolls, sortDirection]);
 
+  const scheduledPayrollColumns = useMemo<IColumnDefinition<ListPayroll>[]>(
+    () => [
+      {
+        header: 'Payment Date',
+        accessorKey: 'paymentDate',
+        render: (value) => formatDate(String(value ?? '')),
+      },
+      {
+        header: 'Employees',
+        accessorKey: 'employeesInPayroll',
+        render: (value) => Number(value ?? 0),
+      },
+      {
+        header: 'Net Pay',
+        accessorKey: 'netPay',
+        render: (value) => formatCurrency(Number(value ?? 0)),
+      },
+      {
+        header: 'Status',
+        accessorKey: 'status',
+        render: (value) => {
+          const statusValue = String(value ?? '-');
+
+          return (
+            <Badge
+              className={cn(
+                'rounded-full px-3 py-1',
+                getStatusBadgeClasses(statusValue)
+              )}
+            >
+              {statusValue}
+            </Badge>
+          );
+        },
+      },
+    ],
+    []
+  );
+
   const selectedPayroll = useMemo(() => {
     return payrolls.find((p) => p.id === selectedPayrollId) ?? null;
   }, [payrolls, selectedPayrollId]);
@@ -171,7 +214,7 @@ export const SchedulePayrollDrawer = () => {
     setSelectedDate(date);
 
     await createPayroll(
-      { paymentDate: date.toISOString() },
+      { payrollPolicyId: '', paymentDate: date.toISOString() },
       {
         onSuccess: () => {
           toast.success('Payroll scheduled successfully.', {
@@ -251,66 +294,37 @@ export const SchedulePayrollDrawer = () => {
                   />
                 ) : (
                   <section className="space-y-2">
-                    <div className="">
-                      <div className="w-full overflow-x-auto">
-                        <table className="w-full table-auto border-collapse text-sm">
-                          <thead className="bg-muted/50">
-                            <tr className="text-left">
-                              <th className="border px-4 py-2">
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    setSortDirection((previous) =>
-                                      previous === 'asc' ? 'desc' : 'asc'
-                                    )
-                                  }
-                                  className="flex items-center gap-1 underline-offset-4 hover:underline"
-                                >
-                                  Payment Date
-                                  <span className="text-muted-foreground text-xs">
-                                    {sortDirection === 'asc' ? '↑' : '↓'}
-                                  </span>
-                                </button>
-                              </th>
-                              <th className="border px-4 py-2">Employees</th>
-                              <th className="border px-4 py-2">Net Pay</th>
-                              <th className="border px-4 py-2">Status</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {sortedPayrolls.map((p) => (
-                              <tr
-                                key={p.id}
-                                className="hover:bg-muted/50 cursor-pointer"
-                                onClick={() => setSelectedPayrollId(p.id)}
-                              >
-                                <td className="border px-4 py-2">
-                                  {formatDate(p.paymentDate)}
-                                </td>
-                                <td className="border px-4 py-2">
-                                  {p.employeesInPayroll ?? 0}
-                                </td>
-                                <td className="border px-4 py-2">
-                                  {formatCurrency(p.netPay ?? 0)}
-                                </td>
-                                {/* <td className="px-4 py-2">{p.policyId}</td>
-                                <td className="px-4 py-2">{p.id}</td> */}
-                                <td className="border px-4 py-2">
-                                  <Badge
-                                    className={cn(
-                                      'rounded-full px-3 py-1',
-                                      getStatusBadgeClasses(p.status)
-                                    )}
-                                  >
-                                    {p.status ?? '-'}
-                                  </Badge>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
+                    <AdvancedDataTable
+                      data={sortedPayrolls}
+                      columns={scheduledPayrollColumns}
+                      onRowClick={(row) => setSelectedPayrollId(row.id)}
+                      enableRowSelection={false}
+                      enableColumnVisibility={false}
+                      enableSorting={false}
+                      enableFiltering={false}
+                      enablePagination={false}
+                      showPagination={false}
+                      showColumnCustomization={false}
+                      mobileCardView={true}
+                      customHeaderRenderer={() => (
+                        <div className="mb-2 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setSortDirection((previous) =>
+                                previous === 'asc' ? 'desc' : 'asc'
+                              )
+                            }
+                            className="inline-flex items-center gap-1 text-sm underline-offset-4 hover:underline"
+                          >
+                            Sort by Payment Date
+                            <span className="text-muted-foreground text-xs">
+                              {sortDirection === 'asc' ? '↑' : '↓'}
+                            </span>
+                          </button>
+                        </div>
+                      )}
+                    />
                   </section>
                 )}
               </>
@@ -373,7 +387,7 @@ export const SchedulePayrollDrawer = () => {
                         </button>
                       </div>
                     }
-                    className="flex flex-col items-center justify-center gap-4 bg-gradient-to-r from-[#013E94] to-[#00132E] text-center"
+                    className="flex flex-col items-center justify-center gap-4 bg-linear-to-r from-[#013E94] to-[#00132E] text-center"
                     titleColor="text-white"
                   />
                 </section>

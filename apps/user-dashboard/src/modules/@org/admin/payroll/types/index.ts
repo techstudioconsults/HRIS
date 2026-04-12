@@ -1,7 +1,7 @@
 // Shared aliases
-export type ActiveStatus = "active" | "inactive";
-export type ValueType = "percentage" | "fixed";
-export type BonusDeductionKind = "bonus" | "deduction";
+export type ActiveStatus = 'active' | 'inactive';
+export type ValueType = 'percentage' | 'fixed';
+export type BonusDeductionKind = 'bonus' | 'deduction';
 export type ISODateString = string;
 
 export interface NamedEntity {
@@ -24,7 +24,7 @@ export interface Payroll extends Record<string, unknown> {
   netPay: number;
   employeesInPayroll: number;
   paymentDate: string;
-  status: "idle" | "completed" | "disbursed" | "awaiting";
+  status: 'idle' | 'completed' | 'disbursed' | 'awaiting';
 }
 
 export interface BonusDeduction {
@@ -49,7 +49,7 @@ export interface BonusDeductionFormData {
 export interface BonusDeductionTableProperties {
   items: BonusDeduction[];
   type: BonusDeductionKind;
-  onAdd: (event: React.BaseSyntheticEvent) => void;
+  onAdd: () => void;
   onEdit: (id: string, data: BonusDeductionFormData) => void;
   onDelete: (id: string) => void;
   onToggleStatus: (id: string) => void;
@@ -75,7 +75,7 @@ export interface CompanyPayrollPolicy {
   payday: number;
   frequency: string;
   currency: string;
-  status: "incomplete" | "complete"; // assuming possible statuses
+  status: 'incomplete' | 'complete'; // assuming possible statuses
   bonuses: PayrollBonusDeduction[];
   deductions: PayrollBonusDeduction[];
   approvers: string[]; // assuming array of user IDs or emails
@@ -96,7 +96,12 @@ export interface CompanyWallet {
 }
 
 // Define Payslip domain types based on provided object
-export type PayslipStatus = "pending" | "draft" | "failed" | "paid" | "cancelled";
+export type PayslipStatus =
+  | 'pending'
+  | 'draft'
+  | 'failed'
+  | 'paid'
+  | 'cancelled';
 
 // Payslip adjustments reuse the common adjustment item
 export type PayslipBonus = AdjustmentItem;

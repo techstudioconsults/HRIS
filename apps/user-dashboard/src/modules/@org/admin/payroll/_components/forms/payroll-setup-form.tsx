@@ -43,8 +43,6 @@ const sectionClassName =
   'space-y-4 rounded-xl border border-border/60 bg-background/60 px-4 pb-4 pt-3 md:px-5 md:pb-5 md:pt-4';
 const legendClassName =
   'text-foreground block w-fit bg-background px-2 text-lg font-semibold leading-6 tracking-tight';
-const sectionHintClassName =
-  'text-muted-foreground -mt-1 text-sm flex items-center gap-2';
 
 export const PayrollSetupForm = () => {
   const router = useRouter();
@@ -78,7 +76,7 @@ export const PayrollSetupForm = () => {
                 ? String((v as Record<string, unknown>).id)
                 : String(v)
           )
-          .filter((v) => typeof v === 'string' && v.length > 0)
+          .filter((v) => v.length > 0)
       : [];
 
   const methods = useForm<PayrollSetupFormValues>({

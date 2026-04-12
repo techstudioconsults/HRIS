@@ -11,6 +11,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { useAuthService } from '../../services/use-auth-service';
+import { Card } from '@workspace/ui/components/card';
 
 export const ForgotPassword = () => {
   const router = useRouter();
@@ -49,7 +50,7 @@ export const ForgotPassword = () => {
   };
 
   return (
-    <section className="bg-background mx-auto max-w-[589px] w-full rounded-xl p-8 shadow">
+    <Card className="mx-auto max-w-[589px] w-full rounded-xl p-8 shadow">
       <div className={`space-y-4`}>
         <BackButton size={32} />
         <FormHeader
@@ -90,6 +91,6 @@ export const ForgotPassword = () => {
           </Link>
         </p>
       </FormProvider>
-    </section>
+    </Card>
   );
 };

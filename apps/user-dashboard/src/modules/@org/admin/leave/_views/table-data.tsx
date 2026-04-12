@@ -5,11 +5,14 @@ import { Icon } from '@workspace/ui/lib/icons/icon';
 import Image from 'next/image';
 
 import { useLeaveStore } from '../stores/leave-store';
-import type { LeaveRequest } from '../types';
+import type { LeaveRequest, LeaveType } from '../types';
 
 export const useLeaveRowActions = () => {
-  const { setShowLeaveDetailsDrawer, setSelectedLeaveRequestId } =
-    useLeaveStore();
+  const {
+    setShowLeaveDetailsDrawer,
+    setSelectedLeaveRequestId,
+    setSelectedLeaveRequest,
+  } = useLeaveStore();
 
   const getRowActions = (request: LeaveRequest) => {
     return [
@@ -17,9 +20,10 @@ export const useLeaveRowActions = () => {
         label: 'View Details',
         onClick: () => {
           setSelectedLeaveRequestId(request.id);
+          setSelectedLeaveRequest(request);
           setShowLeaveDetailsDrawer(true);
         },
-        icon: <Icon name="Eye" size={16} />,
+        icon: <Icon name="Eye" size={16} variant={`Outline`} />,
       },
     ];
   };
@@ -103,6 +107,46 @@ export const leaveColumns: IColumnDefinition<LeaveRequest>[] = [
       <span className="text-sm truncate text-gray-500">
         {formatDate(row.createdAt)}
       </span>
+    ),
+  },
+];
+
+export const leaveTypeColumns: IColumnDefinition<LeaveType>[] = [
+  {
+    accessorKey: 'name',
+    header: 'Leave Type',
+    render: (_value: unknown, row: LeaveType) => (
+      <span className="text-sm font-medium">{row.name}</span>
+    ),
+  },
+  {
+    accessorKey: 'days',
+    header: 'Days',
+    render: (_value: unknown, row: LeaveType) => (
+      <span className="text-sm font-medium">{row.days}</span>
+    ),
+  },
+  {
+    accessorKey: 'cycle',
+    header: 'Cycle',
+    render: (_value: unknown, row: LeaveType) => (
+      <span className="text-sm font-medium">{row.cycle}</span>
+    ),
+  },
+  {
+    accessorKey: 'carryOver',
+    header: 'Eligibility',
+    render: (_value: unknown, row: LeaveType) => (
+      <Badge
+        className={cn(
+          'text-sm font-medium',
+          row.carryOver
+            ? 'bg-success/10 text-success'
+            : 'bg-warning/10 text-warning'
+        )}
+      >
+        {row.carryOver ? 'Yes' : 'No'}
+      </Badge>
     ),
   },
 ];

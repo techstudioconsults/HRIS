@@ -39,7 +39,7 @@ export const DashboardHeader = () => {
           value={undefined}
           onValueChange={() => {}}
           placeholder="Select overview period"
-          className="h-10 lg:w-[20rem] w-full"
+          className="h-10 lg:w-[20rem] w-full border-none bg-primary/10 text-primary"
         />
 
         {/* Desktop CTAs — hidden on mobile */}

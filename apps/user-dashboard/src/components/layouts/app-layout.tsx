@@ -35,7 +35,7 @@ export function AppLayout({ children, header, footer, nav }: AppLayoutProps) {
 
       {/* Bottom Navigation - with safe-area-bottom */}
       {nav && (
-        <nav className="app-layout__dock safe-area-bottom bg-background">
+        <nav className="app-layout__dock fixed my-5 w-full bottom-0 safe-area-bottom">
           {nav}
         </nav>
       )}

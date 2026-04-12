@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 
 import { useAuthService } from '../../services/use-auth-service';
 import { FormField } from '@workspace/ui/lib';
+import { Card } from '@workspace/ui/components/card';
 
 export const ResetPassword = () => {
   const token = useSearchParameters('token');
@@ -61,9 +62,9 @@ export const ResetPassword = () => {
   };
 
   return (
-    <section className="mx-auto max-w-[589px] w-full rounded-xl bg-background p-8 shadow">
+    <Card className="mx-auto max-w-[589px] w-full rounded-xl p-8 shadow">
       <div className={`mb-8 space-y-2`}>
-        <h3 className="text-[32px]/[120%] font-semibold tracking-[-2%] text-black">
+        <h3 className="text-[32px]/[120%] font-semibold tracking-[-2%]">
           Reset Password
         </h3>
         <p className={`text-gray`}>
@@ -114,6 +115,6 @@ export const ResetPassword = () => {
           </Link>
         </span>
       </FormProvider>
-    </section>
+    </Card>
   );
 };

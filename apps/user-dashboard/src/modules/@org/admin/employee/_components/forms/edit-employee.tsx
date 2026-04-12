@@ -629,7 +629,7 @@ export const EditEmployeeForm = () => {
           <div className="mt-6 flex w-[50%] justify-start gap-4">
             <MainButton
               type="button"
-              variant="outline"
+              variant="destructiveOutline"
               onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
                 event.preventDefault();
                 event.stopPropagation();

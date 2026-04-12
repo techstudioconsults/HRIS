@@ -116,7 +116,7 @@ export const EmployeeHeaderSection = ({
               </GenericDropdown>
             </div>
             <SearchInput
-              className="border-border h-10 rounded-md border w-full"
+              className="h-10 w-full"
               placeholder="Search employee..."
               onSearch={handleSearchChange}
             />
@@ -124,9 +124,8 @@ export const EmployeeHeaderSection = ({
               contentClassName="bg-background"
               trigger={
                 <Button
-                  className="data-[state=open]:border-border
-                  data-[state=open]:text-gray h-10 rounded-md border px-3"
-                  variant="primaryOutline"
+                  className="h-10 rounded-md bg-primary/10 text-primary px-3"
+                  variant="default"
                 >
                   <Icon name="Filter" size={16} variant={`Outline`} />
                   <span className={`hidden lg:block`}>Filter</span>

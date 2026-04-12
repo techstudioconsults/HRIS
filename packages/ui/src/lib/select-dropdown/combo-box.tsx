@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { Button } from "@workspace/ui/components/button";
+import { Button } from '@workspace/ui/components/button';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@workspace/ui/components/popover";
-import { CheckIcon } from "lucide-react";
-import * as React from "react";
-import { FaChevronDown } from "react-icons/fa";
-import { cn } from "../utils";
+} from '@workspace/ui/components/popover';
+import { CheckIcon } from 'lucide-react';
+import * as React from 'react';
+import { FaChevronDown } from 'react-icons/fa';
+import { cn } from '../utils';
 import {
   Command,
   CommandEmpty,
@@ -17,7 +17,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@workspace/ui/components/command";
+} from '@workspace/ui/components/command';
 
 export interface ComboBoxOption {
   value: string;
@@ -43,15 +43,15 @@ export interface ComboBoxProperties {
 
 export function ComboBox({
   options,
-  value = "",
+  value = '',
   onValueChange,
-  placeholder = "Select option...",
-  searchPlaceholder = "Search...",
-  emptyMessage = "No options found.",
+  placeholder = 'Select option...',
+  searchPlaceholder = 'Search...',
+  emptyMessage = 'No options found.',
   disabled = false,
   readOnly = false,
   className,
-  width = "w-full",
+  width = 'w-full',
   triggerClassName,
   contentClassName,
   allowClear = true,
@@ -68,12 +68,12 @@ export function ComboBox({
   const setCurrentValue = onValueChange || setInternalValue;
 
   const selectedOption = options.find(
-    (option) => option.value === currentValue,
+    (option) => option.value === currentValue
   );
 
   const handleSelect = (selectedValue: string) => {
     const newValue =
-      selectedValue === currentValue && allowClear ? "" : selectedValue;
+      selectedValue === currentValue && allowClear ? '' : selectedValue;
     setCurrentValue(newValue);
     setOpen(false);
   };
@@ -82,34 +82,40 @@ export function ComboBox({
     <Popover open={open} onOpenChange={readOnly ? undefined : setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
+          variant="default"
           role="combobox"
           aria-expanded={open}
           disabled={disabled}
           className={cn(
-            `bg-background ring-offset-background focus-visible:ring-ring border-border hover:bg-background flex h-12 w-full rounded-md border px-3 py-2 text-sm shadow-none file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-200 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50`,
+            `bg-background text-foreground ring-offset-background focus-visible:ring-ring border-border
+             hover:bg-background flex h-12 w-full rounded-md border px-3 py-2 text-sm
+              shadow-none file:border-0 file:bg-transparent file:text-sm file:font-medium 
+              placeholder:text-gray-200 focus-visible:ring-2 focus-visible:ring-offset-2
+               focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50`,
             width,
-            "justify-between",
-            readOnly && "pointer-events-none cursor-default",
+            'justify-between',
+            readOnly && 'pointer-events-none cursor-default',
             triggerClassName,
-            className,
+            className
           )}
         >
-          <span className={cn(!selectedOption && "text-gray-200")}>
-            {selectedOption ? selectedOption.label : placeholder}
-          </span>
-          <FaChevronDown className="ml-2 size-3 shrink-0 text-gray-500 opacity-30" />
+          {/*<span className={cn(!selectedOption && 'text-gray-200')}>*/}
+          <span>{selectedOption ? selectedOption.label : placeholder}</span>
+          <FaChevronDown className="ml-2 size-3 shrink-0" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        className={cn("p-0", contentClassName)}
-        style={{ width: "var(--radix-popover-trigger-width)" }}
+        className={cn('p-0 shadow-none', contentClassName)}
+        style={{ width: 'var(--radix-popover-trigger-width)' }}
         align="start"
       >
         <Command className="w-full">
-          <CommandInput placeholder={searchPlaceholder} />
+          <CommandInput
+            placeholder={searchPlaceholder}
+            className={`placeholder:text-primary-75`}
+          />
           <CommandList className="max-h-[200px]">
-            <CommandEmpty className="py-6 text-center text-sm">
+            <CommandEmpty className="py-6 text-center text-sm text-primary">
               {emptyMessage}
             </CommandEmpty>
             <CommandGroup>
@@ -123,10 +129,10 @@ export function ComboBox({
                 >
                   <CheckIcon
                     className={cn(
-                      "mr-2 h-4 w-4",
+                      'mr-2 h-4 w-4',
                       currentValue === option.value
-                        ? "opacity-100"
-                        : "opacity-0",
+                        ? 'opacity-100'
+                        : 'opacity-0'
                     )}
                   />
                   {option.label}

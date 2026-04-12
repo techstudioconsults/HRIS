@@ -1,8 +1,8 @@
-import { Badge } from "@workspace/ui/components/badge";
-import { Card, CardContent } from "@workspace/ui/components/card";
-import { MainButton } from "@workspace/ui/lib/button";
+import { Badge } from '@workspace/ui/components/badge';
+import { Card, CardContent } from '@workspace/ui/components/card';
+import { MainButton } from '@workspace/ui/lib/button';
 
-import type { Payslip } from "../../types";
+import type { Payslip } from '../../types';
 
 interface EmployeeInformationProperties {
   payslip?: Payslip | null;
@@ -12,46 +12,58 @@ const EmployeeInformation = ({ payslip }: EmployeeInformationProperties) => {
   const employee = payslip?.employee;
 
   const employeeInfo = {
-    fullName: employee?.name ?? "-",
-    employeeId: employee?.id ?? "-",
-    department: employee?.team?.name ?? "-",
-    role: employee?.role?.name ?? "-",
-    workType: employee?.workMode ?? "-",
-    employeeType: employee?.employmentType ?? "-",
-    status: employee?.status ?? "-",
+    fullName: employee?.name ?? '-',
+    employeeId: employee?.id ?? '-',
+    department: employee?.team?.name ?? '-',
+    role: employee?.role?.name ?? '-',
+    workType: employee?.workMode ?? '-',
+    employeeType: employee?.employmentType ?? '-',
+    status: employee?.status ?? '-',
   };
 
   return (
     <div className="space-y-10">
-      <Card className="rounded-2xl border shadow-none">
-        <CardContent className="space-y-4">
-          <dl className="space-y-4 text-sm">
+      <Card className="border shadow-none bg-primary/10">
+        <CardContent className="">
+          <dl className="space-y-8 text-sm">
             <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground text-lg">Full Name</dt>
-              <dd className="text-foreground text-base font-medium">{employeeInfo.fullName}</dd>
+              <dt className="text-muted-foreground truncate">Full Name</dt>
+              <dd className="text-foreground truncate font-medium">
+                {employeeInfo.fullName}
+              </dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground text-lg">Employee ID</dt>
-              <dd className="text-foreground text-base font-medium">{employeeInfo.employeeId}</dd>
+              <dt className="text-muted-foreground truncate">Employee ID</dt>
+              <dd className="text-foreground truncate font-medium">
+                {employeeInfo.employeeId}
+              </dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground text-lg">Department</dt>
-              <dd className="text-foreground text-base font-medium">{employeeInfo.department}</dd>
+              <dt className="text-muted-foreground truncate">Department</dt>
+              <dd className="text-foreground truncate font-medium">
+                {employeeInfo.department}
+              </dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground text-lg">Role</dt>
-              <dd className="text-foreground text-base font-medium">{employeeInfo.role}</dd>
+              <dt className="text-muted-foreground truncate">Role</dt>
+              <dd className="text-foreground truncate font-medium">
+                {employeeInfo.role}
+              </dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground text-lg">Work Type</dt>
-              <dd className="text-foreground text-base font-medium">{employeeInfo.workType}</dd>
+              <dt className="text-muted-foreground truncate">Work Type</dt>
+              <dd className="text-foreground truncate font-medium">
+                {employeeInfo.workType}
+              </dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground text-lg">Employee Type</dt>
-              <dd className="text-foreground text-base font-medium">{employeeInfo.employeeType}</dd>
+              <dt className="text-muted-foreground truncate">Employee Type</dt>
+              <dd className="text-foreground truncate font-medium">
+                {employeeInfo.employeeType}
+              </dd>
             </div>
             <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground text-lg">Status</dt>
+              <dt className="text-muted-foreground">Status</dt>
               <dd>
                 <Badge variant="success">{employeeInfo.status}</Badge>
               </dd>

@@ -46,11 +46,6 @@ export function LayoutSelector({
 }: LayoutSelectorProps) {
   const { isPWA, isInitialized } = usePWA();
 
-  // During hydration, render nothing to avoid mismatch
-  if (!isInitialized) {
-    return <>{children}</>;
-  }
-
   const slots: LayoutSelectorSlots = {
     children,
     header,
@@ -58,6 +53,19 @@ export function LayoutSelector({
     nav,
     sidebar,
   };
+
+  // Default to web shell during initialization to avoid a PWA-first flash on desktop refresh.
+  if (!isInitialized) {
+    if (renderWeb) {
+      return <>{renderWeb(slots)}</>;
+    }
+
+    return (
+      <WebLayout header={header} footer={footer} sidebar={sidebar}>
+        {children}
+      </WebLayout>
+    );
+  }
 
   // Render based on context
   if (isPWA) {

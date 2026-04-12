@@ -1,6 +1,7 @@
 import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import Link from 'next/link';
+import { Card } from '@workspace/ui/components/card';
 
 // Type definitions
 type IconVariant = 'success' | 'primary' | 'warning' | 'purple-500';
@@ -166,9 +167,9 @@ export function DashboardCard({
   };
 
   return (
-    <section
+    <Card
       className={cn(
-        'bg-background flex flex-col justify-between rounded-xl p-6 shadow',
+        'flex flex-col justify-between rounded-xl p-6 shadow',
         className
       )}
     >
@@ -211,6 +212,6 @@ export function DashboardCard({
           {renderAction()}
         </div>
       )}
-    </section>
+    </Card>
   );
 }

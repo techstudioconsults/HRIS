@@ -29,7 +29,7 @@ export const LeaveHeader = ({ onSearch }: LeaveHeaderProperties) => {
                 trigger={
                   <Button
                     size="icon"
-                    className="shadow rounded-md p-2.5"
+                    className="rounded-md size-10"
                     variant="default"
                   >
                     <Icon
@@ -52,17 +52,14 @@ export const LeaveHeader = ({ onSearch }: LeaveHeaderProperties) => {
               </GenericDropdown>
             </div>
             <SearchInput
-              className="border-border h-10 w-full rounded-md border"
+              className=" h-10 w-full"
               placeholder="Search leave requests..."
               onSearch={onSearch}
             />
             <GenericDropdown
               contentClassName="bg-background"
               trigger={
-                <Button
-                  className="data-[state=open]:border-border data-[state=open]:text-gray h-10 rounded-md border px-3"
-                  variant="primaryOutline"
-                >
+                <Button className="h-10 rounded-md px-3">
                   <Icon variant={`Outline`} name="Filter" size={16} />
                   <span className="hidden lg:block">Filter</span>
                 </Button>

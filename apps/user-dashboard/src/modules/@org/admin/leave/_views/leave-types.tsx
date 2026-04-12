@@ -4,6 +4,7 @@ import { getApiErrorMessage } from '@/lib/tools/api-error-message';
 import {
   AdvancedDataTable,
   AlertModal,
+  BreadCrumb,
   DashboardHeader,
   EmptyState,
   ErrorEmptyState,
@@ -16,67 +17,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import empty1 from '~/images/empty-state.svg';
+import { SearchInput } from '@/modules/@org/shared/search-input';
 import { CreateLeaveTypeForm } from '../_components/forms/create-leave-type-form';
 import { EditLeaveTypeForm } from '../_components/forms/edit-leave-type-form';
 import { useLeaveService } from '../services/use-service';
 import type { LeaveType } from '../types';
-
-const DEFAULT_TABLE_LEAVE_TYPES: LeaveType[] = [
-  {
-    id: 'default-annual',
-    name: 'Annual Leave',
-    days: 20,
-    cycle: 'Yearly',
-    carryOver: false,
-  },
-  {
-    id: 'default-sick',
-    name: 'Sick Leave',
-    days: 10,
-    cycle: 'Yearly',
-    carryOver: false,
-  },
-  {
-    id: 'default-maternity',
-    name: 'Maternity Leave',
-    days: 90,
-    cycle: 'Yearly',
-    carryOver: false,
-  },
-];
-
-const leaveTypeColumns: IColumnDefinition<LeaveType>[] = [
-  {
-    accessorKey: 'name',
-    header: 'Leave Type',
-    render: (_value: unknown, row: LeaveType) => (
-      <span className="text-sm text-gray-900">{row.name}</span>
-    ),
-  },
-  {
-    accessorKey: 'days',
-    header: 'Days',
-    render: (_value: unknown, row: LeaveType) => (
-      <span className="text-sm text-gray-600">{row.days}</span>
-    ),
-  },
-  {
-    accessorKey: 'cycle',
-    header: 'Cycle',
-    render: (_value: unknown, row: LeaveType) => (
-      <span className="text-sm text-gray-600">{row.cycle}</span>
-    ),
-  },
-  {
-    accessorKey: 'carryOver',
-    header: 'Eligibility',
-    render: (_value: unknown, row: LeaveType) => (
-      <span className="text-sm text-gray-600">
-        {row.carryOver ? 'Yes' : 'No'}
-      </span>
-    ),
-  },
-];
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { leaveTypeColumns } from '@/modules/@org/admin/leave/_views/table-data';
 
 const LeaveTypesView = () => {
   const { useGetLeaveTypes, useGetLeaveTypeById, useDeleteLeaveType } =
@@ -140,8 +87,7 @@ const LeaveTypesView = () => {
     if (Array.isArray(nestedItems)) return nestedItems;
     return [];
   })();
-  const effectiveLeaveTypes =
-    safeLeaveTypes.length > 0 ? safeLeaveTypes : DEFAULT_TABLE_LEAVE_TYPES;
+  const effectiveLeaveTypes = safeLeaveTypes.length > 0 ? safeLeaveTypes : [];
 
   const filteredLeaveTypes = useMemo(() => {
     if (!searchQuery.trim()) return effectiveLeaveTypes;
@@ -164,13 +110,30 @@ const LeaveTypesView = () => {
     const actions: IRowAction<LeaveType>[] = [
       {
         label: 'Edit',
+        icon: <Icon name={`Edit`} variant={`Outline`} size={18} />,
         onClick: () => {
           setSelectedLeaveType(row);
           setEditDialogOpen(true);
         },
       },
       {
+        label: ``,
+        type: `separator`,
+        onClick: function (row: LeaveType): void {
+          throw new Error('Function not implemented.');
+        },
+      },
+      {
         label: 'Delete',
+        icon: (
+          <Icon
+            name={`Trash`}
+            variant={`Outline`}
+            className={`text-destructive`}
+            size={18}
+          />
+        ),
+        variant: `destructive`,
         onClick: () => {
           setSelectedLeaveType(row);
           setDeleteDialogOpen(true);
@@ -262,18 +225,31 @@ const LeaveTypesView = () => {
     <div className="space-y-6">
       <DashboardHeader
         title="Leave Types"
-        subtitle="Create and manage all leave types"
+        subtitle={
+          <BreadCrumb
+            showHome={true}
+            items={[
+              { label: 'Leave', href: '/admin/leave' },
+              {
+                label: `Leave type`,
+              },
+            ]}
+          />
+        }
         actionComponent={
-          <div className="flex items-center gap-3">
-            <input
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
+          <div className="flex items-center justify-between flex-col md:flex-row gap-3">
+            <SearchInput
               placeholder="Search leave types..."
-              className="border-border bg-background h-10 w-[260px] rounded-md border px-3 text-sm"
+              onSearch={setSearchQuery}
+              delay={0}
+              className=" h-10 w-full lg:w-[20rem]"
             />
             <MainButton
               variant="primary"
+              isLeftIconVisible
+              icon={<Icon name={`Add`} variant={`Bold`} />}
               onClick={() => setCreateDialogOpen(true)}
+              className={`w-full md:w-fit`}
             >
               Add Leave Type
             </MainButton>
@@ -282,7 +258,7 @@ const LeaveTypesView = () => {
       />
       <section className="space-y-4">
         <h2 className="text-lg font-semibold">All Leave Types</h2>
-        <div className="!h-fit overflow-hidden rounded-lg">
+        <div className="h-fit! overflow-hidden rounded-lg">
           <AdvancedDataTable
             columns={leaveTypeColumns}
             data={filteredLeaveTypes}
@@ -300,7 +276,6 @@ const LeaveTypesView = () => {
             enableFiltering={false}
             mobileCardView={true}
             showColumnCustomization={false}
-            className={`min-h-fit`}
           />
         </div>
       </section>

@@ -1,6 +1,14 @@
 'use client';
 
 import { formatCurrency } from '@/lib/formatters';
+import EmployeeInformation from '@/modules/@org/admin/payroll/_components/tab-content/employee-information';
+import { SalaryDetails } from '@/modules/@org/admin/payroll/_components/tab-content/salary-details';
+import { usePayrollService } from '@/modules/@org/admin/payroll/services/use-service';
+import { usePayrollStore } from '@/modules/@org/admin/payroll/stores/payroll-store';
+import type {
+  Payslip,
+  PayslipStatus,
+} from '@/modules/@org/admin/payroll/types';
 import { Badge } from '@workspace/ui/components/badge';
 import {
   Drawer,
@@ -17,25 +25,27 @@ import {
 } from '@workspace/ui/components/tabs';
 import {
   AdvancedDataTable,
+  AlertModal,
   EmptyState,
   TableSkeleton,
   type IColumnDefinition,
+  type IRowAction,
 } from '@workspace/ui/lib';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { useState } from 'react';
+import { AxiosError } from 'axios';
+import { useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 import Loading from '../../../../../../../note/loading';
-import { usePayrollService } from '../../services/use-service';
-import { usePayrollStore } from '../../stores/payroll-store';
-import type { Payslip, PayslipStatus } from '../../types';
-import EmployeeInformation from '../tab-content/employee-information';
-import { SalaryDetails } from '../tab-content/salary-details';
+import { PayslipDetailsDialog } from '../payslip-details-dialog';
 
 interface EmployeeInformationDrawerProperties {
   payrollId?: string | null;
 }
 
-type PayslipRow = Payslip;
+type PayslipRow = Payslip & {
+  payrollId?: string;
+};
 
 const HISTORY_PAGE_SIZE = 10;
 
@@ -50,58 +60,48 @@ const statusVariantMap: Record<
   draft: 'secondary',
 };
 
-const historyColumns: IColumnDefinition<PayslipRow>[] = [
-  {
-    header: 'Period',
-    accessorKey: 'paymentDate',
-    render: (value) => {
-      if (!value) return 'N/A';
-      return new Date(String(value)).toLocaleDateString(undefined, {
-        month: 'long',
-        year: 'numeric',
-      });
-    },
-  },
-  {
-    header: 'Payment Date',
-    accessorKey: 'id',
-    render: (_, row) => {
-      if (!row.paymentDate) return 'N/A';
-      return new Date(String(row.paymentDate)).toLocaleDateString();
-    },
-  },
-  {
-    header: 'Status',
-    accessorKey: 'status',
-    render: (value) => {
-      const s = (value as PayslipStatus) ?? 'pending';
-      return (
-        <Badge
-          variant={statusVariantMap[s] ?? 'secondary'}
-          className="capitalize"
-        >
-          {s}
-        </Badge>
-      );
-    },
-  },
-  {
-    header: 'Gross Pay',
-    accessorKey: 'grossPay',
-    render: (value) => (
-      <span className="font-medium">{formatCurrency(Number(value ?? 0))}</span>
-    ),
-  },
-  {
-    header: 'Net Pay',
-    accessorKey: 'netPay',
-    render: (value) => (
-      <span className="text-success font-medium">
-        {formatCurrency(Number(value ?? 0))}
-      </span>
-    ),
-  },
-];
+const formatHistoryMonth = (value: unknown) => {
+  if (!value) return 'N/A';
+
+  return new Date(String(value)).toLocaleDateString(undefined, {
+    month: 'short',
+    year: 'numeric',
+  });
+};
+
+const formatHistoryDate = (value: unknown) => {
+  if (!value) return 'N/A';
+
+  return new Date(String(value)).toLocaleDateString('en-GB');
+};
+
+const formatStatusLabel = (status: PayslipStatus) => {
+  if (status === 'paid') {
+    return 'Confirmed';
+  }
+
+  return `${status.charAt(0).toUpperCase()}${status.slice(1)}`;
+};
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error instanceof AxiosError) {
+    const message = error.response?.data?.message;
+
+    if (Array.isArray(message)) {
+      return message.join(', ');
+    }
+
+    if (typeof message === 'string' && message.trim()) {
+      return message;
+    }
+  }
+
+  if (error instanceof Error && error.message.trim()) {
+    return error.message;
+  }
+
+  return fallback;
+};
 
 export const EmployeeInformationDrawer = ({
   payrollId,
@@ -110,12 +110,18 @@ export const EmployeeInformationDrawer = ({
     showEmployeeInformationDrawer,
     setShowEmployeeInformationDrawer,
     selectedPayslipId,
+    setSelectedPayslipId,
     employeeInformationActiveTab,
     setEmployeeInformationActiveTab,
   } = usePayrollStore();
-  const { useGetPayslipById, useGetPayslips } = usePayrollService();
+  const { useDeletePayslip, useGetPayslipById, useGetPayslips } =
+    usePayrollService();
 
   const [historyPage, setHistoryPage] = useState(1);
+  const [viewPayslipId, setViewPayslipId] = useState<string | null>(null);
+  const [payslipToDelete, setPayslipToDelete] = useState<PayslipRow | null>(
+    null
+  );
 
   const { data: payslipResponse, isLoading } = useGetPayslipById(
     payrollId ?? '',
@@ -126,6 +132,13 @@ export const EmployeeInformationDrawer = ({
   );
 
   const payslip = payslipResponse?.data ?? null;
+
+  const { mutateAsync: deletePayslip, isPending: isDeletingPayslip } =
+    useDeletePayslip();
+
+  useEffect(() => {
+    setHistoryPage(1);
+  }, [payslip?.employee?.id]);
 
   const { data: historyResponse, isLoading: isHistoryLoading } = useGetPayslips(
     '',
@@ -139,11 +152,134 @@ export const EmployeeInformationDrawer = ({
     }
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const historyMeta = (historyResponse?.data as any)?.meta;
-  const historyItems: PayslipRow[] =
-    (historyResponse?.data as { items?: PayslipRow[] })?.items ?? [];
-  const totalHistoryPages: number = historyMeta?.totalPages ?? 1;
+  const historyPayload = historyResponse?.data as
+    | {
+        items?: PayslipRow[];
+        meta?: { totalPages?: number };
+        metadata?: { totalPages?: number };
+      }
+    | undefined;
+  const historyMeta = historyPayload?.meta ?? historyPayload?.metadata;
+  const historyItems: PayslipRow[] = historyPayload?.items ?? [];
+  const totalHistoryPages = historyMeta?.totalPages ?? 1;
+
+  const resolvePayrollId = (row?: PayslipRow | null) =>
+    row?.payrollId ?? payrollId ?? null;
+
+  const handleDeletePayslip = async () => {
+    if (!payslipToDelete) {
+      return;
+    }
+
+    const targetPayrollId = resolvePayrollId(payslipToDelete);
+
+    if (!targetPayrollId) {
+      toast.error('Unable to delete this payslip right now.');
+      return;
+    }
+
+    await deletePayslip(
+      {
+        payrollId: targetPayrollId,
+        payslipId: payslipToDelete.id,
+      },
+      {
+        onSuccess: () => {
+          const isActivePayslip = payslipToDelete.id === selectedPayslipId;
+
+          toast.success('Payslip deleted successfully.');
+          setPayslipToDelete(null);
+
+          if (isActivePayslip) {
+            setShowEmployeeInformationDrawer(false);
+            setSelectedPayslipId(null);
+          }
+        },
+        onError: (error) => {
+          toast.error(
+            getErrorMessage(
+              error,
+              'Failed to delete payslip. Please try again.'
+            )
+          );
+        },
+      }
+    );
+  };
+
+  const historyColumns = useMemo<IColumnDefinition<PayslipRow>[]>(
+    () => [
+      {
+        header: 'Month',
+        accessorKey: 'paymentDate',
+        render: (value) => formatHistoryMonth(value),
+      },
+      {
+        header: 'Payment Date',
+        accessorKey: 'paymentDate',
+        render: (value) => formatHistoryDate(value),
+      },
+      {
+        header: 'Status',
+        accessorKey: 'status',
+        render: (value) => {
+          const status = (value as PayslipStatus) ?? 'pending';
+
+          return (
+            <Badge
+              variant={statusVariantMap[status] ?? 'secondary'}
+              className="rounded-full px-3 py-1 text-xs font-medium"
+            >
+              {formatStatusLabel(status)}
+            </Badge>
+          );
+        },
+      },
+      {
+        header: 'Net Paid',
+        accessorKey: 'netPay',
+        render: (value) => (
+          <span className="text-success font-medium">
+            {formatCurrency(Number(value ?? 0))}
+          </span>
+        ),
+      },
+    ],
+    []
+  );
+
+  const historyRowActions = useMemo(
+    () =>
+      (row: PayslipRow): IRowAction<PayslipRow>[] => [
+        {
+          label: 'View Payslip',
+          onClick: () => {
+            setViewPayslipId(row.id);
+          },
+          icon: <Icon name="Eye" size={16} variant="Outline" />,
+        },
+        { type: 'separator' },
+        {
+          label:
+            isDeletingPayslip && payslipToDelete?.id === row.id
+              ? 'Deleting Payslip...'
+              : 'Delete Payslip',
+          variant: 'destructive',
+          onClick: () => {
+            setPayslipToDelete(row);
+          },
+          icon: (
+            <Icon
+              name="Trash"
+              size={16}
+              variant="Outline"
+              className="text-destructive"
+            />
+          ),
+        },
+      ],
+    [isDeletingPayslip, payslipToDelete?.id]
+  );
 
   const titleText =
     payslip?.employee?.name && payslip?.paymentDate
@@ -236,6 +372,7 @@ export const EmployeeInformationDrawer = ({
                     <AdvancedDataTable
                       data={historyItems}
                       columns={historyColumns}
+                      rowActions={historyRowActions}
                       enableRowSelection={false}
                       enableColumnVisibility={false}
                       enableSorting={false}
@@ -262,6 +399,37 @@ export const EmployeeInformationDrawer = ({
           <div className="border-t p-6"></div>
         </DrawerContent>
       </Drawer>
+
+      <AlertModal
+        isOpen={!!payslipToDelete}
+        onClose={() => {
+          if (!isDeletingPayslip) {
+            setPayslipToDelete(null);
+          }
+        }}
+        onConfirm={() => {
+          void handleDeletePayslip();
+        }}
+        loading={isDeletingPayslip}
+        type="warning"
+        title="Delete payslip"
+        description={`Are you sure you want to delete the payslip for ${formatHistoryMonth(
+          payslipToDelete?.paymentDate
+        )}? This action cannot be undone.`}
+        confirmText={isDeletingPayslip ? 'Deleting...' : 'Delete Payslip'}
+        cancelText="Cancel"
+      />
+
+      <PayslipDetailsDialog
+        payrollId={payrollId}
+        payslipId={viewPayslipId}
+        open={!!viewPayslipId}
+        onOpenChange={(open) => {
+          if (!open) {
+            setViewPayslipId(null);
+          }
+        }}
+      />
     </>
   );
 };

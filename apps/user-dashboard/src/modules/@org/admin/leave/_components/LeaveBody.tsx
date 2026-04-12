@@ -134,8 +134,8 @@ export const LeaveBody = ({
         enableFiltering={false}
         mobileCardView={true}
         showColumnCustomization={false}
-        desktopTableClassname={`lg:hidden 2xl:block`}
-        mobileTableClassname={`lg:grid 2xl:hidden`}
+        desktopTableClassname={`lg:hidden xl:block`}
+        mobileTableClassname={`lg:grid xl:hidden`}
       />
     </section>
   );

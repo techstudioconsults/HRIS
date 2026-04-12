@@ -9,7 +9,6 @@ import {
 import { cn } from '@workspace/ui/lib/utils';
 import { HRSettingsGeneralRulesTab } from './hr-settings/hr-settings-general-rules-tab';
 import { HRSettingsLeaveTab } from './hr-settings/hr-settings-leave-tab';
-import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 
 const subTabTriggerClassName = cn(
   'text-muted-foreground rounded-none border-none bg-transparent px-0 py-2 text-xs sm:text-sm',
@@ -25,14 +24,6 @@ export const HRSettingsTab = () => {
 
       <Tabs defaultValue="leave" className="w-full">
         <TabsList className="relative flex h-auto w-fit flex-wrap items-center gap-10 bg-transparent pb-2">
-          <GradientMask
-            direction={`left`}
-            className={`from-[#F8F8F9] h-6 z-1 translate-y-9`}
-          />
-          <GradientMask
-            direction={`right`}
-            className={`from-[#F8F8F9] h-6 z-1 translate-y-9`}
-          />
           <TabsTrigger value="leave" className={subTabTriggerClassName}>
             Leave
           </TabsTrigger>

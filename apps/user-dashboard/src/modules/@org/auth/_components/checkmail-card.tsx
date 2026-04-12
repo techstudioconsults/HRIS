@@ -1,11 +1,12 @@
 import { MainButton } from '@workspace/ui/lib/button';
 import Link from 'next/link';
+import { Card } from '@workspace/ui/components/card';
 
 export const CheckMailCard = () => {
   return (
-    <section className="mx-auto max-w-[589px] w-full rounded-xl bg-background p-8 shadow">
+    <Card className="mx-auto max-w-[589px] w-full rounded-xl bg-background p-8 shadow">
       <div className={`mb-8 space-y-2`}>
-        <h3 className="text-[32px]/[120%] font-semibold tracking-[-2%] text-black">
+        <h3 className="text-[32px]/[120%] font-semibold tracking-[-2%]">
           Forgot Password
         </h3>
         <p className={`text-gray text-lg`}>
@@ -21,6 +22,6 @@ export const CheckMailCard = () => {
           Sign Up
         </Link>
       </p>
-    </section>
+    </Card>
   );
 };

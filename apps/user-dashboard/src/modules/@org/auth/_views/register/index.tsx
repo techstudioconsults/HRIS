@@ -150,11 +150,19 @@ export const Register = () => {
             <div className="text-muted-foreground mb-4 text-sm">
               <p>
                 By signing up, you&apos;re agreeing to TechstudioHR&apos;s{' '}
-                <Link href="/privacy" className="text-primary hover:underline">
+                <Link
+                  href="https://techstudiohr.com/privacy-policy"
+                  className="text-primary hover:underline"
+                  target={`_blank`}
+                >
                   Privacy Policy
                 </Link>
                 , and{' '}
-                <Link href="/terms" className="text-primary hover:underline">
+                <Link
+                  href="https://techstudiohr.com/terms-of-use"
+                  className="text-primary hover:underline"
+                  target={`_blank`}
+                >
                   Terms & Conditions.
                 </Link>
               </p>

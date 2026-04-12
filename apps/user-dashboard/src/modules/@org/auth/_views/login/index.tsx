@@ -9,7 +9,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 
 export const Login = () => {
   const router = useRouter();
@@ -111,8 +110,14 @@ export const Login = () => {
 
         <section className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <GradientMask direction={`left`} />
-            <GradientMask direction={`right`} />
+            {/*<GradientMask*/}
+            {/*  direction={`left`}*/}
+            {/*  className={`dark:from-[#121212] `}*/}
+            {/*/>*/}
+            {/*<GradientMask*/}
+            {/*  direction={`right`}*/}
+            {/*  className={`dark:from-[#121212]!`}*/}
+            {/*/>*/}
             <hr className="w-full" />
           </div>
           <div className="relative flex justify-center text-sm">

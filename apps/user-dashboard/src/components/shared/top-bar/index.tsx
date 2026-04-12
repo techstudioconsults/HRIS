@@ -93,8 +93,8 @@ export default function TopBar({
             className={cn('hidden lg:block', !showSidebarTrigger && 'lg:ml-0')}
           >
             <GlobalSearchInput
-              className="border border-primary/25 sm:min-w-[320px] md:min-w-[500px]
-            placeholder:text-primary/25 shadow-none md:max-w-[640px]"
+              className="sm:min-w-[320px] md:min-w-[500px]
+             shadow-none md:max-w-[640px]"
             />
           </div>
 

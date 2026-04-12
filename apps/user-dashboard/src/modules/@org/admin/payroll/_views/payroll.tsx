@@ -420,7 +420,7 @@ export const PayrollView = () => {
                 value={selectedPayrollId}
                 onValueChange={handlePayrollSelection}
                 placeholder="Select payroll period"
-                className="h-10 lg:w-80 border w-full"
+                className="h-10 lg:w-80 border-none bg-primary/10 text-primary w-full"
               />
             </div>
             {/* Desktop Layout - Show individual buttons */}
@@ -428,7 +428,7 @@ export const PayrollView = () => {
               <MainButton
                 isDisabled={isFundWalletDisabled}
                 onClick={handleFundWallet}
-                variant="primaryOutline"
+                variant="default"
               >
                 Fund Wallet
               </MainButton>
@@ -472,7 +472,7 @@ export const PayrollView = () => {
                 <GenericDropdown
                   align={`end`}
                   trigger={
-                    <Button size={`icon`} className={`shadow rounded-md p-2.5`}>
+                    <Button size={`icon`} className={`rounded-md size-10`}>
                       <Icon
                         name="More"
                         size={20}
@@ -504,7 +504,7 @@ export const PayrollView = () => {
                 trigger={
                   <Button
                     size={`icon`}
-                    className={`shadow rounded-md p-2.5`}
+                    className={`size-10 rounded-md`}
                     variant="default"
                   >
                     <Icon

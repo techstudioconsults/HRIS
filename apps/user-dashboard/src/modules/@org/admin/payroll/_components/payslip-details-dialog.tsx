@@ -7,6 +7,7 @@ import { Card, CardContent } from '@workspace/ui/components/card';
 import { Logo, ReusableDialog } from '@workspace/ui/lib';
 
 import Loading from '../../../../../../note/loading';
+import { useTheme } from 'next-themes';
 
 interface PayslipDetailsDialogProperties {
   payrollId?: string | null;
@@ -104,6 +105,10 @@ export const PayslipDetailsDialog = ({
   open,
   onOpenChange,
 }: PayslipDetailsDialogProperties) => {
+  const { resolvedTheme } = useTheme();
+  const logoPath =
+    resolvedTheme === 'dark' ? '/images/logo-white.svg' : '/images/logo.svg';
+
   const { useGetPayslipById } = usePayrollService();
 
   const { data, isLoading } = useGetPayslipById(
@@ -144,7 +149,7 @@ export const PayslipDetailsDialog = ({
       open={open}
       onOpenChange={onOpenChange}
       hideClose={false}
-      className="gap-0 md:min-w-sm overflow-hidden border-0 p-0"
+      className="gap-0 md:min-w-140! overflow-hidden border-0 p-0"
       wrapperClassName="hidden"
     >
       <div className="flex max-h-screen flex-col">
@@ -152,7 +157,7 @@ export const PayslipDetailsDialog = ({
           {payslip ? (
             <div className="flex flex-col items-center gap-3">
               <div className="flex items-center gap-2">
-                <Logo className={`w-50`} logo={`/images/logo.svg`} />
+                <Logo className={`w-50`} logo={logoPath} />
               </div>
               <h2 className="text-base font-semibold text-foreground">
                 {formatPayslipMonth(payslip.paymentDate)}
@@ -161,7 +166,7 @@ export const PayslipDetailsDialog = ({
           ) : (
             <div className="flex flex-col items-center gap-3">
               <div className="flex items-center gap-2">
-                <Logo className={`w-50`} logo={`/images/logo.svg`} />
+                <Logo className={`w-50`} logo={logoPath} />
               </div>
               <h2 className="text-base font-semibold text-foreground">
                 Payslip

@@ -23,7 +23,7 @@ const EmployeeInformation = ({ payslip }: EmployeeInformationProperties) => {
 
   return (
     <div className="space-y-10">
-      <Card className="border shadow-none">
+      <Card className="border shadow-none bg-primary/10">
         <CardContent className="">
           <dl className="space-y-8 text-sm">
             <div className="flex items-center justify-between">

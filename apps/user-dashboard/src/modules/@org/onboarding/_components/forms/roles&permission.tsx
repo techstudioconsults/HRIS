@@ -187,7 +187,7 @@ export const RolesAndPermission = ({
         )}
 
         {/* Claims Matrix Table */}
-        <Card className={`border-none p-0 shadow-none`}>
+        <Card className={`border-none bg-transparent p-0 shadow-none`}>
           <CardHeader className={`p-0`}>
             <CardTitle className="text-lg">
               Assign Module Permissions (Claims)
@@ -227,7 +227,7 @@ export const RolesAndPermission = ({
                 };
 
                 return (
-                  <div className="space-y-4">
+                  <Card className="space-y-4 py-0 shadow-none">
                     <div className="max-h-[40svh] space-y-3 overflow-y-auto pr-1 md:hidden">
                       {modules.map((module) => (
                         <div
@@ -320,7 +320,7 @@ export const RolesAndPermission = ({
                         </table>
                       </div>
                     </div>
-                  </div>
+                  </Card>
                 );
               }}
             />

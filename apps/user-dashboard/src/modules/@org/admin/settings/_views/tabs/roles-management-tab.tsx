@@ -407,7 +407,7 @@ export const RolesManagementTab = () => {
               </GenericDropdown>
             </div>
             <SearchInput
-              className="border-border h-10 w-full rounded-md border"
+              className=" h-10 w-full"
               placeholder="Search role name..."
               delay={0}
               onSearch={(query) => setSearchInput(query)}
@@ -416,11 +416,8 @@ export const RolesManagementTab = () => {
             <GenericDropdown
               contentClassName="bg-background"
               trigger={
-                <Button
-                  variant={'primaryOutline'}
-                  className="data-[state=open]:border-border data-[state=open]:text-gray h-10 rounded-md border px-3 shadow-none"
-                >
-                  <Icon name="Filter" size={16} />
+                <Button className="h-10 rounded-md">
+                  <Icon name="Filter" size={16} variant={`Outline`} />
                   <span className="hidden lg:block">Filter</span>
                 </Button>
               }
@@ -485,7 +482,7 @@ export const RolesManagementTab = () => {
               {
                 label: 'Edit Role',
                 onClick: () => openEditDialog(row),
-                icon: <Icon name="More" size={16} />,
+                icon: <Icon name="Edit" size={16} variant={`Outline`} />,
                 ariaLabel: `Edit role ${row.name}`,
               },
               { type: 'separator' },
@@ -606,7 +603,7 @@ export const RolesManagementTab = () => {
               placeholder={
                 isLoadingTeams ? 'Loading departments...' : 'Select department'
               }
-              className="h-12"
+              className="h-12 mt-2"
               disabled={isLoadingTeams || isBusy}
             />
           </div>

@@ -5,9 +5,19 @@ import { cn } from '@workspace/ui/lib/utils';
 import { usePathname } from 'next/navigation';
 import { AuthCarousel } from '@/modules/@org/auth';
 import Image from 'next/image';
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted && resolvedTheme === 'dark';
   const hideCarouselRoutes = [
     'forgot-password',
     'reset-password',
@@ -29,7 +39,10 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
           <div
             className={cn('mx-auto max-w-[527px] flex items-center min-h-40')}
           >
-            <Logo logo={`/images/logo.svg`} width={214} />
+            <Logo
+              logo={isDark ? `/images/logo-white.svg` : `/images/logo.svg`}
+              width={214}
+            />
           </div>
           <div className="flex min-h-[calc(100dvh-160px)] w-full items-center pb-10">
             {children}

@@ -83,7 +83,7 @@ export const TeamHeaderSection = ({
               </GenericDropdown>
             </div>
             <SearchInput
-              className="border-border h-10 rounded-md border w-full"
+              className="h-10 rounded-md w-full"
               placeholder="Search teams..."
               onSearch={onSearchChange}
             />
@@ -91,8 +91,8 @@ export const TeamHeaderSection = ({
               contentClassName="bg-background"
               trigger={
                 <Button
-                  variant={'primaryOutline'}
-                  className="data-[state=open]:border-border data-[state=open]:text-gray h-10 rounded-md border px-3 shadow-none"
+                  variant={'default'}
+                  className=" h-10 rounded-md px-3 bg-primary-50 text-primary"
                 >
                   <Icon name="Filter" size={16} variant={`Outline`} />
                   <span className={`hidden lg:block`}>Filter</span>

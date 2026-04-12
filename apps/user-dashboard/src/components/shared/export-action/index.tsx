@@ -60,8 +60,11 @@ const ExportAction = <T extends object>({
   return (
     <MainButton
       isDisabled={isDisabled}
-      variant="primaryOutline"
-      className={cn('w-full lg:w-auto disabled:border-muted', className)}
+      variant="default"
+      className={cn(
+        'w-full text-primary bg-primary/10 lg:w-auto disabled:border-muted',
+        className
+      )}
       size={size as 'lg' | 'xl' | `icon`}
       ariaLabel={buttonText}
       onClick={handleDownload}

@@ -42,7 +42,10 @@ function EligibilityPill({ count }: { count: number }) {
           </AvatarFallback>
         </Avatar>
       </div>
-      <span className="border-background bg-muted text-primary bg-primary/10 flex size-9 items-center justify-center rounded-full border text-[12px] font-medium">
+      <span
+        className="border-background text-primary bg-primary/10 flex size-9 items-center
+      justify-center rounded-full border text-[12px] font-medium"
+      >
         +{count}
       </span>
     </div>
@@ -169,7 +172,7 @@ export function HRSettingsLeaveTab() {
 
         <div className="flex w-full flex-col gap-4 md:gap-2 sm:w-auto sm:flex-row sm:items-center">
           <SearchInput
-            className="border-border h-10 w-full rounded-md border sm:w-60"
+            className=" h-10 w-full rounded-md  sm:w-80"
             placeholder="Search leave type..."
             onSearch={(query) => {
               setSearch(query);

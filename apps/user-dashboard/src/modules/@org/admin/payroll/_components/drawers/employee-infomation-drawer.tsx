@@ -212,12 +212,16 @@ export const EmployeeInformationDrawer = ({
       {
         header: 'Month',
         accessorKey: 'paymentDate',
-        render: (value) => formatHistoryMonth(value),
+        render: (value) => (
+          <span className={`text-sm`}>{formatHistoryMonth(value)}</span>
+        ),
       },
       {
         header: 'Payment Date',
         accessorKey: 'paymentDate',
-        render: (value) => formatHistoryDate(value),
+        render: (value) => (
+          <span className={`text-sm`}>{formatHistoryDate(value)}</span>
+        ),
       },
       {
         header: 'Status',
@@ -239,7 +243,7 @@ export const EmployeeInformationDrawer = ({
         header: 'Net Paid',
         accessorKey: 'netPay',
         render: (value) => (
-          <span className="text-success font-medium">
+          <span className="text-success text-sm font-medium">
             {formatCurrency(Number(value ?? 0))}
           </span>
         ),
@@ -296,12 +300,12 @@ export const EmployeeInformationDrawer = ({
         onOpenChange={setShowEmployeeInformationDrawer}
         direction="right"
       >
-        <DrawerContent className="h-full w-full! sm:max-w-xl! md:max-w-3xl!">
+        <DrawerContent className="h-full w-full! sm:max-w-xl! md:max-w-2xl!">
           <DrawerHeader className="border-b pb-4">
             <div className="flex items-center justify-between gap-10">
               <div className="flex items-center gap-4">
                 <div className="flex size-10 items-center justify-center rounded-lg bg-blue-100">
-                  <Icon name="User" size={20} className="text-blue-600" />
+                  <Icon name="User" size={20} className="text-primary" />
                 </div>
                 <div>
                   <DrawerTitle className="text-lg font-semibold">

@@ -63,7 +63,7 @@ const DetailsItem = ({
       <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
         {label}
       </p>
-      <p className="text-foreground truncate text-sm font-medium">
+      <p className="text-foreground capitalize truncate text-sm font-medium">
         {value || 'N/A'}
       </p>
     </div>
@@ -139,7 +139,10 @@ const EmployeeDetailsHeader = ({
         <GenericDropdown
           align="end"
           trigger={
-            <Button size={`icon`} className={`shadow rounded-md p-2.5`}>
+            <Button
+              size={`icon`}
+              className={`bg-primary/10 rounded-md size-10.5`}
+            >
               <Icon
                 name="More"
                 size={20}
@@ -193,9 +196,10 @@ const EmployeeDetailsContent = ({ employeeData }: { employeeData: any }) => {
             </span>
           </div>
 
-          <div className="h-0.5 relative bg-primary/50">
-            <GradientMask direction={`left`} />
-            <GradientMask direction={`right`} />
+          <div className={`relative`}>
+            <hr className=" bg-primary/50" />
+            <GradientMask className={`absolute`} direction={`left`} />
+            <GradientMask className={`absolute`} direction={`right`} />
           </div>
 
           <fieldset className="space-y-4">
@@ -214,9 +218,10 @@ const EmployeeDetailsContent = ({ employeeData }: { employeeData: any }) => {
             />
           </fieldset>
 
-          <div className="h-0.5 relative bg-primary/50">
-            <GradientMask direction={`left`} />
-            <GradientMask direction={`right`} />
+          <div className={`relative`}>
+            <hr className=" bg-primary/50" />
+            <GradientMask className={`absolute`} direction={`left`} />
+            <GradientMask className={`absolute`} direction={`right`} />
           </div>
 
           <fieldset className="space-y-4">

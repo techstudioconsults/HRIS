@@ -1,5 +1,7 @@
-import { create } from "zustand";
-import { devtools } from "zustand/middleware";
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+
+import type { LeaveRequest } from '../types';
 
 export interface LeaveUIState {
   showLeaveSetupModal: boolean;
@@ -7,6 +9,7 @@ export interface LeaveUIState {
 
   showLeaveDetailsDrawer: boolean;
   selectedLeaveRequestId: string | null;
+  selectedLeaveRequest: LeaveRequest | null;
 }
 
 export interface LeaveUIActions {
@@ -15,6 +18,7 @@ export interface LeaveUIActions {
 
   setShowLeaveDetailsDrawer: (open: boolean) => void;
   setSelectedLeaveRequestId: (id: string | null) => void;
+  setSelectedLeaveRequest: (request: LeaveRequest | null) => void;
 
   resetUI: () => void;
 }
@@ -24,6 +28,7 @@ const initialState: LeaveUIState = {
   hasCompletedLeaveSetup: false,
   showLeaveDetailsDrawer: false,
   selectedLeaveRequestId: null,
+  selectedLeaveRequest: null,
 };
 
 export const useLeaveStore = create<LeaveUIState & LeaveUIActions>()(
@@ -31,13 +36,17 @@ export const useLeaveStore = create<LeaveUIState & LeaveUIActions>()(
     (set) => ({
       ...initialState,
       setShowLeaveSetupModal: (open) => set({ showLeaveSetupModal: open }),
-      setHasCompletedLeaveSetup: (status) => set({ hasCompletedLeaveSetup: status }),
-      setShowLeaveDetailsDrawer: (open) => set({ showLeaveDetailsDrawer: open }),
+      setHasCompletedLeaveSetup: (status) =>
+        set({ hasCompletedLeaveSetup: status }),
+      setShowLeaveDetailsDrawer: (open) =>
+        set({ showLeaveDetailsDrawer: open }),
       setSelectedLeaveRequestId: (id) => set({ selectedLeaveRequestId: id }),
+      setSelectedLeaveRequest: (request) =>
+        set({ selectedLeaveRequest: request }),
       resetUI: () => set(initialState),
     }),
-    { name: "leave-ui" },
-  ),
+    { name: 'leave-ui' }
+  )
 );
 
 export type { LeaveUIState as LeaveState, LeaveUIActions as LeaveActions };

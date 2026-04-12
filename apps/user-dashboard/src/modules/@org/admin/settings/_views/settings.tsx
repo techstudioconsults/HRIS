@@ -15,7 +15,6 @@ import { HRSettingsTab } from './tabs/hr-settings-tab';
 import { NotificationSettingsTab } from './tabs/notification-settings-tab';
 import { RolesManagementTab } from './tabs/roles-management-tab';
 import { SecuritySettingsTab } from './tabs/security-settings-tab';
-import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 
 type SettingsTab =
   | 'account'
@@ -46,14 +45,14 @@ export const SettingsView = () => {
         className="w-full"
       >
         <TabsList className="flex relative h-auto w-full flex-wrap items-center gap-6 bg-transparent pb-6">
-          <GradientMask
-            direction={`left`}
-            className={`from-[#F8F8F9] h-10 translate-y-25 z-1 lg:translate-y-10`}
-          />
-          <GradientMask
-            direction={`right`}
-            className={`from-[#F8F8F9] z-1 h-10 translate-y-25 lg:translate-y-10`}
-          />
+          {/*<GradientMask*/}
+          {/*  direction={`left`}*/}
+          {/*  className={`from-[#F8F8F9] dark:from-[#0f1216] h-10 translate-y-25 z-1 lg:translate-y-10`}*/}
+          {/*/>*/}
+          {/*<GradientMask*/}
+          {/*  direction={`right`}*/}
+          {/*  className={`from-[#F8F8F9] dark:from-[#0f1216] z-1 h-10 translate-y-25 lg:translate-y-10`}*/}
+          {/*/>*/}
           <TabsTrigger value="account" className={tabTriggerClassName}>
             Account
           </TabsTrigger>

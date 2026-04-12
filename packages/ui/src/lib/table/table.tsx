@@ -629,7 +629,7 @@ export function AdvancedDataTable<T extends DataItem>({
         {/* Desktop Table View */}
         <div
           className={cn(
-            'bg-background hidden h-full overflow-auto rounded-lg shadow lg:block',
+            ' hidden h-full overflow-auto rounded-lg shadow lg:block',
             desktopTableClassname
           )}
         >
@@ -740,7 +740,7 @@ export function AdvancedDataTable<T extends DataItem>({
                               <MoreVertical className="h-4 w-4" />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent
-                              className="bg-background min-w-60 shadow-none"
+                              className=" min-w-60 shadow-none"
                               align="end"
                             >
                               {rowActions(row.original).map(

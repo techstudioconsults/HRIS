@@ -16,6 +16,7 @@ import type { FolderFile } from '../../services/types';
 import { useResourceService } from '../../services/use-service';
 import { formatDate, formatFileSize, getFileIcon } from '../../utils/format';
 import { Separator } from '@workspace/ui/components/separator';
+import { Card } from '@workspace/ui/components/card';
 
 interface FileCardProperties {
   file: FolderFile;
@@ -64,7 +65,7 @@ export const FileCard = ({ file }: FileCardProperties) => {
 
   return (
     <>
-      <div className="group bg-background rounded-lg p-4 shadow transition-all">
+      <Card className="group rounded-lg p-4 shadow transition-all">
         <div className="flex items-start justify-between">
           <div className="flex min-w-0 flex-1 items-start gap-3">
             <Image
@@ -124,7 +125,7 @@ export const FileCard = ({ file }: FileCardProperties) => {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      </div>
+      </Card>
 
       {/* Delete File Dialog */}
       <AlertModal

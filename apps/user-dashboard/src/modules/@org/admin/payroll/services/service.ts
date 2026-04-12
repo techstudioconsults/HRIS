@@ -293,7 +293,7 @@ export class PayrollService {
     const response = await this.http.get<PaginatedApiResponse<Payslip>>(
       `/payslips`,
       {
-        payrollId: payrollID,
+        // payrollId: payrollID,
         ...filters,
       }
     );

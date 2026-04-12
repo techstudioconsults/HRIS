@@ -1,8 +1,7 @@
 'use client';
 
+import { formatCurrency } from '@/lib/formatters';
 import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
-import { Card, CardContent, CardFooter } from '@workspace/ui/components/card';
 import {
   Drawer,
   DrawerClose,
@@ -11,42 +10,98 @@ import {
   DrawerTitle,
 } from '@workspace/ui/components/drawer';
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from '@workspace/ui/components/pagination';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@workspace/ui/components/table';
-import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@workspace/ui/components/tabs';
+import {
+  AdvancedDataTable,
+  EmptyState,
+  TableSkeleton,
+  type IColumnDefinition,
+} from '@workspace/ui/lib';
 import { Icon } from '@workspace/ui/lib/icons/icon';
+import { useState } from 'react';
 
 import Loading from '../../../../../../../note/loading';
 import { usePayrollService } from '../../services/use-service';
 import { usePayrollStore } from '../../stores/payroll-store';
+import type { Payslip, PayslipStatus } from '../../types';
 import EmployeeInformation from '../tab-content/employee-information';
 import { SalaryDetails } from '../tab-content/salary-details';
 
 interface EmployeeInformationDrawerProperties {
-  /**
-   * The currently selected payroll period identifier.
-   * Optional so the drawer can still be rendered in places
-   * where a payroll context is not yet available.
-   */
   payrollId?: string | null;
 }
+
+type PayslipRow = Payslip;
+
+const HISTORY_PAGE_SIZE = 10;
+
+const statusVariantMap: Record<
+  PayslipStatus,
+  'success' | 'destructive' | 'secondary' | 'warning'
+> = {
+  paid: 'success',
+  failed: 'destructive',
+  cancelled: 'destructive',
+  pending: 'warning',
+  draft: 'secondary',
+};
+
+const historyColumns: IColumnDefinition<PayslipRow>[] = [
+  {
+    header: 'Period',
+    accessorKey: 'paymentDate',
+    render: (value) => {
+      if (!value) return 'N/A';
+      return new Date(String(value)).toLocaleDateString(undefined, {
+        month: 'long',
+        year: 'numeric',
+      });
+    },
+  },
+  {
+    header: 'Payment Date',
+    accessorKey: 'id',
+    render: (_, row) => {
+      if (!row.paymentDate) return 'N/A';
+      return new Date(String(row.paymentDate)).toLocaleDateString();
+    },
+  },
+  {
+    header: 'Status',
+    accessorKey: 'status',
+    render: (value) => {
+      const s = (value as PayslipStatus) ?? 'pending';
+      return (
+        <Badge
+          variant={statusVariantMap[s] ?? 'secondary'}
+          className="capitalize"
+        >
+          {s}
+        </Badge>
+      );
+    },
+  },
+  {
+    header: 'Gross Pay',
+    accessorKey: 'grossPay',
+    render: (value) => (
+      <span className="font-medium">{formatCurrency(Number(value ?? 0))}</span>
+    ),
+  },
+  {
+    header: 'Net Pay',
+    accessorKey: 'netPay',
+    render: (value) => (
+      <span className="text-success font-medium">
+        {formatCurrency(Number(value ?? 0))}
+      </span>
+    ),
+  },
+];
 
 export const EmployeeInformationDrawer = ({
   payrollId,
@@ -58,7 +113,9 @@ export const EmployeeInformationDrawer = ({
     employeeInformationActiveTab,
     setEmployeeInformationActiveTab,
   } = usePayrollStore();
-  const { useGetPayslipById } = usePayrollService();
+  const { useGetPayslipById, useGetPayslips } = usePayrollService();
+
+  const [historyPage, setHistoryPage] = useState(1);
 
   const { data: payslipResponse, isLoading } = useGetPayslipById(
     payrollId ?? '',
@@ -70,14 +127,29 @@ export const EmployeeInformationDrawer = ({
 
   const payslip = payslipResponse?.data ?? null;
 
+  const { data: historyResponse, isLoading: isHistoryLoading } = useGetPayslips(
+    '',
+    {
+      employeeId: payslip?.employee?.id,
+    },
+    {
+      enabled:
+        employeeInformationActiveTab === 'payroll-history' &&
+        !!payslip?.employee?.id,
+    }
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const historyMeta = (historyResponse?.data as any)?.meta;
+  const historyItems: PayslipRow[] =
+    (historyResponse?.data as { items?: PayslipRow[] })?.items ?? [];
+  const totalHistoryPages: number = historyMeta?.totalPages ?? 1;
+
   const titleText =
     payslip?.employee?.name && payslip?.paymentDate
       ? `Payroll Review (${new Date(payslip.paymentDate).toLocaleDateString(
           undefined,
-          {
-            month: 'long',
-            year: 'numeric',
-          }
+          { month: 'long', year: 'numeric' }
         )}) - ${payslip.employee.name}`
       : 'Payroll Review';
 
@@ -99,7 +171,6 @@ export const EmployeeInformationDrawer = ({
                   <DrawerTitle className="text-lg font-semibold">
                     {titleText}
                   </DrawerTitle>
-                  {/* <DrawerDescription>Set up automated payroll processing</DrawerDescription> */}
                 </div>
               </div>
               <DrawerClose className={`text-primary`} asChild>
@@ -108,7 +179,7 @@ export const EmployeeInformationDrawer = ({
             </div>
           </DrawerHeader>
 
-          <section className="flex-1 space-y-6 overflow-y-auto p-10">
+          <section className="flex-1 space-y-6 overflow-y-auto p-4 lg:p-10">
             <div className="space-y-6">
               <Tabs
                 value={employeeInformationActiveTab}
@@ -124,12 +195,12 @@ export const EmployeeInformationDrawer = ({
               >
                 <TabsList className="w-full bg-transparent">
                   <TabsTrigger value="employee-information">
-                    Employee Infomation
+                    Employee Information
                   </TabsTrigger>
                   <TabsTrigger value="salary-details">
                     Salary Details
                   </TabsTrigger>
-                  <TabsTrigger className="" value="payroll-history">
+                  <TabsTrigger value="payroll-history">
                     Payroll History
                   </TabsTrigger>
                 </TabsList>
@@ -152,139 +223,38 @@ export const EmployeeInformationDrawer = ({
                 </TabsContent>
 
                 <TabsContent value="payroll-history" className="mt-6 space-y-6">
-                  <Card className="rounded-2xl border shadow-none">
-                    <CardContent className="px-0">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Month</TableHead>
-                            <TableHead>Payment Date</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Net Paid</TableHead>
-                            <TableHead className="text-right">
-                              Payslip
-                            </TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell>Jun 2025</TableCell>
-                            <TableCell>25/6/2025</TableCell>
-                            <TableCell>
-                              <Badge variant="success">Confirmed</Badge>
-                            </TableCell>
-                            <TableCell className="text-success font-medium">
-                              ₦300,000
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-muted-foreground"
-                              >
-                                ...
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>May 2025</TableCell>
-                            <TableCell>25/6/2025</TableCell>
-                            <TableCell>
-                              <Badge variant="success">Confirmed</Badge>
-                            </TableCell>
-                            <TableCell className="text-success font-medium">
-                              ₦300,000
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-muted-foreground"
-                              >
-                                ...
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>Apr 2025</TableCell>
-                            <TableCell>25/6/2025</TableCell>
-                            <TableCell>
-                              <Badge variant="success">Confirmed</Badge>
-                            </TableCell>
-                            <TableCell className="text-success font-medium">
-                              ₦300,000
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-muted-foreground"
-                              >
-                                ...
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>Mar 2025</TableCell>
-                            <TableCell>25/6/2025</TableCell>
-                            <TableCell>
-                              <Badge variant="success">Confirmed</Badge>
-                            </TableCell>
-                            <TableCell className="text-success font-medium">
-                              ₦300,000
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-muted-foreground"
-                              >
-                                ...
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>Feb 2025</TableCell>
-                            <TableCell>25/6/2025</TableCell>
-                            <TableCell>
-                              <Badge variant="success">Confirmed</Badge>
-                            </TableCell>
-                            <TableCell className="text-success font-medium">
-                              ₦300,000
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-muted-foreground"
-                              >
-                                ...
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </CardContent>
-
-                    <CardFooter className="text-muted-foreground flex flex-col items-center justify-between gap-4 border-t py-4 text-xs sm:flex-row">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span>10 entries per page</span>
-                        <span className="text-border hidden sm:inline">|</span>
-                        <span>Page 1 of 1</span>
-                      </div>
-
-                      <Pagination className="w-auto justify-center sm:justify-end">
-                        <PaginationContent>
-                          <PaginationItem>
-                            <PaginationPrevious href="#" />
-                          </PaginationItem>
-                          <PaginationItem>
-                            <PaginationNext href="#" />
-                          </PaginationItem>
-                        </PaginationContent>
-                      </Pagination>
-                    </CardFooter>
-                  </Card>
+                  {isHistoryLoading ? (
+                    <TableSkeleton />
+                  ) : historyItems.length === 0 ? (
+                    <EmptyState
+                      className="bg-background shadow"
+                      images={[]}
+                      title="No payroll history found."
+                      description="This employee has no previous payslips on record."
+                    />
+                  ) : (
+                    <AdvancedDataTable
+                      data={historyItems}
+                      columns={historyColumns}
+                      enableRowSelection={false}
+                      enableColumnVisibility={false}
+                      enableSorting={false}
+                      enableFiltering={false}
+                      enablePagination={false}
+                      showColumnCustomization={false}
+                      showPagination={true}
+                      currentPage={historyPage}
+                      totalPages={totalHistoryPages}
+                      itemsPerPage={HISTORY_PAGE_SIZE}
+                      hasNextPage={historyPage < totalHistoryPages}
+                      hasPreviousPage={historyPage > 1}
+                      onPageChange={(page) => setHistoryPage(page)}
+                      mobileCardView={true}
+                      desktopTableClassname="lg:block!"
+                      mobileTableClassname="lg:hidden!"
+                      className="min-h-0"
+                    />
+                  )}
                 </TabsContent>
               </Tabs>
             </div>

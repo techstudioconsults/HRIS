@@ -22,6 +22,7 @@ import { useResourceService } from '../../services/use-service';
 import { formatDate } from '../../utils/format';
 import { EditFolderForm } from '../forms/edit-folder';
 import { FileCard } from './FileCard';
+import { Card } from '@workspace/ui/components/card';
 
 interface FolderCardProperties {
   folder: Folder;
@@ -83,8 +84,8 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
 
   return (
     <>
-      <div
-        className="group bg-background cursor-pointer rounded-lg p-4 shadow transition-all hover:shadow-md"
+      <Card
+        className="group cursor-pointer rounded-lg p-4 shadow transition-all hover:shadow-md"
         onClick={handleFolderClick}
       >
         <div className="flex items-start justify-between">
@@ -154,7 +155,7 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      </div>
+      </Card>
 
       {/* Delete Folder Dialog */}
       <AlertModal

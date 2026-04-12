@@ -107,11 +107,11 @@ export const EmployeeTableSection = ({
         hasNextPage={employeeData.data.metadata.hasNextPage}
         onPageChange={handlePageChange}
         rowActions={getRowActions}
-        // onRowClick={(employee: any) => {
-        //   if (employee?.id) {
-        //     router.push(`/admin/employees/${employee.id}`);
-        //   }
-        // }}
+        onRowClick={(employee: any) => {
+          if (employee?.id) {
+            router.push(`/admin/employees/${employee.id}`);
+          }
+        }}
         showPagination={true}
         enableRowSelection={true}
         enableColumnVisibility={true}

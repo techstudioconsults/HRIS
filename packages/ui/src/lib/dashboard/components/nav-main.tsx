@@ -87,7 +87,7 @@ export function NavMain({
                         variant={item.isActive ? `Bulk` : `Linear`}
                         name={item.icon}
                         size={18}
-                        className={cn(`text-background`)}
+                        className={cn(`text-white`)}
                       />
                     )}
                     <span>{item.name}</span>
@@ -125,7 +125,7 @@ export function NavMain({
                         variant={parentIsActive ? `Bulk` : `Linear`}
                         name={item.icon}
                         size={18}
-                        className={cn(`text-background`)}
+                        className={cn(`text-white`)}
                       />
                     )}
                     <span>{item.name}</span>

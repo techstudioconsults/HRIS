@@ -241,7 +241,7 @@ const EmployeeDetailsContent = ({ employeeData }: { employeeData: any }) => {
         {/* Main Content - Scrollable */}
         <div className="space-y-6 lg:col-span-8">
           {/* Personal Information */}
-          <Card className="border-border bg-background p-6 shadow-sm md:p-8">
+          <Card className="border-border p-6 shadow-sm md:p-8">
             <DetailsFieldset icon={`Profile`} legend="Personal Information">
               <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 <DetailsItem label="Full Name" value={fullName} />
@@ -264,7 +264,7 @@ const EmployeeDetailsContent = ({ employeeData }: { employeeData: any }) => {
           </Card>
 
           {/* Employment Details */}
-          <Card className="border-border bg-background p-6 shadow-sm md:p-8">
+          <Card className="border-border p-6 shadow-sm md:p-8">
             <DetailsFieldset icon={`Buildings`} legend="Employment Details">
               <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 <DetailsItem
@@ -296,7 +296,7 @@ const EmployeeDetailsContent = ({ employeeData }: { employeeData: any }) => {
           </Card>
 
           {/* Salary and Payroll */}
-          <Card className="border-border bg-background p-6 shadow-sm md:p-8">
+          <Card className="border-border p-6 shadow-sm md:p-8">
             <DetailsFieldset
               icon={`WalletMoney`}
               legend="Salary and Payroll Details"

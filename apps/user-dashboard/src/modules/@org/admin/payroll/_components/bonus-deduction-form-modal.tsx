@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Switch } from "@workspace/ui/components/switch";
-import { FormField, ReusableDialog } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Switch } from '@workspace/ui/components/switch';
+import { FormField, ReusableDialog } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { BonusDeductionFormData } from "../types";
+import { BonusDeductionFormData } from '../types';
 
 const bonusDeductionSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  valueType: z.enum(["percentage", "fixed"]),
-  value: z.number().min(0, "Value must be positive"),
+  name: z.string().min(1, 'Name is required'),
+  valueType: z.enum(['percentage', 'fixed']),
+  value: z.number().min(0, 'Value must be positive'),
   status: z.boolean(),
-  type: z.enum(["bonus", "deduction"]),
+  type: z.enum(['bonus', 'deduction']),
 });
 
 interface BonusDeductionFormModalProperties {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: BonusDeductionFormData) => void;
-  type: "bonus" | "deduction";
+  type: 'bonus' | 'deduction';
   initialData?: BonusDeductionFormData;
   isEditing?: boolean;
 }
@@ -40,8 +40,8 @@ export function BonusDeductionFormModal({
   const methods = useForm<BonusDeductionFormData>({
     resolver: zodResolver(bonusDeductionSchema),
     defaultValues: initialData || {
-      name: "",
-      valueType: "percentage",
+      name: '',
+      valueType: 'percentage',
       value: 0,
       status: true,
       type: type,
@@ -49,8 +49,8 @@ export function BonusDeductionFormModal({
   });
 
   const { handleSubmit, watch, setValue } = methods;
-  const valueType = watch("valueType");
-  const status = watch("status");
+  const valueType = watch('valueType');
+  const status = watch('status');
 
   // Reset form values whenever modal opens or initialData/type changes
   // This ensures the edit form populates inputs with the original values
@@ -58,12 +58,12 @@ export function BonusDeductionFormModal({
     if (open) {
       methods.reset(
         initialData || {
-          name: "",
-          valueType: "percentage",
+          name: '',
+          valueType: 'percentage',
           value: 0,
           status: true,
           type,
-        },
+        }
       );
     }
   }, [open, initialData, type, methods]);
@@ -90,11 +90,11 @@ export function BonusDeductionFormModal({
 
   return (
     <ReusableDialog
-      trigger={""}
+      trigger={''}
       open={open}
       onOpenChange={onOpenChange}
-      title={`${isEditing ? "Edit" : "Add"} ${type}`}
-      className="!max-w-lg"
+      title={`${isEditing ? 'Edit' : 'Add'} ${type}`}
+      className="lg:max-w-lg!"
     >
       <FormProvider {...methods}>
         <form
@@ -111,7 +111,7 @@ export function BonusDeductionFormModal({
               label={`${type} Name`}
               placeholder={`Enter ${type} name`}
               type="text"
-              className="!h-14 w-full"
+              className="h-14! w-full"
             />
 
             <FormField
@@ -119,33 +119,37 @@ export function BonusDeductionFormModal({
               label="Value Type"
               placeholder="Select type"
               type="select"
-              className="!h-14 w-full"
+              className="h-14! w-full"
               options={[
-                { label: "Percentage", value: "percentage" },
-                { label: "Fixed Amount", value: "fixed" },
+                { label: 'Percentage', value: 'percentage' },
+                { label: 'Fixed Amount', value: 'fixed' },
               ]}
             />
 
             <FormField
               name="value"
               label="Value"
-              placeholder={`Enter value${valueType === "percentage" ? " (e.g., 4.5)" : " (e.g., 3000)"}`}
+              placeholder={`Enter value${valueType === 'percentage' ? ' (e.g., 4.5)' : ' (e.g., 3000)'}`}
               type="number"
-              className="!h-14 w-full"
+              className="h-14! w-full"
             />
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-3">
                 <label className="text-sm font-medium">Active</label>
-                <Switch checked={status} onCheckedChange={(checked) => setValue("status", checked)} />
+                <Switch
+                  checked={status}
+                  onCheckedChange={(checked) => setValue('status', checked)}
+                />
               </div>
-              <p className="text-xs text-gray-500">
-                Setting this to active means you want this {type} to reoccur in the other cycles.
+              <p className="text-muted-foreground text-xs leading-relaxed">
+                Setting this to active means you want this {type} to reoccur in
+                the other cycles.
               </p>
             </div>
           </div>
 
-          <div className="flex gap-3 pt-4">
+          <div className="flex flex-col gap-3 pt-4 sm:flex-row">
             <MainButton
               className="w-full"
               type="button"
@@ -166,7 +170,7 @@ export function BonusDeductionFormModal({
                 handleSubmit(handleFormSubmit)();
               }}
             >
-              {isSubmitting ? "Saving..." : "Continue"}
+              {isSubmitting ? 'Saving...' : 'Continue'}
             </MainButton>
           </div>
         </form>

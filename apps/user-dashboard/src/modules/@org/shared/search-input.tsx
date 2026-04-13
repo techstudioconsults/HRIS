@@ -47,7 +47,8 @@ export const SearchInput = ({
         disabled={isDisabled}
         type="search"
         placeholder={placeholder}
-        className="h-full placeholder:text-xs border-none pr-4 bg-gray-75/50! pl-10 shadow-none"
+        className="h-full placeholder:text-xs placeholder:text-primary-200
+        dark:bg-primary-50 border-none pr-4 bg-primary-50 pl-10 shadow-none"
         value={searchQuery}
         onChange={(event) => setSearchQuery(event.target.value)}
       />
@@ -172,7 +173,7 @@ export function GlobalSearchInput({
       <PopoverTrigger className={`w-full`}>
         <div
           className={cn(
-            'bg-gray-75/50 relative flex h-10 ' +
+            'bg-primary-50 dark:bg-primary-50 relative flex h-10 ' +
               'items-center gap-2 rounded-md px-3 focus:border-none! focus:ring-0',
             disabled && 'cursor-not-allowed opacity-50',
             className
@@ -193,7 +194,7 @@ export function GlobalSearchInput({
             onKeyDown={handleKeyDown}
             onFocus={() => setOpen(true)}
             disabled={disabled}
-            className="h-full flex-1 border-none bg-transparent! p-0
+            className="h-full flex-1 border-none placeholder:text-primary-200 placeholder:text-sm bg-transparent! p-0
             text-sm"
           />
           {isLoading && (

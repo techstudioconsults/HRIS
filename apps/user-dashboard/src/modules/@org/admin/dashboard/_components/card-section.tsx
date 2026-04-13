@@ -1,39 +1,37 @@
 import { CardGroup } from './card-group';
 import { DashboardCard } from './dashboard-card';
 import { Icon } from '@workspace/ui/lib/icons/icon';
+import { useRouter } from 'next/navigation';
 
 export const CardSection = () => {
+  const navigate = useRouter();
   return (
     <>
       <CardGroup>
         <DashboardCard
-          title="New Joiners"
-          value={15}
-          percentage="8%"
+          title="Payroll Summary"
+          value="N5.5M"
+          percentage="38%"
           showTrendIcon={true}
           trend="up"
-          icon={<Icon name="People" />}
-          iconVariant="success"
-          titleColor=""
+          icon={<Icon name="Briefcase" />}
+          iconVariant="warning"
         />
-
         <DashboardCard
           title="Pending Leave Request"
           value={8}
           actionText="View all"
-          //   onAction={() => console.log("View all clicked")}
+          onAction={() => navigate.push('/admin/leave')}
           icon={<Icon name="Calendar" />}
           iconVariant="primary"
         />
-
         <DashboardCard
-          title="Payroll Summary"
-          value="N5.5M"
-          //   percentage="94%"
-          icon={<Icon name="Briefcase" />}
-          iconVariant="warning"
+          title="New Joiners"
+          value={15}
+          icon={<Icon name="People" />}
+          iconVariant="success"
+          titleColor=""
         />
-
         <DashboardCard
           title="Click-In Summary"
           value="98%"

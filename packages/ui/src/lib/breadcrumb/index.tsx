@@ -10,7 +10,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
-import { PiHouse } from 'react-icons/pi';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 
 interface BreadcrumbItem {
   label: string;
@@ -32,7 +32,7 @@ export const BreadCrumb = ({
   showHome = false,
   className = '',
   separator,
-  homeIcon = <PiHouse size={16} />,
+  homeIcon = <Icon name={`Home`} size={16} />,
   homeLabel = 'Home',
 }: BreadCrumbProperties) => {
   const pathName = usePathname();

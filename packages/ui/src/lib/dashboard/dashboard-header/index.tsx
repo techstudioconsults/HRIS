@@ -26,7 +26,7 @@ export const DashboardHeader = ({
               {icon}
             </span>
           )}
-          <div>
+          <div className={`hidden md:block`}>
             <h4
               className={cn(
                 'text-foreground flex items-center gap-2',

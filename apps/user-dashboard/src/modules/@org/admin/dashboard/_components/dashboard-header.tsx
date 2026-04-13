@@ -14,12 +14,17 @@ import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Button } from '@workspace/ui/components/button';
+import { cn } from '@workspace/ui/lib/utils';
 
 export const DashboardHeader = () => {
   const { data: session, status } = useSession();
 
   return (
-    <div className="flex lg:items-center flex-col lg:flex-row lg:justify-between xl:pb-6 ">
+    <div
+      className={cn(
+        'flex lg:items-center flex-col lg:flex-row lg:justify-between xl:pb-6 '
+      )}
+    >
       <div className="min-h-[88px] py-3">
         {status === 'loading' ? (
           <>

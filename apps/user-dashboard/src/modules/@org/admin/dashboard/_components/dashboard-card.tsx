@@ -187,7 +187,10 @@ export function DashboardCard({
         {/* Card Body */}
         <div className="flex items-center justify-between">
           <div
-            className={cn('text-foreground text-3xl font-semibold', valueColor)}
+            className={cn(
+              'text-foreground text-xl lg:text-3xl font-semibold',
+              valueColor
+            )}
           >
             {value}
           </div>

@@ -20,18 +20,22 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
-  IconArrowDown,
-  IconArrowsSort,
-  IconArrowUp,
-  IconChevronDown,
-  IconChevronLeft,
-  IconChevronRight,
-  IconChevronsLeft,
-  IconChevronsRight,
-  IconGripVertical,
-  IconLayoutColumns,
-  IconPlus,
-} from '@tabler/icons-react';
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  ChevronDown,
+  ChevronLeft,
+  ChevronLeftIcon,
+  ChevronRight,
+  ChevronRightIcon,
+  ChevronsLeft,
+  ChevronsRight,
+  Columns3,
+  GripVertical,
+  MoreHorizontal,
+  MoreVertical,
+  Plus,
+} from 'lucide-react';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -57,12 +61,6 @@ import {
   TableHeader,
   TableRow,
 } from '@workspace/ui/components/table';
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  MoreHorizontal,
-  MoreVertical,
-} from 'lucide-react';
 import * as React from 'react';
 import { z } from 'zod';
 import { cn } from '../utils';
@@ -178,7 +176,7 @@ function DragHandle({ id }: { id: number }) {
       size="icon"
       className="text-muted-foreground size-7 hover:bg-transparent"
     >
-      <IconGripVertical className="text-muted-foreground size-3" />
+      <GripVertical className="text-muted-foreground size-3" />
       <span className="sr-only">Drag to reorder</span>
     </Button>
   );
@@ -263,11 +261,11 @@ function convertColumnsToTanStackFormat<T extends DataItem>(
           >
             <span>{column.header}</span>
             {tanstackColumn.getIsSorted() === 'asc' ? (
-              <IconArrowUp className="ml-2 h-4 w-4" />
+              <ArrowUp className="ml-2 h-4 w-4" />
             ) : tanstackColumn.getIsSorted() === 'desc' ? (
-              <IconArrowDown className="ml-2 h-4 w-4" />
+              <ArrowDown className="ml-2 h-4 w-4" />
             ) : (
-              <IconArrowsSort className="ml-2 h-4 w-4 opacity-50" />
+              <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />
             )}
           </p>
         );
@@ -576,10 +574,10 @@ export function AdvancedDataTable<T extends DataItem>({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="primaryOutline" size="sm">
-                  <IconLayoutColumns />
+                  <Columns3 />
                   <span className="hidden lg:inline">Customize Columns</span>
                   <span className="lg:hidden">Columns</span>
-                  <IconChevronDown />
+                  <ChevronDown />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
@@ -608,7 +606,7 @@ export function AdvancedDataTable<T extends DataItem>({
           )}
           {showAddButton && onAddClick && (
             <Button variant="primaryOutline" size="sm" onClick={onAddClick}>
-              <IconPlus />
+              <Plus />
               <span className="hidden lg:inline">{addButtonText}</span>
             </Button>
           )}
@@ -1016,7 +1014,7 @@ export function AdvancedDataTable<T extends DataItem>({
                 disabled={!table.getCanPreviousPage()}
               >
                 <span className="sr-only">Go to first page</span>
-                <IconChevronsLeft />
+                <ChevronsLeft />
               </Button>
               <Button
                 variant="primaryOutline"
@@ -1026,7 +1024,7 @@ export function AdvancedDataTable<T extends DataItem>({
                 disabled={!table.getCanPreviousPage()}
               >
                 <span className="sr-only">Go to previous page</span>
-                <IconChevronLeft />
+                <ChevronLeft />
               </Button>
               <Button
                 variant="primaryOutline"
@@ -1036,7 +1034,7 @@ export function AdvancedDataTable<T extends DataItem>({
                 disabled={!table.getCanNextPage()}
               >
                 <span className="sr-only">Go to next page</span>
-                <IconChevronRight />
+                <ChevronRight />
               </Button>
               <Button
                 variant="primaryOutline"
@@ -1046,7 +1044,7 @@ export function AdvancedDataTable<T extends DataItem>({
                 disabled={!table.getCanNextPage()}
               >
                 <span className="sr-only">Go to last page</span>
-                <IconChevronsRight />
+                <ChevronsRight />
               </Button>
             </div>
           </div>

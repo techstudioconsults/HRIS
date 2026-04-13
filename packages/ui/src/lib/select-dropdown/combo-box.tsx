@@ -8,7 +8,6 @@ import {
 } from '@workspace/ui/components/popover';
 import { CheckIcon } from 'lucide-react';
 import * as React from 'react';
-import { FaChevronDown } from 'react-icons/fa';
 import { cn } from '../utils';
 import {
   Command,
@@ -18,6 +17,7 @@ import {
   CommandItem,
   CommandList,
 } from '@workspace/ui/components/command';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 
 export interface ComboBoxOption {
   value: string;
@@ -101,7 +101,7 @@ export function ComboBox({
         >
           {/*<span className={cn(!selectedOption && 'text-gray-200')}>*/}
           <span>{selectedOption ? selectedOption.label : placeholder}</span>
-          <FaChevronDown className="ml-2 size-3 shrink-0" />
+          <Icon name={`ChevronsUpDown`} className="ml-2 size-3 shrink-0" />
         </Button>
       </PopoverTrigger>
       <PopoverContent

@@ -29,7 +29,7 @@ export function AppLayout({ children, header, footer, nav }: AppLayoutProps) {
       )}
 
       {/* Main Content - only scrollable region in the app shell */}
-      <main className="app-layout__main">
+      <main className="app-layout__main safe-area-bottom">
         <div className="safe-area-x">{children}</div>
       </main>
 

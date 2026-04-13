@@ -1,6 +1,8 @@
 'use client';
 
 import { AppEventsListener } from '@/components/shared/app-events-listener';
+import { useIsPWA } from '@/lib/pwa/pwa-provider';
+import { getTopBarTitle } from '@/lib/routes/top-bar-title';
 import { GlobalSearchInput } from '@/modules/@org/shared/search-input';
 import { SidebarTrigger } from '@workspace/ui/components/sidebar';
 import {
@@ -9,7 +11,7 @@ import {
 } from '@workspace/ui/lib/notification-widget';
 import { UserMenu } from '@workspace/ui/lib/user-menu';
 import { cn } from '@workspace/ui/lib/utils';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -48,6 +50,8 @@ export default function TopBar({
   showSidebarTrigger = true,
   sticky = true,
 }: TopBarProperties) {
+  const isPWA = useIsPWA();
+  const pathname = usePathname();
   const [hideMobileSearch, setHideMobileSearch] = useState(true);
   const router = useRouter();
   const [notificationsList, setNotificationsList] =
@@ -75,6 +79,8 @@ export default function TopBar({
     setNotificationsList([]);
   };
 
+  const title = getTopBarTitle(pathname);
+  console.log(title, isPWA);
   return (
     <>
       <header
@@ -88,7 +94,7 @@ export default function TopBar({
           {showSidebarTrigger && (
             <SidebarTrigger className="bg-primary-50 text-primary shadow-none hover:bg-primary-75" />
           )}
-
+          <h4 className={cn(`md:hidden`)}>{title}</h4>
           <div
             className={cn('hidden lg:block', !showSidebarTrigger && 'lg:ml-0')}
           >

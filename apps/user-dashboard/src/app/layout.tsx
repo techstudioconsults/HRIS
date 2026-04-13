@@ -14,34 +14,6 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: 'HRIS',
-    startupImage: [
-      '/icons/icon-512-v2.png',
-      {
-        url: '/icons/icon-512-v2.png',
-        media:
-          '(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)',
-      },
-      {
-        url: '/icons/icon-512-v2.png',
-        media:
-          '(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)',
-      },
-      {
-        url: '/icons/icon-512-v2.png',
-        media:
-          '(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)',
-      },
-      {
-        url: '/icons/icon-512-v2.png',
-        media:
-          '(device-width: 820px) and (device-height: 1180px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)',
-      },
-      {
-        url: '/icons/icon-512-v2.png',
-        media:
-          '(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)',
-      },
-    ],
   },
   formatDetection: {
     telephone: false,
@@ -52,7 +24,7 @@ export const metadata: Metadata = {
       { url: '/icons/icon-512-v2.png', sizes: '512x512', type: 'image/png' },
     ],
     shortcut: [{ url: '/icons/icon-192-v2.png', type: 'image/png' }],
-    apple: [{ url: '/icons/apple-touch-icon-v2.png', type: 'image/png' }],
+    apple: [{ url: '/icons/apple-touch-icon-v3.png', type: 'image/png' }],
   },
 };
 

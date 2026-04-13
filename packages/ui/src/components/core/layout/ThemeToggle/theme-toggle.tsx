@@ -18,7 +18,11 @@ export function ModeToggle() {
       aria-label={`Switch to ${nextMode} mode`}
       title={`Switch to ${nextMode} mode`}
     >
-      {mode === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      {mode === 'dark' ? (
+        <Sun className="size-6" />
+      ) : (
+        <Moon className="size-6" />
+      )}
       <span className="sr-only">Toggle theme</span>
     </Button>
   );

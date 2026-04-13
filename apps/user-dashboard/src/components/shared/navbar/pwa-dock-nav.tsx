@@ -112,7 +112,7 @@ export function PWADockNav() {
   return (
     <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
       <nav className="mx-auto px-8" aria-label="PWA dock navigation">
-        <div className="flex items-center justify-between border backdrop-blur-2xl rounded-full px-4 py-2">
+        <div className="flex items-center justify-between border backdrop-blur-2xl rounded-full px-4">
           {leftItems.map((item) => (
             <DockLink
               key={item.url}

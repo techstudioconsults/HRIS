@@ -16,6 +16,7 @@ import {
   AvatarImage,
 } from '@workspace/ui/components/avatar';
 import { Icon } from '@workspace/ui/lib/icons/icon';
+import { ModeToggle } from '@workspace/ui/components/core/layout/ThemeToggle/theme-toggle';
 
 export interface UserMenuProperties {
   userName: string;
@@ -78,7 +79,7 @@ export function UserMenu({
         align="end"
         className="min-w-56 shadow-none"
       >
-        <DropdownMenuLabel>
+        <DropdownMenuLabel className={`flex items-center justify-between`}>
           <div className="flex flex-col gap-1">
             <p className="text-sm font-medium">{userName}</p>
             {userRole && (
@@ -87,15 +88,12 @@ export function UserMenu({
               </span>
             )}
           </div>
+          <ModeToggle />
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={onProfileClick} className="cursor-pointer">
-            <Icon
-              name={`User`}
-              className="mr-2 text-primary size-4"
-              variant={`Outline`}
-            />
+            <Icon name={`User`} className="mr-2 size-4" variant={`Outline`} />
             <span>My Profile</span>
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -105,7 +103,7 @@ export function UserMenu({
             <Icon
               name={`Setting2`}
               variant={`Outline`}
-              className="mr-2 size-4 text-primary"
+              className="mr-2 size-4"
             />
             <span>Account Settings</span>
           </DropdownMenuItem>

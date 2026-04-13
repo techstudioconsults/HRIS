@@ -4,7 +4,7 @@ import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { cn } from '@workspace/ui/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap shadow text-sm cursor-pointer ' +
+  'inline-flex items-center rounded-md justify-center gap-2 whitespace-nowrap shadow text-sm cursor-pointer ' +
     'font-medium transition-colors focus-visible:outline-none focus-visible:ring-1' +
     ' focus-visible:ring-ring disabled:pointer-events-none disabled:bg-muted disabled:border-muted disabled:text-gray disabled:shadow-none',
   {

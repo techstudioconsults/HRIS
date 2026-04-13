@@ -68,7 +68,7 @@ export function LayoutSelector({
   }
 
   // Render based on context
-  if (isPWA) {
+  if (!isPWA) {
     if (renderPWA) {
       return <>{renderPWA(slots)}</>;
     }

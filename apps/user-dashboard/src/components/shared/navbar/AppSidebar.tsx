@@ -1,6 +1,6 @@
 'use client';
 
-import { adminNavItems } from '@/lib/tools/constants';
+import { adminNavItems, userNavItems } from '@/lib/tools/constants';
 import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onboarding-service';
 import { useSidebar } from '@workspace/ui/components/sidebar';
 import { AppSidebar as Sidebar, Logo, useModeToggle } from '@workspace/ui/lib';
@@ -18,8 +18,9 @@ export function AppSideBar() {
   const { data: session } = useSession();
 
   const roleName = session?.user.employee.role.name;
-  const isOwner = roleName === 'owner';
-  const isDefault = roleName === 'default';
+  const userName = session?.user.employee.fullName.toUpperCase();
+  const isAdmin = roleName === 'owner';
+  const isUser = roleName !== 'owner';
 
   const teams = useMemo(
     () => [
@@ -44,10 +45,10 @@ export function AppSideBar() {
   return (
     <Sidebar
       theme={theme}
-      navMainTitle={isOwner ? 'ADMIN' : ''}
-      navMain={isOwner ? adminNavItems : EMPTY_NAV_ITEMS}
-      secondaryTitle={isDefault ? 'USER' : ''}
-      navSecondary={isDefault ? adminNavItems : EMPTY_NAV_ITEMS}
+      navMainTitle={isAdmin ? 'ADMIN' : ''}
+      navMain={isAdmin ? adminNavItems : EMPTY_NAV_ITEMS}
+      secondaryTitle={isUser ? userName : ''}
+      navSecondary={isUser ? userNavItems : EMPTY_NAV_ITEMS}
       className={cn(
         'z-50 bg-[#1F2666] text-white',
         state === 'collapsed' ? 'px-4 md:px-0' : 'px-4 md:px-6'

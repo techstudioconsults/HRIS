@@ -10,50 +10,93 @@ import { SetupTask, SetupPageState, SETUP_TASK_IDS } from './setup-types';
 
 // Icons - using placeholder SVG components
 const PasswordIcon = () => (
-  <svg className="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 1C5.9 1 1 5.9 1 12s4.9 11 11 11 11-4.9 11-11S18.1 1 12 1zm0 20c-4.9 0-9-4.1-9-9s4.1-9 9-9 9 4.1 9 9-4.1 9-9 9zm3.5-9c.8 0 1.5-.7 1.5-1.5S16.3 9 15.5 9 14 9.7 14 10.5s.7 1.5 1.5 1.5zm-7 0c.8 0 1.5-.7 1.5-1.5S9.3 9 8.5 9 7 9.7 7 10.5 7.7 12 8.5 12z" />
+  <svg
+    className="w-6 h-6 text-gray-700"
+    fill="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      d="M12 1C5.9 1 1 5.9 1 12s4.9 11 11 11 11-4.9 11-11S18.1 1 12 1zm0 20c-4.9
+     0-9-4.1-9-9s4.1-9 9-9 9 4.1 9 9-4.1 9-9 9zm3.5-9c.8 0 1.5-.7 1.5-1.5S16.3 9 15.5 9
+     14 9.7 14 10.5s.7 1.5 1.5 1.5zm-7 0c.8 0 1.5-.7 1.5-1.5S9.3 9 8.5 9 7 9.7 7 10.5 7.7 12 8.5 12z"
+    />
   </svg>
 );
 
 const ProfileIcon = () => (
-  <svg className="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 24 24">
+  <svg
+    className="w-6 h-6 text-gray-700"
+    fill="currentColor"
+    viewBox="0 0 24 24"
+  >
     <path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z" />
   </svg>
 );
 
 const PolicyIcon = () => (
-  <svg className="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 24 24">
+  <svg
+    className="w-6 h-6 text-gray-700"
+    fill="currentColor"
+    viewBox="0 0 24 24"
+  >
     <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" />
   </svg>
 );
 
 const PayrollIcon = () => (
-  <svg className="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-5.5-3.4V7z" />
+  <svg
+    className="w-6 h-6 text-gray-700"
+    fill="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4
+    0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-5.5-3.4V7z"
+    />
   </svg>
 );
 
 // Decorative icons
 const LockDecorativeIcon = () => (
-  <svg className="w-20 h-20 text-blue-100" fill="currentColor" viewBox="0 0 24 24" opacity={0.5}>
+  <svg
+    className="w-20 h-20 text-blue-100"
+    fill="currentColor"
+    viewBox="0 0 24 24"
+    opacity={0.5}
+  >
     <path d="M18 8h-1V6c0-2.8-2.2-5-5-5s-5 2.2-5 5v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.7 1.3-3 3-3s3 1.3 3 3v2H9V6zm9 14H6V10h12v10zm-6-3c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z" />
   </svg>
 );
 
 const ProfileDecorativeIcon = () => (
-  <svg className="w-20 h-20 text-blue-100" fill="currentColor" viewBox="0 0 24 24" opacity={0.5}>
+  <svg
+    className="w-20 h-20 text-blue-100"
+    fill="currentColor"
+    viewBox="0 0 24 24"
+    opacity={0.5}
+  >
     <path d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z" />
   </svg>
 );
 
 const PolicyDecorativeIcon = () => (
-  <svg className="w-20 h-20 text-blue-100" fill="currentColor" viewBox="0 0 24 24" opacity={0.5}>
+  <svg
+    className="w-20 h-20 text-blue-100"
+    fill="currentColor"
+    viewBox="0 0 24 24"
+    opacity={0.5}
+  >
     <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" />
   </svg>
 );
 
 const PayrollDecorativeIcon = () => (
-  <svg className="w-20 h-20 text-blue-100" fill="currentColor" viewBox="0 0 24 24" opacity={0.5}>
+  <svg
+    className="w-20 h-20 text-blue-100"
+    fill="currentColor"
+    viewBox="0 0 24 24"
+    opacity={0.5}
+  >
     <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-5.5-3.4V7z" />
   </svg>
 );
@@ -76,7 +119,8 @@ export const SetupPage: React.FC = () => {
         {
           id: SETUP_TASK_IDS.RESET_PASSWORD,
           title: 'Reset Your Password',
-          description: 'Change your password to something you can easily remember',
+          description:
+            'Change your password to something you can easily remember',
           status: 'pending',
           icon: <PasswordIcon />,
           decorativeIcon: <LockDecorativeIcon />,
@@ -87,7 +131,8 @@ export const SetupPage: React.FC = () => {
         {
           id: SETUP_TASK_IDS.REVIEW_PROFILE,
           title: 'Review Your Profile Details',
-          description: 'Confirm your personal info (name, department, role, contact)',
+          description:
+            'Confirm your personal info (name, department, role, contact)',
           status: 'pending',
           icon: <ProfileIcon />,
           decorativeIcon: <ProfileDecorativeIcon />,
@@ -98,7 +143,8 @@ export const SetupPage: React.FC = () => {
         {
           id: SETUP_TASK_IDS.ACKNOWLEDGE_POLICY,
           title: 'Acknowledge HR Policies',
-          description: "Read and accept your company's attendance, leave, and code of conduct policies",
+          description:
+            "Read and accept your company's attendance, leave, and code of conduct policies",
           status: 'pending',
           icon: <PolicyIcon />,
           decorativeIcon: <PolicyDecorativeIcon />,
@@ -131,7 +177,9 @@ export const SetupPage: React.FC = () => {
 
   // Calculate completed count
   useEffect(() => {
-    const completedCount = state.tasks.filter((t) => t.status === 'completed').length;
+    const completedCount = state.tasks.filter(
+      (t) => t.status === 'completed'
+    ).length;
     const userSetupComplete = completedCount === state.totalCount;
 
     setState((prev) => ({
@@ -170,7 +218,10 @@ export const SetupPage: React.FC = () => {
 
       {/* Progress Section */}
       <div className="mb-8">
-        <SetupProgress completed={state.completedCount} total={state.totalCount} />
+        <SetupProgress
+          completed={state.completedCount}
+          total={state.totalCount}
+        />
       </div>
 
       {/* Tasks Grid */}
@@ -193,13 +244,20 @@ export const SetupPage: React.FC = () => {
       {state.userSetupComplete && (
         <div className="mt-8 p-6 bg-green-50 border border-green-200 rounded-lg text-center">
           <div className="text-green-600 mb-2">
-            <svg className="w-12 h-12 mx-auto" fill="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="w-12 h-12 mx-auto"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-green-800 mb-2">Setup Complete!</h3>
+          <h3 className="text-lg font-semibold text-green-800 mb-2">
+            Setup Complete!
+          </h3>
           <p className="text-green-700">
-            You&apos;ve successfully completed your onboarding. You now have full access to your HR dashboard.
+            You&apos;ve successfully completed your onboarding. You now have
+            full access to your HR dashboard.
           </p>
           <button
             onClick={() => router.push('/user/dashboard')}

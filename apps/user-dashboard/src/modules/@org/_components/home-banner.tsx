@@ -2,6 +2,7 @@
 
 import { cn } from '@workspace/ui/lib/utils';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 interface DashboardBannerProperties {
   img: string;
@@ -14,27 +15,30 @@ export const DashboardBanner = ({
   title,
   desc,
 }: DashboardBannerProperties) => {
+  const pathname = usePathname();
+  const isAdmin = pathname.includes(`admin`);
+
   return (
     <div
       className={cn(
         'bg-primary flex flex-col items-center gap-2 rounded-lg ' +
           'shadow md:items-center md:justify-between lg:flex-row',
         'bg-cover bg-right bg-no-repeat',
-        'px-8 pt-8 lg:pt-0',
-        `bg-[url(/images/lines.svg)]`
+        'p-6 lg:px-10',
+        `bg-[url(/images/dashboard/Lines.svg)]`
       )}
     >
-      <div className="w-full flex-1 text-center md:w-auto lg:text-left">
+      <div className="w-full flex-2 text-center md:w-auto lg:text-left">
         <h3 className="text-2xl leading-10 text-balance text-white">{title}</h3>
-        <p className="mt-2 text-sm text-gray-50 sm:mt-3 md:mt-4 md:max-w-140">
+        <p className="mt-2 text-sm text-white sm:mt-3 md:mt-4 md:max-w-140">
           {desc}
         </p>
       </div>
-      <div className="relative flex-1">
+      <div className="relative flex-1 translate-y-6">
         <Image
           src={img}
           alt="Banner image"
-          width={250}
+          width={isAdmin ? 250 : 175}
           height={250}
           className="object-contain ml-auto"
         />

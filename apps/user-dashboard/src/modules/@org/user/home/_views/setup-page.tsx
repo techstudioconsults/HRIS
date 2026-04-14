@@ -3,10 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { WelcomeWidget } from './welcome-widget';
-import { SetupProgress } from './setup-progress';
-import { VerificationCard } from './verification-card';
-import { SetupTask, SetupPageState, SETUP_TASK_IDS } from './setup-types';
+import { WelcomeWidget } from '../_components/welcome-widget';
+import { SetupProgress } from '../_components/setup-progress';
+import { VerificationCard } from '../_components/verification-card';
+import { SetupTask, SetupPageState, SETUP_TASK_IDS } from '../setup-types';
 
 // Icons - using placeholder SVG components
 const PasswordIcon = () => (

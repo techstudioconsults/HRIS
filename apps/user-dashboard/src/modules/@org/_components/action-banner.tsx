@@ -5,6 +5,7 @@ import { Checkbox } from '@workspace/ui/components/checkbox';
 import { ButtonHTMLAttributes, useTransition } from 'react';
 import { MainButton } from '@workspace/ui/lib';
 import { cn } from '@workspace/ui/lib/utils';
+import { Card } from '@workspace/ui/components/card';
 
 interface ActionBannerProperties {
   title: string;
@@ -43,9 +44,9 @@ export const ActionBanner = ({
   };
 
   return (
-    <div
+    <Card
       className={cn(
-        'bg-background flex items-center rounded-lg p-6 shadow',
+        'flex items-center rounded-lg p-6 shadow',
         // "border-low-grey-III border",
         className
       )}
@@ -83,6 +84,6 @@ export const ActionBanner = ({
           <Image src={icon} alt="" width={178} height={82} className="hidden object-contain sm:block" />
         )} */}
       </div>
-    </div>
+    </Card>
   );
 };

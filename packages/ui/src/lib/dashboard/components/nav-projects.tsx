@@ -63,7 +63,7 @@ export function NavProjects({
                     variant={item.isActive ? `Bulk` : `Linear`}
                     name={item.icon}
                     size={18}
-                    className={cn(`text-background`)}
+                    className={cn(``)}
                   />
                 )}
                 <span>{item.name}</span>

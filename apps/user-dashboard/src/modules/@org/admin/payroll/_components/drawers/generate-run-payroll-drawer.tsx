@@ -24,7 +24,7 @@ import { useRouter } from 'next/navigation';
 import { ReactNode, useState } from 'react';
 import { toast } from 'sonner';
 
-import { DashboardCard } from '../../../dashboard/_components/dashboard-card';
+import { DashboardCard } from '../../../../_components/dashboard-card';
 import { usePayrollService } from '../../services/use-service';
 import { usePayrollStore } from '../../stores/payroll-store';
 import type { Payroll, PayrollApproval } from '../../types';

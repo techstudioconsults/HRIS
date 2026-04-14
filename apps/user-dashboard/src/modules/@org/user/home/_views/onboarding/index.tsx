@@ -1,12 +1,10 @@
 'use client';
 
-import { cn } from '@workspace/ui/lib/utils';
-
-import onboardingImage from '~/images/dashboard/banner_illustration.svg';
-import { ActionBanner } from '../../_components/action-banner';
-import { DashboardBanner } from '../../_components/home-banner';
+import { DashboardBanner } from '../../../../_components/home-banner';
 import { OnboardingHeader } from './onboarding-header';
 import { useSession } from 'next-auth/react';
+import { QuickActionCard } from '@/modules/@org/user/home/_components/quick-action-card';
+import { cn } from '@workspace/ui/lib/utils';
 
 interface OnboardingProperties {
   steps: OnboardingStep[];
@@ -18,19 +16,19 @@ export const Onboarding = ({ steps }: OnboardingProperties) => {
   return (
     <div>
       <DashboardBanner
-        img={onboardingImage.src}
+        img={`/images/dashboard/man.svg`}
         title={`Welcome, ${session?.user.employee.fullName}`}
         desc="Complete your company profile to unlock the full experience and get started with your HR setup."
       />
-      <div className="my-4">
+      <div className="my-10">
         <OnboardingHeader
           completedSteps={completedSteps}
           totalSteps={steps.length}
         />
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="space-y-8">
         {steps.map((step) => (
-          <ActionBanner
+          <QuickActionCard
             key={step.title}
             title={step.title}
             description={step.description}

@@ -1,8 +1,8 @@
 'use client';
 
-import onboardingImage from '~/images/dashboard/banner_illustration.svg';
-import { ActionBanner } from '../../_components/action-banner';
-import { DashboardBanner } from '../../_components/home-banner';
+import onboardingImage from '~/images/dashboard/woman.svg';
+import { ActionBanner } from '../../../../_components/action-banner';
+import { DashboardBanner } from '../../../../_components/home-banner';
 import { AttendanceAndRecentActivities } from '../../../../_components/attendanceandactivities';
 import { CardSection } from '../../../../_components/card-section';
 import { LeaveAndPayroll } from '../../../../_components/leaveandpayroll';

@@ -38,8 +38,18 @@ export const VerificationCard: React.FC<VerificationCardProps> = ({
         <div className="flex-shrink-0 pt-1">
           {isCompleted ? (
             <div className="w-6 h-6 rounded-full bg-[#0F973D] flex items-center justify-center flex-shrink-0">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              <svg
+                className="w-4 h-4 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={3}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             </div>
           ) : (
@@ -50,7 +60,9 @@ export const VerificationCard: React.FC<VerificationCardProps> = ({
         {/* Text Content */}
         <div className="flex-1 min-w-0">
           <h3 className="text-base font-medium text-[#232323] mb-1">{title}</h3>
-          <p className="text-sm font-normal text-[#878789] mb-3">{description}</p>
+          <p className="text-sm font-normal text-[#878789] mb-3">
+            {description}
+          </p>
 
           {isCompleted ? (
             <div className="text-sm font-medium text-[#0F973D]">Completed</div>
@@ -68,7 +80,9 @@ export const VerificationCard: React.FC<VerificationCardProps> = ({
 
       {/* Right Decorative Icon */}
       {decorativeIcon && !isCompleted && (
-        <div className="flex-shrink-0 w-24 h-24 flex items-center justify-center opacity-80">{decorativeIcon}</div>
+        <div className="flex-shrink-0 w-24 h-24 flex items-center justify-center opacity-80">
+          {decorativeIcon}
+        </div>
       )}
     </div>
   );

@@ -31,7 +31,7 @@ import { ReactNode, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import empty1 from '~/images/empty-state.svg';
-import { DashboardCard } from '../../../dashboard/_components/dashboard-card';
+import { DashboardCard } from '../../../../_components/dashboard-card';
 import { usePayrollService } from '../../services/use-service';
 import { usePayrollStore } from '../../stores/payroll-store';
 import type { Payroll, PayrollApproval } from '../../types';

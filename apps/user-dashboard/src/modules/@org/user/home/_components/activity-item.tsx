@@ -3,7 +3,7 @@
 import React from 'react';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { formatDistanceToNow } from 'date-fns';
-import { ActivityType } from './home-types';
+import { ActivityType } from '../home-types';
 
 interface ActivityItemProps {
   type: ActivityType;

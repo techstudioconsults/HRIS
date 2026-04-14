@@ -38,7 +38,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   );
 
   const content = (
-    <Wrapper className="relative max-w-[1440px] px-4! space-y-0 my-0! py-5 lg:py-10">
+    <Wrapper className="relative max-w-360 px-4! space-y-0 my-0! py-5 lg:py-10">
       {children}
     </Wrapper>
   );

@@ -19,7 +19,19 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  /* config options here */
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: [
+          {
+            loader: '@svgr/webpack',
+            options: { svgo: false },
+          },
+        ],
+        as: '*.js',
+      },
+    },
+  },
   images: {
     remotePatterns: [
       {

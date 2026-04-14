@@ -1,8 +1,8 @@
 'use client';
-import { HomePage } from '../_components/home-page';
+import { HomePage } from '@/modules/@org/user/home/_views/home-page';
 export default function DashboardPage() {
   return (
-    <main className="">
+    <main className="max-w-[750] mx-auto">
       <HomePage />
     </main>
   );

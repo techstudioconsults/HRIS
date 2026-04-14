@@ -7,7 +7,7 @@ export const CardSection = () => {
   const navigate = useRouter();
   return (
     <>
-      <CardGroup>
+      <CardGroup className={``}>
         <DashboardCard
           title="Payroll Summary"
           value="N5.5M"

@@ -5,9 +5,9 @@ import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 
 import { useRouter } from 'next/navigation';
 
-import { ActiveUser } from './_views/active-user';
-import { NewUser } from './_views/new-user';
-import { Onboarding } from './_views/onboarding';
+import { ActiveUser } from '@/modules/@org/admin/dashboard/_views/active-user';
+import { NewUser } from '@/modules/@org/admin/dashboard/_views/new-user';
+import { Onboarding } from '@/modules/@org/admin/dashboard/_views/onboarding';
 import { WithDependency } from '@/HOC/withDependencies';
 
 const BaseDashboardHomePage = () => {
@@ -66,11 +66,11 @@ const BaseDashboardHomePage = () => {
   ];
 
   const completedSteps =
-    ONBOARDING_STEPS.filter((step) => step.isCompleted).length || 7;
+    ONBOARDING_STEPS.filter((step) => step.isCompleted).length || 0;
   // Less than 4 steps completed -> Onboarding
   if (completedSteps < 4) {
     return (
-      <Wrapper className="max-w-[800px] my-0! p-0">
+      <Wrapper className="max-w-200 my-0! p-0">
         <Onboarding steps={ONBOARDING_STEPS} />
       </Wrapper>
     );

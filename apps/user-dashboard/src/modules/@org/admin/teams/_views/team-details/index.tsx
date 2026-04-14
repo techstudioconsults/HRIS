@@ -31,8 +31,8 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import empty1 from '~/images/empty-state.svg';
-import { CardGroup } from '../../../dashboard/_components/card-group';
-import { DashboardCard } from '../../../dashboard/_components/dashboard-card';
+import { CardGroup } from '../../../../_components/card-group';
+import { DashboardCard } from '../../../../_components/dashboard-card';
 import { useTeamService } from '../../services/use-service';
 import { subTeamColumn, useSubTeamRowActions } from '../table-data';
 import { TeamDetailsSkeleton } from './skeleton';

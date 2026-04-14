@@ -31,7 +31,7 @@ import { FundWalletFormModal } from '../_components/forms/fund-wallet-form-modal
 import { FundWalletAccountModal } from '../_components/fund-wallet-account-modal';
 import { PayrollSetupSettingsModal } from '../_components/payroll-setup-modal';
 import { PayrollNotificationBanner } from '../_components/payroll-notification-banner/banner';
-import { DashboardCard } from '../../dashboard/_components/dashboard-card';
+import { DashboardCard } from '../../../_components/dashboard-card';
 import { usePayrollService } from '../services/use-service';
 import { usePayrollStore } from '../stores/payroll-store';
 import type { Payroll, PayrollApproval } from '../types';

@@ -23,7 +23,9 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "test:e2e": "pnpm --dir ../.. exec playwright test --project=chromium apps/user-dashboard",
-    "test:e2e:ui": "pnpm --dir ../.. exec playwright test --ui --project=chromium apps/user-dashboard"
+    "test:e2e:ui": "pnpm --dir ../.. exec playwright test --ui --project=chromium apps/user-dashboard",
+    "svg:optimize": "svgo --config=svgo.config.mjs --folder public/images --recursive",
+    "svg:check": "svgo --config=svgo.config.mjs --folder public/images --recursive --output .svgo-check --quiet"
   },
   "dependencies": {
     "@bprogress/next": "^3.2.12",
@@ -54,7 +56,8 @@
     "tailwindcss": "^4.1.11",
     "use-debounce": "^10.0.5",
     "zod": "^3.25.76",
-    "zustand": "^5.0.6"
+    "zustand": "^5.0.6",
+    "svgo": "^4.0.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.48.1",
@@ -62,6 +65,7 @@
     "@types/file-saver": "2.0.7",
     "@types/node": "^20.19.9",
     "@types/react": "^19.1.9",
+    "@svgr/webpack": "^8.1.0",
     "@types/react-dom": "^19.1.7",
     "@vitest/coverage-v8": "^2.1.8",
     "@workspace/eslint-config": "workspace:*",

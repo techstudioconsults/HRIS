@@ -14,8 +14,8 @@ declare global {
     icon?: ReactNode;
     onClick: (row: T) => void;
     kbd?: string;
-    type?: "action" | "separator";
-    variant?: "destructive" | "default";
+    type?: 'action' | 'separator';
+    variant?: 'destructive' | 'default';
     ariaLabel?: string;
   }
 
@@ -52,27 +52,27 @@ declare global {
   }
 
   type Permission =
-    | "company:manage"
-    | "employee:manage"
-    | "team:manage"
-    | "role:manage"
-    | "payroll:manage"
-    | "attendance:manage"
-    | "leave:manage"
-    | "resource:manage"
-    | "company:read"
-    | "employee:read"
-    | "team:read"
-    | "role:read"
-    | "payroll:read"
-    | "attendance:read"
-    | "leave:read"
-    | "resource:read";
+    | 'company:manage'
+    | 'employee:manage'
+    | 'team:manage'
+    | 'role:manage'
+    | 'payroll:manage'
+    | 'attendance:manage'
+    | 'leave:manage'
+    | 'resource:manage'
+    | 'company:read'
+    | 'employee:read'
+    | 'team:read'
+    | 'role:read'
+    | 'payroll:read'
+    | 'attendance:read'
+    | 'leave:read'
+    | 'resource:read';
 
   // New employee shape types based on backend payload
-  type Gender = "male" | "female";
-  type EmploymentType = "full time" | "part time" | "contract" | null;
-  type WorkMode = "remote" | "hybrid" | "on site" | null;
+  type Gender = 'male' | 'female';
+  type EmploymentType = 'full time' | 'part time' | 'contract' | null;
+  type WorkMode = 'remote' | 'hybrid' | 'on site' | null;
 
   interface EmploymentDetails {
     startDate: string; // ISO date string
@@ -116,7 +116,7 @@ declare global {
     title: string;
     description: string;
     buttonLabel: string;
-    icon: string;
+    icon: string | ReactNode;
     isCompleted: boolean | undefined;
     action: () => void;
   }

@@ -3,19 +3,23 @@
 import React from 'react';
 import Link from 'next/link';
 import { Card } from '@workspace/ui/components/card';
-import { ActivityItem } from './activity-item';
-import { Activity } from './home-types';
+import { ActivityItem } from '../_components/activity-item';
+import { Activity } from '../home-types';
 
 interface RecentActivitiesProps {
   activities: Activity[];
 }
 
-export const RecentActivities: React.FC<RecentActivitiesProps> = ({ activities }) => {
+export const RecentActivities: React.FC<RecentActivitiesProps> = ({
+  activities,
+}) => {
   return (
     <div className="flex flex-col gap-[19.2px]">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-[22.56px] font-semibold leading-[1.2] text-[#232323]">Recent Activities</h2>
+        <h2 className="text-[22.56px] font-semibold leading-[1.2] text-[#232323]">
+          Recent Activities
+        </h2>
         <Link
           href="/user/activities"
           className="text-[18px] font-normal leading-[1.45] text-[#232323] hover:text-[#0266F3] transition-colors"
@@ -37,7 +41,13 @@ export const RecentActivities: React.FC<RecentActivitiesProps> = ({ activities }
                   timestamp={activity.timestamp}
                 />
                 {index < activities.length - 1 && (
-                  <div style={{ height: '1px', backgroundColor: '#EDF2FA', margin: '0' }} />
+                  <div
+                    style={{
+                      height: '1px',
+                      backgroundColor: '#EDF2FA',
+                      margin: '0',
+                    }}
+                  />
                 )}
               </div>
             ))}

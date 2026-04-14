@@ -17,8 +17,8 @@ import { toast } from 'sonner';
 
 import empty1 from '~/images/empty-state.svg';
 import AddNewMembers from '../../_components/forms/add-new-members';
-import { CardGroup } from '../../../dashboard/_components/card-group';
-import { DashboardCard } from '../../../dashboard/_components/dashboard-card';
+import { CardGroup } from '../../../../_components/card-group';
+import { DashboardCard } from '../../../../_components/dashboard-card';
 import { useEmployeeRowActions } from '../../../employee/_views/table-data';
 import { useEmployeeService } from '../../../employee/services/use-service';
 import { useTeamService } from '../../services/use-service';

@@ -1,3 +1,5 @@
-export default function SetupPageRoute() {
-  return <div></div>;
-}
+const Page = () => {
+  return <main></main>;
+};
+
+export default Page;

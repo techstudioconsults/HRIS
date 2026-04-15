@@ -1,3 +1,5 @@
+'use client';
+
 import { formatCurrency } from '@/lib/formatters';
 import Coin from '~/images/dashboard/coin.svg';
 import { cn } from '@workspace/ui/lib/utils';

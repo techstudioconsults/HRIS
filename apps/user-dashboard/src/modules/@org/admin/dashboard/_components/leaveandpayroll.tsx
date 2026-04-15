@@ -1,5 +1,5 @@
-import { LeaveDistributionPieChart } from './leave-piechart';
-import { PayrollLineChart } from './payrool-linechart';
+import { LeaveDistributionPieChart } from '../../../_components/leave-piechart';
+import { PayrollLineChart } from '../../../_components/payrool-linechart';
 
 export function LeaveAndPayroll() {
   return (

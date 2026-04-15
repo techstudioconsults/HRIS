@@ -2,8 +2,8 @@
 
 import { cn } from '@workspace/ui/lib/utils';
 
-import { ActionBanner } from '../../../../_components/action-banner';
-import { DashboardBanner } from '../../../../_components/home-banner';
+import { ActionBanner } from '../../_components/action-banner';
+import { DashboardBanner } from '../../_components/home-banner';
 import { OnboardingHeader } from './onboarding-header';
 import { useSession } from 'next-auth/react';
 

@@ -6,6 +6,7 @@ import { Button } from '@workspace/ui/components/button';
 import { ReusableDialog } from '@workspace/ui/lib';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import type { LeaveRequest } from '../types';
+import { Card } from '@workspace/ui/components/card';
 
 interface LeaveDetailsModalProps {
   open: boolean;
@@ -19,9 +20,9 @@ export const LeaveDetailsModal = ({
   request,
 }: LeaveDetailsModalProps) => {
   const getStatusStyles = (status: LeaveRequest['status']) => {
-    if (status === 'approved') return 'bg-[#ECFDF3] text-[#027A48]';
-    if (status === 'declined') return 'bg-[#FBE9E9] text-[#DB4B46]';
-    return 'bg-[#FCF5E8] text-[#E49817]';
+    if (status === 'approved') return 'bg-success/10 text-success';
+    if (status === 'declined') return 'bg-destructive/10 text-destructive';
+    return 'bg-warning/10 text-warning';
   };
 
   const formatStatusLabel = (status: LeaveRequest['status']) => {
@@ -40,30 +41,30 @@ export const LeaveDetailsModal = ({
       trigger={undefined}
     >
       <section className="space-y-5">
-        <div className="bg-[#F7F9FC] space-y-4 rounded-lg p-4">
+        <Card className=" space-y-4 rounded-lg p-10">
           <div className="flex items-center justify-between gap-4">
-            <p className="text-sm text-[#6A717D]">Leave Type</p>
-            <p className="text-right text-sm font-medium text-[#232323]">
+            <p className="text-sm ">Leave Type</p>
+            <p className="text-right text-sm font-medium ">
               {request.leaveTypeName}
             </p>
           </div>
 
           <div className="flex items-center justify-between gap-4">
-            <p className="text-sm text-[#6A717D]">Duration</p>
-            <p className="text-right text-sm font-medium text-[#232323]">
+            <p className="text-sm ">Duration</p>
+            <p className="text-right text-sm font-medium ">
               {request.days} working days
             </p>
           </div>
 
           <div className="flex items-center justify-between gap-4">
-            <p className="text-sm text-[#6A717D]">Period</p>
-            <p className="text-right text-sm font-medium text-[#232323]">
+            <p className="text-sm ">Period</p>
+            <p className="text-right text-sm font-medium ">
               {formatDate(request.startDate)} - {formatDate(request.endDate)}
             </p>
           </div>
 
           <div className="flex items-center justify-between gap-4">
-            <p className="text-sm text-[#6A717D]">Status</p>
+            <p className="text-sm ">Status</p>
             <Badge
               className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusStyles(request.status)}`}
             >
@@ -72,26 +73,26 @@ export const LeaveDetailsModal = ({
           </div>
 
           <div className="flex items-center justify-between gap-4">
-            <p className="text-sm text-[#6A717D]">Requested on</p>
-            <p className="text-right text-sm font-medium text-[#232323]">
+            <p className="text-sm ">Requested on</p>
+            <p className="text-right text-sm font-medium ">
               {formatDate(request.createdAt)}
             </p>
           </div>
 
           <div className="flex items-center justify-between gap-4">
-            <p className="text-sm text-[#6A717D]">Approved By</p>
-            <p className="text-right text-sm font-medium text-[#232323]">
+            <p className="text-sm ">Approved By</p>
+            <p className="text-right text-sm font-medium ">
               {request.approvedBy ?? 'Pending review'}
             </p>
           </div>
 
           <div className="flex items-start justify-between gap-4">
-            <p className="pt-0.5 text-sm text-[#6A717D]">Reason</p>
-            <p className="max-w-[70%] text-right text-sm font-medium text-[#232323]">
+            <p className="pt-0.5 text-sm ">Reason</p>
+            <p className="max-w-[70%] text-right text-sm font-medium ">
               {request.reason}
             </p>
           </div>
-        </div>
+        </Card>
 
         {request.supportingDocumentName && (
           <div className="border-primary/20 bg-primary/5 flex items-center justify-between rounded-lg border p-3">
@@ -100,7 +101,7 @@ export const LeaveDetailsModal = ({
                 <Icon name="FileText" size={16} className="text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium text-[#232323]">
+                <p className="text-sm font-medium ">
                   {request.supportingDocumentName}
                 </p>
                 <p className="text-xs text-[#6A717D]">Click to download</p>

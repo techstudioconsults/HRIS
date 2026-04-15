@@ -1,5 +1,5 @@
-import { CardGroup } from './card-group';
-import { DashboardCard } from './dashboard-card';
+import { CardGroup } from '../../../_components/card-group';
+import { DashboardCard } from '../../../_components/dashboard-card';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useRouter } from 'next/navigation';
 

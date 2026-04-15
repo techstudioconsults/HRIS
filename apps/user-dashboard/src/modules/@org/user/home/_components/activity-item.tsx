@@ -2,14 +2,14 @@
 
 import React from 'react';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { formatDistanceToNow } from 'date-fns';
 import { ActivityType } from '../home-types';
+import { formatTimestamp } from '@workspace/ui/lib/utils';
 
 interface ActivityItemProps {
   type: ActivityType;
   title: string;
   message: string;
-  timestamp: Date | string;
+  timestamp?: Date | string | null;
 }
 
 const getIconByType = (type: ActivityType) => {
@@ -42,27 +42,6 @@ const getIconBgColor = (type: ActivityType): string => {
   }
 };
 
-const formatTimestamp = (date: Date | string): string => {
-  const timestampDate = typeof date === 'string' ? new Date(date) : date;
-
-  // Check if it's a specific date (not recent)
-  const now = new Date();
-  const diffMs = now.getTime() - timestampDate.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffDays > 7) {
-    return timestampDate
-      .toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      })
-      .replace(/\//g, '-');
-  }
-
-  return formatDistanceToNow(timestampDate, { addSuffix: true });
-};
-
 export const ActivityItem: React.FC<ActivityItemProps> = ({
   type,
   title,
@@ -70,23 +49,23 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
   timestamp,
 }) => {
   return (
-    <div className="flex gap-[18px] py-[24px]">
+    <div className="flex  gap-4.5 py-6">
       {/* Icon Container - 45.52px as per design */}
       <div
-        className={`flex-shrink-0 flex items-center size-[45.52px] justify-center rounded-full ${getIconBgColor(type)}`}
+        className={`shrink-0 flex items-center size-[45.52px] justify-center rounded-full ${getIconBgColor(type)}`}
       >
         {getIconByType(type)}
       </div>
 
       {/* Content Section */}
       <div className="flex-1 min-w-0 flex flex-col gap-[3.34px]">
-        <h4 className="text-[20px] font-medium leading-[1.45] text-[#232323]">
+        <h4 className="font-medium text-base lg:text-lg leading-[1.45]">
           {title}
         </h4>
-        <p className="text-[16px] font-normal leading-[1.45] text-[#878789]">
+        <p className=" font-normal text-sm text-gray leading-[1.45]">
           {message}
         </p>
-        <p className="text-[14px] font-normal leading-[1.45] text-[#878789]">
+        <p className="text-xs  font-normal leading-[1.45]">
           {formatTimestamp(timestamp)}
         </p>
       </div>

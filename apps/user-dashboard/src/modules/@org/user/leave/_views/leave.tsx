@@ -3,17 +3,20 @@
 import { useState } from 'react';
 
 import { UserLeaveBody, UserLeaveHeader } from '@/modules/@org/user';
-import { LeaveDetailsModal } from '../_components/LeaveDetailsModal';
-import { LeaveRequestSubmittedModal } from '../_components/LeaveRequestSubmittedModal';
-import { RequestLeaveModal } from '../_components/RequestLeaveModal';
+import { LeaveDetailsModal } from '@/modules/@org/user';
+import { LeaveRequestSubmittedModal } from '@/modules/@org/user';
+import { RequestLeaveModal } from '@/modules/@org/user';
 import type { LeaveRequest } from '../types';
+import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 
 const UserLeaveView = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isSubmittedModalOpen, setIsSubmittedModalOpen] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(
+    null
+  );
 
   const handleCreateRequest = () => {
     setIsRequestModalOpen(true);
@@ -29,9 +32,15 @@ const UserLeaveView = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <UserLeaveHeader onSearch={setSearchQuery} onCreateRequest={handleCreateRequest} />
-      <UserLeaveBody searchQuery={searchQuery} onViewDetails={handleViewDetails} />
+    <Wrapper className="my-0! p-0 max-w-200">
+      <UserLeaveHeader
+        onSearch={setSearchQuery}
+        onCreateRequest={handleCreateRequest}
+      />
+      <UserLeaveBody
+        searchQuery={searchQuery}
+        onViewDetails={handleViewDetails}
+      />
 
       <RequestLeaveModal
         open={isRequestModalOpen}
@@ -39,10 +48,17 @@ const UserLeaveView = () => {
         onSuccess={handleRequestSuccess}
       />
 
-      <LeaveDetailsModal open={isDetailsModalOpen} onOpenChange={setIsDetailsModalOpen} request={selectedRequest} />
+      <LeaveDetailsModal
+        open={isDetailsModalOpen}
+        onOpenChange={setIsDetailsModalOpen}
+        request={selectedRequest}
+      />
 
-      <LeaveRequestSubmittedModal open={isSubmittedModalOpen} onOpenChange={setIsSubmittedModalOpen} />
-    </div>
+      <LeaveRequestSubmittedModal
+        open={isSubmittedModalOpen}
+        onOpenChange={setIsSubmittedModalOpen}
+      />
+    </Wrapper>
   );
 };
 

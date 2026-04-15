@@ -18,16 +18,13 @@ export const UserLeaveHeader = ({ onCreateRequest }: UserLeaveHeaderProps) => {
           <GenericDropdown
             contentClassName="bg-background"
             trigger={
-              <Button
-                className="data-[state=open]:border-border data-[state=open]:text-gray h-10 rounded-md border px-3"
-                variant="primaryOutline"
-              >
-                <Icon name="Filter" size={16} />
+              <Button className="h-10 rounded-md px-3">
+                <Icon name="Filter" size={16} variant={`Outline`} />
                 Filter
               </Button>
             }
           >
-            <section className="text-muted-foreground min-w-[220px] p-3 text-sm">
+            <section className="text-muted-foreground min-w-55 p-3 text-sm">
               Filter options will be available soon.
             </section>
           </GenericDropdown>

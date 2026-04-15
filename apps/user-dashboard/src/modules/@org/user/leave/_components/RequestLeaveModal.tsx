@@ -1,7 +1,6 @@
 'use client';
 
 import { ReusableDialog } from '@workspace/ui/lib';
-import { Badge } from '@workspace/ui/components/badge';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { RequestLeaveForm } from '@/modules/@org/user';
@@ -12,10 +11,19 @@ interface RequestLeaveModalProps {
   onSuccess?: () => void;
 }
 
-export const RequestLeaveModal = ({ open, onOpenChange, onSuccess }: RequestLeaveModalProps) => {
+export const RequestLeaveModal = ({
+  open,
+  onOpenChange,
+  onSuccess,
+}: RequestLeaveModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (data: { leaveType: string; startDate: string; endDate: string; reason?: string }) => {
+  const handleSubmit = async (data: {
+    leaveType: string;
+    startDate: string;
+    endDate: string;
+    reason?: string;
+  }) => {
     setIsSubmitting(true);
     try {
       // TODO: Implement actual submission logic using service
@@ -43,12 +51,11 @@ export const RequestLeaveModal = ({ open, onOpenChange, onSuccess }: RequestLeav
       description="Fill in your leave details below. Make sure your dates don't overlap with an existing approved leave."
       trigger={undefined}
     >
-      <div className="mb-4 flex items-center gap-3">
-        <Badge className="bg-success-50 text-success-700 rounded-ful py-1 text-xs font-medium hover:bg-success-50">
-          Paid
-        </Badge>
-      </div>
-      <RequestLeaveForm onSubmit={handleSubmit} onCancel={handleCancel} isSubmitting={isSubmitting} />
+      <RequestLeaveForm
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+        isSubmitting={isSubmitting}
+      />
     </ReusableDialog>
   );
 };

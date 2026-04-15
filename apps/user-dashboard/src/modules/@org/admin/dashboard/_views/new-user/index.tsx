@@ -1,11 +1,11 @@
 'use client';
 
 import onboardingImage from '~/images/dashboard/woman.svg';
-import { ActionBanner } from '../../../../_components/action-banner';
-import { DashboardBanner } from '../../../../_components/home-banner';
-import { AttendanceAndRecentActivities } from '../../../../_components/attendanceandactivities';
-import { CardSection } from '../../../../_components/card-section';
-import { LeaveAndPayroll } from '../../../../_components/leaveandpayroll';
+import { ActionBanner } from '../../_components/action-banner';
+import { DashboardBanner } from '../../_components/home-banner';
+import { AttendanceAndRecentActivities } from '../../_components/attendanceandactivities';
+import { CardSection } from '../../_components/card-section';
+import { LeaveAndPayroll } from '../../_components/leaveandpayroll';
 import { OnboardingHeader } from '../onboarding/onboarding-header';
 import { useSession } from 'next-auth/react';
 

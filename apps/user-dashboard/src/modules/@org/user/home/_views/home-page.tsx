@@ -7,14 +7,13 @@ import { useRouter } from 'next/navigation';
 
 import { WithDependency } from '@/HOC/withDependencies';
 import { Onboarding } from '@/modules/@org/user/home/_views/onboarding';
-import { NewUser } from '@/modules/@org/user/home/_views/new-user';
 import { ActiveUser } from '@/modules/@org/user/home/_views/active-user';
 import Lock from '~/images/dashboard/lock.svg';
 import Card from '~/images/dashboard/card.svg';
 import Gavel from '~/images/dashboard/gavel.svg';
 import Coins from '~/images/dashboard/coins.svg';
 
-export const HomePage = () => {
+const HomePage = () => {
   const router = useRouter();
 
   const ONBOARDING_STEPS: OnboardingStep[] = [
@@ -56,7 +55,7 @@ export const HomePage = () => {
   ];
 
   const completedSteps =
-    ONBOARDING_STEPS.filter((step) => step.isCompleted).length || 0;
+    ONBOARDING_STEPS.filter((step) => step.isCompleted).length || 4;
   // Less than 4 steps completed -> Onboarding
   if (completedSteps < 4) {
     return (
@@ -64,10 +63,6 @@ export const HomePage = () => {
         <Onboarding steps={ONBOARDING_STEPS} />
       </Wrapper>
     );
-  }
-  // Exactly 4 steps completed -> NewUser
-  if (completedSteps >= 4 && completedSteps < ONBOARDING_STEPS.length) {
-    return <NewUser steps={ONBOARDING_STEPS} completedSteps={completedSteps} />;
   }
   // All 5 steps completed -> ActiveUser
   return <ActiveUser />;

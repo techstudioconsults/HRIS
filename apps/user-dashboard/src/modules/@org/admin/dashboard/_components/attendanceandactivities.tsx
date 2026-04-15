@@ -1,4 +1,4 @@
-import { AttendanceBarChart } from './attendance-barchart';
+import { AttendanceBarChart } from '../../../_components/attendance-barchart';
 import { RecentActivities } from './recent-activities';
 
 export function AttendanceAndRecentActivities() {

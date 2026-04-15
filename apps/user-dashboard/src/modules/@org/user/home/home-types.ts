@@ -9,7 +9,7 @@ export interface Activity {
   type: ActivityType;
   title: string;
   message: string;
-  timestamp: Date | string;
+  timestamp?: Date | string | null;
 }
 
 export interface QuickAction {

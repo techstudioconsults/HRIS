@@ -31,7 +31,7 @@ export const RecentActivities: React.FC<RecentActivitiesProps> = ({
       {/* Activities Card */}
       <Card className="overflow-hidden rounded-lg">
         {activities.length > 0 ? (
-          <div className=" px-10">
+          <div className="px-5 lg:px-10">
             {activities.map((activity, index) => (
               <div key={activity.id}>
                 <ActivityItem

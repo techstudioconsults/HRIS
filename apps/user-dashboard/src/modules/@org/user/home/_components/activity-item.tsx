@@ -15,15 +15,21 @@ interface ActivityItemProps {
 const getIconByType = (type: ActivityType) => {
   switch (type) {
     case 'approved':
-      return <Icon name="CheckCircle" size={24} className="text-green-600" />;
+      return (
+        <Icon name="CheckCircle" className="size-4 lg:size-6 text-green-600" />
+      );
     case 'rejected':
-      return <Icon name="XCircle" size={24} className="text-red-600" />;
+      return <Icon name="XCircle" className="size-4 lg:size-6 text-red-600" />;
     case 'available':
-      return <Icon name="FileText" size={24} className="text-blue-600" />;
+      return (
+        <Icon name="FileText" className="size-4 lg:size-6 text-blue-600" />
+      );
     case 'submitted':
-      return <Icon name="Clock" size={24} className="text-yellow-600" />;
+      return <Icon name="Clock" className="size-4 lg:size-6 text-yellow-600" />;
     default:
-      return <Icon name="FileText" size={24} className="text-gray-600" />;
+      return (
+        <Icon name="FileText" className="size-4 lg:size-6 text-gray-600" />
+      );
   }
 };
 
@@ -52,7 +58,7 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({
     <div className="flex  gap-4.5 py-6">
       {/* Icon Container - 45.52px as per design */}
       <div
-        className={`shrink-0 flex items-center size-[45.52px] justify-center rounded-full ${getIconBgColor(type)}`}
+        className={`shrink-0 flex items-center size-8 lg:size-[45.52px] justify-center rounded-full ${getIconBgColor(type)}`}
       >
         {getIconByType(type)}
       </div>

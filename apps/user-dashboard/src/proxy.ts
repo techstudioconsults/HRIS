@@ -1,5 +1,6 @@
 // proxy.ts
 import { getRouteConfig } from '@/lib/routes/routes';
+import { getDashboardRoute } from '@/lib/routes/redirect-helpers';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 import {
@@ -8,6 +9,20 @@ import {
   PermissionCheckResult,
   ROLES,
 } from '@/lib/auth-types';
+
+const AUTH_BLOCKED_FOR_AUTHENTICATED_PREFIXES = [
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/reset-password',
+  '/onboarding',
+] as const;
+
+const isBlockedAuthPageForAuthenticatedUser = (path: string): boolean => {
+  return AUTH_BLOCKED_FOR_AUTHENTICATED_PREFIXES.some(
+    (prefix) => path === prefix || path.startsWith(`${prefix}/`)
+  );
+};
 
 // Check if user has required permissions
 const checkPermissions = (
@@ -73,6 +88,18 @@ export async function proxy(request: NextRequest) {
   const userRole =
     (token?.employee as { role?: { name?: string } })?.role?.name || '';
   const userPermissions = (token?.permissions as string[]) || [];
+
+  // Keep authenticated users out of auth/onboarding flows.
+  if (
+    isAuthenticated &&
+    isBlockedAuthPageForAuthenticatedUser(pathWithoutLocale)
+  ) {
+    const dashboardUrl = new URL(
+      getDashboardRoute(userPermissions),
+      request.url
+    );
+    return NextResponse.redirect(dashboardUrl);
+  }
 
   // Get route configuration
   const routeConfig = getRouteConfig(pathWithoutLocale);

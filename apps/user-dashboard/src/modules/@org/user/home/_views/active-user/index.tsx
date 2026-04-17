@@ -12,7 +12,7 @@ export const ActiveUser: React.FC = () => {
   const { data: session } = useSession();
   const userName = session?.user.employee.fullName;
   return (
-    <Wrapper className="max-w-200 my-0! p-0">
+    <Wrapper className="my-0! p-0">
       <DashboardBanner
         img={`/images/dashboard/man.svg`}
         title={`Welcome, ${userName}`}

@@ -2422,6 +2422,14 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`);
       { revision: null, url: '/_next/static/css/76d675adc62b20a8.css' },
       { revision: null, url: '/_next/static/css/dae4ff1291381909.css' },
       {
+        revision: '642b755ec89dc3611174ef3429df8119',
+        url: '/_next/static/dZeQ7AXtLZ1iTmyx8FGMU/_buildManifest.js',
+      },
+      {
+        revision: 'b6652df95db52feb4daf4eca35380933',
+        url: '/_next/static/dZeQ7AXtLZ1iTmyx8FGMU/_ssgManifest.js',
+      },
+      {
         revision: '0b68fb45c615fdc8c195100b48cd88f9',
         url: '/_next/static/media/10f65c94012f0d89-s.woff2',
       },
@@ -2448,14 +2456,6 @@ This is generally NOT safe. Learn more at https://bit.ly/wb-precache`);
       {
         revision: '1f8c41030121d16f9ecf9aa9bdadcaa3',
         url: '/_next/static/media/f0a6239bc4153746-s.woff2',
-      },
-      {
-        revision: '642b755ec89dc3611174ef3429df8119',
-        url: '/_next/static/uK7GojgxH-01lBQAiotXJ/_buildManifest.js',
-      },
-      {
-        revision: 'b6652df95db52feb4daf4eca35380933',
-        url: '/_next/static/uK7GojgxH-01lBQAiotXJ/_ssgManifest.js',
       },
       {
         revision: 'f2b5e346f2217ea6d0f424787097cce3',

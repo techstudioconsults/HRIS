@@ -25,7 +25,7 @@ export const DashboardHeader = () => {
         'flex lg:items-center flex-col lg:flex-row lg:justify-between xl:pb-6 '
       )}
     >
-      <div className="min-h-[88px] py-3">
+      <div className="min-h-22 py-3">
         {status === 'loading' ? (
           <>
             <Skeleton className="mb-2 h-8 w-48" />

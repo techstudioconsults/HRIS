@@ -6,7 +6,7 @@
  * reducing the number of session requests.
  */
 
-import { getSession } from "next-auth/react";
+import { getSession } from 'next-auth/react';
 
 interface CachedToken {
   accessToken: string;
@@ -36,8 +36,7 @@ class TokenManager {
     this.pendingRequest = this.fetchNewToken();
 
     try {
-      const token = await this.pendingRequest;
-      return token;
+      return await this.pendingRequest;
     } finally {
       this.pendingRequest = null;
     }
@@ -76,7 +75,7 @@ class TokenManager {
       return this.cache.accessToken;
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error("TokenManager: Failed to fetch session", error);
+      console.error('TokenManager: Failed to fetch session', error);
       this.cache = null;
       return null;
     }
@@ -93,21 +92,24 @@ class TokenManager {
 
       if (!session?.tokens?.refreshToken) {
         // eslint-disable-next-line no-console
-        console.error("TokenManager: No refresh token available");
+        console.error('TokenManager: No refresh token available');
         this.invalidate();
         return null;
       }
 
       // Call backend refresh endpoint directly
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/refresh`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          refreshToken: session.tokens.refreshToken,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/refresh`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            refreshToken: session.tokens.refreshToken,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Failed to refresh token: ${response.status}`);
@@ -129,7 +131,7 @@ class TokenManager {
       return null;
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error("TokenManager: Failed to refresh token", error);
+      console.error('TokenManager: Failed to refresh token', error);
       this.invalidate();
       return null;
     }

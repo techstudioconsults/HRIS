@@ -297,12 +297,12 @@ export const LeaveDetailsModal = ({
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="flex flex-col items-center gap-3 sm:flex-row">
                 <MainButton
                   variant="primary"
                   onClick={() => onEdit?.(request)}
-                  className="flex-1"
                   isLeftIconVisible
+                  className={`w-full`}
                   icon={<Icon name="Edit" size={15} variant="Outline" />}
                 >
                   Edit Request
@@ -310,7 +310,7 @@ export const LeaveDetailsModal = ({
                 <MainButton
                   variant="destructiveOutline"
                   onClick={() => setShowCancelConfirm(true)}
-                  className="flex-1 border-destructive/40 text-destructive"
+                  className={`w-full`}
                   isLeftIconVisible={false}
                 >
                   Cancel Request

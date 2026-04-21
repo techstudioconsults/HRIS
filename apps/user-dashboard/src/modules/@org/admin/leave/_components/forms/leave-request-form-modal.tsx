@@ -122,7 +122,7 @@ export function LeaveRequestFormModal({
       open={open}
       onOpenChange={onOpenChange}
       title="New Leave Request"
-      className="!max-w-2xl"
+      className="max-w-2xl!"
     >
       <FormProvider {...methods}>
         <form
@@ -138,7 +138,7 @@ export function LeaveRequestFormModal({
               label="Employee"
               placeholder="Select employee"
               type="select"
-              className="!h-14 w-full"
+              className="h-14! w-full"
               options={employeeOptions}
               disabled={isSubmitting}
             />
@@ -148,7 +148,7 @@ export function LeaveRequestFormModal({
               label="Leave Type"
               placeholder="Select leave type"
               type="select"
-              className="!h-14 w-full"
+              className="h-14! w-full"
               options={leaveTypeOptions}
               disabled={isSubmitting}
             />

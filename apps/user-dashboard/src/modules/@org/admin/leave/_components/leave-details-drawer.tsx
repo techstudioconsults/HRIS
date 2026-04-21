@@ -110,9 +110,7 @@ export function LeaveDetailsDrawer() {
                     <Icon name="Calendar" size={18} />
                     <span>Leave Type</span>
                   </div>
-                  <p className="mt-1 font-medium">
-                    {leaveRequest.leaveTypeName}
-                  </p>
+                  <p className="mt-1 font-medium">{leaveRequest.type}</p>
                 </div>
 
                 <div className="rounded-md bg-primary/10 p-4">
@@ -179,7 +177,7 @@ export function LeaveDetailsDrawer() {
 
             {/* NOTE: Approve/Decline actions are not supported from admin dashboard yet. */}
             {leaveRequest.status === 'pending' && (
-              <div className="space-y-3 border-t pt-6">
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-3 lg:gap-6 border-t pt-6">
                 <MainButton
                   variant="primary"
                   onClick={handleApprove}

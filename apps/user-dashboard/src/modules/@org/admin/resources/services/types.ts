@@ -1,7 +1,7 @@
 /**
- * Global API Response Type
+ * Paginated response used by resources listing endpoints.
  */
-export interface ApiResponse<T> {
+export interface PaginatedResponse<T> {
   data: {
     items: T[];
     total: number;
@@ -46,7 +46,7 @@ export interface FolderQueryParameters {
   limit?: number;
   search?: string;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
 }
 
 /**
@@ -56,7 +56,7 @@ export interface FileQueryParameters {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
   folderId?: string;
   search?: string;
 }

@@ -2,13 +2,8 @@ import { formatCurrency, formatDate } from '@/lib/formatters';
 import { Badge } from '@workspace/ui/components/badge';
 import { MainButton } from '@workspace/ui/lib';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import type { UserPayslip } from '../types';
 import { Card } from '@workspace/ui/components/card';
-
-interface PayslipItemCardProps {
-  payslip: UserPayslip;
-  onViewPayslip: (payslip: UserPayslip) => void;
-}
+import type { PayslipItemCardProps } from '../types';
 
 export const PayslipItemCard = ({
   payslip,

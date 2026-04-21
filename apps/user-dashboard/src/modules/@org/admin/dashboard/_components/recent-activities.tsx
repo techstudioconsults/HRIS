@@ -2,41 +2,10 @@
 
 import { Card } from '@workspace/ui/components/card';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-
-interface Activity {
-  id: string;
-  action: string;
-  timestamp: string;
-  type: 'leave' | 'payroll' | 'report' | 'announcement' | 'attendance';
-}
+import { RECENT_ACTIVITIES } from './constants';
+import { Activity } from '@/modules/@org/admin/dashboard/types';
 
 export function RecentActivities() {
-  const activities: Activity[] = [
-    {
-      id: '1',
-      action: 'Anyanwu Emmanuella requested annual leave',
-      timestamp: '30 minutes ago',
-      type: 'leave',
-    },
-    {
-      id: '2',
-      action: 'Payroll for April was processed',
-      timestamp: '2 hours ago',
-      type: 'payroll',
-    },
-    {
-      id: '3',
-      action: 'Mbachu Charles requested sick leave (2 days)',
-      timestamp: '2 days ago',
-      type: 'leave',
-    },
-    {
-      id: '4',
-      action: 'Attendance report for April was exported',
-      timestamp: '2 days ago',
-      type: 'report',
-    },
-  ];
   const getActivityIcon = (type: Activity['type']) => {
     switch (type) {
       case 'leave': {
@@ -71,7 +40,7 @@ export function RecentActivities() {
       </div>
 
       <div className="divide-y px-6">
-        {activities.map((activity) => (
+        {RECENT_ACTIVITIES.map((activity) => (
           <div
             key={activity.id}
             className="hover:bg-muted/50 flex items-start gap-3 border-0 py-3 transition-colors"

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { MainButton } from '@workspace/ui/lib/button';
@@ -7,22 +6,7 @@ import { useCallback, useEffect } from 'react';
 import { EmployeeSetupForm } from '../../_components/forms/employee/employee-setup';
 import { stepThreeTourSteps } from '../../config/tour-steps';
 import { useTour } from '@workspace/ui/context/tour-context';
-
-// Enhanced Employee type with teamId and roleId
-export interface Employee {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  password?: string;
-  teamId: string;
-  roleId: string;
-  permissions?: any[];
-}
-
-export interface OnboardEmployeesPayload {
-  employees: Employee[];
-}
+export type { Employee, OnboardEmployeesPayload } from '../../types';
 
 export const EmployeeSetup = () => {
   const { startTour } = useTour();

@@ -7,7 +7,7 @@ import {
   ErrorEmptyState,
   FilteredEmptyState,
   TableSkeleton,
-} from '@workspace/ui/lib/index';
+} from '@workspace/ui/lib';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 

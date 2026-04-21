@@ -14,3 +14,15 @@ export {
   stepThreeTourSteps,
   fullOnboardingTour,
 } from './config/tour-steps';
+
+export type {
+  CompanyProfile,
+  TeamApiResponse,
+  RoleApiResponse,
+  Role,
+  Team,
+  OnboardingSetupStatus,
+  OnboardingSetupStatusApi,
+  Employee,
+  OnboardEmployeesPayload,
+} from './types';

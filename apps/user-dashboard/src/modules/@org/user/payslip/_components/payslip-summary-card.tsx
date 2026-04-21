@@ -5,10 +5,7 @@ import Coin from '~/images/dashboard/coin.svg';
 import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useState } from 'react';
-
-interface PayslipSummaryCardProps {
-  netPay: number;
-}
+import type { PayslipSummaryCardProps } from '../types';
 
 export const PayslipSummaryCard = ({ netPay }: PayslipSummaryCardProps) => {
   const [isValueShown, setShowValue] = useState(false);

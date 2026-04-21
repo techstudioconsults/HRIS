@@ -45,10 +45,6 @@ interface FilterValues {
 
 interface AddEmployeeDrawerProperties {
   payrollId: string | null;
-  /**
-   * Indicates that payslips have been generated for the selected payroll.
-   * Used to avoid calling the "absent" endpoint before payslips exist.
-   */
   hasPayslips: boolean;
 }
 

@@ -2,15 +2,8 @@
 
 import React from 'react';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { ActivityType } from '../home-types';
+import type { ActivityType, ActivityItemProps } from '../types';
 import { formatTimestamp } from '@workspace/ui/lib/utils';
-
-interface ActivityItemProps {
-  type: ActivityType;
-  title: string;
-  message: string;
-  timestamp?: Date | string | null;
-}
 
 const getIconByType = (type: ActivityType) => {
   switch (type) {

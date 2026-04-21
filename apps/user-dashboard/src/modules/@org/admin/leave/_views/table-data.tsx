@@ -1,6 +1,6 @@
 import { formatDate } from '@/lib/formatters';
 import { Badge } from '@workspace/ui/components/badge';
-import { cn } from '@workspace/ui/lib/utils';
+import { calculateDaysBetween, cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import Image from 'next/image';
 
@@ -30,6 +30,7 @@ export const useLeaveRowActions = () => {
 
   return { getRowActions };
 };
+
 export const leaveColumns: IColumnDefinition<LeaveRequest>[] = [
   {
     header: 'Employee',
@@ -48,7 +49,7 @@ export const leaveColumns: IColumnDefinition<LeaveRequest>[] = [
               />
             </div>
           )}
-          <span className="font-medium">{request.employeeName}</span>
+          <span className="font-medium text-sm truncate">{request.id}</span>
         </div>
       );
     },
@@ -57,7 +58,7 @@ export const leaveColumns: IColumnDefinition<LeaveRequest>[] = [
     header: 'Leave Type',
     accessorKey: 'leaveTypeName',
     render: (_value, row) => (
-      <span className="text-sm truncate">{row.leaveTypeName}</span>
+      <span className="text-sm truncate">{row.type}</span>
     ),
   },
   {
@@ -78,7 +79,9 @@ export const leaveColumns: IColumnDefinition<LeaveRequest>[] = [
     header: 'Days',
     accessorKey: 'days',
     render: (_value, row) => (
-      <span className="text-sm truncate font-medium">{row.days}</span>
+      <span className="text-sm truncate font-medium">
+        {calculateDaysBetween(row.startDate, row.endDate)}
+      </span>
     ),
   },
   {
@@ -89,7 +92,7 @@ export const leaveColumns: IColumnDefinition<LeaveRequest>[] = [
       return (
         <Badge
           className={cn(
-            'rounded-full py-1 text-xs',
+            'rounded-full px-4 py-1 text-xs',
             status === 'pending' && 'bg-warning-50 text-warning',
             status === 'approved' && 'bg-success-50 text-success',
             status === 'declined' && 'bg-destructive/10 text-destructive'

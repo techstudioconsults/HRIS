@@ -6,34 +6,15 @@ import { AlertModal, FormField, ReusableDialog } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { generatePayrollTourStep } from '../../config/tour-steps';
+import { fundWalletSchema } from '../../schemas/forms';
 import { usePayrollService } from '../../services/use-service';
 import { usePayrollStore } from '../../stores/payroll-store';
-
-const fundWalletSchema = z.object({
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  email: z.string().email('Please enter a valid email address'),
-  phoneNumber: z.string().min(1, 'Phone number is required'),
-});
-
-export interface FundWalletFormData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-}
-
-interface FundWalletFormModalProperties {
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  onFundWallet?: () => void;
-  initialData?: FundWalletFormData;
-
-  isGeneratePayrollBannerShowing?: boolean;
-}
+import type {
+  FundWalletFormData,
+  FundWalletFormModalProperties,
+} from '../../types';
 
 export function FundWalletFormModal({
   initialData,

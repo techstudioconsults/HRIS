@@ -1,10 +1,16 @@
-"use client";
+'use client';
 
-import { useNotifications, type UseNotificationsReturn } from "@/lib/sse/use-notifications";
-import { useSession } from "next-auth/react";
-import { createContext, useContext, useMemo, type ReactNode } from "react";
+import {
+  useNotifications,
+  type UseNotificationsReturn,
+} from '@/lib/sse/use-notifications';
+import { useSession } from 'next-auth/react';
+import { createContext, useContext, useMemo, type ReactNode } from 'react';
 
-type SSEContextValue = Pick<UseNotificationsReturn, "on" | "close" | "getStatus">;
+type SSEContextValue = Pick<
+  UseNotificationsReturn,
+  'on' | 'close' | 'getStatus' | 'status'
+>;
 const SSEContext = createContext<SSEContextValue | null>(null);
 
 export function SSEProvider({ children }: { children: ReactNode }) {
@@ -20,8 +26,9 @@ export function SSEProvider({ children }: { children: ReactNode }) {
       on: api.on,
       close: api.close,
       getStatus: api.getStatus,
+      status: api.status,
     }),
-    [api.on, api.close, api.getStatus],
+    [api.on, api.close, api.getStatus, api.status]
   );
 
   return <SSEContext.Provider value={value}>{children}</SSEContext.Provider>;
@@ -30,7 +37,7 @@ export function SSEProvider({ children }: { children: ReactNode }) {
 export function useSSE(): SSEContextValue {
   const context = useContext(SSEContext);
   if (!context) {
-    throw new Error("useSSE must be used within SSEProvider");
+    throw new Error('useSSE must be used within SSEProvider');
   }
   return context;
 }

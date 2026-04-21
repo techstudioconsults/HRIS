@@ -1,4 +1,4 @@
-import { Activity } from '@/modules/@org/user/home/home-types';
+import type { Activity } from '@/modules/@org/user/home/types';
 
 export const RECENT_ACTIVITIES: Activity[] = [
   {

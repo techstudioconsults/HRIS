@@ -31,37 +31,6 @@ declare global {
     metadata: PaginationMetadata;
   }>;
 
-  // interface PaginationLink {
-  //   url: string | null;
-  //   label: string;
-  //   active: boolean;
-  // }
-
-  // interface PaginationLinks {
-  //   first: string;
-  //   last: string;
-  //   prev: string | null;
-  //   next: string | null;
-  // }
-
-  // interface LegacyPaginatedResponse<T> {
-  //   data: T[];
-  //   links: PaginationLinks;
-  //   meta: LegacyPaginationMeta;
-  // }
-
-  // /** Legacy pagination structure for backward compatibility */
-  // interface LegacyPaginationMeta {
-  //   current_page: number;
-  //   from: number;
-  //   last_page: number;
-  //   links: PaginationLink[];
-  //   path: string;
-  //   per_page: number;
-  //   to: number;
-  //   total: number;
-  // }
-
   // ============================================================================
   // HTTP AND API TYPES
   // ============================================================================

@@ -1,13 +1,12 @@
 'use client';
 
 import { AlertModal } from '@workspace/ui/lib/dialog';
+import type { LeaveRequestSubmittedModalProps } from '../types';
 
-interface LeaveRequestSubmittedModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-export const LeaveRequestSubmittedModal = ({ open, onOpenChange }: LeaveRequestSubmittedModalProps) => {
+export const LeaveRequestSubmittedModal = ({
+  open,
+  onOpenChange,
+}: LeaveRequestSubmittedModalProps) => {
   const handleClose = () => onOpenChange(false);
 
   return (

@@ -30,12 +30,13 @@ export interface LeaveRequest extends Record<string, unknown> {
   employeeName: string;
   employeeAvatar?: string;
   leaveTypeId: string;
+  type?: string;
   leaveTypeName: string;
   startDate: string;
   endDate: string;
   days: number;
   reason: string;
-  status: "pending" | "approved" | "declined";
+  status: 'pending' | 'approved' | 'declined';
   approvedBy?: string;
   approvedAt?: string;
   createdAt: string;
@@ -122,7 +123,7 @@ export interface UpdateLeaveRequestPayload {
   startDate?: string;
   endDate?: string;
   reason?: string;
-  status?: LeaveRequest["status"];
+  status?: LeaveRequest['status'];
 }
 
 export interface UpdateCompanyLeavePolicyPayload {
@@ -131,4 +132,23 @@ export interface UpdateCompanyLeavePolicyPayload {
   requireManagerApproval?: boolean;
   allowCarryOver?: boolean;
   maxCarryOverDays?: number;
+}
+
+export interface CreateLeaveTypeFormProperties {
+  onClose?: () => void;
+}
+
+export interface EditLeaveTypeFormProperties {
+  leaveType: LeaveType;
+  onClose?: () => void;
+}
+
+export interface LeaveBodyProperties {
+  searchQuery?: string;
+  // IRowAction is declared globally in `apps/user-dashboard/src/modules/@org/admin/types/index.d.ts`
+  getRowActions: (row: LeaveRequest) => IRowAction<LeaveRequest>[];
+}
+
+export interface LeaveHeaderProperties {
+  onSearch: (query: string) => void;
 }

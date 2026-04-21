@@ -1,13 +1,10 @@
 'use client';
+
 import { Button } from '@workspace/ui/components/button';
 import { DashboardHeader, GenericDropdown } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-
-interface UserLeaveHeaderProps {
-  onCreateRequest?: () => void;
-}
-
+import type { UserLeaveHeaderProps } from '../types';
 export const UserLeaveHeader = ({ onCreateRequest }: UserLeaveHeaderProps) => {
   return (
     <DashboardHeader
@@ -19,7 +16,7 @@ export const UserLeaveHeader = ({ onCreateRequest }: UserLeaveHeaderProps) => {
             contentClassName="bg-background"
             trigger={
               <Button className="h-10 rounded-md px-3">
-                <Icon name="Filter" size={16} variant={`Outline`} />
+                <Icon name="Filter" size={16} variant="Outline" />
                 Filter
               </Button>
             }

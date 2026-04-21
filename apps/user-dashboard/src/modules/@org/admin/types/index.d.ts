@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // Define strict types for table data and actions
 declare global {
-  type DataItem = Record<string, any>;
-
   interface IColumnDefinition<T extends DataItem> {
     header: string;
     accessorKey: keyof T;

@@ -14,4 +14,7 @@ export type {
   LeaveStatistics,
   CreateLeaveRequestPayload,
   UpdateLeaveRequestPayload,
+  RejectLeaveRequestPayload,
+  LeaveModalState,
+  RequestLeaveModalProps,
 } from './types';

@@ -6,10 +6,7 @@ import { ActionBanner } from '../../_components/action-banner';
 import { DashboardBanner } from '../../_components/home-banner';
 import { OnboardingHeader } from './onboarding-header';
 import { useSession } from 'next-auth/react';
-
-interface OnboardingProperties {
-  steps: OnboardingStep[];
-}
+import type { OnboardingProperties } from '../../types';
 
 export const Onboarding = ({ steps }: OnboardingProperties) => {
   const completedSteps = steps.filter((step) => step.isCompleted).length || 4;

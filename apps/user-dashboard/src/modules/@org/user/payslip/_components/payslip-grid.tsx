@@ -1,10 +1,5 @@
-import type { UserPayslip } from '../types';
 import { PayslipItemCard } from './payslip-item-card';
-
-interface PayslipGridProps {
-  payslips: UserPayslip[];
-  onViewPayslip: (payslip: UserPayslip) => void;
-}
+import type { PayslipGridProps } from '../types';
 
 export const PayslipGrid = ({ payslips, onViewPayslip }: PayslipGridProps) => {
   return (

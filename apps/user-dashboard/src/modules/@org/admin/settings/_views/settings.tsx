@@ -15,14 +15,7 @@ import { HRSettingsTab } from './tabs/hr-settings-tab';
 import { NotificationSettingsTab } from './tabs/notification-settings-tab';
 import { RolesManagementTab } from './tabs/roles-management-tab';
 import { SecuritySettingsTab } from './tabs/security-settings-tab';
-
-type SettingsTab =
-  | 'account'
-  | 'roles'
-  | 'hr'
-  | 'payroll'
-  | 'notifications'
-  | 'security';
+import type { SettingsTab } from '../types';
 
 const tabTriggerClassName = cn(
   'text-muted-foreground rounded-none border-none bg-transparent px-0 py-2 text-sm',

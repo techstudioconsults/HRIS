@@ -12,14 +12,11 @@ import { Icon } from '@workspace/ui/lib/icons/icon';
 import { cn } from '@workspace/ui/lib/utils';
 import { useEffect, useRef, useState } from 'react';
 import { useDebounce } from 'use-debounce';
-
-interface SearchInputProperties {
-  placeholder?: string;
-  onSearch: (query: string) => void;
-  delay?: number; // debounce delay in ms
-  className?: string;
-  isDisabled?: boolean;
-}
+import type {
+  GlobalSearchInputProperties,
+  SearchInputProperties,
+  SearchResult,
+} from './types';
 
 export const SearchInput = ({
   placeholder = 'Search...',
@@ -56,29 +53,7 @@ export const SearchInput = ({
   );
 };
 
-export interface SearchResult {
-  id: string;
-  title: string;
-  description?: string;
-  category?: string;
-  icon?: React.ReactNode;
-  url?: string;
-  metadata?: Record<string, unknown>;
-}
-
-interface GlobalSearchInputProperties {
-  className?: string;
-  placeholder?: string;
-  onSearch?: (query: string) => void;
-  onResultSelect?: (result: SearchResult) => void;
-  results?: SearchResult[];
-  isLoading?: boolean;
-  disabled?: boolean;
-  recentSearches?: string[];
-  onClearRecent?: () => void;
-  emptyMessage?: string;
-  delay?: number;
-}
+export type { SearchResult } from './types';
 
 export function GlobalSearchInput({
   className,

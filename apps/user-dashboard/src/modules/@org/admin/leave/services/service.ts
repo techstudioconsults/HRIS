@@ -5,19 +5,7 @@ import type {
   LeaveRequest,
   LeaveType,
   UpdateLeaveTypePayload,
-} from '../types/index';
-
-type PaginatedResponse<TItem> = {
-  items: TItem[];
-  metadata?: {
-    total?: number;
-    page?: number;
-    limit?: number;
-    totalPages?: number;
-    hasNextPage?: boolean;
-    hasPreviousPage?: boolean;
-  };
-};
+} from '../types';
 
 export class LeaveService {
   private readonly http: HttpAdapter;
@@ -38,10 +26,9 @@ export class LeaveService {
     // but lacks an index signature, so we cast.
     // Backend commonly returns a paginated object: { items: LeaveType[], metadata: {...} }
     // Some environments may return { data: LeaveType[] }.
-    const response = await this.http.get<PaginatedResponse<LeaveType> | { data: LeaveType[] }>(
-      '/leaves',
-      filters as QueryParameters
-    );
+    const response = await this.http.get<
+      PaginatedApiResponse<LeaveType> | { data: LeaveType[] }
+    >('/leaves', filters as QueryParameters);
     if (response?.status === 200) {
       return response.data;
     }
@@ -55,20 +42,25 @@ export class LeaveService {
   }
 
   async updateLeaveType(id: string, data: UpdateLeaveTypePayload) {
-    const response = await this.http.put<{ data: LeaveType }>(`/leaves/${id}`, data);
+    const response = await this.http.put<{ data: LeaveType }>(
+      `/leaves/${id}`,
+      data
+    );
     if (response?.status === 200) {
       return response.data.data;
     }
   }
 
   async deleteLeaveType(id: string) {
-    const response = await this.http.delete<{ message: string }>(`/leaves/${id}`);
+    const response = await this.http.delete<{ message: string }>(
+      `/leaves/${id}`
+    );
     if (response?.status === 200) {
       return response.data;
     }
   }
 
-  // =============================
+  // =============================,
   // Leave Requests
   // =============================
   /**
@@ -77,10 +69,13 @@ export class LeaveService {
    * NOTE: This module previously attempted to call a non-existent hook `useGetLeaves()`.
    * The backend route naming across the app suggests `/leave-requests`.
    */
-  async getLeaveRequests(filters: Filters = {}) {
-    const response = await this.http.get<
-      PaginatedResponse<LeaveRequest> | { data: LeaveRequest[] }
-    >('/leave-requests', filters as QueryParameters);
+  async getLeaveRequests(filters: Filters) {
+    const response = await this.http.get<PaginatedApiResponse<LeaveRequest>>(
+      '/leave-request',
+      {
+        ...filters,
+      }
+    );
     if (response?.status === 200) {
       return response.data;
     }

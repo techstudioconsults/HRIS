@@ -45,3 +45,33 @@ export interface Team {
   name: string;
   roles: Role[];
 }
+
+export interface OnboardingSetupStatus {
+  resetPassword?: boolean;
+  reviewProfileDetails?: boolean;
+  acknowledgePolicy?: boolean;
+  reviewPayrollInfo?: boolean;
+  takenTour?: boolean;
+}
+
+export type OnboardingSetupStatusApi = Omit<
+  OnboardingSetupStatus,
+  'takenTour'
+> & {
+  takenTour?: boolean;
+};
+
+export interface Employee {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  password?: string;
+  teamId: string;
+  roleId: string;
+  permissions?: unknown[];
+}
+
+export interface OnboardEmployeesPayload {
+  employees: Employee[];
+}

@@ -2,16 +2,14 @@ import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import Link from 'next/link';
 import { Card } from '@workspace/ui/components/card';
-
-// Type definitions
-type IconVariant = 'success' | 'primary' | 'warning' | 'purple-500';
-type TrendDirection = 'up' | 'down';
+import { IconVariant, TrendDirection } from '@/modules/@org/_components/types';
+import { ReactNode } from 'react';
 
 interface DashboardCardProperties {
   title: string;
-  value: string | number | React.ReactNode;
+  value: string | number | ReactNode;
   percentage?: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   iconVariant?: IconVariant;
   className?: string;
   actionText?: string;

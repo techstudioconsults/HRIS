@@ -1,11 +1,7 @@
 'use client';
 
 import { ProgressBar } from '../../../../_components/progress-bar';
-
-interface OnboardingHeaderProperties {
-  completedSteps: number;
-  totalSteps: number;
-}
+import type { OnboardingHeaderProperties } from '../../types';
 
 export const OnboardingHeader = ({
   completedSteps,

@@ -59,7 +59,7 @@ export function AttendanceBarChart() {
         <p className="text-muted-foreground text-sm">This year</p>
       </CardHeader>
       <CardContent className={`p-0`}>
-        <ChartContainer config={chartConfig} className="h-[300px] w-full">
+        <ChartContainer config={chartConfig} className="h-75 w-full">
           <BarChart
             data={attendanceData}
             margin={{

@@ -46,6 +46,38 @@ export interface BonusDeductionFormData {
   type: BonusDeductionKind;
 }
 
+export interface FundWalletFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+}
+
+export interface FundWalletFormModalProperties {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onFundWallet?: () => void;
+  initialData?: FundWalletFormData;
+  isGeneratePayrollBannerShowing?: boolean;
+}
+
+export interface BonusDeductionFormModalProperties {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (data: BonusDeductionFormData) => void;
+  type: BonusDeductionKind;
+  initialData?: BonusDeductionFormData;
+  isEditing?: boolean;
+}
+
+export interface BonusDeductionManagerProperties {
+  type: BonusDeductionKind;
+  initialItems?: BonusDeduction[];
+  onChange?: (items: BonusDeduction[]) => void;
+  policyId?: string;
+  profileId?: string;
+}
+
 export interface BonusDeductionTableProperties {
   items: BonusDeduction[];
   type: BonusDeductionKind;

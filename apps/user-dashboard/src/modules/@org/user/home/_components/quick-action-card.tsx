@@ -1,23 +1,11 @@
 'use client';
 
-import React, { ButtonHTMLAttributes, useTransition } from 'react';
+import React, { useTransition } from 'react';
 import { Card } from '@workspace/ui/components/card';
 import { cn } from '@workspace/ui/lib/utils';
 import { MainButton } from '@workspace/ui/lib';
 import { Checkbox } from '@workspace/ui/components/checkbox';
-
-interface QuickActionCardProps {
-  title: string;
-  description: string;
-  button: {
-    label: string;
-    onClick?: () => Promise<void> | void;
-    className?: string;
-  } & ButtonHTMLAttributes<HTMLButtonElement>;
-  icon?: string;
-  className?: string;
-  isCompleted?: boolean;
-}
+import type { QuickActionCardProps } from '../types';
 
 export const QuickActionCard: React.FC<QuickActionCardProps> = ({
   title,

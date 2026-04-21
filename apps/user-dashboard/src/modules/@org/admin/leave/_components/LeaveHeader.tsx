@@ -7,10 +7,7 @@ import { DashboardHeader, GenericDropdown } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useRouter } from 'next/navigation';
-
-interface LeaveHeaderProperties {
-  onSearch: (query: string) => void;
-}
+import { LeaveHeaderProperties } from '@/modules/@org/admin/leave/types';
 
 export const LeaveHeader = ({ onSearch }: LeaveHeaderProperties) => {
   const router = useRouter();

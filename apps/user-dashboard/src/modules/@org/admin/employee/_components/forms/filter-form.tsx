@@ -102,7 +102,7 @@ export const FilterForm = ({
 
   return (
     <FormProvider {...methods}>
-      <section className="mx-auto max-w-[527px] p-7">
+      <section className="mx-auto max-w-131.75 p-7">
         <h5 className="mb-4 text-xl">Filter Employees</h5>
         <div className="space-y-4">
           {/* Team Dropdown */}

@@ -5,10 +5,7 @@ import { OnboardingHeader } from './onboarding-header';
 import { useSession } from 'next-auth/react';
 import { QuickActionCard } from '@/modules/@org/user/home/_components/quick-action-card';
 import { cn } from '@workspace/ui/lib/utils';
-
-interface OnboardingProperties {
-  steps: OnboardingStep[];
-}
+import type { OnboardingProperties } from '../../types';
 
 export const Onboarding = ({ steps }: OnboardingProperties) => {
   const completedSteps = steps.filter((step) => step.isCompleted).length || 4;

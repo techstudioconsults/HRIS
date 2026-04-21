@@ -1,42 +1,75 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { useSSEContext } from '@/context/sse-provider';
+import { useSSE } from '@/context/sse-provider';
 import type { LogEvent, ProgressEvent } from '@/lib/sse/types';
+import type { INotificationPayload } from '@/lib/sse/use-notifications';
 import { useEffect, useMemo, useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@workspace/ui/components/card';
+import { Progress } from '@workspace/ui/components/progress';
 
 interface SSEProgressWidgetProperties {
   channel: string;
   title?: string;
 }
 
+function isProgressEvent(value: unknown): value is ProgressEvent {
+  const event_ = value as Partial<ProgressEvent> | null;
+  return Boolean(
+    event_ &&
+    event_.type === 'progress' &&
+    typeof event_.channel === 'string' &&
+    typeof event_.data === 'object' &&
+    event_.data &&
+    true
+  );
+}
+
+function isLogEvent(value: unknown): value is LogEvent {
+  const event_ = value as Partial<LogEvent> | null;
+  return Boolean(
+    event_ &&
+    event_.type === 'log' &&
+    typeof event_.channel === 'string' &&
+    typeof event_.data === 'object' &&
+    event_.data &&
+    true &&
+    true
+  );
+}
+
 export function SSEProgressWidget({
   channel,
   title = 'Live Job Progress',
 }: SSEProgressWidgetProperties) {
-  const { status, on } = useSSEContext();
+  const { on, status } = useSSE();
   const [percent, setPercent] = useState(0);
   const [message, setMessage] = useState<string | undefined>();
   const [lastLog, setLastLog] = useState<string | undefined>();
 
   useEffect(() => {
-    const off = on('progress', (event) => {
-      const progressEvent = event as ProgressEvent;
-      if (progressEvent.channel !== channel) return;
-      const next = Math.max(0, Math.min(100, progressEvent.data.percent));
+    const off = on('progress', (payload: INotificationPayload<unknown>) => {
+      const candidate = payload.data?.metadata ?? payload;
+      if (!isProgressEvent(candidate) || candidate.channel !== channel) return;
+
+      const next = Math.max(0, Math.min(100, candidate.data.percent));
       setPercent(next);
-      if (progressEvent.data.message) setMessage(progressEvent.data.message);
+      if (candidate.data.message) setMessage(candidate.data.message);
     });
     return () => off();
   }, [channel, on]);
 
   useEffect(() => {
-    const off = on('log', (event) => {
-      const logEvent = event as LogEvent;
-      if (logEvent.channel !== channel) return;
+    const off = on('log', (payload: INotificationPayload<unknown>) => {
+      const candidate = payload.data?.metadata ?? payload;
+      if (!isLogEvent(candidate) || candidate.channel !== channel) return;
+
       setLastLog(
-        `${logEvent.data.level.toUpperCase()}: ${logEvent.data.message}`
+        `${candidate.data.level.toUpperCase()}: ${candidate.data.message}`
       );
     });
     return () => off();

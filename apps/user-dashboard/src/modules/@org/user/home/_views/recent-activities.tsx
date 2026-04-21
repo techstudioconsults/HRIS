@@ -4,11 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Card } from '@workspace/ui/components/card';
 import { ActivityItem } from '../_components/activity-item';
-import { Activity } from '../home-types';
-
-interface RecentActivitiesProps {
-  activities: Activity[];
-}
+import type { RecentActivitiesProps } from '../types';
 
 export const RecentActivities: React.FC<RecentActivitiesProps> = ({
   activities,

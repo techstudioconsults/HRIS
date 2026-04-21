@@ -6,22 +6,13 @@ import { useEffect, useRef, useState } from 'react';
 import type React from 'react';
 
 import { usePayrollService } from '../services/use-service';
-import { BonusDeduction, BonusDeductionFormData } from '../types';
+import type {
+  BonusDeduction,
+  BonusDeductionFormData,
+  BonusDeductionManagerProperties,
+} from '../types';
 import { BonusDeductionFormModal } from './bonus-deduction-form-modal';
 import { BonusDeductionTable } from './bonus-deduction-table';
-
-interface BonusDeductionManagerProperties {
-  type: 'bonus' | 'deduction';
-  initialItems?: BonusDeduction[];
-  onChange?: (items: BonusDeduction[]) => void;
-  policyId?: string;
-  profileId?: string; // NEW: employee-level (payProfileId)
-}
-
-// Local generic response type to satisfy references
-interface ApiResponse<T> {
-  data: T;
-}
 
 const generateId = () => {
   return Math.random().toString(36).slice(2, 11);
@@ -136,7 +127,7 @@ export function BonusDeductionManager({
       updatedAt?: string;
     };
     const data =
-      (response as unknown as ApiResponse<APIEntity> | undefined)?.data ??
+      (response as ApiResponse<APIEntity> | undefined)?.data ??
       ({} as APIEntity);
     const newItem: BonusDeduction = {
       id: data.id ?? generateId(),
@@ -220,7 +211,7 @@ export function BonusDeductionManager({
       updatedAt?: string;
     };
     const data =
-      (response as unknown as ApiResponse<APIEntity> | undefined)?.data ??
+      (response as ApiResponse<APIEntity> | undefined)?.data ??
       ({} as APIEntity);
     setItems((previous) =>
       previous.map((item) =>

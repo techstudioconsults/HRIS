@@ -1,41 +1,37 @@
 'use client';
 
 import { ReusableDialog } from '@workspace/ui/lib';
-import { useState } from 'react';
 import { toast } from 'sonner';
+import { useUserLeaveService } from '@/modules/@org/user';
+import type { RequestLeaveSubmitData, RequestLeaveModalProps } from '../types';
 import { RequestLeaveForm } from '@/modules/@org/user';
-
-interface RequestLeaveModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSuccess?: () => void;
-}
 
 export const RequestLeaveModal = ({
   open,
   onOpenChange,
   onSuccess,
 }: RequestLeaveModalProps) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { useGetLeaveTypes, useCreateLeaveRequest } = useUserLeaveService();
 
-  const handleSubmit = async (data: {
-    leaveType: string;
-    startDate: string;
-    endDate: string;
-    reason?: string;
-  }) => {
-    setIsSubmitting(true);
+  const { data: leaveTypesData, isLoading: isLoadingTypes } =
+    useGetLeaveTypes();
+  const { mutateAsync: createLeaveRequest, isPending } =
+    useCreateLeaveRequest();
+  const leaveTypes = leaveTypesData ?? [];
+
+  const handleSubmit = async (data: RequestLeaveSubmitData) => {
     try {
-      // TODO: Implement actual submission logic using service
-      void data;
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      onSuccess?.();
+      await createLeaveRequest({
+        leaveId: data.leaveId,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        reason: data.reason,
+        document: data.document,
+      });
       onOpenChange(false);
+      onSuccess?.();
     } catch {
-      toast.error('Failed to submit leave request.');
-    } finally {
-      setIsSubmitting(false);
+      toast.error('Failed to submit leave request. Please try again.');
     }
   };
 
@@ -52,9 +48,11 @@ export const RequestLeaveModal = ({
       trigger={undefined}
     >
       <RequestLeaveForm
+        leaveTypes={leaveTypes}
+        isLoadingTypes={isLoadingTypes}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
-        isSubmitting={isSubmitting}
+        isSubmitting={isPending}
       />
     </ReusableDialog>
   );

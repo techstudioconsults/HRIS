@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { EventSource } from "eventsource";
-import { useCallback, useEffect, useRef } from "react";
+import { EventSource } from 'eventsource';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export const EventRegistry = {
-  PAYROLL_APPROVE_REQUEST: "payroll.approve.request",
-  PAYROLL_APPROVED: "payroll.approve.success",
-  PAYROLL_REJECTED: "payroll.approve.rejected",
-  PAYROLL_COMPLETED: "payroll.completed",
-  PAYROLL_STATUS: "payroll.status",
-  SALARY_PAID: "salary.paid",
-  WALLET_CREATED_SUCCESS: "wallet.created.success",
-  WALLET_TOP_SUCCESS: "wallet.topup",
+  PAYROLL_APPROVE_REQUEST: 'payroll.approve.request',
+  PAYROLL_APPROVED: 'payroll.approve.success',
+  PAYROLL_REJECTED: 'payroll.approve.rejected',
+  PAYROLL_COMPLETED: 'payroll.completed',
+  PAYROLL_STATUS: 'payroll.status',
+  SALARY_PAID: 'salary.paid',
+  WALLET_CREATED_SUCCESS: 'wallet.created.success',
+  WALLET_TOP_SUCCESS: 'wallet.topup',
 } as const;
 
 export type EventNameType = (typeof EventRegistry)[keyof typeof EventRegistry];
@@ -29,9 +29,12 @@ export interface INotificationPayload<T = any> {
   timestamp: string;
 }
 
-type Status = "idle" | "connecting" | "open" | "error" | "closed";
+type Status = 'idle' | 'connecting' | 'open' | 'error' | 'closed';
 
-type Handler<T = any> = (payload: INotificationPayload<T>, raw: MessageEvent<string>) => void;
+type Handler<T = any> = (
+  payload: INotificationPayload<T>,
+  raw: MessageEvent<string>
+) => void;
 
 // Normalize server payload shape. Supports:
 // 1) { type, data, timestamp }
@@ -40,11 +43,11 @@ function unwrapPayload(input: unknown): INotificationPayload {
   const object = input as Record<string, unknown> | null;
   if (
     object &&
-    typeof object === "object" &&
-    "data" in object &&
+    typeof object === 'object' &&
+    'data' in object &&
     object.data &&
-    typeof (object as any).data === "object" &&
-    "type" in (object as any).data
+    typeof (object as any).data === 'object' &&
+    'type' in (object as any).data
   ) {
     return (object as any).data as INotificationPayload;
   }
@@ -53,62 +56,78 @@ function unwrapPayload(input: unknown): INotificationPayload {
 
 export function useNotifications(userId?: string, token?: string) {
   const sourceReference = useRef<EventSource | null>(null);
-  const statusReference = useRef<Status>("idle");
+  const statusReference = useRef<Status>('idle');
+  const [status, setStatus] = useState<Status>('idle');
   const listenersReference = useRef<Map<string, Set<Handler>>>(new Map());
   const wildcardReference = useRef<Set<Handler>>(new Set());
+
+  const updateStatus = useCallback((nextStatus: Status) => {
+    statusReference.current = nextStatus;
+    setStatus(nextStatus);
+  }, []);
 
   const close = useCallback(() => {
     const source = sourceReference.current;
     if (source) {
       source.close();
       sourceReference.current = null;
-      statusReference.current = "closed";
+      updateStatus('closed');
     }
-  }, []);
+  }, [updateStatus]);
 
-  const on = useCallback(<T = any>(event: EventNameType | string | "*", handler: Handler<T>) => {
-    if (event === "*") {
-      wildcardReference.current.add(handler as Handler);
+  const on = useCallback(
+    <T = any>(event: EventNameType | string | '*', handler: Handler<T>) => {
+      if (event === '*') {
+        wildcardReference.current.add(handler as Handler);
+        return () => {
+          wildcardReference.current.delete(handler as Handler);
+        };
+      }
+      const key = String(event);
+      let set = listenersReference.current.get(key);
+      if (!set) {
+        set = new Set();
+        listenersReference.current.set(key, set);
+      }
+      set.add(handler as Handler);
       return () => {
-        wildcardReference.current.delete(handler as Handler);
+        const set_ = listenersReference.current.get(key);
+        if (!set_) return;
+        set_.delete(handler as Handler);
+        if (set_.size === 0) listenersReference.current.delete(key);
       };
-    }
-    const key = String(event);
-    let set = listenersReference.current.get(key);
-    if (!set) {
-      set = new Set();
-      listenersReference.current.set(key, set);
-    }
-    set.add(handler as Handler);
-    return () => {
-      const set_ = listenersReference.current.get(key);
-      if (!set_) return;
-      set_.delete(handler as Handler);
-      if (set_.size === 0) listenersReference.current.delete(key);
-    };
-  }, []);
+    },
+    []
+  );
 
-  const emit = useCallback((eventName: string, payload: INotificationPayload, raw: MessageEvent<string>) => {
-    const specific = listenersReference.current.get(eventName);
-    if (specific) {
-      for (const function_ of specific) {
-        try {
-          function_(payload, raw);
-        } catch {
-          // no-op for individual handler errors
+  const emit = useCallback(
+    (
+      eventName: string,
+      payload: INotificationPayload,
+      raw: MessageEvent<string>
+    ) => {
+      const specific = listenersReference.current.get(eventName);
+      if (specific) {
+        for (const function_ of specific) {
+          try {
+            function_(payload, raw);
+          } catch {
+            // no-op for individual handler errors
+          }
         }
       }
-    }
-    if (wildcardReference.current.size > 0) {
-      for (const function_ of wildcardReference.current) {
-        try {
-          function_(payload, raw);
-        } catch {
-          // ignore
+      if (wildcardReference.current.size > 0) {
+        for (const function_ of wildcardReference.current) {
+          try {
+            function_(payload, raw);
+          } catch {
+            // ignore
+          }
         }
       }
-    }
-  }, []);
+    },
+    []
+  );
 
   useEffect(() => {
     if (!userId || !token) {
@@ -116,7 +135,7 @@ export function useNotifications(userId?: string, token?: string) {
       return;
     }
 
-    statusReference.current = "connecting";
+    updateStatus('connecting');
 
     const eventSource = new EventSource(
       `${process.env.NEXT_PUBLIC_SSE_PROGRESS_CHANNEL}/notifications/users/${userId}`,
@@ -127,25 +146,25 @@ export function useNotifications(userId?: string, token?: string) {
             headers: { ...init.headers, Authorization: `Bearer ${token}` },
           });
         },
-      },
+      }
     );
 
     sourceReference.current = eventSource;
 
-    eventSource.addEventListener("open", () => {
-      statusReference.current = "open";
+    eventSource.addEventListener('open', () => {
+      updateStatus('open');
     });
 
-    eventSource.addEventListener("error", () => {
-      statusReference.current = "error";
+    eventSource.addEventListener('error', () => {
+      updateStatus('error');
     });
 
     // Default messages where the server does not set a named SSE event
-    eventSource.addEventListener("message", (event_: MessageEvent<string>) => {
+    eventSource.addEventListener('message', (event_: MessageEvent<string>) => {
       try {
         const raw = JSON.parse(event_.data) as unknown;
         const payload: INotificationPayload = unwrapPayload(raw);
-        const eventName = payload?.type ?? "message";
+        const eventName = payload?.type ?? 'message';
         emit(eventName, payload, event_);
       } catch {
         // ignore parse error
@@ -154,28 +173,31 @@ export function useNotifications(userId?: string, token?: string) {
 
     // Also listen to known event names explicitly if the server uses SSE "event:" names
     for (const eventName of Object.values(EventRegistry)) {
-      eventSource.addEventListener(eventName, (event_: MessageEvent<string>) => {
-        try {
-          const raw = JSON.parse(event_.data) as unknown;
-          const payload: INotificationPayload = unwrapPayload(raw);
-          emit(eventName, payload, event_);
-        } catch {
-          // ignore parse error
+      eventSource.addEventListener(
+        eventName,
+        (event_: MessageEvent<string>) => {
+          try {
+            const raw = JSON.parse(event_.data) as unknown;
+            const payload: INotificationPayload = unwrapPayload(raw);
+            emit(eventName, payload, event_);
+          } catch {
+            // ignore parse error
+          }
         }
-      });
+      );
     }
 
     return () => {
       eventSource.close();
       sourceReference.current = null;
-      statusReference.current = "closed";
+      updateStatus('closed');
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, token]);
+  }, [userId, token, updateStatus]);
 
   const getStatus = useCallback(() => statusReference.current, []);
 
-  return { on, close, getStatus };
+  return { on, close, getStatus, status };
 }
 
 export type UseNotificationsReturn = ReturnType<typeof useNotifications>;

@@ -2,23 +2,11 @@
 
 import { Checkbox } from '@workspace/ui/components/checkbox';
 // import Image from "next/image";
-import { ButtonHTMLAttributes, useTransition } from 'react';
+import { useTransition } from 'react';
 import { MainButton } from '@workspace/ui/lib';
 import { cn } from '@workspace/ui/lib/utils';
 import { Card } from '@workspace/ui/components/card';
-
-interface ActionBannerProperties {
-  title: string;
-  description: string;
-  button: {
-    label: string;
-    onClick?: () => Promise<void> | void;
-    className?: string;
-  } & ButtonHTMLAttributes<HTMLButtonElement>;
-  icon?: string;
-  className?: string;
-  isCompleted?: boolean;
-}
+import type { ActionBannerProperties } from '../types';
 
 export const ActionBanner = ({
   title,

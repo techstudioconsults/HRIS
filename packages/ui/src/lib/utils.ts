@@ -32,3 +32,13 @@ export const formatTimestamp = (
 
   return formatDistanceToNow(timestampDate, { addSuffix: true });
 };
+
+export const calculateDaysBetween = (
+  startDate: string,
+  endDate: string
+): number => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const diffMs = end.getTime() - start.getTime();
+  return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+};

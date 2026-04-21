@@ -3,12 +3,7 @@
 import { cn } from '@workspace/ui/lib/utils';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-
-interface DashboardBannerProperties {
-  img: string;
-  title: string;
-  desc: string;
-}
+import { DashboardBannerProperties } from '@/modules/@org/admin/dashboard/types';
 
 export const DashboardBanner = ({
   img,

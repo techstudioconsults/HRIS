@@ -3,19 +3,11 @@
 import { formatCurrency, formatDate } from '@/lib/formatters';
 import { Badge } from '@workspace/ui/components/badge';
 import { MainButton, ReusableDialog } from '@workspace/ui/lib';
-import type { PayslipLineItem, UserPayslip } from '../types';
-
-interface PayslipDetailsModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  payslip: UserPayslip | null;
-  onDownload?: (payslip: UserPayslip) => void;
-}
-
-interface PayslipBreakdownProps {
-  title: string;
-  items: PayslipLineItem[];
-}
+import type {
+  PayslipBreakdownProps,
+  PayslipDetailsModalProps,
+  SummaryCardProps,
+} from '../types';
 
 const PayslipBreakdown = ({ title, items }: PayslipBreakdownProps) => {
   return (
@@ -38,15 +30,7 @@ const PayslipBreakdown = ({ title, items }: PayslipBreakdownProps) => {
   );
 };
 
-const SummaryCard = ({
-  label,
-  value,
-  highlighted,
-}: {
-  label: string;
-  value: number;
-  highlighted?: boolean;
-}) => {
+const SummaryCard = ({ label, value, highlighted }: SummaryCardProps) => {
   return (
     <div
       className={

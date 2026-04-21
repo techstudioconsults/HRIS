@@ -5,14 +5,8 @@ import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
 import { ReusableDialog } from '@workspace/ui/lib';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import type { LeaveRequest } from '../types';
+import type { LeaveDetailsModalProps, LeaveRequest } from '../types';
 import { Card } from '@workspace/ui/components/card';
-
-interface LeaveDetailsModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  request: LeaveRequest | null;
-}
 
 export const LeaveDetailsModal = ({
   open,
@@ -21,14 +15,12 @@ export const LeaveDetailsModal = ({
 }: LeaveDetailsModalProps) => {
   const getStatusStyles = (status: LeaveRequest['status']) => {
     if (status === 'approved') return 'bg-success/10 text-success';
-    if (status === 'declined') return 'bg-destructive/10 text-destructive';
+    if (status === 'rejected') return 'bg-destructive/10 text-destructive';
     return 'bg-warning/10 text-warning';
   };
 
-  const formatStatusLabel = (status: LeaveRequest['status']) => {
-    if (status === 'declined') return 'Rejected';
-    return status.charAt(0).toUpperCase() + status.slice(1);
-  };
+  const formatStatusLabel = (status: LeaveRequest['status']) =>
+    status.charAt(0).toUpperCase() + status.slice(1);
 
   if (!request) return null;
 
@@ -92,6 +84,15 @@ export const LeaveDetailsModal = ({
               {request.reason}
             </p>
           </div>
+
+          {request.status === 'rejected' && request.rejectionReason && (
+            <div className="flex items-start justify-between gap-4">
+              <p className="pt-0.5 text-sm ">Rejection Reason</p>
+              <p className="text-destructive max-w-[70%] text-right text-sm font-medium">
+                {request.rejectionReason}
+              </p>
+            </div>
+          )}
         </Card>
 
         {request.supportingDocumentName && (

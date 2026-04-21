@@ -6,26 +6,12 @@ import { FormField, ReusableDialog } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { z } from 'zod';
 
-import { BonusDeductionFormData } from '../types';
-
-const bonusDeductionSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  valueType: z.enum(['percentage', 'fixed']),
-  value: z.number().min(0, 'Value must be positive'),
-  status: z.boolean(),
-  type: z.enum(['bonus', 'deduction']),
-});
-
-interface BonusDeductionFormModalProperties {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onSubmit: (data: BonusDeductionFormData) => void;
-  type: 'bonus' | 'deduction';
-  initialData?: BonusDeductionFormData;
-  isEditing?: boolean;
-}
+import { bonusDeductionSchema } from '../schemas/forms';
+import type {
+  BonusDeductionFormData,
+  BonusDeductionFormModalProperties,
+} from '../types';
 
 export function BonusDeductionFormModal({
   open,

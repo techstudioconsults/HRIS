@@ -1,11 +1,5 @@
 import { cn } from '@workspace/ui/lib/utils';
-import { ReactNode } from 'react';
-
-interface CardGroupProperties {
-  children: ReactNode;
-  className?: string;
-  cols?: 2 | 3 | 4;
-}
+import { CardGroupProperties } from '@/modules/@org/_components/types';
 
 export function CardGroup({
   children,

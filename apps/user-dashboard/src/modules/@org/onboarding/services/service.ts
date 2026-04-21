@@ -8,19 +8,11 @@ import {
 } from '@/modules/@org/shared/organization-service';
 import { CompanyProfileFormData } from '@/schemas';
 
-import { CompanyProfile } from '../types';
-
-export interface OnboardingSetupStatus {
-  resetPassword?: boolean;
-  reviewProfileDetails?: boolean;
-  acknowledgePolicy?: boolean;
-  reviewPayrollInfo?: boolean;
-  takenTour?: boolean;
-}
-
-type OnboardingSetupStatusApi = Omit<OnboardingSetupStatus, 'takenTour'> & {
-  takenTour?: boolean;
-};
+import type {
+  CompanyProfile,
+  OnboardingSetupStatus,
+  OnboardingSetupStatusApi,
+} from '../types';
 
 const normalizeSetupStatus = (
   setupStatus: OnboardingSetupStatusApi

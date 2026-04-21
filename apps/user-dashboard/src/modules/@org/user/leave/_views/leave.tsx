@@ -1,38 +1,39 @@
 'use client';
 
 import { useState } from 'react';
-
-import { UserLeaveBody, UserLeaveHeader } from '@/modules/@org/user';
-import { LeaveDetailsModal } from '@/modules/@org/user';
-import { LeaveRequestSubmittedModal } from '@/modules/@org/user';
-import { RequestLeaveModal } from '@/modules/@org/user';
-import type { LeaveRequest } from '../types';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
+import {
+  UserLeaveBody,
+  UserLeaveHeader,
+  LeaveDetailsModal,
+  LeaveRequestSubmittedModal,
+  RequestLeaveModal,
+} from '@/modules/@org/user';
+
+import type { LeaveRequest, LeaveModalState } from '../types';
 
 const UserLeaveView = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [isSubmittedModalOpen, setIsSubmittedModalOpen] = useState(false);
+  const [activeModal, setActiveModal] = useState<LeaveModalState>(null);
   const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(
     null
   );
 
-  const handleCreateRequest = () => {
-    setIsRequestModalOpen(true);
-  };
+  const handleCreateRequest = () => setActiveModal('request');
 
   const handleViewDetails = (request: LeaveRequest) => {
     setSelectedRequest(request);
-    setIsDetailsModalOpen(true);
+    setActiveModal('details');
   };
 
-  const handleRequestSuccess = () => {
-    setIsSubmittedModalOpen(true);
-  };
+  const handleRequestSuccess = () => setActiveModal('submitted');
 
+  const closeModal = () => {
+    setActiveModal(null);
+    setSelectedRequest(null);
+  };
   return (
-    <Wrapper className="my-0! p-0 max-w-200">
+    <Wrapper className="my-0! p-0 max-w-800">
       <UserLeaveHeader
         onSearch={setSearchQuery}
         onCreateRequest={handleCreateRequest}
@@ -41,25 +42,21 @@ const UserLeaveView = () => {
         searchQuery={searchQuery}
         onViewDetails={handleViewDetails}
       />
-
       <RequestLeaveModal
-        open={isRequestModalOpen}
-        onOpenChange={setIsRequestModalOpen}
+        open={activeModal === 'request'}
+        onOpenChange={(open) => !open && closeModal()}
         onSuccess={handleRequestSuccess}
       />
-
       <LeaveDetailsModal
-        open={isDetailsModalOpen}
-        onOpenChange={setIsDetailsModalOpen}
+        open={activeModal === 'details'}
+        onOpenChange={(open) => !open && closeModal()}
         request={selectedRequest}
       />
-
       <LeaveRequestSubmittedModal
-        open={isSubmittedModalOpen}
-        onOpenChange={setIsSubmittedModalOpen}
+        open={activeModal === 'submitted'}
+        onOpenChange={(open) => !open && closeModal()}
       />
     </Wrapper>
   );
 };
-
 export { UserLeaveView };

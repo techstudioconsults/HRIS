@@ -16,3 +16,35 @@ export interface UserPayslip {
   earnings: PayslipLineItem[];
   deductions: PayslipLineItem[];
 }
+
+export interface PayslipSummaryCardProps {
+  netPay: number;
+}
+
+export interface PayslipItemCardProps {
+  payslip: UserPayslip;
+  onViewPayslip: (payslip: UserPayslip) => void;
+}
+
+export interface PayslipGridProps {
+  payslips: UserPayslip[];
+  onViewPayslip: (payslip: UserPayslip) => void;
+}
+
+export interface PayslipDetailsModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  payslip: UserPayslip | null;
+  onDownload?: (payslip: UserPayslip) => void;
+}
+
+export interface PayslipBreakdownProps {
+  title: string;
+  items: PayslipLineItem[];
+}
+
+export interface SummaryCardProps {
+  label: string;
+  value: number;
+  highlighted?: boolean;
+}

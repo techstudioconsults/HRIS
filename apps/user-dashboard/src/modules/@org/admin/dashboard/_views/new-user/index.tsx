@@ -8,11 +8,7 @@ import { CardSection } from '../../_components/card-section';
 import { LeaveAndPayroll } from '../../_components/leaveandpayroll';
 import { OnboardingHeader } from '../onboarding/onboarding-header';
 import { useSession } from 'next-auth/react';
-
-interface NewUserProperties {
-  steps: OnboardingStep[];
-  completedSteps: number;
-}
+import { NewUserProperties } from '@/modules/@org/admin/dashboard/types';
 
 export const NewUser = ({ steps, completedSteps }: NewUserProperties) => {
   const nextStep = steps.find((step) => !step.isCompleted);

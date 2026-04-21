@@ -1,11 +1,7 @@
 'use client';
 
-import { ProgressBar } from '../../../../_components/progress-bar';
-
-interface OnboardingHeaderProperties {
-  completedSteps: number;
-  totalSteps: number;
-}
+import { OnboardingHeaderProperties } from '@/modules/@org/admin/dashboard/types';
+import { ProgressBar } from '@/modules/@org/_components/progress-bar';
 
 export const OnboardingHeader = ({
   completedSteps,

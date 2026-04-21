@@ -8,13 +8,22 @@ import { useQueryClient } from '@tanstack/react-query';
 import { EmployeeService } from './service';
 
 export const useEmployeeService = () => {
-  const { useServiceQuery, useServiceMutation } = createServiceHooks<EmployeeService>(dependencies.EMPLOYEE_SERVICE);
+  const { useServiceQuery, useServiceMutation } =
+    createServiceHooks<EmployeeService>(dependencies.EMPLOYEE_SERVICE);
 
   // Queries with Suspense support
   const useGetAllEmployees = (filters: Filters = {}, options?: any) =>
-    useServiceQuery(queryKeys.employee.list(filters), (service) => service.getAllEmployees(filters), options);
+    useServiceQuery(
+      queryKeys.employee.list(filters),
+      (service) => service.getAllEmployees(filters),
+      options
+    );
 
-  const useGetSuspendedEmployeesByPayroll = (payrollId: string, filters: Filters = {}, options?: any) =>
+  const useGetSuspendedEmployeesByPayroll = (
+    payrollId: string,
+    filters: Filters = {},
+    options?: any
+  ) =>
     useServiceQuery(
       queryKeys.employee.suspendedByPayroll(payrollId, filters),
       (service) => service.getSuspendedEmployeesByPayroll(payrollId, filters),
@@ -22,29 +31,44 @@ export const useEmployeeService = () => {
     );
 
   const useGetEmployeeById = (id: string, options?: any) =>
-    useServiceQuery(queryKeys.employee.details(id), (service) => service.getEmployeeById(id), options);
+    useServiceQuery(
+      queryKeys.employee.details(id),
+      (service) => service.getEmployeeById(id),
+      options
+    );
 
   const useGetAllTeams = (options?: any) =>
-    useServiceQuery(queryKeys.employee.teams(), (service) => service.getTeams(), options);
+    useServiceQuery(
+      queryKeys.employee.teams(),
+      (service) => service.getTeams(),
+      options
+    );
 
   // Use mutation for on-demand filtered downloads
   const useDownloadEmployees = () =>
-    useServiceMutation((service, filters: Filters) => service.downloadEmployees(filters));
+    useServiceMutation((service, filters: Filters) =>
+      service.downloadEmployees(filters)
+    );
 
   // Mutations with proper cache invalidation
   const useCreateEmployee = () =>
-    useServiceMutation((service, data: FormData) => service.createEmployee(data), {
-      invalidateQueries: () => {
-        // Invalidate all employee list queries (with any filters)
-        return [['employee', 'list']];
-      },
-    });
+    useServiceMutation(
+      (service, data: FormData) => service.createEmployee(data),
+      {
+        invalidateQueries: () => {
+          // Invalidate all employee list queries (with any filters)
+          return [['employee', 'list']];
+        },
+      }
+    );
 
   const useUpdateEmployee = () => {
     const queryClient = useQueryClient();
     return useServiceMutation(
-      (service, variables: { id: string; data: FormData; payrollIds?: string[] }) =>
-        service.updateEmployee(variables.id, variables.data),
+      (
+        service,
+        variables: { id: string; data: FormData; payrollIds?: string[] }
+      ) => service.updateEmployee(variables.id, variables.data),
       {
         invalidateQueries: (_, { id, payrollIds }) => {
           const base: (readonly unknown[])[] = [
@@ -54,7 +78,11 @@ export const useEmployeeService = () => {
           ];
           if (Array.isArray(payrollIds)) {
             for (const pid of payrollIds) {
-              base.push(queryKeys.payroll.details(pid), ['payrolls', 'payslips', pid]);
+              base.push(queryKeys.payroll.details(pid), [
+                'payrolls',
+                'payslips',
+                pid,
+              ]);
             }
           }
           return base;
@@ -64,7 +92,11 @@ export const useEmployeeService = () => {
           await queryClient.invalidateQueries({
             predicate: (q) => {
               const k = q.queryKey as unknown[];
-              return Array.isArray(k) && k[0] === 'payrolls' && (k[1] === 'detail' || k[1] === 'payslips');
+              return (
+                Array.isArray(k) &&
+                k[0] === 'payrolls' &&
+                (k[1] === 'detail' || k[1] === 'payslips')
+              );
             },
           });
         },

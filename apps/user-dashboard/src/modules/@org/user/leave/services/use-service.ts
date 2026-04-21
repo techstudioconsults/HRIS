@@ -49,7 +49,7 @@ export const useUserLeaveService = () => {
     useServiceMutation(
       (service, data: CreateLeaveRequestPayload) =>
         service.createLeaveRequest(data),
-      { invalidateQueries: () => [queryKeys.leave.requests({})] }
+      { invalidateQueries: () => [['leave', 'requests'] as const] }
     );
   const useUpdateLeaveRequest = () =>
     useServiceMutation(
@@ -57,18 +57,18 @@ export const useUserLeaveService = () => {
         service,
         { id, data }: { id: string; data: UpdateLeaveRequestPayload }
       ) => service.updateLeaveRequest(id, data),
-      { invalidateQueries: () => [queryKeys.leave.requests({})] }
+      { invalidateQueries: () => [['leave', 'requests'] as const] }
     );
   const useDeleteLeaveRequest = () =>
     useServiceMutation(
       (service, id: string) => service.deleteLeaveRequest(id),
-      { invalidateQueries: () => [queryKeys.leave.requests({})] }
+      { invalidateQueries: () => [['leave', 'requests'] as const] }
     );
   // Leave Request Actions
   const useApproveLeaveRequest = () =>
     useServiceMutation(
       (service, id: string) => service.approveLeaveRequest(id),
-      { invalidateQueries: () => [queryKeys.leave.requests({})] }
+      { invalidateQueries: () => [['leave', 'requests'] as const] }
     );
   const useRejectLeaveRequest = () =>
     useServiceMutation(
@@ -76,7 +76,7 @@ export const useUserLeaveService = () => {
         service,
         { id, data }: { id: string; data: RejectLeaveRequestPayload }
       ) => service.rejectLeaveRequest(id, data),
-      { invalidateQueries: () => [queryKeys.leave.requests({})] }
+      { invalidateQueries: () => [['leave', 'requests'] as const] }
     );
   return {
     // Leave Types

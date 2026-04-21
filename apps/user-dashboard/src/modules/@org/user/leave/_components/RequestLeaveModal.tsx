@@ -10,48 +10,85 @@ export const RequestLeaveModal = ({
   open,
   onOpenChange,
   onSuccess,
+  initialRequest,
 }: RequestLeaveModalProps) => {
-  const { useGetLeaveTypes, useCreateLeaveRequest } = useUserLeaveService();
+  const isEditMode = !!initialRequest;
+
+  const { useGetLeaveTypes, useCreateLeaveRequest, useUpdateLeaveRequest } =
+    useUserLeaveService();
 
   const { data: leaveTypesData, isLoading: isLoadingTypes } =
     useGetLeaveTypes();
-  const { mutateAsync: createLeaveRequest, isPending } =
+  const { mutateAsync: createLeaveRequest, isPending: isCreating } =
     useCreateLeaveRequest();
+  const { mutateAsync: updateLeaveRequest, isPending: isUpdating } =
+    useUpdateLeaveRequest();
+
   const leaveTypes = leaveTypesData ?? [];
+  const isPending = isCreating || isUpdating;
 
   const handleSubmit = async (data: RequestLeaveSubmitData) => {
     try {
-      await createLeaveRequest({
-        leaveId: data.leaveId,
-        startDate: data.startDate,
-        endDate: data.endDate,
-        reason: data.reason,
-        document: data.document,
-      });
-      onOpenChange(false);
-      onSuccess?.();
+      if (isEditMode) {
+        await updateLeaveRequest({
+          id: initialRequest.id,
+          data: {
+            leaveId: data.leaveId,
+            startDate: data.startDate,
+            endDate: data.endDate,
+            reason: data.reason,
+            document: data.document,
+          },
+        });
+        toast.success('Leave request updated successfully.');
+        onOpenChange(false);
+      } else {
+        await createLeaveRequest({
+          leaveId: data.leaveId,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          reason: data.reason,
+          document: data.document,
+        });
+        onOpenChange(false);
+        onSuccess?.();
+      }
     } catch {
-      toast.error('Failed to submit leave request. Please try again.');
+      toast.error(
+        isEditMode
+          ? 'Failed to update leave request. Please try again.'
+          : 'Failed to submit leave request. Please try again.'
+      );
     }
-  };
-
-  const handleCancel = () => {
-    onOpenChange(false);
   };
 
   return (
     <ReusableDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Request for Leave"
-      description="Fill in your leave details below. Make sure your dates don't overlap with an existing approved leave."
+      title={isEditMode ? 'Edit Leave Request' : 'Request for Leave'}
+      description={
+        isEditMode
+          ? 'Update your leave request details below.'
+          : "Fill in your leave details below. Make sure your dates don't overlap with an existing approved leave."
+      }
       trigger={undefined}
     >
       <RequestLeaveForm
         leaveTypes={leaveTypes}
         isLoadingTypes={isLoadingTypes}
+        initialData={
+          initialRequest
+            ? {
+                leaveId: initialRequest.leaveTypeId,
+                startDate: initialRequest.startDate.split('T')[0],
+                endDate: initialRequest.endDate.split('T')[0],
+                reason: initialRequest.reason,
+              }
+            : null
+        }
         onSubmit={handleSubmit}
-        onCancel={handleCancel}
+        onCancel={() => onOpenChange(false)}
         isSubmitting={isPending}
       />
     </ReusableDialog>

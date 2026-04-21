@@ -81,6 +81,7 @@ export interface RequestLeaveFormProps {
   onSubmit: (data: RequestLeaveSubmitData) => Promise<void> | void;
   onCancel: () => void;
   isSubmitting?: boolean;
+  submitLabel?: string;
 }
 
 export interface UserLeaveHeaderProps {
@@ -107,12 +108,19 @@ export interface LeaveDetailsModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   request: LeaveRequest | null;
+  onEdit?: (request: LeaveRequest) => void;
 }
 
-export type LeaveModalState = 'request' | 'details' | 'submitted' | null;
+export type LeaveModalState =
+  | 'request'
+  | 'edit'
+  | 'details'
+  | 'submitted'
+  | null;
 
 export interface RequestLeaveModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
+  initialRequest?: LeaveRequest | null;
 }

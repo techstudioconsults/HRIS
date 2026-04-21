@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormField } from '@workspace/ui/lib';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
   requestLeaveSchema,
@@ -19,6 +19,7 @@ export const RequestLeaveForm = ({
   onSubmit,
   onCancel,
   isSubmitting = false,
+  // submitLabel = 'Submit Request',
 }: RequestLeaveFormProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -37,7 +38,23 @@ export const RequestLeaveForm = ({
   const {
     handleSubmit,
     formState: { isSubmitting: isFormSubmitting, isValid },
+    reset,
   } = methods;
+
+  useEffect(() => {
+    reset({
+      leaveId: initialData?.leaveId ?? '',
+      startDate: initialData?.startDate ?? '',
+      endDate: initialData?.endDate ?? '',
+      reason: initialData?.reason ?? '',
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    initialData?.leaveId,
+    initialData?.startDate,
+    initialData?.endDate,
+    initialData?.reason,
+  ]);
 
   const submit = async (values: RequestLeaveFormValues) => {
     await onSubmit({ ...values, document: selectedFile ?? undefined });
@@ -171,7 +188,7 @@ export const RequestLeaveForm = ({
             isDisabled={!isValid || isSubmittingForm}
             className="w-full sm:w-auto"
           >
-            {isSubmittingForm ? 'Submitting...' : 'Submit Request'}
+            {isSubmittingForm ? 'Submitting...' : `Submit Request`}
           </MainButton>
         </div>
       </form>

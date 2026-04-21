@@ -5,10 +5,14 @@ import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
 import { Separator } from '@workspace/ui/components/separator';
 import { ReusableDialog } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
+import type { AnyIconName } from '@workspace/ui/lib/icons/types';
 import { calculateDaysBetween, cn } from '@workspace/ui/lib/utils';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { useUserLeaveService } from '@/modules/@org/user';
 import type { LeaveDetailsModalProps, LeaveRequest } from '../types';
-import { AnyIconName } from '@workspace/ui/lib/icons/types';
 
 const STATUS_CONFIG: Record<
   LeaveRequest['status'],
@@ -47,20 +51,44 @@ export const LeaveDetailsModal = ({
   open,
   onOpenChange,
   request,
+  onEdit,
 }: LeaveDetailsModalProps) => {
+  const { useDeleteLeaveRequest } = useUserLeaveService();
+  const { mutateAsync: deleteRequest, isPending: isDeleting } =
+    useDeleteLeaveRequest();
+
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+
+  const handleClose = (isOpen: boolean) => {
+    if (!isOpen) setShowCancelConfirm(false);
+    onOpenChange(isOpen);
+  };
+
+  const handleCancelConfirm = async () => {
+    if (!request) return;
+    try {
+      await deleteRequest(request.id);
+      toast.success('Leave request cancelled successfully.');
+      handleClose(false);
+    } catch {
+      toast.error('Failed to cancel leave request. Please try again.');
+    }
+  };
+
   if (!request) return null;
 
   const config = STATUS_CONFIG[request.status];
   const durationDays = calculateDaysBetween(request.startDate, request.endDate);
+  const isPending = request.status === 'pending';
 
   return (
     <ReusableDialog
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={handleClose}
       title="Leave Request Details"
       description=""
       trigger={undefined}
-      className={`md:min-w-lg!`}
+      className="md:min-w-lg!"
     >
       <div className="space-y-5">
         {/* Status Banner */}
@@ -97,30 +125,28 @@ export const LeaveDetailsModal = ({
         </div>
 
         {/* Leave Type + Request Date */}
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h3 className="text-lg font-bold">{request.type}</h3>
-            <p className="text-primary/60 mt-0.5 flex items-center gap-1.5 text-sm">
-              <Icon
-                name="Calendar"
-                size={16}
-                variant="Outline"
-                className={`text-primary/60`}
-              />
-              Requested {formatDate(request.createdAt)}
-            </p>
-          </div>
+        <div>
+          <h3 className="text-lg font-bold">{request.type}</h3>
+          <p className="text-primary/60 mt-0.5 flex items-center gap-1.5 text-sm">
+            <Icon
+              name="Calendar"
+              size={13}
+              variant="Outline"
+              className="text-primary/60"
+            />
+            Requested {formatDate(request.createdAt)}
+          </p>
         </div>
 
         <Separator />
 
         {/* Duration + Date Range Metrics */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           <div className="bg-primary/10 rounded-lg p-3 text-center">
             <p className="text-2xl font-black">{durationDays}</p>
             <p className="text-muted-foreground mt-0.5 text-xs">Working Days</p>
           </div>
-          <div className="bg-primary/10 rounded-lg p-3 flex items-center justify-center text-center">
+          <div className="bg-primary/10 flex items-center justify-center rounded-lg p-3 text-center">
             <div>
               <p className="text-sm font-semibold">
                 {formatDate(request.startDate)}
@@ -131,7 +157,7 @@ export const LeaveDetailsModal = ({
               </p>
             </div>
           </div>
-          <div className="bg-primary/10 rounded-lg p-3 flex items-center justify-center text-center">
+          <div className="bg-primary/10 flex items-center justify-center rounded-lg p-3 text-center">
             <div>
               <p className="text-sm font-semibold">
                 {formatDate(request.endDate)}
@@ -144,7 +170,7 @@ export const LeaveDetailsModal = ({
           </div>
         </div>
 
-        {/* Reviewed By (only when actioned) */}
+        {/* Reviewed By */}
         {request.approvedBy && (
           <>
             <Separator />
@@ -174,7 +200,7 @@ export const LeaveDetailsModal = ({
         {/* Reason */}
         <div className="space-y-2">
           <p className="flex items-center gap-1.5 text-sm font-semibold">
-            <Icon name="InfoCircle" size={16} variant="Outline" />
+            <Icon name="InfoCircle" size={15} variant="Outline" />
             Reason for Leave
           </p>
           <p className="bg-primary/10 text-muted-foreground rounded-lg px-4 py-3 text-sm leading-relaxed">
@@ -231,6 +257,66 @@ export const LeaveDetailsModal = ({
                 <Icon name="Download" size={16} />
               </Button>
             </div>
+          </>
+        )}
+
+        {/* Actions for pending requests */}
+        {isPending && (
+          <>
+            <Separator />
+            {showCancelConfirm ? (
+              <div className="space-y-3">
+                <div className="border-destructive/20 bg-destructive/5 rounded-lg border p-3">
+                  <p className="text-destructive text-sm font-medium">
+                    Cancel this leave request?
+                  </p>
+                  <p className="text-muted-foreground mt-1 text-xs">
+                    This action cannot be undone. Your request will be
+                    permanently removed.
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <MainButton
+                    variant="destructiveOutline"
+                    onClick={handleCancelConfirm}
+                    className="flex-1 border-destructive/50"
+                    isLeftIconVisible={false}
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? 'Cancelling...' : 'Yes, Cancel Request'}
+                  </MainButton>
+                  <MainButton
+                    variant="outline"
+                    onClick={() => setShowCancelConfirm(false)}
+                    className="flex-1"
+                    isLeftIconVisible={false}
+                    disabled={isDeleting}
+                  >
+                    Keep Request
+                  </MainButton>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <MainButton
+                  variant="primary"
+                  onClick={() => onEdit?.(request)}
+                  className="flex-1"
+                  isLeftIconVisible
+                  icon={<Icon name="Edit" size={15} variant="Outline" />}
+                >
+                  Edit Request
+                </MainButton>
+                <MainButton
+                  variant="destructiveOutline"
+                  onClick={() => setShowCancelConfirm(true)}
+                  className="flex-1 border-destructive/40 text-destructive"
+                  isLeftIconVisible={false}
+                >
+                  Cancel Request
+                </MainButton>
+              </div>
+            )}
           </>
         )}
       </div>

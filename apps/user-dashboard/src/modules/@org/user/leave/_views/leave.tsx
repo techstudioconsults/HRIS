@@ -26,12 +26,18 @@ const UserLeaveView = () => {
     setActiveModal('details');
   };
 
+  const handleEditRequest = (request: LeaveRequest) => {
+    setSelectedRequest(request);
+    setActiveModal('edit');
+  };
+
   const handleRequestSuccess = () => setActiveModal('submitted');
 
   const closeModal = () => {
     setActiveModal(null);
     setSelectedRequest(null);
   };
+
   return (
     <Wrapper className="my-0! p-0 max-w-800">
       <UserLeaveHeader
@@ -42,16 +48,30 @@ const UserLeaveView = () => {
         searchQuery={searchQuery}
         onViewDetails={handleViewDetails}
       />
+
+      {/* Create */}
       <RequestLeaveModal
         open={activeModal === 'request'}
         onOpenChange={(open) => !open && closeModal()}
         onSuccess={handleRequestSuccess}
       />
+
+      {/* Edit */}
+      <RequestLeaveModal
+        open={activeModal === 'edit'}
+        onOpenChange={(open) => !open && closeModal()}
+        initialRequest={selectedRequest}
+      />
+
+      {/* View Details */}
       <LeaveDetailsModal
         open={activeModal === 'details'}
         onOpenChange={(open) => !open && closeModal()}
         request={selectedRequest}
+        onEdit={handleEditRequest}
       />
+
+      {/* Post-submit confirmation */}
       <LeaveRequestSubmittedModal
         open={activeModal === 'submitted'}
         onOpenChange={(open) => !open && closeModal()}

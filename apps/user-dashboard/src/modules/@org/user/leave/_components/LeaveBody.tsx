@@ -22,7 +22,7 @@ export const UserLeaveBody = ({
     () =>
       requests.filter(
         (request) =>
-          request.leaveTypeName?.toLowerCase().includes(query) ||
+          request.type?.toLowerCase().includes(query) ||
           request.reason?.toLowerCase().includes(query)
       ),
     [requests, query]
@@ -47,7 +47,7 @@ export const UserLeaveBody = ({
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
       {filtered.map((request) => (
         <LeaveCard
           key={request.id}

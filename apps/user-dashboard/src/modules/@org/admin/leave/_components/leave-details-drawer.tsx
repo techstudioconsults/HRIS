@@ -121,8 +121,8 @@ export function LeaveDetailsDrawer() {
                       'bg-warning-50 text-warning',
                     leaveRequest.status === 'approved' &&
                       'bg-success-50 text-success',
-                    leaveRequest.status === 'declined' &&
-                      'bg-destructive-50 text-destructive'
+                    leaveRequest.status === 'rejected' &&
+                      'bg-destructive/10 text-destructive'
                   )}
                 >
                   {leaveRequest.status.charAt(0).toUpperCase() +

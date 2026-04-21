@@ -2,7 +2,7 @@
 import { formatDate } from '@/lib/formatters';
 import { Badge } from '@workspace/ui/components/badge';
 import { Card, CardContent } from '@workspace/ui/components/card';
-import { cn } from '@workspace/ui/lib/utils';
+import { calculateDaysBetween, cn } from '@workspace/ui/lib/utils';
 import { MainButton } from '@workspace/ui/lib';
 import type { LeaveCardProps, LeaveRequest } from '../types';
 const STATUS_STYLES: Record<LeaveRequest['status'], string> = {
@@ -19,7 +19,7 @@ export const LeaveCard = ({ request, onViewDetails }: LeaveCardProps) => {
         {/* Header */}
         <div className="flex items-start justify-between">
           <div>
-            <h3 className="text-base font-semibold">{request.leaveTypeName}</h3>
+            <h3 className="text-base font-semibold">{request.type}</h3>
             <p className="text-muted-foreground text-sm">
               Requested on {formatDate(request.createdAt)}
             </p>
@@ -36,7 +36,9 @@ export const LeaveCard = ({ request, onViewDetails }: LeaveCardProps) => {
         {/* Days Display */}
         <div className="flex items-center justify-center rounded-md bg-muted p-3">
           <div className="text-center">
-            <p className="text-3xl font-bold">{request.days}</p>
+            <p className="text-3xl font-bold">
+              {calculateDaysBetween(request.startDate, request.endDate)}
+            </p>
             <p className="text-muted-foreground text-xs">Working Days</p>
           </div>
         </div>

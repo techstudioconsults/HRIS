@@ -20,7 +20,7 @@ export interface LeaveRequest {
   employeeName: string;
   employeeAvatar?: string;
   leaveTypeId: string;
-  leaveTypeName: string;
+  type: string;
   startDate: string;
   endDate: string;
   days: number;

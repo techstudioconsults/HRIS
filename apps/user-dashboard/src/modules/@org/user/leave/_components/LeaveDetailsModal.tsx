@@ -3,117 +3,237 @@
 import { formatDate } from '@/lib/formatters';
 import { Badge } from '@workspace/ui/components/badge';
 import { Button } from '@workspace/ui/components/button';
+import { Separator } from '@workspace/ui/components/separator';
 import { ReusableDialog } from '@workspace/ui/lib';
 import { Icon } from '@workspace/ui/lib/icons/icon';
+import { calculateDaysBetween, cn } from '@workspace/ui/lib/utils';
 import type { LeaveDetailsModalProps, LeaveRequest } from '../types';
-import { Card } from '@workspace/ui/components/card';
+import { AnyIconName } from '@workspace/ui/lib/icons/types';
+
+const STATUS_CONFIG: Record<
+  LeaveRequest['status'],
+  {
+    label: string;
+    icon: AnyIconName;
+    bannerClass: string;
+    badgeClass: string;
+    iconClass: string;
+  }
+> = {
+  approved: {
+    label: 'Approved',
+    icon: 'CheckCircle',
+    bannerClass: 'bg-success/10 border-success/20',
+    badgeClass: 'bg-success/10 text-success',
+    iconClass: 'text-success',
+  },
+  rejected: {
+    label: 'Rejected',
+    icon: 'CloseCircle',
+    bannerClass: 'bg-destructive/10 border-destructive/20',
+    badgeClass: 'bg-destructive/10 text-destructive',
+    iconClass: 'text-destructive',
+  },
+  pending: {
+    label: 'Pending Review',
+    icon: 'Clock',
+    bannerClass: 'bg-warning/10 border-warning/20',
+    badgeClass: 'bg-warning/10 text-warning',
+    iconClass: 'text-warning',
+  },
+};
 
 export const LeaveDetailsModal = ({
   open,
   onOpenChange,
   request,
 }: LeaveDetailsModalProps) => {
-  const getStatusStyles = (status: LeaveRequest['status']) => {
-    if (status === 'approved') return 'bg-success/10 text-success';
-    if (status === 'rejected') return 'bg-destructive/10 text-destructive';
-    return 'bg-warning/10 text-warning';
-  };
-
-  const formatStatusLabel = (status: LeaveRequest['status']) =>
-    status.charAt(0).toUpperCase() + status.slice(1);
-
   if (!request) return null;
+
+  const config = STATUS_CONFIG[request.status];
+  const durationDays = calculateDaysBetween(request.startDate, request.endDate);
 
   return (
     <ReusableDialog
       open={open}
       onOpenChange={onOpenChange}
-      title="Leave Details"
+      title="Leave Request Details"
       description=""
       trigger={undefined}
+      className={`md:min-w-lg!`}
     >
-      <section className="space-y-5">
-        <Card className=" space-y-4 rounded-lg p-10">
-          <div className="flex items-center justify-between gap-4">
-            <p className="text-sm ">Leave Type</p>
-            <p className="text-right text-sm font-medium ">
-              {request.leaveTypeName}
+      <div className="space-y-5">
+        {/* Status Banner */}
+        <div
+          className={cn(
+            'flex items-center gap-3 rounded-lg border px-4 py-3',
+            config.bannerClass
+          )}
+        >
+          <Icon
+            name={config.icon}
+            size={20}
+            className={config.iconClass}
+            variant="Bold"
+          />
+          <div className="flex-1">
+            <p className={cn('text-sm font-semibold', config.iconClass)}>
+              {config.label}
+            </p>
+            {request.approvedAt && request.status !== 'pending' && (
+              <p className="text-muted-foreground text-xs">
+                on {formatDate(request.approvedAt)}
+              </p>
+            )}
+          </div>
+          <Badge
+            className={cn(
+              'rounded-full px-3 py-1 text-xs font-medium capitalize',
+              config.badgeClass
+            )}
+          >
+            {config.label}
+          </Badge>
+        </div>
+
+        {/* Leave Type + Request Date */}
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h3 className="text-lg font-bold">{request.type}</h3>
+            <p className="text-primary/60 mt-0.5 flex items-center gap-1.5 text-sm">
+              <Icon
+                name="Calendar"
+                size={16}
+                variant="Outline"
+                className={`text-primary/60`}
+              />
+              Requested {formatDate(request.createdAt)}
             </p>
           </div>
+        </div>
 
-          <div className="flex items-center justify-between gap-4">
-            <p className="text-sm ">Duration</p>
-            <p className="text-right text-sm font-medium ">
-              {request.days} working days
-            </p>
+        <Separator />
+
+        {/* Duration + Date Range Metrics */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+          <div className="bg-primary/10 rounded-lg p-3 text-center">
+            <p className="text-2xl font-black">{durationDays}</p>
+            <p className="text-muted-foreground mt-0.5 text-xs">Working Days</p>
           </div>
-
-          <div className="flex items-center justify-between gap-4">
-            <p className="text-sm ">Period</p>
-            <p className="text-right text-sm font-medium ">
-              {formatDate(request.startDate)} - {formatDate(request.endDate)}
-            </p>
-          </div>
-
-          <div className="flex items-center justify-between gap-4">
-            <p className="text-sm ">Status</p>
-            <Badge
-              className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusStyles(request.status)}`}
-            >
-              {formatStatusLabel(request.status)}
-            </Badge>
-          </div>
-
-          <div className="flex items-center justify-between gap-4">
-            <p className="text-sm ">Requested on</p>
-            <p className="text-right text-sm font-medium ">
-              {formatDate(request.createdAt)}
-            </p>
-          </div>
-
-          <div className="flex items-center justify-between gap-4">
-            <p className="text-sm ">Approved By</p>
-            <p className="text-right text-sm font-medium ">
-              {request.approvedBy ?? 'Pending review'}
-            </p>
-          </div>
-
-          <div className="flex items-start justify-between gap-4">
-            <p className="pt-0.5 text-sm ">Reason</p>
-            <p className="max-w-[70%] text-right text-sm font-medium ">
-              {request.reason}
-            </p>
-          </div>
-
-          {request.status === 'rejected' && request.rejectionReason && (
-            <div className="flex items-start justify-between gap-4">
-              <p className="pt-0.5 text-sm ">Rejection Reason</p>
-              <p className="text-destructive max-w-[70%] text-right text-sm font-medium">
-                {request.rejectionReason}
+          <div className="bg-primary/10 rounded-lg p-3 flex items-center justify-center text-center">
+            <div>
+              <p className="text-sm font-semibold">
+                {formatDate(request.startDate)}
+              </p>
+              <p className="text-muted-foreground mt-0.5 flex items-center justify-center gap-1 text-xs">
+                <Icon name="Calendar" size={11} variant="Outline" />
+                Start Date
               </p>
             </div>
-          )}
-        </Card>
+          </div>
+          <div className="bg-primary/10 rounded-lg p-3 flex items-center justify-center text-center">
+            <div>
+              <p className="text-sm font-semibold">
+                {formatDate(request.endDate)}
+              </p>
+              <p className="text-muted-foreground mt-0.5 flex items-center justify-center gap-1 text-xs">
+                <Icon name="Calendar" size={11} variant="Outline" />
+                End Date
+              </p>
+            </div>
+          </div>
+        </div>
 
-        {request.supportingDocumentName && (
-          <div className="border-primary/20 bg-primary/5 flex items-center justify-between rounded-lg border p-3">
+        {/* Reviewed By (only when actioned) */}
+        {request.approvedBy && (
+          <>
+            <Separator />
             <div className="flex items-center gap-3">
-              <div className="bg-primary/20 rounded p-2">
-                <Icon name="FileText" size={16} className="text-primary" />
+              <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-full">
+                <Icon
+                  name="User"
+                  size={16}
+                  className="text-primary"
+                  variant="Bold"
+                />
               </div>
               <div>
-                <p className="text-sm font-medium ">
-                  {request.supportingDocumentName}
+                <p className="text-muted-foreground text-xs">
+                  {request.status === 'approved'
+                    ? 'Approved by'
+                    : 'Reviewed by'}
                 </p>
-                <p className="text-xs text-[#6A717D]">Click to download</p>
+                <p className="text-sm font-medium">{request.approvedBy}</p>
               </div>
             </div>
-            <Button variant="ghost" size="icon" className="text-primary">
-              <Icon name="Download" size={16} />
-            </Button>
+          </>
+        )}
+
+        <Separator />
+
+        {/* Reason */}
+        <div className="space-y-2">
+          <p className="flex items-center gap-1.5 text-sm font-semibold">
+            <Icon name="InfoCircle" size={16} variant="Outline" />
+            Reason for Leave
+          </p>
+          <p className="bg-primary/10 text-muted-foreground rounded-lg px-4 py-3 text-sm leading-relaxed">
+            {request.reason}
+          </p>
+        </div>
+
+        {/* Rejection Reason */}
+        {request.status === 'rejected' && request.rejectionReason && (
+          <div className="space-y-2">
+            <p className="text-destructive flex items-center gap-1.5 text-sm font-semibold">
+              <Icon
+                name="CloseCircle"
+                size={15}
+                variant="Outline"
+                className="text-destructive"
+              />
+              Rejection Reason
+            </p>
+            <p className="border-destructive/20 bg-destructive/5 text-destructive rounded-lg border px-4 py-3 text-sm leading-relaxed">
+              {request.rejectionReason}
+            </p>
           </div>
         )}
-      </section>
+
+        {/* Supporting Document */}
+        {request.supportingDocumentName && (
+          <>
+            <Separator />
+            <div className="border-primary/20 bg-primary/5 flex items-center justify-between rounded-lg border p-3">
+              <div className="flex items-center gap-3">
+                <div className="bg-primary/15 rounded-md p-2">
+                  <Icon
+                    name="FileText"
+                    size={16}
+                    className="text-primary"
+                    variant="Outline"
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">
+                    {request.supportingDocumentName}
+                  </p>
+                  <p className="text-muted-foreground text-xs">
+                    Supporting document
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-primary hover:bg-primary/10"
+              >
+                <Icon name="Download" size={16} />
+              </Button>
+            </div>
+          </>
+        )}
+      </div>
     </ReusableDialog>
   );
 };

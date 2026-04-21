@@ -95,7 +95,7 @@ export const leaveColumns: IColumnDefinition<LeaveRequest>[] = [
             'rounded-full px-4 py-1 text-xs',
             status === 'pending' && 'bg-warning-50 text-warning',
             status === 'approved' && 'bg-success-50 text-success',
-            status === 'declined' && 'bg-destructive/10 text-destructive'
+            status === 'rejected' && 'bg-destructive/10 text-destructive'
           )}
         >
           {status.charAt(0).toUpperCase() + status.slice(1)}

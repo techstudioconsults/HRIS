@@ -36,7 +36,7 @@ export interface LeaveRequest extends Record<string, unknown> {
   endDate: string;
   days: number;
   reason: string;
-  status: 'pending' | 'approved' | 'declined';
+  status: 'pending' | 'approved' | 'rejected';
   approvedBy?: string;
   approvedAt?: string;
   createdAt: string;

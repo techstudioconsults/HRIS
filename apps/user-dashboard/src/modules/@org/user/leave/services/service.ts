@@ -6,7 +6,7 @@ import type {
   LeaveType,
   RejectLeaveRequestPayload,
   UpdateLeaveRequestPayload,
-} from '../types/index';
+} from '../types';
 
 export class UserLeaveService {
   private readonly http: HttpAdapter;

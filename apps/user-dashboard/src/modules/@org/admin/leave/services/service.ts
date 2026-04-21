@@ -4,6 +4,7 @@ import type {
   CreateLeaveTypePayload,
   LeaveRequest,
   LeaveType,
+  RejectLeaveRequestPayload,
   UpdateLeaveTypePayload,
 } from '../types';
 
@@ -22,10 +23,6 @@ export class LeaveService {
   }
 
   async getLeaveTypes(filters: Filters = {}) {
-    // HttpAdapter expects an index-signature record; Filters is structurally compatible
-    // but lacks an index signature, so we cast.
-    // Backend commonly returns a paginated object: { items: LeaveType[], metadata: {...} }
-    // Some environments may return { data: LeaveType[] }.
     const response = await this.http.get<
       PaginatedApiResponse<LeaveType> | { data: LeaveType[] }
     >('/leaves', filters as QueryParameters);
@@ -78,6 +75,25 @@ export class LeaveService {
     );
     if (response?.status === 200) {
       return response.data;
+    }
+  }
+
+  async approveLeaveRequest(id: string) {
+    const response = await this.http.patch<{ data: LeaveRequest }>(
+      `/leave-request/${id}/approve`
+    );
+    if (response?.status === 200) {
+      return response.data.data;
+    }
+  }
+
+  async rejectLeaveRequest(id: string, data: RejectLeaveRequestPayload) {
+    const response = await this.http.patch<{ data: LeaveRequest }>(
+      `/leave-request/${id}/reject`,
+      data
+    );
+    if (response?.status === 200) {
+      return response.data.data;
     }
   }
 }

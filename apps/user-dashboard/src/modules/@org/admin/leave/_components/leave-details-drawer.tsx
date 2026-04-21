@@ -1,15 +1,17 @@
 'use client';
 
 import { formatDate } from '@/lib/formatters';
+import { Textarea } from '@workspace/ui/components/textarea';
 import { Badge } from '@workspace/ui/components/badge';
 import { MainButton } from '@workspace/ui/lib/button';
 import { ReusableDialog } from '@workspace/ui/lib/dialog/Dialog';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { cn } from '@workspace/ui/lib/utils';
 import Image from 'next/image';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
+import { useLeaveService } from '../services/use-service';
 import { useLeaveStore } from '../stores/leave-store';
 
 export function LeaveDetailsDrawer() {
@@ -22,6 +24,15 @@ export function LeaveDetailsDrawer() {
     setSelectedLeaveRequestId,
   } = useLeaveStore();
 
+  const { useApproveLeaveRequest, useRejectLeaveRequest } = useLeaveService();
+  const { mutateAsync: approveRequest, isPending: isApproving } =
+    useApproveLeaveRequest();
+  const { mutateAsync: rejectRequest, isPending: isRejecting } =
+    useRejectLeaveRequest();
+
+  const [showRejectForm, setShowRejectForm] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState('');
+
   const leaveRequest = selectedLeaveRequest;
 
   const handleOpenChange = useCallback(
@@ -30,6 +41,8 @@ export function LeaveDetailsDrawer() {
       if (!open) {
         setSelectedLeaveRequest(null);
         setSelectedLeaveRequestId(null);
+        setShowRejectForm(false);
+        setRejectionReason('');
       }
     },
     [
@@ -41,9 +54,27 @@ export function LeaveDetailsDrawer() {
 
   const handleApprove = async () => {
     if (!selectedLeaveRequestId) return;
-    // Admin leave module currently only supports reading leave-requests.
-    toast.info('Approve/Decline is not available in this build.');
-    handleOpenChange(false);
+    try {
+      await approveRequest(selectedLeaveRequestId);
+      toast.success('Leave request approved.');
+      handleOpenChange(false);
+    } catch {
+      toast.error('Failed to approve leave request. Please try again.');
+    }
+  };
+
+  const handleRejectConfirm = async () => {
+    if (!selectedLeaveRequestId || !rejectionReason.trim()) return;
+    try {
+      await rejectRequest({
+        id: selectedLeaveRequestId,
+        data: { rejectionReason: rejectionReason.trim() },
+      });
+      toast.success('Leave request rejected.');
+      handleOpenChange(false);
+    } catch {
+      toast.error('Failed to reject leave request. Please try again.');
+    }
   };
 
   return (
@@ -175,25 +206,65 @@ export function LeaveDetailsDrawer() {
               )}
             </div>
 
-            {/* NOTE: Approve/Decline actions are not supported from admin dashboard yet. */}
             {leaveRequest.status === 'pending' && (
-              <div className="flex flex-col lg:flex-row items-center justify-between gap-3 lg:gap-6 border-t pt-6">
-                <MainButton
-                  variant="primary"
-                  onClick={handleApprove}
-                  className="w-full"
-                  isLeftIconVisible={false}
-                >
-                  Confirm Leave Request
-                </MainButton>
-                <MainButton
-                  variant="destructiveOutline"
-                  onClick={handleApprove}
-                  className="w-full border-destructive/50 text-destructive"
-                  isLeftIconVisible={false}
-                >
-                  Reject Leave Request
-                </MainButton>
+              <div className="space-y-4 border-t pt-6">
+                {showRejectForm ? (
+                  <div className="space-y-3">
+                    <label className="text-sm font-medium">
+                      Rejection Reason
+                    </label>
+                    <Textarea
+                      placeholder="Provide a reason for rejecting this leave request..."
+                      value={rejectionReason}
+                      onChange={(e) => setRejectionReason(e.target.value)}
+                      rows={3}
+                      className="resize-none"
+                    />
+                    <div className="flex gap-3">
+                      <MainButton
+                        variant="destructiveOutline"
+                        onClick={handleRejectConfirm}
+                        className="flex-1 border-destructive/50 text-destructive"
+                        isLeftIconVisible={false}
+                        disabled={!rejectionReason.trim() || isRejecting}
+                      >
+                        {isRejecting ? 'Rejecting...' : 'Confirm Rejection'}
+                      </MainButton>
+                      <MainButton
+                        variant="outline"
+                        onClick={() => {
+                          setShowRejectForm(false);
+                          setRejectionReason('');
+                        }}
+                        className="flex-1"
+                        isLeftIconVisible={false}
+                        disabled={isRejecting}
+                      >
+                        Cancel
+                      </MainButton>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col lg:flex-row items-center justify-between gap-3 lg:gap-6">
+                    <MainButton
+                      variant="primary"
+                      onClick={handleApprove}
+                      className="w-full"
+                      isLeftIconVisible={false}
+                      disabled={isApproving}
+                    >
+                      {isApproving ? 'Approving...' : 'Confirm Leave Request'}
+                    </MainButton>
+                    <MainButton
+                      variant="destructiveOutline"
+                      onClick={() => setShowRejectForm(true)}
+                      className="w-full border-destructive/50 text-destructive"
+                      isLeftIconVisible={false}
+                    >
+                      Reject Leave Request
+                    </MainButton>
+                  </div>
+                )}
               </div>
             )}
           </div>

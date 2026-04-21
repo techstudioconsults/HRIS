@@ -126,6 +126,10 @@ export interface UpdateLeaveRequestPayload {
   status?: LeaveRequest['status'];
 }
 
+export interface RejectLeaveRequestPayload {
+  rejectionReason: string;
+}
+
 export interface UpdateCompanyLeavePolicyPayload {
   defaultLeaveTypes?: LeaveType[];
   approvers?: string[];

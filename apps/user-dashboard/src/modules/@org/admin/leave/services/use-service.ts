@@ -1,43 +1,58 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { queryKeys } from "@/lib/react-query/query-keys";
-import { createServiceHooks } from "@/lib/react-query/use-service-query";
-import { dependencies } from "@/lib/tools/dependencies";
+import { queryKeys } from '@/lib/react-query/query-keys';
+import { createServiceHooks } from '@/lib/react-query/use-service-query';
+import { dependencies } from '@/lib/tools/dependencies';
 
 import type {
-  // CreateLeaveRequestPayload,
   CreateLeaveTypePayload,
-  // UpdateLeaveRequestPayload,
+  RejectLeaveRequestPayload,
   UpdateLeaveTypePayload,
-} from "../types";
-import { LeaveService } from "./service";
+} from '../types';
+import { LeaveService } from './service';
 
 export const useLeaveService = () => {
-  const { useServiceQuery, useServiceMutation } = createServiceHooks<LeaveService>(dependencies.LEAVE_SERVICE);
+  const { useServiceQuery, useServiceMutation } =
+    createServiceHooks<LeaveService>(dependencies.LEAVE_SERVICE);
 
   // =============================
   // Leave Types
   // =============================
 
   const useGetLeaveTypes = (filters: Record<string, any> = {}, options?: any) =>
-    useServiceQuery(queryKeys.leave.types(), (service) => service.getLeaveTypes(filters), options);
+    useServiceQuery(
+      queryKeys.leave.types(),
+      (service) => service.getLeaveTypes(filters),
+      options
+    );
 
   const useGetLeaveTypeById = (id: string, options?: any) =>
-    useServiceQuery(queryKeys.leave.type(id), (service) => service.getLeaveTypeById(id), {
-      enabled: !!id,
-      ...options,
-    });
+    useServiceQuery(
+      queryKeys.leave.type(id),
+      (service) => service.getLeaveTypeById(id),
+      {
+        enabled: !!id,
+        ...options,
+      }
+    );
 
   const useCreateLeaveType = () =>
-    useServiceMutation((service, data: CreateLeaveTypePayload) => service.createLeaveType(data), {
-      invalidateQueries: () => [queryKeys.leave.types()],
-    });
+    useServiceMutation(
+      (service, data: CreateLeaveTypePayload) => service.createLeaveType(data),
+      {
+        invalidateQueries: () => [queryKeys.leave.types()],
+      }
+    );
 
   const useUpdateLeaveType = () =>
     useServiceMutation(
-      (service, { id, data }: { id: string; data: UpdateLeaveTypePayload }) => service.updateLeaveType(id, data),
+      (service, { id, data }: { id: string; data: UpdateLeaveTypePayload }) =>
+        service.updateLeaveType(id, data),
       {
-        invalidateQueries: (_, { id }) => [queryKeys.leave.types(), queryKeys.leave.type(id)],
-      },
+        invalidateQueries: (_, { id }) => [
+          queryKeys.leave.types(),
+          queryKeys.leave.type(id),
+        ],
+      }
     );
 
   const useDeleteLeaveType = () =>
@@ -49,8 +64,34 @@ export const useLeaveService = () => {
   // Leave Requests
   // =============================
 
-  const useGetLeaveRequests = (filters: Record<string, any> = {}, options?: any) =>
-    useServiceQuery(queryKeys.leave.requests(filters), (service) => service.getLeaveRequests(filters), options);
+  const useGetLeaveRequests = (
+    filters: Record<string, any> = {},
+    options?: any
+  ) =>
+    useServiceQuery(
+      queryKeys.leave.requests(filters),
+      (service) => service.getLeaveRequests(filters),
+      options
+    );
+
+  const useApproveLeaveRequest = () =>
+    useServiceMutation(
+      (service, id: string) => service.approveLeaveRequest(id),
+      {
+        invalidateQueries: () => [['leave', 'requests'] as const],
+      }
+    );
+
+  const useRejectLeaveRequest = () =>
+    useServiceMutation(
+      (
+        service,
+        { id, data }: { id: string; data: RejectLeaveRequestPayload }
+      ) => service.rejectLeaveRequest(id, data),
+      {
+        invalidateQueries: () => [['leave', 'requests'] as const],
+      }
+    );
 
   return {
     // Leave Types
@@ -62,6 +103,8 @@ export const useLeaveService = () => {
 
     // Leave Requests
     useGetLeaveRequests,
+    useApproveLeaveRequest,
+    useRejectLeaveRequest,
   };
 };
 

@@ -1,3 +1,7 @@
+import type { PayslipStatus } from '@/modules/@org/admin/payroll/types';
+
+export type { PayslipStatus };
+
 export interface PayslipLineItem {
   id: string;
   label: string;
@@ -9,7 +13,7 @@ export interface UserPayslip {
   monthLabel: string;
   amount: number;
   processedAt: string;
-  status: 'paid';
+  status: PayslipStatus;
   grossPay: number;
   netPay: number;
   totalDeductions: number;

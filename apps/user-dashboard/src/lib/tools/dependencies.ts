@@ -4,6 +4,7 @@ import { PayrollService } from '@/modules/@org/admin/payroll/services/service';
 import { ResourceService } from '@/modules/@org/admin/resources/services/service';
 import { TeamService } from '@/modules/@org/admin/teams/services/service';
 import { UserLeaveService } from '@/modules/@org/user/leave/services/service';
+import { UserPayslipService } from '@/modules/@org/user/payslip/services/service';
 import { AuthService } from '@/modules/@org/auth/services/auth.service';
 import { OnboardingService } from '@/modules/@org/onboarding/services/service';
 import { AppService } from '@/services/app/app.service';
@@ -26,6 +27,7 @@ const dependencies = {
   PAYROLL_SERVICE: Symbol('PayrollService'),
   LEAVE_SERVICE: Symbol('LeaveService'),
   USER_LEAVE_SERVICE: Symbol('UserLeaveService'),
+  USER_PAYSLIP_SERVICE: Symbol('UserPayslipService'),
 };
 
 const httpAdapter = new HttpAdapter();
@@ -38,6 +40,7 @@ const resourceService = new ResourceService(httpAdapter);
 const payrollService = new PayrollService(httpAdapter);
 const leaveService = new LeaveService(httpAdapter);
 const userLeaveService = new UserLeaveService(httpAdapter);
+const userPayslipService = new UserPayslipService(httpAdapter);
 class DependencyContainer implements IDependencyContainer {
   _dependencies = {};
 
@@ -64,5 +67,6 @@ container.add(dependencies.RESOURCE_SERVICE, resourceService);
 container.add(dependencies.PAYROLL_SERVICE, payrollService);
 container.add(dependencies.LEAVE_SERVICE, leaveService);
 container.add(dependencies.USER_LEAVE_SERVICE, userLeaveService);
+container.add(dependencies.USER_PAYSLIP_SERVICE, userPayslipService);
 
 export { container, dependencies };

@@ -1,6 +1,6 @@
 /// <reference lib="WebWorker" />
 
-import { defaultCache } from '@serwist/next/worker';
+import { defaultCache } from '@serwist/turbopack/worker';
 import {
   CacheFirst,
   ExpirationPlugin,

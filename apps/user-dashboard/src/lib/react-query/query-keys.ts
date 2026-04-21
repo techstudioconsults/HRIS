@@ -70,5 +70,9 @@ export const queryKeys = {
       ['leave', 'balances', employeeId] as const,
     statistics: () => ['leave', 'statistics'] as const,
   },
+  userPayslip: {
+    list: (filters?: Filters) => ['userPayslip', 'list', filters] as const,
+    details: (id: string) => ['userPayslip', 'detail', id] as const,
+  },
   // Add other domains as needed
 };

@@ -231,6 +231,9 @@ importers:
       '@workspace/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
+      esbuild:
+        specifier: 0.25.12
+        version: 0.25.12
       vitest:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@20.19.39)(@vitest/ui@2.1.9)(jsdom@25.0.1)(lightningcss@1.32.0)

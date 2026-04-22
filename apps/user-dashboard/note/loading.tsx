@@ -1,6 +1,6 @@
 'use client';
 
-import { Logo } from '@workspace/ui/lib';
+import { Logo } from '@workspace/ui/lib/logo';
 import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 

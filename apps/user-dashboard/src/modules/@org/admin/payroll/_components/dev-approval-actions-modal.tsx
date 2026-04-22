@@ -2,7 +2,7 @@
 
 import { Badge } from '@workspace/ui/components/badge';
 import { MainButton } from '@workspace/ui/lib/button';
-import { ReusableDialog } from '@workspace/ui/lib';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { cn } from '@workspace/ui/lib/utils';
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';

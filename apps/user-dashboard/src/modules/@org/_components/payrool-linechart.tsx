@@ -15,6 +15,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import { CHART_COLORS } from '@/lib/chart-colors';
 
 // Payroll data from your Figma design
 const payrollData = [
@@ -60,14 +61,22 @@ export function PayrollLineChart() {
             >
               <defs>
                 <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
+                  <stop
+                    offset="5%"
+                    stopColor={CHART_COLORS.blue}
+                    stopOpacity={0.2}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor={CHART_COLORS.blue}
+                    stopOpacity={0}
+                  />
                 </linearGradient>
               </defs>
               <CartesianGrid
                 strokeDasharray="4 4"
                 vertical={false}
-                stroke="#E0E0E0"
+                stroke={CHART_COLORS.grid}
               />
               <XAxis
                 dataKey="month"
@@ -104,15 +113,15 @@ export function PayrollLineChart() {
               <Area
                 type="monotone"
                 dataKey="amount"
-                stroke="#3B82F6"
+                stroke={CHART_COLORS.blue}
                 strokeWidth={2}
                 fillOpacity={1}
                 fill="url(#colorAmount)"
                 activeDot={{
                   r: 6,
-                  fill: '#3B82F6',
+                  fill: CHART_COLORS.blue,
                   strokeWidth: 2,
-                  stroke: '#FFFFFF',
+                  stroke: CHART_COLORS.white,
                 }}
               />
             </AreaChart>

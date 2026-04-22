@@ -3,7 +3,8 @@
 import { SearchInput } from '@/modules/@org/shared/search-input';
 import { Button } from '@workspace/ui/components/button';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
-import { DashboardHeader, GenericDropdown } from '@workspace/ui/lib';
+import { DashboardHeader } from '@workspace/ui/lib/dashboard';
+import { GenericDropdown } from '@workspace/ui/lib/drop-down';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useRouter } from 'next/navigation';

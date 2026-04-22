@@ -12,7 +12,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { useAuthService } from '../../services/use-auth-service';
-import { FormField } from '@workspace/ui/lib';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { Card } from '@workspace/ui/components/card';
 
 export const ResetPassword = () => {

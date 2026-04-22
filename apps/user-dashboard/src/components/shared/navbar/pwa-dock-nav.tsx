@@ -7,7 +7,7 @@ import {
   DrawerContent,
   DrawerTrigger,
 } from '@workspace/ui/components/drawer';
-import { Logo } from '@workspace/ui/lib';
+import { Logo } from '@workspace/ui/lib/logo';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import type { AnyIconName } from '@workspace/ui/lib/icons/types';
 import { cn } from '@workspace/ui/lib/utils';

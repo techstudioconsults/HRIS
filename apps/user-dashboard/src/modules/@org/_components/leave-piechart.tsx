@@ -7,31 +7,32 @@ import {
   CardTitle,
 } from '@workspace/ui/components/card';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { CHART_COLORS } from '@/lib/chart-colors';
 
 const teamData = [
   {
     name: 'Product',
     leaves: 23,
     percentage: 25,
-    fill: '#1F2666', // dark blue
+    fill: CHART_COLORS.navy,
   },
   {
     name: 'Sales',
     leaves: 18,
     percentage: 20,
-    fill: '#9DD4AF', // success-75
+    fill: CHART_COLORS.green,
   },
   {
     name: 'Marketing',
     leaves: 15,
     percentage: 16,
-    fill: '#F4D5A0', // Yellow
+    fill: CHART_COLORS.amber,
   },
   {
     name: 'Engineering',
     leaves: 34,
     percentage: 37,
-    fill: '#5542F6', // primary
+    fill: CHART_COLORS.purple,
   },
 ];
 

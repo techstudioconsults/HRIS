@@ -1,6 +1,6 @@
 'use client';
 
-import { ReusableDialog } from '@workspace/ui/lib';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { toast } from 'sonner';
 import { useUserLeaveService } from '@/modules/@org/user';
 import type { RequestLeaveSubmitData, RequestLeaveModalProps } from '../types';

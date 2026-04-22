@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { AdvancedDataTable, TableSkeleton } from '@workspace/ui/lib/table';
 import {
-  AdvancedDataTable,
   EmptyState,
   ErrorEmptyState,
   FilteredEmptyState,
-  TableSkeleton,
-} from '@workspace/ui/lib';
+} from '@workspace/ui/lib/empty-state';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 

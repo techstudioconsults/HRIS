@@ -3,7 +3,7 @@
 import { getApiErrorMessage } from '@/lib/tools/api-error-message';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Switch } from '@workspace/ui/components/switch';
-import { FormField } from '@workspace/ui/lib';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import { useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';

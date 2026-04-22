@@ -6,7 +6,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@workspace/ui/components/tabs';
-import { DashboardHeader } from '@workspace/ui/lib';
+import { DashboardHeader } from '@workspace/ui/lib/dashboard';
 import { cn } from '@workspace/ui/lib/utils';
 import { useState } from 'react';
 

@@ -2,7 +2,8 @@
 
 import { useTour } from '@/modules/@org/onboarding';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertModal, FormField, ReusableDialog } from '@workspace/ui/lib';
+import { AlertModal, ReusableDialog } from '@workspace/ui/lib/dialog';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';

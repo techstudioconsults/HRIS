@@ -3,9 +3,8 @@
 import { Check, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-import { EmptyState, MainButton } from '@workspace/ui/lib';
-import { NotificationItem } from '@workspace/ui/lib';
-import { NotificationWidgetProperties } from '@workspace/ui/lib';
+import { EmptyState } from '@workspace/ui/lib/empty-state';
+import { NotificationItem } from '@workspace/ui/lib/notification-widget/notification-item';
 import {
   Popover,
   PopoverContent,
@@ -16,6 +15,7 @@ import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { cn } from '../utils';
 import { Separator } from '@workspace/ui/components/separator';
 import { Icon } from '@workspace/ui/lib/icons/icon';
+import { NotificationWidgetProperties } from '@/lib/notification-widget/types';
 
 export function NotificationWidget({
   notifications,

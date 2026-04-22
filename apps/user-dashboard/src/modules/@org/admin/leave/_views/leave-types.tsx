@@ -1,17 +1,15 @@
 'use client';
 
 import { getApiErrorMessage } from '@/lib/tools/api-error-message';
+import { AdvancedDataTable, TableSkeleton } from '@workspace/ui/lib/table';
+import { AlertModal, ReusableDialog } from '@workspace/ui/lib/dialog';
+import { BreadCrumb } from '@workspace/ui/lib/breadcrumb';
+import { DashboardHeader } from '@workspace/ui/lib/dashboard';
 import {
-  AdvancedDataTable,
-  AlertModal,
-  BreadCrumb,
-  DashboardHeader,
   EmptyState,
   ErrorEmptyState,
   FilteredEmptyState,
-  ReusableDialog,
-  TableSkeleton,
-} from '@workspace/ui/lib';
+} from '@workspace/ui/lib/empty-state';
 import { MainButton } from '@workspace/ui/lib/button';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';

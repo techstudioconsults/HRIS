@@ -18,7 +18,7 @@ export const RecentActivities: React.FC<RecentActivitiesProps> = ({
         </h2>
         <Link
           href="/user/activities"
-          className="text-base lg:text-lg font-normal leading-[1.45]  hover:text-[#0266F3] transition-colors"
+          className="text-base lg:text-lg font-normal leading-[1.45]  hover:text-primary transition-colors"
         >
           See all
         </Link>

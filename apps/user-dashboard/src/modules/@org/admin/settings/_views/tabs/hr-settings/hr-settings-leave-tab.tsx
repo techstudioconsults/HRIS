@@ -6,7 +6,7 @@ import { useLeaveService } from '@/modules/@org/admin/leave/services/use-service
 import type { LeaveType } from '@/modules/@org/admin/leave/types';
 import { SearchInput } from '@/modules/@org/shared/search-input';
 import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar';
-import { ReusableDialog } from '@workspace/ui/lib';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import {

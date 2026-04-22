@@ -2,7 +2,8 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Switch } from '@workspace/ui/components/switch';
-import { FormField, ReusableDialog } from '@workspace/ui/lib';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';

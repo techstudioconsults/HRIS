@@ -7,12 +7,10 @@ import {
 } from '@workspace/ui/components/avatar';
 import { Card } from '@workspace/ui/components/card';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
-import {
-  BreadCrumb,
-  DashboardHeader,
-  ErrorEmptyState,
-  GenericDropdown,
-} from '@workspace/ui/lib';
+import { BreadCrumb } from '@workspace/ui/lib/breadcrumb';
+import { DashboardHeader } from '@workspace/ui/lib/dashboard';
+import { ErrorEmptyState } from '@workspace/ui/lib/empty-state';
+import { GenericDropdown } from '@workspace/ui/lib/drop-down';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import Image from 'next/image';

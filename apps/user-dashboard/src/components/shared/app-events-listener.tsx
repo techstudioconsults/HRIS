@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { MainButton, ReusableDialog } from '@workspace/ui/lib';
 import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { usePathname } from 'next/navigation';
@@ -17,6 +15,8 @@ import {
 } from '@/lib/sse/use-notifications';
 import { usePayrollService } from '@/modules/@org/admin/payroll/services/use-service';
 import { AnyIconName } from '@workspace/ui/lib/icons/types';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
+import { MainButton } from '@workspace/ui/lib/button';
 
 type RenderType = 'toast' | 'banner' | 'modal';
 

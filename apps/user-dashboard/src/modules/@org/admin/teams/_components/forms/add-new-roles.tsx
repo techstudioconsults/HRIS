@@ -9,7 +9,8 @@ import {
   CardTitle,
 } from '@workspace/ui/components/card';
 import { Checkbox } from '@workspace/ui/components/checkbox';
-import { BatchProgress, FormField } from '@workspace/ui/lib';
+import { BatchProgress } from '@workspace/ui/lib/progress';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { FormEvent, useEffect, useState } from 'react';

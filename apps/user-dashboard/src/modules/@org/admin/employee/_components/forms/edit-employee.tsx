@@ -11,13 +11,11 @@ import { usePayrollService } from '@/modules/@org/admin/payroll/services/use-ser
 import { EmployeeFormData, employeeSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Label } from '@workspace/ui/components/label';
-import {
-  BreadCrumb,
-  ComboBox,
-  DashboardHeader,
-  ErrorEmptyState,
-  FormField,
-} from '@workspace/ui/lib';
+import { BreadCrumb } from '@workspace/ui/lib/breadcrumb';
+import { ComboBox } from '@workspace/ui/lib/select-dropdown/combo-box';
+import { DashboardHeader } from '@workspace/ui/lib/dashboard';
+import { ErrorEmptyState } from '@workspace/ui/lib/empty-state';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import FileUpload from '@workspace/ui/lib/file-upload/file-upload';
 import { AxiosError } from 'axios';

@@ -33,7 +33,7 @@
 
     /* Success */
     --success: oklch(59.8% 0.225 137.8);
-    --success-50: hsla(144, 83%, 96%, 1);
+    --success-50: oklch(96.5% 0.02 148);
     --success-75: oklch(84.5% 0.095 148.2);
     --success-100: oklch(76.8% 0.145 144.5);
     --success-200: oklch(66.2% 0.195 140.1);
@@ -41,13 +41,13 @@
     --success-500: oklch(39.2% 0.175 135.5);
 
     /* Warning */
-    --warning: oklch(72.8% 0.225 69.3);
-    --warning-50: oklch(96.5% 0.035 85.2);
-    --warning-75: oklch(87.3% 0.095 75.8);
-    --warning-100: oklch(82.5% 0.135 72.4);
-    --warning-200: oklch(76.2% 0.195 70.1);
-    --warning-400: oklch(52.5% 0.175 68.5);
-    --warning-500: oklch(47.3% 0.155 68.2);
+    --warning: oklch(78% 0.18 55);
+    --warning-50: oklch(96% 0.025 65);
+    --warning-75: oklch(88% 0.08 60);
+    --warning-100: oklch(83% 0.12 58);
+    --warning-200: oklch(77% 0.165 56);
+    --warning-400: oklch(54% 0.155 52);
+    --warning-500: oklch(49% 0.14 50);
 
     /* danger */
     --error: oklch(50.2% 0.275 24.8);
@@ -82,8 +82,7 @@
     --accent-foreground: oklch(0.25 0 0);
 
     /* Border */
-    /*--border: oklch(0.88 0 0);*/
-    --border: #0057e640;
+    --border: oklch(50.5% 0.235 257.6 / 25%);
     --input: oklch(0.96 0 0);
     --ring: oklch(50.5% 0.235 257.6);
 
@@ -151,6 +150,34 @@
     --leading-normal: 1.5;
     --leading-relaxed: 1.625;
     --leading-loose: 2;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.05);
+    --shadow: 0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px oklch(0 0 0 / 0.06);
+    --shadow-md: 0 4px 6px oklch(0 0 0 / 0.07), 0 2px 4px oklch(0 0 0 / 0.06);
+    --shadow-lg: 0 10px 15px oklch(0 0 0 / 0.1), 0 4px 6px oklch(0 0 0 / 0.05);
+    --shadow-xl: 0 20px 25px oklch(0 0 0 / 0.1), 0 10px 10px oklch(0 0 0 / 0.04);
+
+    /* White */
+    --white: oklch(100% 0 0);
+
+    /* Info variants */
+    --info-50: oklch(97% 0.02 220);
+    --info-75: oklch(91% 0.05 220);
+
+    /* Sidebar */
+    --sidebar-bg: oklch(28% 0.12 265);
+    --sidebar-foreground: oklch(98% 0 0);
+
+    /* Brand gradient — used on wallet / payroll cards */
+    --brand-gradient-from: oklch(35% 0.17 258);
+    --brand-gradient-to: oklch(18% 0.07 258);
+
+    /* Chart palette */
+    --chart-1: oklch(62% 0.18 256);
+    --chart-2: oklch(52% 0.24 282);
+    --chart-3: oklch(82% 0.1 152);
+    --chart-4: oklch(88% 0.1 75);
 }
 
 .dark {
@@ -188,13 +215,13 @@
     --success-500: oklch(69% 0.17 142);
 
     /* Warning */
-    --warning: oklch(74% 0.18 70);
-    --warning-50: oklch(30% 0.05 74);
-    --warning-75: oklch(38% 0.08 72);
-    --warning-100: oklch(45% 0.1 71);
-    --warning-200: oklch(56% 0.13 70);
-    --warning-400: oklch(69% 0.16 69);
-    --warning-500: oklch(75% 0.18 68);
+    --warning: oklch(80% 0.16 55);
+    --warning-50: oklch(28% 0.05 58);
+    --warning-75: oklch(36% 0.08 57);
+    --warning-100: oklch(43% 0.1 56);
+    --warning-200: oklch(55% 0.13 55);
+    --warning-400: oklch(69% 0.155 53);
+    --warning-500: oklch(74% 0.16 52);
 
     /* Danger */
     --error: oklch(64% 0.2 25);
@@ -258,6 +285,31 @@
     --link: oklch(74% 0.16 250);
     --link-hover: oklch(80% 0.17 250);
     --link-active: oklch(88% 0.08 250);
+
+    /* Shadows — stronger on dark surfaces */
+    --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.25);
+    --shadow: 0 1px 3px oklch(0 0 0 / 0.35), 0 1px 2px oklch(0 0 0 / 0.28);
+    --shadow-md: 0 4px 6px oklch(0 0 0 / 0.3), 0 2px 4px oklch(0 0 0 / 0.25);
+    --shadow-lg: 0 10px 15px oklch(0 0 0 / 0.35), 0 4px 6px oklch(0 0 0 / 0.2);
+    --shadow-xl: 0 20px 25px oklch(0 0 0 / 0.35), 0 10px 10px oklch(0 0 0 / 0.2);
+
+    /* Info variants */
+    --info-50: oklch(24% 0.04 220);
+    --info-75: oklch(30% 0.06 220);
+
+    /* Sidebar */
+    --sidebar-bg: oklch(24% 0.1 265);
+    --sidebar-foreground: oklch(95% 0 0);
+
+    /* Brand gradient */
+    --brand-gradient-from: oklch(40% 0.17 258);
+    --brand-gradient-to: oklch(22% 0.07 258);
+
+    /* Chart palette */
+    --chart-1: oklch(68% 0.18 256);
+    --chart-2: oklch(58% 0.22 282);
+    --chart-3: oklch(76% 0.1 152);
+    --chart-4: oklch(84% 0.1 75);
 }
 
 @theme inline {
@@ -375,4 +427,22 @@
     --box-shadow-md: var(--shadow-md);
     --box-shadow-lg: var(--shadow-lg);
     --box-shadow-xl: var(--shadow-xl);
+
+    /* Info variants */
+    --color-info-50: var(--info-50);
+    --color-info-75: var(--info-75);
+
+    /* Sidebar */
+    --color-sidebar-bg: var(--sidebar-bg);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+
+    /* Brand gradient */
+    --color-brand-gradient-from: var(--brand-gradient-from);
+    --color-brand-gradient-to: var(--brand-gradient-to);
+
+    /* Chart palette */
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
 }

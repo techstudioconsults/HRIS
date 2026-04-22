@@ -17,11 +17,11 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@workspace/ui/components/drawer';
+import { EmptyState } from '@workspace/ui/lib/empty-state';
 import {
   AdvancedDataTable,
-  EmptyState,
   type IColumnDefinition,
-} from '@workspace/ui/lib';
+} from '@workspace/ui/lib/table';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { cn } from '@workspace/ui/lib/utils';
@@ -387,7 +387,7 @@ export const SchedulePayrollDrawer = () => {
                         </button>
                       </div>
                     }
-                    className="flex flex-col items-center justify-center gap-4 bg-linear-to-r from-[#013E94] to-[#00132E] text-center"
+                    className="flex flex-col items-center justify-center gap-4 bg-linear-to-r from-brand-gradient-from to-brand-gradient-to text-center"
                     titleColor="text-white"
                   />
                 </section>

@@ -11,12 +11,10 @@ import { usePayrollService } from '@/modules/@org/admin/payroll/services/use-ser
 import { EmployeeFormData, employeeSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Label } from '@workspace/ui/components/label';
-import {
-  BreadCrumb,
-  ComboBox,
-  DashboardHeader,
-  FormField,
-} from '@workspace/ui/lib';
+import { BreadCrumb } from '@workspace/ui/lib/breadcrumb';
+import { ComboBox } from '@workspace/ui/lib/select-dropdown/combo-box';
+import { DashboardHeader } from '@workspace/ui/lib/dashboard';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';

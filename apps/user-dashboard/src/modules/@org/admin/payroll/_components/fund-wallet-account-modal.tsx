@@ -1,7 +1,7 @@
 'use client';
 
 import { useTour } from '@/modules/@org/onboarding';
-import { ReusableDialog } from '@workspace/ui/lib';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useEffect, useState } from 'react';

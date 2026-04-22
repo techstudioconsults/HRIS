@@ -7,7 +7,7 @@ import {
   PopoverTrigger,
 } from '@workspace/ui/components/popover';
 import { ScrollArea } from '@workspace/ui/components/scroll-area';
-import { EmptyState } from '@workspace/ui/lib';
+import { EmptyState } from '@workspace/ui/lib/empty-state';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { cn } from '@workspace/ui/lib/utils';
 import { useEffect, useRef, useState } from 'react';

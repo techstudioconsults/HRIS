@@ -1,13 +1,13 @@
 // components/forms/TeamForm.tsx
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormField } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { useEffect } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
+import { MainButton } from '@workspace/ui/lib/button';
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 
-import { Team, teamSchema } from "../schema";
+import { Team, teamSchema } from '../schema';
 
 type TeamFormValues = { name: string };
 
@@ -18,11 +18,16 @@ interface TeamFormProperties {
   isSubmitting?: boolean;
 }
 
-export const TeamForm = ({ initialData, onSubmit, onCancel, isSubmitting = false }: TeamFormProperties) => {
+export const TeamForm = ({
+  initialData,
+  onSubmit,
+  onCancel,
+  isSubmitting = false,
+}: TeamFormProperties) => {
   const methods = useForm<TeamFormValues>({
     resolver: zodResolver(teamSchema.pick({ name: true })),
-    defaultValues: { name: initialData?.name ?? "" },
-    mode: "onChange",
+    defaultValues: { name: initialData?.name ?? '' },
+    mode: 'onChange',
   });
 
   const {
@@ -32,7 +37,7 @@ export const TeamForm = ({ initialData, onSubmit, onCancel, isSubmitting = false
   } = methods;
 
   useEffect(() => {
-    reset({ name: initialData?.name ?? "" });
+    reset({ name: initialData?.name ?? '' });
   }, [initialData, reset]);
 
   const submit = async (values: TeamFormValues) => {
@@ -42,13 +47,32 @@ export const TeamForm = ({ initialData, onSubmit, onCancel, isSubmitting = false
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(submit)} className="grid gap-6">
-        <FormField placeholder="Enter team name" className="h-14 w-full" label="Team Name" name="name" required />
+        <FormField
+          placeholder="Enter team name"
+          className="h-14 w-full"
+          label="Team Name"
+          name="name"
+          required
+        />
         <div className="flex justify-end gap-4">
-          <MainButton type="button" variant="outline" onClick={onCancel} isDisabled={isSubmitting || rhfSubmitting}>
+          <MainButton
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            isDisabled={isSubmitting || rhfSubmitting}
+          >
             Cancel
           </MainButton>
-          <MainButton type="submit" variant="primary" isDisabled={!isValid || isSubmitting || rhfSubmitting}>
-            {isSubmitting || rhfSubmitting ? "Saving..." : initialData ? "Save Changes" : "Create Team"}
+          <MainButton
+            type="submit"
+            variant="primary"
+            isDisabled={!isValid || isSubmitting || rhfSubmitting}
+          >
+            {isSubmitting || rhfSubmitting
+              ? 'Saving...'
+              : initialData
+                ? 'Save Changes'
+                : 'Create Team'}
           </MainButton>
         </div>
       </form>

@@ -3,7 +3,7 @@
 import { Checkbox } from '@workspace/ui/components/checkbox';
 // import Image from "next/image";
 import { useTransition } from 'react';
-import { MainButton } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
 import { cn } from '@workspace/ui/lib/utils';
 import { Card } from '@workspace/ui/components/card';
 import type { ActionBannerProperties } from '../types';

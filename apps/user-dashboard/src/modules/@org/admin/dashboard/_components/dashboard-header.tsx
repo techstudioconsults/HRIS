@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 import { Skeleton } from '@workspace/ui/components/skeleton';
-import { ComboBox } from '@workspace/ui/lib';
+import { ComboBox } from '@workspace/ui/lib/select-dropdown/combo-box';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useSession } from 'next-auth/react';

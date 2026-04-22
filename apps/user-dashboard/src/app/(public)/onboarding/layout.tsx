@@ -3,7 +3,7 @@
 import { OnboardingRouteGuard } from '@/modules/@org/onboarding';
 import { TourProvider } from '@workspace/ui/context/tour-context';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
-import { Logo } from '@workspace/ui/lib';
+import { Logo } from '@workspace/ui/lib/logo';
 
 function OnboardingLayout({ children }: { children: React.ReactNode }) {
   return (

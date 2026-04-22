@@ -2,7 +2,7 @@
 'use client';
 
 import { Button } from '@workspace/ui/components/button';
-import { Logo } from '@workspace/ui/lib';
+import { Logo } from '@workspace/ui/lib/logo';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useEffect } from 'react';
 
@@ -18,7 +18,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="bg-background flex h-[70dvh]! flex-col items-center justify-center rounded-md shadow dark:bg-[#000000]">
+    <div className="flex h-[70dvh]! flex-col items-center justify-center rounded-md bg-background shadow">
       <div className="flex flex-col items-center gap-4 text-center">
         <Icon name="AlertCircle" size={48} className="text-destructive" />
         <Logo width={100} height={47} />

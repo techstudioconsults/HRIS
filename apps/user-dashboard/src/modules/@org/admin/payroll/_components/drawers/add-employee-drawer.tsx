@@ -12,13 +12,10 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@workspace/ui/components/drawer';
-import {
-  AdvancedDataTable,
-  AlertModal,
-  EmptyState,
-  FilteredEmptyState,
-  GenericDropdown,
-} from '@workspace/ui/lib';
+import { AlertModal } from '@workspace/ui/lib/dialog';
+import { EmptyState, FilteredEmptyState } from '@workspace/ui/lib/empty-state';
+import { GenericDropdown } from '@workspace/ui/lib/drop-down';
+import { AdvancedDataTable } from '@workspace/ui/lib/table';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useCallback, useEffect, useState } from 'react';

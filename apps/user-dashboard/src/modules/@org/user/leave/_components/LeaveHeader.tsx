@@ -1,7 +1,8 @@
 'use client';
 
 import { Button } from '@workspace/ui/components/button';
-import { DashboardHeader, GenericDropdown } from '@workspace/ui/lib';
+import { DashboardHeader } from '@workspace/ui/lib/dashboard';
+import { GenericDropdown } from '@workspace/ui/lib/drop-down';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import type { UserLeaveHeaderProps } from '../types';

@@ -41,7 +41,7 @@ export const HelpSidebar = () => {
         {/*  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary/70">*/}
         {/*    Browse help topics*/}
         {/*  </p>*/}
-        {/*  <p className="mt-1 text-sm text-[#64748B]">*/}
+        {/*  <p className="mt-1 text-sm text-muted-foreground">*/}
         {/*    Keep this menu open while you read and jump between guides faster.*/}
         {/*  </p>*/}
         {/*</div>*/}
@@ -77,7 +77,7 @@ export const HelpSidebar = () => {
                               'duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30',
                             isActive
                               ? 'bg-blue-50 text-primary'
-                              : 'text-[#64748B] hover:bg-blue-50/60 hover:text-primary'
+                              : 'text-muted-foreground hover:bg-blue-50/60 hover:text-primary'
                           )}
                         >
                           {article.title}

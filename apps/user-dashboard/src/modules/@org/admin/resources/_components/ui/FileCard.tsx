@@ -6,7 +6,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
-import { AlertModal, MainButton } from '@workspace/ui/lib';
+import { AlertModal } from '@workspace/ui/lib/dialog';
+import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import Image from 'next/image';
 import { useState } from 'react';

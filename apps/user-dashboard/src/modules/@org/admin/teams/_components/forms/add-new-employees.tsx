@@ -22,7 +22,7 @@ import {
   PopoverTrigger,
 } from '@workspace/ui/components/popover';
 import { Progress } from '@workspace/ui/components/progress';
-import { FormField } from '@workspace/ui/lib';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';

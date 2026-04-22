@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Calendar } from '@workspace/ui/components/calendar';
-import { FormField } from '@workspace/ui/lib';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { ReusableDialog } from '@workspace/ui/lib/dialog/Dialog';

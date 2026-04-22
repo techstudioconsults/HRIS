@@ -8,7 +8,8 @@ import { useCallback } from 'react';
 
 import { FilterForm } from '../../../_components/forms/filter-form';
 import { useTeamService } from '../../../services/use-service';
-import { DashboardHeader, GenericDropdown } from '@workspace/ui/lib';
+import { DashboardHeader } from '@workspace/ui/lib/dashboard';
+import { GenericDropdown } from '@workspace/ui/lib/drop-down';
 import { SearchInput } from '@/modules/@org/shared/search-input';
 import { Button } from '@workspace/ui/components/button';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';

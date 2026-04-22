@@ -21,11 +21,11 @@ export const BuiltForAllTeams = () => {
     <section
       data-home-built-for-all-teams
       className={cn(
-        'relative bg-[#F7F9FC] overflow-hidden min-h-[800px] bg-[url(/images/home/techstudio-text.svg)]' +
+        'relative bg-muted overflow-hidden min-h-[800px] bg-[url(/images/home/techstudio-text.svg)]' +
           ' bg-fixed bg-contain bg-bottom' +
           '      bg-no-repeat py-5 lg:py-10',
         `before:pointer-events-none before:absolute before:top-0 before:left-0
-         before:right-0 before:h-full before:w-full before:bg-[#F7F9FC]
+         before:right-0 before:h-full before:w-full before:bg-muted
          before:transition-[height] before:duration-1000 hover:before:h-[75%]`
       )}
     >

@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '@workspace/ui/components/card';
 import { Checkbox } from '@workspace/ui/components/checkbox';
-import { FormField } from '@workspace/ui/lib';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import { FormEvent, useState } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';

@@ -23,14 +23,14 @@ import {
   TabsList,
   TabsTrigger,
 } from '@workspace/ui/components/tabs';
+import { AlertModal } from '@workspace/ui/lib/dialog';
+import { EmptyState } from '@workspace/ui/lib/empty-state';
 import {
   AdvancedDataTable,
-  AlertModal,
-  EmptyState,
   TableSkeleton,
   type IColumnDefinition,
   type IRowAction,
-} from '@workspace/ui/lib';
+} from '@workspace/ui/lib/table';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { AxiosError } from 'axios';
 import { useEffect, useMemo, useState } from 'react';

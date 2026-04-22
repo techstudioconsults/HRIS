@@ -3,7 +3,7 @@
 import React, { useTransition } from 'react';
 import { Card } from '@workspace/ui/components/card';
 import { cn } from '@workspace/ui/lib/utils';
-import { MainButton } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import type { QuickActionCardProps } from '../types';
 

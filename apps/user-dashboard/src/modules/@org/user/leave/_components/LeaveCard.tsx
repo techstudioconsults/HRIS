@@ -3,7 +3,7 @@ import { formatDate } from '@/lib/formatters';
 import { Badge } from '@workspace/ui/components/badge';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { calculateDaysBetween, cn } from '@workspace/ui/lib/utils';
-import { MainButton } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
 import type { LeaveCardProps, LeaveRequest } from '../types';
 const STATUS_STYLES: Record<LeaveRequest['status'], string> = {
   pending: 'bg-warning/10 text-warning',

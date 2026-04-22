@@ -1,7 +1,7 @@
 import empty1 from '~/images/empty-state.svg';
 import type { FolderFile } from '../../services/types';
 import { FileCard } from '../ui/FileCard';
-import { EmptyState } from '@workspace/ui/lib';
+import { EmptyState } from '@workspace/ui/lib/empty-state';
 
 interface FilesTabProperties {
   files: FolderFile[];

@@ -5,7 +5,7 @@ import {
   AdvancedDataTable,
   type IColumnDefinition,
   type IRowAction,
-} from '@workspace/ui/lib';
+} from '@workspace/ui/lib/table';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { cn } from '@workspace/ui/lib/utils';

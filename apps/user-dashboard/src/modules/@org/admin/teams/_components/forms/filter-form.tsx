@@ -1,6 +1,6 @@
 'use client';
 
-import { FormField } from '@workspace/ui/lib';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { cn } from '@workspace/ui/lib/utils';
 import { useEffect, useRef } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';

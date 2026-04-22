@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { FormField, ReusableDialog } from '@workspace/ui/lib';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { FormEvent, useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';

@@ -10,7 +10,7 @@ import type {
 import { TeamForm } from '@/modules/@org/onboarding/_components/forms/team/team-form';
 import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onboarding-service';
 import { useQueryClient } from '@tanstack/react-query';
-import { ReusableDialog } from '@workspace/ui/lib';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { AxiosError } from 'axios';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';

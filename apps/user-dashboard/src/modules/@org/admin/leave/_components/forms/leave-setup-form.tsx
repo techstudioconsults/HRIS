@@ -2,7 +2,9 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Switch } from '@workspace/ui/components/switch';
-import { AlertModal, BreadCrumb, FormField } from '@workspace/ui/lib';
+import { AlertModal } from '@workspace/ui/lib/dialog';
+import { BreadCrumb } from '@workspace/ui/lib/breadcrumb';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
@@ -32,7 +34,9 @@ const leaveSetupSchema = z
     leaveCycle: z.string().min(1, 'Leave cycle is required'),
     enableRollover: z.boolean(),
     maxRollover: z
-      .number({ invalid_type_error: 'Maximum number of roll over must be a number' })
+      .number({
+        invalid_type_error: 'Maximum number of roll over must be a number',
+      })
       .optional(),
     // API payload expects eligibility as a string month value e.g. "12"
     eligibility: z
@@ -49,7 +53,8 @@ const leaveSetupSchema = z
       context.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['maxRollover'],
-        message: 'Maximum number of roll over is required when roll over is enabled',
+        message:
+          'Maximum number of roll over is required when roll over is enabled',
       });
       return;
     }
@@ -129,7 +134,10 @@ export const LeaveSetupForm = () => {
       setHasCompletedLeaveSetup(true);
     } catch (error) {
       toast.error('Failed to save leave type', {
-        description: getApiErrorMessage(error, 'Unable to save leave type. Please try again.'),
+        description: getApiErrorMessage(
+          error,
+          'Unable to save leave type. Please try again.'
+        ),
       });
     }
   };
@@ -140,7 +148,10 @@ export const LeaveSetupForm = () => {
     <section>
       <h1 className="text-2xl font-bold">Add Leave Type</h1>
       <BreadCrumb
-        items={[{ label: 'All Leaves', href: '/admin/leave' }, { label: 'Add Leave Type' }]}
+        items={[
+          { label: 'All Leaves', href: '/admin/leave' },
+          { label: 'Add Leave Type' },
+        ]}
         className="mb-6"
       />
       <FormProvider {...methods}>
@@ -230,7 +241,11 @@ export const LeaveSetupForm = () => {
             </section>
 
             <div className="flex gap-4">
-              <MainButton type="button" variant="outline" onClick={() => router.back()}>
+              <MainButton
+                type="button"
+                variant="outline"
+                onClick={() => router.back()}
+              >
                 Cancel
               </MainButton>
               <MainButton type="submit" variant="primary">

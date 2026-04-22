@@ -2,7 +2,8 @@
 
 import { LoginOTPFFormData, loginOTPFormSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormField, FormHeader } from '@workspace/ui/lib';
+import { FormHeader } from '@workspace/ui/lib/form-header';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

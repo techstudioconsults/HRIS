@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { AlertModal } from '@workspace/ui/lib';
+import { AlertModal } from '@workspace/ui/lib/dialog';
 import { useEffect, useRef, useState } from 'react';
 import type React from 'react';
 

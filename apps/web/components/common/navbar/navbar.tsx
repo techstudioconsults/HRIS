@@ -37,7 +37,7 @@ export const Navbar = () => {
             <Link
               key={link.name}
               href={link.href}
-              className="text-[#1E293B] hover:text-[#0052CC] font-medium
+              className="text-foreground hover:text-primary-400 font-medium
                  text-sm transition-colors flex items-center gap-1"
             >
               {link.name}

@@ -1,6 +1,6 @@
 import { formatCurrency, formatDate } from '@/lib/formatters';
 import { Badge } from '@workspace/ui/components/badge';
-import { MainButton } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { Card } from '@workspace/ui/components/card';
 import type { PayslipItemCardProps } from '../types';

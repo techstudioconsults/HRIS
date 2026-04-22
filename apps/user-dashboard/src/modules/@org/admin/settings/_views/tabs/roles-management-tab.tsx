@@ -11,7 +11,9 @@ import { SearchInput } from '@/modules/@org/shared/search-input';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@workspace/ui/components/button';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
-import { ComboBox, GenericDropdown, ReusableDialog } from '@workspace/ui/lib';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
+import { GenericDropdown } from '@workspace/ui/lib/drop-down';
+import { ComboBox } from '@workspace/ui/lib/select-dropdown/combo-box';
 import { MainButton } from '@workspace/ui/lib/button';
 import { AlertModal } from '@workspace/ui/lib/dialog';
 import {

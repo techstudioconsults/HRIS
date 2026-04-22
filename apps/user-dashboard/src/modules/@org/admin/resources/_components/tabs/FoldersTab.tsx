@@ -1,4 +1,4 @@
-import { EmptyState } from '@workspace/ui/lib';
+import { EmptyState } from '@workspace/ui/lib/empty-state';
 
 import empty1 from '~/images/empty-state.svg';
 import type { Folder } from '../../services/types';

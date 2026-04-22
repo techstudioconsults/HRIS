@@ -7,7 +7,6 @@ export function useModeToggle() {
   const { setTheme, resolvedTheme } = useTheme();
 
   const toggleTheme = React.useCallback(() => {
-    console.log('Toggling theme from', resolvedTheme);
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark');
   }, [resolvedTheme, setTheme]);
 

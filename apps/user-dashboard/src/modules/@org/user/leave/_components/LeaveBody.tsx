@@ -1,6 +1,6 @@
 'use client';
 
-import { EmptyState } from '@workspace/ui/lib';
+import { EmptyState } from '@workspace/ui/lib/empty-state';
 import { useMemo } from 'react';
 import empty1 from '~/images/empty-state.svg';
 import { useUserLeaveService } from '@/modules/@org/user';

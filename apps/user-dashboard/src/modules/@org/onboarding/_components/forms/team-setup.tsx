@@ -1,6 +1,6 @@
 'use client';
 
-import { FormHeader } from '@workspace/ui/lib';
+import { FormHeader } from '@workspace/ui/lib/form-header';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 // import { Skeleton } from "@/components/ui/skeleton";

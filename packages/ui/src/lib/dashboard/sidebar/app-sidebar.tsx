@@ -12,10 +12,12 @@ import {
 } from 'lucide-react';
 import * as React from 'react';
 
-import { NavMain } from '@workspace/ui/lib';
-import { NavProjects } from '@workspace/ui/lib';
-import { NavUser } from '@workspace/ui/lib';
-import { TeamSwitcher } from '../components/team-switcher';
+import {
+  NavMain,
+  NavProjects,
+  NavUser,
+  TeamSwitcher,
+} from '@workspace/ui/lib/dashboard';
 import {
   Sidebar,
   SidebarContent,
@@ -25,8 +27,6 @@ import {
   useSidebar,
 } from '@workspace/ui/components/sidebar';
 import { useActiveNavigation } from '@workspace/ui/hooks';
-import { Logo } from '@workspace/ui/lib';
-import { cn } from '@workspace/ui/lib/utils';
 
 /**
  * Reusable Dashboard Sidebar Types

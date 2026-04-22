@@ -29,11 +29,11 @@ const attendanceData = [
 const chartConfig = {
   present: {
     label: 'Present',
-    color: '#5542F6',
+    color: 'var(--chart-2)',
   },
   absent: {
     label: 'Absent',
-    color: '#9DD4AF',
+    color: 'var(--chart-3)',
   },
   late: {
     label: 'Late',

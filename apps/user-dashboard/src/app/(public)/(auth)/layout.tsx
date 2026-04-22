@@ -1,6 +1,6 @@
 'use client';
 
-import { Logo } from '@workspace/ui/lib';
+import { Logo } from '@workspace/ui/lib/logo';
 import { cn } from '@workspace/ui/lib/utils';
 import { usePathname } from 'next/navigation';
 import { AuthCarousel } from '@/modules/@org/auth';

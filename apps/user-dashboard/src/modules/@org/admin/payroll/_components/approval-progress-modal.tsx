@@ -6,7 +6,7 @@ import {
   AvatarImage,
 } from '@workspace/ui/components/avatar';
 import { Badge } from '@workspace/ui/components/badge';
-import { ReusableDialog } from '@workspace/ui/lib';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { cn } from '@workspace/ui/lib/utils';
 import type { ReactNode } from 'react';
 

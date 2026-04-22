@@ -1,5 +1,8 @@
 import { gsap } from '../../lib/gsap/gsap';
 
+const MARKER_FILL = 'oklch(59.8% 0.225 137.8)'; // --success
+const MARKER_STROKE = 'oklch(100% 0 0)'; // --white
+
 interface PayrollCardAnimationOptions {
   card: HTMLElement;
   animationTarget: HTMLElement;
@@ -123,8 +126,8 @@ export const createPayrollCardAnimation = ({
       const startPoint = sampledPoints[0];
 
       marker.setAttribute('r', '2.5');
-      marker.setAttribute('fill', '#0f973d');
-      marker.setAttribute('stroke', '#ffffff');
+      marker.setAttribute('fill', MARKER_FILL);
+      marker.setAttribute('stroke', MARKER_STROKE);
       marker.setAttribute('stroke-width', '0.75');
       marker.setAttribute('cx', String(startPoint.x));
       marker.setAttribute('cy', String(startPoint.y));

@@ -71,7 +71,7 @@ export const NavbarMobileMenu = ({ links }: NavbarMobileMenuProps) => {
         <DrawerHeader className="shrink-0 gap-3 border-b border-slate-100 px-5 pb-5 pt-6 text-left">
           <div className="flex items-start justify-between gap-3">
             <div className="space-y-3">
-              <span className="inline-flex items-center gap-2 rounded-full bg-[#E9F1FF] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#0052CC]">
+              <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-primary-400">
                 <Icon name={`LucideSparkles`} size={12} />
                 Menu
               </span>
@@ -105,7 +105,7 @@ export const NavbarMobileMenu = ({ links }: NavbarMobileMenuProps) => {
                 key={link.name}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="group flex items-start gap-3 rounded-3xl border border-slate-200/80 bg-slate-50/80 px-4 py-4 transition-all hover:border-[#0066F3]/20 hover:bg-white hover:shadow-[0_16px_36px_-28px_rgba(0,102,243,0.45)]"
+                className="group flex items-start gap-3 rounded-3xl border border-slate-200/80 bg-slate-50/80 px-4 py-4 transition-all hover:border-primary/20 hover:bg-white hover:shadow-[0_16px_36px_-28px_rgba(0,102,243,0.45)]"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
@@ -113,7 +113,7 @@ export const NavbarMobileMenu = ({ links }: NavbarMobileMenuProps) => {
                       {link.name}
                     </span>
                     {link.badge && (
-                      <span className="rounded-full bg-[#E9F1FF] px-2.5 py-1 text-[11px] font-semibold text-[#0052CC]">
+                      <span className="rounded-full bg-primary-50 px-2.5 py-1 text-[11px] font-semibold text-primary-400">
                         {link.badge}
                       </span>
                     )}
@@ -125,7 +125,7 @@ export const NavbarMobileMenu = ({ links }: NavbarMobileMenuProps) => {
                   )}
                 </div>
 
-                <span className="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-slate-400 ring-1 ring-slate-200 transition-colors group-hover:text-[#0066F3]">
+                <span className="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-slate-400 ring-1 ring-slate-200 transition-colors group-hover:text-primary">
                   {link.hasDropdown ? (
                     <Icon name={`ChevronLeftCircle`} size={18} />
                   ) : (

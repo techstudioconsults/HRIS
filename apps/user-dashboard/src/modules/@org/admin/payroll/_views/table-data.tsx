@@ -3,7 +3,7 @@
 import { formatCurrency } from '@/lib/formatters';
 import type { IColumnDefinition, IRowAction } from '@workspace/ui/lib/table';
 import { Badge } from '@workspace/ui/components/badge';
-import { AlertModal } from '@workspace/ui/lib';
+import { AlertModal } from '@workspace/ui/lib/dialog';
 import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { AxiosError } from 'axios';

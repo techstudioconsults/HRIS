@@ -2,12 +2,9 @@
 
 import { useEmployeeService } from '@/modules/@org/admin/employee/services/use-service';
 import { useTour } from '@/modules/@org/onboarding';
-import {
-  AlertModal,
-  BreadCrumb,
-  FormField,
-  MultiSelect,
-} from '@workspace/ui/lib';
+import { AlertModal } from '@workspace/ui/lib/dialog';
+import { BreadCrumb } from '@workspace/ui/lib/breadcrumb';
+import { FormField, MultiSelect } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import { cn } from '@workspace/ui/lib/utils';
 import { AxiosError } from 'axios';

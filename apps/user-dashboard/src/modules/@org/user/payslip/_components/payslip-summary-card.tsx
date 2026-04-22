@@ -25,7 +25,9 @@ export const PayslipSummaryCard = ({ netPay }: PayslipSummaryCardProps) => {
         <Coin className="size-16 shrink-0 sm:size-20 lg:size-24" />
 
         <div className="min-w-0 space-y-1">
-          <p className="text-sm font-medium text-[#F3F2FB]">Monthly Net Pay</p>
+          <p className="text-sm font-medium text-primary-foreground/85">
+            Monthly Net Pay
+          </p>
 
           <div className="flex items-baseline gap-3 sm:gap-4">
             <h2 className="truncate text-2xl font-semibold leading-tight tracking-tight text-white sm:text-3xl">
@@ -46,7 +48,7 @@ export const PayslipSummaryCard = ({ netPay }: PayslipSummaryCardProps) => {
             </button>
           </div>
 
-          <p className="max-w-xl text-sm text-[#E8ECF2]">
+          <p className="max-w-xl text-sm text-primary-foreground/70">
             Your current take-home pay for this month.
           </p>
         </div>

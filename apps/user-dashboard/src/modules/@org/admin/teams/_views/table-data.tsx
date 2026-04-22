@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 import { useTeamShortcuts } from '../hooks/use-team-shortcuts';
 import { useTeamService } from '../services/use-service';
 import { Badge } from '@workspace/ui/components/badge';
-import { AlertModal } from '@workspace/ui/lib';
+import { AlertModal } from '@workspace/ui/lib/dialog';
 
 export const teamColumn: IColumnDefinition<Team>[] = [
   {

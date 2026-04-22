@@ -56,7 +56,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           renderWeb={({ header, children: layoutChildren }) => (
             <SidebarProvider>
               <AppSideBar />
-              <SidebarInset className="dark:bg-background bg-[#F8F8F9]">
+              <SidebarInset className="bg-muted dark:bg-background">
                 {header}
                 {layoutChildren}
               </SidebarInset>

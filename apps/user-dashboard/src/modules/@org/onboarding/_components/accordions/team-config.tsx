@@ -18,7 +18,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@workspace/ui/components/accordion';
-import { ReusableDialog } from '@workspace/ui/lib';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
 
 export const TeamConfig = () => {
   const [dialogOpen, setDialogOpen] = useState(false);

@@ -8,7 +8,8 @@ import {
 } from '@workspace/ui/components/avatar';
 import { Badge } from '@workspace/ui/components/badge';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { AlertModal, EmailTooltip, NameTooltip } from '@workspace/ui/lib';
+import { AlertModal } from '@workspace/ui/lib/dialog';
+import { EmailTooltip, NameTooltip } from '@workspace/ui/lib/tooltip';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';

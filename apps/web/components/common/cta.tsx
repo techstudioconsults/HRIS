@@ -1,6 +1,6 @@
 import { cn } from '@workspace/ui/lib/utils';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
-import { MainButton } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
 
 interface CTAProps {
   title?: string;

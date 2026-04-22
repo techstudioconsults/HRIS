@@ -1,5 +1,6 @@
 import { Input } from '@workspace/ui/components/input';
-import { MainButton, ReusableDialog } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useState } from 'react';
 

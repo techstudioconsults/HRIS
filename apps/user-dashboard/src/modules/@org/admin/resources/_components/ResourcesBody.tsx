@@ -6,7 +6,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@workspace/ui/components/tabs';
-import { ErrorEmptyState } from '@workspace/ui/lib';
+import { ErrorEmptyState } from '@workspace/ui/lib/empty-state';
 
 import { useResourceService } from '../services/use-service';
 import { FilesSkeleton } from './FilesSkeleton';

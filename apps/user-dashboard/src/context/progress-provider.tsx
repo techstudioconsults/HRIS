@@ -1,13 +1,17 @@
-"use client";
+'use client';
 
-import { ProgressProvider } from "@bprogress/next/app";
+import { ProgressProvider } from '@bprogress/next/app';
 
-export const ProgressProviders = ({ children }: { children: React.ReactNode }) => {
+export const ProgressProviders = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   return (
     <ProgressProvider
       height="4px"
       // color={`#${Math.floor(Math.random() * 16_777_215).toString(16)}`}
-      color={`#FF0000`}
+      color="var(--primary)"
       options={{ showSpinner: false }}
       shallowRouting
     >

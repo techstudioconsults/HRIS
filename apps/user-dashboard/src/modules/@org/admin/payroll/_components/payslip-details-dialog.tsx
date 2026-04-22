@@ -4,7 +4,8 @@ import { formatCurrency } from '@/lib/formatters';
 import { usePayrollService } from '@/modules/@org/admin/payroll/services/use-service';
 import type { Payslip } from '@/modules/@org/admin/payroll/types';
 import { Card, CardContent } from '@workspace/ui/components/card';
-import { Logo, ReusableDialog } from '@workspace/ui/lib';
+import { Logo } from '@workspace/ui/lib/logo';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
 
 import Loading from '../../../../../../note/loading';
 import { useTheme } from 'next-themes';
@@ -189,19 +190,19 @@ export const PayslipDetailsDialog = ({
               <Card className="border-0 shadow-none">
                 <CardContent className="space-y-4 px-5 py-4">
                   <div className="flex items-center justify-between gap-4 text-sm">
-                    <span className="text-[#6A717D]">Company Name</span>
+                    <span className="text-muted-foreground">Company Name</span>
                     <span className="text-right font-semibold text-foreground">
                       {getCompanyName(payslip)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between gap-4 text-sm">
-                    <span className="text-[#6A717D]">Employee Name</span>
+                    <span className="text-muted-foreground">Employee Name</span>
                     <span className="text-right font-semibold text-foreground">
                       {payslip.employee?.name ?? '—'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between gap-4 text-sm">
-                    <span className="text-[#6A717D]">Employee ID</span>
+                    <span className="text-muted-foreground">Employee ID</span>
                     <span className="text-right font-semibold text-foreground">
                       {payslip.employee?.id ?? '—'}
                     </span>

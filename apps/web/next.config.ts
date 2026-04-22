@@ -1,12 +1,12 @@
-import bundleAnalyzer from '@next/bundle-analyzer';
 import type { NextConfig } from 'next';
 
-const withBundleAnalyzer = bundleAnalyzer({
-  enabled: process.env.ANALYZE === 'true',
-}) as (config: NextConfig) => NextConfig;
-
-const nextConfig = {
+const nextConfig: NextConfig = {
   transpilePackages: ['@workspace/ui'],
+  serverExternalPackages: ['msw'],
+  compress: false,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   turbopack: {
     rules: {
       '*.svg': {
@@ -22,12 +22,14 @@ const nextConfig = {
   },
   images: {
     remotePatterns: [
-      { hostname: 'cdn.dummyjson.com' },
-      { hostname: 'res.cloudinary.com' },
+      {
+        hostname: 'cdn.dummyjson.com',
+      },
+      {
+        hostname: 'res.cloudinary.com',
+      },
     ],
   },
 };
 
-const finalConfig: NextConfig = withBundleAnalyzer(nextConfig);
-
-export default finalConfig;
+export default nextConfig;

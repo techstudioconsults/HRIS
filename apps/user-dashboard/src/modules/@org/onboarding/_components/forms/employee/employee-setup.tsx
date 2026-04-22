@@ -4,7 +4,7 @@
 import { getDashboardRoute } from '@/lib/routes/redirect-helpers';
 import { onboardEmployeeSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormHeader } from '@workspace/ui/lib';
+import { FormHeader } from '@workspace/ui/lib/form-header';
 import { MainButton } from '@workspace/ui/lib/button';
 import { AxiosError } from 'axios';
 import { useSession } from 'next-auth/react';

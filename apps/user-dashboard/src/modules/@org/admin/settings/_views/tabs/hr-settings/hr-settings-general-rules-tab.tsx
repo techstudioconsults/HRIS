@@ -1,6 +1,6 @@
 'use client';
 
-import { FormField, SwitchField } from '@workspace/ui/lib';
+import { FormField, SwitchField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import { AlertModal } from '@workspace/ui/lib/dialog';
 import { useState } from 'react';

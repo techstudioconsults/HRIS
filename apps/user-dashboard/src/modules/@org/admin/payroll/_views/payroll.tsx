@@ -2,14 +2,11 @@
 
 import { formatCurrency, formatDate } from '@/lib/formatters';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
-import {
-  AdvancedDataTable,
-  ComboBox,
-  DashboardHeader,
-  EmptyState,
-  GenericDropdown,
-  TableSkeleton,
-} from '@workspace/ui/lib';
+import { DashboardHeader } from '@workspace/ui/lib/dashboard';
+import { GenericDropdown } from '@workspace/ui/lib/drop-down';
+import { EmptyState } from '@workspace/ui/lib/empty-state';
+import { ComboBox } from '@workspace/ui/lib/select-dropdown/combo-box';
+import { AdvancedDataTable, TableSkeleton } from '@workspace/ui/lib/table';
 import { MainButton } from '@workspace/ui/lib/button';
 import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
@@ -648,7 +645,7 @@ export const PayrollView = () => {
             </div>
           }
           className={cn(
-            'flex flex-col col-span-2 md:col-span-1 items-center justify-center gap-4 bg-linear-to-r from-[#013E94] to-[#00132E] text-center'
+            'flex flex-col col-span-2 md:col-span-1 items-center justify-center gap-4 bg-linear-to-r from-brand-gradient-from to-brand-gradient-to text-center'
           )}
           titleColor="text-white"
         />

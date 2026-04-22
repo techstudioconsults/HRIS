@@ -2,7 +2,8 @@
 
 import { formatCurrency, formatDate } from '@/lib/formatters';
 import { Badge } from '@workspace/ui/components/badge';
-import { MainButton, ReusableDialog } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import type {
   PayslipBreakdownProps,
   PayslipDetailsModalProps,
@@ -41,7 +42,7 @@ const SummaryCard = ({ label, value, highlighted }: SummaryCardProps) => {
     >
       <p
         className={
-          highlighted ? 'text-sm text-primary' : 'text-sm text-[#878789]'
+          highlighted ? 'text-sm text-primary' : 'text-sm text-muted-foreground'
         }
       >
         {label}
@@ -93,7 +94,7 @@ export const PayslipDetailsModal = ({
                   </Badge>
                 </div>
               </div>
-              <p className="text-sm text-[#878789]">
+              <p className="text-sm text-muted-foreground">
                 Date Processed:{' '}
                 {formatDate(payslip.processedAt, {
                   day: '2-digit',

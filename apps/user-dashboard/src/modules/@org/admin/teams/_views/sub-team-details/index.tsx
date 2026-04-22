@@ -1,14 +1,11 @@
 'use client';
 
 import { Badge } from '@workspace/ui/components/badge';
-import {
-  AdvancedDataTable,
-  BreadCrumb,
-  DashboardHeader,
-  EmptyState,
-  ErrorEmptyState,
-  ReusableDialog,
-} from '@workspace/ui/lib';
+import { BreadCrumb } from '@workspace/ui/lib/breadcrumb';
+import { DashboardHeader } from '@workspace/ui/lib/dashboard';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
+import { EmptyState, ErrorEmptyState } from '@workspace/ui/lib/empty-state';
+import { AdvancedDataTable } from '@workspace/ui/lib/table';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import Image from 'next/image';

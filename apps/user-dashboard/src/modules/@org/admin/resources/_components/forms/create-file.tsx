@@ -2,7 +2,7 @@
 
 import { FileFormData, fileSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormField } from '@workspace/ui/lib';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import FileUpload from '@workspace/ui/lib/file-upload/file-upload';
 import { Icon } from '@workspace/ui/lib/icons/icon';

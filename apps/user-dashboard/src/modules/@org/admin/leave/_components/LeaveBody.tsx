@@ -1,11 +1,7 @@
 'use client';
 
-import {
-  AdvancedDataTable,
-  EmptyState,
-  ErrorEmptyState,
-  TableSkeleton,
-} from '@workspace/ui/lib';
+import { AdvancedDataTable, TableSkeleton } from '@workspace/ui/lib/table';
+import { EmptyState, ErrorEmptyState } from '@workspace/ui/lib/empty-state';
 
 import empty1 from '~/images/empty-state.svg';
 import { leaveColumns } from '../_views/table-data';

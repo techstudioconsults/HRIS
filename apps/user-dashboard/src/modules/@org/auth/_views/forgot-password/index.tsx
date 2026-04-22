@@ -2,7 +2,9 @@
 
 import { ForgotPasswordData, forgotPasswordSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { BackButton, FormField, FormHeader } from '@workspace/ui/lib';
+import { BackButton } from '@workspace/ui/lib/back-button';
+import { FormHeader } from '@workspace/ui/lib/form-header';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import { AxiosError } from 'axios';
 import Link from 'next/link';

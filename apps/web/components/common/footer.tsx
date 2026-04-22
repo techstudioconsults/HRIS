@@ -1,7 +1,7 @@
 import { Logo } from '@workspace/ui/lib/logo';
 import Link from 'next/link';
 import FooterLogo from '~/images/footer-logo.svg';
-import { MainButton } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
 import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 // import dynamic from 'next/dynamic';
 import { FooterSvgMorph } from '../micro-interactions/footer-svg-morph';
@@ -45,7 +45,7 @@ export const Footer = () => {
   ];
 
   return (
-    <footer className="bg-[#E6F0FE] pt-24 pb-0 px-6 md:px-12  relative overflow-hidden text-center md:text-left">
+    <footer className="bg-primary-50 pt-24 pb-0 px-6 md:px-12  relative overflow-hidden text-center md:text-left">
       <div
         className="max-w-7xl mx-auto flex flex-col items-center md:items-start lg:grid
       lg:grid-cols-10 gap-16 lg:gap-8 border-b border-white/10 pb-16 mb-12 relative z-10"
@@ -115,11 +115,11 @@ export const Footer = () => {
         <hr className="border-primary/50 mb-4" />
         <GradientMask
           direction={`left`}
-          className={`from-[#E6F0FE] w-[20%]!`}
+          className={`from-primary-50 w-[20%]!`}
         />
         <GradientMask
           direction={`right`}
-          className={`from-[#E6F0FE] w-[20%]!`}
+          className={`from-primary-50 w-[20%]!`}
         />
       </div>
 

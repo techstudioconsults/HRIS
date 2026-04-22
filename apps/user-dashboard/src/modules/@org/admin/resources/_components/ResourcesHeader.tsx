@@ -1,7 +1,8 @@
 'use client';
 
 import { SearchInput } from '@/modules/@org/shared/search-input';
-import { DashboardHeader, ReusableDialog } from '@workspace/ui/lib';
+import { DashboardHeader } from '@workspace/ui/lib/dashboard';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useState } from 'react';

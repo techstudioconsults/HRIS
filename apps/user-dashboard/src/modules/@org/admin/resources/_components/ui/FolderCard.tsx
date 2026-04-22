@@ -7,12 +7,9 @@ import {
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu';
 import { Separator } from '@workspace/ui/components/separator';
-import {
-  AlertModal,
-  EmptyState,
-  MainButton,
-  ReusableDialog,
-} from '@workspace/ui/lib';
+import { AlertModal, ReusableDialog } from '@workspace/ui/lib/dialog';
+import { EmptyState } from '@workspace/ui/lib/empty-state';
+import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useState } from 'react';
 

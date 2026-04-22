@@ -13,16 +13,12 @@ import {
 } from '@workspace/ui/components/avatar';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
 import { Separator } from '@workspace/ui/components/separator';
-import {
-  AdvancedDataTable,
-  AlertModal,
-  BreadCrumb,
-  DashboardHeader,
-  EmptyState,
-  ErrorEmptyState,
-  GenericDropdown,
-  ReusableDialog,
-} from '@workspace/ui/lib';
+import { BreadCrumb } from '@workspace/ui/lib/breadcrumb';
+import { DashboardHeader } from '@workspace/ui/lib/dashboard';
+import { AlertModal, ReusableDialog } from '@workspace/ui/lib/dialog';
+import { GenericDropdown } from '@workspace/ui/lib/drop-down';
+import { EmptyState, ErrorEmptyState } from '@workspace/ui/lib/empty-state';
+import { AdvancedDataTable } from '@workspace/ui/lib/table';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { AxiosError } from 'axios';

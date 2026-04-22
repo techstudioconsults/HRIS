@@ -9,11 +9,11 @@ export default function NotFound() {
       <section className="relative min-h-[500px] pt-32 pb-20 px-6 md:px-12 bg-[url('/images/hero-bg.svg')] bg-cover bg-center overflow-hidden flex items-center">
         <div className="max-w-7xl mx-auto text-center relative z-10 flex flex-col items-center gap-6 w-full">
           {/* Large 404 badge */}
-          <span className="inline-flex items-center justify-center rounded-full bg-[#0066F3]/10 text-[#0066F3] text-sm font-semibold px-5 py-2 tracking-widest uppercase">
+          <span className="inline-flex items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-semibold px-5 py-2 tracking-widest uppercase">
             Error 404
           </span>
 
-          <h1 className="text-5xl md:text-[80px] font-bold text-[#003B99] leading-none tracking-tight">
+          <h1 className="text-5xl md:text-[80px] font-bold text-primary-500 leading-none tracking-tight">
             Page Not Found
           </h1>
 
@@ -24,7 +24,7 @@ export default function NotFound() {
 
           <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
             <Button
-              className="bg-[#0066F3] hover:bg-[#0052CC] text-white px-8 h-[52px] text-base font-bold rounded-[10px] w-full sm:w-auto"
+              className="bg-primary hover:bg-primary-400 text-white px-8 h-[52px] text-base font-bold rounded-[10px] w-full sm:w-auto"
               asChild
             >
               <Link href="/">Back to Home</Link>
@@ -32,7 +32,7 @@ export default function NotFound() {
 
             <Button
               variant="outline"
-              className="border-[#0066F3] text-[#0066F3] hover:bg-[#0066F3]/5 px-8 h-[52px] text-base font-bold rounded-[10px] w-full sm:w-auto"
+              className="border-primary text-primary hover:bg-primary/5 px-8 h-[52px] text-base font-bold rounded-[10px] w-full sm:w-auto"
               asChild
             >
               <Link href="/help-center">Visit Help Center</Link>
@@ -44,7 +44,7 @@ export default function NotFound() {
       {/* Quick links section */}
       <section className="px-6 md:px-12 py-16 bg-white">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-center text-xl font-semibold text-[#232323] mb-10">
+          <h2 className="text-center text-xl font-semibold text-foreground mb-10">
             You might be looking for
           </h2>
 
@@ -54,12 +54,12 @@ export default function NotFound() {
                 key={href}
                 href={href}
                 className="group flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm
-                           hover:border-[#0066F3]/30 hover:shadow-md transition-all duration-200"
+                           hover:border-primary/30 hover:shadow-md transition-all duration-200"
               >
-                <span className="font-semibold text-[#232323] group-hover:text-[#0066F3] transition-colors">
+                <span className="font-semibold text-foreground group-hover:text-primary transition-colors">
                   {label}
                 </span>
-                <span className="text-sm text-[#6A717D] leading-relaxed">
+                <span className="text-sm text-muted-foreground leading-relaxed">
                   {description}
                 </span>
               </Link>

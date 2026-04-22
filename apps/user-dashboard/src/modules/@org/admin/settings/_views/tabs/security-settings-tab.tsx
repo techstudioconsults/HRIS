@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { FormField, SwitchField } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { AlertModal } from "@workspace/ui/lib/dialog";
-import { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormField, SwitchField } from '@workspace/ui/lib/inputs/FormFields';
+import { MainButton } from '@workspace/ui/lib/button';
+import { AlertModal } from '@workspace/ui/lib/dialog';
+import { useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 
 type SecuritySettingsFormValues = {
   oldPassword: string;
@@ -14,9 +14,9 @@ type SecuritySettingsFormValues = {
 };
 
 const DEFAULT_VALUES: SecuritySettingsFormValues = {
-  oldPassword: "",
-  newPassword: "",
-  confirmNewPassword: "",
+  oldPassword: '',
+  newPassword: '',
+  confirmNewPassword: '',
   enable2fa: true,
 };
 
@@ -39,12 +39,17 @@ export const SecuritySettingsTab = () => {
       </div>
 
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)} className="rounded-lg p-4 sm:p-8 bg-background shadow">
+        <form
+          onSubmit={methods.handleSubmit(onSubmit)}
+          className="rounded-lg p-4 sm:p-8 bg-background shadow"
+        >
           <div className="grid gap-10 lg:grid-cols-[560px_1fr]">
             {/* Left descriptors */}
             <div className="space-y-2">
               <h4 className="text-lg font-semibold">Reset Password</h4>
-              <p className="text-muted-foreground text-xs">Update your account password to keep it secure.</p>
+              <p className="text-muted-foreground text-xs">
+                Update your account password to keep it secure.
+              </p>
             </div>
 
             {/* Right form */}
@@ -81,7 +86,12 @@ export const SecuritySettingsTab = () => {
                 >
                   Cancel
                 </MainButton>
-                <MainButton size="xl" variant="primary" type="submit" className="w-full sm:w-[137px]">
+                <MainButton
+                  size="xl"
+                  variant="primary"
+                  type="submit"
+                  className="w-full sm:w-[137px]"
+                >
                   Save Changes
                 </MainButton>
               </div>

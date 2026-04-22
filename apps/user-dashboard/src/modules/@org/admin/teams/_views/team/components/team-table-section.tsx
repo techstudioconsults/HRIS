@@ -1,13 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client';
 
-import { AdvancedDataTable, EmptyState, ErrorEmptyState, FilteredEmptyState, TableSkeleton } from "@workspace/ui/lib";
-import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
 
-import empty1 from "~/images/empty-state.svg";
-import { useTeamService } from "../../../services/use-service";
-import { teamColumn } from "../../table-data";
+import empty1 from '~/images/empty-state.svg';
+import { useTeamService } from '../../../services/use-service';
+import { teamColumn } from '../../table-data';
+import {
+  EmptyState,
+  ErrorEmptyState,
+  FilteredEmptyState,
+} from '@workspace/ui/lib/empty-state';
+import { AdvancedDataTable, TableSkeleton } from '@workspace/ui/lib/table';
 
 interface TeamTableSectionProperties {
   apiFilters: any;
@@ -33,13 +38,18 @@ export const TeamTableSection = ({
   const router = useRouter();
   const { useGetAllTeams } = useTeamService();
 
-  const { data: teamData, isLoading: isLoadingTeams, isError: isErrorTeams, refetch } = useGetAllTeams(apiFilters);
+  const {
+    data: teamData,
+    isLoading: isLoadingTeams,
+    isError: isErrorTeams,
+    refetch,
+  } = useGetAllTeams(apiFilters);
 
   const handlePageChange = useCallback(
     (newPage: number) => {
       onPageChange(newPage);
     },
-    [onPageChange],
+    [onPageChange]
   );
 
   if (isLoadingTeams) {
@@ -50,18 +60,22 @@ export const TeamTableSection = ({
     return <ErrorEmptyState onRetry={refetch} />;
   }
 
-  const hasFilters = (debouncedSearch && debouncedSearch.trim()) || (status && status !== "all") || sortBy;
-  const hasTeams = Array.isArray(teamData?.data?.items) && teamData?.data?.items.length > 0;
+  const hasFilters =
+    (debouncedSearch && debouncedSearch.trim()) ||
+    (status && status !== 'all') ||
+    sortBy;
+  const hasTeams =
+    Array.isArray(teamData?.data?.items) && teamData?.data?.items.length > 0;
 
   if (!hasTeams && !hasFilters) {
     return (
       <EmptyState
         className="bg-background"
-        images={[{ src: empty1.src, alt: "No teams", width: 100, height: 100 }]}
+        images={[{ src: empty1.src, alt: 'No teams', width: 100, height: 100 }]}
         title="No team added yet."
         description="Add teams to better organize your workforce, assign leads, and manage roles across your organization."
         button={{
-          text: "Add New Team",
+          text: 'Add New Team',
           onClick: onAddTeamClick,
         }}
       />

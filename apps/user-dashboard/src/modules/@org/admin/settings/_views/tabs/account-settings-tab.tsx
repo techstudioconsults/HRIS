@@ -1,33 +1,37 @@
-"use client";
+'use client';
 
-import { industryOptions, sizeOptions } from "@/lib/tools/constants";
-import { useOnboardingService } from "@/modules/@org/onboarding/services/use-onboarding-service";
-import { CompanyProfileFormData, companyProfileSchema } from "@/schemas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Label } from "@workspace/ui/components/label";
-import { useLocationData } from "@workspace/ui/hooks";
-import { ComboBox, FormField } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { cn } from "@workspace/ui/lib/utils";
-import { useSession } from "next-auth/react";
-import { useEffect, useMemo, useRef } from "react";
-import { Controller, FormProvider, useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { industryOptions, sizeOptions } from '@/lib/tools/constants';
+import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onboarding-service';
+import { CompanyProfileFormData, companyProfileSchema } from '@/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Label } from '@workspace/ui/components/label';
+import { useLocationData } from '@workspace/ui/hooks';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
+import { MainButton } from '@workspace/ui/lib/button';
+import { cn } from '@workspace/ui/lib/utils';
+import { useSession } from 'next-auth/react';
+import { useEffect, useMemo, useRef } from 'react';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { ComboBox } from '@workspace/ui/lib/select-dropdown/combo-box';
 
 export const AccountSettingsTab = () => {
   const { data: session } = useSession();
-  const { useGetCompanyProfile, useUpdateCompanyProfile } = useOnboardingService();
+  const { useGetCompanyProfile, useUpdateCompanyProfile } =
+    useOnboardingService();
 
-  const employeeFullName = session?.user.employee.fullName || "";
+  const employeeFullName = session?.user.employee.fullName || '';
   const [adminFirstName, adminLastName] = useMemo(() => {
     const parts = employeeFullName.trim().split(/\s+/).filter(Boolean);
-    if (parts.length === 0) return ["-", "-"] as const;
+    if (parts.length === 0) return ['-', '-'] as const;
     const [first, ...rest] = parts;
-    return [first || "-", rest.join(" ") || "-"] as const;
+    return [first || '-', rest.join(' ') || '-'] as const;
   }, [employeeFullName]);
 
-  const { data: companyProfile, isPending: isLoadingCompanyProfile } = useGetCompanyProfile();
-  const { mutateAsync: updateCompanyProfile, isPending: isSaving } = useUpdateCompanyProfile();
+  const { data: companyProfile, isPending: isLoadingCompanyProfile } =
+    useGetCompanyProfile();
+  const { mutateAsync: updateCompanyProfile, isPending: isSaving } =
+    useUpdateCompanyProfile();
 
   const {
     countries,
@@ -47,17 +51,17 @@ export const AccountSettingsTab = () => {
   const methods = useForm<CompanyProfileFormData>({
     resolver: zodResolver(companyProfileSchema),
     defaultValues: {
-      name: "",
-      industry: "",
-      size: "",
-      addressLine1: "",
-      addressLine2: ".",
-      city: "",
-      state: "",
-      country: "",
-      postcode: "",
+      name: '',
+      industry: '',
+      size: '',
+      addressLine1: '',
+      addressLine2: '.',
+      city: '',
+      state: '',
+      country: '',
+      postcode: '',
     },
-    mode: "onChange",
+    mode: 'onChange',
   });
 
   const {
@@ -67,8 +71,8 @@ export const AccountSettingsTab = () => {
     watch,
   } = methods;
 
-  const countryValue = watch("country");
-  const stateValue = watch("state");
+  const countryValue = watch('country');
+  const stateValue = watch('state');
 
   useEffect(() => {
     if (countryValue !== selectedCountry) {
@@ -86,15 +90,15 @@ export const AccountSettingsTab = () => {
     if (!companyProfile) return null;
 
     return {
-      name: companyProfile?.name || "",
-      industry: companyProfile?.industry || "",
-      size: companyProfile?.size || "",
-      addressLine1: companyProfile?.address?.addressLine1 || "",
-      addressLine2: companyProfile?.address?.addressLine2 || ".",
-      city: companyProfile?.address?.city || "",
-      state: companyProfile?.address?.state || "",
-      country: companyProfile?.address?.country || "",
-      postcode: companyProfile?.address?.postcode || "",
+      name: companyProfile?.name || '',
+      industry: companyProfile?.industry || '',
+      size: companyProfile?.size || '',
+      addressLine1: companyProfile?.address?.addressLine1 || '',
+      addressLine2: companyProfile?.address?.addressLine2 || '.',
+      city: companyProfile?.address?.city || '',
+      state: companyProfile?.address?.state || '',
+      country: companyProfile?.address?.country || '',
+      postcode: companyProfile?.address?.postcode || '',
     };
   }, [companyProfile]);
 
@@ -109,13 +113,13 @@ export const AccountSettingsTab = () => {
   const onSubmit = async (data: CompanyProfileFormData) => {
     await updateCompanyProfile(data, {
       onSuccess: () => {
-        toast.success("Settings updated", {
-          description: "Account settings saved successfully.",
+        toast.success('Settings updated', {
+          description: 'Account settings saved successfully.',
         });
       },
       onError: () => {
-        toast.error("Failed to update settings", {
-          description: "Please try again.",
+        toast.error('Failed to update settings', {
+          description: 'Please try again.',
         });
       },
     });
@@ -125,7 +129,9 @@ export const AccountSettingsTab = () => {
     <div className="space-y-6">
       <div>
         <h2 className="text-base font-semibold">Account Settings</h2>
-        <p className="text-muted-foreground mt-1 text-sm">Manage your company profile and preferences</p>
+        <p className="text-muted-foreground mt-1 text-sm">
+          Manage your company profile and preferences
+        </p>
       </div>
 
       <div className="bg-background shadow rounded-lg border border-none p-4 sm:p-8">
@@ -139,21 +145,28 @@ export const AccountSettingsTab = () => {
                   name="name"
                   label="Company Name"
                   type="text"
-                  placeholder={isLoadingCompanyProfile ? "Loading..." : "Enter company name"}
+                  placeholder={
+                    isLoadingCompanyProfile
+                      ? 'Loading...'
+                      : 'Enter company name'
+                  }
                   className="border-border !h-14 w-full"
                   disabled={isDisabled}
                   required
                 />
 
                 <div className="space-y-2">
-                  <Label className="text-[16px] font-medium">Company Domain</Label>
+                  <Label className="text-[16px] font-medium">
+                    Company Domain
+                  </Label>
                   <div
                     className={cn(
-                      "border-border bg-muted flex h-14 w-full items-center rounded-md border px-4 text-sm",
-                      "text-muted-foreground",
+                      'border-border bg-muted flex h-14 w-full items-center rounded-md border px-4 text-sm',
+                      'text-muted-foreground'
                     )}
                   >
-                    {companyProfile?.domain || (isLoadingCompanyProfile ? "Loading..." : "-")}
+                    {companyProfile?.domain ||
+                      (isLoadingCompanyProfile ? 'Loading...' : '-')}
                   </div>
                 </div>
 
@@ -161,7 +174,9 @@ export const AccountSettingsTab = () => {
                   name="industry"
                   label="Industry"
                   type="select"
-                  placeholder={isLoadingCompanyProfile ? "Loading..." : "Select industry"}
+                  placeholder={
+                    isLoadingCompanyProfile ? 'Loading...' : 'Select industry'
+                  }
                   className="bg-background border-border !h-14 w-full"
                   options={industryOptions}
                   disabled={isDisabled}
@@ -172,7 +187,11 @@ export const AccountSettingsTab = () => {
                   name="size"
                   label="Company Size"
                   type="select"
-                  placeholder={isLoadingCompanyProfile ? "Loading..." : "Select company size"}
+                  placeholder={
+                    isLoadingCompanyProfile
+                      ? 'Loading...'
+                      : 'Select company size'
+                  }
                   className="bg-background border-border !h-14 w-full"
                   options={sizeOptions}
                   disabled={isDisabled}
@@ -183,7 +202,9 @@ export const AccountSettingsTab = () => {
 
             {/* Primary Admin Information */}
             <section className="space-y-4">
-              <h3 className="text-base font-semibold">Primary Admin Information</h3>
+              <h3 className="text-base font-semibold">
+                Primary Admin Information
+              </h3>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
                 <div className="space-y-2">
                   <Label className="text-[16px] font-medium">First Name</Label>
@@ -200,13 +221,13 @@ export const AccountSettingsTab = () => {
                 <div className="space-y-2">
                   <Label className="text-[16px] font-medium">Email</Label>
                   <div className="border-border bg-muted h-14 w-full rounded-md border px-4 py-4 text-sm text-gray-700">
-                    {session?.user.employee.email || "-"}
+                    {session?.user.employee.email || '-'}
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[16px] font-medium">Role</Label>
                   <div className="border-border bg-muted h-14 w-full rounded-md border px-4 py-4 text-sm text-gray-700">
-                    {session?.user.employee.role?.name || "-"}
+                    {session?.user.employee.role?.name || '-'}
                   </div>
                 </div>
               </div>
@@ -220,7 +241,9 @@ export const AccountSettingsTab = () => {
                   name="addressLine1"
                   label="Address Line 1"
                   type="text"
-                  placeholder={isLoadingCompanyProfile ? "Loading..." : "Enter address"}
+                  placeholder={
+                    isLoadingCompanyProfile ? 'Loading...' : 'Enter address'
+                  }
                   className="border-border !h-14 w-full"
                   disabled={isDisabled}
                   required
@@ -230,7 +253,11 @@ export const AccountSettingsTab = () => {
                   name="addressLine2"
                   label="Address Line 2"
                   type="text"
-                  placeholder={isLoadingCompanyProfile ? "Loading..." : "Enter address (optional)"}
+                  placeholder={
+                    isLoadingCompanyProfile
+                      ? 'Loading...'
+                      : 'Enter address (optional)'
+                  }
                   className="border-border !h-14 w-full"
                   disabled={isDisabled}
                 />
@@ -247,9 +274,16 @@ export const AccountSettingsTab = () => {
                         options={countries}
                         value={field.value}
                         onValueChange={field.onChange}
-                        placeholder={countriesLoading || isLoadingCompanyProfile ? "Loading..." : "Select your country"}
+                        placeholder={
+                          countriesLoading || isLoadingCompanyProfile
+                            ? 'Loading...'
+                            : 'Select your country'
+                        }
                         disabled={isDisabled || countriesLoading}
-                        className={cn("h-14", fieldState.error && "border-destructive")}
+                        className={cn(
+                          'h-14',
+                          fieldState.error && 'border-destructive'
+                        )}
                       />
                     )}
                   />
@@ -269,13 +303,16 @@ export const AccountSettingsTab = () => {
                         onValueChange={field.onChange}
                         placeholder={
                           statesLoading || isLoadingCompanyProfile
-                            ? "Loading..."
+                            ? 'Loading...'
                             : countryValue
-                              ? "Select state"
-                              : "Select a country first"
+                              ? 'Select state'
+                              : 'Select a country first'
                         }
                         disabled={isDisabled || statesLoading || !countryValue}
-                        className={cn("h-14", fieldState.error && "border-destructive")}
+                        className={cn(
+                          'h-14',
+                          fieldState.error && 'border-destructive'
+                        )}
                       />
                     )}
                   />
@@ -295,13 +332,16 @@ export const AccountSettingsTab = () => {
                         onValueChange={field.onChange}
                         placeholder={
                           citiesLoading || isLoadingCompanyProfile
-                            ? "Loading..."
+                            ? 'Loading...'
                             : countryValue
-                              ? "Select city"
-                              : "Select a country first"
+                              ? 'Select city'
+                              : 'Select a country first'
                         }
                         disabled={isDisabled || citiesLoading || !countryValue}
-                        className={cn("h-14", fieldState.error && "border-destructive")}
+                        className={cn(
+                          'h-14',
+                          fieldState.error && 'border-destructive'
+                        )}
                       />
                     )}
                   />
@@ -311,7 +351,9 @@ export const AccountSettingsTab = () => {
                   name="postcode"
                   label="Postal Code"
                   type="text"
-                  placeholder={isLoadingCompanyProfile ? "Loading..." : "Enter postal code"}
+                  placeholder={
+                    isLoadingCompanyProfile ? 'Loading...' : 'Enter postal code'
+                  }
                   className="border-border !h-14 w-full"
                   disabled={isDisabled}
                   required
@@ -326,7 +368,8 @@ export const AccountSettingsTab = () => {
                 className="text-destructive border-destructive w-full sm:w-[200px]"
                 isDisabled={isSaving}
                 onClick={() => {
-                  if (lastLoadedValuesReference.current) reset(lastLoadedValuesReference.current);
+                  if (lastLoadedValuesReference.current)
+                    reset(lastLoadedValuesReference.current);
                 }}
               >
                 Cancel

@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { FolderFormData, folderSchema } from "@/schemas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormField } from "@workspace/ui/lib";
-import { MainButton } from "@workspace/ui/lib/button";
-import { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { FolderFormData, folderSchema } from '@/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
+import { MainButton } from '@workspace/ui/lib/button';
+import { useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
-import { useResourceService } from "../../services/use-service";
-import FileUpload from "@workspace/ui/lib/file-upload/file-upload";
+import { useResourceService } from '../../services/use-service';
+import FileUpload from '@workspace/ui/lib/file-upload/file-upload';
 
 interface CreateFolderFormProperties {
   onClose?: () => void;
@@ -22,7 +22,7 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
   const methods = useForm<FolderFormData>({
     resolver: zodResolver(folderSchema),
     defaultValues: {
-      name: "",
+      name: '',
       file: [],
     },
   });
@@ -38,7 +38,7 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
 
   const handleFilesSelected = (files: File[]) => {
     setSelectedFiles(files);
-    setValue("file", files);
+    setValue('file', files);
   };
 
   const handleCancel = () => {
@@ -58,13 +58,16 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
           toast.success(`Folder "${data.name}" has been created.`);
           handleCancel();
         },
-      },
+      }
     );
   };
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} className="grid w-full gap-6 py-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="grid w-full gap-6 py-4"
+      >
         <div className="grid w-full gap-2">
           <FormField
             name="name"
@@ -74,7 +77,9 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
             type="text"
             required
           />
-          {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
+          {errors.name && (
+            <p className="text-sm text-red-600">{errors.name.message}</p>
+          )}
         </div>
 
         <div className="flex w-full flex-col gap-4 pt-4">
@@ -86,7 +91,8 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
           />
           {selectedFiles.length > 0 && (
             <p className="text-sm text-gray-600">
-              {selectedFiles.length} file{selectedFiles.length > 1 ? "s" : ""} selected
+              {selectedFiles.length} file{selectedFiles.length > 1 ? 's' : ''}{' '}
+              selected
             </p>
           )}
         </div>
@@ -101,8 +107,13 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
           >
             Cancel
           </MainButton>
-          <MainButton className="w-full" variant="primary" type="submit" isDisabled={isSubmitting || isPending}>
-            {isSubmitting || isPending ? "Creating..." : "Create Folder"}
+          <MainButton
+            className="w-full"
+            variant="primary"
+            type="submit"
+            isDisabled={isSubmitting || isPending}
+          >
+            {isSubmitting || isPending ? 'Creating...' : 'Create Folder'}
           </MainButton>
         </div>
       </form>

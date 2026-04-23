@@ -44,16 +44,16 @@ http.interceptors.request.use(
 );
 
 // Add response interceptor to handle authorization failures.
-http.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401) {
-      tokenManager.invalidate();
-      redirectToLogin();
-    }
-
-    return Promise.reject(error);
-  }
-);
+// http.interceptors.response.use(
+//   (response) => response,
+//   async (error) => {
+//     if (error.response?.status === 401) {
+//       tokenManager.invalidate();
+//       redirectToLogin();
+//     }
+//
+//     return Promise.reject(error);
+//   }
+// );
 
 export default http;

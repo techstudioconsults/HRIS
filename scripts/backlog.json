@@ -1,0 +1,55 @@
+{
+  "labels": [
+    {
+      "name": "feat",
+      "color": "0075ca",
+      "description": "New feature or request"
+    },
+    { "name": "bug", "color": "d73a4a", "description": "Something is broken" },
+    {
+      "name": "chore",
+      "color": "e4e669",
+      "description": "Maintenance / housekeeping"
+    },
+    { "name": "docs", "color": "0052cc", "description": "Documentation only" },
+    { "name": "test", "color": "bfd4f2", "description": "Test coverage" },
+    {
+      "name": "security",
+      "color": "e11d48",
+      "description": "Security concern or hardening"
+    },
+    {
+      "name": "perf",
+      "color": "16a34a",
+      "description": "Performance improvement"
+    },
+    { "name": "ui", "color": "a855f7", "description": "UI / frontend change" },
+    { "name": "api", "color": "f97316", "description": "API / backend change" },
+    {
+      "name": "blocked",
+      "color": "6b7280",
+      "description": "Blocked by another issue or dependency"
+    }
+  ],
+  "milestones": [
+    {
+      "title": "Sprint 1 — Foundation",
+      "description": "Core auth, onboarding, and style system hardening",
+      "due_on": "2026-05-09T00:00:00Z"
+    },
+    {
+      "title": "Sprint 2 — HR Core",
+      "description": "Leave management, payslip, and employee profile features",
+      "due_on": "2026-05-23T00:00:00Z"
+    }
+  ],
+  "issues": [
+    {
+      "title": "chore: Verify zero TypeScript errors after UI import refactor",
+      "body": "## Context\nThe root barrel `packages/ui/src/lib/index.ts` was removed and all ~82 import paths were migrated to per-subfolder paths.\n\n## Task\nRun `pnpm typecheck` from the monorepo root and confirm zero errors are reported across all packages.\n\n## Acceptance Criteria\n- [ ] `pnpm typecheck` exits with code 0\n- [ ] No `Module not found` or `Cannot find module` errors for `@workspace/ui/*` paths\n\n## Notes\nIf errors remain, check that `packages/ui/src/lib/<subfolder>/index.ts` barrels exist for all exported components.",
+      "labels": ["chore", "ui"],
+      "milestone": "Sprint 1 — Foundation",
+      "assignees": []
+    }
+  ]
+}

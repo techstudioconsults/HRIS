@@ -1,5 +1,25 @@
 /* Base Typography and Element Styles */
 
+/*
+ * Density scaling via root font-size.
+ * All rem values — Tailwind utilities, --text-* tokens, spacing — scale automatically.
+ *
+ * Mobile default  (< 640px)  : 16px  — comfortable touch targets, full scale
+ * sm / md         (640–1023px): 16px  — tablets still benefit from full scale
+ * lg              (1024px+)   : 14px  — laptop density (~0.875× scale)
+ * xl              (1280px+)   : 15px  — standard desktop (~0.9375× scale)
+ * 2xl             (1536px+)   : 16px  — large display, restore full scale
+ */
+@media (min-width: 1024px) {
+    html { font-size: 14px; }
+}
+@media (min-width: 1280px) {
+    html { font-size: 12px; }
+}
+@media (min-width: 1536px) {
+    html { font-size: 16px; }
+}
+
 @layer base {
     * {
         @apply border-border outline-ring/50;
@@ -118,4 +138,5 @@
     .leading-loose {
         line-height: var(--leading-loose);
     }
+
 }

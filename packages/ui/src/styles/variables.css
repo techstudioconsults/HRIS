@@ -128,20 +128,25 @@
     --outline-hover: oklch(0.85 0 0);
     --outline-foreground: oklch(0.45 0 0);
 
-    /* Typography */
-    --text-xs: clamp(0.7rem, 0.85vw + 0.4rem, 0.8rem);
-    --text-sm: clamp(0.8rem, 0.9vw + 0.5rem, 0.9rem);
-    --text-base: clamp(1rem, 1vw + 0.6rem, 1.1rem);
-    --text-lg: clamp(1.125rem, 1.1vw + 0.7rem, 1.25rem);
-    --text-xl: clamp(1.25rem, 1.2vw + 0.8rem, 1.5rem);
-    --text-2xl: clamp(1.5rem, 1.4vw + 0.9rem, 1.875rem);
-    --text-3xl: clamp(1.875rem, 1.8vw + 1rem, 2.25rem);
-    --text-4xl: clamp(2.25rem, 2.2vw + 1.1rem, 3rem);
-    --text-5xl: clamp(3rem, 2.8vw + 1.2rem, 3.75rem);
-    --text-6xl: clamp(3.75rem, 3.5vw + 1.3rem, 4.5rem);
-    --text-7xl: clamp(4.5rem, 4.2vw + 1.4rem, 5.25rem);
-    --text-8xl: clamp(5.25rem, 5vw + 1.5rem, 6rem);
-    --text-9xl: clamp(6rem, 6vw + 1.6rem, 7rem);
+    /* Typography — pure rem so html font-size density scaling applies uniformly.
+     * At mobile (16px root): values match standard Tailwind defaults.
+     * At lg (14px root):     scale is ×0.875 — denser on laptops.
+     * At xl (15px root):     scale is ×0.9375 — comfortable on desktops.
+     * At 2xl (16px root):    restored to full scale on large displays.
+     */
+    --text-xs:   0.75rem;   /* 12px → 10.5px → 11.25px */
+    --text-sm:   0.875rem;  /* 14px → 12.25px → 13.125px */
+    --text-base: 1rem;      /* 16px → 14px → 15px */
+    --text-lg:   1.125rem;  /* 18px → 15.75px → 16.875px */
+    --text-xl:   1.25rem;   /* 20px → 17.5px → 18.75px */
+    --text-2xl:  1.5rem;    /* 24px → 21px → 22.5px */
+    --text-3xl:  1.875rem;  /* 30px → 26.25px → 28.125px */
+    --text-4xl:  2.25rem;   /* 36px → 31.5px → 33.75px */
+    --text-5xl:  3rem;      /* 48px → 42px → 45px */
+    --text-6xl:  3.75rem;   /* 60px → 52.5px → 56.25px */
+    --text-7xl:  4.5rem;    /* 72px → 63px → 67.5px */
+    --text-8xl:  6rem;      /* 96px → 84px → 90px */
+    --text-9xl:  8rem;      /* 128px → 112px → 120px */
 
     /* Line heights */
     --leading-none: 1;

@@ -164,14 +164,14 @@ export async function proxy(request: NextRequest) {
       }
 
       if (!isOwnerWithAdminPermission(userRole, userPermissions)) {
-        // Redirect to login page if not owner with admin permission
-        const loginUrl = new URL(`/login`, request.url);
-        // Preserve original query parameters
-        if (request.nextUrl.search) {
-          loginUrl.search +=
-            (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
-        }
-        return NextResponse.redirect(loginUrl);
+        // User is authenticated but lacks owner+admin — send to their dashboard.
+        // Redirecting to /login would loop: the proxy's auth-page guard would
+        // immediately bounce an authenticated user back to the dashboard.
+        const dashboardUrl = new URL(
+          getDashboardRoute(userPermissions),
+          request.url
+        );
+        return NextResponse.redirect(dashboardUrl);
       }
 
       return NextResponse.next();
@@ -197,14 +197,14 @@ export async function proxy(request: NextRequest) {
       );
 
       if (!permissionCheck.hasAccess) {
-        // Redirect to login page if missing required permissions
-        const loginUrl = new URL(`/login`, request.url);
-        // Preserve original query parameters
-        if (request.nextUrl.search) {
-          loginUrl.search +=
-            (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
-        }
-        return NextResponse.redirect(loginUrl);
+        // User is authenticated but lacks module permissions — send to their
+        // dashboard. Redirecting to /login would loop for the same reason as
+        // the OWNER_ONLY case above.
+        const dashboardUrl = new URL(
+          getDashboardRoute(userPermissions),
+          request.url
+        );
+        return NextResponse.redirect(dashboardUrl);
       }
 
       return NextResponse.next();

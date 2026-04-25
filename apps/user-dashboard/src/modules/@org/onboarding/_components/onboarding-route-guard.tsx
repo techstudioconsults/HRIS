@@ -1,13 +1,11 @@
 'use client';
 
-import { getDashboardRoute } from '@/lib/routes/redirect-helpers';
 import { ROLES } from '@/lib/auth-types';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { PropsWithChildren, useEffect, useMemo } from 'react';
+import { PropsWithChildren, useMemo } from 'react';
 
 import { useOnboardingService } from '../services/use-onboarding-service';
-import { isOnboardingSetupComplete } from '../services/service';
 
 export const OnboardingRouteGuard = ({ children }: PropsWithChildren) => {
   const router = useRouter();
@@ -27,37 +25,37 @@ export const OnboardingRouteGuard = ({ children }: PropsWithChildren) => {
       enabled: status === 'authenticated' && isOwner && Boolean(employeeId),
     });
 
-  useEffect(() => {
-    if (status !== 'authenticated') {
-      return;
-    }
-
-    if (!isOwner) {
-      router.replace(getDashboardRoute(permissions));
-      return;
-    }
-
-    if (!employeeId || isSetupLoading) {
-      return;
-    }
-
-    if (isOnboardingSetupComplete(setupStatusResponse?.data)) {
-      router.replace(getDashboardRoute(permissions));
-    }
-  }, [
-    employeeId,
-    isSetupLoading,
-    isOwner,
-    permissions,
-    router,
-    setupStatusResponse?.data,
-    status,
-  ]);
-
-  // Avoid onboarding content flashes while redirecting or checking owner setup status.
-  if (status === 'authenticated' && (!isOwner || isSetupLoading)) {
-    return null;
-  }
+  // useEffect(() => {
+  //   if (status !== 'authenticated') {
+  //     return;
+  //   }
+  //
+  //   if (!isOwner) {
+  //     router.replace(getDashboardRoute(permissions));
+  //     return;
+  //   }
+  //
+  //   if (!employeeId || isSetupLoading) {
+  //     return;
+  //   }
+  //
+  //   if (isOnboardingSetupComplete(setupStatusResponse?.data)) {
+  //     router.replace(getDashboardRoute(permissions));
+  //   }
+  // }, [
+  //   employeeId,
+  //   isSetupLoading,
+  //   isOwner,
+  //   permissions,
+  //   router,
+  //   setupStatusResponse?.data,
+  //   status,
+  // ]);
+  //
+  // // Avoid onboarding content flashes while redirecting or checking owner setup status.
+  // if (status === 'authenticated' && (!isOwner || isSetupLoading)) {
+  //   return null;
+  // }
 
   return <>{children}</>;
 };

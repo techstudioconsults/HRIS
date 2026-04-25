@@ -68,7 +68,7 @@ export class LeaveService {
    */
   async getLeaveRequests(filters: Filters) {
     const response = await this.http.get<PaginatedApiResponse<LeaveRequest>>(
-      '/leave-request',
+      '/leave-requests',
       {
         ...filters,
       }
@@ -80,7 +80,7 @@ export class LeaveService {
 
   async approveLeaveRequest(id: string) {
     const response = await this.http.patch<{ data: LeaveRequest }>(
-      `/leave-request/${id}/approve`
+      `/leave-requests/${id}/approve`
     );
     if (response?.status === 200) {
       return response.data.data;
@@ -89,7 +89,7 @@ export class LeaveService {
 
   async rejectLeaveRequest(id: string, data: RejectLeaveRequestPayload) {
     const response = await this.http.patch<{ data: LeaveRequest }>(
-      `/leave-request/${id}/reject`,
+      `/leave-requests/${id}/reject`,
       data
     );
     if (response?.status === 200) {

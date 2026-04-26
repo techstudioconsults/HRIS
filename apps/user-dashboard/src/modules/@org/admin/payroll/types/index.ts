@@ -241,20 +241,6 @@ export interface SchedulePayrollDrawerProperties {
   canRunNow?: boolean;
 }
 
-/**
- * Shared filter shape used by both the payroll filter form and the
- * add-employee drawer. If shapes ever diverge, split into distinct types.
- */
-export interface PayrollFilterValues {
-  search?: string;
-  teamId?: string;
-  roleId?: string;
-  status?: string;
-  sortBy?: string;
-  limit?: string;
-  page?: string;
-}
-
 /** Local helpers for the filter-form teams prop */
 export interface PayrollFilterRole {
   id: string;

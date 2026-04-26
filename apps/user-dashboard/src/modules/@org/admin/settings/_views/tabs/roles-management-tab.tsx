@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useRolesManagementSearchParameters } from '@/lib/nuqs/use-roles-management-search-parameters';
@@ -204,7 +203,7 @@ export const RolesManagementTab = () => {
   const closeRoleEditor = () => setRoleEditor({ open: false });
 
   const handleFilterChange = useCallback(
-    (newFilters: any) => {
+    (newFilters: Filters) => {
       // Re-use the Teams FilterForm by mapping fields:
       // status => teamId (Department)
       // sortBy => sortBy
@@ -289,7 +288,7 @@ export const RolesManagementTab = () => {
     const permissions = Array.isArray(data.permissions) ? data.permissions : [];
 
     if (roleEditor.open && roleEditor.mode === 'edit' && roleEditor.role?.id) {
-      // Optimistically update the table immediately on submit (no refresh needed).
+      // Optimistically update the table immediately on submitting (no refresh needed).
       const optimisticPatch = {
         teamId: selectedTeamId,
         roleId: roleEditor.role.id,
@@ -416,11 +415,11 @@ export const RolesManagementTab = () => {
                     search: search || undefined,
                     status: effectiveTeamId || undefined,
                     sortBy: sortBy || undefined,
-                    limit: limit ? String(limit) : undefined,
+                    limit: limit ? limit : undefined,
                     page: pageSafe ? String(pageSafe) : undefined,
                   }}
                   onFilterChange={handleFilterChange}
-                  // Roles tab doesn't need the teams status filter values; we map it to Department.
+                  // Role tab doesn't need the team status filter values; we map it to Department.
                   showStatus
                   showSortBy
                   showLimit

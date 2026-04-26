@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
@@ -6,19 +5,16 @@ import { useEffect, useRef } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
 
-import type { FilterValues } from '../../types';
-
 export const FilterForm = ({
   initialFilters,
   onFilterChange,
   teams = [],
 }: {
-  initialFilters: FilterValues;
-  // @ts-ignore
-  onFilterChange: (filters: FilterValues) => void;
+  initialFilters: Filters;
+  onFilterChange: (filters: Filters) => void;
   teams: Team[];
 }) => {
-  const methods = useForm<FilterValues>({
+  const methods = useForm<Filters>({
     defaultValues: initialFilters,
   });
   const watchedFilters = useWatch({ control: methods.control });
@@ -30,8 +26,8 @@ export const FilterForm = ({
 
   // Get roles for the selected team
   const selectedTeamId = useWatch({ control: methods.control, name: 'teamId' });
-  const roles: any =
-    teams.find((team) => team.id === selectedTeamId)?.roles || [];
+  const roles: Role[] =
+    teams.find((team) => team.id === selectedTeamId)?.roles ?? [];
 
   // Sync form with parent's filter state when it changes (e.g., on reset)
   useEffect(() => {
@@ -48,10 +44,10 @@ export const FilterForm = ({
       return; // avoid duplicate refresh after immediate change
     }
     // Normalize: drop keys with undefined, empty string, or sentinel 'all'
-    const normalized: FilterValues = {};
+    const normalized: Filters = {};
     for (const [key, value] of Object.entries(debouncedFilters ?? {})) {
       if (value === undefined || value === '' || value === 'all') continue;
-      (normalized as any)[key] = value;
+      (normalized as Record<string, unknown>)[key] = value;
     }
 
     const serializedFilters = JSON.stringify(normalized);
@@ -66,7 +62,7 @@ export const FilterForm = ({
     // If "All Departments" selected, reset to initial state and omit teamId entirely
     if (isAll) {
       skipNextDebouncedEffect.current = true;
-      const resetFilters: FilterValues = {
+      const resetFilters: Filters = {
         ...initialFilters,
         teamId: undefined,
         roleId: undefined,
@@ -75,7 +71,7 @@ export const FilterForm = ({
       methods.reset(resetFilters);
       const nextFilters = { ...resetFilters } as Record<string, unknown>;
       delete nextFilters.teamId; // omit teamId entirely
-      const normalizedNextFilters = nextFilters as FilterValues;
+      const normalizedNextFilters = nextFilters as Filters;
       lastEmittedFiltersRef.current = JSON.stringify(normalizedNextFilters);
       onFilterChangeRef.current(normalizedNextFilters);
       return;
@@ -86,7 +82,7 @@ export const FilterForm = ({
     methods.setValue('page', '1');
   };
 
-  const handleFilterChange = (name: keyof FilterValues, value: string) => {
+  const handleFilterChange = (name: keyof Filters, value: string) => {
     const actualValue = value === 'all' ? undefined : value;
     methods.setValue(name, actualValue);
     methods.setValue('page', '1'); // Reset to first page on filter change

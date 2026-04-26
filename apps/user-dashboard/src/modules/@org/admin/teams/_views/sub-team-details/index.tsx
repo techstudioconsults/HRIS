@@ -126,7 +126,10 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
   }, [employeesResp]);
 
   const members: Employee[] = useMemo(
-    () => allEmployees.filter((employee) => employee?.team?.id === teamId),
+    () =>
+      allEmployees.filter(
+        (employee) => employee?.employmentDetails?.team?.id === teamId
+      ),
     [allEmployees, teamId]
   );
 
@@ -173,7 +176,9 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
         header: 'Role',
         accessorKey: 'role',
         render: (_, employee: Employee) => (
-          <span className="text-sm">{employee?.role?.name || 'N/A'}</span>
+          <span className="text-sm">
+            {employee?.employmentDetails?.role?.name || 'N/A'}
+          </span>
         ),
       },
       {
@@ -181,7 +186,7 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
         accessorKey: 'workMode',
         render: (_, employee: Employee) => (
           <span className="text-sm capitalize">
-            {employee?.workMode || 'N/A'}
+            {employee?.employmentDetails?.workMode || 'N/A'}
           </span>
         ),
       },

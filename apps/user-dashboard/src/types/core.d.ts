@@ -1,6 +1,7 @@
 /**
  * Core types and utilities for the HRIS application
  */
+import React from 'react';
 
 declare global {
   // ============================================================================
@@ -83,7 +84,7 @@ declare global {
 
   /** Generic filters interface */
   interface Filters {
-    page?: number;
+    page?: number | string;
     limit?: number;
     search?: string;
     status?: string;
@@ -97,6 +98,11 @@ declare global {
     employeeId?: string;
     payProfileId?: string;
     permission?: string;
+  }
+
+  interface Timestamp {
+    createdAt: string;
+    updatedAt: string;
   }
 }
 

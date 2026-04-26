@@ -18,13 +18,6 @@ import { useEmployeeService } from '../../../services/use-service';
 import type { EmployeeHeaderSectionProperties } from '../../../types';
 
 export const EmployeeHeaderSection = ({
-  search,
-  teamId,
-  roleId,
-  status,
-  sortBy,
-  limit,
-  page,
   apiFilters,
   onSearchChange,
   onFilterChange,
@@ -124,13 +117,13 @@ export const EmployeeHeaderSection = ({
               <section className="min-w-screen sm:min-w-sm">
                 <FilterForm
                   initialFilters={{
-                    search: search || undefined,
-                    teamId: teamId || undefined,
-                    roleId: roleId || undefined,
-                    status: status || undefined,
-                    sortBy: sortBy || undefined,
-                    limit: limit ? String(limit) : undefined,
-                    page: page ? String(page) : undefined,
+                    search: apiFilters.search || undefined,
+                    teamId: apiFilters.teamId || undefined,
+                    roleId: apiFilters.roleId || undefined,
+                    status: apiFilters.status || undefined,
+                    sortBy: apiFilters.sortBy || undefined,
+                    limit: apiFilters.limit ? apiFilters.limit : undefined,
+                    page: apiFilters.page ? apiFilters.page : undefined,
                   }}
                   onFilterChange={handleFilterChange}
                   teams={teams}

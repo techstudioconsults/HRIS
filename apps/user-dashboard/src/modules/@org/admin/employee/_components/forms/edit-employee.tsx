@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { PhoneInput } from '@/components/shared/phone-input';
@@ -81,18 +80,21 @@ export const EditEmployeeForm = () => {
 
     // Ensure all required enum fields have valid values
     const gender = employee.gender ?? 'male';
-    const employmentType = employee.employmentType || 'full time';
-    const workMode: 'remote' | 'onsite' | 'hybrid' =
-      (employee.workMode as 'remote' | 'onsite' | 'hybrid') || 'remote';
+    const employmentType =
+      employee.employmentDetails.employmentType || 'full time';
+    const workMode: 'remote' | 'onsite' | 'hybrid' = (employee.employmentDetails
+      .workMode ?? 'remote') as 'remote' | 'onsite' | 'hybrid';
 
     const teamId =
-      employee.team?.id !== undefined && employee.team?.id !== null
-        ? String(employee.team.id)
+      employee.employmentDetails.team?.id !== undefined &&
+      employee.employmentDetails.team?.id !== null
+        ? String(employee.employmentDetails.team.id)
         : '';
 
     const roleId =
-      employee.role?.id !== undefined && employee.role?.id !== null
-        ? String(employee.role.id)
+      employee.employmentDetails.role?.id !== undefined &&
+      employee.employmentDetails.role?.id !== null
+        ? String(employee.employmentDetails.role.id)
         : '';
 
     // Normalize phone number - remove non-digit characters and format for E.164
@@ -114,19 +116,18 @@ export const EditEmployeeForm = () => {
       phoneNumber: normalizePhoneNumber(employee.phoneNumber),
       dateOfBirth: employee.dateOfBirth?.split('T')[0] || '',
       gender: gender,
-      startDate: employee.startDate?.split('T')[0] || '',
+      startDate: employee.employmentDetails.startDate?.split('T')[0] || '',
       employmentType: employmentType,
-      workMode: workMode as 'remote' | 'onsite' | 'hybrid',
+      workMode: workMode,
       teamId,
       roleId,
-      baseSalary: employee.monthlySalary ? Number(employee.monthlySalary) : 0,
-      bankName: employee.bankName ?? '',
-      accountName: employee.accountName ?? '',
-      accountNumber: employee.accountNumber
-        ? String(employee.accountNumber)
+      baseSalary: employee.payProfile.baseSalary ?? 0,
+      bankName: employee.payProfile.bankName ?? '',
+      accountName: employee.payProfile.accountName ?? '',
+      accountNumber: employee.payProfile.accountNumber
+        ? String(employee.payProfile.accountNumber)
         : '',
       bankCode: '',
-      // permissions: employee.employmentDetails.role.permissions ?? [],
     };
   }, [employee]);
 
@@ -197,30 +198,37 @@ export const EditEmployeeForm = () => {
     if (currentTeamId && !base.some((opt) => opt.value === currentTeamId)) {
       base.push({
         value: currentTeamId,
-        label: employee?.team?.name || 'Current team',
+        label: employee?.employmentDetails?.team?.name || 'Current team',
       });
     }
     return base;
-  }, [teams, formValues?.teamId, selectedTeamId, employee?.team?.name]);
+  }, [
+    teams,
+    formValues?.teamId,
+    selectedTeamId,
+    employee?.employmentDetails?.team?.name,
+  ]);
 
   const roleOptions = useMemo(() => {
     const rolesArray = Array.isArray(derivedRoles) ? derivedRoles : [];
-    const base = rolesArray.map((role: any) => ({
+    const base = rolesArray.map((role: Role) => ({
       value: String(role.id),
       label: role.name,
     }));
     const currentRoleId = formValues?.roleId || selectedRoleId;
-    if (
-      currentRoleId &&
-      !base.some((opt: { value: string }) => opt.value === currentRoleId)
-    ) {
+    if (currentRoleId && !base.some((opt) => opt.value === currentRoleId)) {
       base.push({
         value: currentRoleId,
-        label: employee?.role?.name || 'Current role',
+        label: employee?.employmentDetails?.role?.name || 'Current role',
       });
     }
     return base;
-  }, [derivedRoles, formValues?.roleId, selectedRoleId, employee?.role?.name]);
+  }, [
+    derivedRoles,
+    formValues?.roleId,
+    selectedRoleId,
+    employee?.employmentDetails?.role?.name,
+  ]);
 
   const handleFilesSelected = (files: File[]) => {
     setFiles(files);

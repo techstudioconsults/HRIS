@@ -145,7 +145,7 @@ const TeamDetailsContent = ({
     teamId
   );
 
-  const subTeams = teamData?.subTeams ?? [];
+  const subTeams = teamData?.subteams ?? [];
 
   if (isLoadingTeam) {
     return <TeamDetailsSkeleton />;
@@ -184,7 +184,7 @@ const TeamDetailsContent = ({
         <DashboardCard
           title="Sub teams"
           value={
-            <span className="text-base">{teamData?.subTeams?.length ?? 0}</span>
+            <span className="text-base">{teamData?.subteams?.length ?? 0}</span>
           }
           className="flex flex-col items-center justify-center text-center"
         />

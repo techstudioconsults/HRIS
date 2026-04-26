@@ -25,56 +25,60 @@ declare global {
   type EmploymentType = 'full time' | 'part time' | 'contract' | null;
   type WorkMode = 'remote' | 'hybrid' | 'onsite' | null;
   type EmploymentStatus = 'active' | 'inactive' | 'leave' | 'terminated';
+  type Status = 'active' | 'inactive' | 'terminated';
 
   // ============================================================================
   // DOMAIN ENTITIES
   // ============================================================================
 
-  interface Team extends Record<string, unknown> {
+  interface Team extends Record<string, unknown>, Timestamp {
     id: string;
     name: string;
     manager: { id: string; name: string } | null;
-    parent: { id: string; name: string } | null;
-    subTeams: { id: string; name: string }[];
+    parent: Team | null;
+    subteams: Team[];
     members: number;
-    createdAt: string;
-    updatedAt: string;
+    roles?: Role[];
   }
 
-  interface Role {
+  interface Role extends Timestamp {
     id: string;
     name: string;
     teamId: string;
     permissions: Permission[];
-    createdAt: string;
-    updatedAt: string;
   }
 
-  interface Employee extends Record<string, unknown> {
+  interface Employee extends Record<string, unknown>, Timestamp {
     id: string;
     firstName: string;
     lastName: string;
     email: string;
+    gender: Gender;
+    avatar: string;
     phoneNumber: string;
-    team: { id: string; name: string };
-    role: { id: string; name: string; permissions: Permission[] };
-    dateOfBirth?: string;
-    gender?: Gender;
-    startDate?: string;
-    employmentType?: EmploymentType;
-    workMode: WorkMode;
-    monthlySalary?: number;
-    pension?: number;
-    healthInsurance?: number;
-    otherDeductions?: number;
-    bankName?: string;
-    accountName?: string;
-    accountNumber?: number;
-    document?: string | null;
-    avatar?: string | null;
-    status: EmploymentStatus;
-    createdAt: string;
-    updatedAt: string;
+    dateOfBirth: string;
+    status: Status;
+    document: string | null;
+    employmentDetails: {
+      startDate: string;
+      employmentType: EmploymentType;
+      workMode: WorkMode;
+      team: Team;
+      role: Role;
+    };
+    payProfile: {
+      id: string;
+      netPay: number;
+      grossSalary: number;
+      baseSalary: number;
+      bankName: string;
+      accountName: string;
+      accountNumber: string;
+    };
+    notifications: {
+      email: boolean;
+      inApp: boolean;
+    };
   }
 }
 

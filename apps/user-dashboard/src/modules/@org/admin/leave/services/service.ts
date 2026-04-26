@@ -68,7 +68,7 @@ export class LeaveService {
    */
   async getLeaveRequests(filters: Filters) {
     const response = await this.http.get<PaginatedApiResponse<LeaveRequest>>(
-      '/leave-requests',
+      '/leave-request',
       {
         ...filters,
       }
@@ -80,7 +80,7 @@ export class LeaveService {
 
   async approveLeaveRequest(id: string) {
     const response = await this.http.patch<{ data: LeaveRequest }>(
-      `/leave-requests/${id}/approve`
+      `/leave-request/${id}/approve`
     );
     if (response?.status === 200) {
       return response.data.data;

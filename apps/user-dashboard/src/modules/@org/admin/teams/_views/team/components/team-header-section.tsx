@@ -96,8 +96,8 @@ export const TeamHeaderSection = ({
                     search: search || undefined,
                     status: status || undefined,
                     sortBy: sortBy || undefined,
-                    limit: limit ? String(limit) : undefined,
-                    page: page ? String(page) : undefined,
+                    limit: limit ? limit : undefined,
+                    page: page ? page : undefined,
                   }}
                   onFilterChange={handleFilterChange}
                 />

@@ -26,8 +26,8 @@ export const FilterForm = ({
   showSortBy = true,
   showLimit = true,
 }: {
-  initialFilters: FilterValues;
-  onFilterChange: (filters: FilterValues) => void;
+  initialFilters: Filters;
+  onFilterChange: (filters: Filters) => void;
   title?: string;
   hideTitle?: boolean;
   containerClassName?: string;
@@ -44,7 +44,7 @@ export const FilterForm = ({
   showSortBy?: boolean;
   showLimit?: boolean;
 }) => {
-  const methods = useForm<FilterValues>({
+  const methods = useForm<Filters>({
     defaultValues: initialFilters,
   });
   const watchedFilters = useWatch({ control: methods.control });
@@ -62,7 +62,7 @@ export const FilterForm = ({
   }, [onFilterChange]);
 
   useEffect(() => {
-    const normalizedFilters: FilterValues = {
+    const normalizedFilters: Filters = {
       search: debouncedFilters?.search,
       status: debouncedFilters?.status,
       sortBy: debouncedFilters?.sortBy,
@@ -85,7 +85,7 @@ export const FilterForm = ({
 
   return (
     <FormProvider {...methods}>
-      <section className={cn('mx-auto max-w-[527px] p-7', containerClassName)}>
+      <section className={cn('mx-auto max-w-131.75 p-7', containerClassName)}>
         {!hideTitle && <h5 className="mb-4 text-xl">{title}</h5>}
         <div className="space-y-4">
           {/* Status Dropdown */}
@@ -105,7 +105,7 @@ export const FilterForm = ({
               onChange={(event) =>
                 handleFilterChange('status', event.target.value)
               }
-              className="!h-12"
+              className="h-12!"
             />
           )}
 
@@ -130,7 +130,7 @@ export const FilterForm = ({
               onChange={(event) =>
                 handleFilterChange('sortBy', event.target.value)
               }
-              className="!h-12"
+              className="h-12!"
             />
           )}
 
@@ -152,7 +152,7 @@ export const FilterForm = ({
               onChange={(event) =>
                 handleFilterChange('limit', event.target.value)
               }
-              className="!h-12"
+              className="h-12!"
             />
           )}
         </div>

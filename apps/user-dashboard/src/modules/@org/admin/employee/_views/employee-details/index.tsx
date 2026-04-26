@@ -21,6 +21,7 @@ import { formatDate } from '@/lib/formatters';
 import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 import { AnyIconName } from '@workspace/ui/lib/icons/types';
 import { Button } from '@workspace/ui/components/button';
+import React, { ReactNode } from 'react';
 
 const getInitials = (firstName?: string, lastName?: string) => {
   const fullName = `${firstName ?? ''} ${lastName ?? ''}`.trim();
@@ -52,7 +53,7 @@ const DetailsItem = ({
   icon,
 }: {
   label: string;
-  value?: string;
+  value?: string | number | boolean | null;
   icon?: React.ReactNode;
 }) => (
   <div className="flex items-start gap-3">
@@ -75,7 +76,7 @@ const DetailsFieldset = ({
   icon,
 }: {
   legend: string;
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   icon?: AnyIconName;
 }) => (
@@ -160,7 +161,11 @@ const EmployeeDetailsHeader = ({
   />
 );
 
-const EmployeeDetailsContent = ({ employeeData }: { employeeData: any }) => {
+const EmployeeDetailsContent = ({
+  employeeData,
+}: {
+  employeeData: Employee;
+}) => {
   const fullName =
     `${employeeData?.firstName ?? ''} ${employeeData?.lastName ?? ''}`.trim();
   const employeeStatus = employeeData?.status || 'Unknown';
@@ -232,11 +237,11 @@ const EmployeeDetailsContent = ({ employeeData }: { employeeData: any }) => {
             />
             <DetailsItem
               label="Work Mode"
-              value={employeeData?.employmentDetails?.workMode}
+              value={employeeData?.employmentDetails?.workMode || 'N/A'}
             />
             <DetailsItem
               label="Employment Type"
-              value={employeeData?.employmentDetails?.employmentType}
+              value={employeeData?.employmentDetails?.employmentType || 'N/A'}
             />
           </fieldset>
         </Card>
@@ -273,21 +278,28 @@ const EmployeeDetailsContent = ({ employeeData }: { employeeData: any }) => {
                 <DetailsItem
                   label="Start Date"
                   value={
-                    employeeData?.startDate
-                      ? formatDate(employeeData.startDate)
-                      : 'N/A'
+                    formatDate(employeeData.employmentDetails.startDate) ||
+                    'N/A'
                   }
                 />
                 <DetailsItem
                   label="Employment Type"
-                  value={employeeData?.employmentType}
+                  value={
+                    employeeData?.employmentDetails.employmentType || 'N/A'
+                  }
                 />
-                <DetailsItem label="Work Mode" value={employeeData?.workMode} />
+                <DetailsItem
+                  label="Work Mode"
+                  value={employeeData?.employmentDetails.workMode || 'N/A'}
+                />
                 <DetailsItem
                   label="Department"
-                  value={employeeData?.team?.name}
+                  value={employeeData?.employmentDetails.team?.name || 'N/A'}
                 />
-                <DetailsItem label="Role" value={employeeData?.role?.name} />
+                <DetailsItem
+                  label="Role"
+                  value={employeeData?.employmentDetails.role?.name || 'N/A'}
+                />
               </div>
             </DetailsFieldset>
           </Card>
@@ -301,16 +313,19 @@ const EmployeeDetailsContent = ({ employeeData }: { employeeData: any }) => {
               <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 <DetailsItem
                   label="Monthly Salary"
-                  value={employeeData?.monthlySalary?.toString()}
+                  value={employeeData?.payProfile.baseSalary}
                 />
-                <DetailsItem label="Bank Name" value={employeeData?.bankName} />
+                <DetailsItem
+                  label="Bank Name"
+                  value={employeeData?.payProfile.bankName}
+                />
                 <DetailsItem
                   label="Account Number"
-                  value={employeeData?.accountNumber?.toString()}
+                  value={employeeData?.payProfile.accountNumber}
                 />
                 <DetailsItem
                   label="Account Name"
-                  value={employeeData?.accountName}
+                  value={employeeData?.payProfile.accountName}
                 />
               </div>
             </DetailsFieldset>
@@ -366,13 +381,15 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
     return <ErrorEmptyState onRetry={refetch} />;
   }
 
+  if (!employeeData) return null;
+
   const employeeName =
-    `${employeeData?.firstName ?? ''} ${employeeData?.lastName ?? ''}`.trim();
+    `${employeeData.firstName} ${employeeData.lastName}`.trim();
 
   return (
     <section className="space-y-6">
       <EmployeeDetailsHeader
-        employeeId={employeeData?.id}
+        employeeId={employeeData.id}
         employeeName={employeeName}
       />
       <EmployeeDetailsContent employeeData={employeeData} />

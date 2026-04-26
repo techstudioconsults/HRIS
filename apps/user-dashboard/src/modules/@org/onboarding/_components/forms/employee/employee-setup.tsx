@@ -14,7 +14,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import { Employee } from '../../../_views/step-three';
+import { OnboardingEmployeeInput } from '../../../_views/step-three';
 import { useOnboardingService } from '../../../services/use-onboarding-service';
 import { EmployeeConfig } from '../../accordions/employee-config';
 import { Icon } from '@workspace/ui/lib/icons/icon';
@@ -25,7 +25,7 @@ export const EmployeeSetupForm = () => {
   const { useOnboardEmployees } = useOnboardingService();
   const { mutateAsync: onboardEmployees, isPending: isOnboarding } =
     useOnboardEmployees();
-  const methods = useForm<{ employees: Employee[] }>({
+  const methods = useForm<{ employees: OnboardingEmployeeInput[] }>({
     resolver: zodResolver(
       z.object({
         employees: z.array(onboardEmployeeSchema),
@@ -51,7 +51,9 @@ export const EmployeeSetupForm = () => {
     formState: { isSubmitting },
   } = methods;
 
-  const handleSubmitForm = async (data: { employees: Employee[] }) => {
+  const handleSubmitForm = async (data: {
+    employees: OnboardingEmployeeInput[];
+  }) => {
     try {
       await onboardEmployees(data, {
         onSuccess: (response) => {

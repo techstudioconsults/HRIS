@@ -60,20 +60,24 @@ function requireEnv(name: string): string {
   return value;
 }
 
-const GITHUB_TOKEN        = requireEnv('GITHUB_TOKEN');
-const GITHUB_OWNER        = requireEnv('GITHUB_OWNER');
+const GITHUB_TOKEN = requireEnv('GITHUB_TOKEN');
+const GITHUB_OWNER = requireEnv('GITHUB_OWNER');
 const GITHUB_FRONTEND_REPO = requireEnv('GITHUB_FRONTEND_REPO'); // e.g. HRIS
-const GITHUB_BACKEND_REPO  = requireEnv('GITHUB_BACKEND_REPO');  // e.g. hr-backend
+const GITHUB_BACKEND_REPO = requireEnv('GITHUB_BACKEND_REPO'); // e.g. hr-backend
 const DRY_RUN = process.argv.includes('--dry-run');
 
 const FRONTEND_BASE = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_FRONTEND_REPO}`;
-const BACKEND_BASE  = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_BACKEND_REPO}`;
+const BACKEND_BASE = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_BACKEND_REPO}`;
 
 // ---------------------------------------------------------------------------
 // GitHub REST client
 // ---------------------------------------------------------------------------
 
-async function ghFetch<T>(baseUrl: string, path: string, options: RequestInit = {}): Promise<T> {
+async function ghFetch<T>(
+  baseUrl: string,
+  path: string,
+  options: RequestInit = {}
+): Promise<T> {
   const url = `${baseUrl}${path}`;
   const response = await fetch(url, {
     ...options,
@@ -101,7 +105,10 @@ async function fetchAllPages<T>(baseUrl: string, path: string): Promise<T[]> {
   let page = 1;
   const sep = path.includes('?') ? '&' : '?';
   while (true) {
-    const items = await ghFetch<T[]>(baseUrl, `${path}${sep}per_page=100&page=${page}`);
+    const items = await ghFetch<T[]>(
+      baseUrl,
+      `${path}${sep}per_page=100&page=${page}`
+    );
     results.push(...items);
     if (items.length < 100) break;
     page++;
@@ -125,14 +132,19 @@ async function ensureLabels(
 
   for (const label of labels) {
     if (existingNames.has(label.name.toLowerCase())) {
-      console.log(`[SKIP]    [${repoName}] Label already exists: ${label.name}`);
+      console.log(
+        `[SKIP]    [${repoName}] Label already exists: ${label.name}`
+      );
       continue;
     }
     if (DRY_RUN) {
       console.log(`[DRY-RUN] [${repoName}] Would create label: ${label.name}`);
       continue;
     }
-    await ghFetch(baseUrl, '/labels', { method: 'POST', body: JSON.stringify(label) });
+    await ghFetch(baseUrl, '/labels', {
+      method: 'POST',
+      body: JSON.stringify(label),
+    });
     console.log(`[CREATE]  [${repoName}] Label created: ${label.name}`);
   }
 }
@@ -149,16 +161,23 @@ async function ensureMilestones(
   const milestoneMap = new Map<string, number>();
   if (milestones.length === 0) return milestoneMap;
 
-  const existing = await fetchAllPages<GhMilestone>(baseUrl, '/milestones?state=all');
+  const existing = await fetchAllPages<GhMilestone>(
+    baseUrl,
+    '/milestones?state=all'
+  );
   for (const m of existing) milestoneMap.set(m.title, m.number);
 
   for (const ms of milestones) {
     if (milestoneMap.has(ms.title)) {
-      console.log(`[SKIP]    [${repoName}] Milestone already exists: ${ms.title}`);
+      console.log(
+        `[SKIP]    [${repoName}] Milestone already exists: ${ms.title}`
+      );
       continue;
     }
     if (DRY_RUN) {
-      console.log(`[DRY-RUN] [${repoName}] Would create milestone: ${ms.title}`);
+      console.log(
+        `[DRY-RUN] [${repoName}] Would create milestone: ${ms.title}`
+      );
       continue;
     }
     const created = await ghFetch<GhMilestone>(baseUrl, '/milestones', {
@@ -188,12 +207,16 @@ async function createIssueInRepo(
   existingTitles: Set<string>
 ): Promise<'created' | 'skipped'> {
   if (existingTitles.has(issue.title.toLowerCase())) {
-    console.log(`[SKIP]    [${target.name}] Issue already exists: "${issue.title}"`);
+    console.log(
+      `[SKIP]    [${target.name}] Issue already exists: "${issue.title}"`
+    );
     return 'skipped';
   }
 
   if (DRY_RUN) {
-    console.log(`[DRY-RUN] [${target.name}] Would create issue: "${issue.title}"`);
+    console.log(
+      `[DRY-RUN] [${target.name}] Would create issue: "${issue.title}"`
+    );
     return 'skipped';
   }
 
@@ -204,7 +227,10 @@ async function createIssueInRepo(
     assignees: issue.assignees ?? [],
   };
 
-  if (issue.milestone !== undefined && target.milestoneMap.has(issue.milestone)) {
+  if (
+    issue.milestone !== undefined &&
+    target.milestoneMap.has(issue.milestone)
+  ) {
     payload['milestone'] = target.milestoneMap.get(issue.milestone);
   }
 
@@ -212,7 +238,9 @@ async function createIssueInRepo(
     method: 'POST',
     body: JSON.stringify(payload),
   });
-  console.log(`[CREATE]  [${target.name}] Issue #${gh.number} created: "${issue.title}"`);
+  console.log(
+    `[CREATE]  [${target.name}] Issue #${gh.number} created: "${issue.title}"`
+  );
   return 'created';
 }
 
@@ -226,8 +254,12 @@ async function ensureIssues(
     fetchAllPages<GhIssue>(backend.baseUrl, '/issues?state=all'),
   ]);
 
-  const frontendTitles = new Set(frontendExisting.map((i) => i.title.toLowerCase()));
-  const backendTitles  = new Set(backendExisting.map((i) => i.title.toLowerCase()));
+  const frontendTitles = new Set(
+    frontendExisting.map((i) => i.title.toLowerCase())
+  );
+  const backendTitles = new Set(
+    backendExisting.map((i) => i.title.toLowerCase())
+  );
 
   let created = 0;
   let skipped = 0;
@@ -235,17 +267,19 @@ async function ensureIssues(
   for (const issue of issues) {
     const labelSet = new Set((issue.labels ?? []).map((l) => l.toLowerCase()));
     const isFrontend = labelSet.has('frontend');
-    const isBackend  = labelSet.has('backend');
+    const isBackend = labelSet.has('backend');
 
     if (!isFrontend && !isBackend) {
-      console.warn(`[WARN]    No routing label (frontend/backend) — skipping: "${issue.title}"`);
+      console.warn(
+        `[WARN]    No routing label (frontend/backend) — skipping: "${issue.title}"`
+      );
       skipped++;
       continue;
     }
 
     const targets: Array<[RepoTarget, Set<string>]> = [];
     if (isFrontend) targets.push([frontend, frontendTitles]);
-    if (isBackend)  targets.push([backend, backendTitles]);
+    if (isBackend) targets.push([backend, backendTitles]);
 
     for (const [target, existingTitles] of targets) {
       const result = await createIssueInRepo(target, issue, existingTitles);
@@ -279,20 +313,36 @@ async function main(): Promise<void> {
   console.log('--- Labels ---');
   await Promise.all([
     ensureLabels(FRONTEND_BASE, GITHUB_FRONTEND_REPO, backlog.labels ?? []),
-    ensureLabels(BACKEND_BASE,  GITHUB_BACKEND_REPO,  backlog.labels ?? []),
+    ensureLabels(BACKEND_BASE, GITHUB_BACKEND_REPO, backlog.labels ?? []),
   ]);
 
   console.log('\n--- Milestones ---');
   const [frontendMilestoneMap, backendMilestoneMap] = await Promise.all([
-    ensureMilestones(FRONTEND_BASE, GITHUB_FRONTEND_REPO, backlog.milestones ?? []),
-    ensureMilestones(BACKEND_BASE,  GITHUB_BACKEND_REPO,  backlog.milestones ?? []),
+    ensureMilestones(
+      FRONTEND_BASE,
+      GITHUB_FRONTEND_REPO,
+      backlog.milestones ?? []
+    ),
+    ensureMilestones(
+      BACKEND_BASE,
+      GITHUB_BACKEND_REPO,
+      backlog.milestones ?? []
+    ),
   ]);
 
   console.log('\n--- Issues ---');
   await ensureIssues(
     backlog.issues,
-    { baseUrl: FRONTEND_BASE, name: GITHUB_FRONTEND_REPO, milestoneMap: frontendMilestoneMap },
-    { baseUrl: BACKEND_BASE,  name: GITHUB_BACKEND_REPO,  milestoneMap: backendMilestoneMap }
+    {
+      baseUrl: FRONTEND_BASE,
+      name: GITHUB_FRONTEND_REPO,
+      milestoneMap: frontendMilestoneMap,
+    },
+    {
+      baseUrl: BACKEND_BASE,
+      name: GITHUB_BACKEND_REPO,
+      milestoneMap: backendMilestoneMap,
+    }
   );
 }
 

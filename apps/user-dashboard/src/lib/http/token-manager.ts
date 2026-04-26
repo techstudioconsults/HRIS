@@ -8,10 +8,7 @@
 
 import { getSession } from 'next-auth/react';
 
-interface CachedToken {
-  accessToken: string;
-  expiresAt: number; // timestamp in milliseconds
-}
+import { type CachedToken } from './types';
 
 class TokenManager {
   private cache: CachedToken | null = null;

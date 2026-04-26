@@ -1,16 +1,11 @@
 'use client';
 
-import {
-  useNotifications,
-  type UseNotificationsReturn,
-} from '@/lib/sse/use-notifications';
+import { useNotifications } from '@/lib/sse/use-notifications';
 import { useSession } from 'next-auth/react';
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 
-type SSEContextValue = Pick<
-  UseNotificationsReturn,
-  'on' | 'close' | 'getStatus' | 'status'
->;
+import { type SSEContextValue } from './types';
+
 const SSEContext = createContext<SSEContextValue | null>(null);
 
 export function SSEProvider({ children }: { children: ReactNode }) {

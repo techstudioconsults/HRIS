@@ -17,31 +17,7 @@ import { usePayrollService } from '@/modules/@org/admin/payroll/services/use-ser
 import { AnyIconName } from '@workspace/ui/lib/icons/types';
 import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { MainButton } from '@workspace/ui/lib/button';
-
-type RenderType = 'toast' | 'banner' | 'modal';
-
-interface BaseNotification {
-  id: string;
-  event: string;
-  title: string;
-  body: string;
-  render: RenderType;
-  severity?: 'info' | 'success' | 'warning' | 'error';
-  actions?: Array<{
-    label: string;
-    variant?: 'primary' | 'outline' | 'destructiveOutline' | 'default';
-    icon?: AnyIconName;
-    onClick: () => void;
-  }>;
-  dismissible?: boolean;
-  payrollId?: string;
-}
-
-interface PayrollMetadata {
-  payrollId?: string;
-  id?: string;
-  payroll_id?: string;
-}
+import type { BaseNotification, PayrollMetadata, RenderType } from './types';
 
 function createId() {
   return Math.random().toString(36).slice(2, 11);

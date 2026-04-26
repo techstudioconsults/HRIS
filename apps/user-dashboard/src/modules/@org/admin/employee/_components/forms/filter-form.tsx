@@ -6,15 +6,7 @@ import { useEffect, useRef } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
 
-interface FilterValues {
-  search?: string;
-  teamId?: string;
-  roleId?: string;
-  status?: string;
-  sortBy?: string;
-  limit?: string;
-  page?: string;
-}
+import type { FilterValues } from '../../types';
 
 export const FilterForm = ({
   initialFilters,

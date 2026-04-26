@@ -4,7 +4,7 @@ import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import type { ReactNode } from 'react';
 
-import type { Payroll } from '../../types';
+import type { PayrollNotificationBannerProps } from '../../types';
 
 const LOW_BALANCE_LIMIT = 0; // 0M NGN
 
@@ -31,26 +31,6 @@ const PAYROLL_RUN_MESSAGE = (
     .
   </>
 );
-
-type PayrollNotificationBannerProps = {
-  hasCompletedPayrollPolicySetupForm: boolean;
-  payrollPolicyStatus: boolean;
-  walletSetupCompleted: boolean;
-  showNoPayrollBanner: boolean;
-  isCreatingPayroll: boolean;
-  onSetupWallet: () => void;
-  onFundWallet: () => void;
-  onGeneratePayroll: () => void;
-  onDismissNoPayrollBanner: () => void;
-  showPayrollBanner: boolean;
-  shouldShowApprovalProgressBanner: boolean;
-  approvalBannerDateLabel: string;
-  isDisbursed: boolean;
-  nextScheduledPayroll: Payroll | null;
-  payrollDataPaymentDate: string;
-  walletBalance: number;
-  onOpenApprovalProgress: () => void;
-};
 
 export const PayrollNotificationBanner = ({
   hasCompletedPayrollPolicySetupForm,

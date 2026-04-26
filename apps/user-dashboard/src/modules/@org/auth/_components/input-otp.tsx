@@ -4,10 +4,7 @@ import {
   InputOTPSlot,
 } from '@workspace/ui/components/input-otp';
 
-interface OTPInputProperties {
-  value: string;
-  onChange: (value: string) => void;
-}
+import type { OTPInputProperties } from '../types';
 
 export const OTPInput = ({ value, onChange }: OTPInputProperties) => {
   return (

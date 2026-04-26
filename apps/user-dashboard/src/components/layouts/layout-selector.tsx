@@ -4,14 +4,7 @@ import React from 'react';
 import { usePWA } from '@/lib/pwa/pwa-provider';
 import { AppLayout } from './app-layout';
 import { WebLayout } from './web-layout';
-
-interface LayoutSelectorSlots {
-  children: React.ReactNode;
-  header?: React.ReactNode;
-  footer?: React.ReactNode;
-  nav?: React.ReactNode;
-  sidebar?: React.ReactNode;
-}
+import type { LayoutSelectorSlots, LayoutSelectorProps } from './types';
 
 /**
  * LayoutSelector - Automatically picks AppLayout or WebLayout
@@ -25,15 +18,7 @@ interface LayoutSelectorSlots {
  * For advanced route shells, use renderPWA/renderWeb to customize wrappers
  * while reusing the central PWA detection logic.
  */
-export interface LayoutSelectorProps {
-  children: React.ReactNode;
-  header?: React.ReactNode;
-  footer?: React.ReactNode;
-  nav?: React.ReactNode; // Bottom nav for PWA
-  sidebar?: React.ReactNode; // Sidebar for Web
-  renderPWA?: (slots: LayoutSelectorSlots) => React.ReactNode;
-  renderWeb?: (slots: LayoutSelectorSlots) => React.ReactNode;
-}
+export type { LayoutSelectorProps };
 
 export function LayoutSelector({
   children,

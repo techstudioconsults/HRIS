@@ -9,11 +9,8 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { useResourceService } from '../../services/use-service';
+import type { CreateFolderFormProperties } from '../../types';
 import FileUpload from '@workspace/ui/lib/file-upload/file-upload';
-
-interface CreateFolderFormProperties {
-  onClose?: () => void;
-}
 
 export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);

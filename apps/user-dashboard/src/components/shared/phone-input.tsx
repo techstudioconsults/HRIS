@@ -19,17 +19,11 @@ import { Icon } from '@workspace/ui/lib/icons/icon';
 import * as React from 'react';
 import * as RPNInput from 'react-phone-number-input';
 import flags from 'react-phone-number-input/flags';
-
-type PhoneInputProperties = Omit<
-  React.ComponentProps<'input'>,
-  'onChange' | 'value' | 'ref'
-> &
-  Omit<RPNInput.Props<typeof RPNInput.default>, 'onChange'> & {
-    /* Allow undefined during intermediate typing */
-    onChange?: (value: RPNInput.Value | undefined) => void;
-    inputClassName?: string;
-    buttonClassName?: string;
-  };
+import type {
+  PhoneInputProperties,
+  CountrySelectProperties,
+  CountrySelectOptionProperties,
+} from './phone-input.types';
 
 const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProperties> =
   React.forwardRef<
@@ -106,16 +100,6 @@ const InputComponent = React.forwardRef<
   />
 ));
 InputComponent.displayName = 'InputComponent';
-
-type CountryEntry = { label: string; value: RPNInput.Country | undefined };
-
-type CountrySelectProperties = {
-  disabled?: boolean;
-  value: RPNInput.Country;
-  options: CountryEntry[];
-  onChange: (country: RPNInput.Country) => void;
-  buttonClassName?: string;
-};
 
 const CountrySelect = ({
   disabled,
@@ -205,12 +189,6 @@ const CountrySelect = ({
     </Popover>
   );
 };
-
-interface CountrySelectOptionProperties extends RPNInput.FlagProps {
-  selectedCountry: RPNInput.Country;
-  onChange: (country: RPNInput.Country) => void;
-  onSelectComplete: () => void;
-}
 
 const CountrySelectOption = ({
   country,

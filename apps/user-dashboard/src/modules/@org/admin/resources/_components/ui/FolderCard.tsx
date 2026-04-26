@@ -14,16 +14,13 @@ import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useState } from 'react';
 
 import empty1 from '~/images/empty-state.svg';
-import type { Folder, FolderFile } from '../../services/types';
+import type { FolderFile } from '../../services/types';
 import { useResourceService } from '../../services/use-service';
 import { formatDate } from '../../utils/format';
+import type { FolderCardProperties } from '../../types';
 import { EditFolderForm } from '../forms/edit-folder';
 import { FileCard } from './FileCard';
 import { Card } from '@workspace/ui/components/card';
-
-interface FolderCardProperties {
-  folder: Folder;
-}
 
 export const FolderCard = ({ folder }: FolderCardProperties) => {
   const { useDeleteFolder, useGetFilesByFolderId } = useResourceService();
@@ -95,7 +92,7 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
                 {folder.name}
               </h6>
               <p className="text-muted-foreground mt-1 text-[8px] lg:text-xs">
-                {folder.fileCount || 0} files • {formatDate(folder.createdAt)}
+                {formatDate(folder.createdAt)}
               </p>
             </div>
           </div>

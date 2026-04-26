@@ -10,9 +10,10 @@ import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { cn } from '@workspace/ui/lib/utils';
 
-import { BonusDeduction, BonusDeductionTableProperties } from '../types';
-
-type BonusDeductionRow = BonusDeduction & Record<string, unknown>;
+import type {
+  BonusDeductionRow,
+  BonusDeductionTableProperties,
+} from '../types';
 
 const formatValue = (value: number, valueType: 'percentage' | 'fixed') => {
   if (valueType === 'percentage') {

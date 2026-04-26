@@ -1,32 +1,17 @@
-"use client";
+'use client';
 
-import { Checkbox } from "@workspace/ui/components/checkbox";
-import { MainButton } from "@workspace/ui/lib/button";
-import { AlertModal } from "@workspace/ui/lib/dialog";
-import { SwitchField } from "@workspace/ui/lib/inputs/FormFields";
-import { cn } from "@workspace/ui/lib/utils";
-import { useMemo, useState } from "react";
-import { Controller, FormProvider, useForm } from "react-hook-form";
+import { Checkbox } from '@workspace/ui/components/checkbox';
+import { MainButton } from '@workspace/ui/lib/button';
+import { AlertModal } from '@workspace/ui/lib/dialog';
+import { SwitchField } from '@workspace/ui/lib/inputs/FormFields';
+import { cn } from '@workspace/ui/lib/utils';
+import { useMemo, useState } from 'react';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 
-type NotificationCategoryKey =
-  | "newEmployeeAdded"
-  | "employeeTermination"
-  | "newRoleCreated"
-  | "newTeamCreated"
-  | "resourceUploaded"
-  | "probationReviewDue"
-  | "salaryDisbursement"
-  | "walletTopUp"
-  | "paydayReminder"
-  | "loginFromNewDevice"
-  | "passwordChange"
-  | "rolePermissionChanges";
-
-type NotificationSettingsFormValues = {
-  emailNotifications: boolean;
-  inAppNotifications: boolean;
-  categories: Record<NotificationCategoryKey, boolean>;
-};
+import type {
+  NotificationCategoryKey,
+  NotificationSettingsFormValues,
+} from '../../types';
 
 const DEFAULT_VALUES: NotificationSettingsFormValues = {
   emailNotifications: true,
@@ -47,7 +32,13 @@ const DEFAULT_VALUES: NotificationSettingsFormValues = {
   },
 };
 
-function CategoryCheckbox({ name, label }: { name: `categories.${NotificationCategoryKey}`; label: string }) {
+function CategoryCheckbox({
+  name,
+  label,
+}: {
+  name: `categories.${NotificationCategoryKey}`;
+  label: string;
+}) {
   return (
     <Controller
       name={name}
@@ -75,34 +66,43 @@ export const NotificationSettingsTab = () => {
   const groupedCategories = useMemo(
     () => [
       {
-        title: "HR & Employee Management",
+        title: 'HR & Employee Management',
         items: [
-          { key: "newEmployeeAdded" as const, label: "New employee added" },
-          { key: "employeeTermination" as const, label: "Employee termination/resignation" },
-          { key: "newRoleCreated" as const, label: "New role created" },
-          { key: "newTeamCreated" as const, label: "New team created" },
-          { key: "resourceUploaded" as const, label: "Resource uploaded" },
-          { key: "probationReviewDue" as const, label: "Probation review due" },
+          { key: 'newEmployeeAdded' as const, label: 'New employee added' },
+          {
+            key: 'employeeTermination' as const,
+            label: 'Employee termination/resignation',
+          },
+          { key: 'newRoleCreated' as const, label: 'New role created' },
+          { key: 'newTeamCreated' as const, label: 'New team created' },
+          { key: 'resourceUploaded' as const, label: 'Resource uploaded' },
+          { key: 'probationReviewDue' as const, label: 'Probation review due' },
         ],
       },
       {
-        title: "Payroll & Finance",
+        title: 'Payroll & Finance',
         items: [
-          { key: "salaryDisbursement" as const, label: "Salary disbursement" },
-          { key: "walletTopUp" as const, label: "Wallet top up" },
-          { key: "paydayReminder" as const, label: "Payday reminder" },
+          { key: 'salaryDisbursement' as const, label: 'Salary disbursement' },
+          { key: 'walletTopUp' as const, label: 'Wallet top up' },
+          { key: 'paydayReminder' as const, label: 'Payday reminder' },
         ],
       },
       {
-        title: "System & Security",
+        title: 'System & Security',
         items: [
-          { key: "loginFromNewDevice" as const, label: "Login from new device" },
-          { key: "passwordChange" as const, label: "Password Change" },
-          { key: "rolePermissionChanges" as const, label: "Role/Permission Changes" },
+          {
+            key: 'loginFromNewDevice' as const,
+            label: 'Login from new device',
+          },
+          { key: 'passwordChange' as const, label: 'Password Change' },
+          {
+            key: 'rolePermissionChanges' as const,
+            label: 'Role/Permission Changes',
+          },
         ],
       },
     ],
-    [],
+    []
   );
 
   const onSubmit = () => {
@@ -117,17 +117,26 @@ export const NotificationSettingsTab = () => {
       </div>
 
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)} className="rounded-lg p-4 sm:p-8 shadow bg-background">
+        <form
+          onSubmit={methods.handleSubmit(onSubmit)}
+          className="rounded-lg p-4 sm:p-8 shadow bg-background"
+        >
           <div className="grid gap-10 lg:grid-cols-[560px_1fr]">
             {/* Left descriptors */}
             <div className="space-y-10">
               <div className="space-y-1">
                 <h4 className="text-lg font-semibold">Notification Channels</h4>
-                <p className="text-muted-foreground text-xs">Choose your preferred way of receiving notifications</p>
+                <p className="text-muted-foreground text-xs">
+                  Choose your preferred way of receiving notifications
+                </p>
               </div>
               <div className="space-y-1">
-                <h4 className="text-lg font-semibold">Notification Categories</h4>
-                <p className="text-muted-foreground text-xs">Toggle on/off for specific events</p>
+                <h4 className="text-lg font-semibold">
+                  Notification Categories
+                </h4>
+                <p className="text-muted-foreground text-xs">
+                  Toggle on/off for specific events
+                </p>
               </div>
             </div>
 
@@ -152,9 +161,13 @@ export const NotificationSettingsTab = () => {
                 {groupedCategories.map((group) => (
                   <div key={group.title} className="space-y-3">
                     <p className="text-lg font-semibold">{group.title}</p>
-                    <div className={cn("space-y-2")}>
+                    <div className={cn('space-y-2')}>
                       {group.items.map((item) => (
-                        <CategoryCheckbox key={item.key} name={`categories.${item.key}`} label={item.label} />
+                        <CategoryCheckbox
+                          key={item.key}
+                          name={`categories.${item.key}`}
+                          label={item.label}
+                        />
                       ))}
                     </div>
                   </div>
@@ -170,7 +183,11 @@ export const NotificationSettingsTab = () => {
                 >
                   Cancel
                 </MainButton>
-                <MainButton variant="primary" type="submit" className="w-full sm:w-[137px]">
+                <MainButton
+                  variant="primary"
+                  type="submit"
+                  className="w-full sm:w-[137px]"
+                >
                   Save Changes
                 </MainButton>
               </div>

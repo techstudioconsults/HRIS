@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,20 +10,13 @@ import {
 import { Checkbox } from '@workspace/ui/components/checkbox';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
-import { FormEvent, useState } from 'react';
+import { useState } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 
-import { Role, roleSchema } from './schema';
+import { roleSchema } from './schema';
+import type { OnboardingSchemaRole as Role } from '../../types';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-
-interface RolesAndPermissionProperties {
-  isEdit?: boolean;
-  initialData?: any;
-  onSubmit: (data: Role) => Promise<void>;
-  onCancel: (event: FormEvent) => void;
-  onDelete?: (roleId: string) => Promise<void>;
-  isSubmitting?: boolean;
-}
+import type { RolesAndPermissionProperties } from '../../types';
 
 const modules = [
   'company',

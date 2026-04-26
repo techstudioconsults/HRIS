@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { z } from 'zod';
 import { act } from 'react';
 import { create } from 'zustand';
+import type { TestStoreState } from '../../../types';
 
 // ─── Schemas under test ───────────────────────────────────────────────────────
 
@@ -27,26 +28,8 @@ const AssignEmployeeSchema = z.object({
 
 // ─── Zustand store under test ─────────────────────────────────────────────────
 
-type Dialog = 'none' | 'team' | 'role' | 'employee';
-type WorkflowMode = 'create' | 'edit' | 'standalone';
-
-interface StoreState {
-  dialog: Dialog;
-  workflowMode: WorkflowMode;
-  currentTeam: { id: string; name: string } | null;
-  skipToNextStep: boolean;
-  openTeamDialog: (
-    team?: { id: string; name: string } | null,
-    mode?: WorkflowMode
-  ) => void;
-  openRoleDialog: (team: { id: string; name: string }) => void;
-  openEmployeeDialog: (team: { id: string; name: string }) => void;
-  closeDialog: () => void;
-  resetWorkflow: () => void;
-}
-
 const createStore = () =>
-  create<StoreState>((set) => ({
+  create<TestStoreState>((set) => ({
     dialog: 'none',
     workflowMode: 'create',
     currentTeam: null,

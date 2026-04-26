@@ -27,33 +27,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { useDebounce } from 'use-debounce';
 
-type RoleRow = {
-  id: string;
-  name: string;
-  teamId: string;
-  teamName: string;
-  permissions: string[];
-  usersAssigned: string;
-  lastModified: string;
-};
-
-type RoleEditorState =
-  | { open: false }
-  | {
-      open: true;
-      mode: 'create' | 'edit';
-      teamId: string;
-      role?: { id: string; name: string; permissions: string[] };
-    };
-
-type RoleToggleState =
-  | { open: false }
-  | {
-      open: true;
-      roleId: string;
-      roleName: string;
-      action: 'deactivate' | 'activate';
-    };
+import type { RoleEditorState, RoleRow, RoleToggleState } from '../../types';
 
 const DEFAULT_PAGE_SIZE = 10;
 

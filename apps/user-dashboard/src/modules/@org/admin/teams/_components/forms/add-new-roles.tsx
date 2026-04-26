@@ -13,24 +13,10 @@ import { BatchProgress } from '@workspace/ui/lib/progress';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { FormEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-
-interface FormRole {
-  name: string;
-  permissions: string[];
-}
-
-interface RolesAndPermissionProperties {
-  isEdit?: boolean;
-  initialData?: any;
-  onSubmit: (data: Role) => Promise<void>;
-  onCancel: (event: FormEvent) => void;
-  onDelete?: (roleId: string) => Promise<void>;
-  onComplete?: () => void;
-  isSubmitting?: boolean;
-}
+import type { TeamsFormRole, RolesAndPermissionProperties } from '../../types';
 
 const modules = [
   'company',
@@ -114,7 +100,7 @@ export const RolesAndPermission = ({
   isSubmitting = false,
 }: RolesAndPermissionProperties) => {
   const [isDeleting, setIsDeleting] = useState(false);
-  const [roles, setRoles] = useState<FormRole[]>([
+  const [roles, setRoles] = useState<TeamsFormRole[]>([
     { name: '', permissions: [] },
   ]);
   const [openPermissions, setOpenPermissions] = useState<boolean[]>([false]);
@@ -137,7 +123,11 @@ export const RolesAndPermission = ({
     }
   };
 
-  const updateRole = (index: number, field: keyof FormRole, value: any) => {
+  const updateRole = (
+    index: number,
+    field: keyof TeamsFormRole,
+    value: any
+  ) => {
     setRoles((previous) =>
       previous.map((role, index_) =>
         index_ === index ? { ...role, [field]: value } : role

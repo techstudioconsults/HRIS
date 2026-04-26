@@ -5,23 +5,9 @@ import { MainButton } from '@workspace/ui/lib/button';
 import { cn } from '@workspace/ui/lib/utils';
 import { format } from 'date-fns';
 import { saveAs } from 'file-saver';
-import { HtmlHTMLAttributes, useTransition } from 'react';
+import { useTransition } from 'react';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-
-interface ExportActionProperties<
-  T,
-> extends HtmlHTMLAttributes<HTMLButtonElement> {
-  isDisabled?: boolean;
-  downloadMutation?: (parameters: T) => Promise<Blob | File>;
-  currentPage?: number;
-  dateRange?: { from?: Date; to?: Date };
-  status?: string;
-  onDownloadComplete?: () => void;
-  buttonText?: string;
-  additionalParameters?: Omit<T, 'page' | 'start_date' | 'end_date' | 'status'>;
-  fileName?: string;
-  size?: 'xs' | 'lg' | 'xl' | 'icon';
-}
+import type { ExportActionProperties } from './types';
 
 const ExportAction = <T extends object>({
   isDisabled = false,

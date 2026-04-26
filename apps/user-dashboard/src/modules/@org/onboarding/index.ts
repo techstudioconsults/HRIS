@@ -19,10 +19,8 @@ export type {
   CompanyProfile,
   TeamApiResponse,
   RoleApiResponse,
-  Role,
-  Team,
   OnboardingSetupStatus,
   OnboardingSetupStatusApi,
-  Employee,
+  OnboardingEmployeeInput,
   OnboardEmployeesPayload,
 } from './types';

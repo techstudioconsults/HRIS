@@ -1,13 +1,8 @@
 import { EmptyState } from '@workspace/ui/lib/empty-state';
 
 import empty1 from '~/images/empty-state.svg';
-import type { Folder } from '../../services/types';
+import type { FoldersTabProperties } from '../../types';
 import { FolderCard } from '../ui/FolderCard';
-
-interface FoldersTabProperties {
-  folders: Folder[];
-  searchQuery: string;
-}
 
 export const FoldersTab = ({ folders, searchQuery }: FoldersTabProperties) => {
   if (folders.length === 0) {

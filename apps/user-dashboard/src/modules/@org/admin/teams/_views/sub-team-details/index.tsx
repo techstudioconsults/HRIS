@@ -126,10 +126,7 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
   }, [employeesResp]);
 
   const members: Employee[] = useMemo(
-    () =>
-      allEmployees.filter(
-        (employee) => employee?.employmentDetails?.team?.id === teamId
-      ),
+    () => allEmployees.filter((employee) => employee?.team?.id === teamId),
     [allEmployees, teamId]
   );
 
@@ -174,19 +171,17 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
       },
       {
         header: 'Role',
-        accessorKey: 'email',
+        accessorKey: 'role',
         render: (_, employee: Employee) => (
-          <span className="text-sm">
-            {employee?.employmentDetails?.role?.name || 'N/A'}
-          </span>
+          <span className="text-sm">{employee?.role?.name || 'N/A'}</span>
         ),
       },
       {
         header: 'Work Mode',
-        accessorKey: 'email',
+        accessorKey: 'workMode',
         render: (_, employee: Employee) => (
           <span className="text-sm capitalize">
-            {employee?.employmentDetails?.workMode || 'N/A'}
+            {employee?.workMode || 'N/A'}
           </span>
         ),
       },
@@ -226,7 +221,7 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
           title="Team Manager"
           value={
             <p className="text-base">
-              {teamData?.manager || `Ifijeh Kingsley`}
+              {teamData?.manager?.name || 'No manager assigned'}
             </p>
           }
           className="flex flex-col items-center justify-center gap-4 text-center"

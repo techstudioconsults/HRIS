@@ -1,9 +1,6 @@
 'use client';
 
-interface ProgressBarProperties {
-  current: number;
-  total: number;
-}
+import type { ProgressBarProperties } from '@/modules/@org/shared/types';
 
 export const ProgressBar = ({ current, total }: ProgressBarProperties) => {
   const percentage = (current / total) * 100;

@@ -27,7 +27,7 @@ export const teamColumn: IColumnDefinition<Team>[] = [
     accessorKey: 'manager',
     render: (_value: unknown, team: Team) => (
       <span className="text-sm text-gray-600 dark:text-gray-400">
-        {team.manager || 'Not assigned'}
+        {team.manager?.name || 'Not assigned'}
       </span>
     ),
   },
@@ -270,7 +270,7 @@ export const subTeamColumn: IColumnDefinition<Team>[] = [
     header: 'Team Lead',
     accessorKey: 'manager',
     render: (_value: unknown, team: Team) => (
-      <span className="text-sm">{team.manager || `N/A`}</span>
+      <span className="text-sm">{team.manager?.name || 'N/A'}</span>
     ),
   },
   {

@@ -1,4 +1,8 @@
-import type { RequestLeaveFormValues } from '../schemas/request-leave-form';
+import { type z } from 'zod';
+import { requestLeaveSchema } from '../schemas/request-leave-form';
+
+/** Inferred from requestLeaveSchema — canonical location for this type. */
+export type RequestLeaveFormValues = z.infer<typeof requestLeaveSchema>;
 
 // User Leave Module Types
 export interface LeaveType {

@@ -1,5 +1,8 @@
-// Define strict types for table data and actions
 declare global {
+  // ============================================================================
+  // TABLE INFRASTRUCTURE TYPES
+  // ============================================================================
+
   interface IColumnDefinition<T extends DataItem> {
     header: string;
     accessorKey: keyof T;
@@ -30,84 +33,9 @@ declare global {
     showPagination?: boolean;
   }
 
-  interface Team extends Record<string, unknown> {
-    id: string;
-    name: string;
-    manager?: string;
-    parent?: string;
-    subteams?: string;
-    members?: number;
-    createdAt?: string;
-    updatedAt?: string;
-  }
-
-  interface Role {
-    id: string;
-    name: string;
-    teamId: string;
-    permissions: Permission[];
-  }
-
-  type Permission =
-    | 'company:manage'
-    | 'employee:manage'
-    | 'team:manage'
-    | 'role:manage'
-    | 'payroll:manage'
-    | 'attendance:manage'
-    | 'leave:manage'
-    | 'resource:manage'
-    | 'company:read'
-    | 'employee:read'
-    | 'team:read'
-    | 'role:read'
-    | 'payroll:read'
-    | 'attendance:read'
-    | 'leave:read'
-    | 'resource:read';
-
-  // New employee shape types based on backend payload
-  type Gender = 'male' | 'female';
-  type EmploymentType = 'full time' | 'part time' | 'contract' | null;
-  type WorkMode = 'remote' | 'hybrid' | 'on site' | null;
-
-  interface EmploymentDetails {
-    startDate: string; // ISO date string
-    employmentType: EmploymentType;
-    workMode: WorkMode;
-    team: {
-      id: string;
-      name: string;
-    };
-    role: Role;
-  }
-
-  interface PayProfile {
-    id: string;
-    netPay: number;
-    grossSalary: number;
-    baseSalary: number;
-    bankName: string;
-    accountName: string;
-    accountNumber: string;
-  }
-
-  interface Employee extends Record<string, unknown> {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    gender: Gender;
-    avatar?: string | null;
-    phoneNumber: string;
-    dateOfBirth: string; // ISO date string
-    status: string;
-    document?: string | null; // File path or URL
-    employmentDetails: EmploymentDetails;
-    payProfile: PayProfile;
-    createdAt: string; // ISO date string
-    updatedAt: string; // ISO date string
-  }
+  // ============================================================================
+  // ADMIN UI TYPES
+  // ============================================================================
 
   interface OnboardingStep {
     title: string;

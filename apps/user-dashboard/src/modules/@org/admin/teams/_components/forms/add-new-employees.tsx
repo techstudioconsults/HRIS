@@ -26,40 +26,14 @@ import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { FormEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-
-interface FormEmployee {
-  employeeId: string;
-  roleId: string;
-  customPermissions?: string[];
-}
-
-interface Employee {
-  id: string;
-  name: string;
-  email: string;
-}
-
-interface Role {
-  id: string;
-  name: string;
-  description?: string;
-}
-
-interface AddNewEmployeesProperties {
-  isEdit?: boolean;
-  initialData?: any;
-  onSubmit: (data: FormEmployee) => Promise<void>;
-  onCancel: (event: FormEvent) => void;
-  onDelete?: (employeeId: string) => Promise<void>;
-  isSubmitting?: boolean;
-  availableRoles?: Role[];
-  availableEmployees?: Employee[];
-}
-
-type FormEmployeeField = keyof FormEmployee;
-type FormEmployeeValue = string | string[] | undefined;
+import type {
+  FormEmployee,
+  AddNewEmployeesProperties,
+  FormEmployeeField,
+  FormEmployeeValue,
+} from '../../types';
 
 export const AddNewEmployees = ({
   isEdit,

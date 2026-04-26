@@ -13,11 +13,10 @@ import {
   LEAVE_CYCLE_OPTIONS,
   LEAVE_ELIGIBILITY_OPTIONS,
   leaveTypeFormSchema,
-  type LeaveTypeFormValues,
 } from '../../schemas/leave-type-form';
+import type { LeaveTypeFormValues } from '../../types';
 import { useLeaveService } from '../../services/use-service';
-import type { LeaveType } from '../../types';
-import type { EditLeaveTypeFormProperties } from './leave-type-form.types';
+import type { EditLeaveTypeFormProperties, LeaveType } from '../../types';
 
 export const EditLeaveTypeForm = ({
   leaveType,
@@ -35,7 +34,10 @@ export const EditLeaveTypeForm = ({
     defaultValues: {
       name: String(leaveType.name ?? ''),
       days: Number(leaveType.days ?? 0),
-      cycle: String(leaveType.cycle ?? ''),
+      cycle: (leaveType.cycle ?? 'monthly') as
+        | 'monthly'
+        | 'quarterly'
+        | 'yearly',
       maxLeaveDaysPerRequest: Number(
         (leaveType as LeaveType).maxLeaveDaysPerRequest ?? 0
       ),
@@ -102,14 +104,14 @@ export const EditLeaveTypeForm = ({
               placeholder="Annual Leave"
               required
               type="text"
-              className="!h-12"
+              className="h-12!"
             />
             <FormField
               name="cycle"
               label="Leave Cycle"
               placeholder="Select Leave Cycle"
               type="select"
-              className="bg-background border-border !h-12"
+              className="bg-background border-border h-12!"
               options={cycleOptions}
               required
             />
@@ -144,7 +146,7 @@ export const EditLeaveTypeForm = ({
               placeholder="Select employment duration"
               type="select"
               required
-              className="bg-background border-border !h-12"
+              className="bg-background border-border h-12!"
               options={eligibilityOptions}
             />
           </div>
@@ -156,7 +158,7 @@ export const EditLeaveTypeForm = ({
               required
               placeholder="Enter number"
               type="number"
-              className="!h-12"
+              className="h-12!"
             />
             <FormField
               name="maxLeaveDaysPerRequest"
@@ -164,14 +166,14 @@ export const EditLeaveTypeForm = ({
               required
               placeholder="Enter number"
               type="number"
-              className="!h-12"
+              className="h-12!"
             />
             <FormField
               name="maxNumberOfRollOver"
               label="Maximum Number of Roll Over"
               placeholder="Enter number"
               type="number"
-              className="!h-12"
+              className="h-12!"
               disabled={!enableRollover}
             />
           </div>

@@ -80,26 +80,19 @@ export const EditEmployeeForm = () => {
     if (!employee) return;
 
     // Ensure all required enum fields have valid values
-    const gender = employee.gender;
-    const employmentType =
-      employee.employmentDetails?.employmentType || 'full time';
-    // Map "on site" to "onsite" to match the schema
-    const rawWorkMode = employee.employmentDetails?.workMode || 'remote';
+    const gender = employee.gender ?? 'male';
+    const employmentType = employee.employmentType || 'full time';
     const workMode: 'remote' | 'onsite' | 'hybrid' =
-      rawWorkMode === 'on site'
-        ? 'onsite'
-        : (rawWorkMode as 'remote' | 'onsite' | 'hybrid');
+      (employee.workMode as 'remote' | 'onsite' | 'hybrid') || 'remote';
 
     const teamId =
-      employee.employmentDetails?.team?.id !== undefined &&
-      employee.employmentDetails?.team?.id !== null
-        ? String(employee.employmentDetails.team.id)
+      employee.team?.id !== undefined && employee.team?.id !== null
+        ? String(employee.team.id)
         : '';
 
     const roleId =
-      employee.employmentDetails?.role?.id !== undefined &&
-      employee.employmentDetails?.role?.id !== null
-        ? String(employee.employmentDetails.role.id)
+      employee.role?.id !== undefined && employee.role?.id !== null
+        ? String(employee.role.id)
         : '';
 
     // Normalize phone number - remove non-digit characters and format for E.164
@@ -121,19 +114,17 @@ export const EditEmployeeForm = () => {
       phoneNumber: normalizePhoneNumber(employee.phoneNumber),
       dateOfBirth: employee.dateOfBirth?.split('T')[0] || '',
       gender: gender,
-      startDate: employee.employmentDetails?.startDate?.split('T')[0] || '',
+      startDate: employee.startDate?.split('T')[0] || '',
       employmentType: employmentType,
       workMode: workMode as 'remote' | 'onsite' | 'hybrid',
       teamId,
       roleId,
-      baseSalary: employee.payProfile.baseSalary
-        ? Number(employee.payProfile.baseSalary)
-        : 0,
-      bankName: employee.payProfile.bankName ?? employee.bankName ?? '',
-      accountName:
-        employee.payProfile.accountName ?? employee.accountName ?? '',
-      accountNumber:
-        employee.payProfile.accountNumber ?? employee.accountNumber ?? '',
+      baseSalary: employee.monthlySalary ? Number(employee.monthlySalary) : 0,
+      bankName: employee.bankName ?? '',
+      accountName: employee.accountName ?? '',
+      accountNumber: employee.accountNumber
+        ? String(employee.accountNumber)
+        : '',
       bankCode: '',
       // permissions: employee.employmentDetails.role.permissions ?? [],
     };
@@ -206,16 +197,11 @@ export const EditEmployeeForm = () => {
     if (currentTeamId && !base.some((opt) => opt.value === currentTeamId)) {
       base.push({
         value: currentTeamId,
-        label: employee?.employmentDetails?.team?.name || 'Current team',
+        label: employee?.team?.name || 'Current team',
       });
     }
     return base;
-  }, [
-    teams,
-    formValues?.teamId,
-    selectedTeamId,
-    employee?.employmentDetails?.team?.name,
-  ]);
+  }, [teams, formValues?.teamId, selectedTeamId, employee?.team?.name]);
 
   const roleOptions = useMemo(() => {
     const rolesArray = Array.isArray(derivedRoles) ? derivedRoles : [];
@@ -230,16 +216,11 @@ export const EditEmployeeForm = () => {
     ) {
       base.push({
         value: currentRoleId,
-        label: employee?.employmentDetails?.role?.name || 'Current role',
+        label: employee?.role?.name || 'Current role',
       });
     }
     return base;
-  }, [
-    derivedRoles,
-    formValues?.roleId,
-    selectedRoleId,
-    employee?.employmentDetails?.role?.name,
-  ]);
+  }, [derivedRoles, formValues?.roleId, selectedRoleId, employee?.role?.name]);
 
   const handleFilesSelected = (files: File[]) => {
     setFiles(files);

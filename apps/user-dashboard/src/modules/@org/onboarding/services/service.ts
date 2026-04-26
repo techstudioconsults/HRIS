@@ -12,6 +12,7 @@ import type {
   CompanyProfile,
   OnboardingSetupStatus,
   OnboardingSetupStatusApi,
+  RoleApiResponse,
 } from '../types';
 
 const normalizeSetupStatus = (
@@ -95,7 +96,7 @@ export class OnboardingService {
   }
 
   async getRole(roleId: string) {
-    const response = await this.http.get<ApiResponse<unknown>>(
+    const response = await this.http.get<ApiResponse<RoleApiResponse>>(
       `/roles/${roleId}`
     );
     if (response?.status === 200) {

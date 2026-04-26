@@ -17,17 +17,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { Button } from '@workspace/ui/components/button';
-
-type TopBarProperties = {
-  adminName: string;
-  adminEmail?: string;
-  adminAvatar?: string;
-  adminRole?: string;
-  notifications?: Notification[];
-  className?: string;
-  showSidebarTrigger?: boolean;
-  sticky?: boolean;
-};
+import type { TopBarProperties } from './types';
 
 const handleLogout = async () => {
   try {

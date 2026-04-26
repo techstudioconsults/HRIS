@@ -20,27 +20,10 @@ import { Progress } from '@workspace/ui/components/progress';
 import { MainButton } from '@workspace/ui/lib/button';
 import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { FormEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-
-interface MemberAssignment {
-  employeeId: string;
-  roleId: string; // optional depending on use-case
-}
-
-interface RoleLite {
-  id: string;
-  name: string;
-  description?: string;
-}
-interface AddNewMembersProperties {
-  parentTeamId: string; // team whose current members should be available
-  availableRoles?: RoleLite[];
-  onSubmit: (data: MemberAssignment) => Promise<void>;
-  onCancel: (event: FormEvent) => void;
-  isSubmitting?: boolean;
-}
+import type { MemberAssignment, AddNewMembersProperties } from '../../types';
 
 export const AddNewMembers = ({
   parentTeamId,

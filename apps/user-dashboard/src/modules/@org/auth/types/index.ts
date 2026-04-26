@@ -25,4 +25,28 @@ export interface UserResponse {
   error?: string;
 }
 
-export type { AuthActions, AuthState } from '../stores/auth-store';
+// ── Auth store state & actions ────────────────────────────────────────────────
+
+export interface AuthState {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  user: any | null;
+  isAuthenticated: boolean;
+  sessionExpiry: Date | null;
+}
+
+export interface AuthActions {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setUser: (user: any | null) => void;
+  clearUser: () => void;
+  logout: () => void;
+  setSessionExpiry: (expiry: Date | null) => void;
+}
+
+// ============================================================================
+// COMPONENT PROP TYPES
+// ============================================================================
+
+export interface OTPInputProperties {
+  value: string;
+  onChange: (value: string) => void;
+}

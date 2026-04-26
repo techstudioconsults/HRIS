@@ -26,24 +26,10 @@ import { FilterForm } from '../../../employee/_components/forms/filter-form';
 import { useEmployeeService } from '../../../employee/services/use-service';
 import { usePayrollService } from '../../services/use-service';
 import { usePayrollStore } from '../../stores/payroll-store';
-
-// Define FilterValues interface to match FilterForm
-interface FilterValues {
-  search?: string;
-  teamId?: string;
-  roleId?: string;
-  status?: string;
-  sortBy?: string;
-  limit?: string;
-  page?: string;
-}
-
-// Initial filter values - removed as we now use URL state management
-
-interface AddEmployeeDrawerProperties {
-  payrollId: string | null;
-  hasPayslips: boolean;
-}
+import type {
+  AddEmployeeDrawerProperties,
+  PayrollFilterValues,
+} from '../../types';
 
 export const AddEmployeeDrawer = ({
   payrollId,
@@ -134,7 +120,7 @@ export const AddEmployeeDrawer = ({
   );
 
   const handleFilterChange = useCallback(
-    (newFilters: FilterValues) => {
+    (newFilters: PayrollFilterValues) => {
       setTeamId(newFilters.teamId ?? null);
       setRoleId(newFilters.roleId ?? null);
       setStatus(
@@ -199,11 +185,11 @@ export const AddEmployeeDrawer = ({
       ),
     },
     {
-      accessorKey: 'employmentDetails',
+      accessorKey: 'role',
       header: 'Role',
       render: (_, employee: Employee) => (
         <div className="text-sm text-gray-500">
-          {employee.employmentDetails?.role?.name || 'N/A'}
+          {employee.role?.name || 'N/A'}
         </div>
       ),
     },

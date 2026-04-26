@@ -1,19 +1,4 @@
 /**
- * Paginated response used by resources listing endpoints.
- */
-export interface PaginatedResponse<T> {
-  data: {
-    items: T[];
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
-  success: boolean;
-  message?: string;
-}
-
-/**
  * API Error Response Type
  */
 export interface ApiError {
@@ -67,10 +52,7 @@ export interface FileQueryParameters {
 export interface Folder {
   id: string;
   name: string;
-  fileCount?: number;
   createdAt: string;
-  updatedAt: string;
-  file?: FolderFile[];
 }
 
 /**
@@ -81,7 +63,7 @@ export interface FolderFile {
   name: string;
   size: number;
   mimetype: string;
-  url?: string;
+  url: string;
   createdAt: string;
   folderId?: string;
 }

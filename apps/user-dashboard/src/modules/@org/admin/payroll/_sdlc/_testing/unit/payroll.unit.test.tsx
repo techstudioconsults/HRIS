@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { act } from 'react';
 import { create } from 'zustand';
 
+import type { PayrollRunStore } from '../../../types';
+
 // ─── Schemas under test ───────────────────────────────────────────────────────
 
 const PayrollSetupSchema = z.object({
@@ -25,20 +27,6 @@ const FundWalletSchema = z.object({
 });
 
 // ─── Zustand store under test ─────────────────────────────────────────────────
-
-type RunProgress = {
-  runId: string | null;
-  progress: number;
-  status: 'idle' | 'processing' | 'completed' | 'error';
-  errorMessage: string | null;
-};
-
-type PayrollRunStore = RunProgress & {
-  setProgress: (runId: string, progress: number) => void;
-  setCompleted: (runId: string) => void;
-  setError: (runId: string, message: string) => void;
-  reset: () => void;
-};
 
 const createPayrollRunStore = () =>
   create<PayrollRunStore>((set) => ({

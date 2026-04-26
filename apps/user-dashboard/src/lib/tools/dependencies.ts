@@ -11,10 +11,7 @@ import { AppService } from '@/services/app/app.service';
 
 import { HttpAdapter } from '../http/http-adapter';
 
-interface IDependencyContainer {
-  add<T>(key: symbol, dependency: T): void;
-  get<T>(key: symbol): T;
-}
+import { type IDependencyContainer } from './types';
 
 const dependencies = {
   HTTP_ADAPTER: Symbol('httpAdapter'),

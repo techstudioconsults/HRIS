@@ -3,26 +3,7 @@ import { Icon } from '@workspace/ui/lib/icons/icon';
 import Link from 'next/link';
 import { Card } from '@workspace/ui/components/card';
 import { IconVariant, TrendDirection } from '@/modules/@org/_components/types';
-import { ReactNode } from 'react';
-
-interface DashboardCardProperties {
-  title: string;
-  value: string | number | ReactNode;
-  percentage?: string;
-  icon?: ReactNode;
-  iconVariant?: IconVariant;
-  className?: string;
-  actionText?: string;
-  actionHref?: string;
-  showTrendIcon?: boolean;
-  trend?: TrendDirection;
-  onAction?: () => void;
-  // Text color customization props
-  titleColor?: string;
-  valueColor?: string;
-  percentageColor?: string;
-  actionTextColor?: string;
-}
+import type { DashboardCardProperties } from '@/modules/@org/shared/types';
 
 // Icon variant styles mapping for better maintainability
 const ICON_VARIANT_STYLES: Record<IconVariant, string> = {

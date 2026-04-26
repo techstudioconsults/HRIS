@@ -1,27 +1,9 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import type { LeaveRequest } from '../types';
+import type { LeaveUIActions, LeaveUIState } from '../types';
 
-export interface LeaveUIState {
-  showLeaveSetupModal: boolean;
-  hasCompletedLeaveSetup: boolean;
-
-  showLeaveDetailsDrawer: boolean;
-  selectedLeaveRequestId: string | null;
-  selectedLeaveRequest: LeaveRequest | null;
-}
-
-export interface LeaveUIActions {
-  setShowLeaveSetupModal: (open: boolean) => void;
-  setHasCompletedLeaveSetup: (status: boolean) => void;
-
-  setShowLeaveDetailsDrawer: (open: boolean) => void;
-  setSelectedLeaveRequestId: (id: string | null) => void;
-  setSelectedLeaveRequest: (request: LeaveRequest | null) => void;
-
-  resetUI: () => void;
-}
+export type { LeaveUIState, LeaveUIActions } from '../types';
 
 const initialState: LeaveUIState = {
   showLeaveSetupModal: false,
@@ -49,4 +31,8 @@ export const useLeaveStore = create<LeaveUIState & LeaveUIActions>()(
   )
 );
 
-export type { LeaveUIState as LeaveState, LeaveUIActions as LeaveActions };
+// Legacy aliases for backwards compatibility — prefer importing LeaveUIState / LeaveUIActions directly.
+export type {
+  LeaveUIState as LeaveState,
+  LeaveUIActions as LeaveActions,
+} from '../types';

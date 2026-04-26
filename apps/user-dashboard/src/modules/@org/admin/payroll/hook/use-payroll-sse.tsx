@@ -5,20 +5,16 @@
 
 import { useEffect, useState } from 'react';
 
-export const EventRegistry = {
-  PAYROLL_APPROVE_REQUEST: 'payroll.approve.request',
-  PAYROLL_APPROVED: 'payroll.approve.success',
-  PAYROLL_REJECTED: 'payroll.approve.rejected',
-  PAYROLL_COMPLETED: 'payroll.completed',
-  PAYROLL_STATUS: 'payroll.status',
-  SALARY_PAID: 'salary.paid',
-  WALLET_CREATED_SUCCESS: 'wallet.created.success',
-} as const;
+import { EventRegistry } from '../types';
+import type { EventNameType } from '../types';
 
-export type EventNameType = (typeof EventRegistry)[keyof typeof EventRegistry];
+export { EventRegistry, EventNameType };
 
 export const useSSEPayroll = (userId: string) => {
-  const [latestEvent, setLatestEvent] = useState<{ type: EventNameType; payload: any } | null>(null);
+  const [latestEvent, setLatestEvent] = useState<{
+    type: EventNameType;
+    payload: any;
+  } | null>(null);
 
   useEffect(() => {
     if (!userId) return;
@@ -50,7 +46,10 @@ export const useSSEPayroll = (userId: string) => {
         console.log('[SSE Generic Message]', data);
         setLatestEvent({ type: 'GENERIC' as EventNameType, payload: data });
       } catch {
-        setLatestEvent({ type: 'GENERIC' as EventNameType, payload: event.data });
+        setLatestEvent({
+          type: 'GENERIC' as EventNameType,
+          payload: event.data,
+        });
       }
     };
 

@@ -15,19 +15,7 @@ import { useCallback, useTransition } from 'react';
 
 import { FilterForm } from '../../../_components/forms/filter-form';
 import { useEmployeeService } from '../../../services/use-service';
-
-interface EmployeeHeaderSectionProperties {
-  search: string | null;
-  teamId: string | null;
-  roleId: string | null;
-  status: string | null;
-  sortBy: string | null;
-  limit: number;
-  page: number;
-  apiFilters: any;
-  onSearchChange: (query: string) => void;
-  onFilterChange: (newFilters: any) => void;
-}
+import type { EmployeeHeaderSectionProperties } from '../../../types';
 
 export const EmployeeHeaderSection = ({
   search,

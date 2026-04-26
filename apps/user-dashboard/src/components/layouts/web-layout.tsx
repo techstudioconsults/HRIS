@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import type { WebLayoutProps } from './types';
+
 /**
  * WebLayout - Optimized for browser viewing
  *
@@ -11,12 +13,7 @@ import React from 'react';
  * - Standard web app spacing
  * - Responsive to browser window
  */
-export interface WebLayoutProps {
-  children: React.ReactNode;
-  header?: React.ReactNode;
-  footer?: React.ReactNode;
-  sidebar?: React.ReactNode;
-}
+export type { WebLayoutProps } from './types';
 
 export function WebLayout({
   children,

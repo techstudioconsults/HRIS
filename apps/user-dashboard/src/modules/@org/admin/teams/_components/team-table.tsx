@@ -27,22 +27,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@workspace/ui/components/pagination';
-
-interface Employee {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  department: string;
-  status: string;
-}
-
-interface EmployeeTableProperties {
-  employees: Employee[];
-  departments: string[];
-  roles: string[];
-  className?: string;
-}
+import type { EmployeeTableProperties } from '../types';
 
 function TableRow(props: { children: ReactNode }) {
   return null;

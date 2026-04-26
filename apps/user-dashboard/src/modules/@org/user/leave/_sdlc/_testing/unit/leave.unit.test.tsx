@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
+import type { LeaveModalState } from '../../../../../../types';
 
 // ---------------------------------------------------------------------------
 // requestLeaveSchema (mirrored from schemas/index.ts)
@@ -98,8 +99,6 @@ describe('requestLeaveSchema', () => {
 // ---------------------------------------------------------------------------
 // LeaveModalState transitions
 // ---------------------------------------------------------------------------
-
-type LeaveModalState = 'request' | 'edit' | 'details' | 'submitted' | null;
 
 const transitions: Record<string, LeaveModalState> = {
   open_request: 'request',

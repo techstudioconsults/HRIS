@@ -2,9 +2,7 @@
 
 import { TeamDetails } from '@/modules/@org/admin/teams/_views/team-details';
 
-type PageProps = {
-  params: Promise<{ id: string }>;
-};
+import { type PageProps } from './types';
 
 const Page = async ({ params }: PageProps) => {
   const { id } = await params;

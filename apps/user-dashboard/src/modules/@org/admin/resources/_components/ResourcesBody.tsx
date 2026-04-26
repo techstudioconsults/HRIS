@@ -9,14 +9,10 @@ import {
 import { ErrorEmptyState } from '@workspace/ui/lib/empty-state';
 
 import { useResourceService } from '../services/use-service';
+import type { ResourcesBodyProperties } from '../types';
 import { FilesSkeleton } from './FilesSkeleton';
 import { FilesTab } from './tabs/FilesTab';
 import { FoldersTab } from './tabs/FoldersTab';
-
-interface ResourcesBodyProperties {
-  defaultView?: 'folders' | 'files';
-  searchQuery?: string;
-}
 
 export const ResourcesBody = ({
   defaultView = 'files',

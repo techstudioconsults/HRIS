@@ -273,27 +273,21 @@ const EmployeeDetailsContent = ({ employeeData }: { employeeData: any }) => {
                 <DetailsItem
                   label="Start Date"
                   value={
-                    employeeData?.employmentDetails?.startDate
-                      ? formatDate(employeeData.employmentDetails.startDate)
+                    employeeData?.startDate
+                      ? formatDate(employeeData.startDate)
                       : 'N/A'
                   }
                 />
                 <DetailsItem
                   label="Employment Type"
-                  value={employeeData?.employmentDetails?.employmentType}
+                  value={employeeData?.employmentType}
                 />
-                <DetailsItem
-                  label="Work Mode"
-                  value={employeeData?.employmentDetails?.workMode}
-                />
+                <DetailsItem label="Work Mode" value={employeeData?.workMode} />
                 <DetailsItem
                   label="Department"
-                  value={employeeData?.employmentDetails?.team?.name}
+                  value={employeeData?.team?.name}
                 />
-                <DetailsItem
-                  label="Role"
-                  value={employeeData?.employmentDetails?.role?.name}
-                />
+                <DetailsItem label="Role" value={employeeData?.role?.name} />
               </div>
             </DetailsFieldset>
           </Card>
@@ -306,20 +300,17 @@ const EmployeeDetailsContent = ({ employeeData }: { employeeData: any }) => {
             >
               <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 <DetailsItem
-                  label="Monthly Gross Salary"
-                  value={employeeData?.payProfile?.grossSalary?.toString()}
+                  label="Monthly Salary"
+                  value={employeeData?.monthlySalary?.toString()}
                 />
-                <DetailsItem
-                  label="Bank Name"
-                  value={employeeData?.payProfile?.bankName}
-                />
+                <DetailsItem label="Bank Name" value={employeeData?.bankName} />
                 <DetailsItem
                   label="Account Number"
-                  value={employeeData?.payProfile?.accountNumber}
+                  value={employeeData?.accountNumber?.toString()}
                 />
                 <DetailsItem
                   label="Account Name"
-                  value={employeeData?.payProfile?.accountName}
+                  value={employeeData?.accountName}
                 />
               </div>
             </DetailsFieldset>

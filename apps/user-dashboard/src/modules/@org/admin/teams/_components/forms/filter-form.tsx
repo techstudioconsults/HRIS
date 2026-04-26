@@ -5,19 +5,7 @@ import { cn } from '@workspace/ui/lib/utils';
 import { useEffect, useRef } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
-
-interface FilterValues {
-  search?: string;
-  status?: string;
-  sortBy?: string;
-  limit?: string;
-  page?: string;
-}
-
-type FilterOption = {
-  value: string;
-  label: string;
-};
+import type { FilterValues, FilterOption } from '../../types';
 
 export const FilterForm = ({
   initialFilters,

@@ -9,19 +9,12 @@ import {
 } from '@workspace/ui/components/drawer';
 import { Logo } from '@workspace/ui/lib/logo';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import type { AnyIconName } from '@workspace/ui/lib/icons/types';
 import { cn } from '@workspace/ui/lib/utils';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo, useState } from 'react';
-
-type DockItem = {
-  name: string;
-  url: string;
-  icon: AnyIconName;
-  id?: string;
-};
+import type { DockItem, DockLinkVariant, DockLinkProps } from './types';
 
 const ADMIN_DOCK_IDS = [
   'dashboard',
@@ -37,16 +30,6 @@ const toDockId = (item: DockItem): string =>
 const isItemActive = (pathname: string, itemUrl: string) =>
   pathname === itemUrl ||
   (itemUrl !== '/' && pathname.startsWith(`${itemUrl}/`));
-
-type DockLinkVariant = 'dock' | 'drawer';
-
-type DockLinkProps = {
-  item: DockItem;
-  pathname: string;
-  variant?: DockLinkVariant;
-  className?: string;
-  onNavigate?: () => void;
-};
 
 const linkVariantClasses: Record<DockLinkVariant, string> = {
   dock: 'size-16 rounded-xl text-[11px] leading-none',

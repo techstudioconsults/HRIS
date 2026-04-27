@@ -1,7 +1,9 @@
 import { HttpAdapter } from '@/lib/http/http-adapter';
 import {
   ForgotPasswordData,
+  LoginFormData,
   LoginOTPFFormData,
+  LoginOTPFormData,
   RegisterFormData,
   ResetPasswordData,
 } from '@/schemas';
@@ -13,6 +15,16 @@ export class AuthService {
 
   constructor(httpAdapter: HttpAdapter) {
     this.http = httpAdapter;
+  }
+
+  async loginWithPassword(data: LoginFormData) {
+    const response = await this.http.post<AuthResponse>(
+      '/auth/login/password',
+      data
+    );
+    if (response?.status === 200) {
+      return response.data;
+    }
   }
 
   async signUp(data: RegisterFormData) {
@@ -35,7 +47,7 @@ export class AuthService {
     }
   }
 
-  async loginWithOTP(data: LoginOTPFFormData) {
+  async loginWithOTP(data: LoginOTPFormData) {
     const response = await this.http.post<AuthResponse>(
       `/auth/login/otp`,
       data

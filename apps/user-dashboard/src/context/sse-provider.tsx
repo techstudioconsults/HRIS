@@ -1,7 +1,7 @@
 'use client';
 
 import { useNotifications } from '@/lib/sse/use-notifications';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/session';
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 
 import { type SSEContextValue } from './types';

@@ -24,10 +24,10 @@ export const leaveHandlers = [
   }),
 
   http.patch('/api/v1/leave/requests/:id/approve', ({ params }) => {
-    const request = mockLeaveData.leaveRequests.find(
+    const leaveReq = mockLeaveData.leaveRequests.find(
       (r) => r.id === params['id']
     );
-    if (!request) {
+    if (!leaveReq) {
       return HttpResponse.json(
         {
           status: 'error',
@@ -40,7 +40,7 @@ export const leaveHandlers = [
     return HttpResponse.json({
       status: 'success',
       data: {
-        ...request,
+        ...leaveReq,
         status: 'approved',
         actionedAt: new Date().toISOString(),
       },
@@ -68,7 +68,7 @@ export const leaveHandlers = [
       return HttpResponse.json({
         status: 'success',
         data: {
-          ...leaveRequest,
+          ...(leaveRequest ?? {}),
           status: 'declined',
           declineReason: body.reason,
           actionedAt: new Date().toISOString(),
@@ -87,7 +87,7 @@ export const leaveHandlers = [
   }),
 
   http.post('/api/v1/leave/types', async ({ request }) => {
-    const body = await request.json();
+    const body = (await request.json()) as Record<string, unknown>;
     return HttpResponse.json(
       {
         status: 'success',
@@ -99,7 +99,7 @@ export const leaveHandlers = [
   }),
 
   http.put('/api/v1/leave/types/:id', async ({ params, request }) => {
-    const body = await request.json();
+    const body = (await request.json()) as Record<string, unknown>;
     return HttpResponse.json({
       status: 'success',
       data: { id: params['id'], ...body },
@@ -124,7 +124,7 @@ export const leaveHandlers = [
   }),
 
   http.put('/api/v1/leave/policy', async ({ request }) => {
-    const body = await request.json();
+    const body = (await request.json()) as Record<string, unknown>;
     return HttpResponse.json({
       status: 'success',
       data: { ...mockLeaveData.leavePolicy, ...body },

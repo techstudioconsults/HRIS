@@ -22,22 +22,14 @@ test.describe('Admin Dashboard E2E Tests', () => {
     await expect(page.getByTestId('headcount-widget')).toBeVisible();
   });
 
-  test.todo('should display all metric widgets after data loads');
-  test.todo('should display the onboarding banner for a new organisation');
-  test.todo(
-    'should not display the onboarding banner for a fully set-up organisation'
-  );
-  test.todo('should display skeleton loaders on initial page load');
-  test.todo(
-    'should navigate to the leave module when clicking pending leave approvals'
-  );
-  test.todo(
-    'should navigate to the payroll module when clicking the payroll summary widget'
-  );
-  test.todo('should show the recent activity feed with at least one item');
-  test.todo(
-    'should redirect to /login when the session has expired (401 response)'
-  );
-  test.todo('should be fully keyboard navigable without a mouse');
-  test.todo('should pass Axe accessibility audit on full render');
+  test.skip('should display all metric widgets after data loads', async () => {});
+  test.skip('should display the onboarding banner for a new organisation', async () => {});
+  test.skip('should not display the onboarding banner for a fully set-up organisation', async () => {});
+  test.skip('should display skeleton loaders on initial page load', async () => {});
+  test.skip('should navigate to the leave module when clicking pending leave approvals', async () => {});
+  test.skip('should navigate to the payroll module when clicking the payroll summary widget', async () => {});
+  test.skip('should show the recent activity feed with at least one item', async () => {});
+  test.skip('should redirect to /login when the session has expired (401 response)', async () => {});
+  test.skip('should be fully keyboard navigable without a mouse', async () => {});
+  test.skip('should pass Axe accessibility audit on full render', async () => {});
 });

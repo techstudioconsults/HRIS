@@ -45,7 +45,7 @@ const mockLeaveRequests: LeaveRequest[] = [
     endDate: '2025-12-20',
     days: 1,
     reason: 'Personal errands',
-    status: 'declined' as const,
+    status: 'rejected',
     approvedBy: 'Team Lead',
     approvedAt: '2025-12-19',
     createdAt: '2025-12-19',
@@ -54,7 +54,7 @@ const mockLeaveRequests: LeaveRequest[] = [
 ];
 
 describe('LeaveBody Component', () => {
-  const mockGetRowActions = vi.fn(() => []);
+  const mockGetRowActions = vi.fn((_row: LeaveRequest) => []);
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -126,7 +126,9 @@ describe('LeaveBody Component', () => {
 
     it('should filter requests by status', () => {
       const searchQuery = 'approved';
-      const filtered = mockLeaveRequests.filter((r) => r.status.toLowerCase().includes(searchQuery.toLowerCase()));
+      const filtered = mockLeaveRequests.filter((r) =>
+        r.status.toLowerCase().includes(searchQuery.toLowerCase())
+      );
 
       expect(filtered).toHaveLength(1);
       expect(filtered[0].status).toBe('approved');
@@ -147,7 +149,9 @@ describe('LeaveBody Component', () => {
     it('should handle empty search', () => {
       const searchQuery = '';
       const filtered = mockLeaveRequests.filter(
-        (r) => searchQuery.trim() === '' || r.employeeName.toLowerCase().includes(searchQuery.toLowerCase())
+        (r) =>
+          searchQuery.trim() === '' ||
+          r.employeeName.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
       expect(filtered).toHaveLength(3);
@@ -157,7 +161,9 @@ describe('LeaveBody Component', () => {
       const searchQuery = '   ';
       const trimmed = searchQuery.trim();
       const filtered = mockLeaveRequests.filter(
-        (r) => trimmed === '' || r.employeeName.toLowerCase().includes(trimmed.toLowerCase())
+        (r) =>
+          trimmed === '' ||
+          r.employeeName.toLowerCase().includes(trimmed.toLowerCase())
       );
 
       expect(filtered).toHaveLength(3);

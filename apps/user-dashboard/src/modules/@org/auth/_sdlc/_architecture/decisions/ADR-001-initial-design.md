@@ -2,7 +2,9 @@
 section: architecture
 topic: adr
 id: ADR-001
-status: Accepted
+status: Superseded
+superseded-by: ADR-002
+date: 2026-04-26
 ---
 
 # ADR-001 — Auth Architecture: NextAuth + Dual Login Modes

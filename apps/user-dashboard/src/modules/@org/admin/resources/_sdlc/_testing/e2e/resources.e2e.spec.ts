@@ -13,14 +13,14 @@ test.describe('Resources E2E Tests', () => {
     await expect(page).toHaveURL(new RegExp('/admin/resources'));
   });
 
-  test.todo('should display the Folders and Files tab headings');
-  test.todo('should show root-level FolderCards on the Folders tab');
-  test.todo('should create a new folder successfully');
-  test.todo('should navigate into a folder and update the breadcrumb');
-  test.todo('should navigate back to root via breadcrumb');
-  test.todo('should upload a PDF to the HR Policies folder');
-  test.todo('should display the uploaded file in the Files tab');
-  test.todo('should delete an empty folder after confirming the dialog');
-  test.todo('should show empty state when a folder has no sub-folders');
-  test.todo('should show empty state when a folder has no files');
+  test.skip('should display the Folders and Files tab headings', async () => {});
+  test.skip('should show root-level FolderCards on the Folders tab', async () => {});
+  test.skip('should create a new folder successfully', async () => {});
+  test.skip('should navigate into a folder and update the breadcrumb', async () => {});
+  test.skip('should navigate back to root via breadcrumb', async () => {});
+  test.skip('should upload a PDF to the HR Policies folder', async () => {});
+  test.skip('should display the uploaded file in the Files tab', async () => {});
+  test.skip('should delete an empty folder after confirming the dialog', async () => {});
+  test.skip('should show empty state when a folder has no sub-folders', async () => {});
+  test.skip('should show empty state when a folder has no files', async () => {});
 });

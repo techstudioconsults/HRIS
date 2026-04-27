@@ -103,3 +103,62 @@ export const expiredResetTokenHandler = http.post(
       { status: 400 }
     )
 );
+
+// ---------------------------------------------------------------------------
+// BFF Route Handler mocks (Next.js /api/auth/* endpoints)
+// These are intercepted at the Next.js layer, not the backend.
+// ---------------------------------------------------------------------------
+
+/** POST /api/auth/session — set all three session cookies after login */
+export const bffSessionHandler = http.post('/api/auth/session', async () =>
+  HttpResponse.json({ ok: true })
+);
+
+/** GET /api/auth/token — returns token + user when session is valid */
+export const bffTokenAuthHandler = http.get('/api/auth/token', async () =>
+  HttpResponse.json({
+    accessToken: 'mock-access-token',
+    expiresAt: Date.now() + 3_600_000,
+    user: {
+      id: 'emp_01',
+      employee: {
+        id: 'emp_01',
+        fullName: 'Amara Okafor',
+        email: 'amara@acme.com',
+        role: { id: 'role_01', name: 'owner' },
+      },
+      role: { id: 'role_01', name: 'owner' },
+      permissions: ['admin:admin'],
+    },
+    expires: new Date(Date.now() + 3_600_000).toISOString(),
+  })
+);
+
+/** GET /api/auth/token — 401 when no session cookie present */
+export const bffTokenUnauthHandler = http.get('/api/auth/token', async () =>
+  HttpResponse.json({ error: 'unauthenticated' }, { status: 401 })
+);
+
+/** DELETE /api/auth/session — clears session cookies on logout */
+export const bffSessionDeleteHandler = http.delete(
+  '/api/auth/session',
+  async () => HttpResponse.json({ ok: true })
+);
+
+/** POST /api/auth/refresh — refreshes access token */
+export const bffRefreshSuccessHandler = http.post(
+  '/api/auth/refresh',
+  async () =>
+    HttpResponse.json({
+      accessToken: 'refreshed-access-token',
+      expiresAt: Date.now() + 3_600_000,
+    })
+);
+
+/** POST /api/auth/refresh — 401 when refresh token is expired */
+export const bffRefreshFailHandler = http.post('/api/auth/refresh', async () =>
+  HttpResponse.json(
+    { title: 'Refresh token expired', status: 401 },
+    { status: 401 }
+  )
+);

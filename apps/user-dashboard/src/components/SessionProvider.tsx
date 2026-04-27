@@ -1,8 +1,8 @@
 'use client';
 
-import { SessionProvider as NextAuthSessionProvider } from 'next-auth/react';
+import { SessionProvider as HrisSessionProvider } from '@/lib/session';
 import type { SessionProviderProperties } from './types';
 
 export function SessionProvider({ children }: SessionProviderProperties) {
-  return <NextAuthSessionProvider>{children}</NextAuthSessionProvider>;
+  return <HrisSessionProvider>{children}</HrisSessionProvider>;
 }

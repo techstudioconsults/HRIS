@@ -7,7 +7,7 @@ import { AttendanceAndRecentActivities } from '../../_components/attendanceandac
 import { CardSection } from '../../_components/card-section';
 import { LeaveAndPayroll } from '../../_components/leaveandpayroll';
 import { OnboardingHeader } from '../onboarding/onboarding-header';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/session';
 import { NewUserProperties } from '@/modules/@org/admin/dashboard/types';
 
 export const NewUser = ({ steps, completedSteps }: NewUserProperties) => {

@@ -46,4 +46,3 @@ export const mockApiError = {
   error: 'An error occurred',
   message: 'Operation failed',
 };
-

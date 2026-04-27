@@ -1,3 +1,5 @@
+import type { Employee } from '@/lib/auth-types';
+
 export interface User {
   id: string;
   firstName: string;
@@ -28,15 +30,13 @@ export interface UserResponse {
 // ── Auth store state & actions ────────────────────────────────────────────────
 
 export interface AuthState {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  user: any | null;
+  user: Employee | null;
   isAuthenticated: boolean;
   sessionExpiry: Date | null;
 }
 
 export interface AuthActions {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  setUser: (user: any | null) => void;
+  setUser: (user: Employee | null) => void;
   clearUser: () => void;
   logout: () => void;
   setSessionExpiry: (expiry: Date | null) => void;

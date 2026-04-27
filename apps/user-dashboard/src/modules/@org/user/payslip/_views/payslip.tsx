@@ -6,7 +6,7 @@ import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 import { PayslipDetailsModal } from '../_components/payslip-details-modal';
 import { PayslipGrid } from '../_components/payslip-grid';
 import { PayslipSummaryCard } from '@/modules/@org/user/payslip/_components/payslip-summary-card';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/session';
 import { useUserPayslipService } from '@/modules/@org/user';
 import type { Payslip } from '@/modules/@org/admin/payroll/types';
 import type { UserPayslip } from '../types';

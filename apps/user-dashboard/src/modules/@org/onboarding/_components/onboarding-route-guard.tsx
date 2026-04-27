@@ -1,7 +1,7 @@
 'use client';
 
 import { ROLES } from '@/lib/auth-types';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/session';
 import { useRouter } from 'next/navigation';
 import { PropsWithChildren, useMemo } from 'react';
 

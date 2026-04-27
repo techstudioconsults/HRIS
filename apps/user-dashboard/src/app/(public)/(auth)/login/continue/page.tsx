@@ -5,7 +5,7 @@ import { getDashboardRoute } from '@/lib/routes/redirect-helpers';
 import { isOnboardingSetupComplete } from '@/modules/@org/onboarding/services/service';
 import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onboarding-service';
 import { SuspenseLoading } from '@workspace/ui/lib/loading';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/session';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 

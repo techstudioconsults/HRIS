@@ -55,7 +55,10 @@ describe('CreateLeaveTypeForm Component', () => {
     });
 
     it('should handle mutation success', async () => {
-      mockMutateAsync.mockResolvedValueOnce({ id: 'lt_001', name: 'Annual Leave' });
+      mockMutateAsync.mockResolvedValueOnce({
+        id: 'lt_001',
+        name: 'Annual Leave',
+      });
 
       const result = await mockMutateAsync({ name: 'Annual Leave', days: 20 });
 
@@ -83,7 +86,9 @@ describe('CreateLeaveTypeForm Component', () => {
     it('should call error toast when mutation fails', () => {
       mockToastError('Failed to create leave type');
 
-      expect(mockToastError).toHaveBeenCalledWith('Failed to create leave type');
+      expect(mockToastError).toHaveBeenCalledWith(
+        'Failed to create leave type'
+      );
     });
   });
 });

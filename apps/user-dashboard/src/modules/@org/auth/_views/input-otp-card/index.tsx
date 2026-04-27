@@ -1,25 +1,26 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { LoginOTPFormData, loginOTPSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDecodedSearchParameters } from '@workspace/ui/hooks';
 import { MainButton } from '@workspace/ui/lib/button';
-import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { useSession } from '@/lib/session';
 import { OTPInput } from '../../_components/input-otp';
 import { useAuthService } from '../../services/use-auth-service';
 
 export const InputOtpCard = () => {
   const email = useDecodedSearchParameters('email');
   const router = useRouter();
-  const { useRequestOTP } = useAuthService();
+  const { refresh } = useSession();
+  const { useRequestOTP, useLoginWithOTP } = useAuthService();
   const { mutateAsync: requestOTP, isPending: otpPending } = useRequestOTP();
+  const { mutateAsync: loginWithOTP, isPending: loginPending } =
+    useLoginWithOTP();
 
   const methods = useForm<LoginOTPFormData>({
     resolver: zodResolver(loginOTPSchema),
@@ -31,7 +32,7 @@ export const InputOtpCard = () => {
 
   const {
     handleSubmit,
-    formState: { isSubmitting, isValid },
+    formState: { isValid },
     setValue,
     watch,
     setError,
@@ -39,29 +40,31 @@ export const InputOtpCard = () => {
 
   const handleSubmitForm = async (data: LoginOTPFormData) => {
     try {
-      // Directly call signIn with the OTP provider
-      const result = await signIn('otp', {
-        email: data.email,
-        otp: data.password,
-        redirect: false,
+      const result = await loginWithOTP(data);
+      if (!result?.data) throw new Error('Unexpected response from server');
+
+      const sessionRes = await fetch('/api/auth/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          employee: result.data.employee,
+          tokens: result.data.tokens,
+          permissions: result.data.permissions,
+        }),
       });
 
-      if (result?.error) {
-        throw new Error(result.error);
-      }
+      if (!sessionRes.ok) throw new Error('Failed to establish session');
 
-      if (result?.ok) {
-        toast.success('Login Successful', {
-          description: 'Redirecting to dashboard...',
-        });
-        router.push('/login/continue');
-      }
-    } catch (error: any) {
-      console.error('Login error:', error);
-      toast.error('Login Failed', {
-        description: error.message || 'An error occurred during login',
+      await refresh();
+
+      toast.success('Login Successful', {
+        description: 'Redirecting to dashboard...',
       });
-      setError('password', { message: error.message || 'Invalid OTP' });
+      router.push('/login/continue');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Invalid OTP';
+      toast.error('Login Failed', { description: message });
+      setError('password', { message });
     }
   };
 
@@ -78,7 +81,7 @@ export const InputOtpCard = () => {
           onSuccess: (response) => {
             if (response?.success) {
               toast.success(`Request Sent Successfully`, {
-                description: `Please check you mail for OTP`,
+                description: `Please check your mail for OTP`,
               });
             }
           },
@@ -115,8 +118,8 @@ export const InputOtpCard = () => {
               variant="primary"
               className="w-full"
               size="2xl"
-              isDisabled={isSubmitting || !isValid}
-              isLoading={isSubmitting}
+              isDisabled={loginPending || !isValid}
+              isLoading={loginPending}
             >
               Login
             </MainButton>

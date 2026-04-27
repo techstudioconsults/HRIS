@@ -10,7 +10,7 @@ import {
 import { Logo } from '@workspace/ui/lib/logo';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { cn } from '@workspace/ui/lib/utils';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/session';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo, useState } from 'react';

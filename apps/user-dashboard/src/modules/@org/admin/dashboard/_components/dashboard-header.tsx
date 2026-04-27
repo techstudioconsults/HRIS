@@ -11,7 +11,7 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import { ComboBox } from '@workspace/ui/lib/select-dropdown/combo-box';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/session';
 import Link from 'next/link';
 import { Button } from '@workspace/ui/components/button';
 import { cn } from '@workspace/ui/lib/utils';

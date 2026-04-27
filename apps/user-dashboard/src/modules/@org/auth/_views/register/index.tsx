@@ -31,10 +31,7 @@ export const Register = () => {
     },
   });
 
-  const {
-    handleSubmit,
-    formState: { isValid },
-  } = methods;
+  const { handleSubmit } = methods;
 
   // Live watch of password fields for immediate user feedback
   const passwordValue = methods.watch('password');
@@ -64,7 +61,7 @@ export const Register = () => {
   };
 
   return (
-    <section className="mx-auto w-full max-w-[527px]">
+    <section className="mx-auto w-full max-w-131.75">
       <FormHeader
         title="Your HR, simplified and smarter."
         subTitle="Sign up to start managing everything HR, all in one place."
@@ -172,7 +169,7 @@ export const Register = () => {
             <MainButton
               type="submit"
               variant="primary"
-              isDisabled={isPending || !isValid}
+              isDisabled={isPending}
               isLoading={isPending}
               className="w-full"
               size="2xl"

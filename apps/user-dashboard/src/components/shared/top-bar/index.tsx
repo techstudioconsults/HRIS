@@ -12,23 +12,12 @@ import {
 import { UserMenu } from '@workspace/ui/lib/user-menu';
 import { cn } from '@workspace/ui/lib/utils';
 import { usePathname, useRouter } from 'next/navigation';
-import { signOut } from 'next-auth/react';
 import { useState } from 'react';
-import { toast } from 'sonner';
+
+import { useLogout } from '@/modules/@org/auth/hooks/use-logout';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { Button } from '@workspace/ui/components/button';
 import type { TopBarProperties } from './types';
-
-const handleLogout = async () => {
-  try {
-    await signOut({
-      redirect: true,
-      callbackUrl: `/login`,
-    });
-  } catch {
-    toast.error(`Something went wrong`);
-  }
-};
 
 export default function TopBar({
   adminName,
@@ -44,6 +33,7 @@ export default function TopBar({
   const pathname = usePathname();
   const [hideMobileSearch, setHideMobileSearch] = useState(true);
   const router = useRouter();
+  const handleLogout = useLogout();
   const [notificationsList, setNotificationsList] =
     useState<Notification[]>(notifications);
 

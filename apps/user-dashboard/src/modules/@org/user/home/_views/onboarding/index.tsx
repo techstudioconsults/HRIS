@@ -2,7 +2,7 @@
 
 import { DashboardBanner } from '../../../../admin/dashboard/_components/home-banner';
 import { OnboardingHeader } from './onboarding-header';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/session';
 import { QuickActionCard } from '@/modules/@org/user/home/_components/quick-action-card';
 import { cn } from '@workspace/ui/lib/utils';
 import type { OnboardingProperties } from '../../types';

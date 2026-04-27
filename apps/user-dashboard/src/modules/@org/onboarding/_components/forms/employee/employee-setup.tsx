@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormHeader } from '@workspace/ui/lib/form-header';
 import { MainButton } from '@workspace/ui/lib/button';
 import { AxiosError } from 'axios';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/session';
 import { useRouter } from 'next/navigation';
 import { FormEvent } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';

@@ -12,7 +12,11 @@ vi.mock('next/navigation', () => ({
 // Mock shared components
 vi.mock('@/modules/@org/shared/search-input', () => ({
   SearchInput: ({ onSearch, placeholder }: any) => (
-    <input data-testid="search-input" placeholder={placeholder} onChange={(e) => onSearch(e.target.value)} />
+    <input
+      data-testid="search-input"
+      placeholder={placeholder}
+      onChange={(e) => onSearch(e.target.value)}
+    />
   ),
 }));
 

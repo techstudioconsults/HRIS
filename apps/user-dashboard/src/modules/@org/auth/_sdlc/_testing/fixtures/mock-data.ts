@@ -19,10 +19,17 @@ export const fixtureTokens = {
   refreshToken: 'mock-refresh-token',
 };
 
+/**
+ * Matches the real backend AuthResponse shape:
+ * { success: boolean; data: { employee, tokens, permissions } }
+ */
 export const fixtureLoginResponse = {
-  employee: fixtureAuthUser,
-  tokens: fixtureTokens,
-  permissions: ['admin:admin'],
+  success: true,
+  data: {
+    employee: fixtureAuthUser,
+    tokens: fixtureTokens,
+    permissions: ['admin:admin'],
+  },
 };
 
 export const fixtureRegisterPayload = {

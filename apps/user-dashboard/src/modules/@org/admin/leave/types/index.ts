@@ -1,6 +1,6 @@
 // Leave Module Types
 
-export interface LeaveType extends Record<string, unknown> {
+export interface LeaveType {
   id: string;
   name: string;
   days: number;
@@ -15,7 +15,7 @@ export interface LeaveType extends Record<string, unknown> {
   description?: string;
 }
 
-export interface LeaveRequest extends Record<string, unknown> {
+export interface LeaveRequest {
   id: string;
   employeeId: string;
   employeeName: string;

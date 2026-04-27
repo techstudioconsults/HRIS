@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { DashboardBanner } from '@/modules/@org/admin/dashboard/_components/home-banner';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/session';
 import { RecentActivities } from '@/modules/@org/user/home/_views/recent-activities';
 import { RECENT_ACTIVITIES } from '@/modules/@org/user/home/constants/recent-activities';
 import { CardGroup } from '@/modules/@org/_components/card-group';

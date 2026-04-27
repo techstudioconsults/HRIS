@@ -13,22 +13,12 @@ test.describe('Home Employee E2E Tests', () => {
     await expect(page).toHaveURL(new RegExp('/user/'));
   });
 
-  test.todo(
-    'should display a personalised greeting with the employee first name'
-  );
-  test.todo('should render three quick-action cards on the active-user view');
-  test.todo(
-    'should navigate to /user/leave when the Request Leave quick-action is clicked'
-  );
-  test.todo(
-    'should navigate to /user/payslip when the View Payslip quick-action is clicked'
-  );
-  test.todo('should render the recent activities feed on the active-user view');
-  test.todo('should display the onboarding checklist for a new employee');
-  test.todo(
-    'should show progress header with correct completed/total steps on onboarding view'
-  );
-  test.todo(
-    'should redirect to /auth/login when accessed without a valid session'
-  );
+  test.skip('should display a personalised greeting with the employee first name', async () => {});
+  test.skip('should render three quick-action cards on the active-user view', async () => {});
+  test.skip('should navigate to /user/leave when the Request Leave quick-action is clicked', async () => {});
+  test.skip('should navigate to /user/payslip when the View Payslip quick-action is clicked', async () => {});
+  test.skip('should render the recent activities feed on the active-user view', async () => {});
+  test.skip('should display the onboarding checklist for a new employee', async () => {});
+  test.skip('should show progress header with correct completed/total steps on onboarding view', async () => {});
+  test.skip('should redirect to /auth/login when accessed without a valid session', async () => {});
 });

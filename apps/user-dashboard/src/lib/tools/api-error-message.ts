@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios';
 
-type UnknownRecord = Record<string, unknown>;
+import { type UnknownRecord } from './types';
 
 const isRecord = (value: unknown): value is UnknownRecord =>
   typeof value === 'object' && value !== null && !Array.isArray(value);

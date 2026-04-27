@@ -98,6 +98,7 @@ export const ResetPassword = () => {
               isLoading={isPending}
               className="w-full"
               size="2xl"
+              data-testid="reset-password-button"
             >
               Reset password
             </MainButton>

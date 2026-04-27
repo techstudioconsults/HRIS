@@ -22,8 +22,8 @@ const mapAdjustmentsToBonusDeduction = (
     value: adjustment.amount,
     status: adjustment.status,
     type: kind,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   }));
 
 export const SalaryDetails = ({ payslip }: { payslip: Payslip | null }) => {

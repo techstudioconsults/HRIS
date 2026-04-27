@@ -49,6 +49,7 @@ export function UserMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
+        data-testid="user-menu-trigger"
         className={cn(
           'focus-visible:ring-ring flex items-center gap-2 rounded-lg px-2 py-1.5 ' +
             'transition-colors focus:outline-none focus-visible:ring-2',
@@ -113,6 +114,7 @@ export function UserMenu({
           onClick={onLogout}
           className="text-destructive focus:text-destructive cursor-pointer"
           variant="destructive"
+          data-testid="logout-button"
         >
           <Icon
             name={`LogoutCurve`}

@@ -3,10 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuthStore } from '@/stores/auth-store';
 import { useEffect, useMemo, useRef, useState } from 'react';
-
-type Properties = {
-  endpoint?: string; // e.g. http://localhost:5000/api/v1/notifications/:userId
-};
+import type { Properties } from './types';
 
 export default function NestjsNotification({ endpoint }: Properties) {
   const { user } = useAuthStore();

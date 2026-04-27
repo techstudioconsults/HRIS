@@ -1,28 +1,42 @@
-"use client";
+'use client';
 
-import { parseAsInteger, parseAsString, parseAsStringEnum, useQueryState } from "nuqs";
-import { useCallback } from "react";
+import {
+  parseAsInteger,
+  parseAsString,
+  parseAsStringEnum,
+  useQueryState,
+} from 'nuqs';
+import { useCallback } from 'react';
 
 export const usePayrollSearchParameters = () => {
-  const [page, setPage] = useQueryState("page", parseAsInteger);
-  const [search, setSearch] = useQueryState("search", parseAsString);
-  const [teamId, setTeamId] = useQueryState("teamId", parseAsString);
-  const [roleId, setRoleId] = useQueryState("roleId", parseAsString);
+  const [page, setPage] = useQueryState('page', parseAsInteger);
+  const [search, setSearch] = useQueryState('search', parseAsString);
+  const [teamId, setTeamId] = useQueryState('teamId', parseAsString);
+  const [roleId, setRoleId] = useQueryState('roleId', parseAsString);
   const [status, setStatus] = useQueryState(
-    "status",
-    parseAsStringEnum(["all", "paid", "pending", "failed", "cancelled"]).withDefault("all"),
+    'status',
+    parseAsStringEnum([
+      'all',
+      'paid',
+      'pending',
+      'failed',
+      'cancelled',
+    ]).withDefault('all')
   );
-  const [sortBy, setSortBy] = useQueryState("sortBy", parseAsString);
-  const [limit, setLimit] = useQueryState("limit", parseAsInteger.withDefault(10));
+  const [sortBy, setSortBy] = useQueryState('sortBy', parseAsString);
+  const [limit, setLimit] = useQueryState(
+    'limit',
+    parseAsInteger.withDefault(10)
+  );
 
   return {
     // Current values
     page: page ?? 1,
-    search: (search as string) ?? "",
-    teamId: (teamId as string) ?? "",
-    roleId: (roleId as string) ?? "",
-    status: (status as string) ?? "all",
-    sortBy: (sortBy as string) ?? "",
+    search: (search as string) ?? '',
+    teamId: (teamId as string) ?? '',
+    roleId: (roleId as string) ?? '',
+    status: (status as string) ?? 'all',
+    sortBy: (sortBy as string) ?? '',
     limit: (limit as number) ?? 10,
 
     // Setters
@@ -30,13 +44,13 @@ export const usePayrollSearchParameters = () => {
     setSearch: useCallback(
       (value: string | null) => {
         // Remove search parameter if value is empty
-        if (!value || value.trim() === "") {
+        if (!value || value.trim() === '') {
           setSearch(null);
         } else {
           setSearch(value);
         }
       },
-      [setSearch],
+      [setSearch]
     ),
     setTeamId,
     setRoleId,
@@ -53,7 +67,15 @@ export const usePayrollSearchParameters = () => {
       setSortBy(null);
       setPage(null);
       setLimit(10); // Always reset to 10
-    }, [setSearch, setTeamId, setRoleId, setStatus, setSortBy, setPage, setLimit]),
+    }, [
+      setSearch,
+      setTeamId,
+      setRoleId,
+      setStatus,
+      setSortBy,
+      setPage,
+      setLimit,
+    ]),
 
     resetToFirstPage: useCallback(() => {
       setPage(null);
@@ -76,7 +98,7 @@ export const usePayrollSearchParameters = () => {
       if (roleId) {
         filters.roleId = roleId;
       }
-      if (status && status !== "all") {
+      if (status && status !== 'all') {
         filters.status = status;
       }
       if (sortBy) {
@@ -99,7 +121,7 @@ export const usePayrollSearchParameters = () => {
       if (roleId) {
         parameters.roleId = roleId;
       }
-      if (status && status !== "all") {
+      if (status && status !== 'all') {
         parameters.status = status;
       }
       if (sortBy) {

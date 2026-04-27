@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { AllTeams } from "@/modules/@org/admin/teams";
+import { AllTeams } from '@/modules/@org/admin/teams';
 
 const Page = () => {
   return (

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { redirect } from "next/navigation";
+import { redirect } from 'next/navigation';
 
 const OnboardingPage = () => {
-  redirect("/onboarding/welcome");
+  redirect('/onboarding/welcome');
 };
 
 export default OnboardingPage;

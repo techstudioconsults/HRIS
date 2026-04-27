@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client';
 
-import { useKBar } from "kbar";
-import { useEffect } from "react";
+import { useKBar } from 'kbar';
+import { useEffect } from 'react';
 
 export function useRegisterActions(actions: any[], dependencies: any[] = []) {
   const { query } = useKBar();

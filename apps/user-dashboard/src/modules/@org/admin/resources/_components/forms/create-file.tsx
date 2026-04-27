@@ -11,10 +11,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { useResourceService } from '../../services/use-service';
-
-interface CreateFileFormProperties {
-  onClose?: () => void;
-}
+import type { CreateFileFormProperties } from '../../types';
 
 export const CreateFileForm = ({ onClose }: CreateFileFormProperties) => {
   const { useGetAllFolders, useAddFilesToFolder } = useResourceService();

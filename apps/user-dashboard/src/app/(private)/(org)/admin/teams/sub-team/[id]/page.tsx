@@ -1,4 +1,4 @@
-import { SubTeamDetails } from "../../../../../../../modules/@org/admin/teams";
+import { SubTeamDetails } from '../../../../../../../modules/@org/admin/teams';
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;

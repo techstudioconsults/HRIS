@@ -9,7 +9,10 @@ export const leaveTypeFormSchema = z
         invalid_type_error: 'Days must be a number',
       })
       .min(1, 'Days must be greater than 0'),
-    cycle: z.string().min(1, 'Leave cycle is required'),
+    cycle: z.enum(['monthly', 'quarterly', 'yearly'], {
+      required_error: 'Leave cycle is required',
+      invalid_type_error: 'Leave cycle must be monthly, quarterly, or yearly',
+    }),
     maxLeaveDaysPerRequest: z
       .number({
         required_error: 'Maximum leave days per request is required',
@@ -51,7 +54,7 @@ export const leaveTypeFormSchema = z
     }
   });
 
-export type LeaveTypeFormValues = z.infer<typeof leaveTypeFormSchema>;
+// LeaveTypeFormValues is defined in leave/types/index.ts (z.infer of this schema).
 
 export const LEAVE_ELIGIBILITY_OPTIONS = [
   { value: '3', label: '3 Months+' },
@@ -63,8 +66,7 @@ export const LEAVE_ELIGIBILITY_OPTIONS = [
 ] as const;
 
 export const LEAVE_CYCLE_OPTIONS = [
-  { value: 'yearly', label: 'Yearly' },
   { value: 'monthly', label: 'Monthly' },
-  { value: 'weekly', label: 'Weekly' },
-  { value: 'daily', label: 'Daily' },
+  { value: 'quarterly', label: 'Quarterly' },
+  { value: 'yearly', label: 'Yearly' },
 ] as const;

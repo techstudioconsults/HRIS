@@ -7,12 +7,9 @@ import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useState } from 'react';
 
+import type { ResourcesHeaderProperties } from '../types';
 import { CreateFileForm } from './forms/create-file';
 import { CreateFolderForm } from './forms/create-folder';
-
-interface ResourcesHeaderProperties {
-  onSearch?: (query: string) => void;
-}
 
 export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
   const [dialogOpen, setDialogOpen] = useState(false);

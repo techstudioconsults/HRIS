@@ -13,17 +13,7 @@ import {
   FilteredEmptyState,
 } from '@workspace/ui/lib/empty-state';
 import { AdvancedDataTable, TableSkeleton } from '@workspace/ui/lib/table';
-
-interface TeamTableSectionProperties {
-  apiFilters: any;
-  debouncedSearch: string;
-  status: string | null;
-  sortBy: string | null;
-  onPageChange: (newPage: number) => void;
-  onResetFilters: () => void;
-  rowActions: (team: any) => any[];
-  onAddTeamClick: () => void;
-}
+import type { TeamTableSectionProperties } from '../../../types';
 
 export const TeamTableSection = ({
   apiFilters,

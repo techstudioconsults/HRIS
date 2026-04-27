@@ -3,6 +3,7 @@
 import { useSSE } from '@/context/sse-provider';
 import type { LogEvent, ProgressEvent } from '@/lib/sse/types';
 import type { INotificationPayload } from '@/lib/sse/use-notifications';
+import type { SSEProgressWidgetProperties } from '@/modules/@org/shared/types';
 import { useEffect, useMemo, useState } from 'react';
 import {
   Card,
@@ -11,11 +12,6 @@ import {
   CardTitle,
 } from '@workspace/ui/components/card';
 import { Progress } from '@workspace/ui/components/progress';
-
-interface SSEProgressWidgetProperties {
-  channel: string;
-  title?: string;
-}
 
 function isProgressEvent(value: unknown): value is ProgressEvent {
   const event_ = value as Partial<ProgressEvent> | null;

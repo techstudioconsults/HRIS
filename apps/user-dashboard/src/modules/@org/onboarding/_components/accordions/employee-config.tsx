@@ -1,7 +1,7 @@
 import { MainButton } from '@workspace/ui/lib/button';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
-import { Employee } from '../../_views/step-three';
+import { OnboardingEmployeeInput } from '../../_views/step-three';
 import { useTour } from '@workspace/ui/context/tour-context';
 import { SingleEmployeeForm } from '../forms/employee/single-employee';
 import {
@@ -13,7 +13,9 @@ import {
 
 export const EmployeeConfig = () => {
   const { stopTour } = useTour();
-  const { control } = useFormContext<{ employees: Employee[] }>();
+  const { control } = useFormContext<{
+    employees: OnboardingEmployeeInput[];
+  }>();
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'employees',

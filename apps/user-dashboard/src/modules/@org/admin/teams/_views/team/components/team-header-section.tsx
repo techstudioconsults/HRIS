@@ -13,17 +13,7 @@ import { GenericDropdown } from '@workspace/ui/lib/drop-down';
 import { SearchInput } from '@/modules/@org/shared/search-input';
 import { Button } from '@workspace/ui/components/button';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
-
-interface TeamHeaderSectionProperties {
-  search: string | null;
-  status: string | null;
-  sortBy: string | null;
-  limit: number;
-  page: number;
-  onSearchChange: (query: string) => void;
-  onFilterChange: (newFilters: any) => void;
-  onAddTeamClick: () => void;
-}
+import type { TeamHeaderSectionProperties } from '../../../types';
 
 export const TeamHeaderSection = ({
   search,
@@ -106,8 +96,8 @@ export const TeamHeaderSection = ({
                     search: search || undefined,
                     status: status || undefined,
                     sortBy: sortBy || undefined,
-                    limit: limit ? String(limit) : undefined,
-                    page: page ? String(page) : undefined,
+                    limit: limit ? limit : undefined,
+                    page: page ? page : undefined,
                   }}
                   onFilterChange={handleFilterChange}
                 />

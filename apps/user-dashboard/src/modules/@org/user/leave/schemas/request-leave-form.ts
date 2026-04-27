@@ -7,4 +7,4 @@ export const requestLeaveSchema = z.object({
   reason: z.string().min(1, 'Please provide a reason for your leave'),
 });
 
-export type RequestLeaveFormValues = z.infer<typeof requestLeaveSchema>;
+// RequestLeaveFormValues is defined in user/leave/types/index.ts (z.infer of this schema).

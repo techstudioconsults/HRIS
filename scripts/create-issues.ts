@@ -62,16 +62,23 @@ function requireEnv(name: string): string {
 
 const GITHUB_TOKEN = requireEnv('GITHUB_TOKEN');
 const GITHUB_OWNER = requireEnv('GITHUB_OWNER');
-const GITHUB_REPO = requireEnv('GITHUB_REPO');
+const GITHUB_FRONTEND_REPO = requireEnv('GITHUB_FRONTEND_REPO'); // e.g. HRIS
+const GITHUB_BACKEND_REPO = requireEnv('GITHUB_BACKEND_REPO'); // e.g. hr-backend
 const DRY_RUN = process.argv.includes('--dry-run');
-const BASE_URL = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`;
+
+const FRONTEND_BASE = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_FRONTEND_REPO}`;
+const BACKEND_BASE = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_BACKEND_REPO}`;
 
 // ---------------------------------------------------------------------------
 // GitHub REST client
 // ---------------------------------------------------------------------------
 
-async function ghFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const url = `${BASE_URL}${path}`;
+async function ghFetch<T>(
+  baseUrl: string,
+  path: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const url = `${baseUrl}${path}`;
   const response = await fetch(url, {
     ...options,
     headers: {
@@ -93,12 +100,15 @@ async function ghFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-async function fetchAllPages<T>(path: string): Promise<T[]> {
+async function fetchAllPages<T>(baseUrl: string, path: string): Promise<T[]> {
   const results: T[] = [];
   let page = 1;
   const sep = path.includes('?') ? '&' : '?';
   while (true) {
-    const items = await ghFetch<T[]>(`${path}${sep}per_page=100&page=${page}`);
+    const items = await ghFetch<T[]>(
+      baseUrl,
+      `${path}${sep}per_page=100&page=${page}`
+    );
     results.push(...items);
     if (items.length < 100) break;
     page++;
@@ -110,23 +120,32 @@ async function fetchAllPages<T>(path: string): Promise<T[]> {
 // Labels
 // ---------------------------------------------------------------------------
 
-async function ensureLabels(labels: readonly LabelDef[]): Promise<void> {
+async function ensureLabels(
+  baseUrl: string,
+  repoName: string,
+  labels: readonly LabelDef[]
+): Promise<void> {
   if (labels.length === 0) return;
 
-  const existing = await fetchAllPages<GhLabel>('/labels');
+  const existing = await fetchAllPages<GhLabel>(baseUrl, '/labels');
   const existingNames = new Set(existing.map((l) => l.name.toLowerCase()));
 
   for (const label of labels) {
     if (existingNames.has(label.name.toLowerCase())) {
-      console.log(`[SKIP]    Label already exists: ${label.name}`);
+      console.log(
+        `[SKIP]    [${repoName}] Label already exists: ${label.name}`
+      );
       continue;
     }
     if (DRY_RUN) {
-      console.log(`[DRY-RUN] Would create label: ${label.name}`);
+      console.log(`[DRY-RUN] [${repoName}] Would create label: ${label.name}`);
       continue;
     }
-    await ghFetch('/labels', { method: 'POST', body: JSON.stringify(label) });
-    console.log(`[CREATE]  Label created: ${label.name}`);
+    await ghFetch(baseUrl, '/labels', {
+      method: 'POST',
+      body: JSON.stringify(label),
+    });
+    console.log(`[CREATE]  [${repoName}] Label created: ${label.name}`);
   }
 }
 
@@ -135,29 +154,38 @@ async function ensureLabels(labels: readonly LabelDef[]): Promise<void> {
 // ---------------------------------------------------------------------------
 
 async function ensureMilestones(
+  baseUrl: string,
+  repoName: string,
   milestones: readonly MilestoneDef[]
 ): Promise<Map<string, number>> {
   const milestoneMap = new Map<string, number>();
   if (milestones.length === 0) return milestoneMap;
 
-  const existing = await fetchAllPages<GhMilestone>('/milestones?state=all');
+  const existing = await fetchAllPages<GhMilestone>(
+    baseUrl,
+    '/milestones?state=all'
+  );
   for (const m of existing) milestoneMap.set(m.title, m.number);
 
   for (const ms of milestones) {
     if (milestoneMap.has(ms.title)) {
-      console.log(`[SKIP]    Milestone already exists: ${ms.title}`);
+      console.log(
+        `[SKIP]    [${repoName}] Milestone already exists: ${ms.title}`
+      );
       continue;
     }
     if (DRY_RUN) {
-      console.log(`[DRY-RUN] Would create milestone: ${ms.title}`);
+      console.log(
+        `[DRY-RUN] [${repoName}] Would create milestone: ${ms.title}`
+      );
       continue;
     }
-    const created = await ghFetch<GhMilestone>('/milestones', {
+    const created = await ghFetch<GhMilestone>(baseUrl, '/milestones', {
       method: 'POST',
       body: JSON.stringify(ms),
     });
     milestoneMap.set(created.title, created.number);
-    console.log(`[CREATE]  Milestone created: ${ms.title}`);
+    console.log(`[CREATE]  [${repoName}] Milestone created: ${ms.title}`);
   }
 
   return milestoneMap;
@@ -167,45 +195,101 @@ async function ensureMilestones(
 // Issues
 // ---------------------------------------------------------------------------
 
+interface RepoTarget {
+  baseUrl: string;
+  name: string;
+  milestoneMap: Map<string, number>;
+}
+
+async function createIssueInRepo(
+  target: RepoTarget,
+  issue: IssueDef,
+  existingTitles: Set<string>
+): Promise<'created' | 'skipped'> {
+  if (existingTitles.has(issue.title.toLowerCase())) {
+    console.log(
+      `[SKIP]    [${target.name}] Issue already exists: "${issue.title}"`
+    );
+    return 'skipped';
+  }
+
+  if (DRY_RUN) {
+    console.log(
+      `[DRY-RUN] [${target.name}] Would create issue: "${issue.title}"`
+    );
+    return 'skipped';
+  }
+
+  const payload: Record<string, unknown> = {
+    title: issue.title,
+    body: issue.body ?? '',
+    labels: issue.labels ?? [],
+    assignees: issue.assignees ?? [],
+  };
+
+  if (
+    issue.milestone !== undefined &&
+    target.milestoneMap.has(issue.milestone)
+  ) {
+    payload['milestone'] = target.milestoneMap.get(issue.milestone);
+  }
+
+  const gh = await ghFetch<GhIssue>(target.baseUrl, '/issues', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+  console.log(
+    `[CREATE]  [${target.name}] Issue #${gh.number} created: "${issue.title}"`
+  );
+  return 'created';
+}
+
 async function ensureIssues(
   issues: readonly IssueDef[],
-  milestoneMap: Map<string, number>
+  frontend: RepoTarget,
+  backend: RepoTarget
 ): Promise<void> {
-  const existing = await fetchAllPages<GhIssue>('/issues?state=all');
-  const existingTitles = new Set(existing.map((i) => i.title.toLowerCase()));
+  const [frontendExisting, backendExisting] = await Promise.all([
+    fetchAllPages<GhIssue>(frontend.baseUrl, '/issues?state=all'),
+    fetchAllPages<GhIssue>(backend.baseUrl, '/issues?state=all'),
+  ]);
+
+  const frontendTitles = new Set(
+    frontendExisting.map((i) => i.title.toLowerCase())
+  );
+  const backendTitles = new Set(
+    backendExisting.map((i) => i.title.toLowerCase())
+  );
 
   let created = 0;
   let skipped = 0;
 
   for (const issue of issues) {
-    if (existingTitles.has(issue.title.toLowerCase())) {
-      console.log(`[SKIP]    Issue already exists: "${issue.title}"`);
+    const labelSet = new Set((issue.labels ?? []).map((l) => l.toLowerCase()));
+    const isFrontend = labelSet.has('frontend');
+    const isBackend = labelSet.has('backend');
+
+    if (!isFrontend && !isBackend) {
+      console.warn(
+        `[WARN]    No routing label (frontend/backend) — skipping: "${issue.title}"`
+      );
       skipped++;
       continue;
     }
 
-    if (DRY_RUN) {
-      console.log(`[DRY-RUN] Would create issue: "${issue.title}"`);
-      continue;
+    const targets: Array<[RepoTarget, Set<string>]> = [];
+    if (isFrontend) targets.push([frontend, frontendTitles]);
+    if (isBackend) targets.push([backend, backendTitles]);
+
+    for (const [target, existingTitles] of targets) {
+      const result = await createIssueInRepo(target, issue, existingTitles);
+      if (result === 'created') {
+        existingTitles.add(issue.title.toLowerCase());
+        created++;
+      } else {
+        skipped++;
+      }
     }
-
-    const payload: Record<string, unknown> = {
-      title: issue.title,
-      body: issue.body ?? '',
-      labels: issue.labels ?? [],
-      assignees: issue.assignees ?? [],
-    };
-
-    if (issue.milestone !== undefined && milestoneMap.has(issue.milestone)) {
-      payload['milestone'] = milestoneMap.get(issue.milestone);
-    }
-
-    const gh = await ghFetch<GhIssue>('/issues', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-    console.log(`[CREATE]  Issue #${gh.number} created: "${issue.title}"`);
-    created++;
   }
 
   if (!DRY_RUN) {
@@ -223,16 +307,43 @@ async function main(): Promise<void> {
   const backlog = JSON.parse(readFileSync(backlogPath, 'utf8')) as Backlog;
 
   if (DRY_RUN) console.log('[DRY-RUN] No changes will be made.\n');
-  console.log(`Target: ${GITHUB_OWNER}/${GITHUB_REPO}\n`);
+  console.log(`Frontend repo: ${GITHUB_OWNER}/${GITHUB_FRONTEND_REPO}`);
+  console.log(`Backend repo:  ${GITHUB_OWNER}/${GITHUB_BACKEND_REPO}\n`);
 
   console.log('--- Labels ---');
-  await ensureLabels(backlog.labels ?? []);
+  await Promise.all([
+    ensureLabels(FRONTEND_BASE, GITHUB_FRONTEND_REPO, backlog.labels ?? []),
+    ensureLabels(BACKEND_BASE, GITHUB_BACKEND_REPO, backlog.labels ?? []),
+  ]);
 
   console.log('\n--- Milestones ---');
-  const milestoneMap = await ensureMilestones(backlog.milestones ?? []);
+  const [frontendMilestoneMap, backendMilestoneMap] = await Promise.all([
+    ensureMilestones(
+      FRONTEND_BASE,
+      GITHUB_FRONTEND_REPO,
+      backlog.milestones ?? []
+    ),
+    ensureMilestones(
+      BACKEND_BASE,
+      GITHUB_BACKEND_REPO,
+      backlog.milestones ?? []
+    ),
+  ]);
 
   console.log('\n--- Issues ---');
-  await ensureIssues(backlog.issues, milestoneMap);
+  await ensureIssues(
+    backlog.issues,
+    {
+      baseUrl: FRONTEND_BASE,
+      name: GITHUB_FRONTEND_REPO,
+      milestoneMap: frontendMilestoneMap,
+    },
+    {
+      baseUrl: BACKEND_BASE,
+      name: GITHUB_BACKEND_REPO,
+      milestoneMap: backendMilestoneMap,
+    }
+  );
 }
 
 main().catch((err: unknown) => {

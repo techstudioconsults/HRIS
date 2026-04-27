@@ -27,15 +27,10 @@ import { toast } from 'sonner';
 import { DashboardCard } from '../../../../_components/dashboard-card';
 import { usePayrollService } from '../../services/use-service';
 import { usePayrollStore } from '../../stores/payroll-store';
-import type { Payroll, PayrollApproval } from '../../types';
-
-interface SchedulePayrollDrawerProperties {
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  payrollId: string | null;
-  summary?: Payroll;
-  canRunNow?: boolean;
-}
+import type {
+  PayrollApproval,
+  SchedulePayrollDrawerProperties,
+} from '../../types';
 
 export const GenerateRunPayrollDrawer = ({
   open,

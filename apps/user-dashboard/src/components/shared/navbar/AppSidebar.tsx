@@ -5,7 +5,7 @@ import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onb
 import { useSidebar } from '@workspace/ui/components/sidebar';
 import { AppSidebar as Sidebar } from '@workspace/ui/lib/dashboard';
 import { cn } from '@workspace/ui/lib/utils';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/session';
 import { useMemo } from 'react';
 import { useModeToggle } from '@workspace/ui/components/core/layout/ThemeToggle/use-theme-toggle';
 import { Logo } from '@workspace/ui/lib/logo';

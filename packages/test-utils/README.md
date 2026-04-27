@@ -49,7 +49,10 @@ describe('MyComponent', () => {
 ### Using Fixtures
 
 ```typescript
-import { createMockUser, createMockAdmin } from '@workspace/test-utils/fixtures';
+import {
+  createMockUser,
+  createMockAdmin,
+} from '@workspace/test-utils/fixtures';
 
 const user = createMockUser({ email: 'custom@example.com' });
 const admin = createMockAdmin({ role: 'super-admin' });
@@ -58,7 +61,11 @@ const admin = createMockAdmin({ role: 'super-admin' });
 ### Using Mocks
 
 ```typescript
-import { mockLocalStorage, mockFetch, resetMocks } from '@workspace/test-utils/mocks';
+import {
+  mockLocalStorage,
+  mockFetch,
+  resetMocks,
+} from '@workspace/test-utils/mocks';
 
 beforeEach(() => {
   mockLocalStorage.clear();

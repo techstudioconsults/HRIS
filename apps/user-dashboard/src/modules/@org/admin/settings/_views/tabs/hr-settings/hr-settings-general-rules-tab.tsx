@@ -6,14 +6,7 @@ import { AlertModal } from '@workspace/ui/lib/dialog';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
-type GeneralHRRulesFormValues = {
-  probationLength: string;
-  autoConfirmAfterProbation: boolean;
-  requireManualConfirmationReview: boolean;
-  minimumNoticePeriodDays?: number;
-  probationReminders: boolean;
-  workAnniversaryReminders: boolean;
-};
+import type { GeneralHRRulesFormValues } from '../../../types';
 
 const DEFAULT_VALUES: GeneralHRRulesFormValues = {
   probationLength: '',

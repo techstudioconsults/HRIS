@@ -4,9 +4,9 @@
 import { useTeamsSearchParameters } from '@/lib/nuqs/use-teams-search-parameters';
 import { useTeamWorkflowStore } from '@/modules/@org/admin/teams/store/team-store';
 import type {
-  Role as FormRole,
-  Team as TeamFormType,
-} from '@/modules/@org/onboarding/_components/forms/schema';
+  OnboardingSchemaRole as FormRole,
+  OnboardingSchemaTeam as TeamFormType,
+} from '@/modules/@org/onboarding/types';
 import { TeamForm } from '@/modules/@org/onboarding/_components/forms/team/team-form';
 import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onboarding-service';
 import { useQueryClient } from '@tanstack/react-query';
@@ -199,9 +199,10 @@ export const AllTeams = () => {
           },
         }
       );
+      const teamResult = newTeam as { id: string; name: string } | undefined;
       const formTeam: TeamFormType = {
-        id: (newTeam as Team)?.id,
-        name: (newTeam as Team)?.name,
+        id: teamResult?.id ?? '',
+        name: teamResult?.name ?? '',
         roles: [],
       };
 

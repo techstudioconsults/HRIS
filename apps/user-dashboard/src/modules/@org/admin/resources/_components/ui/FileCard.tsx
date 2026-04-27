@@ -13,15 +13,11 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import type { FolderFile } from '../../services/types';
 import { useResourceService } from '../../services/use-service';
 import { formatDate, formatFileSize, getFileIcon } from '../../utils/format';
+import type { FileCardProperties } from '../../types';
 import { Separator } from '@workspace/ui/components/separator';
 import { Card } from '@workspace/ui/components/card';
-
-interface FileCardProperties {
-  file: FolderFile;
-}
 
 export const FileCard = ({ file }: FileCardProperties) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);

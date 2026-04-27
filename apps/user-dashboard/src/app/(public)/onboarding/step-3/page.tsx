@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { EmployeeSetup } from "@/modules/@org/onboarding";
+import { EmployeeSetup } from '@/modules/@org/onboarding';
 
 const OnboardingStepThreePage = () => {
   return (

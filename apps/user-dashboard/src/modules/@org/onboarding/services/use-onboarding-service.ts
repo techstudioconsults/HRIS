@@ -5,7 +5,8 @@ import { dependencies } from '@/lib/tools/dependencies';
 import { CompanyProfileFormData } from '@/schemas';
 import { UseQueryOptions } from '@tanstack/react-query';
 
-import { OnboardingService, OnboardingSetupStatus } from './service';
+import { OnboardingService } from './service';
+import type { OnboardingSetupStatus } from '../types';
 
 export const useOnboardingService = () => {
   const { useServiceMutation, useServiceQuery } =

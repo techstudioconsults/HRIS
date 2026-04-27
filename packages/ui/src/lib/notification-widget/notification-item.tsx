@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { formatDistanceToNow } from "date-fns";
-import { AlertCircle, CheckCircle2, Info, XCircle } from "lucide-react";
+import { formatDistanceToNow } from 'date-fns';
+import { AlertCircle, CheckCircle2, Info, XCircle } from 'lucide-react';
 
-import { Notification, NotificationType } from "./types";
-import { cn } from "../utils";
+import { Notification, NotificationType } from './types';
+import { cn } from '../utils';
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@workspace/ui/components/avatar";
+} from '@workspace/ui/components/avatar';
 
 interface NotificationItemProperties {
   notification: Notification;
@@ -26,13 +26,13 @@ const notificationIcons: Record<NotificationType, React.ReactNode> = {
 };
 
 const notificationColors: Record<NotificationType, string> = {
-  info: "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900",
+  info: 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900',
   success:
-    "bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-900",
+    'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-900',
   warning:
-    "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900",
-  error: "bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-900",
-  system: "bg-gray-50 dark:bg-gray-950/20 border-gray-200 dark:border-gray-900",
+    'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900',
+  error: 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-900',
+  system: 'bg-gray-50 dark:bg-gray-950/20 border-gray-200 dark:border-gray-900',
 };
 
 export function NotificationItem({
@@ -50,10 +50,10 @@ export function NotificationItem({
   return (
     <div
       className={cn(
-        "group relative flex cursor-pointer gap-3 rounded-lg border p-3 transition-all hover:shadow-sm",
+        'group relative flex cursor-pointer gap-3 rounded-lg border p-3 transition-all hover:shadow-sm',
         notification.read
-          ? "bg-background border-border opacity-75"
-          : notificationColors[notification.type],
+          ? 'bg-background border-border opacity-75'
+          : notificationColors[notification.type]
       )}
       onClick={handleClick}
     >
@@ -72,15 +72,15 @@ export function NotificationItem({
         ) : (
           <div
             className={cn(
-              "flex size-10 items-center justify-center rounded-full",
-              notification.type === "info" && "bg-blue-100 dark:bg-blue-900/30",
-              notification.type === "success" &&
-                "bg-green-100 dark:bg-green-900/30",
-              notification.type === "warning" &&
-                "bg-amber-100 dark:bg-amber-900/30",
-              notification.type === "error" && "bg-red-100 dark:bg-red-900/30",
-              notification.type === "system" &&
-                "bg-gray-100 dark:bg-gray-900/30",
+              'flex size-10 items-center justify-center rounded-full',
+              notification.type === 'info' && 'bg-blue-100 dark:bg-blue-900/30',
+              notification.type === 'success' &&
+                'bg-green-100 dark:bg-green-900/30',
+              notification.type === 'warning' &&
+                'bg-amber-100 dark:bg-amber-900/30',
+              notification.type === 'error' && 'bg-red-100 dark:bg-red-900/30',
+              notification.type === 'system' &&
+                'bg-gray-100 dark:bg-gray-900/30'
             )}
           >
             {notification.icon || notificationIcons[notification.type]}

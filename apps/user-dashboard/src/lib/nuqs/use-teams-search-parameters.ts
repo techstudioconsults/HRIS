@@ -1,17 +1,25 @@
-"use client";
+'use client';
 
-import { parseAsInteger, parseAsString, parseAsStringEnum, useQueryState } from "nuqs";
-import { useCallback } from "react";
+import {
+  parseAsInteger,
+  parseAsString,
+  parseAsStringEnum,
+  useQueryState,
+} from 'nuqs';
+import { useCallback } from 'react';
 
 export const useTeamsSearchParameters = () => {
-  const [page, setPage] = useQueryState("page", parseAsInteger);
-  const [search, setSearch] = useQueryState("search", parseAsString);
+  const [page, setPage] = useQueryState('page', parseAsInteger);
+  const [search, setSearch] = useQueryState('search', parseAsString);
   const [status, setStatus] = useQueryState(
-    "status",
-    parseAsStringEnum(["all", "active", "inactive"]).withDefault("all"),
+    'status',
+    parseAsStringEnum(['all', 'active', 'inactive']).withDefault('all')
   );
-  const [sortBy, setSortBy] = useQueryState("sortBy", parseAsString);
-  const [limit, setLimit] = useQueryState("limit", parseAsInteger.withDefault(10));
+  const [sortBy, setSortBy] = useQueryState('sortBy', parseAsString);
+  const [limit, setLimit] = useQueryState(
+    'limit',
+    parseAsInteger.withDefault(10)
+  );
 
   return {
     // Current values
@@ -26,13 +34,13 @@ export const useTeamsSearchParameters = () => {
     setSearch: useCallback(
       (value: string | null) => {
         // Remove search parameter if value is empty
-        if (!value || value.trim() === "") {
+        if (!value || value.trim() === '') {
           setSearch(null);
         } else {
           setSearch(value);
         }
       },
-      [setSearch],
+      [setSearch]
     ),
     setStatus,
     setSortBy,
@@ -62,7 +70,7 @@ export const useTeamsSearchParameters = () => {
       if (search && search.trim()) {
         filters.search = search.trim();
       }
-      if (status && status !== "all") {
+      if (status && status !== 'all') {
         filters.status = status;
       }
       if (sortBy) {

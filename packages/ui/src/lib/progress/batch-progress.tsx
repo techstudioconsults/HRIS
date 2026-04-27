@@ -1,6 +1,6 @@
-import * as React from "react";
-import { cn } from "../utils";
-import { Progress } from "@workspace/ui/components/progress";
+import * as React from 'react';
+import { cn } from '../utils';
+import { Progress } from '@workspace/ui/components/progress';
 
 export interface BatchProgressProperties {
   /** Current progress percentage 0 - 100 */
@@ -16,9 +16,9 @@ export interface BatchProgressProperties {
   /** If true, hides numeric percentage visually but keeps it for screen readers */
   hidePercentage?: boolean;
   /** ARIA live mode for status updates */
-  ariaLive?: "polite" | "assertive" | "off";
+  ariaLive?: 'polite' | 'assertive' | 'off';
   /** Size variant */
-  size?: "sm" | "md";
+  size?: 'sm' | 'md';
 }
 
 /**
@@ -36,13 +36,13 @@ export interface BatchProgressProperties {
  */
 export const BatchProgress: React.FC<BatchProgressProperties> = ({
   progress,
-  status = "",
+  status = '',
   show = true,
   className,
   barClassName,
   hidePercentage = false,
-  ariaLive = "polite",
-  size = "sm",
+  ariaLive = 'polite',
+  size = 'sm',
 }) => {
   if (!show) return null;
 
@@ -54,23 +54,23 @@ export const BatchProgress: React.FC<BatchProgressProperties> = ({
   return (
     <div
       className={cn(
-        "flex items-center justify-between gap-4",
-        size === "md" && "text-sm",
-        className,
+        'flex items-center justify-between gap-4',
+        size === 'md' && 'text-sm',
+        className
       )}
       role="group"
       aria-label="Batch operation progress"
     >
       <div
         className={cn(
-          "text-muted-foreground flex items-center justify-between",
-          size === "md" ? "text-sm" : "text-xs",
+          'text-muted-foreground flex items-center justify-between',
+          size === 'md' ? 'text-sm' : 'text-xs'
         )}
         aria-live={ariaLive}
         aria-atomic="true"
       >
         <span
-          className={cn("font-medium", hidePercentage && "sr-only")}
+          className={cn('font-medium', hidePercentage && 'sr-only')}
           aria-label={percentageLabel}
         >
           {percentageLabel}
@@ -84,11 +84,11 @@ export const BatchProgress: React.FC<BatchProgressProperties> = ({
       </div>
       <Progress
         value={clamped}
-        className={cn("h-1 flex-1", size === "md" && "h-2", barClassName)}
+        className={cn('h-1 flex-1', size === 'md' && 'h-2', barClassName)}
         aria-valuenow={clamped}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-label={"Progress " + percentageLabel}
+        aria-label={'Progress ' + percentageLabel}
       />
     </div>
   );

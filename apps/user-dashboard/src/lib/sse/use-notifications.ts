@@ -4,6 +4,8 @@
 import { EventSource } from 'eventsource';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { type Handler, type INotificationPayload, type Status } from './types';
+
 export const EventRegistry = {
   PAYROLL_APPROVE_REQUEST: 'payroll.approve.request',
   PAYROLL_APPROVED: 'payroll.approve.success',
@@ -17,24 +19,8 @@ export const EventRegistry = {
 
 export type EventNameType = (typeof EventRegistry)[keyof typeof EventRegistry];
 
-export interface NotificationData<T = any> {
-  title: string;
-  body: string;
-  metadata?: T;
-}
-
-export interface INotificationPayload<T = any> {
-  type: string;
-  data: NotificationData<T>;
-  timestamp: string;
-}
-
-type Status = 'idle' | 'connecting' | 'open' | 'error' | 'closed';
-
-type Handler<T = any> = (
-  payload: INotificationPayload<T>,
-  raw: MessageEvent<string>
-) => void;
+// Re-export from types.ts so existing consumers can import from this module unchanged
+export type { NotificationData, INotificationPayload } from './types';
 
 // Normalize server payload shape. Supports:
 // 1) { type, data, timestamp }

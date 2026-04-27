@@ -7,16 +7,8 @@ import { MainButton } from '@workspace/ui/lib/button';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import { Team, teamSchema } from '../schema';
-
-type TeamFormValues = { name: string };
-
-interface TeamFormProperties {
-  initialData?: Team | null;
-  onSubmit: (data: TeamFormValues) => Promise<void> | void;
-  onCancel: () => void;
-  isSubmitting?: boolean;
-}
+import { teamSchema } from '../schema';
+import type { TeamFormProperties, TeamFormValues } from '../../../types';
 
 export const TeamForm = ({
   initialData,

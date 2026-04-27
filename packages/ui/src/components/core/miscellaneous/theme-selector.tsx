@@ -59,8 +59,13 @@ export function ThemeSelector() {
         Theme
       </Label>
       <Select value={activeTheme} onValueChange={setActiveTheme}>
-        <SelectTrigger id="theme-selector" className="justify-start *:data-[slot=select-value]:w-12">
-          <span className="text-muted-foreground hidden sm:block">Select a theme:</span>
+        <SelectTrigger
+          id="theme-selector"
+          className="justify-start *:data-[slot=select-value]:w-12"
+        >
+          <span className="text-muted-foreground hidden sm:block">
+            Select a theme:
+          </span>
           <span className="text-muted-foreground block sm:hidden">Theme</span>
           <SelectValue placeholder="Select a theme" />
         </SelectTrigger>

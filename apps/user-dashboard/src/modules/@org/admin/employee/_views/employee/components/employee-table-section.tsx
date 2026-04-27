@@ -13,17 +13,7 @@ import { useCallback } from 'react';
 import empty1 from '~/images/empty-state.svg';
 import { useEmployeeService } from '../../../services/use-service';
 import { employeeColumn, useEmployeeRowActions } from '../../table-data';
-
-interface EmployeeTableSectionProperties {
-  apiFilters: any;
-  debouncedSearch: string;
-  teamId: string | null;
-  roleId: string | null;
-  status: string | null;
-  sortBy: string | null;
-  onPageChange: (newPage: number) => void;
-  onResetFilters: () => void;
-}
+import type { EmployeeTableSectionProperties } from '../../../types';
 
 export const EmployeeTableSection = ({
   apiFilters,

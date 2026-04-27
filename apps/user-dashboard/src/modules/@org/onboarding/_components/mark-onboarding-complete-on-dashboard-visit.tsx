@@ -1,7 +1,7 @@
 'use client';
 
 import { ROLES } from '@/lib/auth-types';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/session';
 import { useEffect, useRef } from 'react';
 
 import { useOnboardingService } from '../services/use-onboarding-service';

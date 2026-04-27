@@ -2,32 +2,17 @@
 
 import { formatCurrency } from '@/lib/formatters';
 import { usePayrollService } from '@/modules/@org/admin/payroll/services/use-service';
-import type { Payslip } from '@/modules/@org/admin/payroll/types';
+import type {
+  Payslip,
+  PayslipDetailsDialogProperties,
+  PayslipLineItemsProperties,
+} from '@/modules/@org/admin/payroll/types';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { Logo } from '@workspace/ui/lib/logo';
 import { ReusableDialog } from '@workspace/ui/lib/dialog';
 
 import Loading from '../../../../../../note/loading';
 import { useTheme } from 'next-themes';
-
-interface PayslipDetailsDialogProperties {
-  payrollId?: string | null;
-  payslipId?: string | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-interface PayslipLineItemsProperties {
-  title: string;
-  items: Array<{
-    id: string;
-    label: string;
-    amount: number;
-    tone?: 'default' | 'positive' | 'negative';
-  }>;
-  totalLabel: string;
-  totalAmount: number;
-}
 
 const formatPayslipMonth = (value?: string | null) => {
   if (!value) return 'Payslip';

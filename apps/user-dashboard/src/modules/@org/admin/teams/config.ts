@@ -41,10 +41,26 @@ export const teamValidationRules = {
 
 // Team status definitions
 export const teamStatuses = {
-  active: { label: 'Active', color: 'green', description: 'Team is currently active' },
-  inactive: { label: 'Inactive', color: 'gray', description: 'Team is temporarily inactive' },
-  archived: { label: 'Archived', color: 'blue', description: 'Team has been archived' },
-  suspended: { label: 'Suspended', color: 'orange', description: 'Team is suspended' },
+  active: {
+    label: 'Active',
+    color: 'green',
+    description: 'Team is currently active',
+  },
+  inactive: {
+    label: 'Inactive',
+    color: 'gray',
+    description: 'Team is temporarily inactive',
+  },
+  archived: {
+    label: 'Archived',
+    color: 'blue',
+    description: 'Team has been archived',
+  },
+  suspended: {
+    label: 'Suspended',
+    color: 'orange',
+    description: 'Team is suspended',
+  },
 };
 
 // Team role configurations
@@ -82,9 +98,21 @@ export const teamRoleConfig = {
 
 // Team member status definitions
 export const teamMemberStatuses = {
-  active: { label: 'Active', color: 'green', description: 'Active team member' },
-  inactive: { label: 'Inactive', color: 'gray', description: 'Inactive team member' },
-  pending: { label: 'Pending', color: 'yellow', description: 'Pending approval' },
+  active: {
+    label: 'Active',
+    color: 'green',
+    description: 'Active team member',
+  },
+  inactive: {
+    label: 'Inactive',
+    color: 'gray',
+    description: 'Inactive team member',
+  },
+  pending: {
+    label: 'Pending',
+    color: 'yellow',
+    description: 'Pending approval',
+  },
   removed: { label: 'Removed', color: 'red', description: 'Removed from team' },
 };
 
@@ -96,10 +124,19 @@ export const teamPermissions = {
   delete: { label: 'Delete', description: 'Delete team and team content' },
   invite: { label: 'Invite', description: 'Invite new members to team' },
   remove: { label: 'Remove', description: 'Remove members from team' },
-  assign_roles: { label: 'Assign Roles', description: 'Assign roles to team members' },
+  assign_roles: {
+    label: 'Assign Roles',
+    description: 'Assign roles to team members',
+  },
   manage_budget: { label: 'Manage Budget', description: 'Manage team budget' },
-  create_goals: { label: 'Create Goals', description: 'Create and manage team goals' },
-  view_analytics: { label: 'View Analytics', description: 'View team performance analytics' },
+  create_goals: {
+    label: 'Create Goals',
+    description: 'Create and manage team goals',
+  },
+  view_analytics: {
+    label: 'View Analytics',
+    description: 'View team performance analytics',
+  },
 };
 
 // Export all team configurations

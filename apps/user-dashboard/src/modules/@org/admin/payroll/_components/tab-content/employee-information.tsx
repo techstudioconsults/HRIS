@@ -2,11 +2,7 @@ import { Badge } from '@workspace/ui/components/badge';
 import { Card, CardContent } from '@workspace/ui/components/card';
 import { MainButton } from '@workspace/ui/lib/button';
 
-import type { Payslip } from '../../types';
-
-interface EmployeeInformationProperties {
-  payslip?: Payslip | null;
-}
+import type { EmployeeInformationProperties } from '../../types';
 
 const EmployeeInformation = ({ payslip }: EmployeeInformationProperties) => {
   const employee = payslip?.employee;

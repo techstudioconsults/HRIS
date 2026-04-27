@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import type { AppLayoutProps } from './types';
+
 /**
  * AppLayout - Optimized for PWA (installed app mode)
  *
@@ -11,12 +13,7 @@ import React from 'react';
  * - Tighter, native app-like spacing
  * - Full viewport utilization
  */
-export interface AppLayoutProps {
-  children: React.ReactNode;
-  header?: React.ReactNode;
-  footer?: React.ReactNode;
-  nav?: React.ReactNode;
-}
+export type { AppLayoutProps } from './types';
 
 export function AppLayout({ children, header, footer, nav }: AppLayoutProps) {
   return (

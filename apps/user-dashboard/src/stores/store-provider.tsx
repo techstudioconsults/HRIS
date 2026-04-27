@@ -1,13 +1,10 @@
 'use client';
 
 import { queryClient } from '@/lib/react-query/query-client';
-import { ReactNode, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { useAuthStore } from './auth-store';
-
-interface StoreProviderProperties {
-  children: ReactNode;
-}
+import { type StoreProviderProperties } from './types';
 
 /**
  * StoreProvider

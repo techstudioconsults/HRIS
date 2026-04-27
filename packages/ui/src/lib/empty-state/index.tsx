@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { AlertCircle } from "lucide-react";
-import Image from "next/image";
-import { ReactNode } from "react";
+import { AlertCircle } from 'lucide-react';
+import Image from 'next/image';
+import { ReactNode } from 'react';
 // import empty1 from './empty-state.svg'
 
-import { MainButton } from "../button";
+import { MainButton } from '../button';
 import {
   Empty,
   EmptyContent,
@@ -13,8 +13,8 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from "@workspace/ui/components/empty";
-import { cn } from "../utils";
+} from '@workspace/ui/components/empty';
+import { cn } from '../utils';
 
 interface ImageConfig {
   src: string;
@@ -23,7 +23,7 @@ interface ImageConfig {
   height?: number;
 }
 
-type EmptyStateVariant = "default" | "icon" | "image";
+type EmptyStateVariant = 'default' | 'icon' | 'image';
 
 interface EmptyStateProperties {
   // Visual
@@ -41,7 +41,7 @@ interface EmptyStateProperties {
     text: string;
     onClick: () => void;
     icon?: ReactNode;
-    variant?: "primary" | "outline" | "ghost" | "destructive";
+    variant?: 'primary' | 'outline' | 'ghost' | 'destructive';
     disabled?: boolean;
     loading?: boolean;
   };
@@ -49,7 +49,7 @@ interface EmptyStateProperties {
     text: string;
     onClick: () => void;
     icon?: ReactNode;
-    variant?: "primary" | "outline" | "ghost" | "destructive";
+    variant?: 'primary' | 'outline' | 'ghost' | 'destructive';
     disabled?: boolean;
   };
   customActions?: ReactNode;
@@ -71,7 +71,7 @@ interface EmptyStateProperties {
 }
 
 export const EmptyState = ({
-  variant = "image",
+  variant = 'image',
   icon,
   image,
   images, // Legacy
@@ -91,23 +91,23 @@ export const EmptyState = ({
   // Handle legacy props
   const finalPrimaryAction =
     primaryAction ||
-    (button ? { ...button, variant: "primary" as const } : undefined);
+    (button ? { ...button, variant: 'primary' as const } : undefined);
   const finalCustomActions = customActions || actionButton;
 
   const overlayclass =
-    primaryAction?.variant === "destructive" ? "bg-danger-50" : undefined;
+    primaryAction?.variant === 'destructive' ? 'bg-danger-50' : undefined;
 
   return (
-    <Empty className={cn("border-none", className)}>
+    <Empty className={cn('border-none', className)}>
       <EmptyHeader className={headerClassName}>
         {/* Media rendering based on variant or fallback */}
-        {variant === "icon" && icon && (
+        {variant === 'icon' && icon && (
           <EmptyMedia className={cn(overlayclass)} variant="icon">
             {icon}
           </EmptyMedia>
         )}
 
-        {variant === "image" && (image || images) ? (
+        {variant === 'image' && (image || images) ? (
           <EmptyMedia variant="default">
             <div className="flex flex-wrap items-center justify-center gap-2">
               {image ? (
@@ -134,7 +134,7 @@ export const EmptyState = ({
               )}
             </div>
           </EmptyMedia>
-        ) : variant === "image" && icon ? (
+        ) : variant === 'image' && icon ? (
           <EmptyMedia
             className={cn(`bg-${primaryAction?.variant}-50`)}
             variant="icon"
@@ -158,7 +158,7 @@ export const EmptyState = ({
               {finalPrimaryAction && (
                 <MainButton
                   onClick={finalPrimaryAction.onClick}
-                  variant={finalPrimaryAction.variant || "primary"}
+                  variant={finalPrimaryAction.variant || 'primary'}
                   isDisabled={finalPrimaryAction.disabled}
                   isLoading={finalPrimaryAction.loading}
                   isLeftIconVisible={!!finalPrimaryAction.icon}
@@ -173,7 +173,7 @@ export const EmptyState = ({
               {secondaryAction && (
                 <MainButton
                   onClick={secondaryAction.onClick}
-                  variant={secondaryAction.variant || "outline"}
+                  variant={secondaryAction.variant || 'outline'}
                   isDisabled={secondaryAction.disabled}
                   isLeftIconVisible={!!secondaryAction.icon}
                   className="min-w-[140px]"
@@ -197,26 +197,26 @@ export const FilteredEmptyState = ({ onReset }: { onReset: () => void }) => (
   <EmptyState
     variant="image"
     image={{
-      src: "/empty-state.svg",
-      alt: "No filtered results",
+      src: '/empty-state.svg',
+      alt: 'No filtered results',
       width: 180,
       height: 180,
     }}
     title="No matching results found"
     description="Try adjusting your filters to find what you're looking for."
     primaryAction={{
-      text: "Reset Filters",
+      text: 'Reset Filters',
       onClick: onReset,
-      variant: "primary",
+      variant: 'primary',
     }}
   />
 );
 
 export const NoDataEmptyState = ({
-  title = "No data available",
+  title = 'No data available',
   description,
   onAction,
-  actionText = "Add New",
+  actionText = 'Add New',
   actionIcon,
 }: {
   title?: string;
@@ -227,7 +227,7 @@ export const NoDataEmptyState = ({
 }) => (
   <EmptyState
     variant="image"
-    image={{ src: "/empty-state.svg", alt: "No data", width: 180, height: 180 }}
+    image={{ src: '/empty-state.svg', alt: 'No data', width: 180, height: 180 }}
     title={title}
     description={description}
     primaryAction={
@@ -236,7 +236,7 @@ export const NoDataEmptyState = ({
             text: actionText,
             onClick: onAction,
             icon: actionIcon,
-            variant: "primary",
+            variant: 'primary',
           }
         : undefined
     }
@@ -244,8 +244,8 @@ export const NoDataEmptyState = ({
 );
 
 export const ErrorEmptyState = ({
-  title = "Something went wrong",
-  description = "We encountered an error while loading your data. Please try again.",
+  title = 'Something went wrong',
+  description = 'We encountered an error while loading your data. Please try again.',
   onRetry,
 }: {
   title?: string;
@@ -261,9 +261,9 @@ export const ErrorEmptyState = ({
     description={description}
     descriptionClassName="text-muted-foreground"
     primaryAction={{
-      text: "Try Again",
+      text: 'Try Again',
       onClick: onRetry,
-      variant: "destructive",
+      variant: 'destructive',
     }}
   />
 );
@@ -278,8 +278,8 @@ export const SearchEmptyState = ({
   <EmptyState
     variant="image"
     image={{
-      src: "/empty-state.svg",
-      alt: "No search results",
+      src: '/empty-state.svg',
+      alt: 'No search results',
       width: 180,
       height: 180,
     }}
@@ -291,13 +291,13 @@ export const SearchEmptyState = ({
           searching with different keywords.
         </>
       ) : (
-        "Try searching with different keywords."
+        'Try searching with different keywords.'
       )
     }
     primaryAction={{
-      text: "Clear Search",
+      text: 'Clear Search',
       onClick: onClear,
-      variant: "outline",
+      variant: 'outline',
     }}
   />
 );

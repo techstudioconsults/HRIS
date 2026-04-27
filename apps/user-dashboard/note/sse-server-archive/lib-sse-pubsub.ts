@@ -1,6 +1,6 @@
 // Archived from src/lib/sse/pubsub.ts
-// eslint-disable-next-line unicorn/prevent-abbreviations
-import type { SSEEvent } from "@/lib/sse/types";
+
+import type { SSEEvent } from '@/lib/sse/types';
 
 class PubSub {
   private channels = new Map<string, Set<(event: SSEEvent) => void>>();

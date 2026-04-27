@@ -8,7 +8,10 @@ import { cn } from '@workspace/ui/lib/utils';
 import { LucideFileUp, X } from 'lucide-react';
 import Image from 'next/image';
 import * as React from 'react';
-import Dropzone, { type DropzoneProps, type FileRejection } from 'react-dropzone';
+import Dropzone, {
+  type DropzoneProps,
+  type FileRejection,
+} from 'react-dropzone';
 import { toast } from 'sonner';
 
 interface FileUploaderProperties extends React.HTMLAttributes<HTMLDivElement> {
@@ -136,8 +139,13 @@ export function FileUploader(properties: FileUploaderProperties) {
         }
       }
 
-      if (onUpload && updatedFiles.length > 0 && updatedFiles.length <= maxFiles) {
-        const target = updatedFiles.length > 0 ? `${updatedFiles.length} files` : `file`;
+      if (
+        onUpload &&
+        updatedFiles.length > 0 &&
+        updatedFiles.length <= maxFiles
+      ) {
+        const target =
+          updatedFiles.length > 0 ? `${updatedFiles.length} files` : `file`;
 
         toast.promise(onUpload(updatedFiles), {
           loading: `Uploading ${target}...`,
@@ -201,14 +209,22 @@ export function FileUploader(properties: FileUploaderProperties) {
             {isDragActive ? (
               <div className="flex flex-col items-center justify-center gap-4 sm:px-5">
                 <div className="rounded-full border border-dashed p-3">
-                  <LucideFileUp className="text-muted-foreground size-7" aria-hidden="true" />
+                  <LucideFileUp
+                    className="text-muted-foreground size-7"
+                    aria-hidden="true"
+                  />
                 </div>
-                <p className="text-muted-foreground font-medium">Drop the files here</p>
+                <p className="text-muted-foreground font-medium">
+                  Drop the files here
+                </p>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center gap-4 sm:px-5">
                 <div className="rounded-full border border-dashed p-3">
-                  <LucideFileUp className="text-muted-foreground size-7" aria-hidden="true" />
+                  <LucideFileUp
+                    className="text-muted-foreground size-7"
+                    aria-hidden="true"
+                  />
                 </div>
                 <div className="space-y-px">
                   <p className="text-muted-foreground font-medium">
@@ -231,7 +247,12 @@ export function FileUploader(properties: FileUploaderProperties) {
         <ScrollArea className="h-fit w-full px-3">
           <div className="max-h-48 space-y-4">
             {files?.map((file, index) => (
-              <FileCard key={index} file={file} onRemove={() => onRemove(index)} progress={progresses?.[file.name]} />
+              <FileCard
+                key={index}
+                file={file}
+                onRemove={() => onRemove(index)}
+                progress={progresses?.[file.name]}
+              />
             ))}
           </div>
         </ScrollArea>
@@ -262,7 +283,9 @@ function FileCard({ file, progress, onRemove }: FileCardProperties) {
         ) : null}
         <div className="flex w-full flex-col gap-2">
           <div className="space-y-px">
-            <p className="text-foreground/80 line-clamp-1 text-sm font-medium">{file.name}</p>
+            <p className="text-foreground/80 line-clamp-1 text-sm font-medium">
+              {file.name}
+            </p>
             {/* <p className="text-muted-foreground text-xs">{formatBytes(file.size)}</p> */}
           </div>
           {progress ? <Progress value={progress} /> : null}

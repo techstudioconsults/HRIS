@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { IconVariant, TrendDirection } from '../../_components/types';
 
 export interface SearchResult {
   id: string;
@@ -30,4 +31,36 @@ export interface GlobalSearchInputProperties {
   onClearRecent?: () => void;
   emptyMessage?: string;
   delay?: number;
+}
+
+// ============================================================================
+// @org SHARED COMPONENT PROP TYPES
+// ============================================================================
+
+export interface DashboardCardProperties {
+  title: string;
+  value: string | number | ReactNode;
+  percentage?: string;
+  icon?: ReactNode;
+  iconVariant?: IconVariant;
+  className?: string;
+  actionText?: string;
+  actionHref?: string;
+  showTrendIcon?: boolean;
+  trend?: TrendDirection;
+  onAction?: () => void;
+  titleColor?: string;
+  valueColor?: string;
+  percentageColor?: string;
+  actionTextColor?: string;
+}
+
+export interface ProgressBarProperties {
+  current: number;
+  total: number;
+}
+
+export interface SSEProgressWidgetProperties {
+  channel: string;
+  title?: string;
 }

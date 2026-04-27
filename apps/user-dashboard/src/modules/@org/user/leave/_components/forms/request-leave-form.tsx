@@ -6,10 +6,8 @@ import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useEffect, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import {
-  requestLeaveSchema,
-  type RequestLeaveFormValues,
-} from '../../schemas/request-leave-form';
+import { requestLeaveSchema } from '../../schemas/request-leave-form';
+import type { RequestLeaveFormValues } from '../../types';
 import type { RequestLeaveFormProps } from '../../types';
 
 export const RequestLeaveForm = ({

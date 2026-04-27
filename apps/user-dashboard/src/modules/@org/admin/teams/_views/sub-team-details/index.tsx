@@ -174,7 +174,7 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
       },
       {
         header: 'Role',
-        accessorKey: 'email',
+        accessorKey: 'role',
         render: (_, employee: Employee) => (
           <span className="text-sm">
             {employee?.employmentDetails?.role?.name || 'N/A'}
@@ -183,7 +183,7 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
       },
       {
         header: 'Work Mode',
-        accessorKey: 'email',
+        accessorKey: 'workMode',
         render: (_, employee: Employee) => (
           <span className="text-sm capitalize">
             {employee?.employmentDetails?.workMode || 'N/A'}
@@ -226,7 +226,7 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
           title="Team Manager"
           value={
             <p className="text-base">
-              {teamData?.manager || `Ifijeh Kingsley`}
+              {teamData?.manager?.name || 'No manager assigned'}
             </p>
           }
           className="flex flex-col items-center justify-center gap-4 text-center"

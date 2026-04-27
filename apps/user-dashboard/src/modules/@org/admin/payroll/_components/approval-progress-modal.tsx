@@ -10,15 +10,7 @@ import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { cn } from '@workspace/ui/lib/utils';
 import type { ReactNode } from 'react';
 
-import type { PayrollApproval } from '../types';
-
-interface ApprovalProgressModalProperties {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  selectedPayrollId: string;
-  approvals: PayrollApproval[];
-  isApprovalsLoading: boolean;
-}
+import type { ApprovalProgressModalProperties } from '../types';
 
 export const ApprovalProgressModal = ({
   open,

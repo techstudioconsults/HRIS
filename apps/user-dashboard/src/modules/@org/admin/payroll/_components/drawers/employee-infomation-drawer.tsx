@@ -6,7 +6,8 @@ import { SalaryDetails } from '@/modules/@org/admin/payroll/_components/tab-cont
 import { usePayrollService } from '@/modules/@org/admin/payroll/services/use-service';
 import { usePayrollStore } from '@/modules/@org/admin/payroll/stores/payroll-store';
 import type {
-  Payslip,
+  EmployeeInformationDrawerProperties,
+  PayslipRow,
   PayslipStatus,
 } from '@/modules/@org/admin/payroll/types';
 import { Badge } from '@workspace/ui/components/badge';
@@ -39,14 +40,6 @@ import { toast } from 'sonner';
 import Loading from '../../../../../../../note/loading';
 import { PayslipDetailsDialog } from '../payslip-details-dialog';
 
-interface EmployeeInformationDrawerProperties {
-  payrollId?: string | null;
-}
-
-type PayslipRow = Payslip & {
-  payrollId?: string;
-};
-
 const HISTORY_PAGE_SIZE = 10;
 
 const statusVariantMap: Record<
@@ -55,9 +48,8 @@ const statusVariantMap: Record<
 > = {
   paid: 'success',
   failed: 'destructive',
-  cancelled: 'destructive',
+  processing: 'secondary',
   pending: 'warning',
-  draft: 'secondary',
 };
 
 const formatHistoryMonth = (value: unknown) => {

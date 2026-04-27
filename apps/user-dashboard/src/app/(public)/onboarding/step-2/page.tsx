@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { TeamSetupPage } from "@/modules/@org/onboarding";
+import { TeamSetupPage } from '@/modules/@org/onboarding';
 
 const OnboardingStepTwoPage = () => {
   return (

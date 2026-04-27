@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import { ResourcesBody } from "../../_components/ResourcesBody";
-import { ResourcesHeader } from "../../_components/ResourcesHeader";
+import { ResourcesBody } from '../../_components/ResourcesBody';
+import { ResourcesHeader } from '../../_components/ResourcesHeader';
 
 export const Resources = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);

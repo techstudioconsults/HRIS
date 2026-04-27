@@ -22,6 +22,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { useEmployeeService } from '../../services/use-service';
+import type { RoleInput, RoleLite } from '../../types';
 import { PhoneInput } from '@/components/shared/phone-input';
 import FileUpload from '@workspace/ui/lib/file-upload/file-upload';
 import { Icon } from '@workspace/ui/lib/icons/icon';
@@ -66,8 +67,6 @@ export const AddEmployeeForm = () => {
     () => teams.find((team) => String(team.id) === selectedTeamId),
     [teams, selectedTeamId]
   );
-  type RoleInput = { id: string | number; name: string };
-  type RoleLite = { id: string; name: string };
   const normalizedDerivedRoles = useMemo<RoleLite[]>(
     () =>
       ((selectedTeam?.roles ?? []) as RoleInput[]).map((r) => ({

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { PhoneInput } from '@/components/shared/phone-input';
@@ -80,25 +79,21 @@ export const EditEmployeeForm = () => {
     if (!employee) return;
 
     // Ensure all required enum fields have valid values
-    const gender = employee.gender;
+    const gender = employee.gender ?? 'male';
     const employmentType =
-      employee.employmentDetails?.employmentType || 'full time';
-    // Map "on site" to "onsite" to match the schema
-    const rawWorkMode = employee.employmentDetails?.workMode || 'remote';
-    const workMode: 'remote' | 'onsite' | 'hybrid' =
-      rawWorkMode === 'on site'
-        ? 'onsite'
-        : (rawWorkMode as 'remote' | 'onsite' | 'hybrid');
+      employee.employmentDetails.employmentType || 'full time';
+    const workMode: 'remote' | 'onsite' | 'hybrid' = (employee.employmentDetails
+      .workMode ?? 'remote') as 'remote' | 'onsite' | 'hybrid';
 
     const teamId =
-      employee.employmentDetails?.team?.id !== undefined &&
-      employee.employmentDetails?.team?.id !== null
+      employee.employmentDetails.team?.id !== undefined &&
+      employee.employmentDetails.team?.id !== null
         ? String(employee.employmentDetails.team.id)
         : '';
 
     const roleId =
-      employee.employmentDetails?.role?.id !== undefined &&
-      employee.employmentDetails?.role?.id !== null
+      employee.employmentDetails.role?.id !== undefined &&
+      employee.employmentDetails.role?.id !== null
         ? String(employee.employmentDetails.role.id)
         : '';
 
@@ -121,21 +116,18 @@ export const EditEmployeeForm = () => {
       phoneNumber: normalizePhoneNumber(employee.phoneNumber),
       dateOfBirth: employee.dateOfBirth?.split('T')[0] || '',
       gender: gender,
-      startDate: employee.employmentDetails?.startDate?.split('T')[0] || '',
+      startDate: employee.employmentDetails.startDate?.split('T')[0] || '',
       employmentType: employmentType,
-      workMode: workMode as 'remote' | 'onsite' | 'hybrid',
+      workMode: workMode,
       teamId,
       roleId,
-      baseSalary: employee.payProfile.baseSalary
-        ? Number(employee.payProfile.baseSalary)
-        : 0,
-      bankName: employee.payProfile.bankName ?? employee.bankName ?? '',
-      accountName:
-        employee.payProfile.accountName ?? employee.accountName ?? '',
-      accountNumber:
-        employee.payProfile.accountNumber ?? employee.accountNumber ?? '',
+      baseSalary: employee.payProfile.baseSalary ?? 0,
+      bankName: employee.payProfile.bankName ?? '',
+      accountName: employee.payProfile.accountName ?? '',
+      accountNumber: employee.payProfile.accountNumber
+        ? String(employee.payProfile.accountNumber)
+        : '',
       bankCode: '',
-      // permissions: employee.employmentDetails.role.permissions ?? [],
     };
   }, [employee]);
 
@@ -219,15 +211,12 @@ export const EditEmployeeForm = () => {
 
   const roleOptions = useMemo(() => {
     const rolesArray = Array.isArray(derivedRoles) ? derivedRoles : [];
-    const base = rolesArray.map((role: any) => ({
+    const base = rolesArray.map((role: Role) => ({
       value: String(role.id),
       label: role.name,
     }));
     const currentRoleId = formValues?.roleId || selectedRoleId;
-    if (
-      currentRoleId &&
-      !base.some((opt: { value: string }) => opt.value === currentRoleId)
-    ) {
+    if (currentRoleId && !base.some((opt) => opt.value === currentRoleId)) {
       base.push({
         value: currentRoleId,
         label: employee?.employmentDetails?.role?.name || 'Current role',

@@ -669,7 +669,7 @@ export const PayrollView = () => {
               isLeftIconVisible
               onClick={() => setShowAddEmployeeModal(true)}
               icon={<Icon name={`Add`} variant={`Bold`} />}
-              isDisabled={isAddEmployeeDisabled}
+              // isDisabled={isAddEmployeeDisabled}
             >
               Add Employee
             </MainButton>
@@ -704,7 +704,7 @@ export const PayrollView = () => {
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => setShowAddEmployeeModal(true)}
-                disabled={isAddEmployeeDisabled}
+                // disabled={isAddEmployeeDisabled}
               >
                 <Icon name={`Add`} variant={`Bold`} />
                 Add Employee

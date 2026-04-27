@@ -9,7 +9,6 @@ export type {
   Folder,
   FolderFile,
   FolderQueryParameters,
-  PaginatedResponse,
   RenameFolderFormData,
   UpdateFolderDto,
 } from './types';

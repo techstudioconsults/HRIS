@@ -89,7 +89,7 @@ export class LeaveService {
 
   async rejectLeaveRequest(id: string, data: RejectLeaveRequestPayload) {
     const response = await this.http.patch<{ data: LeaveRequest }>(
-      `/leave-request/${id}/reject`,
+      `/leave-requests/${id}/reject`,
       data
     );
     if (response?.status === 200) {

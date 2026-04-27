@@ -14,12 +14,37 @@ export default mergeConfig(
     // @ts-ignore - Vite version mismatch
     plugins: [react()],
     test: {
-      setupFiles: [path.resolve(__dirname, '../../packages/test-utils/src/setup.ts')],
-      exclude: ['**/node_modules/**', '**/dist/**', '**/e2e/**', '**/.{idea,git,cache,output,temp}/**'],
+      setupFiles: [
+        path.resolve(__dirname, '../../packages/test-utils/src/setup.ts'),
+      ],
+      exclude: [
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/e2e/**',
+        '**/.next/**',
+        '**/.{idea,git,cache,output,temp}/**',
+      ],
+      coverage: {
+        include: ['src/**/*.{ts,tsx}'],
+        exclude: [
+          'node_modules/**',
+          'dist/**',
+          'coverage/**',
+          '**/.next/**',
+          '**/*.test.{ts,tsx}',
+          '**/*.spec.{ts,tsx}',
+          '**/__tests__/**',
+          '**/setup.ts',
+        ],
+      },
     },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
+        // Mirror tsconfig paths so workspace packages resolve in Vitest
+        // (@workspace/ui package.json exports use wildcards that Vite can't
+        // match for bare sub-paths like @workspace/ui/hooks)
+        '@workspace/ui': path.resolve(__dirname, '../../packages/ui/src'),
       },
     },
   }) as any

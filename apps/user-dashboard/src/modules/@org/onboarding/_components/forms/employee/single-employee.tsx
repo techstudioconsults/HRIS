@@ -8,29 +8,19 @@ import { FormEvent, useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { Employee } from '../../../_views/step-three';
+import { OnboardingEmployeeInput } from '../../../_views/step-three';
 import { useOnboardingService } from '../../../services/use-onboarding-service';
+import type {
+  OnboardingDepartment as Department,
+  OnboardingRole as Role,
+  SingleEmployeeFormProperties,
+} from '../../../types';
 import { RolesAndPermission } from '../roles&permission';
 
-// import { Role } from "../schema";
-
-interface SingleEmployeeFormProperties {
-  index: number;
-}
-
-interface Department {
-  id: string;
-  name: string;
-}
-
-interface Role {
-  id: string;
-  name: string;
-  permissions?: any[];
-}
-
 export const SingleEmployeeForm = ({ index }: SingleEmployeeFormProperties) => {
-  const { control, setValue } = useFormContext<{ employees: Employee[] }>();
+  const { control, setValue } = useFormContext<{
+    employees: OnboardingEmployeeInput[];
+  }>();
   const employee = useWatch({ control, name: `employees.${index}` });
   const selectedTeamId = useWatch({
     control,

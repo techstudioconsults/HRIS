@@ -1,5 +1,5 @@
 // Archived from src/lib/sse/pubsub.ts
-import type { SSEEvent } from "@/lib/sse/types";
+import type { SSEEvent } from '@/lib/sse/types';
 
 class PubSub {
   private channels = new Map<string, Set<(event: SSEEvent) => void>>();

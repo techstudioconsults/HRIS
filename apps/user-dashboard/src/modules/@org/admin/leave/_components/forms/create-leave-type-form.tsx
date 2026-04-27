@@ -13,10 +13,10 @@ import {
   LEAVE_CYCLE_OPTIONS,
   LEAVE_ELIGIBILITY_OPTIONS,
   leaveTypeFormSchema,
-  type LeaveTypeFormValues,
 } from '../../schemas/leave-type-form';
+import type { LeaveTypeFormValues } from '../../types';
 import { useLeaveService } from '../../services/use-service';
-import type { CreateLeaveTypeFormProperties } from './leave-type-form.types';
+import type { CreateLeaveTypeFormProperties } from '../../types';
 
 export const CreateLeaveTypeForm = ({
   onClose,
@@ -29,7 +29,7 @@ export const CreateLeaveTypeForm = ({
     defaultValues: {
       name: '',
       days: undefined as unknown as number,
-      cycle: '',
+      cycle: 'monthly' as const,
       maxLeaveDaysPerRequest: undefined as unknown as number,
       enableRollover: false,
       maxNumberOfRollOver: undefined,

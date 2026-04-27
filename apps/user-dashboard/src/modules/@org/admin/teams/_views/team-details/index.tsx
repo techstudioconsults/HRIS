@@ -2,7 +2,7 @@
 'use client';
 
 import { queryKeys } from '@/lib/react-query/query-keys';
-import type { Team as TeamFormType } from '@/modules/@org/onboarding/_components/forms/schema';
+import type { OnboardingSchemaTeam as TeamFormType } from '@/modules/@org/onboarding/types';
 import { TeamForm } from '@/modules/@org/onboarding/_components/forms/team/team-form';
 import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onboarding-service';
 import { useQueryClient } from '@tanstack/react-query';
@@ -145,8 +145,7 @@ const TeamDetailsContent = ({
     teamId
   );
 
-  type TeamWithSubteams = Team & { subteams?: Team[] };
-  const subTeams: Team[] = (teamData as TeamWithSubteams)?.subteams ?? [];
+  const subTeams = teamData?.subteams ?? [];
 
   if (isLoadingTeam) {
     return <TeamDetailsSkeleton />;
@@ -176,7 +175,7 @@ const TeamDetailsContent = ({
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <span className="text-sm lg:text-base text-balance">
-                {teamData?.manager || `Ifijeh Kingsley`}
+                {teamData?.manager?.name || 'No manager assigned'}
               </span>
             </div>
           }
@@ -185,7 +184,7 @@ const TeamDetailsContent = ({
         <DashboardCard
           title="Sub teams"
           value={
-            <span className="text-base">{teamData?.subteams?.length}</span>
+            <span className="text-base">{teamData?.subteams?.length ?? 0}</span>
           }
           className="flex flex-col items-center justify-center text-center"
         />
@@ -201,7 +200,7 @@ const TeamDetailsContent = ({
       <section>
         {subTeams.length > 0 ? (
           <AdvancedDataTable
-            data={subTeams}
+            data={subTeams as unknown as Team[]}
             columns={subTeamColumn}
             rowActions={getRowActions}
             showPagination={false}

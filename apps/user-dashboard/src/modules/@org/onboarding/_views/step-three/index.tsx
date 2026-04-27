@@ -6,7 +6,10 @@ import { useCallback, useEffect } from 'react';
 import { EmployeeSetupForm } from '../../_components/forms/employee/employee-setup';
 import { stepThreeTourSteps } from '../../config/tour-steps';
 import { useTour } from '@workspace/ui/context/tour-context';
-export type { Employee, OnboardEmployeesPayload } from '../../types';
+export type {
+  OnboardingEmployeeInput,
+  OnboardEmployeesPayload,
+} from '../../types';
 
 export const EmployeeSetup = () => {
   const { startTour } = useTour();

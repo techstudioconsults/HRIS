@@ -7,7 +7,10 @@ export const WithDependency: DependencyInjector = (Component, dependencies) => {
   const resolvedDependencies: ResolveDependencies = {};
 
   for (const property of Object.keys(dependencies)) {
-    const dependencyKey: symbol = Object.getOwnPropertyDescriptor(dependencies, property)?.value;
+    const dependencyKey: symbol = Object.getOwnPropertyDescriptor(
+      dependencies,
+      property
+    )?.value;
 
     if (dependencyKey) {
       Object.defineProperty(resolvedDependencies, property, {

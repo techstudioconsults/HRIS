@@ -1,14 +1,14 @@
-// proxy.ts
 import { getRouteConfig } from '@/lib/routes/routes';
 import { getDashboardRoute } from '@/lib/routes/redirect-helpers';
-import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   ACCESS_LEVELS,
   MODULE_PERMISSIONS,
-  PermissionCheckResult,
+  type PermissionCheckResult,
   ROLES,
 } from '@/lib/auth-types';
+import { COOKIE_SESSION_META } from '@/lib/session/cookie-names';
+import { verifyMeta } from '@/lib/session/session-manager';
 
 const AUTH_BLOCKED_FOR_AUTHENTICATED_PREFIXES = [
   '/login',
@@ -18,13 +18,11 @@ const AUTH_BLOCKED_FOR_AUTHENTICATED_PREFIXES = [
   '/onboarding',
 ] as const;
 
-const isBlockedAuthPageForAuthenticatedUser = (path: string): boolean => {
-  return AUTH_BLOCKED_FOR_AUTHENTICATED_PREFIXES.some(
+const isBlockedAuthPageForAuthenticatedUser = (path: string): boolean =>
+  AUTH_BLOCKED_FOR_AUTHENTICATED_PREFIXES.some(
     (prefix) => path === prefix || path.startsWith(`${prefix}/`)
   );
-};
 
-// Check if user has required permissions
 const checkPermissions = (
   userPermissions: string[],
   requiredPermissions: string[]
@@ -32,11 +30,9 @@ const checkPermissions = (
   if (!requiredPermissions || requiredPermissions.length === 0) {
     return { hasAccess: true };
   }
-
   const missingPermissions = requiredPermissions.filter(
-    (permission) => !userPermissions.includes(permission)
+    (p) => !userPermissions.includes(p)
   );
-
   if (missingPermissions.length > 0) {
     return {
       hasAccess: false,
@@ -44,103 +40,63 @@ const checkPermissions = (
       reason: `Missing required permissions: ${missingPermissions.join(', ')}`,
     };
   }
-
   return { hasAccess: true };
 };
 
-// Check if user has owner role and admin permission
 const isOwnerWithAdminPermission = (
   userRole: string,
   userPermissions: string[]
-): boolean => {
-  return (
-    userRole === ROLES.OWNER &&
-    userPermissions.includes(MODULE_PERMISSIONS.ADMIN)
-  );
-};
+): boolean =>
+  userRole === ROLES.OWNER &&
+  userPermissions.includes(MODULE_PERMISSIONS.ADMIN);
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip proxy for static files and API routes
   if (
     pathname.startsWith('/_next/') ||
     pathname.startsWith('/api/') ||
     pathname.startsWith('/static/') ||
-    pathname.includes('.') // Skip files with extensions
+    pathname.includes('.')
   ) {
     return NextResponse.next();
   }
 
-  // No locale segment handling — application no longer uses per-path locales
-  const pathWithoutLocale = pathname;
+  const secret = process.env.AUTH_SECRET ?? '';
+  const metaCookie = request.cookies.get(COOKIE_SESSION_META)?.value;
+  const session = metaCookie ? await verifyMeta(metaCookie, secret) : null;
 
-  // Get user token to check authentication and role
-  const token = await getToken({
-    req: request,
-    secret: process.env.AUTH_SECRET,
-    secureCookie: process.env.NODE_ENV === 'production',
-  });
+  const isAuthenticated = !!session;
+  const userRole = session?.role?.name ?? '';
+  const userPermissions = session?.permissions ?? [];
 
-  const isAuthenticated = !!token;
-
-  // Extract user data from token
-  const userRole =
-    (token?.employee as { role?: { name?: string } })?.role?.name || '';
-  const userPermissions = (token?.permissions as string[]) || [];
-
-  // Keep authenticated users out of auth/onboarding flows.
-  if (
-    isAuthenticated &&
-    isBlockedAuthPageForAuthenticatedUser(pathWithoutLocale)
-  ) {
-    const dashboardUrl = new URL(
-      getDashboardRoute(userPermissions),
-      request.url
+  if (isAuthenticated && isBlockedAuthPageForAuthenticatedUser(pathname)) {
+    return NextResponse.redirect(
+      new URL(getDashboardRoute(userPermissions), request.url)
     );
-    return NextResponse.redirect(dashboardUrl);
   }
 
-  // Get route configuration
-  const routeConfig = getRouteConfig(pathWithoutLocale);
+  const routeConfig = getRouteConfig(pathname);
+  if (!routeConfig) return NextResponse.next();
 
-  // If no route config found, allow access (fallback)
-  if (!routeConfig) {
-    return NextResponse.next();
-  }
-
-  // Role-based dashboard redirection logic
   const isAdminUser = userPermissions.includes(MODULE_PERMISSIONS.ADMIN);
 
-  // Prevent admins from accessing user routes
-  if (isAuthenticated && isAdminUser && pathWithoutLocale.startsWith('/user')) {
-    const adminDashboardUrl = new URL('/admin/dashboard', request.url);
-    return NextResponse.redirect(adminDashboardUrl);
+  if (isAuthenticated && isAdminUser && pathname.startsWith('/user')) {
+    return NextResponse.redirect(new URL('/admin/dashboard', request.url));
   }
 
-  // Prevent non-admins from accessing admin routes
-  if (
-    isAuthenticated &&
-    !isAdminUser &&
-    pathWithoutLocale.startsWith('/admin')
-  ) {
-    const userDashboardUrl = new URL('/user/dashboard', request.url);
-    return NextResponse.redirect(userDashboardUrl);
+  if (isAuthenticated && !isAdminUser && pathname.startsWith('/admin')) {
+    return NextResponse.redirect(new URL('/user/dashboard', request.url));
   }
 
-  // Handle different access levels
   switch (routeConfig.accessLevel) {
-    case ACCESS_LEVELS.PUBLIC: {
-      // Public routes - accessible to everyone
+    case ACCESS_LEVELS.PUBLIC:
       return NextResponse.next();
-    }
 
     case ACCESS_LEVELS.AUTHENTICATED: {
-      // Authenticated routes - require login but no specific permissions
       if (!isAuthenticated) {
-        const loginUrl = new URL(`/login`, request.url);
+        const loginUrl = new URL('/login', request.url);
         loginUrl.searchParams.set('callbackUrl', pathname);
-        // Preserve original query parameters
         if (request.nextUrl.search) {
           loginUrl.search +=
             (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
@@ -151,69 +107,39 @@ export async function proxy(request: NextRequest) {
     }
 
     case ACCESS_LEVELS.OWNER_ONLY: {
-      // Owner-only routes - only accessible to owner role with admin permission
       if (!isAuthenticated) {
-        const loginUrl = new URL(`/login`, request.url);
+        const loginUrl = new URL('/login', request.url);
         loginUrl.searchParams.set('callbackUrl', pathname);
-        // Preserve original query parameters
-        if (request.nextUrl.search) {
-          loginUrl.search +=
-            (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
-        }
         return NextResponse.redirect(loginUrl);
       }
-
       if (!isOwnerWithAdminPermission(userRole, userPermissions)) {
-        // User is authenticated but lacks owner+admin — send to their dashboard.
-        // Redirecting to /login would loop: the proxy's auth-page guard would
-        // immediately bounce an authenticated user back to the dashboard.
-        const dashboardUrl = new URL(
-          getDashboardRoute(userPermissions),
-          request.url
+        return NextResponse.redirect(
+          new URL(getDashboardRoute(userPermissions), request.url)
         );
-        return NextResponse.redirect(dashboardUrl);
       }
-
       return NextResponse.next();
     }
 
     case ACCESS_LEVELS.PERMISSION_BASED: {
-      // Permission-based routes - require specific module permissions
       if (!isAuthenticated) {
-        const loginUrl = new URL(`/login`, request.url);
+        const loginUrl = new URL('/login', request.url);
         loginUrl.searchParams.set('callbackUrl', pathname);
-        // Preserve original query parameters
-        if (request.nextUrl.search) {
-          loginUrl.search +=
-            (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
-        }
         return NextResponse.redirect(loginUrl);
       }
-
-      // Check if user has required permissions
       const permissionCheck = checkPermissions(
         userPermissions,
-        (routeConfig.requiredPermissions as unknown as string[]) || []
+        (routeConfig.requiredPermissions as unknown as string[]) ?? []
       );
-
       if (!permissionCheck.hasAccess) {
-        // User is authenticated but lacks module permissions — send to their
-        // dashboard. Redirecting to /login would loop for the same reason as
-        // the OWNER_ONLY case above.
-        const dashboardUrl = new URL(
-          getDashboardRoute(userPermissions),
-          request.url
+        return NextResponse.redirect(
+          new URL(getDashboardRoute(userPermissions), request.url)
         );
-        return NextResponse.redirect(dashboardUrl);
       }
-
       return NextResponse.next();
     }
 
     default: {
-      // Unknown access level - redirect to login
-      const loginUrl = new URL(`/login`, request.url);
-      // Preserve original query parameters
+      const loginUrl = new URL('/login', request.url);
       if (request.nextUrl.search) {
         loginUrl.search +=
           (loginUrl.search ? '&' : '?') + request.nextUrl.search.slice(1);
@@ -225,14 +151,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder files
-     */
     '/((?!api|_next|static|images|favicon.ico|public|mockServiceWorker).*)',
   ],
 };

@@ -1,9 +1,7 @@
-import { Skeleton } from "@workspace/ui/components/skeleton";
-import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
+import { Skeleton } from '@workspace/ui/components/skeleton';
+import { Tabs, TabsList, TabsTrigger } from '@workspace/ui/components/tabs';
 
-interface FilesSkeletonProperties {
-  count?: number;
-}
+import type { FilesSkeletonProperties } from '../types';
 
 // Individual file card skeleton
 const FileCardSkeleton = () => {

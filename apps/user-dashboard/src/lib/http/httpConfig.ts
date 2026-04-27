@@ -1,52 +1,38 @@
-import axios, { InternalAxiosRequestConfig } from 'axios';
-import { signOut } from 'next-auth/react';
+import axios, { type InternalAxiosRequestConfig } from 'axios';
 
 import { tokenManager } from './token-manager';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL as string;
-const TIMEOUTMSG = 'Waiting for too long...Aborted!';
 
-// Axios instance configuration
-const config = {
+const http = axios.create({
   baseURL: BASE_URL,
-  timeoutErrorMessage: TIMEOUTMSG,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-};
-
-const http = axios.create(config);
+  timeoutErrorMessage: 'Waiting for too long...Aborted!',
+  headers: { 'Content-Type': 'application/json' },
+});
 
 const redirectToLogin = () => {
-  if (typeof window === 'undefined') {
-    return;
-  }
-
+  if (typeof window === 'undefined') return;
   if (window.location.pathname !== '/login') {
     window.location.replace('/login');
   }
 };
 
-// Add request interceptor to add auth token
 http.interceptors.request.use(
   async (config) => {
-    // Get cached or fresh access token
     const accessToken = await tokenManager.getAccessToken();
-
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
-
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor — handle 401 with token refresh, then sign-out fallback.
-// signOut({ redirect: false }) clears the NextAuth cookie so the proxy allows
-// the /login redirect instead of bouncing the user back to the dashboard.
+/**
+ * Response interceptor — on 401, attempt a token refresh via the BFF Route Handler.
+ * If the refresh also fails, clear the session cookies and redirect to /login.
+ * The _retried guard prevents infinite retry loops.
+ */
 http.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -58,16 +44,14 @@ http.interceptors.response.use(
       originalRequest._retried = true;
 
       const newToken = await tokenManager.refreshAccessToken();
-
       if (newToken) {
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return http(originalRequest);
       }
 
-      // Refresh failed — clear session cookie so the proxy stops treating
-      // this user as authenticated, then navigate to login.
+      // Refresh failed — clear server-side cookies then navigate to login
       tokenManager.invalidate();
-      await signOut({ redirect: false });
+      await fetch('/api/auth/session', { method: 'DELETE' }).catch(() => {});
       redirectToLogin();
     }
 

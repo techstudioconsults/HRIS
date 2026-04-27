@@ -1,8 +1,8 @@
 // Archived from src/app/api/sse/route.ts
-import pubsub from "@/lib/sse/pubsub";
-import type { SSEEvent } from "@/lib/sse/types";
+import pubsub from '@/lib/sse/pubsub';
+import type { SSEEvent } from '@/lib/sse/types';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 function toSSE(event: SSEEvent) {
   return `id: ${event.id}\nevent: ${event.type}\ndata: ${JSON.stringify(event)}\n\n`;
@@ -10,7 +10,9 @@ function toSSE(event: SSEEvent) {
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const channels = (searchParams.get("channels")?.split(",") ?? ["global"]).map((s) => s.trim()).filter(Boolean);
+  const channels = (searchParams.get('channels')?.split(',') ?? ['global'])
+    .map((s) => s.trim())
+    .filter(Boolean);
 
   const encoder = new TextEncoder();
 
@@ -52,7 +54,7 @@ export async function GET(request: Request) {
 
       try {
         const signal: AbortSignal | undefined = (request as Request).signal;
-        signal?.addEventListener("abort", close);
+        signal?.addEventListener('abort', close);
       } catch (error) {
         void error;
       }
@@ -63,10 +65,10 @@ export async function GET(request: Request) {
 
   return new Response(stream, {
     headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache, no-transform",
-      Connection: "keep-alive",
-      "X-Accel-Buffering": "no",
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache, no-transform',
+      Connection: 'keep-alive',
+      'X-Accel-Buffering': 'no',
     },
   });
 }

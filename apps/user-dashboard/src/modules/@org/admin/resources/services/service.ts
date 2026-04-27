@@ -7,7 +7,6 @@ import type {
   Folder,
   FolderFile,
   FolderQueryParameters,
-  PaginatedResponse,
   UpdateFolderDto,
 } from './types';
 
@@ -45,7 +44,7 @@ export class ResourceService {
   }
 
   async getAllFiles(filters: FileQueryParameters = {}) {
-    const response = await this.http.get<PaginatedResponse<FolderFile>>(
+    const response = await this.http.get<PaginatedApiResponse<FolderFile>>(
       '/files',
       {
         ...filters,
@@ -60,7 +59,7 @@ export class ResourceService {
     folderId: string,
     filters: FileQueryParameters = {}
   ) {
-    const response = await this.http.get<PaginatedResponse<FolderFile>>(
+    const response = await this.http.get<PaginatedApiResponse<FolderFile>>(
       '/files',
       {
         ...filters,
@@ -117,7 +116,7 @@ export class ResourceService {
   }
 
   async getAllFolders(filters: FolderQueryParameters = {}) {
-    const response = await this.http.get<PaginatedResponse<Folder>>(
+    const response = await this.http.get<PaginatedApiResponse<Folder>>(
       '/folders',
       {
         ...filters,

@@ -6,12 +6,7 @@ import { AlertModal } from '@workspace/ui/lib/dialog';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
-type SecuritySettingsFormValues = {
-  oldPassword: string;
-  newPassword: string;
-  confirmNewPassword: string;
-  enable2fa: boolean;
-};
+import type { SecuritySettingsFormValues } from '../../types';
 
 const DEFAULT_VALUES: SecuritySettingsFormValues = {
   oldPassword: '',

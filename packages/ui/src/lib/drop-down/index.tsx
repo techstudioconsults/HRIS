@@ -2,13 +2,13 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@workspace/ui/components/dropdown-menu";
-import { cn } from "../utils";
+} from '@workspace/ui/components/dropdown-menu';
+import { cn } from '../utils';
 
 interface GenericDropdownProperties {
   trigger: React.ReactNode;
   children: React.ReactNode;
-  align?: "start" | "center" | "end";
+  align?: 'start' | 'center' | 'end';
   className?: string;
   contentClassName?: string;
   isDisabled?: boolean;
@@ -17,10 +17,10 @@ interface GenericDropdownProperties {
 export function GenericDropdown({
   trigger,
   children,
-  align = "start",
+  align = 'start',
   className,
   isDisabled = false,
-  contentClassName = "w-56",
+  contentClassName = 'w-56',
 }: GenericDropdownProperties) {
   return (
     <DropdownMenu>

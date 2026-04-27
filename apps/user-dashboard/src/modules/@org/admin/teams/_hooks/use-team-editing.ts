@@ -1,17 +1,9 @@
 /* eslint-disable no-console */
-import type { Team as TeamFormType } from "@/modules/@org/onboarding/_components/forms/schema";
-import { useOnboardingService } from "@/modules/@org/onboarding/services/use-onboarding-service";
-import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-
-interface UseTeamEditingReturn {
-  isEditing: boolean;
-  editingTeam: TeamFormType | null;
-  openEditDialog: (team: TeamFormType) => void;
-  closeEditDialog: () => void;
-  handleUpdateTeam: (data: { name: string }) => Promise<void>;
-  isSubmitting: boolean;
-}
+import type { OnboardingSchemaTeam as TeamFormType } from '@/modules/@org/onboarding/types';
+import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onboarding-service';
+import { useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import type { UseTeamEditingReturn } from '../types';
 
 export const useTeamEditing = (): UseTeamEditingReturn => {
   const [isEditing, setIsEditing] = useState(false);
@@ -35,7 +27,7 @@ export const useTeamEditing = (): UseTeamEditingReturn => {
 
   const handleUpdateTeam = async (data: { name: string }) => {
     if (!editingTeam?.id) {
-      throw new Error("No team selected for editing");
+      throw new Error('No team selected for editing');
     }
 
     try {
@@ -46,12 +38,12 @@ export const useTeamEditing = (): UseTeamEditingReturn => {
       });
 
       // Invalidate queries to refresh the data
-      await queryClient.invalidateQueries({ queryKey: ["teams"] });
+      await queryClient.invalidateQueries({ queryKey: ['teams'] });
 
       // Close the dialog
       closeEditDialog();
     } catch (error) {
-      console.error("Failed to update team:", error);
+      console.error('Failed to update team:', error);
       throw error;
     } finally {
       setIsSubmitting(false);

@@ -5,14 +5,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormHeader } from '@workspace/ui/lib/form-header';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
-import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { useSession } from '@/lib/session';
+import { useAuthService } from '../../services/use-auth-service';
+
 export const Login = () => {
   const router = useRouter();
+  const { refresh } = useSession();
+  const { useLoginWithPassword } = useAuthService();
+  const { mutateAsync: loginWithPassword, isPending } = useLoginWithPassword();
+
   const methods = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -21,47 +27,40 @@ export const Login = () => {
     },
   });
 
-  const {
-    handleSubmit,
-    formState: { isSubmitting, isValid },
-    setError,
-  } = methods;
+  const { handleSubmit, setError } = methods;
 
   const handleSubmitForm = async (data: LoginFormData) => {
-    const result = await signIn('credentials', {
-      email: data.email,
-      password: data.password,
-      redirect: false,
-    });
+    try {
+      const result = await loginWithPassword(data);
+      if (!result?.data) new Error('Unexpected response from server');
 
-    if (result?.error) {
-      // Extract the actual error message from CredentialsSignin error
-      let errorMessage = result.error;
-      // Try to extract message after "CredentialsSignin: " prefix
-      if (errorMessage.includes('CredentialsSignin: ')) {
-        errorMessage = errorMessage.split('CredentialsSignin: ')[1];
-      }
-      // If it's the default NextAuth error, show the axios message
-      if (errorMessage.includes('Read more at')) {
-        errorMessage = errorMessage.split('.')[0];
-      }
-
-      toast.warning('Login Failed', {
-        description: errorMessage,
+      const sessionRes = await fetch('/api/auth/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          employee: result?.data.employee,
+          tokens: result?.data.tokens,
+          permissions: result?.data.permissions,
+        }),
       });
-      setError('password', { message: errorMessage });
-      return;
-    }
-    if (result?.ok) {
+
+      if (!sessionRes.ok) new Error('Failed to establish session');
+
+      await refresh();
+
       toast.success('Login Successful', {
         description: 'Redirecting to dashboard...',
       });
       router.push('/login/continue');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Login failed';
+      toast.warning('Login Failed', { description: message });
+      setError('password', { message });
     }
   };
 
   return (
-    <section className="mx-auto w-full max-w-[527px]">
+    <section className="mx-auto w-full max-w-131.75">
       <FormHeader
         title="Welcome Back, HR"
         subTitle="Login to access your HR dashboard, and simplify operations."
@@ -97,10 +96,11 @@ export const Login = () => {
           </section>
           <div className="pt-8">
             <MainButton
+              data-testid={`login-button`}
               type="submit"
               variant="primary"
-              isDisabled={isSubmitting || !isValid}
-              isLoading={isSubmitting}
+              isDisabled={isPending}
+              isLoading={isPending}
               className="w-full"
               size="2xl"
             >
@@ -111,14 +111,6 @@ export const Login = () => {
 
         <section className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            {/*<GradientMask*/}
-            {/*  direction={`left`}*/}
-            {/*  className={`dark:from-[#121212] `}*/}
-            {/*/>*/}
-            {/*<GradientMask*/}
-            {/*  direction={`right`}*/}
-            {/*  className={`dark:from-[#121212]!`}*/}
-            {/*/>*/}
             <hr className="w-full" />
           </div>
           <div className="relative flex justify-center text-sm">

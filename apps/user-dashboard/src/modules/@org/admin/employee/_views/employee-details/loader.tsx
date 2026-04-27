@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Skeleton } from "@workspace/ui/components/skeleton";
+import { Skeleton } from '@workspace/ui/components/skeleton';
 
 export const EmployeeDetailsSkeleton = () => {
   return (

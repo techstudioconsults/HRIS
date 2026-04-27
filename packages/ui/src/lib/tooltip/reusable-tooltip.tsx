@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { Tooltip } from "@workspace/ui/components/tooltip";
-import { ReactNode } from "react";
-import { cn } from "../utils";
+import { Tooltip } from '@workspace/ui/components/tooltip';
+import { ReactNode } from 'react';
+import { cn } from '../utils';
 
 interface ReusableTooltipProperties {
   content: string | ReactNode;
   children: ReactNode;
-  side?: "top" | "right" | "bottom" | "left";
-  align?: "start" | "center" | "end";
+  side?: 'top' | 'right' | 'bottom' | 'left';
+  align?: 'start' | 'center' | 'end';
   contentClassName?: string;
   delayDuration?: number;
   disableHoverableContent?: boolean;
@@ -19,13 +19,13 @@ interface ReusableTooltipProperties {
 export const ReusableTooltip = ({
   content,
   children,
-  side = "top",
-  align = "center",
+  side = 'top',
+  align = 'center',
   contentClassName,
   delayDuration = 300,
   disableHoverableContent = false,
   disabled = false,
-  maxWidth = "max-w-xs",
+  maxWidth = 'max-w-xs',
 }: ReusableTooltipProperties) => {
   if (disabled || !content) {
     return <>{children}</>;
@@ -36,7 +36,7 @@ export const ReusableTooltip = ({
       content={content}
       side={side}
       align={align}
-      className={cn("break-words", maxWidth, contentClassName)}
+      className={cn('break-words', maxWidth, contentClassName)}
       delayDuration={delayDuration}
       disableHoverableContent={disableHoverableContent}
     >
@@ -50,8 +50,8 @@ interface TruncatedTooltipProperties {
   text: string;
   children: ReactNode;
   maxLength?: number;
-  side?: "top" | "right" | "bottom" | "left";
-  align?: "start" | "center" | "end";
+  side?: 'top' | 'right' | 'bottom' | 'left';
+  align?: 'start' | 'center' | 'end';
   contentClassName?: string;
   disabled?: boolean;
 }
@@ -60,8 +60,8 @@ export const TruncatedTooltip = ({
   text,
   children,
   maxLength = 20,
-  side = "top",
-  align = "center",
+  side = 'top',
+  align = 'center',
   contentClassName,
   disabled = false,
 }: TruncatedTooltipProperties) => {
@@ -86,8 +86,8 @@ export const TruncatedTooltip = ({
 interface EmailTooltipProperties {
   email: string;
   children?: ReactNode;
-  side?: "top" | "right" | "bottom" | "left";
-  align?: "start" | "center" | "end";
+  side?: 'top' | 'right' | 'bottom' | 'left';
+  align?: 'start' | 'center' | 'end';
   contentClassName?: string;
   disabled?: boolean;
 }
@@ -95,8 +95,8 @@ interface EmailTooltipProperties {
 export const EmailTooltip = ({
   email,
   children,
-  side = "top",
-  align = "center",
+  side = 'top',
+  align = 'center',
   contentClassName,
   disabled = false,
 }: EmailTooltipProperties) => {
@@ -118,8 +118,8 @@ export const EmailTooltip = ({
 interface NameTooltipProperties {
   name: string;
   children?: ReactNode;
-  side?: "top" | "right" | "bottom" | "left";
-  align?: "start" | "center" | "end";
+  side?: 'top' | 'right' | 'bottom' | 'left';
+  align?: 'start' | 'center' | 'end';
   contentClassName?: string;
   disabled?: boolean;
 }
@@ -127,8 +127,8 @@ interface NameTooltipProperties {
 export const NameTooltip = ({
   name,
   children,
-  side = "top",
-  align = "center",
+  side = 'top',
+  align = 'center',
   contentClassName,
   disabled = false,
 }: NameTooltipProperties) => {

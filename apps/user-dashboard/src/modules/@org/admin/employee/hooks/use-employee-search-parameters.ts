@@ -1,19 +1,29 @@
-"use client";
+'use client';
 
-import { parseAsInteger, parseAsString, parseAsStringEnum, useQueryState } from "nuqs";
-import { useCallback } from "react";
+import {
+  parseAsInteger,
+  parseAsString,
+  parseAsStringEnum,
+  useQueryState,
+} from 'nuqs';
+import { useCallback } from 'react';
 
 export const useEmployeeSearchParameters = () => {
-  const [page, setPage] = useQueryState("page", parseAsInteger);
-  const [search, setSearch] = useQueryState("search", parseAsString);
-  const [teamId, setTeamId] = useQueryState("teamId", parseAsString);
-  const [roleId, setRoleId] = useQueryState("roleId", parseAsString);
+  const [page, setPage] = useQueryState('page', parseAsInteger);
+  const [search, setSearch] = useQueryState('search', parseAsString);
+  const [teamId, setTeamId] = useQueryState('teamId', parseAsString);
+  const [roleId, setRoleId] = useQueryState('roleId', parseAsString);
   const [status, setStatus] = useQueryState(
-    "status",
-    parseAsStringEnum(["all", "active", "inactive", "pending"]).withDefault("all"),
+    'status',
+    parseAsStringEnum(['all', 'active', 'inactive', 'pending']).withDefault(
+      'all'
+    )
   );
-  const [sortBy, setSortBy] = useQueryState("sortBy", parseAsString);
-  const [limit, setLimit] = useQueryState("limit", parseAsInteger.withDefault(10));
+  const [sortBy, setSortBy] = useQueryState('sortBy', parseAsString);
+  const [limit, setLimit] = useQueryState(
+    'limit',
+    parseAsInteger.withDefault(10)
+  );
 
   return {
     // Current values
@@ -24,19 +34,18 @@ export const useEmployeeSearchParameters = () => {
     status,
     sortBy,
     limit,
-
     // Setters
     setPage,
     setSearch: useCallback(
       (value: string | null) => {
         // Remove search parameter if value is empty
-        if (!value || value.trim() === "") {
+        if (!value || value.trim() === '') {
           setSearch(null);
         } else {
           setSearch(value);
         }
       },
-      [setSearch],
+      [setSearch]
     ),
     setTeamId,
     setRoleId,
@@ -53,7 +62,15 @@ export const useEmployeeSearchParameters = () => {
       setSortBy(null);
       setPage(null);
       setLimit(10); // Always reset to 10
-    }, [setSearch, setTeamId, setRoleId, setStatus, setSortBy, setPage, setLimit]),
+    }, [
+      setSearch,
+      setTeamId,
+      setRoleId,
+      setStatus,
+      setSortBy,
+      setPage,
+      setLimit,
+    ]),
 
     resetToFirstPage: useCallback(() => {
       setPage(null);
@@ -76,7 +93,7 @@ export const useEmployeeSearchParameters = () => {
       if (roleId) {
         filters.roleId = roleId;
       }
-      if (status && status !== "all") {
+      if (status && status !== 'all') {
         filters.status = status;
       }
       if (sortBy) {

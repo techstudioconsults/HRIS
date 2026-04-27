@@ -1,30 +1,21 @@
 // Leave Module Types
 
-export interface LeaveType extends Record<string, unknown> {
+export interface LeaveType {
   id: string;
   name: string;
-  days: number | string;
-  cycle: string;
-  carryOver: boolean;
-  /**
-   * Max leave days allowed per request.
-   * Optional because not all backends/environments return it.
-   */
-  maxLeaveDaysPerRequest?: number;
-  /**
-   * Eligibility in months (string), e.g. "12".
-   */
-  eligibility?: string;
-  /**
-   * Maximum number of leave days that can roll over to the next cycle.
-   */
+  days: number;
+  cycle: 'monthly' | 'quarterly' | 'yearly';
+  maxLeaveDaysPerRequest: number;
+  eligibility?: 3 | 6 | 12 | 24 | 36 | 48;
+  eligibleEmployees?: Array<{ id: string; name: string }>;
+  createdAt: string;
+  // Optional fields present in some backend environments
+  carryOver?: boolean;
   maxNumberOfRollOver?: number;
   description?: string;
-  createdAt?: string;
-  updatedAt?: string;
 }
 
-export interface LeaveRequest extends Record<string, unknown> {
+export interface LeaveRequest {
   id: string;
   employeeId: string;
   employeeName: string;
@@ -78,35 +69,17 @@ export interface LeaveStatistics {
 export interface UpdateLeaveTypePayload {
   name?: string;
   days?: number;
-  cycle?: string;
-  carryOver?: boolean;
-  description?: string;
+  cycle?: 'monthly' | 'quarterly' | 'yearly';
   maxLeaveDaysPerRequest?: number;
   eligibility?: string;
-  maxNumberOfRollOver?: number;
 }
 
-/**
- * Payload for creating a Leave Type.
- *
- * Note: Some backends accept additional policy-related fields (e.g. eligibility,
- * rollover/max per request). These are included here to match the current
- * [`LeaveSetupForm`](apps/user-dashboard/src/modules/@org/admin/leave/_components/forms/leave-setup-form.tsx:22)
- * payload transform.
- */
 export interface CreateLeaveTypePayload {
   name: string;
   days: number;
-  cycle: string;
-  carryOver?: boolean;
-  description?: string;
+  cycle: 'monthly' | 'quarterly' | 'yearly';
   maxLeaveDaysPerRequest?: number;
-  /**
-   * Eligibility in months (string).
-   * Allowed values are validated in the UI as: ["3", "6", "12", "24", "36", "48"].
-   */
   eligibility?: string;
-  maxNumberOfRollOver?: number;
 }
 
 export interface CreateLeaveRequestPayload {
@@ -156,3 +129,55 @@ export interface LeaveBodyProperties {
 export interface LeaveHeaderProperties {
   onSearch: (query: string) => void;
 }
+
+export type LeaveRequestFormData = {
+  employeeId: string;
+  leaveTypeId: string;
+  startDate: string;
+  endDate: string;
+  reason: string;
+};
+
+export interface LeaveRequestFormModalProperties {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export type LeaveSetupFormValues = {
+  name: string;
+  days: number;
+  maxPerRequest: number;
+  leaveCycle: 'monthly' | 'quarterly' | 'yearly';
+  enableRollover: boolean;
+  maxRollover?: number;
+  eligibility: string;
+};
+
+// ── Leave UI store state & actions ────────────────────────────────────────────
+
+export interface LeaveUIState {
+  showLeaveSetupModal: boolean;
+  hasCompletedLeaveSetup: boolean;
+
+  showLeaveDetailsDrawer: boolean;
+  selectedLeaveRequestId: string | null;
+  selectedLeaveRequest: LeaveRequest | null;
+}
+
+export interface LeaveUIActions {
+  setShowLeaveSetupModal: (open: boolean) => void;
+  setHasCompletedLeaveSetup: (status: boolean) => void;
+
+  setShowLeaveDetailsDrawer: (open: boolean) => void;
+  setSelectedLeaveRequestId: (id: string | null) => void;
+  setSelectedLeaveRequest: (request: LeaveRequest | null) => void;
+
+  resetUI: () => void;
+}
+
+// ── Schema-inferred form types ────────────────────────────────────────────────
+
+import { type z } from 'zod';
+import { leaveTypeFormSchema } from '../schemas/leave-type-form';
+
+export type LeaveTypeFormValues = z.infer<typeof leaveTypeFormSchema>;

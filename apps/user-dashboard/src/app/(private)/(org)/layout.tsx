@@ -8,7 +8,7 @@ import {
   SidebarInset,
   SidebarProvider,
 } from '@workspace/ui/components/sidebar';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/session';
 import { ReactNode } from 'react';
 import { AppSideBar } from '@/components/shared/navbar/AppSidebar';
 import { LayoutSelector, AppLayout } from '@/components/layouts';
@@ -56,7 +56,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           renderWeb={({ header, children: layoutChildren }) => (
             <SidebarProvider>
               <AppSideBar />
-              <SidebarInset className="bg-muted dark:bg-background">
+              <SidebarInset className="bg-[#fcfcfc] dark:bg-background">
                 {header}
                 {layoutChildren}
               </SidebarInset>

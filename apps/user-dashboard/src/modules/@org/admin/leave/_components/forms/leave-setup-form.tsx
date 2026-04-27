@@ -15,6 +15,7 @@ import { z } from 'zod';
 import { getApiErrorMessage } from '@/lib/tools/api-error-message';
 import { useLeaveService } from '../../services/use-service';
 import { useLeaveStore } from '../../stores/leave-store';
+import type { LeaveSetupFormValues } from '../../types';
 
 const leaveSetupSchema = z
   .object({
@@ -31,7 +32,9 @@ const leaveSetupSchema = z
         invalid_type_error: 'Maximum leave days per request must be a number',
       })
       .min(1, 'Maximum leave days per request must be greater than 0'),
-    leaveCycle: z.string().min(1, 'Leave cycle is required'),
+    leaveCycle: z.enum(['monthly', 'quarterly', 'yearly'], {
+      required_error: 'Leave cycle is required',
+    }),
     enableRollover: z.boolean(),
     maxRollover: z
       .number({
@@ -68,8 +71,6 @@ const leaveSetupSchema = z
     }
   });
 
-type LeaveSetupFormValues = z.infer<typeof leaveSetupSchema>;
-
 export const LeaveSetupForm = () => {
   const router = useRouter();
   const [isSubmittedAlertOpen, setIsSubmittedAlertOpen] = useState(false);
@@ -85,7 +86,7 @@ export const LeaveSetupForm = () => {
       // use `undefined` so the inputs render empty by default.
       days: undefined as unknown as number,
       maxPerRequest: undefined as unknown as number,
-      leaveCycle: '',
+      leaveCycle: 'monthly' as const,
       enableRollover: false,
       maxRollover: undefined,
       eligibility: '',
@@ -108,10 +109,9 @@ export const LeaveSetupForm = () => {
 
   const leaveCycleOptions = useMemo(
     () => [
-      { value: 'yearly', label: 'Yearly' },
       { value: 'monthly', label: 'Monthly' },
-      { value: 'weekly', label: 'Weekly' },
-      { value: 'daily', label: 'Daily' },
+      { value: 'quarterly', label: 'Quarterly' },
+      { value: 'yearly', label: 'Yearly' },
     ],
     []
   );

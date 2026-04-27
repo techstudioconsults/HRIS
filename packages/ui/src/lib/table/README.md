@@ -59,11 +59,11 @@ const employeeColumns: IColumnDefinition<Employee>[] = [
 ```typescript
 const getRowActions = (employee: Employee): IRowAction<Employee>[] => [
   {
-    label: "View Details",
+    label: 'View Details',
     onClick: (employee) => router.push(`/employees/${employee.id}`),
   },
   {
-    label: "Edit",
+    label: 'Edit',
     onClick: (employee) => router.push(`/employees/edit/${employee.id}`),
   },
 ];
@@ -74,7 +74,7 @@ const getRowActions = (employee: Employee): IRowAction<Employee>[] => [
 #### Simple Table (Like DashboardTable)
 
 ```tsx
-import { AdvancedDataTable } from "@/components/shared/table/table";
+import { AdvancedDataTable } from '@/components/shared/table/table';
 
 <AdvancedDataTable
   data={employees}
@@ -88,7 +88,7 @@ import { AdvancedDataTable } from "@/components/shared/table/table";
   hasNextPage={true}
   hasPreviousPage={false}
   onPageChange={(page) => console.log(page)}
-/>
+/>;
 ```
 
 #### Advanced Table (With All Features)
@@ -97,11 +97,9 @@ import { AdvancedDataTable } from "@/components/shared/table/table";
 <AdvancedDataTable
   data={employees}
   columns={employeeColumns}
-  
   // Row Actions
   rowActions={getRowActions}
   onRowClick={(employee) => handleRowClick(employee)}
-  
   // Backend Pagination
   currentPage={currentPage}
   totalPages={totalPages}
@@ -110,26 +108,23 @@ import { AdvancedDataTable } from "@/components/shared/table/table";
   hasPreviousPage={hasPreviousPage}
   onPageChange={setCurrentPage}
   showPagination={true}
-  
   // Advanced Features
   enableDragAndDrop={true}
   enableRowSelection={true}
   enableColumnVisibility={true}
   enableSorting={true}
   enableFiltering={true}
-  
   // UI Customization
   mobileCardView={true}
   showColumnCustomization={true}
   showAddButton={true}
   addButtonText="Add Employee"
   onAddClick={handleAddEmployee}
-  
   // Tabs (Optional)
   tabs={[
-    { value: "all", label: "All" },
-    { value: "active", label: "Active", badge: "10" },
-    { value: "inactive", label: "Inactive", badge: "5" },
+    { value: 'all', label: 'All' },
+    { value: 'active', label: 'Active', badge: '10' },
+    { value: 'inactive', label: 'Inactive', badge: '5' },
   ]}
   defaultTab="all"
   onTabChange={handleTabChange}
@@ -140,33 +135,33 @@ import { AdvancedDataTable } from "@/components/shared/table/table";
 
 ### IAdvancedTableProperties<T>
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `data` | `T[]` | **Required** | Array of data items to display |
-| `columns` | `IColumnDefinition<T>[]` | **Required** | Column definitions |
-| `currentPage` | `number` | `1` | Current page number (for backend pagination) |
-| `onPageChange` | `(page: number) => void` | - | Callback when page changes |
-| `totalPages` | `number` | `1` | Total number of pages |
-| `itemsPerPage` | `number` | `10` | Items per page |
-| `hasNextPage` | `boolean` | `false` | Whether there's a next page |
-| `hasPreviousPage` | `boolean` | `false` | Whether there's a previous page |
-| `rowActions` | `(row: T) => IRowAction<T>[]` | - | Function returning row actions |
-| `onRowClick` | `(row: T) => void` | - | Callback when row is clicked |
-| `showPagination` | `boolean` | `false` | Show backend pagination controls |
-| `enableDragAndDrop` | `boolean` | `false` | Enable drag and drop reordering |
-| `enableRowSelection` | `boolean` | `false` | Enable row selection checkboxes |
-| `enableColumnVisibility` | `boolean` | `true` | Enable column visibility toggle |
-| `enableSorting` | `boolean` | `true` | Enable column sorting |
-| `enableFiltering` | `boolean` | `true` | Enable column filtering |
-| `enablePagination` | `boolean` | `false` | Enable client-side pagination |
-| `mobileCardView` | `boolean` | `true` | Show card view on mobile |
-| `showColumnCustomization` | `boolean` | `true` | Show column customization button |
-| `showAddButton` | `boolean` | `false` | Show add button |
-| `addButtonText` | `string` | `"Add Item"` | Text for add button |
-| `onAddClick` | `() => void` | - | Callback for add button |
-| `tabs` | `Array<{value: string, label: string, badge?: string \| number}>` | - | Tab configuration |
-| `defaultTab` | `string` | `"outline"` | Default selected tab |
-| `onTabChange` | `(tab: string) => void` | - | Callback when tab changes |
+| Prop                      | Type                                                              | Default      | Description                                  |
+| ------------------------- | ----------------------------------------------------------------- | ------------ | -------------------------------------------- |
+| `data`                    | `T[]`                                                             | **Required** | Array of data items to display               |
+| `columns`                 | `IColumnDefinition<T>[]`                                          | **Required** | Column definitions                           |
+| `currentPage`             | `number`                                                          | `1`          | Current page number (for backend pagination) |
+| `onPageChange`            | `(page: number) => void`                                          | -            | Callback when page changes                   |
+| `totalPages`              | `number`                                                          | `1`          | Total number of pages                        |
+| `itemsPerPage`            | `number`                                                          | `10`         | Items per page                               |
+| `hasNextPage`             | `boolean`                                                         | `false`      | Whether there's a next page                  |
+| `hasPreviousPage`         | `boolean`                                                         | `false`      | Whether there's a previous page              |
+| `rowActions`              | `(row: T) => IRowAction<T>[]`                                     | -            | Function returning row actions               |
+| `onRowClick`              | `(row: T) => void`                                                | -            | Callback when row is clicked                 |
+| `showPagination`          | `boolean`                                                         | `false`      | Show backend pagination controls             |
+| `enableDragAndDrop`       | `boolean`                                                         | `false`      | Enable drag and drop reordering              |
+| `enableRowSelection`      | `boolean`                                                         | `false`      | Enable row selection checkboxes              |
+| `enableColumnVisibility`  | `boolean`                                                         | `true`       | Enable column visibility toggle              |
+| `enableSorting`           | `boolean`                                                         | `true`       | Enable column sorting                        |
+| `enableFiltering`         | `boolean`                                                         | `true`       | Enable column filtering                      |
+| `enablePagination`        | `boolean`                                                         | `false`      | Enable client-side pagination                |
+| `mobileCardView`          | `boolean`                                                         | `true`       | Show card view on mobile                     |
+| `showColumnCustomization` | `boolean`                                                         | `true`       | Show column customization button             |
+| `showAddButton`           | `boolean`                                                         | `false`      | Show add button                              |
+| `addButtonText`           | `string`                                                          | `"Add Item"` | Text for add button                          |
+| `onAddClick`              | `() => void`                                                      | -            | Callback for add button                      |
+| `tabs`                    | `Array<{value: string, label: string, badge?: string \| number}>` | -            | Tab configuration                            |
+| `defaultTab`              | `string`                                                          | `"outline"`  | Default selected tab                         |
+| `onTabChange`             | `(tab: string) => void`                                           | -            | Callback when tab changes                    |
 
 ## Column Definition
 

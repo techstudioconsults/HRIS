@@ -9,7 +9,7 @@ import { useLocationData } from '@workspace/ui/hooks';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import { cn } from '@workspace/ui/lib/utils';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/session';
 import { useEffect, useMemo, useRef } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';

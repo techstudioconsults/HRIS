@@ -8,13 +8,10 @@ import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
 import { usePayrollService } from '../services/use-service';
-import type { PayrollApproval } from '../types';
-
-interface DevApprovalActionsModalProperties {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  selectedPayrollId: string;
-}
+import type {
+  DevApprovalActionsModalProperties,
+  PayrollApproval,
+} from '../types';
 
 export const DevApprovalActionsModal = ({
   open,

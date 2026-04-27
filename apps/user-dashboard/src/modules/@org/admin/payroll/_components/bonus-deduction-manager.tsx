@@ -10,6 +10,7 @@ import type {
   BonusDeduction,
   BonusDeductionFormData,
   BonusDeductionManagerProperties,
+  PayrollAPIEntity,
 } from '../types';
 import { BonusDeductionFormModal } from './bonus-deduction-form-modal';
 import { BonusDeductionTable } from './bonus-deduction-table';
@@ -94,8 +95,8 @@ export function BonusDeductionManager({
         value: formData.value,
         status: formData.status ? 'active' : 'inactive',
         type: formData.type,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
       setItems((previous) => [...previous, fallback]);
       setIsModalOpen(false);
@@ -117,18 +118,9 @@ export function BonusDeductionManager({
         ? await createBonus.mutateAsync(payload as any)
         : await createDeduction.mutateAsync(payload as any);
 
-    type APIEntity = {
-      id?: string;
-      name?: string;
-      amount?: number;
-      type?: 'fixed' | 'percentage';
-      status?: 'active' | 'inactive';
-      createdAt?: string;
-      updatedAt?: string;
-    };
     const data =
-      (response as ApiResponse<APIEntity> | undefined)?.data ??
-      ({} as APIEntity);
+      (response as ApiResponse<PayrollAPIEntity> | undefined)?.data ??
+      ({} as PayrollAPIEntity);
     const newItem: BonusDeduction = {
       id: data.id ?? generateId(),
       name: data.name ?? formData.name,
@@ -138,8 +130,8 @@ export function BonusDeductionManager({
         | 'active'
         | 'inactive',
       type,
-      createdAt: data.createdAt ? new Date(data.createdAt) : new Date(),
-      updatedAt: new Date(),
+      createdAt: data.createdAt ?? new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     setItems((previous) => [...previous, newItem]);
@@ -154,8 +146,8 @@ export function BonusDeductionManager({
       value: formData.value,
       status: formData.status ? 'active' : 'inactive',
       type: formData.type,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
     setIsModalOpen(true);
   };
@@ -178,7 +170,7 @@ export function BonusDeductionManager({
                 valueType: formData.valueType,
                 value: formData.value,
                 status: formData.status ? 'active' : 'inactive',
-                updatedAt: new Date(),
+                updatedAt: new Date().toISOString(),
               }
             : item
         )
@@ -202,17 +194,9 @@ export function BonusDeductionManager({
             data: payload,
           });
 
-    type APIEntity = {
-      id?: string;
-      name?: string;
-      amount?: number;
-      type?: 'fixed' | 'percentage';
-      status?: 'active' | 'inactive';
-      updatedAt?: string;
-    };
     const data =
-      (response as ApiResponse<APIEntity> | undefined)?.data ??
-      ({} as APIEntity);
+      (response as ApiResponse<PayrollAPIEntity> | undefined)?.data ??
+      ({} as PayrollAPIEntity);
     setItems((previous) =>
       previous.map((item) =>
         item.id === editingItem.id
@@ -227,7 +211,7 @@ export function BonusDeductionManager({
                 (formData.status ? 'active' : 'inactive')) as
                 | 'active'
                 | 'inactive',
-              updatedAt: data.updatedAt ? new Date(data.updatedAt) : new Date(),
+              updatedAt: data.updatedAt ?? new Date().toISOString(),
             }
           : item
       )
@@ -272,7 +256,7 @@ export function BonusDeductionManager({
           ? {
               ...item,
               status: nextStatus || item.status,
-              updatedAt: new Date(),
+              updatedAt: new Date().toISOString(),
             }
           : item
       )

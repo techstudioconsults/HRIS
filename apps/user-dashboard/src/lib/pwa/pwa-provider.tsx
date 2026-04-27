@@ -8,13 +8,7 @@ import {
   isIOSPWA,
 } from '@/lib/pwa/detect-pwa';
 
-interface PWAContextType {
-  isPWA: boolean;
-  displayMode: 'standalone' | 'fullscreen' | 'minimal-ui' | 'browser';
-  isIOSDevice: boolean;
-  isIOSPWA: boolean;
-  isInitialized: boolean;
-}
+import { type PWAContextType } from './types';
 
 const PWAContext = createContext<PWAContextType | undefined>(undefined);
 

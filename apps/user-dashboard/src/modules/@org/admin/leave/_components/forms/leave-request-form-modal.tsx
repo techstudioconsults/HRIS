@@ -11,6 +11,11 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
+import type {
+  LeaveRequestFormData,
+  LeaveRequestFormModalProperties,
+} from '../../types';
+
 // Form Schema
 const leaveRequestSchema = z
   .object({
@@ -32,13 +37,6 @@ const leaveRequestSchema = z
       path: ['endDate'],
     }
   );
-
-type LeaveRequestFormData = z.infer<typeof leaveRequestSchema>;
-
-interface LeaveRequestFormModalProperties {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
 
 export function LeaveRequestFormModal({
   open,

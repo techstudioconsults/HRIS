@@ -18,23 +18,12 @@ import { toast } from 'sonner';
 import { payrollSetupTourStep } from '../../config/tour-steps';
 import { usePayrollService } from '../../services/use-service';
 import { usePayrollStore } from '../../stores/payroll-store';
-import type { CompanyPayrollPolicy, PayrollBonusDeduction } from '../../types';
+import type {
+  APIBonusDeduction,
+  CompanyPayrollPolicy,
+  PayrollSetupFormValues,
+} from '../../types';
 import { BonusDeductionManager } from '../bonus-deduction-manager';
-
-// Extend API bonus/deduction type to cover backend field variants without using any
-type APIBonusDeduction = PayrollBonusDeduction & {
-  createdAt?: string;
-  updatedAt?: string;
-  amount?: number;
-  value?: number;
-};
-
-type PayrollSetupFormValues = {
-  payday: string;
-  frequency: string;
-  currency?: string;
-  approvers: string[];
-};
 
 const sectionClassName =
   'space-y-4 rounded-xl border border-border/60 bg-background/60 px-4 pb-4 pt-3 md:px-5 md:pb-5 md:pt-4';
@@ -270,12 +259,8 @@ export const PayrollSetupForm = () => {
                       value: Number(b.amount ?? b.value ?? 0),
                       status: b.status,
                       type: 'bonus' as const,
-                      createdAt: b.createdAt
-                        ? new Date(b.createdAt)
-                        : new Date(),
-                      updatedAt: b.updatedAt
-                        ? new Date(b.updatedAt)
-                        : new Date(),
+                      createdAt: b.createdAt ?? new Date().toISOString(),
+                      updatedAt: b.updatedAt ?? new Date().toISOString(),
                     })) ?? []
                   }
                 />
@@ -306,12 +291,8 @@ export const PayrollSetupForm = () => {
                       value: Number(d.amount ?? d.value ?? 0),
                       status: d.status,
                       type: 'deduction' as const,
-                      createdAt: d.createdAt
-                        ? new Date(d.createdAt)
-                        : new Date(),
-                      updatedAt: d.updatedAt
-                        ? new Date(d.updatedAt)
-                        : new Date(),
+                      createdAt: d.createdAt ?? new Date().toISOString(),
+                      updatedAt: d.updatedAt ?? new Date().toISOString(),
                     })) ?? []
                   }
                 />

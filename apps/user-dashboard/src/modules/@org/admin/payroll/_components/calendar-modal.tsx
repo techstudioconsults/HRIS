@@ -8,15 +8,7 @@ import { useState } from 'react';
 
 import { ReusableDialog } from '../../../../../../../../packages/ui/src/lib/dialog/Dialog';
 
-interface CalendarModalProperties {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  selectedDate?: Date;
-  onDateSelect?: (date: Date | undefined) => void;
-  onContinue?: (date: Date | undefined) => void;
-  /** Indicates if the schedule action is currently submitting */
-  isSubmitting?: boolean;
-}
+import type { CalendarModalProperties } from '../types';
 
 export const CalendarModal = ({
   open,

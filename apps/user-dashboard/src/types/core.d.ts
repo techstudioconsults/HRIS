@@ -1,6 +1,7 @@
 /**
- * Core types and utilities for the Ski Shop application
+ * Core types and utilities for the HRIS application
  */
+import React from 'react';
 
 declare global {
   // ============================================================================
@@ -83,39 +84,25 @@ declare global {
 
   /** Generic filters interface */
   interface Filters {
-    page?: number;
+    page?: number | string;
+    limit?: number;
+    search?: string;
     status?: string;
     start_date?: string;
     end_date?: string;
-    categories?: string;
-    search?: string;
-    limit?: number;
-    vendor?: string;
     sort?: string;
     sortBy?: string;
-    rating?: string;
-    storeId?: string;
-    stockCount?: number;
-    flag?: string;
-    deliveryStatus?: string;
     role?: string;
-    /** Filter employees by team identifier */
     teamId?: string;
-    /** Filter employees by role identifier */
     roleId?: string;
-    buyerId?: string;
-    productId?: string;
-    /**
-     * Optional employee identifier filter, used by payroll/payslip services
-     * to scope results to a specific employee.
-     */
     employeeId?: string;
-    /**
-     * Optional pay-profile identifier filter, used by payslip history queries
-     * to retrieve all payslips for a specific employee pay profile.
-     */
     payProfileId?: string;
     permission?: string;
+  }
+
+  interface Timestamp {
+    createdAt: string;
+    updatedAt: string;
   }
 }
 

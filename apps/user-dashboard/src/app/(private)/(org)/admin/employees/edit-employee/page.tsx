@@ -1,4 +1,4 @@
-import { EditEmployee } from "@/modules/@org/admin/employee";
+import { EditEmployee } from '@/modules/@org/admin/employee';
 
 const page = () => {
   return (

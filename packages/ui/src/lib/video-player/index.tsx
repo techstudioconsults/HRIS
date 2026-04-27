@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 // Format time (seconds to MM:SS)
 const formatTime = (time: number) => {
   const minutes = Math.floor(time / 60);
   const seconds = Math.floor(time % 60);
-  return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 };
 
 const CustomVideoPlayer = ({ src }: { src: string }) => {
@@ -23,7 +23,9 @@ const CustomVideoPlayer = ({ src }: { src: string }) => {
   // Update progress bar and current time
   const handleTimeUpdate = () => {
     if (videoReference.current) {
-      const currentProgress = (videoReference.current.currentTime / videoReference.current.duration) * 100;
+      const currentProgress =
+        (videoReference.current.currentTime / videoReference.current.duration) *
+        100;
       setProgress(currentProgress);
       setCurrentTime(videoReference.current.currentTime);
     }
@@ -53,7 +55,8 @@ const CustomVideoPlayer = ({ src }: { src: string }) => {
     if (videoReference.current) {
       const rect = event.currentTarget.getBoundingClientRect();
       const pos = (event.clientX - rect.left) / rect.width;
-      videoReference.current.currentTime = pos * videoReference.current.duration;
+      videoReference.current.currentTime =
+        pos * videoReference.current.duration;
     }
   };
 
@@ -97,34 +100,40 @@ const CustomVideoPlayer = ({ src }: { src: string }) => {
       if (!videoReference.current) return;
 
       switch (event.key) {
-        case " ": {
+        case ' ': {
           event.preventDefault();
           togglePlayPause();
           break;
         }
-        case "m": {
+        case 'm': {
           toggleMute();
           break;
         }
-        case "f": {
+        case 'f': {
           toggleFullscreen();
           break;
         }
-        case "ArrowLeft": {
+        case 'ArrowLeft': {
           videoReference.current.currentTime -= 5;
           break;
         }
-        case "ArrowRight": {
+        case 'ArrowRight': {
           videoReference.current.currentTime += 5;
           break;
         }
-        case "ArrowUp": {
-          videoReference.current.volume = Math.min(videoReference.current.volume + 0.1, 1);
+        case 'ArrowUp': {
+          videoReference.current.volume = Math.min(
+            videoReference.current.volume + 0.1,
+            1
+          );
           setVolume(videoReference.current.volume);
           break;
         }
-        case "ArrowDown": {
-          videoReference.current.volume = Math.max(videoReference.current.volume - 0.1, 0);
+        case 'ArrowDown': {
+          videoReference.current.volume = Math.max(
+            videoReference.current.volume - 0.1,
+            0
+          );
           setVolume(videoReference.current.volume);
           break;
         }
@@ -134,9 +143,9 @@ const CustomVideoPlayer = ({ src }: { src: string }) => {
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [isPlaying, isMuted, isFullscreen]);
 
@@ -158,8 +167,14 @@ const CustomVideoPlayer = ({ src }: { src: string }) => {
       {/* Custom Controls */}
       <div className="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/80 to-transparent p-4 pt-8">
         {/* Progress Bar */}
-        <div className="relative mb-2 h-2 w-full cursor-pointer rounded-full bg-gray-600" onClick={handleProgressClick}>
-          <div className="bg-primary absolute top-0 left-0 h-full rounded-full" style={{ width: `${progress}%` }} />
+        <div
+          className="relative mb-2 h-2 w-full cursor-pointer rounded-full bg-gray-600"
+          onClick={handleProgressClick}
+        >
+          <div
+            className="bg-primary absolute top-0 left-0 h-full rounded-full"
+            style={{ width: `${progress}%` }}
+          />
           <div
             className="absolute top-1/2 h-3 w-3 -translate-y-1/2 transform rounded-full bg-white"
             style={{ left: `${progress}%` }}
@@ -170,13 +185,23 @@ const CustomVideoPlayer = ({ src }: { src: string }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             {/* Play/Pause Button */}
-            <button onClick={togglePlayPause} className="text-white focus:outline-none">
-              {isPlaying ? <PauseIcon className="h-6 w-6" /> : <PlayIcon className="h-6 w-6" />}
+            <button
+              onClick={togglePlayPause}
+              className="text-white focus:outline-none"
+            >
+              {isPlaying ? (
+                <PauseIcon className="h-6 w-6" />
+              ) : (
+                <PlayIcon className="h-6 w-6" />
+              )}
             </button>
 
             {/* Volume Controls */}
             <div className="flex items-center space-x-2">
-              <button onClick={toggleMute} className="text-white focus:outline-none">
+              <button
+                onClick={toggleMute}
+                className="text-white focus:outline-none"
+              >
                 {isMuted || volume === 0 ? (
                   <MuteIcon className="h-5 w-5" />
                 ) : volume > 0.5 ? (
@@ -203,8 +228,15 @@ const CustomVideoPlayer = ({ src }: { src: string }) => {
           </div>
 
           {/* Fullscreen Button */}
-          <button onClick={toggleFullscreen} className="text-white focus:outline-none">
-            {isFullscreen ? <ExitFullscreenIcon className="h-5 w-5" /> : <FullscreenIcon className="h-5 w-5" />}
+          <button
+            onClick={toggleFullscreen}
+            className="text-white focus:outline-none"
+          >
+            {isFullscreen ? (
+              <ExitFullscreenIcon className="h-5 w-5" />
+            ) : (
+              <FullscreenIcon className="h-5 w-5" />
+            )}
           </button>
         </div>
       </div>

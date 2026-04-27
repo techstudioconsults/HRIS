@@ -34,7 +34,7 @@ import empty1 from '~/images/empty-state.svg';
 import { DashboardCard } from '../../../../_components/dashboard-card';
 import { usePayrollService } from '../../services/use-service';
 import { usePayrollStore } from '../../stores/payroll-store';
-import type { Payroll, PayrollApproval } from '../../types';
+import type { ListPayroll, PayrollApproval } from '../../types';
 
 // Pure helpers (moved to module scope to satisfy lint rule requiring outer scope for arrow functions)
 const normalizeStatus = (status?: string) => (status || '').toLowerCase();
@@ -113,18 +113,6 @@ export const SchedulePayrollDrawer = () => {
   } = useGetAllPayrolls();
 
   // Normalize response to array (supports both summary and payroll shapes)
-  type ListPayroll = Pick<
-    Payroll,
-    'id' | 'policyId' | 'netPay' | 'employeesInPayroll' | 'paymentDate'
-  > & {
-    status?: string;
-    name?: string;
-    role?: string;
-    grossPay?: number;
-    bonus?: number;
-    deduction?: number;
-  };
-
   const payrolls: ListPayroll[] = useMemo(() => {
     const shaped = payrollsResponse as unknown as
       | { data?: ListPayroll[]; items?: ListPayroll[] }

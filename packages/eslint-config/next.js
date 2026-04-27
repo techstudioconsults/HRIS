@@ -109,7 +109,7 @@ export const nextJsConfig = [
     },
   },
   {
-    files: ["**/*.spec.ts", "**/*.spec.tsx", "**/e2e/**/*.ts"],
+    files: ["**/*.spec.ts", "**/*.spec.tsx"],
     rules: {
       "vitest/consistent-test-filename": "off",
       "vitest/require-hook": "off",

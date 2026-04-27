@@ -62,7 +62,10 @@ export const mockSessionStorage = (() => {
 /**
  * Create a mock fetch response
  */
-export const createMockFetch = (data: any, options: { status?: number; ok?: boolean } = {}) => {
+export const createMockFetch = (
+  data: any,
+  options: { status?: number; ok?: boolean } = {}
+) => {
   return vi.fn(() =>
     Promise.resolve({
       ok: options.ok ?? options.status === 200,
@@ -97,4 +100,3 @@ export const mockFetch = (data: any) => {
 export const resetMocks = () => {
   vi.clearAllMocks();
 };
-

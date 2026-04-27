@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Select,
@@ -6,7 +6,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
+} from '@workspace/ui/components/select';
 
 interface CustomSelectProperties {
   options: string[];
@@ -17,7 +17,7 @@ interface CustomSelectProperties {
 
 export function CustomSelect({
   options,
-  placeholder = "Select an option",
+  placeholder = 'Select an option',
   value,
   onChange,
 }: CustomSelectProperties) {

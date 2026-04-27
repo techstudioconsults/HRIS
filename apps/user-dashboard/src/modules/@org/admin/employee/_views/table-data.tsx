@@ -204,7 +204,7 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
     accessorKey: 'role',
     render: (_, employee: Employee) => (
       <span className="text-primary text-sm font-medium capitalize">
-        {employee?.employmentDetails?.role?.name}
+        {employee?.employmentDetails.role.name}
       </span>
     ),
   },
@@ -213,7 +213,7 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
     accessorKey: 'department',
     render: (_, employee: Employee) => (
       <span className="text-primary text-sm font-medium capitalize">
-        {employee?.employmentDetails?.team?.name}
+        {employee?.employmentDetails.team.name}
       </span>
     ),
   },

@@ -1,0 +1,36 @@
+ What's blocking MVP                                       
+
+  Roughly in priority order:
+
+  P0 — Broken core flows (nothing works without these)                                                                                                                                                                                                                                          
+  1. OTP email not rendering → users can't register or reset passwords
+  2. Token refresh not implemented → sessions die mid-use, users get hard-logged-out                                                                                                                                                                                                            
+  3. Leave hub 404 → employees can't manage leave at all                            
+                                                                                                                                                                                                                                                                                                
+  P1 — Broken admin operations                                                                                                                                                                                                                                                                  
+  4. Team delete 500 → admin gets a server error deleting teams                                                                                                                                                                                                                                 
+  5. Team members not showing → team detail pages are empty                                                                                                                                                                                                                                     
+  6. Payroll setup modal re-appears → broken state persistence after setup                                                                                                                                                                                                                      
+                                                                                                                                                                                                                                                                                                
+  P2 — Missing features that complete the core HR loop                                                                                                                                                                                                                                          
+  7. Payslip endpoint missing → employees can never see their salary                                                                                                                                                                                                                            
+  8. Profile avatar → no faces anywhere in the app                                                                                                                                                                                                                                              
+  9. Download CTAs not wired → all export buttons are dead                                                                                                                                                                                                                                      
+  10. Payroll dev env broken → can't validate the payroll workflow end-to-end                                                                                                                                                                                                                   
+                                                                                                                                                                                                                                                                                                
+  P3 — Polish                                                                                                                                                                                                                                                                                   
+  11. Toast redesign + inline auth errors                                                                                                                                                                                                                                                       
+  12. Dark theme contrast audit                                                                                                                                                                                                                                                                 
+   
+  ---                                                                                                                                                                                                                                                                                           
+  Recommendation for next move                              
+                                                                                                                                                                                                                                                                                                
+  The critical path to a shippable MVP is:
+                                                                                                                                                                                                                                                                                                
+  Fix OTP email → Fix 401/token refresh → Fix leave hub 404 
+  → Fix team bugs → Fix payslip endpoint → Validate payroll E2E                                                                                                                                                                                                                                 
+                                                                                                                                                                                                                                                                                                
+  Everything else (avatar, downloads, toast, dark theme) can ship after the first real users are in
+
+
+

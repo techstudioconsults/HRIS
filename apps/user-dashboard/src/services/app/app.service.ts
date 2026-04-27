@@ -1,4 +1,4 @@
-import { HttpAdapter } from "@/lib/http/http-adapter";
+import { HttpAdapter } from '@/lib/http/http-adapter';
 
 export class AppService {
   private readonly http: HttpAdapter;
@@ -9,7 +9,9 @@ export class AppService {
 
   async getAllProducts(employeeID: string) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const response = await this.http.get<any>(`/notifications/users/${employeeID}`);
+    const response = await this.http.get<any>(
+      `/notifications/users/${employeeID}`
+    );
     if (response?.status === 200) {
       return response.data;
     }

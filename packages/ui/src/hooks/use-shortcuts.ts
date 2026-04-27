@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 export type NormalizedCombo = {
   alt: boolean;
@@ -12,25 +12,30 @@ export type NormalizedCombo = {
 export function normalizeCombo(combo: string): NormalizedCombo {
   const parts = combo
     .toLowerCase()
-    .replace("⌘", "mod")
-    .split("+")
+    .replace('⌘', 'mod')
+    .split('+')
     .map((p) => p.trim())
     .filter(Boolean);
-  const key = parts.find((p) => !["alt", "shift", "mod"].includes(p)) ?? "";
+  const key = parts.find((p) => !['alt', 'shift', 'mod'].includes(p)) ?? '';
   return {
-    alt: parts.includes("alt"),
-    shift: parts.includes("shift"),
-    mod: parts.includes("mod"),
+    alt: parts.includes('alt'),
+    shift: parts.includes('shift'),
+    mod: parts.includes('mod'),
     key,
   };
 }
 
 export function eventMatches(event: KeyboardEvent, combo: NormalizedCombo) {
-  const isMac = typeof navigator !== "undefined" && /mac/i.test(navigator.platform);
+  const isMac =
+    typeof navigator !== 'undefined' && /mac/i.test(navigator.platform);
   const moduleHeld = isMac ? event.metaKey : event.ctrlKey;
-  const eventKey = event.key.length === 1 ? event.key.toLowerCase() : event.key.toLowerCase();
+  const eventKey =
+    event.key.length === 1 ? event.key.toLowerCase() : event.key.toLowerCase();
   const matches =
-    combo.alt === event.altKey && combo.shift === event.shiftKey && combo.mod === moduleHeld && combo.key === eventKey;
+    combo.alt === event.altKey &&
+    combo.shift === event.shiftKey &&
+    combo.mod === moduleHeld &&
+    combo.key === eventKey;
   return matches;
 }
 
@@ -52,7 +57,10 @@ export function useShortcuts(actions: ShortcutAction[], deps: unknown[] = []) {
   actionsReference.current = actions;
 
   useEffect(() => {
-    const normalized = actionsReference.current.map((a) => ({ ...a, parsed: normalizeCombo(a.combo) }));
+    const normalized = actionsReference.current.map((a) => ({
+      ...a,
+      parsed: normalizeCombo(a.combo),
+    }));
 
     const handler = (event: KeyboardEvent) => {
       for (const act of normalized) {
@@ -65,8 +73,8 @@ export function useShortcuts(actions: ShortcutAction[], deps: unknown[] = []) {
       }
     };
 
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }

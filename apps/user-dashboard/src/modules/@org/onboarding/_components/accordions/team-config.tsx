@@ -10,7 +10,10 @@ import { toast } from 'sonner';
 import { useTour } from '@workspace/ui/context/tour-context';
 import { useOnboardingService } from '../../services/use-onboarding-service';
 import { RolesAndPermission } from '../forms/roles&permission';
-import { Role, Team } from '../forms/schema';
+import type {
+  OnboardingSchemaRole as Role,
+  OnboardingSchemaTeam as Team,
+} from '../../types';
 import { TeamForm } from '../forms/team/team-form';
 import {
   Accordion,

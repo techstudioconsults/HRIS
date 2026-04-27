@@ -1,3 +1,5 @@
+import type { Employee } from '@/lib/auth-types';
+
 export interface User {
   id: string;
   firstName: string;
@@ -25,4 +27,26 @@ export interface UserResponse {
   error?: string;
 }
 
-export type { AuthActions, AuthState } from '../stores/auth-store';
+// ── Auth store state & actions ────────────────────────────────────────────────
+
+export interface AuthState {
+  user: Employee | null;
+  isAuthenticated: boolean;
+  sessionExpiry: Date | null;
+}
+
+export interface AuthActions {
+  setUser: (user: Employee | null) => void;
+  clearUser: () => void;
+  logout: () => void;
+  setSessionExpiry: (expiry: Date | null) => void;
+}
+
+// ============================================================================
+// COMPONENT PROP TYPES
+// ============================================================================
+
+export interface OTPInputProperties {
+  value: string;
+  onChange: (value: string) => void;
+}

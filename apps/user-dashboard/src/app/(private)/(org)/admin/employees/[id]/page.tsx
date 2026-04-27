@@ -1,8 +1,6 @@
 import { EmployeeDetails } from '@/modules/@org/admin/employee';
 
-type PageProps = {
-  params: Promise<{ id: string }>;
-};
+import { type PageProps } from './types';
 
 const Page = async ({ params }: PageProps) => {
   const { id } = await params;

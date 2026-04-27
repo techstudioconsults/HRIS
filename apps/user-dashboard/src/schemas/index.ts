@@ -2,8 +2,8 @@ import * as z from 'zod';
 
 export const registerSchema = z
   .object({
-    companyName: z.string(),
-    domain: z.string(),
+    companyName: z.string().min(1, 'Enter a unique company name'),
+    domain: z.string().min(2, 'Enter a unique domain'),
     firstName: z.string().min(2, 'First name must be at least 2 characters'),
     lastName: z.string().min(2, 'Last name must be at least 2 characters'),
     email: z.string().email('Please enter a valid email'),
@@ -16,17 +16,25 @@ export const registerSchema = z
   });
 
 export const loginSchema = z.object({
-  email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address'),
   password: z.string().min(1, 'Password is required'),
-  // .min(8, "Password must be at least 8 characters"),
 });
 
 export const loginOTPSchema = z.object({
-  email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address'),
   password: z.string().min(1, 'Password is required'),
 });
 export const loginOTPFormSchema = z.object({
-  email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address'),
   // password: z.string().min(1, "Password is required"),
 });
 
@@ -39,7 +47,10 @@ export const resetPasswordSchema = z
   .object({
     // token: z.string().min(1, "Token is required").optional(),
     // email: z.string().min(1, "Email is required").email("Please enter a valid email address").optional(),
-    password: z.string().min(1, 'Password is required').min(8, 'Password must be at least 8 characters'),
+    password: z
+      .string()
+      .min(1, 'Password is required')
+      .min(8, 'Password must be at least 8 characters'),
     confirmPassword: z.string().min(1, 'Confirm password is required'),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -54,7 +65,10 @@ export const bankFormSchema = z.object({
 });
 
 export const contactSchema = z.object({
-  email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address'),
   subject: z.string().min(1, 'Subject is required'),
   message: z.string().min(1, 'Message is required'),
 });
@@ -62,7 +76,10 @@ export const contactSchema = z.object({
 export const externalContactSchema = z.object({
   firstname: z.string().min(2, 'First name must be at least 2 characters'),
   lastname: z.string().min(2, 'Last name must be at least 2 characters'),
-  email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address'),
   subject: z.string().min(1, 'Subject is required'),
   message: z.string().min(1, 'Message is required'),
 });
@@ -110,7 +127,10 @@ export const onboardEmployeeSchema = z.object({
 export const employeeSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
-  email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address'),
   phoneNumber: z
     .string()
     .min(1, 'Phone number is required')
@@ -155,8 +175,14 @@ export const fileSchema = z.object({
   file: z
     .array(z.instanceof(File))
     .min(1, 'Please select at least one file')
-    .refine((files) => files.every((file) => file.size > 0), 'File cannot be empty')
-    .refine((files) => files.every((file) => file.size <= 10 * 1024 * 1024), 'File size must be less than 10MB'),
+    .refine(
+      (files) => files.every((file) => file.size > 0),
+      'File cannot be empty'
+    )
+    .refine(
+      (files) => files.every((file) => file.size <= 10 * 1024 * 1024),
+      'File size must be less than 10MB'
+    ),
 });
 
 // Payroll Policy Setup Form Schema
@@ -166,7 +192,10 @@ export const payrollPolicyFormSchema = z.object({
   currency: z.string().min(1, 'Currency is required'),
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
-  email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address'),
   phoneNumber: z
     .string()
     .min(1, 'Phone number is required')

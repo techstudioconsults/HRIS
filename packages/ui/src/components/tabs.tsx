@@ -1,14 +1,26 @@
-"use client";
+'use client';
 
-import { cn } from "../lib/utils";
-import * as TabsPrimitive from "@radix-ui/react-tabs";
-import * as React from "react";
+import { cn } from '../lib/utils';
+import * as TabsPrimitive from '@radix-ui/react-tabs';
+import * as React from 'react';
 
-function Tabs({ className, ...properties }: React.ComponentProps<typeof TabsPrimitive.Root>) {
-  return <TabsPrimitive.Root data-slot="tabs" className={cn("flex flex-col gap-2", className)} {...properties} />;
+function Tabs({
+  className,
+  ...properties
+}: React.ComponentProps<typeof TabsPrimitive.Root>) {
+  return (
+    <TabsPrimitive.Root
+      data-slot="tabs"
+      className={cn('flex flex-col gap-2', className)}
+      {...properties}
+    />
+  );
 }
 
-function TabsList({ className, ...properties }: React.ComponentProps<typeof TabsPrimitive.List>) {
+function TabsList({
+  className,
+  ...properties
+}: React.ComponentProps<typeof TabsPrimitive.List>) {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
@@ -16,15 +28,18 @@ function TabsList({ className, ...properties }: React.ComponentProps<typeof Tabs
       //   "bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-[3px]",
       //   className,
       className={cn(
-        "inline-flex h-9 w-fit items-center justify-center border-b border-gray-200", // Changed
-        className,
+        'inline-flex h-9 w-fit items-center justify-center border-b border-gray-200', // Changed
+        className
       )}
       {...properties}
     />
   );
 }
 
-function TabsTrigger({ className, ...properties }: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
+function TabsTrigger({
+  className,
+  ...properties
+}: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
   return (
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
@@ -33,16 +48,23 @@ function TabsTrigger({ className, ...properties }: React.ComponentProps<typeof T
       //   className,
       className={cn(
         "text-muted-foreground data-[state=active]:text-primary inline-flex h-full flex-1 cursor-pointer items-center justify-center gap-1.5 border-b-2 border-transparent px-4 py-1 text-sm font-medium whitespace-nowrap transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=active]:border-blue-500 data-[state=inactive]:border-b-2 data-[state=inactive]:border-gray-200 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4", // Changed
-        className,
+        className
       )}
       {...properties}
     />
   );
 }
 
-function TabsContent({ className, ...properties }: React.ComponentProps<typeof TabsPrimitive.Content>) {
+function TabsContent({
+  className,
+  ...properties
+}: React.ComponentProps<typeof TabsPrimitive.Content>) {
   return (
-    <TabsPrimitive.Content data-slot="tabs-content" className={cn("flex-1 outline-none", className)} {...properties} />
+    <TabsPrimitive.Content
+      data-slot="tabs-content"
+      className={cn('flex-1 outline-none', className)}
+      {...properties}
+    />
   );
 }
 

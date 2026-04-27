@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Component, ErrorInfo, ReactNode } from "react";
+import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Properties {
   children: ReactNode;
@@ -22,7 +22,7 @@ class ErrorBoundary extends Component<Properties, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Error caught by Error Boundary:", error, errorInfo);
+    console.error('Error caught by Error Boundary:', error, errorInfo);
   }
 
   handleRetry = () => {

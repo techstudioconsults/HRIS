@@ -12,7 +12,10 @@ export const SearchDialog = () => {
     <ReusableDialog
       hideClose
       trigger={
-        <button aria-label="Open Search Dialog" className="border-neutral-dark-2 rounded-full border p-2">
+        <button
+          aria-label="Open Search Dialog"
+          className="border-neutral-dark-2 rounded-full border p-2"
+        >
           <LucideSearch size={20} />
         </button>
       }

@@ -77,7 +77,7 @@ export function FormField({
     <div className="space-y-2">
       {label && (
         <div>
-          <Label className="text-sm lg:text-[16px] font-medium">
+          <Label htmlFor={name} className="text-sm lg:text-[16px] font-medium">
             {label}
             {required && <span className="text-destructive -ml-1">*</span>}
           </Label>
@@ -111,6 +111,8 @@ export function FormField({
               {type === 'textarea' ? (
                 <Textarea
                   {...field}
+                  id={name}
+                  data-testid={name}
                   placeholder={placeholder}
                   disabled={disabled}
                   readOnly={readOnly}
@@ -129,6 +131,7 @@ export function FormField({
                       disabled={disabled}
                     >
                       <SelectTrigger
+                        data-testid={name}
                         className={cn(
                           readOnly &&
                             'pointer-events-none cursor-not-allowed opacity-100',
@@ -157,6 +160,8 @@ export function FormField({
               ) : type === 'number' ? (
                 <Input
                   {...field}
+                  id={name}
+                  data-testid={name}
                   type="number"
                   placeholder={placeholder}
                   disabled={disabled}
@@ -171,6 +176,8 @@ export function FormField({
                 <div className="relative w-full">
                   <Input
                     {...field}
+                    id={name}
+                    data-testid={name}
                     type={showPassword ? 'text' : 'password'}
                     placeholder={placeholder}
                     disabled={disabled}
@@ -198,6 +205,8 @@ export function FormField({
               ) : type === 'date' ? (
                 <Input
                   {...field}
+                  id={name}
+                  data-testid={name}
                   type={type}
                   placeholder={placeholder}
                   disabled={disabled}
@@ -215,6 +224,8 @@ export function FormField({
               ) : (
                 <Input
                   {...field}
+                  id={name}
+                  data-testid={name}
                   type={type}
                   placeholder={placeholder}
                   disabled={disabled}

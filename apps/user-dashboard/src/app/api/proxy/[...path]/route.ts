@@ -5,14 +5,17 @@
   Env: BACKEND_URL must be set to the backend base (e.g. https://api.example.com)
 */
 
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from 'next/server';
 
 const BACKEND_URL = process.env.BACKEND_URL;
 
-function buildTargetUrl(pathSegments: string[], searchParameters: URLSearchParams): string {
-  if (!BACKEND_URL) throw new Error("BACKEND_URL env variable is not set");
-  const base = BACKEND_URL.replace(/\/$/, "");
-  const path = "/" + pathSegments.join("/");
+function buildTargetUrl(
+  pathSegments: string[],
+  searchParameters: URLSearchParams
+): string {
+  if (!BACKEND_URL) throw new Error('BACKEND_URL env variable is not set');
+  const base = BACKEND_URL.replace(/\/$/, '');
+  const path = '/' + pathSegments.join('/');
   const query = searchParameters.toString();
   return query ? `${base}${path}?${query}` : `${base}${path}`;
 }
@@ -23,17 +26,17 @@ function filterHeadersForUpstream(request: NextRequest): Headers {
     // Drop headers that commonly break proxies or are hop-by-hop
     if (
       [
-        "host",
-        "origin",
-        "referer",
-        "connection",
-        "keep-alive",
-        "proxy-authenticate",
-        "proxy-authorization",
-        "te",
-        "trailers",
-        "transfer-encoding",
-        "upgrade",
+        'host',
+        'origin',
+        'referer',
+        'connection',
+        'keep-alive',
+        'proxy-authenticate',
+        'proxy-authorization',
+        'te',
+        'trailers',
+        'transfer-encoding',
+        'upgrade',
       ].includes(key.toLowerCase())
     ) {
       continue;
@@ -45,7 +48,10 @@ function filterHeadersForUpstream(request: NextRequest): Headers {
   return upstreamHeaders;
 }
 
-async function forward(request: NextRequest, context: { params: { path: string[] } }) {
+async function forward(
+  request: NextRequest,
+  context: { params: { path: string[] } }
+) {
   const { path } = context.params;
   const targetUrl = buildTargetUrl(path, request.nextUrl.searchParams);
 
@@ -54,7 +60,7 @@ async function forward(request: NextRequest, context: { params: { path: string[]
 
   // Read body for non-GET/HEAD
   let body: BodyInit | undefined;
-  if (method !== "GET" && method !== "HEAD") {
+  if (method !== 'GET' && method !== 'HEAD') {
     // Clone the request and read the body as ArrayBuffer for binary-safety
     const arrayBuffer = await request.arrayBuffer();
     body = arrayBuffer;
@@ -67,11 +73,11 @@ async function forward(request: NextRequest, context: { params: { path: string[]
       headers,
       body,
       // Include cookies if your backend needs session (adjust as required):
-      credentials: "include",
+      credentials: 'include',
       // If backend has self-signed certs in dev you might need `next dev` flags; we keep defaults.
     });
   } catch (error: any) {
-    const message = error?.message || "Upstream fetch failed";
+    const message = error?.message || 'Upstream fetch failed';
     return NextResponse.json({ error: message }, { status: 502 });
   }
 
@@ -79,16 +85,19 @@ async function forward(request: NextRequest, context: { params: { path: string[]
   const resourcesHeaders = new Headers(upstreamResponse.headers);
 
   // Set permissive CORS for the browser on our own origin (safe because this is our API route)
-  resourcesHeaders.set("Access-Control-Allow-Origin", "*");
-  resourcesHeaders.set("Access-Control-Allow-Credentials", "true");
-  resourcesHeaders.set("Access-Control-Allow-Methods", "GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS");
+  resourcesHeaders.set('Access-Control-Allow-Origin', '*');
+  resourcesHeaders.set('Access-Control-Allow-Credentials', 'true');
   resourcesHeaders.set(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, X-Requested-With, X-Session, Accept, Origin",
+    'Access-Control-Allow-Methods',
+    'GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS'
+  );
+  resourcesHeaders.set(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Authorization, X-Requested-With, X-Session, Accept, Origin'
   );
 
   // For OPTIONS preflight, reply immediately
-  if (method === "OPTIONS") {
+  if (method === 'OPTIONS') {
     return new NextResponse(null, { status: 204, headers: resourcesHeaders });
   }
 

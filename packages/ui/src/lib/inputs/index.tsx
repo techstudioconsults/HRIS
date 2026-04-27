@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import { Label } from "@workspace/ui/components/label";
-import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
-import { cn } from "../utils";
-import { Textarea } from "@workspace/ui/components/textarea";
+import { Label } from '@workspace/ui/components/label';
+import { Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
+import { cn } from '../utils';
+import { Textarea } from '@workspace/ui/components/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
-import { Input } from "@workspace/ui/components/input";
+} from '@workspace/ui/components/select';
+import { Input } from '@workspace/ui/components/input';
 
 interface FormFieldProperties {
   label?: string;
   labelDetailedNode?: React.ReactNode;
   name: string;
-  type?: "text" | "textarea" | "select" | "number" | "password" | "email";
+  type?: 'text' | 'textarea' | 'select' | 'number' | 'password' | 'email';
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
@@ -34,12 +34,12 @@ interface FormFieldProperties {
 export function InputField({
   label,
   name,
-  type = "text",
+  type = 'text',
   placeholder,
   required = false,
   disabled = false,
   options = [],
-  className = "",
+  className = '',
   containerClassName,
   leftAddon,
   rightAddon,
@@ -76,9 +76,9 @@ export function InputField({
         control={control}
         render={({ field }) => {
           const inputClassName = cn(
-            "flex h-10 w-full min-w-[400px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50",
-            error && "border-destructive",
-            className,
+            'flex h-10 w-full min-w-[400px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50',
+            error && 'border-destructive',
+            className
           );
 
           const inputWithAddons = (
@@ -86,52 +86,52 @@ export function InputField({
               {leftAddon && (
                 <div className="flex items-center">{leftAddon}</div>
               )}
-              {type === "textarea" ? (
+              {type === 'textarea' ? (
                 <Textarea
                   {...field}
                   placeholder={placeholder}
                   disabled={disabled}
-                  className={cn(inputClassName, "resize-y")}
+                  className={cn(inputClassName, 'resize-y')}
                 />
-              ) : type === "select" ? (
+              ) : type === 'select' ? (
                 <Select
                   onValueChange={field.onChange}
                   value={field.value}
                   disabled={disabled}
                 >
-                  <SelectTrigger className={cn(inputClassName, "w-full")}>
+                  <SelectTrigger className={cn(inputClassName, 'w-full')}>
                     <SelectValue placeholder={placeholder} />
                   </SelectTrigger>
                   <SelectContent>
                     {options.map(
                       (
                         option: { value: string; label: string },
-                        index: number,
+                        index: number
                       ) => (
                         <SelectItem key={index} value={option.value}>
                           {option.label}
                         </SelectItem>
-                      ),
+                      )
                     )}
                   </SelectContent>
                 </Select>
-              ) : type === "number" ? (
+              ) : type === 'number' ? (
                 <input
                   {...field}
                   type="number"
                   placeholder={placeholder}
                   disabled={disabled}
                   className={inputClassName}
-                  value={field.value || ""}
+                  value={field.value || ''}
                   onChange={(event) =>
                     field.onChange(event.target.valueAsNumber)
                   }
                 />
-              ) : type === "password" ? (
+              ) : type === 'password' ? (
                 <div className="relative w-full">
                   <Input
                     {...field}
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     placeholder={placeholder}
                     disabled={disabled}
                     className={inputClassName}

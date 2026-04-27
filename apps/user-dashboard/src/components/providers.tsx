@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { SSEProvider } from '@/context/sse-provider';
-import { SessionProvider } from '@/components/SessionProvider';
 import NextTopLoader from 'nextjs-toploader';
 import { ReactQueryProvider } from '@/lib/react-query/query-provider';
 import { NuqsAdapter } from 'nuqs/adapters/next';
@@ -13,6 +12,7 @@ import { KBarProviderWrapper } from '@/lib/kbar/kbar-provider';
 import { Suspense } from 'react';
 import { PwaRegistration } from '@/components/pwa/pwa-registration';
 import { PWAProvider } from '@/lib/pwa/pwa-provider';
+import { SessionProvider } from '@/lib/session';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (

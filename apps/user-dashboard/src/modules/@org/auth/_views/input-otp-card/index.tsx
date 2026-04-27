@@ -120,6 +120,7 @@ export const InputOtpCard = () => {
               size="2xl"
               isDisabled={loginPending || !isValid}
               isLoading={loginPending}
+              data-testid="otp-submit-button"
             >
               Login
             </MainButton>
@@ -128,6 +129,7 @@ export const InputOtpCard = () => {
               <span
                 onClick={resendOTP}
                 className="text-primary cursor-pointer font-medium hover:underline"
+                data-testid="resend-otp-button"
               >
                 {otpPending ? 'Sent' : 'Resend'}
               </span>

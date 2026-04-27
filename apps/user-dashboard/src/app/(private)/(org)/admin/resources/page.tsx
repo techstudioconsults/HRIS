@@ -1,4 +1,4 @@
-import { Resources } from "@/modules/@org/admin/resources";
+import { Resources } from '@/modules/@org/admin/resources';
 
 const page = () => {
   return (

@@ -1,4 +1,4 @@
-import { PayrollSetupForm } from "@/modules/@org/admin/payroll";
+import { PayrollSetupForm } from '@/modules/@org/admin/payroll';
 
 const page = () => {
   return (

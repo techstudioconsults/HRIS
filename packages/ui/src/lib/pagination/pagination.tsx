@@ -5,8 +5,8 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@workspace/ui/components/pagination";
-import React from "react";
+} from '@workspace/ui/components/pagination';
+import React from 'react';
 
 interface PaginationsProperties {
   currentPage: number;
@@ -31,7 +31,7 @@ export const Paginations: React.FC<PaginationsProperties> = ({
           <PaginationItem>
             <PaginationPrevious
               href="#"
-              size={"default"}
+              size={'default'}
               onClick={(event) => {
                 event.preventDefault();
                 handlePageChange(Math.max(currentPage - 1, 1), event);
@@ -44,9 +44,9 @@ export const Paginations: React.FC<PaginationsProperties> = ({
             <PaginationItem key={index + 1}>
               <PaginationLink
                 href="#"
-                size={"default"}
+                size={'default'}
                 onClick={(event) => handlePageChange(index + 1, event)}
-                className={`${currentPage === index + 1 ? "bg-primary text-white" : ""}`}
+                className={`${currentPage === index + 1 ? 'bg-primary text-white' : ''}`}
               >
                 {index + 1}
               </PaginationLink>
@@ -56,7 +56,7 @@ export const Paginations: React.FC<PaginationsProperties> = ({
           <PaginationItem>
             <PaginationNext
               href="#"
-              size={"default"}
+              size={'default'}
               onClick={(event) => {
                 event.preventDefault();
                 handlePageChange(Math.min(currentPage + 1, totalPages), event);

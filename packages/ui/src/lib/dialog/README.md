@@ -16,8 +16,8 @@ A flexible and reusable alert modal component that supports multiple types: succ
 ### Basic Usage
 
 ```tsx
-import { AlertModal, AlertType } from "@/components/shared/dialog/alert-modal";
-import { useState } from "react";
+import { AlertModal, AlertType } from '@/components/shared/dialog/alert-modal';
+import { useState } from 'react';
 
 function MyComponent() {
   const [isOpen, setIsOpen] = useState(false);

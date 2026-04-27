@@ -173,6 +173,7 @@ export const Register = () => {
               isLoading={isPending}
               className="w-full"
               size="2xl"
+              data-testid="register-button"
             >
               Create Account
             </MainButton>

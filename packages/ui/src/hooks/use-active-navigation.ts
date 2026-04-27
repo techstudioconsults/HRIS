@@ -26,7 +26,10 @@ export const useActiveNavigation = (items: NavigationItem[]) => {
 
       // Check if any sub-items are active
       const hasActiveSubItem =
-        item.subItems?.some((subItem) => path === subItem.url || path.startsWith(subItem.url + '/')) || false;
+        item.subItems?.some(
+          (subItem) =>
+            path === subItem.url || path.startsWith(subItem.url + '/')
+        ) || false;
 
       return {
         ...item,

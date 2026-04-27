@@ -25,20 +25,30 @@ interface ListItemProperties extends LinkProps {
   children?: React.ReactNode;
 }
 
-export const NavItems: React.FC<NavItemProperties> = ({ links, isMobile, className }) => {
+export const NavItems: React.FC<NavItemProperties> = ({
+  links,
+  isMobile,
+  className,
+}) => {
   const pathname = usePathname();
 
   return (
     <NavigationMenu className={cn(isMobile && 'block max-w-full', className)}>
       <NavigationMenuList
-        className={cn('cc-border gap-0 divide-y lg:divide-x lg:divide-y-0 lg:border-x', isMobile && 'block')}
+        className={cn(
+          'cc-border gap-0 divide-y lg:divide-x lg:divide-y-0 lg:border-x',
+          isMobile && 'block'
+        )}
       >
         {links.map((link, index) => {
           if (link.type === 'dropdown' && link.subLinks) {
             return (
               <NavigationMenuItem key={index}>
                 <NavigationMenuTrigger
-                  className={cn('w-full', pathname === link.href && 'border-accent border border-b')}
+                  className={cn(
+                    'w-full',
+                    pathname === link.href && 'border-accent border border-b'
+                  )}
                 >
                   {link.title}
                 </NavigationMenuTrigger>
@@ -49,7 +59,9 @@ export const NavItems: React.FC<NavItemProperties> = ({ links, isMobile, classNa
                         key={subLink.id}
                         href={subLink.href}
                         title={subLink.title}
-                        className={pathname === subLink.href ? 'bg-accent/50' : ''}
+                        className={
+                          pathname === subLink.href ? 'bg-accent/50' : ''
+                        }
                       >
                         {subLink.description}
                       </ListItem>
@@ -97,7 +109,9 @@ const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProperties>(
             {...properties}
           >
             <div className="text-sm leading-none font-medium">{title}</div>
-            <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">{children}</p>
+            <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
+              {children}
+            </p>
           </Link>
         </NavigationMenuLink>
       </li>

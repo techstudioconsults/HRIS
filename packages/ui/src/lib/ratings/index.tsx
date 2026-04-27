@@ -1,7 +1,7 @@
-"use client";
-import { Star } from "lucide-react";
-import React, { useState } from "react";
-import { cn } from "../utils";
+'use client';
+import { Star } from 'lucide-react';
+import React, { useState } from 'react';
+import { cn } from '../utils';
 
 interface RatingsProperties {
   rating: number;
@@ -16,7 +16,7 @@ export const Ratings: React.FC<RatingsProperties> = ({
   size = 20,
   readonly = true,
   onChange,
-  className = "",
+  className = '',
 }) => {
   const [hovered, setHovered] = useState<number | null>(null);
   const [internalRating, setInternalRating] = useState<number>(rating);
@@ -45,13 +45,13 @@ export const Ratings: React.FC<RatingsProperties> = ({
   };
 
   return (
-    <div className={cn("flex gap-0.5", className)}>
+    <div className={cn('flex gap-0.5', className)}>
       {Array.from({ length: 5 }).map((_, index) => (
         <button
           key={index}
           type="button"
           tabIndex={readonly ? -1 : 0}
-          aria-label={`Rate ${index + 1} star${index === 0 ? "" : "s"}`}
+          aria-label={`Rate ${index + 1} star${index === 0 ? '' : 's'}`}
           disabled={readonly}
           onClick={() => handleClick(index)}
           onMouseEnter={() => handleMouseEnter(index)}
@@ -59,17 +59,17 @@ export const Ratings: React.FC<RatingsProperties> = ({
           onFocus={() => handleMouseEnter(index)}
           onBlur={handleMouseLeave}
           className={cn(
-            "transition-colors focus:outline-none",
-            readonly && "cursor-default",
-            !readonly && "cursor-pointer",
+            'transition-colors focus:outline-none',
+            readonly && 'cursor-default',
+            !readonly && 'cursor-pointer'
           )}
         >
           <Star
             size={size}
             className={cn(
               index < displayRating
-                ? "fill-yellow-400 text-yellow-400"
-                : "fill-gray-400 text-gray-400",
+                ? 'fill-yellow-400 text-yellow-400'
+                : 'fill-gray-400 text-gray-400'
             )}
           />
         </button>

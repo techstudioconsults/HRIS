@@ -1,8 +1,16 @@
-"use client";
+'use client';
 
-import { KBarAnimator, KBarPortal, KBarPositioner, KBarProvider, KBarResults, KBarSearch, useMatches } from "kbar";
-import { useRouter } from "next/navigation";
-import { ReactNode, useMemo } from "react";
+import {
+  KBarAnimator,
+  KBarPortal,
+  KBarPositioner,
+  KBarProvider,
+  KBarResults,
+  KBarSearch,
+  useMatches,
+} from 'kbar';
+import { useRouter } from 'next/navigation';
+import { ReactNode, useMemo } from 'react';
 
 export function KBarProviderWrapper({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -11,28 +19,28 @@ export function KBarProviderWrapper({ children }: { children: ReactNode }) {
   const staticActions = useMemo(
     () => [
       {
-        id: "home",
-        name: "Home",
-        shortcut: ["h"],
-        keywords: "go home",
-        perform: () => router.push("/"),
+        id: 'home',
+        name: 'Home',
+        shortcut: ['h'],
+        keywords: 'go home',
+        perform: () => router.push('/'),
       },
       {
-        id: "dashboard",
-        name: "Dashboard",
-        shortcut: ["g", "d"],
-        keywords: "go dashboard",
-        perform: () => router.push("/dashboard"),
+        id: 'dashboard',
+        name: 'Dashboard',
+        shortcut: ['g', 'd'],
+        keywords: 'go dashboard',
+        perform: () => router.push('/dashboard'),
       },
       {
-        id: "settings",
-        name: "Settings",
-        shortcut: ["g", "s"],
-        keywords: "go settings",
-        perform: () => router.push("/settings"),
+        id: 'settings',
+        name: 'Settings',
+        shortcut: ['g', 's'],
+        keywords: 'go settings',
+        perform: () => router.push('/settings'),
       },
     ],
-    [router],
+    [router]
   );
 
   return (
@@ -57,7 +65,7 @@ function RenderResults() {
     <KBarResults
       items={results}
       onRender={({ item, active }) =>
-        typeof item === "string" ? (
+        typeof item === 'string' ? (
           <div className="bg-gray-100 px-4 py-2 text-xs text-gray-500 uppercase dark:bg-gray-700 dark:text-gray-400">
             {item}
           </div>
@@ -65,21 +73,28 @@ function RenderResults() {
           <div
             className={`flex cursor-pointer items-center justify-between px-4 py-3 ${
               active
-                ? "bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-100"
-                : "bg-transparent text-gray-700 dark:text-gray-300"
+                ? 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-100'
+                : 'bg-transparent text-gray-700 dark:text-gray-300'
             }`}
           >
             <div className="flex items-center gap-3">
               {item.icon && <span className="text-lg">{item.icon}</span>}
               <div className="flex flex-col">
                 <span>{item.name}</span>
-                {item.subtitle && <span className="text-xs text-gray-500 dark:text-gray-400">{item.subtitle}</span>}
+                {item.subtitle && (
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    {item.subtitle}
+                  </span>
+                )}
               </div>
             </div>
             {item.shortcut?.length && (
               <div className="flex gap-1">
                 {item.shortcut.map((shortcut) => (
-                  <kbd key={shortcut} className="rounded bg-gray-200 px-2 py-1 font-mono text-xs dark:bg-gray-600">
+                  <kbd
+                    key={shortcut}
+                    className="rounded bg-gray-200 px-2 py-1 font-mono text-xs dark:bg-gray-600"
+                  >
                     {shortcut}
                   </kbd>
                 ))}

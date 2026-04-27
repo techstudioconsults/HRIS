@@ -1,9 +1,9 @@
-import { handleError } from "./errorHandler";
+import { handleError } from './errorHandler';
 
 // tryCatchWrapper.ts
 export const tryCatchWrapper = async <T>(
   request: () => Promise<T>,
-  customErrorHandler?: (error: unknown) => Error | void,
+  customErrorHandler?: (error: unknown) => Error | void
 ) => {
   try {
     return await request();

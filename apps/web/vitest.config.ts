@@ -14,8 +14,29 @@ export default mergeConfig(
     // @ts-ignore - Vite version mismatch
     plugins: [react()],
     test: {
-      setupFiles: [path.resolve(__dirname, '../../packages/test-utils/src/setup.ts')],
-      exclude: ['**/node_modules/**', '**/dist/**', '**/e2e/**', '**/.{idea,git,cache,output,temp}/**'],
+      setupFiles: [
+        path.resolve(__dirname, '../../packages/test-utils/src/setup.ts'),
+      ],
+      exclude: [
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/e2e/**',
+        '**/.next/**',
+        '**/.{idea,git,cache,output,temp}/**',
+      ],
+      coverage: {
+        include: ['src/**/*.{ts,tsx}'],
+        exclude: [
+          'node_modules/**',
+          'dist/**',
+          'coverage/**',
+          '**/.next/**',
+          '**/*.test.{ts,tsx}',
+          '**/*.spec.{ts,tsx}',
+          '**/__tests__/**',
+          '**/setup.ts',
+        ],
+      },
     },
     resolve: {
       alias: {

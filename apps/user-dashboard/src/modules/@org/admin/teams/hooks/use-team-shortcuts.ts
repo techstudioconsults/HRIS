@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useActiveTarget } from "@/context/active-target";
-import { useShortcuts } from "@workspace/ui/hooks";
-import { useRouter } from "next/navigation";
+import { useActiveTarget } from '@/context/active-target';
+import { useShortcuts } from '@workspace/ui/hooks';
+import { useRouter } from 'next/navigation';
 
 export function useTeamShortcuts() {
   const router = useRouter();
@@ -10,7 +10,7 @@ export function useTeamShortcuts() {
 
   useShortcuts([
     {
-      combo: "mod+v",
+      combo: 'mod+v',
       when: () => !!activeTeam,
       run: () => {
         if (!activeTeam) return;
@@ -18,7 +18,7 @@ export function useTeamShortcuts() {
       },
     },
     {
-      combo: "mod+e",
+      combo: 'mod+e',
       when: () => !!activeTeam,
       run: () => {
         if (!activeTeam) return;
@@ -26,19 +26,19 @@ export function useTeamShortcuts() {
       },
     },
     {
-      combo: "mod+backspace",
+      combo: 'mod+backspace',
       when: () => !!activeTeam,
       run: () => {
         if (!activeTeam) return;
-        window.dispatchEvent(new CustomEvent("team:request-delete"));
+        window.dispatchEvent(new CustomEvent('team:request-delete'));
       },
     },
     {
-      combo: "mod+delete",
+      combo: 'mod+delete',
       when: () => !!activeTeam,
       run: () => {
         if (!activeTeam) return;
-        window.dispatchEvent(new CustomEvent("team:request-delete"));
+        window.dispatchEvent(new CustomEvent('team:request-delete'));
       },
     },
   ]);

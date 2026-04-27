@@ -9,18 +9,13 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "lint": {
-      "dependsOn": ["^lint"]
-    },
-    "check-types": {
-      "dependsOn": ["^check-types"]
+      "inputs": ["$TURBO_DEFAULT$"]
     },
     "typecheck": {
       "dependsOn": ["^typecheck"]
     },
     "test": {
-      "dependsOn": ["^test"],
-      "inputs": ["src/**", "__tests__/**", "vitest.config.ts"],
-      "outputs": ["coverage/**"]
+      "inputs": ["src/**", "__tests__/**", "vitest.config.ts"]
     },
     "test:watch": {
       "cache": false,
@@ -31,16 +26,7 @@
       "persistent": true
     },
     "test:coverage": {
-      "dependsOn": ["^test:coverage"],
       "outputs": ["coverage/**"]
-    },
-    "test:e2e": {
-      "dependsOn": ["build"],
-      "cache": false
-    },
-    "test:e2e:ui": {
-      "cache": false,
-      "persistent": true
     },
     "dev": {
       "cache": false,

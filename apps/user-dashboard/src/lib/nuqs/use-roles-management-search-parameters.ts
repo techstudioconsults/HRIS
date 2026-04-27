@@ -12,7 +12,10 @@ export const useRolesManagementSearchParameters = () => {
   const [search, setSearch] = useQueryState('rolesSearch', parseAsString);
   const [teamId, setTeamId] = useQueryState('rolesTeamId', parseAsString);
   const [sortBy, setSortBy] = useQueryState('rolesSortBy', parseAsString);
-  const [limit, setLimit] = useQueryState('rolesLimit', parseAsInteger.withDefault(10));
+  const [limit, setLimit] = useQueryState(
+    'rolesLimit',
+    parseAsInteger.withDefault(10)
+  );
 
   return {
     page,

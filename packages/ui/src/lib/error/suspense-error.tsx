@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { AlertCircle } from "lucide-react";
-import { Logo } from "../logo";
-import { cn } from "../utils";
-import { Button } from "@workspace/ui/components/button";
+import { AlertCircle } from 'lucide-react';
+import { Logo } from '../logo';
+import { cn } from '../utils';
+import { Button } from '@workspace/ui/components/button';
 
 interface SuspenseErrorProperties {
   title?: string;
@@ -14,8 +14,8 @@ interface SuspenseErrorProperties {
 }
 
 export function SuspenseError({
-  title = "Something went wrong!",
-  message = "Unable to load content. Please try again.",
+  title = 'Something went wrong!',
+  message = 'Unable to load content. Please try again.',
   onRetry,
   className,
   showLogo = true,
@@ -23,8 +23,8 @@ export function SuspenseError({
   return (
     <div
       className={cn(
-        "bg-background flex !h-[50dvh] flex-col items-center justify-center rounded-md shadow dark:bg-[#000000]",
-        className,
+        'bg-background flex !h-[50dvh] flex-col items-center justify-center rounded-md shadow dark:bg-[#000000]',
+        className
       )}
     >
       <div className="flex max-w-md flex-col items-center gap-4 px-4 text-center">

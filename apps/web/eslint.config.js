@@ -4,12 +4,7 @@ import { nextJsConfig } from '@workspace/eslint-config/next';
 export default [
   ...nextJsConfig,
   {
-    ignores: [
-      '.next/**',
-      'node_modules/**',
-      'coverage/**',
-      'playwright-report/**',
-    ],
+    ignores: ['.next/**', 'node_modules/**', 'coverage/**'],
   },
   {
     files: ['**/*.{ts,tsx,js,jsx,mjs,cjs}'],

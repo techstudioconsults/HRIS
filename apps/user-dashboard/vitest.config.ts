@@ -21,8 +21,22 @@ export default mergeConfig(
         '**/node_modules/**',
         '**/dist/**',
         '**/e2e/**',
+        '**/.next/**',
         '**/.{idea,git,cache,output,temp}/**',
       ],
+      coverage: {
+        include: ['src/**/*.{ts,tsx}'],
+        exclude: [
+          'node_modules/**',
+          'dist/**',
+          'coverage/**',
+          '**/.next/**',
+          '**/*.test.{ts,tsx}',
+          '**/*.spec.{ts,tsx}',
+          '**/__tests__/**',
+          '**/setup.ts',
+        ],
+      },
     },
     resolve: {
       alias: {

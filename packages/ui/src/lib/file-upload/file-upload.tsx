@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { BlurImage } from "@workspace/ui/components/core/miscellaneous/blur-image";
-import { File, PaperclipIcon, Trash2Icon } from "lucide-react";
-import { ChangeEvent, useRef, useState } from "react";
-import { MainButton } from "../button";
+import { BlurImage } from '@workspace/ui/components/core/miscellaneous/blur-image';
+import { File, PaperclipIcon, Trash2Icon } from 'lucide-react';
+import { ChangeEvent, useRef, useState } from 'react';
+import { MainButton } from '../button';
 
 type FileUploadProperties = {
   onFileChange: (files: File[]) => void;
@@ -19,7 +19,7 @@ const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
 
 export default function FileUpload({
   onFileChange,
-  acceptedFileTypes = "*",
+  acceptedFileTypes = '*',
   maxFiles = 1,
   showPreview = false,
 }: FileUploadProperties) {
@@ -33,15 +33,15 @@ export default function FileUpload({
   const generatePreviews = (newFiles: File[]) => {
     const newPreviews: string[] = [];
     for (const file of newFiles) {
-      if (file.type.startsWith("image/")) {
+      if (file.type.startsWith('image/')) {
         const reader = new FileReader();
-        reader.addEventListener("load", (event) => {
+        reader.addEventListener('load', (event) => {
           newPreviews.push(event.target?.result as string);
           setPreviews([...newPreviews]);
         });
         reader.readAsDataURL(file);
       } else {
-        newPreviews.push("");
+        newPreviews.push('');
       }
     }
   };
@@ -106,8 +106,8 @@ export default function FileUpload({
         onClick={() => fileInputReference.current?.click()}
         className={`${
           isDragActive
-            ? "border-primary-400 bg-primary-100"
-            : "border-primary hover:border-primary-300"
+            ? 'border-primary-400 bg-primary-100'
+            : 'border-primary hover:border-primary-300'
         } bg-primary-50 flex min-h-[120px] cursor-pointer items-center justify-center rounded-lg border-2 border-dashed p-6 text-center transition-colors`}
       >
         <div className="flex flex-col items-center justify-center">
@@ -119,8 +119,8 @@ export default function FileUpload({
             </p>
           </div>
           <p className="mt-2 text-[10px] text-gray-500">
-            {acceptedFileTypes === "*"
-              ? "Any file type"
+            {acceptedFileTypes === '*'
+              ? 'Any file type'
               : `Supported: ${acceptedFileTypes}`}
           </p>
         </div>
@@ -143,7 +143,7 @@ export default function FileUpload({
             >
               <div className="flex items-center space-x-2">
                 {showPreview &&
-                file.type.startsWith("image/") &&
+                file.type.startsWith('image/') &&
                 previews[index] ? (
                   <BlurImage
                     src={previews[index]}

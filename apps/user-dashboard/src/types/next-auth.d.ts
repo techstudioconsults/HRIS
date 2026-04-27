@@ -1,7 +1,7 @@
-import { AuthTokens, Employee, Role } from "@/lib/auth-types";
-import { DefaultSession } from "next-auth";
+import { AuthTokens, Employee, Role } from '@/lib/auth-types';
+import { DefaultSession } from 'next-auth';
 
-declare module "next-auth" {
+declare module 'next-auth' {
   interface User {
     id: string;
     employee: Employee;
@@ -16,13 +16,13 @@ declare module "next-auth" {
       employee: Employee;
       role: Role;
       permissions: string[];
-    } & DefaultSession["user"];
+    } & DefaultSession['user'];
     tokens: AuthTokens;
     expires: string;
   }
 }
 
-declare module "next-auth/jwt" {
+declare module 'next-auth/jwt' {
   interface JWT {
     id: string;
     employee: Employee;

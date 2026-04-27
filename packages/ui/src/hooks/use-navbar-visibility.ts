@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 export const useNavbarVisibility = () => {
   const [isNavbarVisible, setIsNavbarVisible] = useState(true);
@@ -17,8 +17,8 @@ export const useNavbarVisibility = () => {
       lastScrollY = currentScrollY;
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return { isNavbarVisible };

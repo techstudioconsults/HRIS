@@ -80,6 +80,7 @@ export const ForgotPassword = () => {
               isLoading={isPending}
               className="w-full"
               size="2xl"
+              data-testid="forgot-password-button"
             >
               Continue
             </MainButton>

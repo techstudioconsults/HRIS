@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 
 interface LocationOption {
   value: string;
@@ -27,16 +27,17 @@ export function useCountries() {
       try {
         setIsLoading(true);
         setError(null);
-        const response = await fetch("/api/location?type=countries");
+        const response = await fetch('/api/location?type=countries');
 
         if (!response.ok) {
-          throw new Error("Failed to fetch countries");
+          throw new Error('Failed to fetch countries');
         }
 
         const data = (await response.json()) as LocationResponse;
         setCountries(data.data);
       } catch (error_) {
-        const message = error_ instanceof Error ? error_.message : "Unknown error";
+        const message =
+          error_ instanceof Error ? error_.message : 'Unknown error';
         setError(message);
         setCountries([]);
       } finally {
@@ -68,16 +69,19 @@ export function useStates(country: string | null) {
       try {
         setIsLoading(true);
         setError(null);
-        const response = await fetch(`/api/location?type=states&country=${encodeURIComponent(country)}`);
+        const response = await fetch(
+          `/api/location?type=states&country=${encodeURIComponent(country)}`
+        );
 
         if (!response.ok) {
-          throw new Error("Failed to fetch states");
+          throw new Error('Failed to fetch states');
         }
 
         const data = (await response.json()) as LocationResponse;
         setStates(data.data);
       } catch (error_) {
-        const message = error_ instanceof Error ? error_.message : "Unknown error";
+        const message =
+          error_ instanceof Error ? error_.message : 'Unknown error';
         setError(message);
         setStates([]);
       } finally {
@@ -111,24 +115,25 @@ export function useCities(country: string | null, state?: string | null) {
         setError(null);
 
         const parameters = new URLSearchParams({
-          type: "cities",
+          type: 'cities',
           country: country,
         });
 
         if (state) {
-          parameters.append("state", state);
+          parameters.append('state', state);
         }
 
         const response = await fetch(`/api/location?${parameters.toString()}`);
 
         if (!response.ok) {
-          throw new Error("Failed to fetch cities");
+          throw new Error('Failed to fetch cities');
         }
 
         const data = (await response.json()) as LocationResponse;
         setCities(data.data);
       } catch (error_) {
-        const message = error_ instanceof Error ? error_.message : "Unknown error";
+        const message =
+          error_ instanceof Error ? error_.message : 'Unknown error';
         setError(message);
         setCities([]);
       } finally {
@@ -149,9 +154,21 @@ export function useLocationData() {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [selectedState, setSelectedState] = useState<string | null>(null);
 
-  const { countries, isLoading: countriesLoading, error: countriesError } = useCountries();
-  const { states, isLoading: statesLoading, error: statesError } = useStates(selectedCountry);
-  const { cities, isLoading: citiesLoading, error: citiesError } = useCities(selectedCountry, selectedState);
+  const {
+    countries,
+    isLoading: countriesLoading,
+    error: countriesError,
+  } = useCountries();
+  const {
+    states,
+    isLoading: statesLoading,
+    error: statesError,
+  } = useStates(selectedCountry);
+  const {
+    cities,
+    isLoading: citiesLoading,
+    error: citiesError,
+  } = useCities(selectedCountry, selectedState);
 
   const handleCountryChange = useCallback((country: string | null) => {
     setSelectedCountry(country);

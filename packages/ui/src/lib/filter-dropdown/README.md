@@ -16,10 +16,10 @@ A reusable dropdown component for filtering data in tables and lists.
 ### Basic Usage
 
 ```tsx
-import { FilterDropdown } from "@/components/shared/filter-dropdown";
+import { FilterDropdown } from '@/components/shared/filter-dropdown';
 
 function MyComponent() {
-  const [status, setStatus] = useState("all");
+  const [status, setStatus] = useState('all');
 
   return <FilterDropdown value={status} onValueChange={setStatus} />;
 }
@@ -28,17 +28,20 @@ function MyComponent() {
 ### Custom Options
 
 ```tsx
-import { FilterDropdown, type FilterOption } from "@/components/shared/filter-dropdown";
+import {
+  FilterDropdown,
+  type FilterOption,
+} from '@/components/shared/filter-dropdown';
 
 const productOptions: FilterOption[] = [
-  { value: "all", label: "All Products" },
-  { value: "published", label: "Published" },
-  { value: "draft", label: "Draft" },
-  { value: "archived", label: "Archived" },
+  { value: 'all', label: 'All Products' },
+  { value: 'published', label: 'Published' },
+  { value: 'draft', label: 'Draft' },
+  { value: 'archived', label: 'Archived' },
 ];
 
 function ProductFilter() {
-  const [status, setStatus] = useState("all");
+  const [status, setStatus] = useState('all');
 
   return (
     <FilterDropdown
@@ -78,10 +81,10 @@ The component comes with default order status options:
 
 ```tsx
 [
-  { value: "all", label: "All" },
-  { value: "completed", label: "Completed" },
-  { value: "failed", label: "Failed" },
-  { value: "pending", label: "Pending" },
+  { value: 'all', label: 'All' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'failed', label: 'Failed' },
+  { value: 'pending', label: 'Pending' },
 ];
 ```
 
@@ -111,12 +114,12 @@ The component is backward compatible. Existing usage will continue to work witho
   value={orderStatus}
   onValueChange={setOrderStatus}
   options={[
-    { value: "all", label: "All Orders" },
-    { value: "pending", label: "Pending" },
-    { value: "processing", label: "Processing" },
-    { value: "shipped", label: "Shipped" },
-    { value: "delivered", label: "Delivered" },
-    { value: "cancelled", label: "Cancelled" },
+    { value: 'all', label: 'All Orders' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'processing', label: 'Processing' },
+    { value: 'shipped', label: 'Shipped' },
+    { value: 'delivered', label: 'Delivered' },
+    { value: 'cancelled', label: 'Cancelled' },
   ]}
   placeholder="Order Status"
 />
@@ -129,10 +132,10 @@ The component is backward compatible. Existing usage will continue to work witho
   value={userStatus}
   onValueChange={setUserStatus}
   options={[
-    { value: "all", label: "All Users" },
-    { value: "active", label: "Active" },
-    { value: "inactive", label: "Inactive" },
-    { value: "suspended", label: "Suspended" },
+    { value: 'all', label: 'All Users' },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' },
+    { value: 'suspended', label: 'Suspended' },
   ]}
   placeholder="User Status"
   width="w-[150px]"
@@ -142,5 +145,10 @@ The component is backward compatible. Existing usage will continue to work witho
 ### Disabled State
 
 ```tsx
-<FilterDropdown value={status} onValueChange={setStatus} disabled={isLoading} placeholder="Loading..." />
+<FilterDropdown
+  value={status}
+  onValueChange={setStatus}
+  disabled={isLoading}
+  placeholder="Loading..."
+/>
 ```

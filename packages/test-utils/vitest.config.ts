@@ -17,7 +17,18 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
-      exclude: ['node_modules/', 'dist/', 'coverage/', '**/*.test.ts(x)?', '**/__tests__/**', '**/setup.ts'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'node_modules/**',
+        'dist/**',
+        'coverage/**',
+        '**/.next/**',
+        '**/*.test.{ts,tsx}',
+        '**/*.spec.{ts,tsx}',
+        '**/__tests__/**',
+        '**/setup.ts',
+        '**/vitest.config.ts',
+      ],
       thresholds: {
         statements: 60,
         branches: 60,

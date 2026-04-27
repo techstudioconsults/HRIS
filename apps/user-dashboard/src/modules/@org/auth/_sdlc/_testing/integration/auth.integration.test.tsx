@@ -33,7 +33,7 @@ import {
   VALID_OTP,
   fixtureLoginResponse,
 } from '../fixtures/mock-data';
-import { SessionProvider, useSession } from '@/lib/session';
+import { SessionProvider, useSession } from '../../../../../../lib/session';
 
 // ---------------------------------------------------------------------------
 // Hoisted mock references — must be declared before vi.mock() calls

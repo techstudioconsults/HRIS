@@ -4,7 +4,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@workspace/ui/components/select";
+} from '@workspace/ui/components/select';
 
 export interface FilterOption {
   value: string;
@@ -24,8 +24,8 @@ export const FilterDropdown = ({
   value,
   onValueChange,
   options,
-  placeholder = "Filter",
-  width = "w-[123px]",
+  placeholder = 'Filter',
+  width = 'w-[123px]',
   disabled = false,
 }: FilterDropdownProperties) => {
   return (

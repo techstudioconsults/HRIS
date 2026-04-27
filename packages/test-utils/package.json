@@ -11,10 +11,10 @@
     "./vitest.config": "./vitest.config.ts"
   },
   "scripts": {
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage --passWithNoTests"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",

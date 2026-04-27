@@ -1,4 +1,9 @@
-import { createSearchParamsCache, createSerializer, parseAsInteger, parseAsString } from "nuqs/server";
+import {
+  createSearchParamsCache,
+  createSerializer,
+  parseAsInteger,
+  parseAsString,
+} from 'nuqs/server';
 
 export const searchParameters = {
   page: parseAsInteger.withDefault(1),

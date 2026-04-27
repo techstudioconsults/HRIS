@@ -8,7 +8,12 @@ import type { OTPInputProperties } from '../types';
 
 export const OTPInput = ({ value, onChange }: OTPInputProperties) => {
   return (
-    <InputOTP maxLength={6} value={value} onChange={onChange}>
+    <InputOTP
+      maxLength={6}
+      value={value}
+      onChange={onChange}
+      data-testid="otp-input"
+    >
       <InputOTPGroup
         className={`flex w-full gap-2 justify-center lg:justify-around`}
       >

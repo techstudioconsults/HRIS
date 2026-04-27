@@ -1,4 +1,4 @@
-import { LeaveSetupForm } from "@/modules/@org/admin/leave";
+import { LeaveSetupForm } from '@/modules/@org/admin/leave';
 
 const page = () => {
   return (

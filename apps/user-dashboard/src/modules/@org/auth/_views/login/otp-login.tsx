@@ -74,6 +74,7 @@ export const OTPLogin = () => {
               isLoading={isPending}
               className="w-full"
               size="2xl"
+              data-testid="send-otp-button"
             >
               Send OTP
             </MainButton>

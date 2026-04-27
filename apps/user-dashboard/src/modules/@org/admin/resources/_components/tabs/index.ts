@@ -1,2 +1,2 @@
-export { FilesTab } from "./FilesTab";
-export { FoldersTab } from "./FoldersTab";
+export { FilesTab } from './FilesTab';
+export { FoldersTab } from './FoldersTab';

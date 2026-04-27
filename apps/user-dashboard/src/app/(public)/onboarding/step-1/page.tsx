@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { StepOne } from "@/modules/@org/onboarding";
+import { StepOne } from '@/modules/@org/onboarding';
 
 const OnboardingStepOnePage = () => {
   return (

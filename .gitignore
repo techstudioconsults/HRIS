@@ -41,6 +41,7 @@ npm-debug.log*
 /nbproject/private/
 
 #AI
-.ai
 .claude
-.mcp.json
+.kilo
+kilo.json
+.stack

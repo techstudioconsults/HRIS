@@ -1,0 +1,141 @@
+<mxfile host="drawio-plugin" modified="2026-04-28T19:27:13.918Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36" version="22.1.22" etag="_sHPB7Y-PT8AyqZMyWS5" type="embed">
+  <diagram id="state_mgmt" name="State Management">
+    <mxGraphModel dx="2164" dy="962" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Auth — State Management (v2 — Custom Session)" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=16;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="10" width="900" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_react" value="React Client Layer" style="swimlane;horizontal=0;startSize=130;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=12;fontStyle=1;html=1;" parent="1" vertex="1">
+          <mxGeometry y="60" width="1720" height="200" as="geometry">
+            <mxRectangle y="60" width="32" height="134" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="login_view" value="&lt;b&gt;LoginView&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;useLoginWithPassword()&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0B4884;fontSize=10;" parent="lane_react" vertex="1">
+          <mxGeometry x="150" y="65" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="otp_view" value="&lt;b&gt;OtpLoginView&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;useLoginWithOTP()&lt;br&gt;+ InputOtpCard&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0B4884;fontSize=10;" parent="lane_react" vertex="1">
+          <mxGeometry x="370" y="65" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="register_view" value="&lt;b&gt;RegisterView&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;useSignUp()&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0B4884;fontSize=10;" parent="lane_react" vertex="1">
+          <mxGeometry x="590" y="65" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="forgot_view" value="&lt;b&gt;ForgotPasswordView&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;useForgotPassword()&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0B4884;fontSize=10;" parent="lane_react" vertex="1">
+          <mxGeometry x="810" y="65" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="use_logout_node" value="&lt;b&gt;useLogout&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;DELETE session,&lt;br&gt;clearUser()&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0B4884;fontSize=10;" parent="lane_react" vertex="1">
+          <mxGeometry x="1030" y="65" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="session_prov_node" value="&lt;b&gt;SessionProvider&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Fetches token on mount,&lt;br&gt;hydrates store&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0B4884;fontColor=#ffffff;strokeColor=#052E56;fontSize=10;" parent="lane_react" vertex="1">
+          <mxGeometry x="1250" y="65" width="180" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="auth_store_node" value="&lt;b&gt;useAuthStore&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Zustand — in-memory]&lt;br&gt;{ user, isAuthenticated,&lt;br&gt;sessionExpiry }&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0B4884;fontColor=#ffffff;strokeColor=#052E56;fontSize=10;" parent="lane_react" vertex="1">
+          <mxGeometry x="1470" y="55" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_cache" value="In-Memory Cache" style="swimlane;horizontal=0;startSize=130;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#000000;fontSize=12;fontStyle=1;html=1;" parent="1" vertex="1">
+          <mxGeometry y="260" width="1720" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="token_mgr_node" value="&lt;b&gt;TokenManager&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Caches access token with 5-min expiry buffer.&lt;br&gt;Calls GET /api/auth/token on cache miss.&lt;br&gt;Only consumer: HttpAdapter interceptor.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6b656;fontColor=#000000;strokeColor=#9A7000;fontSize=10;" parent="lane_cache" vertex="1">
+          <mxGeometry x="1030" y="25" width="380" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_cookies" value="HTTP-only Cookie Store" style="swimlane;horizontal=0;startSize=130;fillColor=#ffe6cc;strokeColor=#d79b00;fontColor=#000000;fontSize=12;fontStyle=1;html=1;" parent="1" vertex="1">
+          <mxGeometry y="380" width="1720" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="at_cookie" value="&lt;b&gt;__hris_at&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Access Token (JWT)&lt;br&gt;HTTP-only, short-lived&lt;/font&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#d79b00;fontColor=#ffffff;strokeColor=#A06000;fontSize=10;" parent="lane_cookies" vertex="1">
+          <mxGeometry x="370" y="25" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="rt_cookie" value="&lt;b&gt;__hris_rt&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Refresh Token&lt;br&gt;HTTP-only, long-lived&lt;/font&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#d79b00;fontColor=#ffffff;strokeColor=#A06000;fontSize=10;" parent="lane_cookies" vertex="1">
+          <mxGeometry x="590" y="25" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="meta_cookie" value="&lt;b&gt;__hris_meta&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Signed session metadata&lt;br&gt;{ id, role, permissions, exp }&lt;br&gt;HMAC-SHA256 — Edge-readable&lt;/font&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#d79b00;fontColor=#ffffff;strokeColor=#A06000;fontSize=10;" parent="lane_cookies" vertex="1">
+          <mxGeometry x="810" y="20" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="proxy_note" value="&lt;b&gt;proxy.ts (Edge Middleware)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Reads __hris_meta synchronously,&lt;br&gt;enforces ACCESS_LEVELS rules&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;fontColor=#000000;strokeColor=#b85450;fontSize=10;" parent="lane_cookies" vertex="1">
+          <mxGeometry x="1250" y="25" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_bff" value="BFF Route Handlers (Next.js)" style="swimlane;horizontal=0;startSize=130;fillColor=#e1d5e7;strokeColor=#9673a6;fontColor=#000000;fontSize=12;fontStyle=1;html=1;" parent="1" vertex="1">
+          <mxGeometry y="510" width="1720" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="bff_post_session" value="&lt;b&gt;POST /api/auth/session&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Sets __hris_at, __hris_rt,&lt;br&gt;__hris_meta cookies&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9673a6;fontColor=#ffffff;strokeColor=#7A4E9E;fontSize=10;" parent="lane_bff" vertex="1">
+          <mxGeometry x="150" y="45" width="210" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="bff_delete_session" value="&lt;b&gt;DELETE /api/auth/session&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Clears all 3 cookies&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9673a6;fontColor=#ffffff;strokeColor=#7A4E9E;fontSize=10;" parent="lane_bff" vertex="1">
+          <mxGeometry x="810" y="45" width="210" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="bff_get_token" value="&lt;b&gt;GET /api/auth/token&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Reads __hris_at,&lt;br&gt;returns { accessToken, expiresAt }&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9673a6;fontColor=#ffffff;strokeColor=#7A4E9E;fontSize=10;" parent="lane_bff" vertex="1">
+          <mxGeometry x="1250" y="45" width="210" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="bff_post_refresh" value="&lt;b&gt;POST /api/auth/refresh&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Reads __hris_rt, rotates&lt;br&gt;both tokens via backend&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#9673a6;fontColor=#ffffff;strokeColor=#7A4E9E;fontSize=10;" parent="lane_bff" vertex="1">
+          <mxGeometry x="1470" y="45" width="210" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_backend" value="HR Backend API (NestJS)" style="swimlane;horizontal=0;startSize=130;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#000000;fontSize=12;fontStyle=1;html=1;" parent="1" vertex="1">
+          <mxGeometry y="670" width="1720" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="be_login" value="&lt;b&gt;POST /auth/login/password&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Validates credentials,&lt;br&gt;returns { employee, tokens, permissions }&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#666666;fontColor=#ffffff;strokeColor=#4A4A4A;fontSize=10;" parent="lane_backend" vertex="1">
+          <mxGeometry x="150" y="40" width="230" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="be_otp" value="&lt;b&gt;POST /auth/login/otp&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Validates OTP code,&lt;br&gt;returns { employee, tokens, permissions }&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#666666;fontColor=#ffffff;strokeColor=#4A4A4A;fontSize=10;" parent="lane_backend" vertex="1">
+          <mxGeometry x="430" y="40" width="230" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="be_refresh" value="&lt;b&gt;POST /auth/refresh&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Validates refresh token,&lt;br&gt;issues new access + refresh tokens&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#666666;fontColor=#ffffff;strokeColor=#4A4A4A;fontSize=10;" parent="lane_backend" vertex="1">
+          <mxGeometry x="1470" y="40" width="230" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e1" value="POST credentials" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="login_view" target="be_login" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e2" value="POST OTP code" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="otp_view" target="be_otp" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e3" value="success: { employee,&lt;br&gt;tokens, permissions }" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="be_login" target="bff_post_session" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e4" value="success: { employee,&lt;br&gt;tokens, permissions }" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="be_otp" target="bff_post_session" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e5" value="sets __hris_at" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="bff_post_session" target="at_cookie" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e6" value="sets __hris_rt" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="bff_post_session" target="rt_cookie" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e7" value="sets __hris_meta&lt;br&gt;(HMAC signed)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="bff_post_session" target="meta_cookie" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e8" value="reads on every request" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;dashed=1;" parent="1" source="meta_cookie" target="proxy_note" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e9" value="GET /api/auth/token on mount" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="session_prov_node" target="bff_get_token" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e10" value="reads __hris_at" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="bff_get_token" target="at_cookie" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e11" value="setUser() — hydrates store" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="session_prov_node" target="auth_store_node" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e12" value="cache miss / expired" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="token_mgr_node" target="bff_get_token" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e13" value="on 401 — sends __hris_rt" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="rt_cookie" target="bff_post_refresh" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e14" value="proxies to backend" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="bff_post_refresh" target="be_refresh" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e15" value="rotates __hris_at + __hris_rt" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="be_refresh" target="at_cookie" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e16" value="DELETE /api/auth/session" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="use_logout_node" target="bff_delete_session" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e17" value="clears all cookies" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="bff_delete_session" target="at_cookie" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sm_e18" value="clearUser()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="use_logout_node" target="auth_store_node" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

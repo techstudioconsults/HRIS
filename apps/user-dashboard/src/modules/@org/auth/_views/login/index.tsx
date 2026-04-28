@@ -45,13 +45,8 @@ export const Login = () => {
       });
 
       if (!sessionRes.ok) new Error('Failed to establish session');
-
-      await refresh();
-
-      toast.success('Login Successful', {
-        description: 'Redirecting to dashboard...',
-      });
       router.push('/login/continue');
+      await refresh();
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Login failed';
       toast.warning('Login Failed', { description: message });

@@ -1,0 +1,432 @@
+<mxfile host="drawio-plugin" modified="2026-04-28T10:35:34.866Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36" etag="2mUuBGCHNPam_iZ9iiUd" version="22.1.22" type="embed" pages="5">
+  <diagram name="Invalid Credentials 401" id="pg1">
+    <mxGraphModel dx="1082" dy="818" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="0" page="0" pageScale="1" pageWidth="1100" pageHeight="620" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tt" value="Error Flow — Invalid Credentials (401)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;align=left;" parent="1" vertex="1">
+          <mxGeometry x="40" y="12" width="550" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" value="Browser" style="rounded=1;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="LoginForm" style="rounded=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="250" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="AuthService" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="460" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="Backend API" style="rounded=1;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="670" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="l1" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="96" as="sourcePoint" />
+            <mxPoint x="120" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l2" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="96" as="sourcePoint" />
+            <mxPoint x="330" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l3" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="96" as="sourcePoint" />
+            <mxPoint x="540" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l4" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="750" y="96" as="sourcePoint" />
+            <mxPoint x="750" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m1" value="submit form" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#6c8ebf;fontColor=#023d7a;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="145" as="sourcePoint" />
+            <mxPoint x="330" y="145" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="loginWithPassword({ email, password })" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="200" as="sourcePoint" />
+            <mxPoint x="540" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="POST /auth/login/password" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="255" as="sourcePoint" />
+            <mxPoint x="750" y="255" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="401 — { title: &#39;Invalid credentials&#39; }" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="750" y="310" as="sourcePoint" />
+            <mxPoint x="540" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="error response" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="360" as="sourcePoint" />
+            <mxPoint x="330" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ms6" value="[self]  form.setError(&#39;root&#39;, { message: &#39;Invalid credentials&#39; })" style="text;html=1;strokeColor=#b85450;fillColor=#f8cecc;fontSize=9;rounded=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="337" y="378" width="350" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="m7" value="inline error rendered" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="420" as="sourcePoint" />
+            <mxPoint x="120" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Account Locked 429" id="pg2">
+    <mxGraphModel dx="1082" dy="818" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="0" page="0" pageScale="1" pageWidth="1100" pageHeight="620" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tt" value="Error Flow — Account Locked / Too Many Attempts (429)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;align=left;" parent="1" vertex="1">
+          <mxGeometry x="40" y="12" width="620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" value="Browser" style="rounded=1;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="LoginForm" style="rounded=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="250" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="AuthService" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="460" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="Backend API" style="rounded=1;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="670" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="l1" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="96" as="sourcePoint" />
+            <mxPoint x="120" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l2" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="96" as="sourcePoint" />
+            <mxPoint x="330" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l3" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="96" as="sourcePoint" />
+            <mxPoint x="540" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l4" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="750" y="96" as="sourcePoint" />
+            <mxPoint x="750" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m1" value="submit form" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#6c8ebf;fontColor=#023d7a;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="145" as="sourcePoint" />
+            <mxPoint x="330" y="145" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="loginWithPassword({ email, password })" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="200" as="sourcePoint" />
+            <mxPoint x="540" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="POST /auth/login/password" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="255" as="sourcePoint" />
+            <mxPoint x="750" y="255" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="429 — { title: &#39;Too many attempts&#39; }" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="750" y="310" as="sourcePoint" />
+            <mxPoint x="540" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="error response" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="360" as="sourcePoint" />
+            <mxPoint x="330" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ms6" value="[self]  form.setError(&#39;root&#39;, { message: &#39;Too many attempts. Try again in 15 minutes.&#39; })" style="text;html=1;strokeColor=#b85450;fillColor=#f8cecc;fontSize=9;rounded=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="337" y="378" width="500" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="m7" value="inline error + locked state rendered" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="420" as="sourcePoint" />
+            <mxPoint x="120" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="OTP Expired" id="pg3">
+    <mxGraphModel dx="1082" dy="818" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="0" page="0" pageScale="1" pageWidth="1100" pageHeight="600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tt" value="Error Flow — OTP Expired (400)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;align=left;" parent="1" vertex="1">
+          <mxGeometry x="40" y="12" width="500" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" value="Browser" style="rounded=1;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="InputOtpCard" style="rounded=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="250" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="AuthService" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="460" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="Backend API" style="rounded=1;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="670" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="l1" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="96" as="sourcePoint" />
+            <mxPoint x="120" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l2" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="96" as="sourcePoint" />
+            <mxPoint x="330" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l3" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="96" as="sourcePoint" />
+            <mxPoint x="540" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l4" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="750" y="96" as="sourcePoint" />
+            <mxPoint x="750" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m1" value="submit OTP code" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#6c8ebf;fontColor=#023d7a;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="145" as="sourcePoint" />
+            <mxPoint x="330" y="145" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="loginWithOTP({ email, otp })" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="200" as="sourcePoint" />
+            <mxPoint x="540" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="POST /auth/login/otp" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="255" as="sourcePoint" />
+            <mxPoint x="750" y="255" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="400 — { title: &#39;OTP expired&#39; }" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="750" y="310" as="sourcePoint" />
+            <mxPoint x="540" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="error thrown" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="360" as="sourcePoint" />
+            <mxPoint x="330" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ms6a" value="[self]  Show &#39;Your code has expired. Request a new one.&#39;" style="text;html=1;strokeColor=#b85450;fillColor=#f8cecc;fontSize=9;rounded=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="337" y="378" width="340" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="ms6b" value="[self]  Highlight ResendOtpButton" style="text;html=1;strokeColor=#b85450;fillColor=#f8cecc;fontSize=9;rounded=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="337" y="405" width="220" height="20" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Token Refresh Failure" id="pg4">
+    <mxGraphModel dx="1082" dy="818" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="0" page="0" pageScale="1" pageWidth="1100" pageHeight="620" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tt" value="Error Flow — Token Refresh Failure (Session Expired Mid-Session)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;align=left;" parent="1" vertex="1">
+          <mxGeometry x="40" y="12" width="700" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" value="Browser" style="rounded=1;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="60" width="150" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="Axios Interceptor" style="rounded=1;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="230" y="60" width="155" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="TokenManager" style="rounded=1;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="435" y="60" width="155" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="BFF / Backend" style="rounded=1;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="640" y="60" width="155" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="l1" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="115" y="96" as="sourcePoint" />
+            <mxPoint x="115" y="540" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l2" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="307" y="96" as="sourcePoint" />
+            <mxPoint x="307" y="540" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l3" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="512" y="96" as="sourcePoint" />
+            <mxPoint x="512" y="540" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l4" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="717" y="96" as="sourcePoint" />
+            <mxPoint x="717" y="540" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m1" value="any API call" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#d6b656;fontColor=#7d6300;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="115" y="145" as="sourcePoint" />
+            <mxPoint x="307" y="145" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="401 Unauthorized" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="717" y="195" as="sourcePoint" />
+            <mxPoint x="307" y="195" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="refreshAccessToken()" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#d6b656;fontColor=#7d6300;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="307" y="245" as="sourcePoint" />
+            <mxPoint x="512" y="245" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="POST /api/auth/refresh → POST /auth/refresh" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="512" y="295" as="sourcePoint" />
+            <mxPoint x="717" y="295" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="401 — refresh token expired / invalid" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="717" y="345" as="sourcePoint" />
+            <mxPoint x="512" y="345" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ms6" value="[self]  tokenManager.invalidate()" style="text;html=1;strokeColor=#b85450;fillColor=#f8cecc;fontSize=9;rounded=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="519" y="363" width="210" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="ms7" value="[self]  router.push(&#39;/login&#39;)  — no redirect loop" style="text;html=1;strokeColor=#b85450;fillColor=#f8cecc;fontSize=9;rounded=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="519" y="390" width="280" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="m8" value="/login (clean redirect)" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#6c8ebf;fontColor=#023d7a;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="307" y="435" as="sourcePoint" />
+            <mxPoint x="115" y="435" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Registration Conflict 409" id="pg5">
+    <mxGraphModel dx="1082" dy="818" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="0" page="0" pageScale="1" pageWidth="1100" pageHeight="600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tt" value="Error Flow — Registration Email Already Exists (409)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;align=left;" parent="1" vertex="1">
+          <mxGeometry x="40" y="12" width="600" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" value="Browser" style="rounded=1;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="RegisterForm" style="rounded=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="250" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="AuthService" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="460" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="Backend API" style="rounded=1;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="670" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="l1" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="96" as="sourcePoint" />
+            <mxPoint x="120" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l2" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="96" as="sourcePoint" />
+            <mxPoint x="330" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l3" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="96" as="sourcePoint" />
+            <mxPoint x="540" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l4" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="750" y="96" as="sourcePoint" />
+            <mxPoint x="750" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m1" value="submit registration form" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#6c8ebf;fontColor=#023d7a;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="145" as="sourcePoint" />
+            <mxPoint x="330" y="145" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="signUp({ companyName, domain, email, ... })" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="200" as="sourcePoint" />
+            <mxPoint x="540" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="POST /auth/onboard" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="255" as="sourcePoint" />
+            <mxPoint x="750" y="255" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="409 — { title: &#39;Email already registered&#39; }" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="750" y="310" as="sourcePoint" />
+            <mxPoint x="540" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="error response" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="360" as="sourcePoint" />
+            <mxPoint x="330" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ms6" value="[self]  form.setError(&#39;email&#39;, { message: &#39;Email already registered&#39; })" style="text;html=1;strokeColor=#b85450;fillColor=#f8cecc;fontSize=9;rounded=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="337" y="378" width="400" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="m7" value="inline email field error" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="420" as="sourcePoint" />
+            <mxPoint x="120" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

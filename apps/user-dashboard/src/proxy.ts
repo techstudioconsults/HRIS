@@ -15,13 +15,22 @@ const AUTH_BLOCKED_FOR_AUTHENTICATED_PREFIXES = [
   '/register',
   '/forgot-password',
   '/reset-password',
-  '/onboarding',
 ] as const;
 
-const isBlockedAuthPageForAuthenticatedUser = (path: string): boolean =>
-  AUTH_BLOCKED_FOR_AUTHENTICATED_PREFIXES.some(
+// These paths are part of the post-login flow and must remain accessible
+// to authenticated users even though they live under a blocked prefix.
+const AUTH_FLOW_EXCEPTIONS = ['/login/continue'] as const;
+
+const isBlockedAuthPageForAuthenticatedUser = (path: string): boolean => {
+  if (
+    AUTH_FLOW_EXCEPTIONS.some((p) => path === p || path.startsWith(`${p}/`))
+  ) {
+    return false;
+  }
+  return AUTH_BLOCKED_FOR_AUTHENTICATED_PREFIXES.some(
     (prefix) => path === prefix || path.startsWith(`${prefix}/`)
   );
+};
 
 const checkPermissions = (
   userPermissions: string[],

@@ -24,7 +24,7 @@ export const Welcome = () => {
       <section
         className={`flex flex-col-reverse items-center justify-between gap-8 lg:flex-row`}
       >
-        <section className={`max-w-[646px]`}>
+        <section className={`max-w-161.5`}>
           <div className={`space-y-6`} data-tour="welcome-heading">
             <h1 className={`text-4xl font-semibold`}>
               Welcome to TechstudioHR,
@@ -66,7 +66,7 @@ export const Welcome = () => {
           height={561}
           src={'/images/onboarding/deal.svg'}
           alt={'onboarding'}
-          className={`max-h-[561px] w-[500px] rounded-2xl bg-gray-50 object-cover shadow`}
+          className={`max-h-140.25 w-125 rounded-2xl bg-gray-50 object-cover shadow`}
         />
       </section>
     </section>

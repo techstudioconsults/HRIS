@@ -2,7 +2,6 @@
 
 import { ROLES } from '@/lib/auth-types';
 import { getDashboardRoute } from '@/lib/routes/redirect-helpers';
-import { isOnboardingSetupComplete } from '@/modules/@org/onboarding/services/service';
 import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onboarding-service';
 import { SuspenseLoading } from '@workspace/ui/lib/loading';
 import { useSession } from '@/lib/session';
@@ -22,10 +21,11 @@ const PostLoginContinuePage = () => {
   );
 
   const { useGetSetupStatus } = useOnboardingService();
-  const { data: setupStatusResponse, isLoading: isSetupLoading } =
-    useGetSetupStatus(employeeId ?? '', {
-      enabled: status === 'authenticated' && isOwner && Boolean(employeeId),
-    });
+  const {
+    data: setupStatusResponse,
+    isLoading: isSetupLoading,
+    isFetching: isSetupFetching,
+  } = useGetSetupStatus(employeeId ?? '');
 
   useEffect(() => {
     if (status === 'loading') {
@@ -44,11 +44,11 @@ const PostLoginContinuePage = () => {
       return;
     }
 
-    if (!employeeId || isSetupLoading) {
+    if (!employeeId || isSetupLoading || isSetupFetching) {
       return;
     }
 
-    if (isOnboardingSetupComplete(setupStatusResponse?.data)) {
+    if (setupStatusResponse?.data?.takenTour) {
       router.replace(dashboardRoute);
       return;
     }
@@ -57,6 +57,7 @@ const PostLoginContinuePage = () => {
   }, [
     employeeId,
     isOwner,
+    isSetupFetching,
     isSetupLoading,
     permissions,
     router,

@@ -7,7 +7,7 @@ import {
   ReactNode,
 } from 'react';
 import type { CarouselApi } from '@workspace/ui/components/carousel';
-import type { EmblaOptionsType } from 'embla-carousel';
+import type { EmblaOptionsType, EmblaPluginType } from 'embla-carousel';
 
 declare global {
   interface LogoProperties {
@@ -78,6 +78,7 @@ declare global {
     items: any[];
     renderItem: (item: any, index: number) => ReactNode;
     swiperOptions?: EmblaOptionsType;
+    plugins?: EmblaPluginType[];
     showNavigation?: boolean;
     showPagination?: boolean;
     showScrollbar?: boolean;

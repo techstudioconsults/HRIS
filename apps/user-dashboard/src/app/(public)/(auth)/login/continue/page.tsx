@@ -66,11 +66,9 @@ const PostLoginContinuePage = () => {
   ]);
 
   return (
-    <div className="bg-primary/10 w-full -mt-60 max-w-lg  mx-auto rounded-xl border p-8 text-center backdrop-blur">
+    <div className=" w-full flex items-end gap-2 -mt-60 max-w-lg mx-auto text-center backdrop-blur">
       <SuspenseLoading />
-      <p className="mt-3 text-sm font-medium text-black">
-        Preparing your workspace...
-      </p>
+      <p className="text-sm font-medium">Preparing your workspace...</p>
     </div>
   );
 };

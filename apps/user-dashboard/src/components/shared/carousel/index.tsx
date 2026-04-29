@@ -16,6 +16,7 @@ export const UniversalSwiper = ({
   items,
   renderItem,
   swiperOptions,
+  plugins,
   showNavigation = false,
   showPagination = false,
   className,
@@ -61,6 +62,7 @@ export const UniversalSwiper = ({
       <Carousel
         className={cn('w-full z-12', swiperClassName)}
         opts={carouselOptions}
+        plugins={plugins}
         setApi={(nextApi) => {
           setApi(nextApi);
           onSwiperInit?.(nextApi);

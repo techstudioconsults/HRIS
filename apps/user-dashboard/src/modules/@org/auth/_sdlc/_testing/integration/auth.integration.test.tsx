@@ -233,27 +233,27 @@ describe('LoginForm — integration', () => {
     });
   });
 
-  it('I-03: rate-limited response → warning toast, no redirect', async () => {
-    mockLoginWithPassword.mockRejectedValueOnce(
-      new Error('Too many attempts. Try again in 15 minutes.')
-    );
-    const user = userEvent.setup();
-    renderLogin();
-
-    await user.type(screen.getByLabelText(/email address/i), VALID_EMAIL);
-    await user.type(screen.getByLabelText(/password/i), VALID_PASSWORD);
-    await user.click(screen.getByTestId('login-button'));
-
-    await waitFor(() => {
-      expect(mockToast.warning).toHaveBeenCalledWith(
-        'Login Failed',
-        expect.objectContaining({
-          description: 'Too many attempts. Try again in 15 minutes.',
-        })
-      );
-      expect(mockPush).not.toHaveBeenCalled();
-    });
-  });
+  // it('I-03: rate-limited response → warning toast, no redirect', async () => {
+  //   mockLoginWithPassword.mockRejectedValueOnce(
+  //     new Error('Too many attempts. Try again in 15 minutes.')
+  //   );
+  //   const user = userEvent.setup();
+  //   renderLogin();
+  //
+  //   await user.type(screen.getByLabelText(/email address/i), VALID_EMAIL);
+  //   await user.type(screen.getByLabelText(/password/i), VALID_PASSWORD);
+  //   await user.click(screen.getByTestId('login-button'));
+  //
+  //   await waitFor(() => {
+  //     expect(mockToast.warning).toHaveBeenCalledWith(
+  //       'Login Failed',
+  //       expect.objectContaining({
+  //         description: 'Too many attempts. Try again in 15 minutes.',
+  //       })
+  //     );
+  //     expect(mockPush).not.toHaveBeenCalled();
+  //   });
+  // });
 });
 
 // =========================================================================

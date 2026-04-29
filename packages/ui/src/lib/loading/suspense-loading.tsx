@@ -16,7 +16,7 @@ export function SuspenseLoading({}: SuspenseLoadingProperties) {
   };
 
   return (
-    <div className="flex items-center justify-center w-full">
+    <div className="flex items-center justify-center">
       <Image
         src={`/images/logo.png`}
         className="text-primary size-6 animate-spin"

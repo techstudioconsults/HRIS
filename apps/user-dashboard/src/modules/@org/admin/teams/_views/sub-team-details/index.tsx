@@ -10,7 +10,8 @@ import { AdvancedDataTable } from '@workspace/ui/lib/table';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import Image from 'next/image';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useDebounce } from 'use-debounce';
 import { toast } from 'sonner';
 
 import empty1 from '~/images/empty-state.svg';
@@ -22,24 +23,7 @@ import { useEmployeeService } from '../../../employee/services/use-service';
 import { useTeamService } from '../../services/use-service';
 import { SubTeamDetailsSkeleton } from './skeleton';
 import { formatDate } from '@/lib/formatters';
-
-// Type guards to safely normalize different response shapes without using `any`
-function isEmployeeArray(value: unknown): value is Employee[] {
-  return Array.isArray(value);
-}
-function hasItems(value: unknown): value is { items: unknown[] } {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    Array.isArray((value as { items?: unknown[] }).items)
-  );
-}
-function hasDataItems(value: unknown): value is { data: { items: unknown[] } } {
-  if (typeof value !== 'object' || value === null) return false;
-  const data = (value as { data?: unknown }).data;
-  if (typeof data !== 'object' || data === null) return false;
-  return Array.isArray((data as { items?: unknown[] }).items);
-}
+import { SearchInput } from '@/modules/@org/shared';
 
 // Sub Team Details Header Component
 const SubTeamDetailsHeader = ({
@@ -104,36 +88,24 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
     refetch,
   } = useGetTeamsById(teamId, { enabled: !!teamId });
 
+  // ── Search: debounced input ───────────────────────────────────────────────
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearch] = useDebounce(searchInput, 300);
+
+  const handleSearchChange = useCallback((query: string) => {
+    setSearchInput(query);
+  }, []);
+
+  // ── Members: backend search via /employees?teamId=&search= ────────────────
   const { useGetAllEmployees } = useEmployeeService();
-  const { data: employeesResp } = useGetAllEmployees({}, { enabled: true });
+  const membersFilters: Filters = { teamId };
+  if (debouncedSearch.trim()) {
+    membersFilters.search = debouncedSearch.trim();
+  }
+  const { data: employeesResp, isLoading: isLoadingMembers } =
+    useGetAllEmployees(membersFilters, { enabled: !!teamId });
 
-  const allEmployees: Employee[] = useMemo(() => {
-    const payload = employeesResp as unknown;
-    if (
-      hasDataItems(payload) &&
-      isEmployeeArray((payload as { data: { items: unknown[] } }).data.items)
-    ) {
-      return (payload as { data: { items: Employee[] } }).data.items;
-    }
-    if (
-      hasItems(payload) &&
-      isEmployeeArray((payload as { items: unknown[] }).items)
-    ) {
-      return (payload as { items: Employee[] }).items;
-    }
-    if (isEmployeeArray(payload)) {
-      return payload as Employee[];
-    }
-    return [];
-  }, [employeesResp]);
-
-  const members: Employee[] = useMemo(
-    () =>
-      allEmployees.filter(
-        (employee) => employee?.employmentDetails?.team?.id === teamId
-      ),
-    [allEmployees, teamId]
-  );
+  const members: Employee[] = employeesResp?.data?.items ?? [];
 
   const { getRowActions, DeleteConfirmationModal, setActiveEmployee } =
     useEmployeeRowActions();
@@ -208,7 +180,7 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
     [setActiveEmployee]
   );
 
-  if (isLoadingTeam) {
+  if (isLoadingTeam || isLoadingMembers) {
     return <SubTeamDetailsSkeleton />;
   }
 
@@ -246,6 +218,13 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
       </CardGroup>
 
       <section className="space-y-4">
+        <div className="relative w-full sm:w-72">
+          <SearchInput
+            placeholder="Search members..."
+            onSearch={handleSearchChange}
+            className="h-10"
+          />
+        </div>
         {members.length > 0 ? (
           <>
             <AdvancedDataTable

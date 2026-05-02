@@ -1,7 +1,40 @@
-# Implementation — Team Details Tabbed View
+# Fix — Sub-Team Details: Backend-Driven Members + Search
 
 **Date**: 2026-05-02
-**Stage**: Phase 3 — Implementation Complete / Phase 4 — Review Complete
+**Stage**: Refactor Complete
+
+## What Was Done
+
+`apps/user-dashboard/src/modules/@org/admin/teams/_views/team-details/index.tsx` was
+730 lines. It has been broken into focused components under a new `components/` folder.
+
+### New Files
+
+| File                                  | Responsibility                                  | Lines |
+| ------------------------------------- | ----------------------------------------------- | ----- |
+| `components/team-details-header.tsx`  | Breadcrumb + Add Sub-team + dropdown menu       | 98    |
+| `components/team-stats-cards.tsx`     | 4 DashboardCard stat widgets                    | 57    |
+| `components/members-columns.tsx`      | `useMembersColumns` hook + response type guards | 122   |
+| `components/members-tab.tsx`          | "All Team Members" tab panel                    | 53    |
+| `components/sub-teams-tab.tsx`        | "Sub Teams" tab panel                           | 54    |
+| `components/team-details-content.tsx` | Tab container: data fetching, filtering, tab UI | 190   |
+| `components/team-details-dialogs.tsx` | Edit / Add / Delete dialogs grouped             | 107   |
+
+### Modified Files
+
+| File        | Change                                                                            |
+| ----------- | --------------------------------------------------------------------------------- |
+| `index.tsx` | Reduced from 730 → 164 lines; pure orchestrator (mutations + state + composition) |
+
+### No Regressions
+
+- All existing functionality preserved (tab switching, search, modals, navigation)
+- Zero new TypeScript errors in team-details folder
+- Pre-existing errors in `_sdlc/mocks` and other modules untouched
+
+## What Comes Next
+
+- The Modal URL Persistence feature (Modal loses children on refresh) still needs investigation
 
 ## Acceptance Criteria Verification
 

@@ -1,9 +1,9 @@
 # Current Feature Context
 
-**Feature Name**: Team Details — Tabbed Members / Sub-Teams View
+**Feature Name**: Team Details — Fix Sub-Teams Tab Backend Search
 **Status**: ✅ Done
 **Started**: 2026-05-02
-**Completed**: 2026-05-02
+**Completed**: 2026-05-02T13:08:00
 
 ---
 

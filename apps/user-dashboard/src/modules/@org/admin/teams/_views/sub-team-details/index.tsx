@@ -12,10 +12,11 @@ import { Icon } from '@workspace/ui/lib/icons/icon';
 import Image from 'next/image';
 import { useCallback, useMemo, useState } from 'react';
 import { useDebounce } from 'use-debounce';
-import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
 
 import empty1 from '~/images/empty-state.svg';
 import AddNewMembers from '../../_components/forms/add-new-members';
+import type { MemberAssignment } from '../../types';
 import { CardGroup } from '../../../../_components/card-group';
 import { DashboardCard } from '../../../../_components/dashboard-card';
 import { useEmployeeRowActions } from '../../../employee/_views/table-data';
@@ -261,38 +262,6 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
             }}
           />
         )}
-        <ReusableDialog
-          open={isAddMemberOpen}
-          onOpenChange={(open) => {
-            if (!open) closeModal();
-          }}
-          title="Assign Members"
-          description="Assign existing parent team members to this sub-team."
-          trigger={<span />}
-          className="min-w-2xl"
-        >
-          <AddNewMembers
-            parentTeamId={(() => {
-              const t = teamData as Team | undefined;
-              const parent: unknown = (t as unknown as { parent?: unknown })
-                ?.parent;
-              if (
-                parent &&
-                typeof parent === 'object' &&
-                (parent as { id?: string }).id
-              ) {
-                return (parent as { id: string }).id;
-              }
-              if (typeof parent === 'string') return parent;
-              return t?.id || '';
-            })()}
-            availableRoles={[]}
-            onSubmit={async () => {
-              toast.success('Member assigned (simulate).');
-            }}
-            onCancel={closeModal}
-          />
-        </ReusableDialog>
       </section>
     </>
   );
@@ -302,8 +271,41 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
   const { id } = params;
   const { isAddMemberOpen, openAddMember, closeModal } =
     useSubTeamModalParams();
-  const { useGetTeamsById } = useTeamService();
+  const { useGetTeamsById, useAssignEmployeeToTeam } = useTeamService();
   const { data: teamData } = useGetTeamsById(id, { enabled: !!id });
+  const queryClient = useQueryClient();
+  const { mutateAsync: assignEmployee, isPending: isAssigning } =
+    useAssignEmployeeToTeam();
+
+  // Derive the parent team id from the team's parent field
+  const parentTeamId = (() => {
+    const parent: unknown = (teamData as unknown as { parent?: unknown })
+      ?.parent;
+    if (
+      parent &&
+      typeof parent === 'object' &&
+      (parent as { id?: string }).id
+    ) {
+      return (parent as { id: string }).id;
+    }
+    if (typeof parent === 'string') return parent;
+    return id;
+  })();
+
+  const handleAddMember = async (assignment: MemberAssignment) => {
+    await assignEmployee({
+      employeeId: assignment.employeeId,
+      teamId: id,
+      roleId: assignment.roleId,
+    });
+    // Refresh the members list for this sub-team
+    await queryClient.invalidateQueries({
+      queryKey: ['employee', 'list'],
+    });
+    await queryClient.invalidateQueries({
+      queryKey: ['team', 'details', id],
+    });
+  };
 
   return (
     <>
@@ -323,25 +325,11 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
         className="min-w-2xl"
       >
         <AddNewMembers
-          parentTeamId={(() => {
-            const t = teamData as Team | undefined;
-            const parent: unknown = (t as unknown as { parent?: unknown })
-              ?.parent;
-            if (
-              parent &&
-              typeof parent === 'object' &&
-              (parent as { id?: string }).id
-            ) {
-              return (parent as { id: string }).id;
-            }
-            if (typeof parent === 'string') return parent;
-            return t?.id || '';
-          })()}
+          parentTeamId={parentTeamId}
           availableRoles={[]}
-          onSubmit={async () => {
-            toast.success('Member assigned (simulate).');
-          }}
+          onSubmit={handleAddMember}
           onCancel={closeModal}
+          isSubmitting={isAssigning}
         />
       </ReusableDialog>
     </>

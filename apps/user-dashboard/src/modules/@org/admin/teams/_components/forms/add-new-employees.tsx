@@ -374,8 +374,7 @@ export const AddNewEmployees = ({
                                     }
                                     className={cn(
                                       'border-input bg-background ring-offset-background focus-visible:ring-ring flex h-[48px] w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-                                      !employee.employeeId &&
-                                        'text-muted-foreground'
+                                      'text-muted-foreground transition-colors hover:border-primary hover:text-primary focus:border-primary focus:text-primary active:border-primary active:text-primary'
                                     )}
                                   >
                                     {employee.employeeId
@@ -479,8 +478,7 @@ export const AddNewEmployees = ({
                                     }
                                     className={cn(
                                       'border-input bg-background ring-offset-background focus-visible:ring-ring flex h-[48px] w-full items-center justify-between rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-                                      !employee.roleId &&
-                                        'text-muted-foreground'
+                                      'text-muted-foreground transition-colors hover:border-primary hover:text-primary focus:border-primary focus:text-primary active:border-primary active:text-primary'
                                     )}
                                   >
                                     {employee.roleId

@@ -50,8 +50,6 @@ export function ComboBox({
   emptyMessage = 'No options found.',
   disabled = false,
   readOnly = false,
-  className,
-  width = 'w-full',
   triggerClassName,
   contentClassName,
   allowClear = true,
@@ -87,16 +85,15 @@ export function ComboBox({
           aria-expanded={open}
           disabled={disabled}
           className={cn(
-            `bg-background text-foreground ring-offset-background focus-visible:ring-ring border-border
-             hover:bg-background flex h-12 w-full rounded-md border px-3 py-2 text-sm
+            `bg-background dark:bg-primary-50 text-muted-foreground ring-offset-background focus-visible:ring-ring h-10 border-border
+            hover:text-primary hover:border-primary focus:text-primary focus:border-primary
+             active:text-primary active:border-primary transition-colors flex w-full rounded-md px-3 py-2 text-sm
               shadow-none file:border-0 file:bg-transparent file:text-sm file:font-medium 
               placeholder:text-gray-200 focus-visible:ring-2 focus-visible:ring-offset-2
                focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50`,
-            width,
-            'justify-between',
+            'bg-background border border-transparent justify-between hover:border-primary-75 hover:text-primary',
             readOnly && 'pointer-events-none cursor-default',
-            triggerClassName,
-            className
+            triggerClassName
           )}
         >
           {/*<span className={cn(!selectedOption && 'text-gray-200')}>*/}

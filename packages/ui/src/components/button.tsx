@@ -10,25 +10,22 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          'bg-primary/10 text-primary shadow-none border border-primary/20',
-        // default: 'bg-default text-default-foreground shadow-none',
+        default: 'bg-default text-default-foreground shadow-none',
         primary:
           'bg-primary text-primary-foreground hover:bg-primary-75 hover:text-primary',
         primaryOutline:
-          'text-primary border border-primary/30 hover:bg-primary-75 hover:border-primary-75 hover:text-primary shadow-none',
-        accent: 'bg-accent text-accent-foreground',
+          'border border-border hover:bg-primary-50 text-primary bg-background shadow-none',
         accentOutline:
-          'text-accent border border-accent/30 hover:bg-accent/10 shadow-none',
+          'border border-border hover:bg-primary-50 text-primary bg-background shadow-none',
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive-hover',
         destructiveOutline:
-          'text-destructive border border-destructive/30 hover:bg-destructive/10 hover:border-destructive/10 shadow-none',
+          'border border-danger-75 hover:bg-danger-50 text-danger bg-background shadow-none',
         subtle: 'bg-subtle text-subtle-foreground hover:bg-subtle-hover',
         loading:
           'bg-loading text-loading-foreground hover:bg-loading-hover opacity-50 hover:opacity-100 transition-opacity duration-500 ease-out',
         outline:
-          'text-gray-500 border border-border hover:bg-primary-75 hover:text-primary shadow-none',
+          'border border-border hover:bg-primary-50 text-primary bg-background shadow-none',
         secondary:
           'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost:

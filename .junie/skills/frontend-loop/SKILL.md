@@ -1,0 +1,38 @@
+---
+name: frontend-loop
+description: Start a frontend-only feature development loop
+tags: [feature, frontend, planning]
+---
+
+We are starting a frontend-only feature loop.
+
+**Feature:** <describe the feature in your task prompt>
+
+## Phases
+
+Planner → Frontend Implementer → Reviewer → Optimizer
+
+## Workflow
+
+Load `/home/kingsley/blackbox/.ai/fullstack/workflows/frontend-feature.md` for the detailed phase instructions.
+
+## Context sources (global blackbox — read-only)
+
+- Architecture: `/home/kingsley/blackbox/.ai/fullstack/context/architecture.md`
+- Frontend architecture: `/home/kingsley/blackbox/.ai/fullstack/context/frontend-architecture.md`
+- Tech stack: `/home/kingsley/blackbox/.ai/fullstack/context/tech-stack.md`
+- API contracts: `/home/kingsley/blackbox/.ai/fullstack/context/api-contracts.md`
+- Constraints: `/home/kingsley/blackbox/.ai/fullstack/context/constraints.md`
+- Readiness checklist: `/home/kingsley/blackbox/.ai/fullstack/context/readiness-checklist.md`
+- Coding standards: `/home/kingsley/blackbox/.ai/fullstack/context/coding-standards.md`
+
+## Project memory & state (shared — read/write)
+
+Memory: `.ai/memory/` | State: `.ai/state/`
+
+## Instructions
+
+1. Read Step 0 from `.junie/AGENTS.md` before starting.
+2. Initialize `.ai/state/current-feature.md` with the feature name, goal, and acceptance criteria.
+3. Set `.ai/state/loop-status.md` to Phase 1 — Plan.
+4. Start with the Planner role now.

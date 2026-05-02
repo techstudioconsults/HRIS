@@ -8,8 +8,8 @@ export type { LeaveUIState, LeaveUIActions } from '../types';
 const initialState: LeaveUIState = {
   showLeaveSetupModal: false,
   hasCompletedLeaveSetup: false,
-  showLeaveDetailsDrawer: false,
-  selectedLeaveRequestId: null,
+  // Drawer open/close and entity ID are managed by nuqs (useLeaveAdminModalParams).
+  // This field is a warm cache only — null on cold refresh.
   selectedLeaveRequest: null,
 };
 
@@ -20,9 +20,6 @@ export const useLeaveStore = create<LeaveUIState & LeaveUIActions>()(
       setShowLeaveSetupModal: (open) => set({ showLeaveSetupModal: open }),
       setHasCompletedLeaveSetup: (status) =>
         set({ hasCompletedLeaveSetup: status }),
-      setShowLeaveDetailsDrawer: (open) =>
-        set({ showLeaveDetailsDrawer: open }),
-      setSelectedLeaveRequestId: (id) => set({ selectedLeaveRequestId: id }),
       setSelectedLeaveRequest: (request) =>
         set({ selectedLeaveRequest: request }),
       resetUI: () => set(initialState),

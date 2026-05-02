@@ -229,7 +229,7 @@ export const AddEmployeeForm = () => {
             <fieldset className={sectionClassName}>
               <legend className={legendClassName}>Personal Information</legend>
               <p className={sectionHintClassName}>
-                <Icon name={'InfoCircle'} />
+                <Icon name={'InfoCircle'} className={`text-primary`} />
                 Add the employee&apos;s core profile and contact details.
               </p>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
@@ -322,7 +322,7 @@ export const AddEmployeeForm = () => {
             <fieldset className={sectionClassName}>
               <legend className={legendClassName}>Employment Details</legend>
               <p className={sectionHintClassName}>
-                <Icon name={'InfoCircle'} />
+                <Icon name={'InfoCircle'} className={`text-primary`} />
                 Configure job setup, department, and role assignment.
               </p>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
@@ -368,7 +368,7 @@ export const AddEmployeeForm = () => {
                       ? `Loading department...`
                       : `Select a department`
                   }
-                  className="bg-background border-border !h-14 w-full"
+                  className="bg-background border-border h-14! w-full"
                   options={teams.map((team) => ({
                     value: String(team.id),
                     label: team.name,
@@ -404,7 +404,7 @@ export const AddEmployeeForm = () => {
             <fieldset className={sectionClassName}>
               <legend className={legendClassName}>Salary Details</legend>
               <p className={sectionHintClassName}>
-                <Icon name={'InfoCircle'} />
+                <Icon name={'InfoCircle'} className={`text-primary`} />
                 Capture payroll and bank account information.
               </p>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
@@ -444,7 +444,7 @@ export const AddEmployeeForm = () => {
                           disabled={
                             loadingBanks || loadingTeams || isSubmitting
                           }
-                          className="h-14 w-full"
+                          triggerClassName="h-14 w-full border-border"
                         />
                         {fieldState.error && (
                           <p className="text-destructive text-sm">
@@ -478,7 +478,7 @@ export const AddEmployeeForm = () => {
             <fieldset className={sectionClassName}>
               <legend className={legendClassName}>Employee Documents</legend>
               <p className={sectionHintClassName}>
-                <Icon name={'InfoCircle'} />
+                <Icon name={'InfoCircle'} className={`text-primary`} />
                 Upload supporting documents for this employee (optional).
               </p>
               <div className="grid grid-cols-1 gap-4 md:gap-8">
@@ -498,7 +498,7 @@ export const AddEmployeeForm = () => {
               variant="destructiveOutline"
               onClick={() => router.push('/admin/employees')}
               isDisabled={isSubmitting}
-              className="text-destructive border-destructive w-full"
+              className="w-full"
             >
               Cancel
             </MainButton>

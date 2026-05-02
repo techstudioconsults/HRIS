@@ -51,8 +51,8 @@ export function UserMenu({
       <DropdownMenuTrigger
         data-testid="user-menu-trigger"
         className={cn(
-          'focus-visible:ring-ring flex items-center gap-2 rounded-lg px-2 py-1.5 ' +
-            'transition-colors focus:outline-none focus-visible:ring-2',
+          ' flex items-center gap-2 rounded-lg px-2 py-1.5 ' +
+            'transition-colors focus:outline-none',
           className
         )}
       >

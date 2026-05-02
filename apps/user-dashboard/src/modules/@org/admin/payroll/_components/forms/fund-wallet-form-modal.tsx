@@ -8,6 +8,7 @@ import { MainButton } from '@workspace/ui/lib/button';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
+import { usePayrollModalParams } from '@/lib/nuqs/use-payroll-modal-params';
 import { generatePayrollTourStep } from '../../config/tour-steps';
 import { fundWalletSchema } from '../../schemas/forms';
 import { usePayrollService } from '../../services/use-service';
@@ -21,11 +22,13 @@ export function FundWalletFormModal({
   initialData,
   isGeneratePayrollBannerShowing,
 }: FundWalletFormModalProperties) {
+  // ── URL state (nuqs) — modal open/close survive refresh ──────────────────
+  const { isFundWalletOpen, closeModal, openFundWalletAccount } =
+    usePayrollModalParams();
+
+  // ── Zustand — non-URL business state ─────────────────────────────────────
   const {
-    setShowFundWalletAccountModal,
-    showFundWalletFormModal,
     setHasCompletedPayrollPolicySetupForm,
-    setShowFundWalletFormModal,
     setWalletSetupCompleted,
     walletSetupCompleted,
   } = usePayrollStore();
@@ -51,7 +54,7 @@ export function FundWalletFormModal({
     try {
       await updateWallet(data, {
         onSuccess: () => {
-          setShowFundWalletFormModal(false);
+          closeModal();
           setTimeout(() => {
             setIsSuccessAlertOpen(true);
             setHasCompletedPayrollPolicySetupForm(false);
@@ -83,7 +86,7 @@ export function FundWalletFormModal({
   };
 
   const handleFundWalletClick = () => {
-    setShowFundWalletAccountModal(true);
+    openFundWalletAccount();
     setIsSuccessAlertOpen(false);
   };
 
@@ -91,8 +94,10 @@ export function FundWalletFormModal({
     <>
       <ReusableDialog
         trigger={''}
-        open={showFundWalletFormModal}
-        onOpenChange={setShowFundWalletFormModal}
+        open={isFundWalletOpen}
+        onOpenChange={(open) => {
+          if (!open) closeModal();
+        }}
         title="Set up Payroll Wallet"
         className="min-w-md"
       >

@@ -36,7 +36,7 @@ export const ReusableTooltip = ({
       content={content}
       side={side}
       align={align}
-      className={cn('break-words', maxWidth, contentClassName)}
+      className={cn('wrap-break-word', maxWidth, contentClassName)}
       delayDuration={delayDuration}
       disableHoverableContent={disableHoverableContent}
     >

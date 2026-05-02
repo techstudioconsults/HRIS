@@ -5,11 +5,9 @@ import { ResetPasswordData, resetPasswordSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { AxiosError } from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 
 import { useAuthService } from '../../services/use-auth-service';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
@@ -44,20 +42,10 @@ export const ResetPassword = () => {
     };
 
     await resetPassword(tokenizedData, {
-      onSuccess: (response) => {
-        toast.success(`Password Reset Successful`, {
-          description: response?.data,
-        });
+      onSuccess: () => {
         router.push(`/login`);
       },
-      onError: (error) => {
-        toast.error('Password Reset Failed', {
-          description:
-            error instanceof AxiosError
-              ? error.response?.data.message
-              : 'An unknown error occurred',
-        });
-      },
+      onError: () => {},
     });
   };
 

@@ -105,10 +105,7 @@ export const EmployeeHeaderSection = ({
             <GenericDropdown
               contentClassName="bg-background"
               trigger={
-                <Button
-                  className="h-10 rounded-md bg-primary/10 text-primary px-3"
-                  variant="default"
-                >
+                <Button className="h-10" variant="primaryOutline">
                   <Icon name="Filter" size={16} variant={`Outline`} />
                   <span className={`hidden lg:block`}>Filter</span>
                 </Button>

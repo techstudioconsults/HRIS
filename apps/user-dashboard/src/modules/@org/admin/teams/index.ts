@@ -5,7 +5,6 @@ export type {
   CreateTeamDto,
   TeamQueryParameters,
   TeamWorkflowActions,
-  TeamWorkflowDialog,
   TeamWorkflowState,
   UpdateTeamDto,
   WorkflowMode,

@@ -11,7 +11,7 @@ const Toaster = ({ ...properties }: ToasterProps) => {
     <Sonner
       theme={theme as ToasterProps['theme']}
       className="toaster group"
-      position="bottom-center"
+      position="bottom-right"
       richColors
       icons={{
         error: <ShieldAlert size={24} />,

@@ -1,6 +1,7 @@
 'use client';
 
 import { useTour } from '@/modules/@org/onboarding';
+import { usePayrollModalParams } from '@/lib/nuqs/use-payroll-modal-params';
 import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
@@ -24,11 +25,12 @@ export function FundWalletAccountModal({
 }) {
   const { startTour } = useTour();
   const [copied, setCopied] = useState(false);
-  const {
-    showFundWalletAccountModal,
-    setShowFundWalletAccountModal,
-    walletSetupCompleted,
-  } = usePayrollStore();
+
+  // ── URL state (nuqs) — modal open/close survive refresh ──────────────────
+  const { isFundWalletAccountOpen, closeModal } = usePayrollModalParams();
+
+  // ── Zustand — non-URL business state ─────────────────────────────────────
+  const { walletSetupCompleted } = usePayrollStore();
   const { useGetCompanyWallet } = usePayrollService();
   const { data: companyWalletData, refetch: refetchCompanyWallet } =
     useGetCompanyWallet();
@@ -46,7 +48,7 @@ export function FundWalletAccountModal({
 
   // Poll every 5s while modal is open and until accountNumber exists
   useEffect(() => {
-    if (!showFundWalletAccountModal) return;
+    if (!isFundWalletAccountOpen) return;
     if (companyWalletData?.data?.accountNumber) return;
 
     const id = setInterval(() => {
@@ -55,13 +57,13 @@ export function FundWalletAccountModal({
 
     return () => clearInterval(id);
   }, [
-    showFundWalletAccountModal,
+    isFundWalletAccountOpen,
     companyWalletData?.data?.accountNumber,
     refetchCompanyWallet,
   ]);
 
   const handleConfirm = async () => {
-    setShowFundWalletAccountModal(false);
+    closeModal();
     if (walletSetupCompleted && isGeneratePayrollBannerShowing) {
       startTour(generatePayrollTourStep);
     }
@@ -70,8 +72,10 @@ export function FundWalletAccountModal({
   return (
     <ReusableDialog
       trigger={''}
-      open={showFundWalletAccountModal}
-      onOpenChange={setShowFundWalletAccountModal}
+      open={isFundWalletAccountOpen}
+      onOpenChange={(open) => {
+        if (!open) closeModal();
+      }}
       title="Fund Wallet"
       className="md:min-w-sm!"
     >

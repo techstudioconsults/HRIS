@@ -557,7 +557,7 @@ export const EditEmployeeForm = () => {
                           searchPlaceholder="Search banks..."
                           emptyMessage="No bank found."
                           disabled={loadingBanks || isHydrating || isSubmitting}
-                          className="h-14 w-full"
+                          triggerClassName="h-14 w-full border-border"
                         />
                         {fieldState.error && (
                           <p className="text-destructive text-sm">
@@ -623,7 +623,7 @@ export const EditEmployeeForm = () => {
                 reset(formValues);
               }}
               isDisabled={isSubmitting}
-              className="text-destructive border-destructive w-full"
+              className="w-full"
             >
               Cancel
             </MainButton>

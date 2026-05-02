@@ -2,6 +2,7 @@
 'use client';
 
 import { useTeamsSearchParameters } from '@/lib/nuqs/use-teams-search-parameters';
+import { useTeamsModalParams } from '@/lib/nuqs/use-teams-modal-params';
 import { useTeamWorkflowStore } from '@/modules/@org/admin/teams/store/team-store';
 import type {
   OnboardingSchemaRole as FormRole,
@@ -46,6 +47,31 @@ export const AllTeams = () => {
   const [searchInput, setSearchInput] = useState(search || '');
   const [debouncedSearch] = useDebounce(searchInput, 300);
 
+  // ── Modal URL state (nuqs) ─────────────────────────────────────────────────
+  const {
+    modalId,
+    modalMode,
+    isTeamOpen,
+    isRoleOpen,
+    isEmployeeOpen,
+    openTeamDialog,
+    openRoleDialog,
+    openEmployeeDialog,
+    closeModal,
+  } = useTeamsModalParams();
+
+  // ── Workflow (non-URL) state from Zustand ─────────────────────────────────
+  const {
+    currentTeam,
+    currentRole,
+    isSubmitting,
+    skipToNextStep,
+    setCurrentTeam,
+    setCurrentRole,
+    setSubmitting,
+    setSkipToNextStep,
+  } = useTeamWorkflowStore();
+
   const handleOpenEmployeeDialog = (team: Team) => {
     const formTeam: TeamFormType = {
       id: team.id,
@@ -54,7 +80,7 @@ export const AllTeams = () => {
     };
     setCurrentTeam(formTeam);
     setCurrentRole(null);
-    openEmployeeDialog(formTeam);
+    openEmployeeDialog(formTeam.id!);
 
     // Force refetch roles for this team
     queryClient.invalidateQueries({ queryKey: ['roles', team.id] });
@@ -77,13 +103,13 @@ export const AllTeams = () => {
     };
     setCurrentTeam(formTeam);
     setCurrentRole(null);
-    openRoleDialog(formTeam, null);
+    openRoleDialog(formTeam.id!);
 
     // Force refetch roles for this team
     queryClient.invalidateQueries({ queryKey: ['roles', team.id] });
   };
 
-  // Team editing hook
+  // Team editing hook (separate from workflow store — Edit via row action)
   const {
     isEditing,
     editingTeam,
@@ -98,25 +124,15 @@ export const AllTeams = () => {
     handleOpenEditDialog,
     handleOpenRoleDialog
   );
-  const {
-    dialog,
-    currentTeam,
-    currentRole,
-    isSubmitting,
-    workflowMode,
-    skipToNextStep,
-    openTeamDialog,
-    openRoleDialog,
-    openEmployeeDialog,
-    closeDialog,
-    setCurrentTeam,
-    setCurrentRole,
-    setSubmitting,
-    setSkipToNextStep,
-  } = useTeamWorkflowStore();
 
   const handleOpenTeamDialog = (team?: TeamFormType) => {
-    openTeamDialog(team || null, team ? 'edit' : 'create');
+    if (team) {
+      setCurrentTeam(team);
+      openTeamDialog({ id: team.id, mode: 'edit' });
+    } else {
+      setCurrentTeam(null);
+      openTeamDialog({ mode: 'create' });
+    }
   };
 
   const { useGetRoles, useCreateRole, useUpdateRole } = useTeamService();
@@ -169,7 +185,7 @@ export const AllTeams = () => {
 
   // Fetch roles for current team - only when employee dialog is open
   const { data: rolesData } = useGetRoles(currentTeam?.id || '', {
-    enabled: !!currentTeam?.id && dialog === 'employee',
+    enabled: !!currentTeam?.id && isEmployeeOpen,
   });
 
   const queryClient = useQueryClient();
@@ -207,7 +223,7 @@ export const AllTeams = () => {
       };
 
       // Close team dialog
-      closeDialog();
+      closeModal();
 
       // Set current team for potential next steps
       setCurrentTeam(formTeam);
@@ -217,7 +233,7 @@ export const AllTeams = () => {
 
       // Auto-open role dialog after brief delay for better UX
       setTimeout(() => {
-        openRoleDialog(formTeam, null);
+        openRoleDialog(formTeam.id!);
       }, 500);
     } catch (error) {
       const errorMessage =
@@ -244,7 +260,7 @@ export const AllTeams = () => {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['teams'] });
             queryClient.invalidateQueries({ queryKey: ['roles', teamId] });
-            closeDialog();
+            closeModal();
           },
           onError: (error) => {
             const message =
@@ -272,7 +288,7 @@ export const AllTeams = () => {
     if (currentTeam && skipToNextStep) {
       // Auto-open employee dialog after brief delay
       setTimeout(() => {
-        openEmployeeDialog(currentTeam);
+        openEmployeeDialog(currentTeam.id!);
       }, 500);
     }
   };
@@ -287,7 +303,7 @@ export const AllTeams = () => {
       });
       await queryClient.invalidateQueries({ queryKey: ['teams'] });
       toast.success(`Role "${data.name}" updated successfully!`);
-      closeDialog();
+      closeModal();
       setCurrentRole(null);
     } catch (error) {
       const errorMessage =
@@ -378,17 +394,18 @@ export const AllTeams = () => {
         />
       </section>
 
+      {/* Team Create/Edit Dialog */}
       <ReusableDialog
-        open={dialog === 'team'}
+        open={isTeamOpen}
         onOpenChange={(open) => {
           if (!open) {
-            closeDialog();
+            closeModal();
             setSkipToNextStep(false);
           }
         }}
-        title={workflowMode === 'edit' ? 'Edit Team' : 'Add New Team'}
+        title={modalMode === 'edit' ? 'Edit Team' : 'Add New Team'}
         description={
-          workflowMode === 'edit'
+          modalMode === 'edit'
             ? 'Modify the team details'
             : 'Create a new team for your organization. You can add roles and employees later.'
         }
@@ -397,25 +414,30 @@ export const AllTeams = () => {
         wrapperClassName={`text-left`}
       >
         <TeamForm
-          initialData={currentTeam}
+          initialData={
+            modalMode === 'edit' && modalId
+              ? (currentTeam ?? undefined)
+              : (currentTeam ?? undefined)
+          }
           onSubmit={async (data) => {
-            return workflowMode === 'edit'
+            return modalMode === 'edit'
               ? handleUpdateTeam({ name: data.name })
               : handleAddTeam(data.name);
           }}
           onCancel={() => {
-            closeDialog();
+            closeModal();
             setSkipToNextStep(false);
           }}
           isSubmitting={isSubmitting}
         />
       </ReusableDialog>
 
+      {/* Role Create/Edit Dialog */}
       <ReusableDialog
-        open={dialog === 'role'}
+        open={isRoleOpen}
         onOpenChange={(open) => {
           if (!open) {
-            closeDialog();
+            closeModal();
             setSkipToNextStep(false);
           }
         }}
@@ -446,7 +468,7 @@ export const AllTeams = () => {
                   'Role creation skipped. You can add roles later from the team details page.'
                 );
               }
-              closeDialog();
+              closeModal();
               setSkipToNextStep(false);
             }}
             onComplete={handleRoleCreationComplete}
@@ -455,11 +477,12 @@ export const AllTeams = () => {
         )}
       </ReusableDialog>
 
+      {/* Employee Assignment Dialog */}
       <ReusableDialog
-        open={dialog === 'employee'}
+        open={isEmployeeOpen}
         onOpenChange={(open) => {
           if (!open) {
-            closeDialog();
+            closeModal();
             setSkipToNextStep(false);
           }
         }}
@@ -483,7 +506,7 @@ export const AllTeams = () => {
                   'Employee assignment skipped. Your team has been created successfully!'
                 );
               }
-              closeDialog();
+              closeModal();
               setSkipToNextStep(false);
             }}
             isSubmitting={isSubmitting}
@@ -513,7 +536,7 @@ export const AllTeams = () => {
 
       <DeleteConfirmationModal />
 
-      {/* Edit Team Dialog */}
+      {/* Edit Team Dialog (from row action — uses useTeamEditing, not workflow store) */}
       <ReusableDialog
         open={isEditing}
         onOpenChange={(open) => {

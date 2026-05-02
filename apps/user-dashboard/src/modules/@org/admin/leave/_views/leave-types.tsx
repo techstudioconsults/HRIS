@@ -1,6 +1,7 @@
 'use client';
 
 import { getApiErrorMessage } from '@/lib/tools/api-error-message';
+import { useLeaveAdminModalParams } from '@/lib/nuqs/use-leave-admin-modal-params';
 import { AdvancedDataTable, TableSkeleton } from '@workspace/ui/lib/table';
 import { AlertModal, ReusableDialog } from '@workspace/ui/lib/dialog';
 import { BreadCrumb } from '@workspace/ui/lib/breadcrumb';
@@ -22,15 +23,26 @@ import { useLeaveService } from '../services/use-service';
 import type { LeaveType } from '../types';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { leaveTypeColumns } from '@/modules/@org/admin/leave/_views/table-data';
+import type { IRowAction } from '@workspace/ui/lib/table';
 
 const LeaveTypesView = () => {
   const { useGetLeaveTypes, useGetLeaveTypeById, useDeleteLeaveType } =
     useLeaveService();
 
+  // Modal URL state (nuqs) — create & edit survive refresh
+  const {
+    isCreateLeaveTypeOpen,
+    isEditLeaveTypeOpen,
+    modalId: editLeaveTypeModalId,
+    openCreateLeaveType,
+    openEditLeaveType,
+    closeModal,
+  } = useLeaveAdminModalParams();
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  // Destructive confirm stays as useState — never persist
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  // Local entity state — non-URL-serializable; used only for delete confirm and edit form
   const [selectedLeaveType, setSelectedLeaveType] = useState<LeaveType | null>(
     null
   );
@@ -45,14 +57,16 @@ const LeaveTypesView = () => {
   const { mutateAsync: deleteLeaveType, isPending: isDeleting } =
     useDeleteLeaveType();
 
-  const selectedLeaveTypeId = selectedLeaveType?.id ?? '';
+  // For edit: use modalId from URL when available, fall back to selectedLeaveType.id
+  const selectedLeaveTypeId =
+    editLeaveTypeModalId ?? selectedLeaveType?.id ?? '';
   const {
     data: selectedLeaveTypeDetails,
     isLoading: isLoadingSelectedLeaveType,
     isError: isSelectedLeaveTypeError,
     refetch: refetchSelectedLeaveType,
   } = useGetLeaveTypeById(selectedLeaveTypeId, {
-    enabled: editDialogOpen && !!selectedLeaveTypeId,
+    enabled: isEditLeaveTypeOpen && !!selectedLeaveTypeId,
   });
 
   const hasToastedLoadErrorReference = useRef(false);
@@ -74,8 +88,6 @@ const LeaveTypesView = () => {
   }, [isError, error]);
 
   const safeLeaveTypes: LeaveType[] = (() => {
-    // Backend returns: { items: LeaveType[], metadata: {...} }
-    // Support legacy shapes too.
     if (Array.isArray(leaveTypesResponse)) return leaveTypesResponse;
     const maybeItems = leaveTypesResponse;
     if (Array.isArray(maybeItems)) return maybeItems;
@@ -104,42 +116,47 @@ const LeaveTypesView = () => {
 
   const hasFilters = !!searchQuery.trim();
 
-  const getRowActions = (row: LeaveType) => {
-    const actions: IRowAction<LeaveType>[] = [
-      {
-        label: 'Edit',
-        icon: <Icon name={`Edit`} variant={`Outline`} size={18} />,
-        onClick: () => {
-          setSelectedLeaveType(row);
-          setEditDialogOpen(true);
-        },
+  // On cold-refresh with modal='edit-leave-type': resolve the entity from fetched list
+  const editLeaveTypeEntity: LeaveType | null = useMemo(() => {
+    if (!isEditLeaveTypeOpen || !editLeaveTypeModalId) return null;
+    return (
+      effectiveLeaveTypes.find((lt) => lt.id === editLeaveTypeModalId) ?? null
+    );
+  }, [isEditLeaveTypeOpen, editLeaveTypeModalId, effectiveLeaveTypes]);
+
+  const getRowActions = (row: LeaveType): IRowAction<LeaveType>[] => [
+    {
+      label: 'Edit',
+      icon: <Icon name={`Edit`} variant={`Outline`} size={18} />,
+      onClick: () => {
+        setSelectedLeaveType(row);
+        openEditLeaveType(row.id);
       },
-      {
-        label: ``,
-        type: `separator`,
-        onClick: function (row: LeaveType): void {
-          throw new Error('Function not implemented.');
-        },
+    },
+    {
+      label: ``,
+      type: `separator`,
+      onClick: (_row: LeaveType) => {
+        // separator — no action
       },
-      {
-        label: 'Delete',
-        icon: (
-          <Icon
-            name={`Trash`}
-            variant={`Outline`}
-            className={`text-destructive`}
-            size={18}
-          />
-        ),
-        variant: `destructive`,
-        onClick: () => {
-          setSelectedLeaveType(row);
-          setDeleteDialogOpen(true);
-        },
+    },
+    {
+      label: 'Delete',
+      icon: (
+        <Icon
+          name={`Trash`}
+          variant={`Outline`}
+          className={`text-destructive`}
+          size={18}
+        />
+      ),
+      variant: `destructive`,
+      onClick: () => {
+        setSelectedLeaveType(row);
+        setDeleteDialogOpen(true);
       },
-    ];
-    return actions;
-  };
+    },
+  ];
 
   const handleConfirmDelete = async () => {
     if (!selectedLeaveType?.id) return;
@@ -184,10 +201,7 @@ const LeaveTypesView = () => {
           title="Leave Types"
           subtitle="Create and manage all leave types"
           actionComponent={
-            <MainButton
-              variant="primary"
-              onClick={() => setCreateDialogOpen(true)}
-            >
+            <MainButton variant="primary" onClick={openCreateLeaveType}>
               Add Leave Type
             </MainButton>
           }
@@ -201,19 +215,21 @@ const LeaveTypesView = () => {
           description="Create your first leave type (e.g., Annual Leave) to get started."
           button={{
             text: 'Create Leave Type',
-            onClick: () => setCreateDialogOpen(true),
+            onClick: openCreateLeaveType,
           }}
         />
 
         <ReusableDialog
-          open={createDialogOpen}
-          onOpenChange={setCreateDialogOpen}
+          open={isCreateLeaveTypeOpen}
+          onOpenChange={(open) => {
+            if (!open) closeModal();
+          }}
           title="Create Leave Type"
           description="Add a new leave type to your organization"
           className="min-w-3xl"
           trigger={null}
         >
-          <CreateLeaveTypeForm onClose={() => setCreateDialogOpen(false)} />
+          <CreateLeaveTypeForm onClose={closeModal} />
         </ReusableDialog>
       </div>
     );
@@ -246,7 +262,7 @@ const LeaveTypesView = () => {
               variant="primary"
               isLeftIconVisible
               icon={<Icon name={`Add`} variant={`Bold`} />}
-              onClick={() => setCreateDialogOpen(true)}
+              onClick={openCreateLeaveType}
               className={`w-full md:w-fit`}
             >
               Add Leave Type
@@ -278,28 +294,37 @@ const LeaveTypesView = () => {
         </div>
       </section>
 
+      {/* Create Leave Type Dialog — persists across refresh */}
       <ReusableDialog
-        open={createDialogOpen}
-        onOpenChange={setCreateDialogOpen}
+        open={isCreateLeaveTypeOpen}
+        onOpenChange={(open) => {
+          if (!open) closeModal();
+        }}
         title="Create Leave Type"
         description="Add a new leave type to your organization"
         wrapperClassName={`text-left`}
         className="lg:min-w-3xl"
         trigger={null}
       >
-        <CreateLeaveTypeForm onClose={() => setCreateDialogOpen(false)} />
+        <CreateLeaveTypeForm onClose={closeModal} />
       </ReusableDialog>
 
+      {/* Edit Leave Type Dialog — persists + deep-links via modalId */}
       <ReusableDialog
-        open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
+        open={isEditLeaveTypeOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            closeModal();
+            setSelectedLeaveType(null);
+          }
+        }}
         title="Edit Leave Type"
         description="Update leave type details"
         wrapperClassName={`text-left`}
         className="lg:min-w-3xl"
         trigger={null}
       >
-        {selectedLeaveType && (
+        {isEditLeaveTypeOpen && (
           <>
             {isLoadingSelectedLeaveType && <TableSkeleton />}
             {!isLoadingSelectedLeaveType && isSelectedLeaveTypeError && (
@@ -313,16 +338,21 @@ const LeaveTypesView = () => {
             {!isLoadingSelectedLeaveType && !isSelectedLeaveTypeError && (
               <EditLeaveTypeForm
                 leaveType={
-                  (selectedLeaveTypeDetails ?? selectedLeaveType) as LeaveType
+                  (selectedLeaveTypeDetails ??
+                    editLeaveTypeEntity ??
+                    selectedLeaveType) as LeaveType
                 }
-                onClose={() => setEditDialogOpen(false)}
+                onClose={() => {
+                  closeModal();
+                  setSelectedLeaveType(null);
+                }}
               />
             )}
           </>
         )}
       </ReusableDialog>
 
-      {/* Delete confirmation */}
+      {/* Delete confirmation — stays as useState (destructive) */}
       <AlertModal
         type="warning"
         isOpen={deleteDialogOpen}

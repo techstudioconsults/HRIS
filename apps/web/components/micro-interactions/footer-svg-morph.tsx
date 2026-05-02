@@ -77,7 +77,7 @@ export const FooterSvgMorph = () => {
               map: 'complexity',
               type: 'rotational',
               origin: '0% 0%',
-              // @ts-ignore
+              // @ts-expect-error
               curveMode: true,
               smooth: {
                 redraw: false, // perfect shape fidelity, but less even spacing

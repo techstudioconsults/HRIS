@@ -159,19 +159,19 @@ export interface LeaveUIState {
   showLeaveSetupModal: boolean;
   hasCompletedLeaveSetup: boolean;
 
-  showLeaveDetailsDrawer: boolean;
-  selectedLeaveRequestId: string | null;
+  /**
+   * In-memory entity cache for the leave-details drawer.
+   * The drawer open/close and entity ID are now managed by nuqs
+   * (useLeaveAdminModalParams). This field is only used as a warm cache
+   * to avoid re-fetching the list on non-cold-refresh opens.
+   */
   selectedLeaveRequest: LeaveRequest | null;
 }
 
 export interface LeaveUIActions {
   setShowLeaveSetupModal: (open: boolean) => void;
   setHasCompletedLeaveSetup: (status: boolean) => void;
-
-  setShowLeaveDetailsDrawer: (open: boolean) => void;
-  setSelectedLeaveRequestId: (id: string | null) => void;
   setSelectedLeaveRequest: (request: LeaveRequest | null) => void;
-
   resetUI: () => void;
 }
 

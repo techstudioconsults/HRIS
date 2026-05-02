@@ -9,32 +9,53 @@ import {
   LeaveRequestSubmittedModal,
   RequestLeaveModal,
 } from '@/modules/@org/user';
+import { useUserLeaveModalParams } from '@/lib/nuqs/use-user-leave-modal-params';
 
-import type { LeaveRequest, LeaveModalState } from '../types';
+import type { LeaveRequest } from '../types';
 
 const UserLeaveView = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeModal, setActiveModal] = useState<LeaveModalState>(null);
+
+  // Modal URL state (nuqs) — request, details, edit survive refresh
+  const {
+    isRequestLeaveOpen,
+    isLeaveDetailsOpen,
+    isEditLeaveOpen,
+    modalId,
+    openRequestLeave,
+    openLeaveDetails,
+    openEditLeave,
+    closeModal,
+  } = useUserLeaveModalParams();
+
+  // Local entity state — non-URL-serializable; populated on user action or cold-refresh lookup
   const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(
     null
   );
+  // 'submitted' success alert stays as useState (ephemeral)
+  const [isSubmittedOpen, setIsSubmittedOpen] = useState(false);
 
-  const handleCreateRequest = () => setActiveModal('request');
+  const handleCreateRequest = () => {
+    openRequestLeave();
+  };
 
   const handleViewDetails = (request: LeaveRequest) => {
     setSelectedRequest(request);
-    setActiveModal('details');
+    openLeaveDetails(request.id);
   };
 
   const handleEditRequest = (request: LeaveRequest) => {
     setSelectedRequest(request);
-    setActiveModal('edit');
+    openEditLeave(request.id);
   };
 
-  const handleRequestSuccess = () => setActiveModal('submitted');
+  const handleRequestSuccess = () => {
+    closeModal();
+    setIsSubmittedOpen(true);
+  };
 
-  const closeModal = () => {
-    setActiveModal(null);
+  const handleCloseModal = () => {
+    closeModal();
     setSelectedRequest(null);
   };
 
@@ -49,32 +70,32 @@ const UserLeaveView = () => {
         onViewDetails={handleViewDetails}
       />
 
-      {/* Create */}
+      {/* Create — persists across refresh */}
       <RequestLeaveModal
-        open={activeModal === 'request'}
-        onOpenChange={(open) => !open && closeModal()}
+        open={isRequestLeaveOpen}
+        onOpenChange={(open) => !open && handleCloseModal()}
         onSuccess={handleRequestSuccess}
       />
 
-      {/* Edit */}
+      {/* Edit — persists across refresh with modalId */}
       <RequestLeaveModal
-        open={activeModal === 'edit'}
-        onOpenChange={(open) => !open && closeModal()}
+        open={isEditLeaveOpen}
+        onOpenChange={(open) => !open && handleCloseModal()}
         initialRequest={selectedRequest}
       />
 
-      {/* View Details */}
+      {/* View Details — persists across refresh with modalId */}
       <LeaveDetailsModal
-        open={activeModal === 'details'}
-        onOpenChange={(open) => !open && closeModal()}
+        open={isLeaveDetailsOpen}
+        onOpenChange={(open) => !open && handleCloseModal()}
         request={selectedRequest}
         onEdit={handleEditRequest}
       />
 
-      {/* Post-submit confirmation */}
+      {/* Post-submit confirmation — stays as useState (ephemeral success alert) */}
       <LeaveRequestSubmittedModal
-        open={activeModal === 'submitted'}
-        onOpenChange={(open) => !open && closeModal()}
+        open={isSubmittedOpen}
+        onOpenChange={(open) => !open && setIsSubmittedOpen(false)}
       />
     </Wrapper>
   );

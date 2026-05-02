@@ -35,7 +35,7 @@ export const handleError = (
   if (typeof window !== 'undefined') {
     toast.error('Something went wrong!', {
       description: message,
-      position: `bottom-left`,
+      position: `bottom-right`,
     });
   }
 

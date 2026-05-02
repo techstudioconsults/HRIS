@@ -31,9 +31,9 @@ import { ReactNode, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import empty1 from '~/images/empty-state.svg';
+import { usePayrollModalParams } from '@/lib/nuqs/use-payroll-modal-params';
 import { DashboardCard } from '../../../../_components/dashboard-card';
 import { usePayrollService } from '../../services/use-service';
-import { usePayrollStore } from '../../stores/payroll-store';
 import type { ListPayroll, PayrollApproval } from '../../types';
 
 // Pure helpers (moved to module scope to satisfy lint rule requiring outer scope for arrow functions)
@@ -102,8 +102,8 @@ export const SchedulePayrollDrawer = () => {
   const [selectedPayrollId, setSelectedPayrollId] = useState<string | null>(
     null
   );
-  const { showSchedulePayrollDrawer, setShowSchedulePayrollDrawer } =
-    usePayrollStore();
+  const { isSchedulePayrollOpen, closeModal: closeSchedulePayroll } =
+    usePayrollModalParams();
 
   // Load available generated payrolls when drawer is open
   const {
@@ -232,8 +232,10 @@ export const SchedulePayrollDrawer = () => {
   return (
     <>
       <Drawer
-        open={showSchedulePayrollDrawer}
-        onOpenChange={setShowSchedulePayrollDrawer}
+        open={isSchedulePayrollOpen}
+        onOpenChange={(open) => {
+          if (!open) closeSchedulePayroll();
+        }}
         direction="right"
       >
         <DrawerContent className="h-full w-full! sm:max-w-xl!">

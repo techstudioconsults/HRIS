@@ -1,37 +1,25 @@
 'use client';
 
+import { useResourcesModalParams } from '@/lib/nuqs/use-resources-modal-params';
 import { SearchInput } from '@/modules/@org/shared/search-input';
 import { DashboardHeader } from '@workspace/ui/lib/dashboard';
 import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { useState } from 'react';
 
 import type { ResourcesHeaderProperties } from '../types';
 import { CreateFileForm } from './forms/create-file';
 import { CreateFolderForm } from './forms/create-folder';
 
 export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogType, setDialogType] = useState<'folder' | 'file'>('folder');
-
-  const handleOpenFolderDialog = () => {
-    setDialogType('folder');
-    setDialogOpen(true);
-  };
-
-  const handleOpenFileDialog = () => {
-    setDialogType('file');
-    setDialogOpen(true);
-  };
-
-  const handleCloseDialog = () => {
-    setDialogOpen(false);
-  };
-
-  const handleSearch = (query: string) => {
-    onSearch?.(query);
-  };
+  // Modal URL state (nuqs) — create-folder and upload-file survive refresh
+  const {
+    isCreateFolderOpen,
+    isUploadFileOpen,
+    openCreateFolder,
+    openUploadFile,
+    closeModal,
+  } = useResourcesModalParams();
 
   return (
     <section>
@@ -43,14 +31,14 @@ export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
             <SearchInput
               className="h-10 w-full lg:w-fit"
               placeholder="Search resources..."
-              onSearch={handleSearch}
+              onSearch={(query) => onSearch?.(query)}
             />
             <div className={`flex items-center w-full lg:w-auto gap-2`}>
               <MainButton
                 variant="default"
                 isLeftIconVisible={true}
                 icon={<Icon name="FolderAdd" variant={`Outline`} />}
-                onClick={handleOpenFolderDialog}
+                onClick={openCreateFolder}
                 className={`w-full bg-primary/10 text-primary`}
               >
                 Create Folder
@@ -59,7 +47,7 @@ export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
                 variant="primary"
                 isLeftIconVisible={true}
                 icon={<Icon name="DocumentText" variant={`Bold`} />}
-                onClick={handleOpenFileDialog}
+                onClick={openUploadFile}
                 className={`w-full`}
               >
                 Upload File
@@ -69,28 +57,32 @@ export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
         }
       />
 
-      {/* Create Folder Dialog */}
+      {/* Create Folder Dialog — persists across refresh */}
       <ReusableDialog
-        open={dialogOpen && dialogType === 'folder'}
-        onOpenChange={setDialogOpen}
+        open={isCreateFolderOpen}
+        onOpenChange={(open) => {
+          if (!open) closeModal();
+        }}
         title="Create New Folder"
         description="Add a new folder to organize your resources"
         className="lg:min-w-xl"
         trigger={null}
       >
-        <CreateFolderForm onClose={handleCloseDialog} />
+        <CreateFolderForm onClose={closeModal} />
       </ReusableDialog>
 
-      {/* Upload File Dialog */}
+      {/* Upload File Dialog — persists across refresh */}
       <ReusableDialog
-        open={dialogOpen && dialogType === 'file'}
-        onOpenChange={setDialogOpen}
+        open={isUploadFileOpen}
+        onOpenChange={(open) => {
+          if (!open) closeModal();
+        }}
         title="Upload File"
         description="Upload a file to an existing folder"
         className="lg:min-w-xl"
         trigger={null}
       >
-        <CreateFileForm onClose={handleCloseDialog} />
+        <CreateFileForm onClose={closeModal} />
       </ReusableDialog>
     </section>
   );

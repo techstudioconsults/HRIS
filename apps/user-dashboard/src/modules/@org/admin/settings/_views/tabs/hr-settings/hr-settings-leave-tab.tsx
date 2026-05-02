@@ -4,6 +4,7 @@ import { CreateLeaveTypeForm } from '@/modules/@org/admin/leave/_components/form
 import { EditLeaveTypeForm } from '@/modules/@org/admin/leave/_components/forms/edit-leave-type-form';
 import { useLeaveService } from '@/modules/@org/admin/leave/services/use-service';
 import type { LeaveType } from '@/modules/@org/admin/leave/types';
+import { useLeaveAdminModalParams } from '@/lib/nuqs/use-leave-admin-modal-params';
 import { SearchInput } from '@/modules/@org/shared/search-input';
 import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar';
 import { ReusableDialog } from '@workspace/ui/lib/dialog';
@@ -21,8 +22,6 @@ import { toast } from 'sonner';
 const PAGE_SIZE = 10;
 
 function EligibilityPill({ count }: { count: number }) {
-  // Simple visual placeholder for the avatar+badge pill in the design.
-  // Swap with real avatars when Leave eligibility is wired to employees.
   return (
     <div className="flex items-center">
       <div className="flex -space-x-4">
@@ -59,12 +58,22 @@ export function HRSettingsLeaveTab() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
 
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  // Modal URL state (nuqs) — create & edit survive refresh
+  const {
+    isCreateLeaveTypeOpen,
+    isEditLeaveTypeOpen,
+    modalId: editLeaveTypeModalId,
+    openCreateLeaveType,
+    openEditLeaveType,
+    closeModal,
+  } = useLeaveAdminModalParams();
+
+  // Local entity state — non-URL-serializable; used only for delete and edit form fallback
   const [selectedLeaveType, setSelectedLeaveType] = useState<LeaveType | null>(
     null
   );
+  // Destructive confirm stays as useState — never persist
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const {
     data: leaveTypesResponse,
@@ -75,13 +84,15 @@ export function HRSettingsLeaveTab() {
   const { mutateAsync: deleteLeaveType, isPending: isDeleting } =
     useDeleteLeaveType();
 
-  const selectedLeaveTypeId = selectedLeaveType?.id ?? '';
+  // For edit: use modalId from URL when available, fall back to selectedLeaveType.id
+  const selectedLeaveTypeId =
+    editLeaveTypeModalId ?? selectedLeaveType?.id ?? '';
   const {
     data: selectedLeaveTypeDetails,
     isLoading: isLoadingSelectedLeaveType,
     isError: isSelectedLeaveTypeError,
   } = useGetLeaveTypeById(selectedLeaveTypeId, {
-    enabled: editDialogOpen && !!selectedLeaveTypeId,
+    enabled: isEditLeaveTypeOpen && !!selectedLeaveTypeId,
   });
 
   useEffect(() => {
@@ -95,8 +106,6 @@ export function HRSettingsLeaveTab() {
   }, [isError, error]);
 
   const leaveTypes = useMemo<LeaveType[]>(() => {
-    // Backend returns: { items: LeaveType[], metadata: {...} }
-    // Support legacy shapes too.
     if (Array.isArray(leaveTypesResponse))
       return leaveTypesResponse as LeaveType[];
 
@@ -128,6 +137,12 @@ export function HRSettingsLeaveTab() {
     );
   }, [leaveTypes, search]);
 
+  // On cold-refresh with modal='edit-leave-type': resolve entity from fetched list
+  const editLeaveTypeEntity: LeaveType | null = useMemo(() => {
+    if (!isEditLeaveTypeOpen || !editLeaveTypeModalId) return null;
+    return leaveTypes.find((lt) => lt.id === editLeaveTypeModalId) ?? null;
+  }, [isEditLeaveTypeOpen, editLeaveTypeModalId, leaveTypes]);
+
   const totalPages = Math.max(
     1,
     Math.ceil(filteredLeaveTypes.length / PAGE_SIZE)
@@ -154,7 +169,6 @@ export function HRSettingsLeaveTab() {
         header: 'Eligibility',
         accessorKey: 'eligibility',
         render: (value) => {
-          // Until backend provides an explicit eligible count, show a placeholder.
           const count = Number(value);
           return <EligibilityPill count={Number.isFinite(count) ? count : 0} />;
         },
@@ -184,7 +198,7 @@ export function HRSettingsLeaveTab() {
             isLeftIconVisible
             icon={<Icon name="Add" variant={`Bold`} />}
             className="w-full sm:w-auto"
-            onClick={() => setCreateDialogOpen(true)}
+            onClick={openCreateLeaveType}
           >
             Add Leave Type
           </MainButton>
@@ -204,7 +218,7 @@ export function HRSettingsLeaveTab() {
               icon: <Icon name={`Edit`} variant={`Outline`} />,
               onClick: () => {
                 setSelectedLeaveType(row);
-                setEditDialogOpen(true);
+                openEditLeaveType(row.id);
               },
             },
             { type: 'separator' },
@@ -245,31 +259,35 @@ export function HRSettingsLeaveTab() {
         />
       )}
 
-      {/* Create Leave Type */}
+      {/* Create Leave Type — persists across refresh */}
       <ReusableDialog
-        open={createDialogOpen}
-        onOpenChange={setCreateDialogOpen}
+        open={isCreateLeaveTypeOpen}
+        onOpenChange={(open) => {
+          if (!open) closeModal();
+        }}
         title="Create Leave Type"
         description="Add a new leave type to your organization"
         className="lg:min-w-3xl"
         trigger={null}
       >
-        <CreateLeaveTypeForm onClose={() => setCreateDialogOpen(false)} />
+        <CreateLeaveTypeForm onClose={closeModal} />
       </ReusableDialog>
 
-      {/* Edit Leave Type */}
+      {/* Edit Leave Type — persists + deep-links via modalId */}
       <ReusableDialog
-        open={editDialogOpen}
+        open={isEditLeaveTypeOpen}
         onOpenChange={(open) => {
-          setEditDialogOpen(open);
-          if (!open) setSelectedLeaveType(null);
+          if (!open) {
+            closeModal();
+            setSelectedLeaveType(null);
+          }
         }}
         title="Edit Leave Type"
         description="Update leave type details"
         className="lg:min-w-3xl"
         trigger={null}
       >
-        {selectedLeaveType ? (
+        {isEditLeaveTypeOpen ? (
           isLoadingSelectedLeaveType ? (
             <TableSkeleton />
           ) : isSelectedLeaveTypeError ? (
@@ -279,15 +297,20 @@ export function HRSettingsLeaveTab() {
           ) : (
             <EditLeaveTypeForm
               leaveType={
-                (selectedLeaveTypeDetails ?? selectedLeaveType) as LeaveType
+                (selectedLeaveTypeDetails ??
+                  editLeaveTypeEntity ??
+                  selectedLeaveType) as LeaveType
               }
-              onClose={() => setEditDialogOpen(false)}
+              onClose={() => {
+                closeModal();
+                setSelectedLeaveType(null);
+              }}
             />
           )
         ) : null}
       </ReusableDialog>
 
-      {/* Delete Leave Type */}
+      {/* Delete Leave Type — stays as useState (destructive) */}
       <ReusableDialog
         open={deleteDialogOpen}
         onOpenChange={(open) => {

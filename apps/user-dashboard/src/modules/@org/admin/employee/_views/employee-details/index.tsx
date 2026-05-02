@@ -120,7 +120,7 @@ const EmployeeDetailsHeader = ({
     }
     actionComponent={
       <div className="flex gap-2 justify-between items-center sm:gap-3">
-        <div className={`w-full`}>
+        <div>
           <MainButton
             isLeftIconVisible
             icon={<Icon name="Edit" variant={`Bold`} />}
@@ -140,7 +140,8 @@ const EmployeeDetailsHeader = ({
           trigger={
             <Button
               size={`icon`}
-              className={`bg-primary/10 rounded-md size-10.5`}
+              variant={`primaryOutline`}
+              className={`size-10.5`}
             >
               <Icon
                 name="More"

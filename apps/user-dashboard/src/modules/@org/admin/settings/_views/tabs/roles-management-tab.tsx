@@ -1,6 +1,7 @@
 'use client';
 
 import { useRolesManagementSearchParameters } from '@/lib/nuqs/use-roles-management-search-parameters';
+import { useSettingsModalParams } from '@/lib/nuqs/use-settings-modal-params';
 import { queryKeys } from '@/lib/react-query/query-keys';
 import { FilterForm } from '@/modules/@org/admin/teams/_components/forms/filter-form';
 import { useTeamService } from '@/modules/@org/admin/teams/services/use-service';
@@ -26,7 +27,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { useDebounce } from 'use-debounce';
 
-import type { RoleEditorState, RoleRow, RoleToggleState } from '../../types';
+import type { RoleRow, RoleToggleState } from '../../types';
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -49,6 +50,20 @@ export const RolesManagementTab = () => {
     resetToFirstPage,
   } = useRolesManagementSearchParameters();
 
+  // Modal URL state (nuqs) — role-editor dialog survives refresh
+  const {
+    isRoleEditorOpen,
+    modalMode,
+    openRoleEditor,
+    closeModal: closeRoleEditorModal,
+  } = useSettingsModalParams();
+
+  // Local state for non-URL-serializable editor context
+  const [editorTeamId, setEditorTeamId] = useState<string>('');
+  const [editorRole, setEditorRole] = useState<
+    { id: string; name: string; permissions: string[] } | undefined
+  >(undefined);
+
   const teamsWithRolesQueryKey = queryKeys.onboarding.teamsWithRoles();
 
   const { data: teamsWithRoles = [], isLoading: isLoadingTeams } =
@@ -61,10 +76,6 @@ export const RolesManagementTab = () => {
   // Local input state (debounced) to throttle URL updates via nuqs
   const [searchInput, setSearchInput] = useState(search || '');
   const [debouncedSearch] = useDebounce(searchInput, 300);
-
-  const [roleEditor, setRoleEditor] = useState<RoleEditorState>({
-    open: false,
-  });
 
   // UI-only role activation state (until backend endpoints are wired)
   const [roleActiveOverrides, setRoleActiveOverrides] = useState<
@@ -184,23 +195,25 @@ export const RolesManagementTab = () => {
   const isBusy = isCreating || isUpdating;
 
   const openCreateDialog = () => {
-    setRoleEditor({
-      open: true,
-      mode: 'create',
-      teamId: effectiveTeamId || '',
-    });
+    setEditorTeamId(effectiveTeamId || '');
+    setEditorRole(undefined);
+    openRoleEditor({ mode: 'create' });
   };
 
   const openEditDialog = (role: RoleRow) => {
-    setRoleEditor({
-      open: true,
-      mode: 'edit',
-      teamId: role.teamId,
-      role: { id: role.id, name: role.name, permissions: role.permissions },
+    setEditorTeamId(role.teamId);
+    setEditorRole({
+      id: role.id,
+      name: role.name,
+      permissions: role.permissions,
     });
+    openRoleEditor({ id: role.id, mode: 'edit' });
   };
 
-  const closeRoleEditor = () => setRoleEditor({ open: false });
+  const closeRoleEditor = () => {
+    closeRoleEditorModal();
+    setEditorRole(undefined);
+  };
 
   const handleFilterChange = useCallback(
     (newFilters: Filters) => {
@@ -277,7 +290,7 @@ export const RolesManagementTab = () => {
     name: string;
     permissions?: string[];
   }) => {
-    const selectedTeamId = roleEditor.open ? roleEditor.teamId : '';
+    const selectedTeamId = isRoleEditorOpen ? editorTeamId : '';
     if (!selectedTeamId) {
       toast.error('Select a department', {
         description: 'Please select a department/team before saving the role.',
@@ -287,11 +300,11 @@ export const RolesManagementTab = () => {
 
     const permissions = Array.isArray(data.permissions) ? data.permissions : [];
 
-    if (roleEditor.open && roleEditor.mode === 'edit' && roleEditor.role?.id) {
+    if (isRoleEditorOpen && modalMode === 'edit' && editorRole?.id) {
       // Optimistically update the table immediately on submitting (no refresh needed).
       const optimisticPatch = {
         teamId: selectedTeamId,
-        roleId: roleEditor.role.id,
+        roleId: editorRole.id,
         name: data.name,
         permissions,
       };
@@ -302,7 +315,7 @@ export const RolesManagementTab = () => {
       closeRoleEditor();
 
       await updateRoleMutation(
-        { roleId: roleEditor.role.id, name: data.name, permissions },
+        { roleId: editorRole.id, name: data.name, permissions },
         {
           onSuccess: async () => {
             toast.success('Role updated');
@@ -550,12 +563,12 @@ export const RolesManagementTab = () => {
 
       {/* Role Create/Edit Dialog */}
       <ReusableDialog
-        open={roleEditor.open}
+        open={isRoleEditorOpen}
         onOpenChange={(open) => {
           if (!open) closeRoleEditor();
         }}
         title={
-          roleEditor.open && roleEditor.mode === 'edit'
+          isRoleEditorOpen && modalMode === 'edit'
             ? 'Edit Role'
             : 'Create New Role'
         }
@@ -570,10 +583,10 @@ export const RolesManagementTab = () => {
             </label>
             <ComboBox
               options={teamOptions}
-              value={roleEditor.open ? roleEditor.teamId : ''}
+              value={isRoleEditorOpen ? editorTeamId : ''}
               onValueChange={(value) => {
-                if (!roleEditor.open) return;
-                setRoleEditor({ ...roleEditor, teamId: value });
+                if (!isRoleEditorOpen) return;
+                setEditorTeamId(value);
               }}
               placeholder={
                 isLoadingTeams ? 'Loading departments...' : 'Select department'
@@ -584,11 +597,9 @@ export const RolesManagementTab = () => {
           </div>
 
           <RolesAndPermission
-            isEdit={roleEditor.open && roleEditor.mode === 'edit'}
+            isEdit={isRoleEditorOpen && modalMode === 'edit'}
             initialData={
-              roleEditor.open && roleEditor.mode === 'edit'
-                ? roleEditor.role
-                : undefined
+              isRoleEditorOpen && modalMode === 'edit' ? editorRole : undefined
             }
             isSubmitting={isBusy}
             onSubmit={handleSubmitRole as any}

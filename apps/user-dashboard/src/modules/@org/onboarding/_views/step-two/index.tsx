@@ -20,7 +20,7 @@ export const TeamSetupPage = () => {
 
   return (
     <section className="flex flex-col items-center justify-between gap-8 lg:flex-row">
-      <section className="max-w-[646px] flex-1 space-y-[41px]">
+      <section className="max-w-161.5 flex-1 space-y-10.25">
         <div className="space-y-4">
           <p>Step 2 of 3</p>
           <div>

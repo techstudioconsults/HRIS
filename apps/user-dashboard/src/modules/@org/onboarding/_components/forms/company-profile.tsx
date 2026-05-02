@@ -130,7 +130,7 @@ export const CompanyProfile = () => {
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(handleSubmitForm)}>
           <section
-            className={`max-h-[500px] grid md:grid-cols-2 lg:grid-cols-1 gap-4 overflow-auto px-1`}
+            className={`max-h-125 grid md:grid-cols-2 lg:grid-cols-1 gap-4 overflow-auto px-1`}
           >
             <div>
               <FormField
@@ -166,7 +166,7 @@ export const CompanyProfile = () => {
                 placeholder={
                   isPending ? `Getting company's profile` : `Select size`
                 }
-                className="!h-12 w-full"
+                className="h-12! w-full"
                 label="Company Size"
                 name="size"
                 options={sizeOptions}
@@ -222,8 +222,8 @@ export const CompanyProfile = () => {
                           : `Select your country`
                     }
                     disabled={isPending || countriesLoading}
-                    className={cn(
-                      `h-12`,
+                    triggerClassName={cn(
+                      `h-12 border-border`,
                       fieldState.error && 'border-destructive'
                     )}
                   />
@@ -256,8 +256,8 @@ export const CompanyProfile = () => {
                           : 'Select a country first'
                     }
                     disabled={isPending || statesLoading || !countryValue}
-                    className={cn(
-                      `h-12`,
+                    triggerClassName={cn(
+                      `h-12 border-border`,
                       fieldState.error && 'border-destructive'
                     )}
                   />
@@ -290,8 +290,8 @@ export const CompanyProfile = () => {
                           : 'Select a country first'
                     }
                     disabled={isPending || citiesLoading || !countryValue}
-                    className={cn(
-                      `h-12`,
+                    triggerClassName={cn(
+                      `h-12 border-border`,
                       fieldState.error && 'border-destructive'
                     )}
                   />
@@ -303,7 +303,7 @@ export const CompanyProfile = () => {
               placeholder={
                 isPending ? `Getting company's profile` : `Enter postal code`
               }
-              className="!h-12 w-full"
+              className="h-12! w-full"
               label="Postal Code"
               name="postcode"
               required

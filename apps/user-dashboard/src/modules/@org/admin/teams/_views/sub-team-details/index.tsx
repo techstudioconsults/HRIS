@@ -1,5 +1,6 @@
 'use client';
 
+import { useSubTeamModalParams } from '@/lib/nuqs/use-sub-team-modal-params';
 import { Badge } from '@workspace/ui/components/badge';
 import { BreadCrumb } from '@workspace/ui/lib/breadcrumb';
 import { DashboardHeader } from '@workspace/ui/lib/dashboard';
@@ -9,7 +10,7 @@ import { AdvancedDataTable } from '@workspace/ui/lib/table';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import Image from 'next/image';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { toast } from 'sonner';
 
 import empty1 from '~/images/empty-state.svg';
@@ -92,7 +93,8 @@ const SubTeamDetailsHeader = ({
 
 // Sub Team Details Content Component
 const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
-  const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] = useState(false);
+  const { isAddMemberOpen, openAddMember, closeModal } =
+    useSubTeamModalParams();
 
   const { useGetTeamsById } = useTeamService();
   const {
@@ -276,13 +278,15 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
             description="Add members to this team to collaborate and assign roles."
             button={{
               text: 'Add Member',
-              onClick: () => setIsAddMemberDialogOpen(true),
+              onClick: openAddMember,
             }}
           />
         )}
         <ReusableDialog
-          open={isAddMemberDialogOpen}
-          onOpenChange={setIsAddMemberDialogOpen}
+          open={isAddMemberOpen}
+          onOpenChange={(open) => {
+            if (!open) closeModal();
+          }}
           title="Assign Members"
           description="Assign existing parent team members to this sub-team."
           trigger={<span />}
@@ -307,7 +311,7 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
             onSubmit={async () => {
               toast.success('Member assigned (simulate).');
             }}
-            onCancel={() => setIsAddMemberDialogOpen(false)}
+            onCancel={closeModal}
           />
         </ReusableDialog>
       </section>
@@ -317,23 +321,23 @@ const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
 
 const SubTeamDetails = ({ params }: { params: { id: string } }) => {
   const { id } = params;
-  const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] = useState(false);
+  const { isAddMemberOpen, openAddMember, closeModal } =
+    useSubTeamModalParams();
   const { useGetTeamsById } = useTeamService();
   const { data: teamData } = useGetTeamsById(id, { enabled: !!id });
 
   return (
     <>
       <section className="space-y-8">
-        <SubTeamDetailsHeader
-          teamId={id}
-          onAddMemberClick={() => setIsAddMemberDialogOpen(true)}
-        />
+        <SubTeamDetailsHeader teamId={id} onAddMemberClick={openAddMember} />
         <SubTeamDetailsContent teamId={id} />
       </section>
 
       <ReusableDialog
-        open={isAddMemberDialogOpen}
-        onOpenChange={setIsAddMemberDialogOpen}
+        open={isAddMemberOpen}
+        onOpenChange={(open) => {
+          if (!open) closeModal();
+        }}
         title="Assign Members"
         description="Assign existing parent team members to this sub-team."
         trigger={<span />}
@@ -358,7 +362,7 @@ const SubTeamDetails = ({ params }: { params: { id: string } }) => {
           onSubmit={async () => {
             toast.success('Member assigned (simulate).');
           }}
-          onCancel={() => setIsAddMemberDialogOpen(false)}
+          onCancel={closeModal}
         />
       </ReusableDialog>
     </>

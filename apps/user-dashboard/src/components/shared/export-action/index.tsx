@@ -46,9 +46,9 @@ const ExportAction = <T extends object>({
   return (
     <MainButton
       isDisabled={isDisabled}
-      variant="default"
+      variant="primaryOutline"
       className={cn(
-        'w-full text-primary bg-primary/10 lg:w-auto disabled:border-muted',
+        'w-full text-primary lg:w-auto disabled:border-muted',
         className
       )}
       size={size as 'lg' | 'xl' | `icon`}

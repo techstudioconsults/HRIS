@@ -28,7 +28,7 @@ export const HelpSidebar = () => {
         ...new Set([...prev, activeCategory.slug]),
       ]);
     }
-  }, [pathname]);
+  }, [pathname, expandedCategories]);
 
   return (
     <aside className="w-full lg:col-span-4 lg:self-start">
@@ -37,14 +37,6 @@ export const HelpSidebar = () => {
         className="w-full rounded-2xl border-black/5 bg-white/90 lg:p-3 backdrop-blur-sm lg:sticky
          lg:top-28 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto xl:top-32"
       >
-        {/*<div className="mb-3 px-2">*/}
-        {/*  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary/70">*/}
-        {/*    Browse help topics*/}
-        {/*  </p>*/}
-        {/*  <p className="mt-1 text-sm text-muted-foreground">*/}
-        {/*    Keep this menu open while you read and jump between guides faster.*/}
-        {/*  </p>*/}
-        {/*</div>*/}
         <Accordion
           type="multiple"
           value={expandedCategories}

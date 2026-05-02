@@ -24,7 +24,7 @@ export const TeamSetupForm = () => {
 
       <section>
         <section
-          className="hide-scrollbar max-h-[500px] space-y-4 overflow-auto"
+          className="hide-scrollbar max-h-125 space-y-4 overflow-auto"
           data-tour="team-accordion"
         >
           <TeamConfig />

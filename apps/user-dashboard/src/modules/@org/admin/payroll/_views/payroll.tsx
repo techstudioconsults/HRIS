@@ -27,6 +27,7 @@ import { SchedulePayrollDrawer } from '../_components/drawers/schedule-payroll-d
 import { FundWalletFormModal } from '../_components/forms/fund-wallet-form-modal';
 import { FundWalletAccountModal } from '../_components/fund-wallet-account-modal';
 import { PayrollSetupSettingsModal } from '../_components/payroll-setup-modal';
+import { usePayrollModalParams } from '@/lib/nuqs/use-payroll-modal-params';
 import { PayrollNotificationBanner } from '../_components/payroll-notification-banner/banner';
 import { DashboardCard } from '../../../_components/dashboard-card';
 import { usePayrollService } from '../services/use-service';
@@ -36,16 +37,23 @@ import { getPayrollColumns, usePayrollRowActions } from './table-data';
 
 export const PayrollView = () => {
   const { getRowActions, DeleteConfirmationModal } = usePayrollRowActions();
+
+  // ── URL state (nuqs) — schedule, generate, fund-wallet survive refresh ────
+  const {
+    isGeneratePayrollOpen,
+    openSchedulePayroll,
+    openGeneratePayroll,
+    openFundWallet,
+    openFundWalletAccount,
+    closeModal: closePayrollModal,
+  } = usePayrollModalParams();
+
+  // ── Zustand — non-URL business state ─────────────────────────────────────
   const {
     hasCompletedPayrollPolicySetupForm,
     setHasCompletedPayrollPolicySetupForm,
-    setShowFundWalletFormModal,
-    setShowFundWalletAccountModal,
-    setShowSchedulePayrollDrawer,
     setShowAddEmployeeModal,
     walletSetupCompleted,
-    showRunPayrollDrawer,
-    setShowPayrollDrawer,
     hidePayrollNotificationBanner,
     payrollSelectedDate,
   } = usePayrollStore();
@@ -235,13 +243,11 @@ export const PayrollView = () => {
   };
 
   const handleSetupWallet = () => {
-    setShowFundWalletFormModal(true);
-    setShowFundWalletAccountModal(false);
+    openFundWallet();
   };
 
   const handleFundWallet = () => {
-    setShowFundWalletAccountModal(true);
-    setShowFundWalletFormModal(false);
+    openFundWalletAccount();
   };
 
   const handleGeneratePayroll = async () => {
@@ -287,7 +293,7 @@ export const PayrollView = () => {
       return;
     }
 
-    setShowPayrollDrawer(true);
+    openGeneratePayroll(selectedPayrollId || undefined);
   };
 
   const handleDismissNoPayrollBanner = () => {
@@ -479,9 +485,7 @@ export const PayrollView = () => {
                     </Button>
                   }
                 >
-                  <DropdownMenuItem
-                    onClick={() => setShowSchedulePayrollDrawer(true)}
-                  >
+                  <DropdownMenuItem onClick={() => openSchedulePayroll()}>
                     <Icon name={`MoneyTime`} variant={`Outline`} />
                     Schedule Payroll
                   </DropdownMenuItem>
@@ -561,9 +565,7 @@ export const PayrollView = () => {
                   </DropdownMenuItem>
                 )}
 
-                <DropdownMenuItem
-                  onClick={() => setShowSchedulePayrollDrawer(true)}
-                >
+                <DropdownMenuItem onClick={() => openSchedulePayroll()}>
                   <Icon name={`MoneyTime`} variant={`Outline`} />
                   Schedule Payroll
                 </DropdownMenuItem>
@@ -757,8 +759,10 @@ export const PayrollView = () => {
       {/* Schedule Payroll Drawer */}
       <SchedulePayrollDrawer />
       <GenerateRunPayrollDrawer
-        open={showRunPayrollDrawer}
-        onOpenChange={setShowPayrollDrawer}
+        open={isGeneratePayrollOpen}
+        onOpenChange={(open) => {
+          if (!open) closePayrollModal();
+        }}
         payrollId={selectedPayrollId || null}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         summary={payrollData as any}

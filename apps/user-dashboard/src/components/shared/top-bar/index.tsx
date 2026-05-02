@@ -78,10 +78,7 @@ export default function TopBar({
           <div
             className={cn('hidden lg:block', !showSidebarTrigger && 'lg:ml-0')}
           >
-            <GlobalSearchInput
-              className="sm:min-w-[320px] md:min-w-[500px]
-             shadow-none md:max-w-[640px]"
-            />
+            <GlobalSearchInput className="sm:min-w-[320px] md:min-w-125 md:max-w-160" />
           </div>
 
           <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2 md:gap-3">

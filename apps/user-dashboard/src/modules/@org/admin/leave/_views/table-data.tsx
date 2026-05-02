@@ -1,4 +1,5 @@
 import { formatDate } from '@/lib/formatters';
+import { useLeaveAdminModalParams } from '@/lib/nuqs/use-leave-admin-modal-params';
 import { Badge } from '@workspace/ui/components/badge';
 import { calculateDaysBetween, cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
@@ -8,20 +9,20 @@ import { useLeaveStore } from '../stores/leave-store';
 import type { LeaveRequest, LeaveType } from '../types';
 
 export const useLeaveRowActions = () => {
-  const {
-    setShowLeaveDetailsDrawer,
-    setSelectedLeaveRequestId,
-    setSelectedLeaveRequest,
-  } = useLeaveStore();
+  // URL state: modal open + entity ID (survives refresh)
+  const { openLeaveDetails } = useLeaveAdminModalParams();
+  // Zustand: entity object (non-URL-serializable; warm cache only)
+  const { setSelectedLeaveRequest } = useLeaveStore();
 
   const getRowActions = (request: LeaveRequest) => {
     return [
       {
         label: 'View Details',
         onClick: () => {
-          setSelectedLeaveRequestId(request.id);
+          // Cache the entity object for immediate display (avoids list re-fetch)
           setSelectedLeaveRequest(request);
-          setShowLeaveDetailsDrawer(true);
+          // Push URL param → drawer survives page refresh
+          openLeaveDetails(request.id);
         },
         icon: <Icon name="Eye" size={16} variant={`Outline`} />,
       },

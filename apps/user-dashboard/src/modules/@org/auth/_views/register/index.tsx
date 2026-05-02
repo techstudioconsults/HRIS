@@ -5,14 +5,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormHeader } from '@workspace/ui/lib/form-header';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
-import { AxiosError } from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-
 import { useAuthService } from '../../services/use-auth-service';
-import { Icon } from '@workspace/ui/lib/icons/icon';
+import { InfoTooltip } from '@workspace/ui/lib/tooltip';
 
 export const Register = () => {
   const router = useRouter();
@@ -44,19 +41,9 @@ export const Register = () => {
   const handleSubmitForm = async (data: RegisterFormData) => {
     await signUp(data, {
       onSuccess: () => {
-        toast.success(`Registration Successful`, {
-          description: `Registration Successful`,
-        });
         router.push(`/login`);
       },
-      onError: (error) => {
-        toast.warning('Registration Failed', {
-          description:
-            error instanceof AxiosError
-              ? error?.response?.data.message
-              : 'An unknown error occurred',
-        });
-      },
+      onError: () => {},
     });
   };
 
@@ -93,19 +80,23 @@ export const Register = () => {
             />
             <div>
               <FormField
-                placeholder={`Enter company domain e.g https://www.techstudioacademy.com`}
+                placeholder={`Enter company domain e.g www.techstudiohr.com`}
                 className={`h-14 w-full`}
                 label={`Company Domain`}
                 name={'domain'}
                 required
               />
-              <p
-                className={`text-primary-200 flex items-start text-[11.5px] italic`}
-              >
-                <Icon name="Info" size={14} className="mt-1 mr-1 inline" /> Used
-                to identify your organization and help verify employee emails
-                (e.g., @techstudio.com).
-              </p>
+              <InfoTooltip
+                className={`text-success`}
+                content={
+                  <span className={`text-xs`}>
+                    Used to identify your organization and help verify employee
+                    emails (e.g. https://techstudiohr.com).
+                  </span>
+                }
+                side={'left'}
+                iconSize={12}
+              />
             </div>
             <FormField
               placeholder={`Enter email address`}

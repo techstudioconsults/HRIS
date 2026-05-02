@@ -7,13 +7,11 @@ export type { PayrollUIState, PayrollUIActions } from '../types';
 
 const initialState: PayrollUIState = {
   showPayrollSettingsSetupModal: false,
-  showFundWalletFormModal: false,
-  showSchedulePayrollDrawer: false,
-  showRunPayrollDrawer: false,
+  // showFundWalletFormModal, showFundWalletAccountModal, showSchedulePayrollDrawer,
+  // and showRunPayrollDrawer removed — now managed by nuqs (usePayrollModalParams).
   showAddEmployeeToPayrollModal: false,
   hidePayrollNotificationBanner: true,
   payrollSelectedDate: undefined,
-  showFundWalletAccountModal: false,
   hasCompletedPayrollPolicySetupForm: false,
   walletSetupCompleted: false,
   showEmployeeInformationDrawer: false,
@@ -27,18 +25,11 @@ export const usePayrollStore = create<PayrollUIState & PayrollUIActions>()(
       ...initialState,
       setShowPayrollSettingsSetupModal: (open) =>
         set({ showPayrollSettingsSetupModal: open }),
-      setShowFundWalletFormModal: (open) =>
-        set({ showFundWalletFormModal: open }),
-      setShowSchedulePayrollDrawer: (open) =>
-        set({ showSchedulePayrollDrawer: open }),
-      setShowPayrollDrawer: (open) => set({ showRunPayrollDrawer: open }),
       setShowAddEmployeeModal: (open) =>
         set({ showAddEmployeeToPayrollModal: open }),
       setHideNotificationBanner: (show) =>
         set({ hidePayrollNotificationBanner: show }),
       setPayrollSelectedDate: (date) => set({ payrollSelectedDate: date }),
-      setShowFundWalletAccountModal: (open) =>
-        set({ showFundWalletAccountModal: open }),
       setHasCompletedPayrollPolicySetupForm: (status) =>
         set({ hasCompletedPayrollPolicySetupForm: status }),
       setWalletSetupCompleted: (status) =>

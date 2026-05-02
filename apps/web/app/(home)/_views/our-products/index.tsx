@@ -22,13 +22,13 @@ export const OurProducts = () => {
         <Wrapper>
           <OurProductsSectionHeader />
           <div className="space-y-7">
-            <div className="grid gap-[37px] md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-9.25 md:grid-cols-2 xl:grid-cols-3">
               <OurProductCard card={productCardsTopRow[0]} />
               <OurProductCard card={productCardsTopRow[1]} />
               <OurProductCard card={productCardsTopRow[2]} />
             </div>
 
-            <div className="grid gap-[37px] lg:grid-cols-12">
+            <div className="grid gap-9.25 lg:grid-cols-12">
               <div className="lg:col-span-5">
                 <OurProductCard card={productCardsBottomRow[0]} />
               </div>

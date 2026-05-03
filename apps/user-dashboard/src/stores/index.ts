@@ -5,5 +5,4 @@ export { useTeamWorkflowStore } from '../modules/@org/admin/teams/store/team-sto
 export type {
   TeamWorkflowState,
   TeamWorkflowActions,
-  TeamWorkflowDialog,
 } from '../modules/@org/admin/teams/store/team-store';

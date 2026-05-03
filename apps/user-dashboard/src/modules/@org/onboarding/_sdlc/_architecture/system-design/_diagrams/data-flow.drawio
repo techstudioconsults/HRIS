@@ -1,0 +1,289 @@
+<mxfile host="drawio-plugin" version="22.1.22" pages="3">
+  <diagram name="Company Profile Data Flow" id="pg1">
+    <mxGraphModel dx="1082" dy="818" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="0" page="1" pageScale="1" pageWidth="1300" pageHeight="819" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tt" value="Data Flow — Company Profile (GET pre-fill &amp; PATCH submit)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;align=left;" parent="1" vertex="1">
+          <mxGeometry x="40" y="12" width="700" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="ha" value="Flow A — GET pre-fill on mount" style="text;html=1;strokeColor=none;fillColor=none;fontSize=13;fontStyle=1;fontColor=#023d7a;" parent="1" vertex="1">
+          <mxGeometry x="40" y="52" width="380" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" value="Browser (CompanyProfile)" style="rounded=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="40" y="86" width="185" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" value="useOnboardingService()" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="280" y="86" width="175" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" value="OnboardingService" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="510" y="86" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" value="HttpAdapter" style="rounded=1;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="730" y="86" width="155" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" value="Backend API" style="rounded=1;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="950" y="86" width="155" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="ea1" value="useGetCompanyProfile()" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" parent="1" source="a1" target="a2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea2" value="getCompanyProfile()" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" parent="1" source="a2" target="a3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea3" value="get()" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#d6b656;fontColor=#7d6300;fontSize=9;" parent="1" source="a3" target="a4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea4" value="GET /api/v1/companies/current" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" parent="1" source="a4" target="a5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea5" value="{ CompanyProfile }" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;endFill=0;strokeColor=#82b366;fontColor=#2a5c1a;fontSize=9;" parent="1" source="a5" target="a1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1027" y="170" />
+              <mxPoint x="132" y="170" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ea6" value="form.reset(profile) — fields pre-filled" style="text;html=1;strokeColor=#82b366;fillColor=#d5e8d4;fontSize=9;rounded=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="40" y="185" width="270" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="hb" value="Flow B — PATCH submit → navigate Step 2" style="text;html=1;strokeColor=none;fillColor=none;fontSize=13;fontStyle=1;fontColor=#7d6300;" parent="1" vertex="1">
+          <mxGeometry x="40" y="270" width="420" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="b1" value="Browser (CompanyProfile)" style="rounded=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="40" y="305" width="185" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="b2" value="useOnboardingService()" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="280" y="305" width="175" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="b3" value="OnboardingService" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="510" y="305" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="b4" value="HttpAdapter" style="rounded=1;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="730" y="305" width="155" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="b5" value="Backend API" style="rounded=1;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="950" y="305" width="155" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="eb1" value="handleSubmit()" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#6c8ebf;fontColor=#023d7a;fontSize=9;" parent="1" source="b1" target="b2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eb2" value="updateCompanyProfile(data)" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" parent="1" source="b2" target="b3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eb3" value="patch()" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#d6b656;fontColor=#7d6300;fontSize=9;" parent="1" source="b3" target="b4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eb4" value="PATCH /api/v1/companies/current" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" parent="1" source="b4" target="b5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eb5" value="200 { success: true }" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;endFill=0;strokeColor=#82b366;fontColor=#2a5c1a;fontSize=9;" parent="1" source="b5" target="b2" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1027" y="390" />
+              <mxPoint x="367" y="390" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="eb6" value="router.push('/onboarding/step-2')" style="text;html=1;strokeColor=#6c8ebf;fillColor=#dae8fc;fontSize=9;rounded=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="40" y="408" width="260" height="20" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Teams &amp; Roles CRUD Flow" id="pg2">
+    <mxGraphModel dx="1082" dy="287" grid="0" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="0" page="0" pageScale="1" pageWidth="1200" pageHeight="780" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tt" value="Data Flow — Teams &amp; Roles CRUD (Step 2)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;align=left;" parent="1" vertex="1">
+          <mxGeometry x="40" y="12" width="620" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="ha" value="Flow A — Load teams on mount" style="text;html=1;strokeColor=none;fillColor=none;fontSize=13;fontStyle=1;fontColor=#023d7a;" parent="1" vertex="1">
+          <mxGeometry x="40" y="52" width="320" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" value="Browser (TeamsSetup)" style="rounded=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="40" y="86" width="175" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" value="useOnboardingService()" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="270" y="86" width="175" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" value="Backend API" style="rounded=1;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="510" y="86" width="155" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="ea1" value="useGetTeams()" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" parent="1" source="a1" target="a2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea2" value="GET /api/v1/teams" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" parent="1" source="a2" target="a3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea3" value="{ teams[] } — accordions rendered" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;endFill=0;strokeColor=#82b366;fontColor=#2a5c1a;fontSize=9;" parent="1" source="a3" target="a1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="587" y="168" />
+              <mxPoint x="127" y="168" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hb" value="Flow B — Add team" style="text;html=1;strokeColor=none;fillColor=none;fontSize=13;fontStyle=1;fontColor=#7d6300;" parent="1" vertex="1">
+          <mxGeometry x="40" y="240" width="240" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="b1" value="Browser (TeamsSetup)" style="rounded=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="40" y="275" width="175" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="b2" value="useOnboardingService()" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="270" y="275" width="175" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="b3" value="Backend API" style="rounded=1;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="510" y="275" width="155" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="eb1" value="useCreateTeam.mutateAsync({ name })" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" parent="1" source="b1" target="b2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eb2" value="POST /api/v1/teams { name }" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" parent="1" source="b2" target="b3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eb3" value="201 { id, name } — new accordion rendered" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;endFill=0;strokeColor=#82b366;fontColor=#2a5c1a;fontSize=9;" parent="1" source="b3" target="b1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="587" y="358" />
+              <mxPoint x="127" y="358" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hc" value="Flow C — Add role to team" style="text;html=1;strokeColor=none;fillColor=none;fontSize=13;fontStyle=1;fontColor=#432160;" parent="1" vertex="1">
+          <mxGeometry x="40" y="430" width="280" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" value="Browser (TeamsSetup)" style="rounded=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="40" y="465" width="175" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="useOnboardingService()" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="270" y="465" width="175" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="Backend API" style="rounded=1;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="510" y="465" width="155" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="ec1" value="useCreateRole.mutateAsync({ name, teamId })" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" parent="1" source="c1" target="c2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2" value="POST /api/v1/roles { name, teamId }" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" parent="1" source="c2" target="c3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ec3" value="201 { id, name, teamId } — role appears in accordion" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;endFill=0;strokeColor=#82b366;fontColor=#2a5c1a;fontSize=9;" parent="1" source="c3" target="c1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="587" y="548" />
+              <mxPoint x="127" y="548" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ec4" value="invalidateQueries([onboarding, teams]) — accordion re-renders" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;fontSize=9;rounded=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="40" y="565" width="370" height="20" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Employee Batch Onboard Flow" id="pg3">
+    <mxGraphModel dx="1200" dy="750" grid="0" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="0" page="0" pageScale="1" pageWidth="1200" pageHeight="680" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tt" value="Data Flow — Employee Batch Onboard (Step 3)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="40" y="12" width="600" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="ha" value="Happy Path — Invite employees + mark setup complete" style="text;html=1;strokeColor=none;fillColor=none;fontSize=13;fontStyle=1;fontColor=#2a5c1a;" vertex="1" parent="1">
+          <mxGeometry x="40" y="52" width="450" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" value="Browser (EmployeeSetup)" style="rounded=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="40" y="86" width="185" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" value="useOnboardingService()" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="280" y="86" width="175" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" value="OnboardingService" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="510" y="86" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" value="Backend API" style="rounded=1;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="730" y="86" width="155" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="ea0" value="useGetTeamsWithRoles() on mount" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" edge="1" parent="1" source="a1" target="a2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea0b" value="GET /api/v1/teams?withRoles=true" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" edge="1" parent="1" source="a2" target="a4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea0c" value="{ teams[] } — populates team + role dropdowns" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;endFill=0;strokeColor=#82b366;fontColor=#2a5c1a;fontSize=9;" edge="1" parent="1" source="a4" target="a1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="807" y="168" />
+              <mxPoint x="132" y="168" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ea1" value="submit employee batch" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#6c8ebf;fontColor=#023d7a;fontSize=9;" edge="1" parent="1" source="a1" target="a2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="132" y="220" />
+              <mxPoint x="367" y="220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ea2" value="onboardEmployees(employees[])" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" edge="1" parent="1" source="a2" target="a3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="367" y="262" />
+              <mxPoint x="590" y="262" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ea3" value="POST /api/v1/employees/onboard" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" edge="1" parent="1" source="a3" target="a4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="590" y="305" />
+              <mxPoint x="807" y="305" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ea4" value="201 { invited: N }" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;endFill=0;strokeColor=#82b366;fontColor=#2a5c1a;fontSize=9;" edge="1" parent="1" source="a4" target="a3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="807" y="348" />
+              <mxPoint x="590" y="348" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ea5" value="onSuccess callback" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;endFill=0;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" edge="1" parent="1" source="a3" target="a2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="590" y="390" />
+              <mxPoint x="367" y="390" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ea6" value="useSetSetupStatus.mutateAsync({ takenTour: false })" style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;fontSize=9;rounded=1;align=left;spacingLeft=5;" vertex="1" parent="1">
+          <mxGeometry x="287" y="408" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="ea7" value="POST /api/v1/setup-status" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" edge="1" parent="1" source="a2" target="a4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="367" y="445" />
+              <mxPoint x="807" y="445" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ea8" value="200 { ok: true }" style="edgeStyle=orthogonalEdgeStyle;dashed=1;endArrow=open;endFill=0;strokeColor=#82b366;fontColor=#2a5c1a;fontSize=9;" edge="1" parent="1" source="a4" target="a1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="807" y="490" />
+              <mxPoint x="132" y="490" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ea9" value="router.push('/onboarding/welcome')" style="text;html=1;strokeColor=#6c8ebf;fillColor=#dae8fc;fontSize=9;rounded=1;align=left;spacingLeft=5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="510" width="260" height="20" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

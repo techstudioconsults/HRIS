@@ -177,6 +177,7 @@ export interface PayrollApproval extends Record<string, unknown> {
     avatar: string | null;
   };
   approvedAt: string;
+  approverRole?: string;
 }
 
 // ─── Component prop types ─────────────────────────────────────────────────────
@@ -371,13 +372,26 @@ export type EventNameType = (typeof EventRegistry)[keyof typeof EventRegistry];
 export interface PayrollUIState {
   showPayrollSettingsSetupModal: boolean;
   hasCompletedPayrollPolicySetupForm: boolean;
-  showFundWalletFormModal: boolean;
-  showSchedulePayrollDrawer: boolean;
-  showRunPayrollDrawer: boolean;
+  /**
+   * showFundWalletFormModal, showFundWalletAccountModal, showSchedulePayrollDrawer,
+   * and showRunPayrollDrawer are now managed by nuqs (usePayrollModalParams).
+   * Retained below as comments for reference only.
+   *
+   * @deprecated use usePayrollModalParams().isFundWalletOpen
+   * showFundWalletFormModal: boolean
+   *
+   * @deprecated use usePayrollModalParams().isFundWalletAccountOpen
+   * showFundWalletAccountModal: boolean
+   *
+   * @deprecated use usePayrollModalParams().isSchedulePayrollOpen
+   * showSchedulePayrollDrawer: boolean
+   *
+   * @deprecated use usePayrollModalParams().isGeneratePayrollOpen
+   * showRunPayrollDrawer: boolean
+   */
   showAddEmployeeToPayrollModal: boolean;
   hidePayrollNotificationBanner?: boolean;
   payrollSelectedDate?: Date;
-  showFundWalletAccountModal: boolean;
   showEmployeeInformationDrawer: boolean;
   selectedPayslipId: string | null;
   /**
@@ -395,13 +409,9 @@ export interface PayrollUIState {
 
 export interface PayrollUIActions {
   setShowPayrollSettingsSetupModal: (open: boolean) => void;
-  setShowFundWalletFormModal: (open: boolean) => void;
-  setShowSchedulePayrollDrawer: (open: boolean) => void;
-  setShowPayrollDrawer: (open: boolean) => void;
   setShowAddEmployeeModal: (open: boolean) => void;
   setHideNotificationBanner: (show: boolean) => void;
   setPayrollSelectedDate: (date: Date | undefined) => void;
-  setShowFundWalletAccountModal: (open: boolean) => void;
   setHasCompletedPayrollPolicySetupForm: (status: boolean) => void;
   setWalletSetupCompleted: (status: boolean) => void;
   setShowEmployeeInformationDrawer: (open: boolean) => void;

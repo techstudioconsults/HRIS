@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { DashboardHeader } from '@workspace/ui/lib/dashboard/dashboard-header';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 import { PayslipDetailsModal } from '../_components/payslip-details-modal';
@@ -8,6 +8,7 @@ import { PayslipGrid } from '../_components/payslip-grid';
 import { PayslipSummaryCard } from '@/modules/@org/user/payslip/_components/payslip-summary-card';
 import { useSession } from '@/lib/session';
 import { useUserPayslipService } from '@/modules/@org/user';
+import { useUserPayslipModalParams } from '@/lib/nuqs/use-user-payslip-modal-params';
 import type { Payslip } from '@/modules/@org/admin/payroll/types';
 import type { UserPayslip } from '../types';
 
@@ -44,10 +45,14 @@ function mapToUserPayslip(payslip: Payslip): UserPayslip {
 }
 
 export const UserPayslipView = () => {
+  // Modal URL state (nuqs) — payslip-details survives refresh
+  const { isPayslipDetailsOpen, modalId, openPayslipDetails, closeModal } =
+    useUserPayslipModalParams();
+
+  // Local entity state — non-URL-serializable; derived from fetched list on cold-refresh
   const [selectedPayslip, setSelectedPayslip] = useState<UserPayslip | null>(
     null
   );
-  const [isDetailsModalOpen, setDetailsModalOpen] = useState(false);
 
   const { data: session } = useSession();
   const employeeId = session?.user?.employee?.id;
@@ -55,17 +60,28 @@ export const UserPayslipView = () => {
   const { useGetPayslips } = useUserPayslipService();
   const { data } = useGetPayslips({ employeeId }, { enabled: !!employeeId });
 
-  const payslips = (data?.data?.items ?? []).map(mapToUserPayslip);
+  const payslips = useMemo(
+    () => (data?.data?.items ?? []).map(mapToUserPayslip),
+    [data]
+  );
   const latestNetPay = payslips[0]?.netPay ?? 0;
+
+  // On cold-refresh: recover selectedPayslip from fetched list via modalId
+  const resolvedPayslip: UserPayslip | null = useMemo(() => {
+    if (!isPayslipDetailsOpen || !modalId) return null;
+    return payslips.find((p) => p.id === modalId) ?? selectedPayslip;
+  }, [isPayslipDetailsOpen, modalId, payslips, selectedPayslip]);
 
   const handleViewPayslip = (payslip: UserPayslip) => {
     setSelectedPayslip(payslip);
-    setDetailsModalOpen(true);
+    openPayslipDetails(payslip.id);
   };
 
   const handleModalOpenChange = (open: boolean) => {
-    setDetailsModalOpen(open);
-    if (!open) setSelectedPayslip(null);
+    if (!open) {
+      closeModal();
+      setSelectedPayslip(null);
+    }
   };
 
   return (
@@ -74,9 +90,9 @@ export const UserPayslipView = () => {
       <PayslipSummaryCard netPay={latestNetPay} />
       <PayslipGrid payslips={payslips} onViewPayslip={handleViewPayslip} />
       <PayslipDetailsModal
-        open={isDetailsModalOpen}
+        open={isPayslipDetailsOpen}
         onOpenChange={handleModalOpenChange}
-        payslip={selectedPayslip}
+        payslip={resolvedPayslip}
       />
     </Wrapper>
   );

@@ -8,8 +8,6 @@ import { MainButton } from '@workspace/ui/lib/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-
 import { useAuthService } from '../../services/use-auth-service';
 
 export const OTPLogin = () => {
@@ -32,24 +30,17 @@ export const OTPLogin = () => {
     await requestOTP(data, {
       onSuccess: (response) => {
         if (response?.success) {
-          toast.success(`Request Sent Successfully`, {
-            description: `Please check you mail for OTP`,
-          });
           router.push(`/login/otp-verify?email=${data.email}`);
         }
       },
-      onError: (error) => {
-        toast.error('Registration Failed', {
-          description: error.message,
-        });
-      },
+      onError: () => {},
     });
   };
 
   return (
-    <section className="mx-auto w-full max-w-[527px]">
+    <section className="mx-auto w-full max-w-131.75">
       <FormHeader
-        title="Welcome Back, HR"
+        title="Welcome Back"
         subTitle=" Sign in with your work email to continue. We'll send a one-time passcode to your email to verify
           it's you."
       />

@@ -1,0 +1,170 @@
+<mxfile host="drawio-plugin" modified="2026-04-29T00:00:00.000Z" version="22.1.22" type="embed" pages="3">
+  <diagram id="l1_context" name="L1 System Context">
+    <mxGraphModel dx="1805" dy="962" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="700" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Onboarding — C4 Level 1: System Context" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=16;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="100" y="20" width="820" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="owner" value="&lt;b&gt;Company Owner&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Person]&lt;br&gt;Registers company,&lt;br&gt;runs onboarding wizard&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#08427B;fontColor=#ffffff;strokeColor=#052E56;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="40" y="230" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="hris" value="&lt;b&gt;HRIS Web App&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[System]&lt;br&gt;Next.js 16 App Router&lt;br&gt;Onboarding wizard (4 steps)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0B4884;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="390" y="235" width="220" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="backend" value="&lt;b&gt;HR Backend API&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[External System]&lt;br&gt;NestJS — company, teams,&lt;br&gt;roles, employee endpoints&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C6C6C;fontColor=#ffffff;strokeColor=#4A4A4A;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="750" y="160" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="email" value="&lt;b&gt;Email Service&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[External System]&lt;br&gt;Sends invite emails&lt;br&gt;to onboarded employees&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C6C6C;fontColor=#ffffff;strokeColor=#4A4A4A;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="750" y="400" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="Configures company,&lt;br&gt;teams, employees" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="owner" target="hris" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="CRUD: companies, teams, roles,&lt;br&gt;employees [HTTPS/REST]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="hris" target="backend" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="Sends employee invite emails&lt;br&gt;[SMTP]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="backend" target="email" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_person" value="Person" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#08427B;fontColor=#ffffff;strokeColor=#052E56;fontSize=9;" parent="1" vertex="1">
+          <mxGeometry x="40" y="580" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_system" value="System" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0B4884;fontSize=9;" parent="1" vertex="1">
+          <mxGeometry x="145" y="580" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_ext" value="External System" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C6C6C;fontColor=#ffffff;strokeColor=#4A4A4A;fontSize=9;" parent="1" vertex="1">
+          <mxGeometry x="250" y="580" width="110" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="l2_containers" name="L2 Containers">
+    <mxGraphModel dx="2205" dy="962" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1500" pageHeight="680" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Onboarding — C4 Level 2: Containers" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=16;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="200" y="10" width="860" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="user" value="&lt;b&gt;Company Owner&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Person]&lt;br&gt;Runs onboarding wizard&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#08427B;fontColor=#ffffff;strokeColor=#052E56;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="-70" y="190" width="140" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="hris_cnt" value="HRIS Web App (Next.js 16)" style="swimlane;startSize=34;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=13;fontStyle=1;html=1;" parent="1" vertex="1">
+          <mxGeometry x="210" y="50" width="960" height="530" as="geometry" />
+        </mxCell>
+        <mxCell id="pages" value="&lt;b&gt;Onboarding App Router Pages&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Next.js RSC + Client Components]&lt;br&gt;/onboarding/welcome, /step-1,&lt;br&gt;/step-2, /step-3&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0B4884;fontSize=11;" parent="hris_cnt" vertex="1">
+          <mxGeometry x="20" y="60" width="270" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="middleware" value="&lt;b&gt;Edge Middleware (proxy.ts)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Next.js Middleware]&lt;br&gt;Route guard — reads __hris_meta cookie,&lt;br&gt;redirects unauthenticated to /login&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0B4884;fontSize=11;" parent="hris_cnt" vertex="1">
+          <mxGeometry x="350" y="170" width="270" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="onb_svc" value="&lt;b&gt;OnboardingService&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[TypeScript Class / DI]&lt;br&gt;All API calls for companies,&lt;br&gt;teams, roles, employees&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0B4884;fontSize=11;" parent="hris_cnt" vertex="1">
+          <mxGeometry x="680" y="60" width="260" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="route_guard" value="&lt;b&gt;OnboardingRouteGuard&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Client Component]&lt;br&gt;Checks setup status,&lt;br&gt;redirects completed orgs&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#006EAF;fontSize=11;" parent="hris_cnt" vertex="1">
+          <mxGeometry x="20" y="310" width="270" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="http_layer" value="&lt;b&gt;HTTP Layer&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Axios + TokenManager / src/lib/http]&lt;br&gt;Attaches Bearer token to every&lt;br&gt;request, handles 401 refresh&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#006EAF;fontSize=11;" parent="hris_cnt" vertex="1">
+          <mxGeometry x="350" y="310" width="270" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="setup_cache" value="&lt;b&gt;TanStack Query Cache&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Client-side Cache]&lt;br&gt;companyProfile | teams | roles&lt;br&gt;teamsWithRoles | setupStatus&lt;/font&gt;" style="shape=cylinder3;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#006EAF;fontSize=11;" parent="hris_cnt" vertex="1">
+          <mxGeometry x="680" y="300" width="260" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="backend_ext" value="&lt;b&gt;HR Backend API&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[External System / NestJS]&lt;br&gt;/api/v1/companies, /teams,&lt;br&gt;/roles, /employees endpoints&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6C6C6C;fontColor=#ffffff;strokeColor=#4A4A4A;fontSize=11;" parent="1" vertex="1">
+          <mxGeometry x="1250" y="265" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="ec1" value="Runs wizard [HTTPS]" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="user" target="pages" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2" value="Calls useOnboardingService() hooks" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="pages" target="onb_svc" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ec3" value="Checks setup status" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="route_guard" target="setup_cache" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ec4" value="Reads __hris_meta" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="middleware" target="setup_cache" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ec5" value="All CRUD operations" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="onb_svc" target="backend_ext" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ec6" value="API calls with Bearer" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="http_layer" target="backend_ext" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ec7" value="Populates / invalidates" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="onb_svc" target="setup_cache" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="l3_components" name="L3 Components">
+    <mxGraphModel dx="1534" dy="818" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1500" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Onboarding — C4 Level 3: Components" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=16;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="200" y="10" width="860" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="onb_mod" value="Onboarding Module (src/modules/@org/onboarding)" style="swimlane;startSize=34;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#000000;fontSize=13;fontStyle=1;html=1;" parent="1" vertex="1">
+          <mxGeometry x="20" y="55" width="980" height="680" as="geometry" />
+        </mxCell>
+        <mxCell id="welcome_view" value="&lt;b&gt;WelcomeView&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Client Component]&lt;br&gt;Take tour / skip&lt;br&gt;Driver.js tour init&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82b366;fontColor=#ffffff;strokeColor=#5B8C47;fontSize=10;" parent="onb_mod" vertex="1">
+          <mxGeometry x="20" y="55" width="175" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="step1_view" value="&lt;b&gt;StepOne&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Client Component]&lt;br&gt;CompanyProfile form&lt;br&gt;Step 1 of 3&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82b366;fontColor=#ffffff;strokeColor=#5B8C47;fontSize=10;" parent="onb_mod" vertex="1">
+          <mxGeometry x="215" y="55" width="175" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="step2_view" value="&lt;b&gt;TeamSetupPage&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Client Component]&lt;br&gt;Teams + roles accordion&lt;br&gt;Step 2 of 3&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82b366;fontColor=#ffffff;strokeColor=#5B8C47;fontSize=10;" parent="onb_mod" vertex="1">
+          <mxGeometry x="410" y="55" width="175" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="step3_view" value="&lt;b&gt;EmployeeSetup&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Client Component]&lt;br&gt;Batch invite form&lt;br&gt;Step 3 of 3&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82b366;fontColor=#ffffff;strokeColor=#5B8C47;fontSize=10;" parent="onb_mod" vertex="1">
+          <mxGeometry x="605" y="55" width="175" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="route_guard_cmp" value="&lt;b&gt;OnboardingRouteGuard&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Client Component]&lt;br&gt;Redirects completed orgs&lt;br&gt;to /admin/dashboard&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82b366;fontColor=#ffffff;strokeColor=#5B8C47;fontSize=10;" parent="onb_mod" vertex="1">
+          <mxGeometry x="800" y="55" width="175" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="onb_svc_cmp" value="&lt;b&gt;OnboardingService&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[TypeScript Class]&lt;br&gt;All API CRUD operations&lt;br&gt;via HttpAdapter&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#006EAF;fontSize=10;" parent="onb_mod" vertex="1">
+          <mxGeometry x="20" y="230" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="use_onb_svc" value="&lt;b&gt;useOnboardingService&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[React Hook]&lt;br&gt;TanStack Query mutation&lt;br&gt;&amp;amp; query wrappers&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#006EAF;fontSize=10;" parent="onb_mod" vertex="1">
+          <mxGeometry x="240" y="230" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="mark_complete" value="&lt;b&gt;MarkOnboardingComplete&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Client Component]&lt;br&gt;Sets takenTour=true&lt;br&gt;on dashboard mount&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#006EAF;fontSize=10;" parent="onb_mod" vertex="1">
+          <mxGeometry x="460" y="230" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="is_complete" value="&lt;b&gt;isOnboardingSetupComplete()&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Pure Function]&lt;br&gt;true only when&lt;br&gt;takenTour === true&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;fontColor=#ffffff;strokeColor=#006EAF;fontSize=10;" parent="onb_mod" vertex="1">
+          <mxGeometry x="680" y="230" width="200" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="company_form" value="&lt;b&gt;CompanyProfile&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Client Component]&lt;br&gt;RHF + Zod&lt;br&gt;companyProfileSchema&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82b366;fontColor=#ffffff;strokeColor=#5B8C47;fontSize=10;" parent="onb_mod" vertex="1">
+          <mxGeometry x="20" y="440" width="175" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="team_form" value="&lt;b&gt;TeamSetupForm&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Client Component]&lt;br&gt;Team + Role accordion&lt;br&gt;CRUD forms&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82b366;fontColor=#ffffff;strokeColor=#5B8C47;fontSize=10;" parent="onb_mod" vertex="1">
+          <mxGeometry x="215" y="440" width="175" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="emp_form" value="&lt;b&gt;EmployeeSetupForm&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Client Component]&lt;br&gt;Accordion per employee&lt;br&gt;onboardEmployeeSchema&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82b366;fontColor=#ffffff;strokeColor=#5B8C47;fontSize=10;" parent="onb_mod" vertex="1">
+          <mxGeometry x="410" y="440" width="175" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="breadcrumb" value="&lt;b&gt;OnboardingBreadcrumb&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;[Client Component]&lt;br&gt;Step indicator&lt;br&gt;1 of 3 progress bar&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#82b366;fontColor=#ffffff;strokeColor=#5B8C47;fontSize=10;" parent="onb_mod" vertex="1">
+          <mxGeometry x="605" y="440" width="175" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="ea1" value="useGetCompanyProfile()&lt;br&gt;useUpdateCompanyProfile()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="step1_view" target="use_onb_svc" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea2" value="useCreateTeam()&lt;br&gt;useCreateRole()..." style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="step2_view" target="use_onb_svc" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea3" value="useOnboardEmployees()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="step3_view" target="use_onb_svc" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea4" value="delegates HTTP calls" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="use_onb_svc" target="onb_svc_cmp" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea5" value="isOnboardingSetupComplete()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="route_guard_cmp" target="is_complete" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

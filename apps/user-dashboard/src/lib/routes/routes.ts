@@ -45,7 +45,7 @@ export const ROUTE_CONFIGS = [
   },
   {
     path: '/onboarding',
-    accessLevel: ACCESS_LEVELS.PUBLIC,
+    accessLevel: ACCESS_LEVELS.AUTHENTICATED,
   },
 
   // Authenticated routes - require login but no specific permissions

@@ -13,35 +13,38 @@ import { Suspense } from 'react';
 import { PwaRegistration } from '@/components/pwa/pwa-registration';
 import { PWAProvider } from '@/lib/pwa/pwa-provider';
 import { SessionProvider } from '@/lib/session';
+import { MswProvider } from '@/components/msw-provider';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <NextThemesProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-      enableColorScheme
-    >
-      <SessionProvider>
-        <PWAProvider>
-          <SSEProvider>
-            <NextTopLoader showSpinner={false} />
-            <ReactQueryProvider>
-              <NuqsAdapter>
-                <TooltipProvider>
-                  <Toast />
-                  {/* <NetworkStatusModal /> */}
-                  <KBarProviderWrapper>
-                    <PwaRegistration />
-                    <Suspense>{children}</Suspense>
-                  </KBarProviderWrapper>
-                </TooltipProvider>
-              </NuqsAdapter>
-            </ReactQueryProvider>
-          </SSEProvider>
-        </PWAProvider>
-      </SessionProvider>
-    </NextThemesProvider>
+    <MswProvider>
+      <NextThemesProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+        enableColorScheme
+      >
+        <SessionProvider>
+          <PWAProvider>
+            <SSEProvider>
+              <NextTopLoader showSpinner={false} />
+              <ReactQueryProvider>
+                <NuqsAdapter>
+                  <TooltipProvider>
+                    <Toast />
+                    {/* <NetworkStatusModal /> */}
+                    <KBarProviderWrapper>
+                      <PwaRegistration />
+                      <Suspense>{children}</Suspense>
+                    </KBarProviderWrapper>
+                  </TooltipProvider>
+                </NuqsAdapter>
+              </ReactQueryProvider>
+            </SSEProvider>
+          </PWAProvider>
+        </SessionProvider>
+      </NextThemesProvider>
+    </MswProvider>
   );
 }

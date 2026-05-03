@@ -44,30 +44,94 @@ export const usePayrollService = () => {
   // Payroll actions
   const useCreatePayroll = (options?: any) =>
     useServiceMutation(
-      (service, data: { paymentDate: string; payrollPolicyId: string }) =>
+      (service, data: { payrollPolicyId: string; paymentDate?: string }) =>
         service.createPayroll(data),
-      options
+      {
+        ...options,
+        invalidateQueries: (result: any, variables: any, context: unknown) => {
+          const keys: ReadonlyArray<readonly unknown[]> = [
+            queryKeys.payroll.list({}),
+          ];
+
+          const extra = options?.invalidateQueries?.(
+            result,
+            variables,
+            context
+          );
+          if (extra && Array.isArray(extra) && extra.length > 0) {
+            return [...keys, ...extra] as ReadonlyArray<readonly unknown[]>;
+          }
+          return keys;
+        },
+      }
+    );
+
+  const useSchedulePayroll = (options?: any) =>
+    useServiceMutation(
+      (service, data: { payrollId: string; paymentDate: string }) =>
+        service.schedulePayroll(data),
+      {
+        ...options,
+        invalidateQueries: (_result: any, variables: { payrollId: string }) => {
+          const keys: ReadonlyArray<readonly unknown[]> = [
+            queryKeys.payroll.list({}),
+            queryKeys.payroll.details(variables.payrollId),
+          ];
+          const extra = options?.invalidateQueries?.(_result, variables);
+          if (extra && Array.isArray(extra) && extra.length > 0) {
+            return [...keys, ...extra] as ReadonlyArray<readonly unknown[]>;
+          }
+          return keys;
+        },
+      }
     );
 
   const useRunPayroll = (options?: any) =>
     useServiceMutation(
       (service, data: { payrollId: string; date: string }) =>
         service.runPayroll(data),
-      options
+      {
+        ...options,
+        invalidateQueries: (
+          result: any,
+          variables: { payrollId: string; date: string },
+          context: unknown
+        ) => {
+          const keys: ReadonlyArray<readonly unknown[]> = [
+            queryKeys.payroll.list({}),
+            queryKeys.payroll.details(variables.payrollId),
+            queryKeys.payroll.payslips(variables.payrollId, {}),
+            queryKeys.payroll.approvals(variables.payrollId),
+          ];
+
+          const extra = options?.invalidateQueries?.(
+            result,
+            variables,
+            context
+          );
+          if (extra && Array.isArray(extra) && extra.length > 0) {
+            return [...keys, ...extra] as ReadonlyArray<readonly unknown[]>;
+          }
+          return keys;
+        },
+      }
     );
 
   const useRetryPayroll = (options?: any) =>
     useServiceMutation(
-      (service, data: { payslipIds: string[] }) => service.retryPayroll(data),
+      (service, data: { payrollId: string; payslipIds: string[] }) =>
+        service.retryPayroll(data),
       {
         ...options,
-        invalidateQueries: (result: any, variables: any, context: unknown) => {
+        invalidateQueries: (
+          result: any,
+          variables: { payrollId: string; payslipIds: string[] },
+          context: unknown
+        ) => {
           const keys: ReadonlyArray<readonly unknown[]> = [
             queryKeys.payroll.list({}),
-            ['payrolls', 'payslips'] as const,
-            ['payrolls', 'payslip'] as const,
-            ['payrolls', 'detail'] as const,
-            ['payrolls', 'approvals'] as const,
+            queryKeys.payroll.details(variables.payrollId),
+            queryKeys.payroll.payslips(variables.payrollId, {}),
           ];
 
           const extra = options?.invalidateQueries?.(
@@ -430,8 +494,7 @@ export const usePayrollService = () => {
         ...options,
         invalidateQueries: (_, variables: any) => {
           const keys: ReadonlyArray<readonly unknown[]> = [
-            ['payrolls', 'payslips'] as const,
-            ['payrolls', 'payslip'] as const,
+            queryKeys.payroll.payslips(variables.payrollId, {}),
             queryKeys.payroll.list({}),
             queryKeys.payroll.details(variables.payrollId),
             queryKeys.employee.suspendedByPayroll(variables.payrollId, {}),
@@ -450,8 +513,8 @@ export const usePayrollService = () => {
         ...options,
         invalidateQueries: (_, variables: any) => {
           const keys: ReadonlyArray<readonly unknown[]> = [
-            ['payrolls', 'payslips'] as const,
-            ['payrolls', 'payslip'] as const,
+            queryKeys.payroll.payslips(variables.payrollId, {}),
+            queryKeys.payroll.payslipDetails(variables.payslipId),
             queryKeys.payroll.list({}),
             queryKeys.payroll.details(variables.payrollId),
             queryKeys.employee.suspendedByPayroll(variables.payrollId, {}),
@@ -466,6 +529,7 @@ export const usePayrollService = () => {
     // Queries
     useGetCompanyPayrollPolicy,
     useCreatePayroll,
+    useSchedulePayroll,
     useRunPayroll,
     useRetryPayroll,
     useGetApprovedBanks,

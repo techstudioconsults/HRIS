@@ -1,0 +1,20 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    "/home/kingsley/blackbox/.ai/fullstack/context/api-contracts.md",
+    "/home/kingsley/blackbox/.ai/fullstack/context/architecture.md",
+    "/home/kingsley/blackbox/.ai/fullstack/context/backend-architecture.md",
+    "/home/kingsley/blackbox/.ai/fullstack/context/coding-standards.md",
+    "/home/kingsley/blackbox/.ai/fullstack/context/constraints.md",
+    "/home/kingsley/blackbox/.ai/fullstack/context/domain-models.md",
+    "/home/kingsley/blackbox/.ai/fullstack/context/frontend-architecture.md",
+    "/home/kingsley/blackbox/.ai/fullstack/context/readiness-checklist.md",
+    "/home/kingsley/blackbox/.ai/fullstack/context/tech-stack.md",
+    ".ai/memory/decisions.md",
+    ".ai/memory/known-issues.md",
+    ".ai/memory/patterns.md",
+    ".ai/state/current-feature.md",
+    ".ai/state/last-output.md",
+    ".ai/state/loop-status.md"
+  ]
+}

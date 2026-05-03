@@ -6,11 +6,9 @@ import { BackButton } from '@workspace/ui/lib/back-button';
 import { FormHeader } from '@workspace/ui/lib/form-header';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
-import { AxiosError } from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 
 import { useAuthService } from '../../services/use-auth-service';
 import { Card } from '@workspace/ui/components/card';
@@ -34,20 +32,10 @@ export const ForgotPassword = () => {
 
   const handleSubmitForm = async (data: ForgotPasswordData) => {
     await forgotPassword(data, {
-      onSuccess: (response) => {
+      onSuccess: () => {
         router.push(`/reset-password?email=${encodeURIComponent(data.email)}`);
-        toast.success(`Request Successful`, {
-          description: response?.data,
-        });
       },
-      onError: (error) => {
-        toast.error('Request Failed', {
-          description:
-            error instanceof AxiosError
-              ? error.response?.data.message
-              : 'An unknown error occurred',
-        });
-      },
+      onError: () => {},
     });
   };
 

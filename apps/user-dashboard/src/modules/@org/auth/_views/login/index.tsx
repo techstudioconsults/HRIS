@@ -8,8 +8,6 @@ import { MainButton } from '@workspace/ui/lib/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-
 import { useSession } from '@/lib/session';
 import { useAuthService } from '../../services/use-auth-service';
 
@@ -32,29 +30,24 @@ export const Login = () => {
   const handleSubmitForm = async (data: LoginFormData) => {
     try {
       const result = await loginWithPassword(data);
-      if (!result?.data) new Error('Unexpected response from server');
+      if (!result?.data) throw new Error('Unexpected response from server');
 
       const sessionRes = await fetch('/api/auth/session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          employee: result?.data.employee,
-          tokens: result?.data.tokens,
-          permissions: result?.data.permissions,
+          employee: result.data.employee,
+          tokens: result.data.tokens,
+          permissions: result.data.permissions,
         }),
       });
 
-      if (!sessionRes.ok) new Error('Failed to establish session');
+      if (!sessionRes.ok) throw new Error('Failed to establish session');
 
       await refresh();
-
-      toast.success('Login Successful', {
-        description: 'Redirecting to dashboard...',
-      });
       router.push('/login/continue');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Login failed';
-      toast.warning('Login Failed', { description: message });
       setError('password', { message });
     }
   };
@@ -62,7 +55,7 @@ export const Login = () => {
   return (
     <section className="mx-auto w-full max-w-131.75">
       <FormHeader
-        title="Welcome Back, HR"
+        title="Welcome Back"
         subTitle="Login to access your HR dashboard, and simplify operations."
       />
       <FormProvider {...methods}>
@@ -121,7 +114,7 @@ export const Login = () => {
         <section>
           <MainButton
             href={`/login/otp`}
-            variant="primaryOutline"
+            variant="outline"
             className="w-full"
             size={`2xl`}
           >

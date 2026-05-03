@@ -1,0 +1,352 @@
+<mxfile host="drawio-plugin" version="22.1.22" pages="4">
+  <diagram name="Validation Error 422" id="pg1">
+    <mxGraphModel dx="1082" dy="818" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="0" page="0" pageScale="1" pageWidth="1100" pageHeight="620" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tt" value="Error Flow — Company Profile Validation Error (422)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;align=left;" parent="1" vertex="1">
+          <mxGeometry x="40" y="12" width="600" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" value="Browser" style="rounded=1;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="CompanyProfile Form" style="rounded=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="250" y="60" width="170" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="OnboardingService" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="470" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="Backend API" style="rounded=1;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="680" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="l1" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="96" as="sourcePoint" />
+            <mxPoint x="120" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l2" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="335" y="96" as="sourcePoint" />
+            <mxPoint x="335" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l3" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="96" as="sourcePoint" />
+            <mxPoint x="550" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l4" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="760" y="96" as="sourcePoint" />
+            <mxPoint x="760" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m1" value="submit form" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#6c8ebf;fontColor=#023d7a;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="145" as="sourcePoint" />
+            <mxPoint x="335" y="145" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="updateCompanyProfile(data)" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="335" y="200" as="sourcePoint" />
+            <mxPoint x="550" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="PATCH /api/v1/companies/current" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="255" as="sourcePoint" />
+            <mxPoint x="760" y="255" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="422 — { errors: [{ field, message }] }" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="760" y="310" as="sourcePoint" />
+            <mxPoint x="550" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="error thrown" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="360" as="sourcePoint" />
+            <mxPoint x="335" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ms6" value="[self]  toast.error('Please check the form for errors')" style="text;html=1;strokeColor=#b85450;fillColor=#f8cecc;fontSize=9;rounded=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="342" y="378" width="330" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="m7" value="field-level errors rendered" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="335" y="420" as="sourcePoint" />
+            <mxPoint x="120" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Team Has Employees 409" id="pg2">
+    <mxGraphModel dx="1082" dy="818" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="0" page="0" pageScale="1" pageWidth="1100" pageHeight="620" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tt" value="Error Flow — Delete Team with Employees (409)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;align=left;" parent="1" vertex="1">
+          <mxGeometry x="40" y="12" width="580" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" value="Browser" style="rounded=1;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="TeamsSetup" style="rounded=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="250" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="OnboardingService" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="460" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="Backend API" style="rounded=1;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="670" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="l1" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="96" as="sourcePoint" />
+            <mxPoint x="120" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l2" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="96" as="sourcePoint" />
+            <mxPoint x="330" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l3" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="96" as="sourcePoint" />
+            <mxPoint x="540" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l4" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="750" y="96" as="sourcePoint" />
+            <mxPoint x="750" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m1" value="click Delete team button" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#6c8ebf;fontColor=#023d7a;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="145" as="sourcePoint" />
+            <mxPoint x="330" y="145" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="useDeleteTeam.mutateAsync({ teamId })" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="200" as="sourcePoint" />
+            <mxPoint x="540" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="DELETE /api/v1/teams/:id" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="255" as="sourcePoint" />
+            <mxPoint x="750" y="255" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="409 — { title: 'Team has existing employees' }" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="750" y="310" as="sourcePoint" />
+            <mxPoint x="540" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="error thrown" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="540" y="360" as="sourcePoint" />
+            <mxPoint x="330" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ms6" value="[self]  toast.error('Cannot delete team with employees')" style="text;html=1;strokeColor=#b85450;fillColor=#f8cecc;fontSize=9;rounded=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="337" y="378" width="360" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="m7" value="accordion remains — no state change" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="330" y="420" as="sourcePoint" />
+            <mxPoint x="120" y="420" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Duplicate Email 409" id="pg3">
+    <mxGraphModel dx="1082" dy="818" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="0" page="0" pageScale="1" pageWidth="1100" pageHeight="620" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tt" value="Error Flow — Duplicate Email in Batch Invite (409)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;align=left;" parent="1" vertex="1">
+          <mxGeometry x="40" y="12" width="600" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" value="Browser" style="rounded=1;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="EmployeeSetup Form" style="rounded=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="250" y="60" width="170" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="OnboardingService" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="470" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="Backend API" style="rounded=1;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="680" y="60" width="160" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="l1" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="96" as="sourcePoint" />
+            <mxPoint x="120" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l2" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="335" y="96" as="sourcePoint" />
+            <mxPoint x="335" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l3" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="96" as="sourcePoint" />
+            <mxPoint x="550" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l4" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="760" y="96" as="sourcePoint" />
+            <mxPoint x="760" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m1" value="submit employee batch" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#6c8ebf;fontColor=#023d7a;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="120" y="145" as="sourcePoint" />
+            <mxPoint x="335" y="145" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="onboardEmployees(employees[])" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="335" y="200" as="sourcePoint" />
+            <mxPoint x="550" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="POST /api/v1/employees/onboard" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="255" as="sourcePoint" />
+            <mxPoint x="760" y="255" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="409 — { title: 'Email already registered', email: '...' }" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="760" y="310" as="sourcePoint" />
+            <mxPoint x="550" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="error thrown" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="360" as="sourcePoint" />
+            <mxPoint x="335" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ms6a" value="[self]  form.setError('employees.N.email', { message: 'Email already registered' })" style="text;html=1;strokeColor=#b85450;fillColor=#f8cecc;fontSize=9;rounded=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="342" y="378" width="440" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="ms6b" value="[self]  Highlight affected employee email field" style="text;html=1;strokeColor=#b85450;fillColor=#f8cecc;fontSize=9;rounded=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="342" y="405" width="290" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="m7" value="inline email field error rendered" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#b85450;fontColor=#b85450;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="335" y="445" as="sourcePoint" />
+            <mxPoint x="120" y="445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Route Guard Redirect" id="pg4">
+    <mxGraphModel dx="1082" dy="818" grid="1" gridSize="10" guides="0" tooltips="1" connect="0" arrows="0" fold="0" page="0" pageScale="1" pageWidth="1100" pageHeight="580" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tt" value="Error Flow — Route Guard Blocks Completed Org (Redirect)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;align=left;" parent="1" vertex="1">
+          <mxGeometry x="40" y="12" width="660" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" value="Browser" style="rounded=1;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="40" y="60" width="150" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="OnboardingRouteGuard" style="rounded=1;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="230" y="60" width="185" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="useOnboardingService()" style="rounded=1;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="465" y="60" width="185" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="Backend API" style="rounded=1;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="700" y="60" width="155" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="l1" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="115" y="96" as="sourcePoint" />
+            <mxPoint x="115" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l2" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="322" y="96" as="sourcePoint" />
+            <mxPoint x="322" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l3" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="557" y="96" as="sourcePoint" />
+            <mxPoint x="557" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l4" value="" style="edgeStyle=none;dashed=1;strokeColor=#bbbbbb;endArrow=none;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="777" y="96" as="sourcePoint" />
+            <mxPoint x="777" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m1" value="navigate to /onboarding/*" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#6c8ebf;fontColor=#023d7a;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="115" y="145" as="sourcePoint" />
+            <mxPoint x="322" y="145" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="useGetSetupStatus()" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="322" y="200" as="sourcePoint" />
+            <mxPoint x="557" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="GET /api/v1/setup-status" style="edgeStyle=none;endArrow=block;endFill=1;strokeColor=#666666;fontColor=#333333;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="557" y="255" as="sourcePoint" />
+            <mxPoint x="777" y="255" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="{ takenTour: true } — setup is complete" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#666666;fontColor=#555555;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="777" y="305" as="sourcePoint" />
+            <mxPoint x="557" y="305" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="isOnboardingSetupComplete(status) === true" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#9673a6;fontColor=#432160;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="557" y="355" as="sourcePoint" />
+            <mxPoint x="322" y="355" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ms6" value="[self]  router.replace('/admin/dashboard')" style="text;html=1;strokeColor=#b85450;fillColor=#f8cecc;fontSize=9;rounded=1;align=left;spacingLeft=5;" parent="1" vertex="1">
+          <mxGeometry x="329" y="373" width="270" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="m7" value="/admin/dashboard (blocked from onboarding)" style="edgeStyle=none;dashed=1;endArrow=open;endFill=0;strokeColor=#6c8ebf;fontColor=#023d7a;fontSize=9;" parent="1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="322" y="415" as="sourcePoint" />
+            <mxPoint x="115" y="415" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="note" value="Note: OnboardingRouteGuard renders a loading spinner during isPending and only redirects once data is fetched." style="text;html=1;strokeColor=#d6b656;fillColor=#fff2cc;fontSize=9;rounded=1;align=left;spacingLeft=6;" parent="1" vertex="1">
+          <mxGeometry x="40" y="450" width="600" height="24" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

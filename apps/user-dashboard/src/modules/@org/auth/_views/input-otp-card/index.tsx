@@ -7,8 +7,6 @@ import { MainButton } from '@workspace/ui/lib/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-
 import { useSession } from '@/lib/session';
 import { OTPInput } from '../../_components/input-otp';
 import { useAuthService } from '../../services/use-auth-service';
@@ -56,14 +54,9 @@ export const InputOtpCard = () => {
       if (!sessionRes.ok) throw new Error('Failed to establish session');
 
       await refresh();
-
-      toast.success('Login Successful', {
-        description: 'Redirecting to dashboard...',
-      });
       router.push('/login/continue');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Invalid OTP';
-      toast.error('Login Failed', { description: message });
       setError('password', { message });
     }
   };
@@ -73,18 +66,8 @@ export const InputOtpCard = () => {
       await requestOTP(
         { email },
         {
-          onError: (error) => {
-            toast.error('Request Failed', {
-              description: error.message,
-            });
-          },
-          onSuccess: (response) => {
-            if (response?.success) {
-              toast.success(`Request Sent Successfully`, {
-                description: `Please check your mail for OTP`,
-              });
-            }
-          },
+          onError: () => {},
+          onSuccess: () => {},
         }
       );
     }

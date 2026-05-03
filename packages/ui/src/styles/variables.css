@@ -83,7 +83,8 @@
 
     /* Border */
     --border: oklch(50.5% 0.235 257.6 / 25%);
-    --input: oklch(0.96 0 0);
+    --input: oklch(50.5% 0.235 257.6 / 25%);
+    /*--input: oklch(0.96 0 0);*/
     --ring: oklch(50.5% 0.235 257.6);
 
     /* Radius */
@@ -134,19 +135,19 @@
      * At xl (15px root):     scale is ×0.9375 — comfortable on desktops.
      * At 2xl (16px root):    restored to full scale on large displays.
      */
-    --text-xs:   0.75rem;   /* 12px → 10.5px → 11.25px */
-    --text-sm:   0.875rem;  /* 14px → 12.25px → 13.125px */
-    --text-base: 1rem;      /* 16px → 14px → 15px */
-    --text-lg:   1.125rem;  /* 18px → 15.75px → 16.875px */
-    --text-xl:   1.25rem;   /* 20px → 17.5px → 18.75px */
-    --text-2xl:  1.5rem;    /* 24px → 21px → 22.5px */
-    --text-3xl:  1.875rem;  /* 30px → 26.25px → 28.125px */
-    --text-4xl:  2.25rem;   /* 36px → 31.5px → 33.75px */
-    --text-5xl:  3rem;      /* 48px → 42px → 45px */
-    --text-6xl:  3.75rem;   /* 60px → 52.5px → 56.25px */
-    --text-7xl:  4.5rem;    /* 72px → 63px → 67.5px */
-    --text-8xl:  6rem;      /* 96px → 84px → 90px */
-    --text-9xl:  8rem;      /* 128px → 112px → 120px */
+    --text-xs: 0.75rem; /* 12px → 10.5px → 11.25px */
+    --text-sm: 0.875rem; /* 14px → 12.25px → 13.125px */
+    --text-base: 1rem; /* 16px → 14px → 15px */
+    --text-lg: 1.125rem; /* 18px → 15.75px → 16.875px */
+    --text-xl: 1.25rem; /* 20px → 17.5px → 18.75px */
+    --text-2xl: 1.5rem; /* 24px → 21px → 22.5px */
+    --text-3xl: 1.875rem; /* 30px → 26.25px → 28.125px */
+    --text-4xl: 2.25rem; /* 36px → 31.5px → 33.75px */
+    --text-5xl: 3rem; /* 48px → 42px → 45px */
+    --text-6xl: 3.75rem; /* 60px → 52.5px → 56.25px */
+    --text-7xl: 4.5rem; /* 72px → 63px → 67.5px */
+    --text-8xl: 6rem; /* 96px → 84px → 90px */
+    --text-9xl: 8rem; /* 128px → 112px → 120px */
 
     /* Line heights */
     --leading-none: 1;

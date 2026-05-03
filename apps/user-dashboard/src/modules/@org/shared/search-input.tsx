@@ -33,19 +33,19 @@ export const SearchInput = ({
   }, [debouncedQuery, onSearch]);
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative border rounded-md ${className}`}>
       <Icon
         name="SearchNormal1"
         size={16}
-        className="absolute  text-primary top-1/2 left-3 -translate-y-1/2 transform"
+        className="absolute text-primary top-1/2 left-3 -translate-y-1/2 transform"
         variant={`Outline`}
       />
       <Input
         disabled={isDisabled}
         type="search"
         placeholder={placeholder}
-        className="h-full placeholder:text-xs placeholder:text-primary-200
-        dark:bg-primary-50 border-none pr-4 bg-primary-50 pl-10 shadow-none"
+        className="h-full placeholder:text-xs placeholder:text-primary-200 dark:placeholder:text-muted-foreground
+        dark:bg-primary-50 border-none pr-4 pl-10 shadow-none"
         value={searchQuery}
         onChange={(event) => setSearchQuery(event.target.value)}
       />
@@ -145,11 +145,12 @@ export function GlobalSearchInput({
 
   return (
     <Popover open={showDropdown} onOpenChange={setOpen}>
-      <PopoverTrigger className={`w-full`}>
+      <PopoverTrigger asChild className={`w-full group`}>
         <div
           className={cn(
-            'bg-primary-50 dark:bg-primary-50 relative flex h-10 ' +
-              'items-center gap-2 rounded-md px-3 focus:border-none! focus:ring-0',
+            'dark:bg-primary-50 relative border flex h-10 ' +
+              'items-center gap-2 rounded-md px-3 transition-colors ' +
+              'group-hover:text-primary',
             disabled && 'cursor-not-allowed opacity-50',
             className
           )}
@@ -169,8 +170,9 @@ export function GlobalSearchInput({
             onKeyDown={handleKeyDown}
             onFocus={() => setOpen(true)}
             disabled={disabled}
-            className="h-full flex-1 border-none placeholder:text-primary-200 placeholder:text-sm bg-transparent! p-0
-            text-sm"
+            className="h-full flex-1 border-none shadow-none placeholder:text-primary-200 dark:placeholder:text-muted-foreground
+            placeholder:text-sm bg-transparent! p-0 text-sm focus-visible:ring-0
+            focus-visible:ring-offset-0 focus:outline-none"
           />
           {isLoading && (
             <Icon
@@ -196,10 +198,10 @@ export function GlobalSearchInput({
       <PopoverContent
         // sideOffset={16}
         align="start"
-        className="min-w-screen md:min-w-[500px]"
+        className="min-w-screen md:min-w-125"
         onOpenAutoFocus={(event) => event.preventDefault()}
       >
-        <ScrollArea className="max-h-[400px]">
+        <ScrollArea className="max-h-100">
           {showRecent && (
             <div className="p-2">
               <div className="flex items-center justify-between px-2 py-1.5">

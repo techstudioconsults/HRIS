@@ -6,7 +6,7 @@ export const Toast = () => {
   return (
     <Toaster
       closeButton
-      position="bottom-center"
+      position="bottom-right"
       expand={false}
       duration={5000}
     />

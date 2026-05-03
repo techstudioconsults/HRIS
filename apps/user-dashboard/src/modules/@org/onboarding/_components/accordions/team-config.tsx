@@ -4,7 +4,7 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { AxiosError } from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { useTour } from '@workspace/ui/context/tour-context';
@@ -22,12 +22,24 @@ import {
   AccordionTrigger,
 } from '@workspace/ui/components/accordion';
 import { ReusableDialog } from '@workspace/ui/lib/dialog';
+import { useOnboardingModalParams } from '@/lib/nuqs/use-onboarding-modal-params';
 
 export const TeamConfig = () => {
-  const [dialogOpen, setDialogOpen] = useState(false);
+  // Modal URL state (nuqs) — team and role dialogs survive refresh
+  const {
+    modalId,
+    modalMode,
+    teamId: modalTeamId,
+    isTeamModalOpen,
+    isRoleModalOpen,
+    openTeamModal,
+    openRoleModal,
+    closeModal,
+  } = useOnboardingModalParams();
+
+  // Local entity state — non-URL-serializable; populated from fetched list or user action
   const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
   const [currentRole, setCurrentRole] = useState<Role | null>(null);
-  const [dialogType, setDialogType] = useState<'team' | 'role'>('team');
   const [deletingTeamId, setDeletingTeamId] = useState<string | null>(null);
   const [deletingRoleId, setDeletingRoleId] = useState<string | null>(null);
   const { stopTour } = useTour();
@@ -57,20 +69,50 @@ export const TeamConfig = () => {
   const { mutateAsync: updateTeam, isPending: isUpdatingTeam } =
     useUpdateTeam();
 
+  // On cold-refresh: recover currentTeam / currentRole from fetched teams list using URL params
+  useEffect(() => {
+    if (!teams || teams.length === 0) return;
+
+    if (isTeamModalOpen && modalId && !currentTeam) {
+      const found = teams.find((t: Team) => t.id === modalId) ?? null;
+      if (found) setCurrentTeam(found);
+    }
+
+    if (isRoleModalOpen && modalTeamId && !currentTeam) {
+      const foundTeam = teams.find((t: Team) => t.id === modalTeamId) ?? null;
+      if (foundTeam) setCurrentTeam(foundTeam);
+
+      if (modalId && foundTeam) {
+        const foundRole =
+          (foundTeam.roles ?? []).find((r: Role) => r.id === modalId) ?? null;
+        if (foundRole) setCurrentRole(foundRole);
+      }
+    }
+  }, [
+    teams,
+    isTeamModalOpen,
+    isRoleModalOpen,
+    modalId,
+    modalTeamId,
+    currentTeam,
+  ]);
+
   const handleOpenTeamDialog = (team?: Team) => {
     stopTour();
-    setCurrentTeam(team || null);
+    setCurrentTeam(team ?? null);
     setCurrentRole(null);
-    setDialogType('team');
-    setDialogOpen(true);
+    if (team) {
+      openTeamModal({ id: team.id, mode: 'edit' });
+    } else {
+      openTeamModal({ mode: 'create' });
+    }
   };
 
   const handleOpenRoleDialog = (team: Team, role?: Role) => {
     stopTour();
     setCurrentTeam(team);
-    setCurrentRole(role || null);
-    setDialogType('role');
-    setDialogOpen(true);
+    setCurrentRole(role ?? null);
+    openRoleModal(team.id!, role ? { id: role.id, mode: 'edit' } : undefined);
   };
 
   const handleAddTeam = async (name: string) => {
@@ -79,7 +121,8 @@ export const TeamConfig = () => {
       {
         onSuccess: () => {
           toast.success('Team created successfully');
-          setDialogOpen(false);
+          closeModal();
+          setCurrentTeam(null);
         },
         onError: (error) => {
           const message =
@@ -98,7 +141,8 @@ export const TeamConfig = () => {
       {
         onSuccess: () => {
           toast.success('Team updated successfully');
-          setDialogOpen(false);
+          closeModal();
+          setCurrentTeam(null);
         },
         onError: (error) => {
           const message =
@@ -122,9 +166,7 @@ export const TeamConfig = () => {
           error instanceof AxiosError
             ? error.response?.data.message
             : 'An unexpected error occurred';
-        toast.error('Failed to delete team', {
-          description: message,
-        });
+        toast.error('Failed to delete team', { description: message });
       },
       onSettled: () => setDeletingTeamId(null),
     });
@@ -140,7 +182,8 @@ export const TeamConfig = () => {
       {
         onSuccess: () => {
           toast.success('Role created successfully');
-          setDialogOpen(false);
+          closeModal();
+          setCurrentRole(null);
         },
         onError: (error) => {
           const message =
@@ -157,47 +200,38 @@ export const TeamConfig = () => {
     roleId: string,
     role: Partial<Role> & { teamId?: string }
   ) => {
-    try {
-      const resolvedTeamId = role.teamId ?? currentTeam?.id;
-      if (!resolvedTeamId) {
-        toast.error('Failed to update role', {
-          description: 'Missing team context for role update',
-        });
-        return;
-      }
-      const updateData: {
-        roleId: string;
-        name?: string;
-        permissions?: string[];
-        teamId: string;
-      } = {
-        roleId,
-        teamId: resolvedTeamId,
-      };
-      if (role.name !== undefined) updateData.name = role.name;
-      if (role.permissions !== undefined)
-        updateData.permissions = role.permissions;
-
-      await updateRole(updateData, {
-        onSuccess: () => {
-          toast.success('Role updated successfully');
-        },
-        onError: (error) => {
-          const message =
-            error instanceof AxiosError
-              ? error.response?.data.message
-              : 'An unexpected error occurred';
-          toast.error('Failed to update role', { description: message });
-          setDialogOpen(false);
-        },
-      });
-    } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : 'An unexpected error occurred';
+    const resolvedTeamId = role.teamId ?? currentTeam?.id;
+    if (!resolvedTeamId) {
       toast.error('Failed to update role', {
-        description: message,
+        description: 'Missing team context for role update',
       });
+      return;
     }
+    const updateData: {
+      roleId: string;
+      name?: string;
+      permissions?: string[];
+      teamId: string;
+    } = { roleId, teamId: resolvedTeamId };
+    if (role.name !== undefined) updateData.name = role.name;
+    if (role.permissions !== undefined)
+      updateData.permissions = role.permissions;
+
+    await updateRole(updateData, {
+      onSuccess: () => {
+        toast.success('Role updated successfully');
+        closeModal();
+        setCurrentRole(null);
+      },
+      onError: (error) => {
+        const message =
+          error instanceof AxiosError
+            ? error.response?.data.message
+            : 'An unexpected error occurred';
+        toast.error('Failed to update role', { description: message });
+        closeModal();
+      },
+    });
   };
 
   const handleDeleteRole = async (_teamId: string, roleId: string) => {
@@ -223,7 +257,7 @@ export const TeamConfig = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Skeleton className="h-5 w-5 rounded" />
-            <Skeleton className="h-6 w-[150px]" />
+            <Skeleton className="h-6 w-37.5" />
           </div>
           <div className="flex space-x-4">
             <Skeleton className="h-5 w-5 rounded" />
@@ -311,7 +345,6 @@ export const TeamConfig = () => {
                           size={16}
                           className="mr-2"
                         />
-                        {/* Edit */}
                       </span>
                       <span
                         className="text-destructive hover:text-destructive flex cursor-pointer items-center"
@@ -335,7 +368,6 @@ export const TeamConfig = () => {
                             className="mr-2 text-danger"
                           />
                         )}
-                        {/* {isDeletingRole && deletingRoleId === role.id ? "Deleting..." : "Delete"} */}
                       </span>
                     </div>
                   </div>
@@ -373,35 +405,48 @@ export const TeamConfig = () => {
         </MainButton>
       </div>
 
-      {/* Team Dialog */}
+      {/* Team Create/Edit Dialog — persists across refresh */}
       <ReusableDialog
-        open={dialogOpen && dialogType === 'team'}
-        onOpenChange={setDialogOpen}
-        title={currentTeam ? 'Edit Team' : 'Add New Team'}
+        open={isTeamModalOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            closeModal();
+            setCurrentTeam(null);
+          }
+        }}
+        title={modalMode === 'edit' ? 'Edit Team' : 'Add New Team'}
         wrapperClassName={`text-left`}
         description={
-          currentTeam
+          modalMode === 'edit'
             ? 'Modify the team details'
             : 'Create a new team for your organization'
         }
         trigger={undefined}
       >
         <TeamForm
-          initialData={currentTeam}
+          initialData={currentTeam ?? undefined}
           onSubmit={(data) =>
             currentTeam
               ? handleUpdateTeam(currentTeam.id!, data.name)
               : handleAddTeam(data.name)
           }
-          onCancel={() => setDialogOpen(false)}
+          onCancel={() => {
+            closeModal();
+            setCurrentTeam(null);
+          }}
           isSubmitting={isCreatingTeam || isUpdatingTeam}
         />
       </ReusableDialog>
 
-      {/* Role Dialog */}
+      {/* Role Create/Edit Dialog — persists across refresh */}
       <ReusableDialog
-        open={dialogOpen && dialogType === 'role'}
-        onOpenChange={setDialogOpen}
+        open={isRoleModalOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            closeModal();
+            setCurrentRole(null);
+          }
+        }}
         title={currentRole ? 'Edit Role' : 'Add New Role'}
         wrapperClassName={`text-left`}
         description={
@@ -413,7 +458,7 @@ export const TeamConfig = () => {
       >
         {currentTeam && (
           <RolesAndPermission
-            initialData={currentRole}
+            initialData={currentRole ?? undefined}
             onSubmit={(data) => {
               return currentRole
                 ? handleUpdateRole(currentRole.id!, {
@@ -422,7 +467,10 @@ export const TeamConfig = () => {
                   })
                 : handleAddRole(currentTeam.id!, data);
             }}
-            onCancel={() => setDialogOpen(false)}
+            onCancel={() => {
+              closeModal();
+              setCurrentRole(null);
+            }}
             isSubmitting={isCreatingRole || isUpdatingRole}
           />
         )}

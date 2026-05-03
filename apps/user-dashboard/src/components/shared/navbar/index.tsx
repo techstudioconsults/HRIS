@@ -27,7 +27,7 @@ const Navbar = () => {
     >
       <section className="flex w-full items-center justify-between">
         <div className={`flex items-center`}>
-          <MainButton variant={`accent`} className={`min-w-[256px] text-black`}>
+          <MainButton variant={`ghost`} className={`min-w-[256px] text-black`}>
             Kingsley Solomon
           </MainButton>
           <NavItems className={`hidden lg:block`} links={NAV_LINKS} />

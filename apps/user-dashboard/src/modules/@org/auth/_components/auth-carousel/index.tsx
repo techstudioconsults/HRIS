@@ -2,6 +2,7 @@
 
 import { testimonials } from '@/lib/tools/constants';
 import { UniversalSwiper } from '@/components/shared/carousel';
+import { Autoplay } from '@workspace/ui/lib/carousel-plugins';
 import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 
 export const AuthCarousel = () => {
@@ -9,6 +10,7 @@ export const AuthCarousel = () => {
     <>
       <UniversalSwiper
         className="overflow-hidden"
+        plugins={[Autoplay({ delay: 8000, stopOnFocusIn: true })]}
         items={testimonials}
         renderItem={(testimonial: AuthCarouselProperties) => (
           <section className="relative flex items-end justify-center p-9">
@@ -26,7 +28,7 @@ export const AuthCarousel = () => {
           </section>
         )}
         showPagination
-        showNavigation
+        // showNavigation
       />
       <GradientMask className={` h-[50%]! via-black/80 from-black`} />
     </>

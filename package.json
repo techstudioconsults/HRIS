@@ -22,7 +22,9 @@
     "changeset:publish": "changeset publish",
     "prepare": "husky",
     "issues:create": "node --env-file=.env --import tsx/esm scripts/create-issues.ts",
-    "issues:create:dry": "node --env-file=.env --import tsx/esm scripts/create-issues.ts --dry-run"
+    "issues:create:dry": "node --env-file=.env --import tsx/esm scripts/create-issues.ts --dry-run",
+    "clickup:create": "node --env-file=.env --import tsx/esm scripts/create-clickup-tickets.ts",
+    "clickup:create:dry": "node --env-file=.env --import tsx/esm scripts/create-clickup-tickets.ts --dry-run"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.8",

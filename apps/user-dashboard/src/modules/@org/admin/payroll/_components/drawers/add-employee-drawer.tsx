@@ -20,6 +20,7 @@ import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useCallback, useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
+import { toast } from 'sonner';
 
 import Loading from '../../../../../../../note/loading';
 import { FilterForm } from '../../../employee/_components/forms/filter-form';
@@ -168,6 +169,79 @@ export const AddEmployeeDrawer = ({
     setAddedEmployee(null);
   };
 
+  const [selectedEmployees, setSelectedEmployees] = useState<Employee[]>([]);
+  const [isBulkReIncludeModalOpen, setIsBulkReIncludeModalOpen] =
+    useState(false);
+  const [isBulkReIncluding, setIsBulkReIncluding] = useState(false);
+
+  const handleSelectionChange = useCallback((rows: Employee[]) => {
+    setSelectedEmployees(rows);
+  }, []);
+
+  const handleBulkReInclude = useCallback(async () => {
+    if (selectedEmployees.length === 0 || isBulkReIncluding) return;
+    setIsBulkReIncluding(true);
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const employee of selectedEmployees) {
+      try {
+        await createPayslip({
+          payrollId: payrollId || '',
+          employeeId: employee.id,
+        });
+        successCount++;
+      } catch {
+        failCount++;
+        toast.error(
+          `Failed to re-include "${employee.firstName} ${employee.lastName}".`
+        );
+      }
+    }
+
+    setIsBulkReIncluding(false);
+    setIsBulkReIncludeModalOpen(false);
+    setSelectedEmployees([]);
+
+    if (successCount > 0) {
+      toast.success(
+        `${successCount} employee${successCount > 1 ? 's' : ''} re-included successfully.`
+      );
+    }
+    if (failCount > 0) {
+      toast.error(
+        `${failCount} re-inclusion${failCount > 1 ? 's' : ''} failed. See errors above.`
+      );
+    }
+  }, [createPayslip, isBulkReIncluding, payrollId, selectedEmployees]);
+
+  const handleBulkExport = useCallback(() => {
+    if (selectedEmployees.length === 0) return;
+    const headers = ['First Name', 'Last Name', 'Email', 'Role', 'Department'];
+    const rows = selectedEmployees.map((employee) => [
+      employee.firstName,
+      employee.lastName,
+      employee.email,
+      employee.employmentDetails?.role?.name ?? '',
+      employee.employmentDetails?.team?.name ?? '',
+    ]);
+    const csvContent = [headers, ...rows]
+      .map((row) =>
+        row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+      )
+      .join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `excluded-employees-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success(
+      `Exported ${selectedEmployees.length} employee${selectedEmployees.length > 1 ? 's' : ''} to CSV.`
+    );
+  }, [selectedEmployees]);
+
   const employeeColumns: IColumnDefinition<Employee>[] = [
     {
       accessorKey: 'firstName',
@@ -304,6 +378,42 @@ export const AddEmployeeDrawer = ({
                       enableFiltering={false}
                       mobileCardView={false}
                       showColumnCustomization={false}
+                      onSelectionChange={handleSelectionChange}
+                      customFooterRenderer={() =>
+                        selectedEmployees.length > 0 ? (
+                          <div className="flex flex-col gap-3 rounded-b-lg border-t bg-primary/5 px-4 py-3 sm:flex-row sm:items-center">
+                            <span className="text-sm font-medium text-primary">
+                              {selectedEmployees.length} row
+                              {selectedEmployees.length > 1 ? 's' : ''} selected
+                            </span>
+                            <div className="flex items-center gap-2 sm:ml-auto">
+                              <MainButton
+                                variant="primaryOutline"
+                                onClick={handleBulkExport}
+                                isLeftIconVisible
+                                icon={
+                                  <Icon
+                                    name="DocumentDownload"
+                                    variant="Outline"
+                                  />
+                                }
+                              >
+                                Export CSV
+                              </MainButton>
+                              <MainButton
+                                variant="primary"
+                                onClick={() =>
+                                  setIsBulkReIncludeModalOpen(true)
+                                }
+                                isLeftIconVisible
+                                icon={<Icon name="Add" variant="Outline" />}
+                              >
+                                Re-include Selected
+                              </MainButton>
+                            </div>
+                          </div>
+                        ) : null
+                      }
                     />
                   ) : (debouncedSearch && debouncedSearch.trim()) ||
                     teamId ||
@@ -343,6 +453,27 @@ export const AddEmployeeDrawer = ({
         confirmText="Continue"
         showCancelButton={false}
         autoClose={false}
+      />
+
+      <AlertModal
+        type="warning"
+        isOpen={isBulkReIncludeModalOpen}
+        onClose={() => {
+          if (!isBulkReIncluding) setIsBulkReIncludeModalOpen(false);
+        }}
+        onConfirm={() => {
+          void handleBulkReInclude();
+        }}
+        loading={isBulkReIncluding}
+        title="Re-include selected employees"
+        description={`Are you sure you want to re-include ${selectedEmployees.length} employee${selectedEmployees.length > 1 ? 's' : ''} into payroll?`}
+        confirmText={
+          isBulkReIncluding
+            ? 'Re-including...'
+            : `Re-include ${selectedEmployees.length} employee${selectedEmployees.length > 1 ? 's' : ''}`
+        }
+        cancelText="Cancel"
+        confirmVariant="primary"
       />
     </>
   );

@@ -4,6 +4,7 @@ import {
   createRole as sharedCreateRole,
   getRoles as sharedGetRoles,
   updateRole as sharedUpdateRole,
+  deleteRole as sharedDeleteRole,
 } from '@/modules/@org/shared/organization-service';
 
 export class TeamService {
@@ -97,6 +98,10 @@ export class TeamService {
     roleData: { name?: string; permissions?: string[] }
   ) {
     return sharedUpdateRole(this.http, roleId, roleData);
+  }
+
+  async deleteRole(roleId: string) {
+    return sharedDeleteRole(this.http, roleId);
   }
 
   async assignEmployeeToTeam(

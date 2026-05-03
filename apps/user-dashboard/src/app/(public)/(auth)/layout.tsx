@@ -37,13 +37,14 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
       >
         <section className="hide-scrollbar lg:col-span-7 max-h-dvh overflow-y-auto px-6">
           <div
-            className={cn('mx-auto max-w-[527px] flex items-center min-h-40')}
+            className={cn('mx-auto max-w-131.75 flex items-center min-h-40')}
           >
             <Logo
               logo={isDark ? `/images/logo-white.svg` : `/images/logo.svg`}
               width={214}
             />
           </div>
+          {/*<hr className={`absolute left-0 right-0 top-40`}/>*/}
           <div className="flex min-h-[calc(100dvh-160px)] w-full items-center pb-10">
             {children}
           </div>

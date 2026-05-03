@@ -5,23 +5,19 @@ import type {
 
 // ── Team workflow store types ─────────────────────────────────────────────────
 
+/** @deprecated - Use nuqs `modal` URL param instead. Kept for test-local usage only. */
 export type TeamWorkflowDialog = 'none' | 'team' | 'role' | 'employee';
 export type WorkflowMode = 'create' | 'edit' | 'standalone';
 
 export interface TeamWorkflowState {
   currentTeam: TeamFormType | null;
   currentRole: FormRole | null;
-  dialog: TeamWorkflowDialog;
   isSubmitting: boolean;
   workflowMode: WorkflowMode;
   skipToNextStep: boolean; // Flag to determine if user wants to continue workflow
 }
 
 export interface TeamWorkflowActions {
-  openTeamDialog: (team?: TeamFormType | null, mode?: WorkflowMode) => void;
-  openRoleDialog: (team?: TeamFormType | null, role?: FormRole | null) => void;
-  openEmployeeDialog: (team: TeamFormType) => void;
-  closeDialog: () => void;
   setCurrentTeam: (team: TeamFormType | null) => void;
   setCurrentRole: (role: FormRole | null) => void;
   setSubmitting: (submitting: boolean) => void;
@@ -123,6 +119,12 @@ export interface AddNewMembersProperties {
   onSubmit: (data: MemberAssignment) => Promise<void>;
   onCancel: (event: import('react').FormEvent) => void;
   isSubmitting?: boolean;
+}
+
+// ── sub-team-details (subteam management) ───────────────────────────────────────
+
+export interface SubTeamDetailsState {
+  // Inherits all team functionality
 }
 
 // ── add-new-roles.tsx ─────────────────────────────────────────────────────────

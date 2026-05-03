@@ -21,12 +21,22 @@ export class PayrollService {
   // =============================
 
   // Create payroll (supports immediate or scheduled creation)
-  async createPayroll(data: { paymentDate: string; payrollPolicyId: string }) {
+  async createPayroll(data: { payrollPolicyId: string; paymentDate?: string }) {
     const response = await this.http.post<ApiResponse<Payroll>>(
       `/payrolls`,
       data
     );
     if (response?.status === 201 || response?.status === 200)
+      return response.data;
+  }
+
+  // Schedule (reschedule) an existing payroll to a new payment date
+  async schedulePayroll(data: { payrollId: string; paymentDate: string }) {
+    const response = await this.http.patch<ApiResponse<Payroll>>(
+      `/payrolls/${data.payrollId}`,
+      { paymentDate: data.paymentDate }
+    );
+    if (response?.status === 200 || response?.status === 201)
       return response.data;
   }
 
@@ -41,11 +51,12 @@ export class PayrollService {
   }
 
   // Retry failed payroll (or stuck state)
-  async retryPayroll(data: { payslipIds: string[] }) {
+  async retryPayroll(data: { payrollId: string; payslipIds: string[] }) {
     const response = await this.http.post<
       ApiResponse<{ success: boolean; payroll: Payroll }>
-    >(`/payrolls/retry`, data);
-    if (response?.status === 200) return response.data;
+    >(`/payrolls/${data.payrollId}/retry`, { payslipIds: data.payslipIds });
+    if (response?.status === 200 || response?.status === 201)
+      return response.data;
   }
 
   // Get approved banks (used for payouts)
@@ -293,7 +304,7 @@ export class PayrollService {
     const response = await this.http.get<PaginatedApiResponse<Payslip>>(
       `/payslips`,
       {
-        // payrollId: payrollID,
+        payrollId: payrollID,
         ...filters,
       }
     );

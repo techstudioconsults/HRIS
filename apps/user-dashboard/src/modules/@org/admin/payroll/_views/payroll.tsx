@@ -4,9 +4,7 @@ import { formatCurrency, formatDate } from '@/lib/formatters';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
 import { DashboardHeader } from '@workspace/ui/lib/dashboard';
 import { GenericDropdown } from '@workspace/ui/lib/drop-down';
-import { EmptyState } from '@workspace/ui/lib/empty-state';
 import { ComboBox } from '@workspace/ui/lib/select-dropdown/combo-box';
-import { AdvancedDataTable, TableSkeleton } from '@workspace/ui/lib/table';
 import { MainButton } from '@workspace/ui/lib/button';
 import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
@@ -17,42 +15,53 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-import empty1 from '~/images/empty-state.svg';
 import { ApprovalProgressModal } from '../_components/approval-progress-modal';
 import { DevApprovalActionsModal } from '../_components/dev-approval-actions-modal';
 import { AddEmployeeDrawer } from '../_components/drawers/add-employee-drawer';
 import { EmployeeInformationDrawer } from '../_components/drawers/employee-infomation-drawer';
 import { GenerateRunPayrollDrawer } from '../_components/drawers/generate-run-payroll-drawer';
+import { GeneratePayrollDrawer } from '../_components/drawers/generate-payroll-drawer';
 import { SchedulePayrollDrawer } from '../_components/drawers/schedule-payroll-drawer';
 import { FundWalletFormModal } from '../_components/forms/fund-wallet-form-modal';
 import { FundWalletAccountModal } from '../_components/fund-wallet-account-modal';
 import { PayrollSetupSettingsModal } from '../_components/payroll-setup-modal';
+import { usePayrollModalParams } from '@/lib/nuqs/use-payroll-modal-params';
 import { PayrollNotificationBanner } from '../_components/payroll-notification-banner/banner';
 import { DashboardCard } from '../../../_components/dashboard-card';
 import { usePayrollService } from '../services/use-service';
 import { usePayrollStore } from '../stores/payroll-store';
 import type { Payroll, PayrollApproval } from '../types';
+import { AlertModal } from '@workspace/ui/lib/dialog';
 import { getPayrollColumns, usePayrollRowActions } from './table-data';
+import { useBulkPayrollActions } from '../hook/use-bulk-payroll-actions';
+import { PayrollTableSection } from './payroll-table-section';
 
 export const PayrollView = () => {
   const { getRowActions, DeleteConfirmationModal } = usePayrollRowActions();
+
+  // ── URL state (nuqs) — schedule, generate, fund-wallet survive refresh ────
+  const {
+    isGeneratePayrollOpen,
+    openSchedulePayroll,
+    openGeneratePayroll,
+    openCreatePayroll,
+    openFundWallet,
+    openFundWalletAccount,
+    closeModal: closePayrollModal,
+  } = usePayrollModalParams();
+
+  // ── Zustand — non-URL business state ─────────────────────────────────────
   const {
     hasCompletedPayrollPolicySetupForm,
     setHasCompletedPayrollPolicySetupForm,
-    setShowFundWalletFormModal,
-    setShowFundWalletAccountModal,
-    setShowSchedulePayrollDrawer,
     setShowAddEmployeeModal,
     walletSetupCompleted,
-    showRunPayrollDrawer,
-    setShowPayrollDrawer,
     hidePayrollNotificationBanner,
     payrollSelectedDate,
   } = usePayrollStore();
   const {
     useGetCompanyPayrollPolicy,
     useGetAllPayrolls,
-    useCreatePayroll,
     useGetPayslips,
     useGetCompanyWallet,
     useGetPayrollApprovals,
@@ -66,11 +75,20 @@ export const PayrollView = () => {
     isLoading: loadingPayrolls,
     refetch: refetchPayrolls,
   } = useGetAllPayrolls();
-  const { mutateAsync: createPayroll, isPending: isCreatingPayroll } =
-    useCreatePayroll();
   const [isWalletBalanceVisible, setIsWalletBalanceVisible] = useState(true);
   const [showNoPayrollBanner, setShowNoPayrollBanner] = useState(false);
   const [selectedPayrollId, setSelectedPayrollId] = useState<string>('');
+
+  const {
+    selectedCount,
+    handleSelectionChange,
+    isBulkDeleteModalOpen,
+    isBulkDeleting,
+    openBulkDeleteModal,
+    closeBulkDeleteModal,
+    handleBulkDelete,
+    handleBulkExport,
+  } = useBulkPayrollActions({ payrollId: selectedPayrollId });
   const [isApprovalProgressOpen, setIsApprovalProgressOpen] = useState(false);
   const [isDevApprovalActionsOpen, setIsDevApprovalActionsOpen] =
     useState(false);
@@ -101,7 +119,7 @@ export const PayrollView = () => {
     selectedPayrollId,
     undefined,
     {
-      enabled: !!selectedPayrollId, // Automatically fetch when payroll is selected
+      enabled: !!selectedPayrollId,
     }
   );
 
@@ -116,8 +134,6 @@ export const PayrollView = () => {
     payslipsData?.data?.items
       ?.filter((payslip) => payslip.status === 'failed')
       .map((payslip) => payslip.id) ?? [];
-  const isRetryAllDisabled =
-    failedPayslipIds.length === 0 || isRetryingAllFailed;
 
   // Approval progress data for the selected payroll
   const payrollIdForApprovals = selectedPayrollId || '';
@@ -126,12 +142,6 @@ export const PayrollView = () => {
       enabled: !!payrollIdForApprovals && isApprovalProgressOpen,
     });
   const approvals = (approvalsResponse?.data ?? []) as PayrollApproval[];
-
-  // Show Run Payroll button when payslips are available, Generate Payslip otherwise
-  const showRunPayrollButton =
-    !!selectedPayrollId && hasPayslipsForSelectedPayroll;
-  const showGeneratePayslipButton =
-    !!selectedPayrollId && !hasPayslipsForSelectedPayroll;
 
   // Find the full record for the currently selected payroll
   const selectedPayrollRecord: Payroll | undefined =
@@ -142,7 +152,6 @@ export const PayrollView = () => {
         ) as Payroll)
       : undefined);
 
-  // Disable running payroll for future months (e.g., December while still in November)
   const isSelectedPayrollInFuture = (() => {
     if (!selectedPayrollRecord?.paymentDate) return false;
     const payrollDate = new Date(selectedPayrollRecord.paymentDate);
@@ -156,17 +165,27 @@ export const PayrollView = () => {
 
   const canRunSelectedPayroll = !isSelectedPayrollInFuture;
 
-  // Robust awaiting detection (captures "awaiting", "awaiting approval", etc.)
+  // ── Derived state-driven flags ────────────────────────────────────────────
   const normalizedStatus = (selectedPayrollRecord?.status ?? '')
     .toString()
     .toLowerCase();
+
+  const canRunPayroll =
+    (normalizedStatus === 'idle' || normalizedStatus === 'failed') &&
+    canRunSelectedPayroll;
   const isAwaitingApproval = normalizedStatus.includes('awaiting');
   const isDisbursed = normalizedStatus.includes('disbursed');
   const isCompleted = normalizedStatus.includes('completed');
-  const isAddEmployeeDisabled =
-    isCompleted ||
-    !payslipsData?.data.items ||
-    payslipsData.data.items.length === 0;
+
+  // ── Conditional visibility rules ──────────────────────────────────────────
+  const showGeneratePayroll =
+    !selectedPayrollId || // nothing selected yet — allow generation
+    normalizedStatus.includes('complete') ||
+    normalizedStatus.includes('partial');
+  const showRunPayroll = canRunPayroll;
+  const showViewApprovalProgress = isAwaitingApproval;
+  const showRetryAllFailed = failedPayslipIds.length > 0;
+  const showAddEmployee = hasPayslipsForSelectedPayroll;
 
   // Show the banner if status is awaiting (ignore hide flag in this state),
   // otherwise show only when a run is in progress and the banner isn't hidden
@@ -180,16 +199,11 @@ export const PayrollView = () => {
     !isCompleted &&
     (shouldShowApprovalProgressBanner || !!payrollData.paymentDate);
 
-  // Show the button if payroll run is in progress or status is awaiting (do not tie to hide flag)
-  const shouldShowApprovalProgressButton =
-    !!payrollSelectedDate || isAwaitingApproval;
-
   const approvalBannerDateLabel =
     payrollSelectedDate && shouldShowApprovalProgressBanner
       ? formatDate(payrollSelectedDate, { month: 'long', year: 'numeric' })
       : payrollData.paymentDate;
 
-  // If current selected payroll is disbursed, attempt to locate the next scheduled payroll (future payment date)
   const nextScheduledPayroll =
     isDisbursed && Array.isArray(allPayrolls?.data) && selectedPayrollRecord
       ? [...allPayrolls.data]
@@ -224,61 +238,34 @@ export const PayrollView = () => {
 
   const handlePayrollSelection = (value: string) => {
     setSelectedPayrollId(value);
-    // Payslips and payroll details will be fetched automatically via hooks when ID changes
   };
 
   const payrollPolicyStatus = payrollPolicy?.data?.status === `incomplete`;
   const isFundWalletDisabled = payrollPolicyStatus && !walletSetupCompleted;
+  const isGenerateDisabled = payrollPolicyStatus;
 
   const toggleWalletBalanceVisibility = () => {
     setIsWalletBalanceVisible(!isWalletBalanceVisible);
   };
 
   const handleSetupWallet = () => {
-    setShowFundWalletFormModal(true);
-    setShowFundWalletAccountModal(false);
+    openFundWallet();
   };
 
   const handleFundWallet = () => {
-    setShowFundWalletAccountModal(true);
-    setShowFundWalletFormModal(false);
+    openFundWalletAccount();
   };
 
-  const handleGeneratePayroll = async () => {
-    try {
-      // Get the current date for payment date
-      const paymentDate = new Date().toISOString();
-      const payrollPolicyId = payrollPolicy?.data.id as string;
-      await createPayroll(
-        { paymentDate, payrollPolicyId },
-        {
-          onSuccess: async (data) => {
-            // Map response to payroll data (only affects dashboard cards)
-            if (data?.data) {
-              const newPayrollId = data.data.id;
-              setSelectedPayrollId(newPayrollId);
-              setPayrollData((previous) => ({
-                ...previous,
-                id: newPayrollId,
-                status: String(data.data.status || ''),
-                policyId: data.data.policyId,
-                netPay: data.data.netPay,
-                employeesInPayroll: data.data.employeesInPayroll,
-                paymentDate: formatDate(data.data.paymentDate),
-                walletBalance: companyWallet?.data?.balance || 0,
-              }));
-              // Hide the no payroll banner
-              setShowNoPayrollBanner(false);
-              // Refetch payrolls to update the list
-              await refetchPayrolls();
-              // Payslips will be automatically fetched due to selectedPayrollId change
-            }
-          },
-        }
-      );
-    } catch {
-      // Error handling is done by the mutation
-    }
+  // ── Generate Payroll → opens GeneratePayrollDrawer ──────────────────────
+  const handleGeneratePayroll = () => {
+    openCreatePayroll();
+  };
+
+  const handleGeneratePayrollSuccess = async (payrollId: string) => {
+    setSelectedPayrollId(payrollId);
+    setShowNoPayrollBanner(false);
+    await refetchPayrolls();
+    // Group C: auto-select the new payroll, do NOT auto-open run drawer
   };
 
   const handleRunPayroll = () => {
@@ -287,7 +274,7 @@ export const PayrollView = () => {
       return;
     }
 
-    setShowPayrollDrawer(true);
+    openGeneratePayroll(selectedPayrollId || undefined);
   };
 
   const handleDismissNoPayrollBanner = () => {
@@ -301,7 +288,7 @@ export const PayrollView = () => {
     }
 
     await retryPayroll(
-      { payslipIds: failedPayslipIds },
+      { payrollId: selectedPayrollId, payslipIds: failedPayslipIds },
       {
         onSuccess: () => {
           toast.success('Retry has been queued for failed payslips.');
@@ -333,8 +320,6 @@ export const PayrollView = () => {
     setHasCompletedPayrollPolicySetupForm,
   ]);
 
-  // When wallet setup has just completed (success alert shown),
-  // ensure the "No payroll" banner becomes visible if there are no payrolls yet.
   useEffect(() => {
     if (!walletSetupCompleted) return;
 
@@ -345,7 +330,6 @@ export const PayrollView = () => {
     }
   }, [walletSetupCompleted, allPayrolls]);
 
-  // Keep local walletBalance in sync with server data
   useEffect(() => {
     const latestBalance = companyWallet?.data?.balance;
     if (typeof latestBalance === 'number') {
@@ -356,7 +340,6 @@ export const PayrollView = () => {
     }
   }, [companyWallet?.data?.balance]);
 
-  // Sync detailed payroll data when fetched
   useEffect(() => {
     if (selectedPayrollResponse?.data) {
       const p = selectedPayrollResponse.data as Payroll;
@@ -373,36 +356,28 @@ export const PayrollView = () => {
     }
   }, [selectedPayrollResponse?.data, companyWallet?.data?.balance]);
 
-  // Check if there are any payrolls available and load current payroll (only affects dashboard cards)
   useEffect(() => {
     if (!loadingPayrolls && allPayrolls) {
       const hasPayrolls =
         Array.isArray(allPayrolls?.data) && allPayrolls.data.length > 0;
       setShowNoPayrollBanner(!hasPayrolls);
 
-      // Load the most recent payroll data if available (sorted by earliest month)
-      // This only affects dashboard cards, not the table
       if (hasPayrolls) {
-        // Sort payrolls by payment date (earliest first) and select earliest; detailed fetch will populate cards
         const payrollsArray = Array.isArray(allPayrolls.data)
           ? allPayrolls.data
           : [];
         const sortedPayrolls = [...payrollsArray].sort(
-          (a, b) =>
-            new Date(a.paymentDate).getTime() -
-            new Date(b.paymentDate).getTime()
+          (a: Payroll, b: Payroll) =>
+            new Date(b.paymentDate).getTime() -
+            new Date(a.paymentDate).getTime()
         );
-        const earliestPayroll = sortedPayrolls[0];
-        if (earliestPayroll) {
-          setSelectedPayrollId(earliestPayroll.id);
+        const mostRecentPayroll = sortedPayrolls[0];
+        if (mostRecentPayroll) {
+          setSelectedPayrollId(mostRecentPayroll.id);
         }
       }
     }
   }, [allPayrolls, companyWallet?.data?.balance, loadingPayrolls]);
-
-  // if (loadingPayrolls) {
-  //   return null;
-  // }
 
   return (
     <section className="space-y-10">
@@ -417,59 +392,63 @@ export const PayrollView = () => {
                 value={selectedPayrollId}
                 onValueChange={handlePayrollSelection}
                 placeholder="Select payroll period"
-                className="h-10 lg:w-80 border-none bg-primary/10 text-primary w-full"
+                triggerClassName="lg:w-[20rem] justify-between w-full"
               />
             </div>
-            {/* Desktop Layout - Show individual buttons */}
+            {/* Desktop Layout */}
             <div className={`hidden 2xl:flex items-center gap-2`}>
               <MainButton
                 isDisabled={isFundWalletDisabled}
                 onClick={handleFundWallet}
-                variant="default"
+                variant="primaryOutline"
               >
                 Fund Wallet
               </MainButton>
-              {showRunPayrollButton ? (
+              {showGeneratePayroll && (
+                <MainButton
+                  onClick={handleGeneratePayroll}
+                  isDisabled={isGenerateDisabled}
+                  variant="primary"
+                >
+                  Generate Payroll
+                </MainButton>
+              )}
+              {showRunPayroll && (
                 <MainButton
                   onClick={handleRunPayroll}
-                  // isDisabled={payrollPolicyStatus || !canRunSelectedPayroll || isCompleted}
-                  isDisabled={isCompleted}
                   variant="primary"
+                  isDisabled={!canRunPayroll}
                 >
                   Run Payroll
                 </MainButton>
-              ) : showGeneratePayslipButton ? (
-                <MainButton
-                  onClick={() => {}}
-                  isDisabled={payrollPolicyStatus || loadingPayslips}
-                  isLoading={loadingPayslips}
-                  variant="primary"
-                >
-                  {loadingPayslips
-                    ? 'Generating Payroll...'
-                    : 'Generate Payroll'}
-                </MainButton>
-              ) : null}
-              <MainButton
-                className={cn(shouldShowApprovalProgressButton ? '' : 'hidden')}
-                variant="primary"
-                onClick={() => setIsApprovalProgressOpen(true)}
-              >
-                View Approval Progress
-              </MainButton>
-              {isDevelopmentMode ? (
-                <MainButton
-                  variant="primaryOutline"
-                  onClick={() => setIsDevApprovalActionsOpen(true)}
-                >
-                  Dev: Approval Actions
-                </MainButton>
-              ) : null}
+              )}
+              {/*{showViewApprovalProgress && (*/}
+              {/*  <MainButton*/}
+              {/*    variant="primary"*/}
+              {/*    onClick={() => setIsApprovalProgressOpen(true)}*/}
+              {/*  >*/}
+              {/*    View Approval Progress*/}
+              {/*  </MainButton>*/}
+              {/*)}*/}
+              {/*{isDevelopmentMode &&*/}
+              {/*  !showViewApprovalProgress &&*/}
+              {/*  selectedPayrollId && (*/}
+              {/*    <MainButton*/}
+              {/*      variant="primaryOutline"*/}
+              {/*      onClick={() => setIsDevApprovalActionsOpen(true)}*/}
+              {/*    >*/}
+              {/*      Dev: Approval Actions*/}
+              {/*    </MainButton>*/}
+              {/*  )}*/}
               <div>
                 <GenericDropdown
                   align={`end`}
                   trigger={
-                    <Button size={`icon`} className={`rounded-md size-10`}>
+                    <Button
+                      variant={`primaryOutline`}
+                      size={`icon`}
+                      className={`size-10`}
+                    >
                       <Icon
                         name="More"
                         size={20}
@@ -479,9 +458,7 @@ export const PayrollView = () => {
                     </Button>
                   }
                 >
-                  <DropdownMenuItem
-                    onClick={() => setShowSchedulePayrollDrawer(true)}
-                  >
+                  <DropdownMenuItem onClick={() => openSchedulePayroll()}>
                     <Icon name={`MoneyTime`} variant={`Outline`} />
                     Schedule Payroll
                   </DropdownMenuItem>
@@ -494,7 +471,7 @@ export const PayrollView = () => {
                 </GenericDropdown>
               </div>
             </div>
-            {/* Mobile Layout - All actions in dropdown */}
+            {/* Mobile Layout */}
             <div className={`flex 2xl:hidden justify-end`}>
               <GenericDropdown
                 align={`end`}
@@ -513,6 +490,26 @@ export const PayrollView = () => {
                   </Button>
                 }
               >
+                {showGeneratePayroll && (
+                  <DropdownMenuItem
+                    onClick={handleGeneratePayroll}
+                    disabled={isGenerateDisabled}
+                  >
+                    <Icon name={`Add`} variant={`Outline`} />
+                    Generate Payroll
+                  </DropdownMenuItem>
+                )}
+
+                {showRunPayroll && (
+                  <DropdownMenuItem
+                    onClick={handleRunPayroll}
+                    disabled={!canRunPayroll}
+                  >
+                    <Icon name={`Play`} variant={`Outline`} />
+                    Run Payroll
+                  </DropdownMenuItem>
+                )}
+
                 <DropdownMenuItem
                   onClick={handleFundWallet}
                   disabled={isFundWalletDisabled}
@@ -521,29 +518,7 @@ export const PayrollView = () => {
                   Fund Wallet
                 </DropdownMenuItem>
 
-                {showRunPayrollButton && (
-                  <DropdownMenuItem
-                    onClick={handleRunPayroll}
-                    disabled={isCompleted}
-                  >
-                    <Icon name={`Play`} variant={`Outline`} />
-                    Run Payroll
-                  </DropdownMenuItem>
-                )}
-
-                {showGeneratePayslipButton && (
-                  <DropdownMenuItem
-                    onClick={() => {}}
-                    disabled={payrollPolicyStatus || loadingPayslips}
-                  >
-                    <Icon name={`Plus`} />
-                    {loadingPayslips
-                      ? 'Generating Payroll...'
-                      : 'Generate Payroll'}
-                  </DropdownMenuItem>
-                )}
-
-                {shouldShowApprovalProgressButton && (
+                {showViewApprovalProgress && (
                   <DropdownMenuItem
                     onClick={() => setIsApprovalProgressOpen(true)}
                   >
@@ -552,18 +527,18 @@ export const PayrollView = () => {
                   </DropdownMenuItem>
                 )}
 
-                {isDevelopmentMode && (
-                  <DropdownMenuItem
-                    onClick={() => setIsDevApprovalActionsOpen(true)}
-                  >
-                    <Icon name={`Setting2`} variant={`Outline`} />
-                    Dev: Approval Actions
-                  </DropdownMenuItem>
-                )}
+                {isDevelopmentMode &&
+                  !showViewApprovalProgress &&
+                  selectedPayrollId && (
+                    <DropdownMenuItem
+                      onClick={() => setIsDevApprovalActionsOpen(true)}
+                    >
+                      <Icon name={`Setting2`} variant={`Outline`} />
+                      Dev: Approval Actions
+                    </DropdownMenuItem>
+                  )}
 
-                <DropdownMenuItem
-                  onClick={() => setShowSchedulePayrollDrawer(true)}
-                >
+                <DropdownMenuItem onClick={() => openSchedulePayroll()}>
                   <Icon name={`MoneyTime`} variant={`Outline`} />
                   Schedule Payroll
                 </DropdownMenuItem>
@@ -585,7 +560,7 @@ export const PayrollView = () => {
         payrollPolicyStatus={payrollPolicyStatus}
         walletSetupCompleted={walletSetupCompleted}
         showNoPayrollBanner={showNoPayrollBanner}
-        isCreatingPayroll={isCreatingPayroll}
+        isCreatingPayroll={false}
         onSetupWallet={handleSetupWallet}
         onFundWallet={handleFundWallet}
         onGeneratePayroll={handleGeneratePayroll}
@@ -600,7 +575,7 @@ export const PayrollView = () => {
         onOpenApprovalProgress={() => setIsApprovalProgressOpen(true)}
       />
 
-      {/* Payroll Table Placeholder */}
+      {/* Dashboard Cards */}
       <section className="grid grid-cols-2 gap-4 md:grid-cols-3">
         <DashboardCard
           title="Estimated Net Pay"
@@ -645,108 +620,36 @@ export const PayrollView = () => {
             </div>
           }
           className={cn(
-            'flex flex-col col-span-2 md:col-span-1 items-center justify-center gap-4 bg-linear-to-r from-brand-gradient-from to-brand-gradient-to text-center'
+            'flex flex-col col-span-2 md:col-span-1 items-center justify-center gap-4' +
+              ' bg-linear-to-r from-brand-gradient-from to-brand-gradient-to text-center'
           )}
           titleColor="text-white"
         />
       </section>
-      <section className="">
-        <section className="mb-6 flex items-center justify-between">
-          <h1 className="text-xl font-bold">Employee Payroll Summary</h1>
-          <div className="hidden items-center gap-2 lg:flex">
-            <MainButton
-              variant="primaryOutline"
-              isDisabled={isRetryAllDisabled}
-              isLoading={isRetryingAllFailed}
-              onClick={() => {
-                void handleRetryFailedPayslips();
-              }}
-            >
-              Retry All Failed Payslips
-            </MainButton>
-            <MainButton
-              variant="primary"
-              isLeftIconVisible
-              onClick={() => setShowAddEmployeeModal(true)}
-              icon={<Icon name={`Add`} variant={`Bold`} />}
-              // isDisabled={isAddEmployeeDisabled}
-            >
-              Add Employee
-            </MainButton>
-          </div>
-          <div className="flex lg:hidden">
-            <GenericDropdown
-              align={`end`}
-              trigger={
-                <Button
-                  size={`icon`}
-                  className={`shadow rounded-md p-2.5`}
-                  variant="default"
-                >
-                  <Icon
-                    name="More"
-                    size={20}
-                    variant={`Outline`}
-                    className={`text-primary rotate-90`}
-                  />
-                </Button>
-              }
-            >
-              <DropdownMenuItem
-                onClick={() => {
-                  void handleRetryFailedPayslips();
-                }}
-                disabled={isRetryAllDisabled}
-              >
-                {isRetryingAllFailed
-                  ? 'Retrying Failed Payslips...'
-                  : 'Retry All Failed Payslips'}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setShowAddEmployeeModal(true)}
-                // disabled={isAddEmployeeDisabled}
-              >
-                <Icon name={`Add`} variant={`Bold`} />
-                Add Employee
-              </DropdownMenuItem>
-            </GenericDropdown>
-          </div>
-        </section>
-        {loadingPayslips ? (
-          <TableSkeleton />
-        ) : !payslipsData?.data.items ||
-          payslipsData.data.items.length === 0 ? (
-          <EmptyState
-            className="bg-background shadow"
-            images={[
-              { src: empty1.src, alt: 'No payslips', width: 50, height: 50 },
-            ]}
-            title="No payslips generated yet."
-            description="Select a payroll from the dropdown above and click 'Generate Payslip' to view employee payroll details."
-          />
-        ) : (
-          <AdvancedDataTable
-            data={payslipsData.data.items}
-            columns={payrollColumns}
-            rowActions={getRowActions}
-            onPageChange={() => {}}
-            showPagination={true}
-            enableRowSelection={true}
-            enableColumnVisibility={false}
-            enableSorting={false}
-            enableFiltering={false}
-            mobileCardView={true}
-            showColumnCustomization={false}
-            desktopTableClassname={`xl:block!`}
-            mobileTableClassname={`xl:hidden!`}
-          />
-        )}
-      </section>
 
-      {/* Payroll Setup Modal (controlled, one-time prompt) */}
+      {/* Employee Payroll Summary Table */}
+      <PayrollTableSection
+        loading={loadingPayslips}
+        payslipsData={payslipsData}
+        columns={payrollColumns}
+        rowActions={getRowActions}
+        selectedCount={selectedCount}
+        onSelectionChange={handleSelectionChange}
+        hasFailedPayslips={showRetryAllFailed}
+        isRetrying={isRetryingAllFailed}
+        onRetryAllFailed={() => {
+          void handleRetryFailedPayslips();
+        }}
+        showAddEmployee={showAddEmployee}
+        onAddEmployee={() => setShowAddEmployeeModal(true)}
+        onBulkExport={handleBulkExport}
+        onOpenBulkDelete={openBulkDeleteModal}
+      />
+
+      {/* ── Modals & Drawers ──────────────────────────────────────────────── */}
+
       <PayrollSetupSettingsModal />
 
-      {/* Fund Wallet Modal */}
       <FundWalletFormModal
         isGeneratePayrollBannerShowing={showNoPayrollBanner}
       />
@@ -754,18 +657,26 @@ export const PayrollView = () => {
         isGeneratePayrollBannerShowing={showNoPayrollBanner}
       />
 
-      {/* Schedule Payroll Drawer */}
       <SchedulePayrollDrawer />
+
+      {/* Generate Payroll Drawer (creates new payroll) */}
+      <GeneratePayrollDrawer
+        payrollPolicy={payrollPolicy?.data}
+        onGenerated={handleGeneratePayrollSuccess}
+      />
+
+      {/* Run Payroll Drawer (runs existing payroll) */}
       <GenerateRunPayrollDrawer
-        open={showRunPayrollDrawer}
-        onOpenChange={setShowPayrollDrawer}
+        open={isGeneratePayrollOpen}
+        onOpenChange={(open) => {
+          if (!open) closePayrollModal();
+        }}
         payrollId={selectedPayrollId || null}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         summary={payrollData as any}
         canRunNow={canRunSelectedPayroll}
       />
 
-      {/* Approval Progress Modal */}
       <ApprovalProgressModal
         open={isApprovalProgressOpen}
         onOpenChange={setIsApprovalProgressOpen}
@@ -782,15 +693,31 @@ export const PayrollView = () => {
         />
       ) : null}
 
-      {/*/!* Add Employee Modal *!/*/}
       <AddEmployeeDrawer
         payrollId={selectedPayrollId || null}
         hasPayslips={hasPayslipsForSelectedPayroll}
       />
       <EmployeeInformationDrawer payrollId={selectedPayrollId || null} />
 
-      {/* Remove employee from payroll confirmation */}
       <DeleteConfirmationModal />
+
+      <AlertModal
+        isOpen={isBulkDeleteModalOpen}
+        onClose={closeBulkDeleteModal}
+        onConfirm={() => {
+          void handleBulkDelete();
+        }}
+        loading={isBulkDeleting}
+        type="warning"
+        title="Remove selected employees from payroll"
+        description={`Are you sure you want to remove ${selectedCount} employee${selectedCount > 1 ? 's' : ''} from this payroll? This action cannot be undone.`}
+        confirmText={
+          isBulkDeleting
+            ? 'Removing...'
+            : `Remove ${selectedCount} employee${selectedCount > 1 ? 's' : ''}`
+        }
+        cancelText="Cancel"
+      />
     </section>
   );
 };

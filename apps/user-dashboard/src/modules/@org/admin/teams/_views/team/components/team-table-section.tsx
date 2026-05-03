@@ -13,6 +13,10 @@ import {
   FilteredEmptyState,
 } from '@workspace/ui/lib/empty-state';
 import { AdvancedDataTable, TableSkeleton } from '@workspace/ui/lib/table';
+import { AlertModal } from '@workspace/ui/lib/dialog';
+import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { useBulkTeamActions } from '../../../hooks/use-bulk-team-actions';
 import type { TeamTableSectionProperties } from '../../../types';
 
 export const TeamTableSection = ({
@@ -26,6 +30,16 @@ export const TeamTableSection = ({
   onAddTeamClick,
 }: TeamTableSectionProperties) => {
   const router = useRouter();
+  const {
+    selectedCount,
+    handleSelectionChange,
+    isBulkDeleteModalOpen,
+    isBulkDeleting,
+    openBulkDeleteModal,
+    closeBulkDeleteModal,
+    handleBulkDelete,
+    handleBulkExport,
+  } = useBulkTeamActions();
   const { useGetAllTeams } = useTeamService();
 
   const {
@@ -77,28 +91,75 @@ export const TeamTableSection = ({
   }
 
   return (
-    <AdvancedDataTable
-      data={teamData!.data!.items as Team[]}
-      columns={teamColumn}
-      currentPage={(teamData!.data as any).metadata.page}
-      totalPages={(teamData!.data as any).metadata.totalPages}
-      itemsPerPage={(teamData!.data as any).metadata.limit}
-      hasPreviousPage={(teamData!.data as any).metadata.hasPreviousPage}
-      hasNextPage={(teamData!.data as any).metadata.hasNextPage}
-      onPageChange={handlePageChange}
-      onRowClick={(team: any) => {
-        if (team?.id) {
-          router.push(`/admin/teams/${team.id}`);
+    <>
+      <AdvancedDataTable
+        data={teamData!.data!.items as Team[]}
+        columns={teamColumn}
+        currentPage={(teamData!.data as any).metadata.page}
+        totalPages={(teamData!.data as any).metadata.totalPages}
+        itemsPerPage={(teamData!.data as any).metadata.limit}
+        hasPreviousPage={(teamData!.data as any).metadata.hasPreviousPage}
+        hasNextPage={(teamData!.data as any).metadata.hasNextPage}
+        onPageChange={handlePageChange}
+        onRowClick={(team: any) => {
+          if (team?.id) {
+            router.push(`/admin/teams/${team.id}`);
+          }
+        }}
+        rowActions={rowActions}
+        showPagination={true}
+        enableRowSelection={true}
+        enableColumnVisibility={true}
+        enableSorting={true}
+        enableFiltering={true}
+        mobileCardView={true}
+        showColumnCustomization={false}
+        onSelectionChange={handleSelectionChange}
+        customFooterRenderer={() =>
+          selectedCount > 0 ? (
+            <div className="flex flex-col gap-3 rounded-b-lg border-t bg-primary/5 px-4 py-3 sm:flex-row sm:items-center">
+              <span className="text-sm font-medium text-primary">
+                {selectedCount} row{selectedCount > 1 ? 's' : ''} selected
+              </span>
+              <div className="flex items-center gap-2 sm:ml-auto">
+                <MainButton
+                  variant="primaryOutline"
+                  onClick={handleBulkExport}
+                  isLeftIconVisible
+                  icon={<Icon name="DocumentDownload" variant="Outline" />}
+                >
+                  Export CSV
+                </MainButton>
+                <MainButton
+                  variant="destructive"
+                  onClick={openBulkDeleteModal}
+                  isLeftIconVisible
+                  icon={<Icon name="Trash" variant="Outline" />}
+                >
+                  Delete Selected
+                </MainButton>
+              </div>
+            </div>
+          ) : null
         }
-      }}
-      rowActions={rowActions}
-      showPagination={true}
-      enableRowSelection={true}
-      enableColumnVisibility={true}
-      enableSorting={true}
-      enableFiltering={true}
-      mobileCardView={true}
-      showColumnCustomization={false}
-    />
+      />
+      <AlertModal
+        isOpen={isBulkDeleteModalOpen}
+        onClose={closeBulkDeleteModal}
+        onConfirm={() => {
+          void handleBulkDelete();
+        }}
+        loading={isBulkDeleting}
+        type="warning"
+        title="Delete selected teams"
+        description={`Are you sure you want to delete ${selectedCount} team${selectedCount > 1 ? 's' : ''}? This action cannot be undone.`}
+        confirmText={
+          isBulkDeleting
+            ? 'Deleting...'
+            : `Delete ${selectedCount} team${selectedCount > 1 ? 's' : ''}`
+        }
+        cancelText="Cancel"
+      />
+    </>
   );
 };

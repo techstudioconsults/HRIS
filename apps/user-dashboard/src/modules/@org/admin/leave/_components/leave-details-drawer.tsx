@@ -1,6 +1,7 @@
 'use client';
 
 import { formatDate } from '@/lib/formatters';
+import { useLeaveAdminModalParams } from '@/lib/nuqs/use-leave-admin-modal-params';
 import { Textarea } from '@workspace/ui/components/textarea';
 import { Badge } from '@workspace/ui/components/badge';
 import { MainButton } from '@workspace/ui/lib/button';
@@ -8,23 +9,49 @@ import { ReusableDialog } from '@workspace/ui/lib/dialog/Dialog';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { cn } from '@workspace/ui/lib/utils';
 import Image from 'next/image';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { useLeaveService } from '../services/use-service';
 import { useLeaveStore } from '../stores/leave-store';
+import type { LeaveRequest } from '../types';
 
 export function LeaveDetailsDrawer() {
+  // ── URL state (nuqs) — drawer open + entity ID survive refresh  ──────────
   const {
-    showLeaveDetailsDrawer,
-    setShowLeaveDetailsDrawer,
-    selectedLeaveRequestId,
-    selectedLeaveRequest,
-    setSelectedLeaveRequest,
-    setSelectedLeaveRequestId,
-  } = useLeaveStore();
+    isLeaveDetailsOpen,
+    modalId: leaveRequestId,
+    closeModal,
+  } = useLeaveAdminModalParams();
 
-  const { useApproveLeaveRequest, useRejectLeaveRequest } = useLeaveService();
+  // ── Zustand — entity object (non-URL-serializable) ─────────────────────
+  const { selectedLeaveRequest, setSelectedLeaveRequest } = useLeaveStore();
+
+  // Cold-refresh recovery: if drawer is open but entity is not in Zustand,
+  // fetch the leave requests list and derive the entry by ID.
+  const { useGetLeaveRequests, useApproveLeaveRequest, useRejectLeaveRequest } =
+    useLeaveService();
+
+  const { data: leaveRequestsData, isLoading: isListLoading } =
+    useGetLeaveRequests(
+      {},
+      {
+        enabled:
+          isLeaveDetailsOpen && !selectedLeaveRequest && !!leaveRequestId,
+      }
+    );
+
+  // Derive the request: prefer Zustand (warm); fall back to list (cold refresh)
+  const leaveRequest = useMemo(() => {
+    if (selectedLeaveRequest) return selectedLeaveRequest;
+    if (!leaveRequestId || !leaveRequestsData) return null;
+    const items: LeaveRequest[] = Array.isArray(leaveRequestsData)
+      ? (leaveRequestsData as LeaveRequest[])
+      : ((leaveRequestsData as { data?: { items?: LeaveRequest[] } })?.data
+          ?.items ?? []);
+    return items.find((r) => r.id === leaveRequestId) ?? null;
+  }, [selectedLeaveRequest, leaveRequestId, leaveRequestsData]);
+
   const { mutateAsync: approveRequest, isPending: isApproving } =
     useApproveLeaveRequest();
   const { mutateAsync: rejectRequest, isPending: isRejecting } =
@@ -33,29 +60,22 @@ export function LeaveDetailsDrawer() {
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
 
-  const leaveRequest = selectedLeaveRequest;
-
   const handleOpenChange = useCallback(
     (open: boolean) => {
-      setShowLeaveDetailsDrawer(open);
       if (!open) {
+        closeModal();
         setSelectedLeaveRequest(null);
-        setSelectedLeaveRequestId(null);
         setShowRejectForm(false);
         setRejectionReason('');
       }
     },
-    [
-      setSelectedLeaveRequest,
-      setSelectedLeaveRequestId,
-      setShowLeaveDetailsDrawer,
-    ]
+    [closeModal, setSelectedLeaveRequest]
   );
 
   const handleApprove = async () => {
-    if (!selectedLeaveRequestId) return;
+    if (!leaveRequestId) return;
     try {
-      await approveRequest(selectedLeaveRequestId);
+      await approveRequest(leaveRequestId);
       toast.success('Leave request approved.');
       handleOpenChange(false);
     } catch {
@@ -64,10 +84,10 @@ export function LeaveDetailsDrawer() {
   };
 
   const handleRejectConfirm = async () => {
-    if (!selectedLeaveRequestId || !rejectionReason.trim()) return;
+    if (!leaveRequestId || !rejectionReason.trim()) return;
     try {
       await rejectRequest({
-        id: selectedLeaveRequestId,
+        id: leaveRequestId,
         data: { rejectionReason: rejectionReason.trim() },
       });
       toast.success('Leave request rejected.');
@@ -77,10 +97,13 @@ export function LeaveDetailsDrawer() {
     }
   };
 
+  // Show loading skeleton on cold-refresh while list is being fetched
+  const isLoading = isLeaveDetailsOpen && !leaveRequest && isListLoading;
+
   return (
     <ReusableDialog
       trigger={''}
-      open={showLeaveDetailsDrawer}
+      open={isLeaveDetailsOpen}
       onOpenChange={handleOpenChange}
       title="Leave Request"
       className="sm:min-w-xl!"
@@ -267,6 +290,10 @@ export function LeaveDetailsDrawer() {
                 )}
               </div>
             )}
+          </div>
+        ) : isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
           </div>
         ) : (
           <div className="flex items-center justify-center py-12">

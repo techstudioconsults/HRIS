@@ -1,0 +1,111 @@
+<mxfile host="drawio-plugin" version="22.1.22">
+  <diagram id="state_mgmt" name="State Management">
+    <mxGraphModel dx="2164" dy="962" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Onboarding — State Management" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=16;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="10" width="900" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_react" value="React Client Layer" style="swimlane;horizontal=0;startSize=130;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#000000;fontSize=12;fontStyle=1;html=1;" parent="1" vertex="1">
+          <mxGeometry y="60" width="1700" height="215" as="geometry">
+            <mxRectangle y="60" width="32" height="145" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="step1_node" value="&lt;b&gt;StepOne&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;CompanyProfile form&lt;br&gt;useGetCompanyProfile()&lt;br&gt;useUpdateCompanyProfile()&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0B4884;fontSize=10;" parent="lane_react" vertex="1">
+          <mxGeometry x="150" y="60" width="185" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="step2_node" value="&lt;b&gt;StepTwo&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;TeamsSetup / RolesSetup&lt;br&gt;useGetTeams()&lt;br&gt;useCreateTeam() + useCreateRole()&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0B4884;fontSize=10;" parent="lane_react" vertex="1">
+          <mxGeometry x="375" y="60" width="195" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="step3_node" value="&lt;b&gt;StepThree&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;EmployeeSetup form&lt;br&gt;useGetTeamsWithRoles()&lt;br&gt;useOnboardEmployees()&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0B4884;fontSize=10;" parent="lane_react" vertex="1">
+          <mxGeometry x="610" y="60" width="185" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="welcome_node" value="&lt;b&gt;Welcome&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;useTour()&lt;br&gt;useSetSetupStatus()&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1168BD;fontColor=#ffffff;strokeColor=#0B4884;fontSize=10;" parent="lane_react" vertex="1">
+          <mxGeometry x="840" y="65" width="175" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="guard_node" value="&lt;b&gt;OnboardingRouteGuard&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;useGetSetupStatus()&lt;br&gt;isOnboardingSetupComplete()&lt;br&gt;Redirects completed orgs to&lt;br&gt;/admin/dashboard&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0B4884;fontColor=#ffffff;strokeColor=#052E56;fontSize=10;" parent="lane_react" vertex="1">
+          <mxGeometry x="1065" y="50" width="210" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_cache" value="TanStack Query Cache (in-memory)" style="swimlane;horizontal=0;startSize=130;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#000000;fontSize=12;fontStyle=1;html=1;" parent="1" vertex="1">
+          <mxGeometry y="275" width="1700" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="profile_cache" value="&lt;b&gt;companyProfile&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;key: [onboarding, company-profile]&lt;br&gt;staleTime: 60 s — pre-fills form on mount&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6b656;fontColor=#000000;strokeColor=#9A7000;fontSize=10;" parent="lane_cache" vertex="1">
+          <mxGeometry x="150" y="25" width="270" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="teams_cache" value="&lt;b&gt;teams&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;key: [onboarding, teams]&lt;br&gt;invalidated after every CRUD mutation&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6b656;fontColor=#000000;strokeColor=#9A7000;fontSize=10;" parent="lane_cache" vertex="1">
+          <mxGeometry x="470" y="25" width="270" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="status_cache" value="&lt;b&gt;setupStatus&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;key: [onboarding, setup-status]&lt;br&gt;read by RouteGuard on every /onboarding/* visit&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d6b656;fontColor=#000000;strokeColor=#9A7000;fontSize=10;" parent="lane_cache" vertex="1">
+          <mxGeometry x="790" y="25" width="300" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_http" value="HttpAdapter (Axios)" style="swimlane;horizontal=0;startSize=130;fillColor=#ffe6cc;strokeColor=#d79b00;fontColor=#000000;fontSize=12;fontStyle=1;html=1;" parent="1" vertex="1">
+          <mxGeometry y="405" width="1700" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="http_node" value="&lt;b&gt;HttpAdapter&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Axios instance · Bearer token attached via TokenManager interceptor&lt;br&gt;All OnboardingService calls go through this single transport&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d79b00;fontColor=#ffffff;strokeColor=#A06000;fontSize=10;" parent="lane_http" vertex="1">
+          <mxGeometry x="150" y="15" width="480" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_backend" value="HR Backend API (NestJS)" style="swimlane;horizontal=0;startSize=130;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#000000;fontSize=12;fontStyle=1;html=1;" parent="1" vertex="1">
+          <mxGeometry y="505" width="1700" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="be_profile_get" value="&lt;b&gt;GET /companies/current&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Returns CompanyProfile&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#666666;fontColor=#ffffff;strokeColor=#4A4A4A;fontSize=10;" parent="lane_backend" vertex="1">
+          <mxGeometry x="150" y="40" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="be_profile_patch" value="&lt;b&gt;PATCH /companies/current&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Updates CompanyProfile&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#666666;fontColor=#ffffff;strokeColor=#4A4A4A;fontSize=10;" parent="lane_backend" vertex="1">
+          <mxGeometry x="390" y="40" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="be_teams" value="&lt;b&gt;/teams (CRUD)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;GET · POST · PATCH · DELETE&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#666666;fontColor=#ffffff;strokeColor=#4A4A4A;fontSize=10;" parent="lane_backend" vertex="1">
+          <mxGeometry x="630" y="40" width="175" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="be_roles" value="&lt;b&gt;/roles (CRUD)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;POST · PATCH · DELETE&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#666666;fontColor=#ffffff;strokeColor=#4A4A4A;fontSize=10;" parent="lane_backend" vertex="1">
+          <mxGeometry x="845" y="40" width="175" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="be_onboard" value="&lt;b&gt;POST /employees/onboard&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;Batch invite employees&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#666666;fontColor=#ffffff;strokeColor=#4A4A4A;fontSize=10;" parent="lane_backend" vertex="1">
+          <mxGeometry x="1060" y="40" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="be_status" value="&lt;b&gt;/setup-status&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;GET · POST { takenTour }&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#666666;fontColor=#ffffff;strokeColor=#4A4A4A;fontSize=10;" parent="lane_backend" vertex="1">
+          <mxGeometry x="1300" y="40" width="175" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="reads profile" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="step1_node" target="profile_cache" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="reads teams" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="step2_node" target="teams_cache" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="reads status" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="guard_node" target="status_cache" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="cache miss" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="profile_cache" target="http_node" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="cache miss" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="teams_cache" target="http_node" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="cache miss" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="status_cache" target="http_node" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="GET /companies/current" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="http_node" target="be_profile_get" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="PATCH mutation (direct)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;dashed=1;" parent="1" source="step1_node" target="be_profile_patch" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="CRUD mutations" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;dashed=1;" parent="1" source="step2_node" target="be_teams" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" value="CRUD mutations" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;dashed=1;" parent="1" source="step2_node" target="be_roles" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" value="POST batch invite" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;dashed=1;" parent="1" source="step3_node" target="be_onboard" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" value="POST takenTour=true" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;dashed=1;" parent="1" source="welcome_node" target="be_status" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" value="GET /setup-status" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=9;" parent="1" source="http_node" target="be_status" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

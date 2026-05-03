@@ -69,6 +69,8 @@ export const GenerateRunPayrollDrawer = ({
   const processingCharges = 0;
   const totalAmount = totalPayroll + processingCharges;
   const status = summary?.status !== `idle`;
+  const canSubmitRun =
+    canRunNow && (summary?.status === 'idle' || summary?.status === 'failed');
 
   const router = useRouter();
 
@@ -174,7 +176,7 @@ export const GenerateRunPayrollDrawer = ({
                     </button>
                   </div>
                 }
-                className="flex flex-col items-center justify-center gap-4 bg-gradient-to-r from-brand-gradient-from to-brand-gradient-to text-center"
+                className="flex flex-col items-center justify-center gap-4 bg-linear-to-r from-brand-gradient-from to-brand-gradient-to text-center"
                 titleColor="text-white"
               />
             </section>
@@ -304,7 +306,7 @@ export const GenerateRunPayrollDrawer = ({
                 type="button"
                 className="flex-1"
                 onClick={() => setIsConfirmModalOpen(true)}
-                isDisabled={!canRunNow}
+                isDisabled={!canSubmitRun}
               >
                 Run Payroll
               </MainButton>

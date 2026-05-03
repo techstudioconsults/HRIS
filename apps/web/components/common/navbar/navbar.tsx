@@ -22,7 +22,7 @@ export const Navbar = () => {
         data-scrolled="false"
         className={cn(
           'bg-background backdrop-blur-md rounded-[17px] px-4 md:px-8 py-3 flex' +
-            ' items-center justify-between w-full max-w-[1200px] transition-all' +
+            ' items-center justify-between w-full max-w-300 transition-all' +
             ' duration-300 border border-black/3',
           'shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)] data-[scrolled=true]:shadow-xl'
         )}

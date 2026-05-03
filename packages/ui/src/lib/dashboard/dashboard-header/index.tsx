@@ -39,7 +39,7 @@ export const DashboardHeader = ({
               (typeof subtitle === 'string' ? (
                 <p
                   className={cn(
-                    'text-primary-200 text-sm font-medium',
+                    'text-muted-foreground text-sm font-medium',
                     subtitleClassName
                   )}
                 >

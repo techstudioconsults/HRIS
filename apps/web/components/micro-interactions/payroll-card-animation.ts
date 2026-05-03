@@ -45,11 +45,12 @@ const CURRENT_FLOW_PATHS = new Set(
   ].map(normalizePathData)
 );
 
-const getCurrentFlowPaths = (payrollSvg: SVGElement) => {
-  return Array.from(
+const getCurrentFlowPaths = (payrollSvg: SVGElement): SVGPathElement[] =>
+  Array.from(
     payrollSvg.querySelectorAll<SVGPathElement>('.current-line')
+  ).filter((path) =>
+    CURRENT_FLOW_PATHS.has(normalizePathData(path.getAttribute('d') ?? ''))
   );
-};
 
 const getPayrollProgressElements = (animationTarget: HTMLElement) => {
   const payrollSvg = animationTarget.querySelector<SVGElement>('svg');

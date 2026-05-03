@@ -21,15 +21,29 @@ import type { FolderCardProperties } from '../../types';
 import { EditFolderForm } from '../forms/edit-folder';
 import { FileCard } from './FileCard';
 import { Card } from '@workspace/ui/components/card';
+import { useResourcesModalParams } from '@/lib/nuqs/use-resources-modal-params';
 
 export const FolderCard = ({ folder }: FolderCardProperties) => {
   const { useDeleteFolder, useGetFilesByFolderId } = useResourceService();
   const { mutateAsync: deleteFolderMutation, isPending: isDeleting } =
     useDeleteFolder();
 
+  // Destructive confirm — stays as useState (never persist)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [renameFolderDialog, setRenameFolderDialog] = useState(false);
+  // View folder is a micro-navigation tap interaction — stays as useState
   const [viewFolderDialog, setViewFolderDialog] = useState(false);
+
+  // Rename folder — persists via nuqs
+  const {
+    isRenameFolderOpen,
+    modalId: renameFolderModalId,
+    openRenameFolder,
+    closeModal,
+  } = useResourcesModalParams();
+
+  // Only treat rename as open for THIS folder (modalId scopes it)
+  const isThisRenameOpen =
+    isRenameFolderOpen && renameFolderModalId === folder.id;
 
   const {
     data: folderFilesResponse,
@@ -42,8 +56,8 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
   );
 
   const handleFolderClick = () => {
-    setViewFolderDialog(true); // open modal immediately
-    refetchFolderFiles(); // fetch files; onSuccess keeps modal open
+    setViewFolderDialog(true);
+    refetchFolderFiles();
   };
 
   const handleDeleteClick = (event: React.MouseEvent) => {
@@ -53,7 +67,7 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
 
   const handleRenameClick = (event: React.MouseEvent) => {
     event.stopPropagation();
-    setRenameFolderDialog(true);
+    openRenameFolder(folder.id);
   };
 
   const handleConfirmDelete = async () => {
@@ -61,18 +75,12 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
     setDeleteDialogOpen(false);
   };
 
-  const handleCloseRename = () => {
-    setRenameFolderDialog(false);
-  };
-
-  // Add: treat modal as loading until we receive the first response
   const isLoadingFiles =
     isFetchingFolderFiles || (viewFolderDialog && !folderFilesResponse);
 
-  // Normalize response -> files array (supports { data: { items: [...] } } shape)
   const files: FolderFile[] = (() => {
     const response = folderFilesResponse;
-    if (Array.isArray(response?.data?.items)) return response.data.items; // primary expected shape
+    if (Array.isArray(response?.data?.items)) return response.data.items;
     return [];
   })();
 
@@ -151,7 +159,7 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
         </div>
       </Card>
 
-      {/* Delete Folder Dialog */}
+      {/* Delete Folder Dialog — stays as useState (destructive) */}
       <AlertModal
         isOpen={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
@@ -164,7 +172,7 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
         cancelText="Cancel"
       />
 
-      {/* View Folder Files Dialog */}
+      {/* View Folder Files Dialog — stays as useState (micro-navigation tap) */}
       <ReusableDialog
         open={viewFolderDialog}
         onOpenChange={setViewFolderDialog}
@@ -199,10 +207,12 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
         )}
       </ReusableDialog>
 
-      {/* Rename Folder Dialog */}
+      {/* Rename Folder Dialog — persists via nuqs (scoped to this folder's ID) */}
       <ReusableDialog
-        open={renameFolderDialog}
-        onOpenChange={setRenameFolderDialog}
+        open={isThisRenameOpen}
+        onOpenChange={(open) => {
+          if (!open) closeModal();
+        }}
         title="Rename Folder"
         description="Enter a new name for this folder"
         wrapperClassName={`text-left`}
@@ -212,7 +222,7 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
         <EditFolderForm
           folderId={folder.id}
           currentName={folder.name}
-          onClose={handleCloseRename}
+          onClose={closeModal}
         />
       </ReusableDialog>
     </>

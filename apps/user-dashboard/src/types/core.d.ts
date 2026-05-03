@@ -94,6 +94,7 @@ declare global {
     sortBy?: string;
     role?: string;
     teamId?: string;
+    parentId?: string;
     roleId?: string;
     employeeId?: string;
     payProfileId?: string;

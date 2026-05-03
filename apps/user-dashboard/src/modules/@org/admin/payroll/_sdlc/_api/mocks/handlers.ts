@@ -1,157 +1,355 @@
 import { http, HttpResponse, delay } from 'msw';
 import {
-  mockPayrollSetup,
-  mockPayrollRun,
-  mockRosterEntries,
-  mockPayslip,
-  mockWallet,
-  mockWalletTransactions,
+  mockPayrollPolicy,
+  mockCompanyWallet,
+  mockPayrolls,
+  mockPayslipsByPayroll,
+  mockApprovals,
+  MOCK_POLICY_ID,
 } from './mock-data';
 
-const BASE = '/api/v1/payroll';
+// ─── Inline types ─────────────────────────────────────────────────────────────
+// Mirrors types/index.ts — not imported to avoid circular dependency in mocks.
 
-export const payrollHandlers = [
-  // Setup
-  http.get(`${BASE}/setup`, async () => {
-    await delay(200);
-    return HttpResponse.json({ data: mockPayrollSetup });
-  }),
-  http.post(`${BASE}/setup`, async ({ request }) => {
-    await delay(500);
-    const body = (await request.json()) as Record<string, unknown>;
-    return HttpResponse.json({ data: { ...mockPayrollSetup, ...body } });
-  }),
+type PayrollStatus =
+  | 'idle'
+  | 'awaiting'
+  | 'disbursed'
+  | 'completed'
+  | 'partially_completed'
+  | 'failed';
+type PayslipStatus = 'pending' | 'processing' | 'paid' | 'failed';
+type ValueType = 'percentage' | 'fixed';
+type ActiveStatus = 'active' | 'inactive';
 
-  // Payroll run
-  http.get(`${BASE}/run`, async () => {
-    await delay(300);
-    return HttpResponse.json({ data: mockPayrollRun });
-  }),
-  http.get(`${BASE}/run/:id`, async ({ params }) => {
-    await delay(200);
-    if (params.id !== mockPayrollRun.id) {
-      return HttpResponse.json(
-        { title: 'Not Found', status: 404 },
-        { status: 404 }
-      );
+interface AdjustmentItem {
+  id: string;
+  name: string;
+  type: ValueType;
+  amount: number;
+  status: ActiveStatus;
+}
+
+interface PayslipEmployee {
+  id: string;
+  name: string;
+  avatar: string;
+  team: { id: string; name: string };
+  role: { id: string; name: string };
+  workMode: string;
+  employmentType: string;
+  status: string;
+}
+
+interface Payroll extends Record<string, unknown> {
+  id: string;
+  policyId: string;
+  netPay: number;
+  employeesInPayroll: number;
+  paymentDate: string;
+  status: PayrollStatus;
+  walletBalance?: number;
+}
+
+interface Payslip extends Record<string, unknown> {
+  id: string;
+  payProfileId: string;
+  payrollId: string;
+  status: PayslipStatus;
+  paymentDate: string;
+  netPay: number;
+  grossPay: number;
+  baseSalary: number;
+  bonuses: AdjustmentItem[];
+  deductions: AdjustmentItem[];
+  totalBonuses: number;
+  totalDeductions: number;
+  employee: PayslipEmployee;
+}
+
+// ─── Known employee stubs for payslip creation lookup ─────────────────────────
+
+const knownEmployeeStubs: Record<string, PayslipEmployee> = {
+  emp_01: {
+    id: 'emp_01',
+    name: 'Amara Okafor',
+    avatar: '',
+    team: { id: 'team_engineering', name: 'Engineering' },
+    role: { id: 'role_senior_swe', name: 'Senior Software Engineer' },
+    workMode: 'onsite',
+    employmentType: 'full time',
+    status: 'active',
+  },
+  emp_02: {
+    id: 'emp_02',
+    name: 'Chidi Eze',
+    avatar: '',
+    team: { id: 'team_finance', name: 'Finance' },
+    role: { id: 'role_payroll_officer', name: 'Payroll Officer' },
+    workMode: 'onsite',
+    employmentType: 'full time',
+    status: 'active',
+  },
+};
+
+function resolveEmployeeStub(employeeId: string): PayslipEmployee {
+  return (
+    knownEmployeeStubs[employeeId] ?? {
+      id: employeeId,
+      name: 'Unknown Employee',
+      avatar: '',
+      team: { id: 'team_unknown', name: 'Unknown' },
+      role: { id: 'role_unknown', name: 'Unknown' },
+      workMode: 'onsite',
+      employmentType: 'full time',
+      status: 'active',
     }
-    return HttpResponse.json({ data: mockPayrollRun });
-  }),
-  http.post(`${BASE}/run`, async () => {
-    await delay(500);
-    const processing = {
-      ...mockPayrollRun,
-      id: `run_${Date.now()}`,
-      status: 'processing' as const,
-      totalGross: 0,
-      totalDeductions: 0,
-      totalNet: 0,
-    };
-    return HttpResponse.json({ data: processing }, { status: 201 });
-  }),
-  http.post(`${BASE}/run/:id/approve`, async ({ params }) => {
-    await delay(600);
-    if (params.id !== mockPayrollRun.id) {
-      return HttpResponse.json(
-        { title: 'Not Found', status: 404 },
-        { status: 404 }
+  );
+}
+
+// ─── Compute current-month 25th for default paymentDate ───────────────────────
+
+function currentMonthPayday(): string {
+  const now = new Date();
+  return new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 25)
+  ).toISOString();
+}
+
+// ─── Mutable in-memory state ──────────────────────────────────────────────────
+
+let payrollsDb: Payroll[] = [...mockPayrolls];
+let payslipsDb: Payslip[] = Object.values(mockPayslipsByPayroll).flat();
+
+// ─── Handler factory ──────────────────────────────────────────────────────────
+// Accepts a base URL so the same handler logic works for both:
+//   - Browser worker: full API origin (e.g. https://hrdev.techstudioacademy.com/api/v1)
+//   - Test setupServer: relative path (/api/v1) resolved against localhost
+
+export function createPayrollHandlers(base: string) {
+  // Reset in-memory state on each factory call so tests are isolated
+  payrollsDb = [...mockPayrolls];
+  payslipsDb = Object.values(mockPayslipsByPayroll).flat();
+
+  return [
+    // 1. GET /payroll-policy/company
+    http.get(`${base}/payroll-policy/company`, async () => {
+      await delay(250);
+      return HttpResponse.json({ data: mockPayrollPolicy });
+    }),
+
+    // 2. GET /wallets/company
+    http.get(`${base}/wallets/company`, async () => {
+      await delay(200);
+      return HttpResponse.json({ data: mockCompanyWallet });
+    }),
+
+    // 3. GET /payrolls
+    http.get(`${base}/payrolls`, async () => {
+      await delay(300);
+      return HttpResponse.json({ data: payrollsDb });
+    }),
+
+    // 4. GET /payrolls/:id
+    http.get(`${base}/payrolls/:id`, async ({ params }) => {
+      await delay(200);
+      const foundPayroll = payrollsDb.find(
+        (payroll) => payroll.id === params.id
       );
-    }
-    if (mockWallet.balance < mockPayrollRun.totalNet) {
+      if (!foundPayroll) {
+        return HttpResponse.json(
+          {
+            title: 'Not Found',
+            status: 404,
+            message: `Payroll '${params.id}' not found`,
+          },
+          { status: 404 }
+        );
+      }
+      return HttpResponse.json({ data: foundPayroll });
+    }),
+
+    // 5. POST /payrolls — generate a new payroll
+    http.post(`${base}/payrolls`, async ({ request }) => {
+      await delay(400);
+      const body = (await request.json()) as {
+        payrollPolicyId?: string;
+        paymentDate?: string;
+      };
+
+      const newPayroll: Payroll = {
+        id: `payroll_${Date.now()}`,
+        policyId: body.payrollPolicyId ?? MOCK_POLICY_ID,
+        paymentDate: body.paymentDate ?? currentMonthPayday(),
+        status: 'idle',
+        netPay: 0,
+        employeesInPayroll: 0,
+        walletBalance: mockCompanyWallet.balance,
+      };
+
+      payrollsDb = [...payrollsDb, newPayroll];
+
+      return HttpResponse.json({ data: newPayroll }, { status: 201 });
+    }),
+
+    // 6. PATCH /payrolls/:id — reschedule payment date
+    http.patch(`${base}/payrolls/:id`, async ({ params, request }) => {
+      await delay(300);
+      const body = (await request.json()) as { paymentDate: string };
+
+      const payrollIndex = payrollsDb.findIndex(
+        (payroll) => payroll.id === params.id
+      );
+      if (payrollIndex === -1) {
+        return HttpResponse.json(
+          {
+            title: 'Not Found',
+            status: 404,
+            message: `Payroll '${params.id}' not found`,
+          },
+          { status: 404 }
+        );
+      }
+
+      const updatedPayroll: Payroll = {
+        ...payrollsDb[payrollIndex],
+        paymentDate: body.paymentDate,
+      };
+
+      payrollsDb = [
+        ...payrollsDb.slice(0, payrollIndex),
+        updatedPayroll,
+        ...payrollsDb.slice(payrollIndex + 1),
+      ];
+
+      return HttpResponse.json({ data: updatedPayroll });
+    }),
+
+    // 7. POST /payrolls/:id/run — run payroll (transitions to awaiting)
+    http.post(`${base}/payrolls/:id/run`, async ({ params }) => {
+      await delay(500);
+
+      const payrollIndex = payrollsDb.findIndex(
+        (payroll) => payroll.id === params.id
+      );
+      if (payrollIndex === -1) {
+        return HttpResponse.json(
+          {
+            title: 'Not Found',
+            status: 404,
+            message: `Payroll '${params.id}' not found`,
+          },
+          { status: 404 }
+        );
+      }
+
+      const updatedPayroll: Payroll = {
+        ...payrollsDb[payrollIndex],
+        status: 'awaiting',
+      };
+
+      payrollsDb = [
+        ...payrollsDb.slice(0, payrollIndex),
+        updatedPayroll,
+        ...payrollsDb.slice(payrollIndex + 1),
+      ];
+
       return HttpResponse.json(
-        {
-          type: 'https://hris.example.com/errors/insufficient-balance',
-          title: 'Insufficient Balance',
-          status: 402,
-          code: 'INSUFFICIENT_BALANCE',
-          required: mockPayrollRun.totalNet,
-          available: mockWallet.balance,
+        { data: { success: true, payroll: updatedPayroll } },
+        { status: 201 }
+      );
+    }),
+
+    // 8. GET /payrolls/:id/approvals
+    http.get(`${base}/payrolls/:id/approvals`, async ({ params }) => {
+      await delay(200);
+      const approvals = params.id === 'payroll_may_2026' ? mockApprovals : [];
+      return HttpResponse.json({ data: approvals });
+    }),
+
+    // 9. GET /payslips?payrollId=...
+    http.get(`${base}/payslips`, async ({ request }) => {
+      await delay(300);
+      const url = new URL(request.url);
+      const payrollId = url.searchParams.get('payrollId') ?? '';
+      const page = Math.max(1, Number(url.searchParams.get('page') ?? '1'));
+      const limit = Math.max(1, Number(url.searchParams.get('limit') ?? '10'));
+
+      const filteredPayslips = payrollId
+        ? payslipsDb.filter((payslip) => payslip.payrollId === payrollId)
+        : payslipsDb;
+
+      const total = filteredPayslips.length;
+      const startIndex = (page - 1) * limit;
+      const pageItems = filteredPayslips.slice(startIndex, startIndex + limit);
+
+      return HttpResponse.json({
+        data: {
+          items: pageItems,
+          total,
+          page,
+          limit,
         },
-        { status: 402 }
+      });
+    }),
+
+    // 10. POST /payslips — create a single payslip for an employee
+    http.post(`${base}/payslips`, async ({ request }) => {
+      await delay(400);
+      const body = (await request.json()) as {
+        payrollId: string;
+        employeeId: string;
+      };
+
+      const existingPayslip = payslipsDb.find(
+        (payslip) =>
+          payslip.payrollId === body.payrollId &&
+          payslip.payProfileId === body.employeeId
       );
-    }
-    return HttpResponse.json({
-      data: {
-        ...mockPayrollRun,
-        status: 'approved',
-        approvedBy: 'admin_01',
-        approvedAt: new Date().toISOString(),
-      },
-    });
-  }),
 
-  // Roster
-  http.get(`${BASE}/run/:id/roster`, async () => {
-    await delay(300);
-    return HttpResponse.json({
-      data: mockRosterEntries,
-      total: mockRosterEntries.length,
-      page: 1,
-      size: 20,
-      totalPages: 1,
-    });
-  }),
-  http.get(`${BASE}/run/:id/payslip/:employeeId`, async ({ params }) => {
-    await delay(200);
-    if (params.employeeId !== mockPayslip.employeeId) {
-      return HttpResponse.json(
-        { title: 'Not Found', status: 404 },
-        { status: 404 }
+      if (existingPayslip) {
+        return HttpResponse.json(
+          {
+            title: 'Conflict',
+            status: 409,
+            message: `A payslip already exists for employee '${body.employeeId}' in payroll '${body.payrollId}'`,
+          },
+          { status: 409 }
+        );
+      }
+
+      const relatedPayroll = payrollsDb.find(
+        (payroll) => payroll.id === body.payrollId
       );
-    }
-    return HttpResponse.json({ data: mockPayslip });
-  }),
+      const resolvedPaymentDate =
+        typeof relatedPayroll?.paymentDate === 'string'
+          ? relatedPayroll.paymentDate
+          : new Date().toISOString();
 
-  // Adjustments
-  http.post(`${BASE}/run/:id/adjustments`, async ({ request }) => {
-    await delay(400);
-    const body = (await request.json()) as {
-      employeeId: string;
-      type: string;
-      label: string;
-      amount: number;
-    };
-    const newAdj = {
-      id: `adj_${Date.now()}`,
-      runId: String(request.url).match(/run\/([^/]+)/)?.[1] ?? 'run_01',
-      ...body,
-      addedBy: 'admin_01',
-      createdAt: new Date().toISOString(),
-    };
-    return HttpResponse.json({ data: newAdj }, { status: 201 });
-  }),
-  http.delete(`${BASE}/run/:id/adjustments/:adjustmentId`, async () => {
-    await delay(300);
-    return new HttpResponse(null, { status: 204 });
-  }),
+      const employeeStub = resolveEmployeeStub(body.employeeId);
 
-  // Wallet
-  http.get(`${BASE}/wallet`, async () => {
-    await delay(200);
-    return HttpResponse.json({ data: mockWallet });
-  }),
-  http.get(`${BASE}/wallet/transactions`, async () => {
-    await delay(200);
-    return HttpResponse.json({
-      data: mockWalletTransactions,
-      total: 2,
-      page: 1,
-      size: 20,
-      totalPages: 1,
-    });
-  }),
-  http.post(`${BASE}/wallet/fund`, async ({ request }) => {
-    await delay(400);
-    const body = (await request.json()) as { amount: number };
-    return HttpResponse.json({
-      data: {
-        reference: `FND-${Date.now()}`,
-        bankName: 'First Bank of Nigeria',
-        accountName: 'HRIS Wallet Account',
-        accountNumber: '9876543210',
-        amount: body.amount,
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-      },
-    });
-  }),
-];
+      const newPayslip: Payslip = {
+        id: `payslip_${Date.now()}`,
+        payProfileId: body.employeeId,
+        payrollId: body.payrollId,
+        status: 'pending',
+        paymentDate: resolvedPaymentDate,
+        baseSalary: 600_000,
+        grossPay: 650_000,
+        netPay: 560_000,
+        bonuses: [],
+        deductions: [],
+        totalBonuses: 0,
+        totalDeductions: 90_000,
+        employee: employeeStub,
+      };
+
+      payslipsDb = [...payslipsDb, newPayslip];
+
+      return HttpResponse.json({ data: newPayslip }, { status: 201 });
+    }),
+  ];
+}
+
+// Default export uses relative paths — correct for test environments (msw/node setupServer)
+export const payrollHandlers = createPayrollHandlers('/api/v1');

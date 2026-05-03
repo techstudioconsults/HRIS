@@ -1,60 +1,50 @@
-# Sub-team Feature Parity Implementation
+# Payroll MSW Mock Data and Handlers
 
-**Feature**: Sub-team module — full feature parity with team module
-**Status**: ✅ Complete
+**Feature**: Payroll MSW Mock — Generate/Reschedule/Payslip + Multi-Payroll Combobox
+**Status**: Done
 **Date**: 2026-05-03
 
 ---
 
 ## What Was Done
 
-Refactored the sub-team views and sub-team details page to match the full functionality of the team module.
+Rewrote the two stale MSW mock files for the payroll module so they match
+the real endpoint paths used by `service.ts`.
 
-### 1. Sub-team Row Actions (`_views/table-data.tsx`)
+### mock-data.ts
 
-- Removed `teamType === 'team'` guard from "Add Role" and "Add Employees" actions
-- Sub-team rows in the sub-teams tab now show: View, Edit, **Add Role**, **Add Members**, Delete
-- Label is "Add Members" for sub-teams, "Add Employees" for teams
-- Updated `useSubTeamRowActions` to accept `onAddRole` and `onAddMembers` callbacks
+- All types declared inline (no import from `../../types`) to avoid circular dependency.
+- `MOCK_POLICY_ID = 'policy_01'` exported as a named constant.
+- `mockPayrollPolicy` — status: complete, payday: 25, monthly, 1 bonus (Performance fixed 50_000), 1 deduction (Pension percentage 8), 2 approvers (Ngozi Adeyemi HR Director + Chidi Eze Finance Manager).
+- `mockCompanyWallet` — First Bank, balance: 50_000_000.
+- `mockPayrolls` — 4 entries (Feb completed, Mar completed, Apr partially_completed, May idle), all share policyId and walletBalance.
+- `mockPayslipsByPayroll` — `Record<string, Payslip[]>` with 2 payslips per payroll (8 total). Built via a shared `buildPayslip` helper. Feb/Mar: both paid. Apr: one paid + one failed. May: both pending.
+- `mockApprovals` — 2 pending approval entries for `payroll_may_2026`.
 
-### 2. Team Details — Sub-team Dialogs (`team-details/index.tsx`)
+### handlers.ts
 
-- Added inline "Add Role" dialog for sub-teams (triggered from row action)
-- Added inline "Add Members" dialog for sub-teams using `AddNewEmployees` form
-- Added `selectedSubTeam` state to track which sub-team is being modified
-- Uses `useCreateRole` and `useAssignEmployeeToTeam` mutations (same endpoints as team)
-- Passes `onAddSubTeamRole` and `onAddSubTeamMembers` down to `TeamDetailsContent`
+- `const BASE = '/api/v1'` pattern.
+- Mutable in-memory state: `let payrollsDb` and `let payslipsDb` (immutable-style updates via spread).
+- `await delay(200–500)` on every handler.
+- 10 handlers covering all endpoints in `service.ts`:
+  1. GET /payroll-policy/company
+  2. GET /wallets/company
+  3. GET /payrolls
+  4. GET /payrolls/:id (404 if missing)
+  5. POST /payrolls (creates new idle payroll, returns 201)
+  6. PATCH /payrolls/:id (updates paymentDate, 404 if missing)
+  7. POST /payrolls/:id/run (transitions to awaiting, returns 201)
+  8. GET /payrolls/:id/approvals (returns mockApprovals for may, [] otherwise)
+  9. GET /payslips?payrollId=... (filtered + paginated)
+  10. POST /payslips (409 on duplicate employee+payroll, creates pending payslip, returns 201)
 
-### 3. Team Details Content (`team-details/components/team-details-content.tsx`)
+### \_testing/fixtures/mock-data.ts (incidental fix)
 
-- Added `onAddSubTeamRole` and `onAddSubTeamMembers` optional props
-- Passes them to `useSubTeamRowActions`
+Updated the thin re-export barrel to export the new named exports
+(old names like `mockPayrollSetup` / `mockPayrollRun` no longer exist).
 
-### 4. Sub-team Details Page (`sub-team-details/index.tsx`)
+## Files Changed
 
-- Fixed React hooks violations: all mutations now hoisted to top-level (not called inside callbacks)
-- Replaced `AddNewMembers` with `AddNewEmployees` for employee assignment (same as team)
-- Wired up previously unused `isEmployeeOpen`/`openEmployeeDialog` from `useSubTeamModalParams`
-- Fixed duplicate `closeModal` destructuring bug
-- Replaced inline `AlertModal` for delete confirmation (instead of relying on row-action modal)
-- Uses `useAssignEmployeeToTeam` mutation for employee assignment
-
-### 5. Sub-team Details Header (`sub-team-details-header.tsx`)
-
-- Renamed `onAddMember` → `onAddEmployee`
-- Button label: "Add Member" → "Add Employee"
-
-### 6. Sub-team Details Content (`sub-team-details-content.tsx`)
-
-- Renamed `onAddMember` → `onAddEmployee`
-- Fixed all import paths to use `@/` absolute aliases (pre-existing relative path bugs)
-- Fixed `Role` type incompatibility with `DataItem` using `RoleRow = Role & Record<string, unknown>`
-
----
-
-## Architecture Notes
-
-- Sub-team and team follow the same endpoint: `POST /teams/:id/employees` via `useAssignEmployeeToTeam`
-- Sub-team row actions in the sub-teams tab mirror team list row actions exactly
-- `useSubTeamModalParams` `'employee'` modal type is now fully wired (previously defined but unused)
-- No new dependencies added
+- `apps/user-dashboard/src/modules/@org/admin/payroll/_sdlc/_api/mocks/mock-data.ts`
+- `apps/user-dashboard/src/modules/@org/admin/payroll/_sdlc/_api/mocks/handlers.ts`
+- `apps/user-dashboard/src/modules/@org/admin/payroll/_sdlc/_testing/fixtures/mock-data.ts`

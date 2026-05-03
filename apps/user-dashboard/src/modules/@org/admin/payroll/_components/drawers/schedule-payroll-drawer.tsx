@@ -90,7 +90,7 @@ export const SchedulePayrollDrawer = () => {
   const {
     useGetCompanyWallet,
     useGetAllPayrolls,
-    useCreatePayroll,
+    useSchedulePayroll,
     useGetPayrollApprovals,
   } = usePayrollService();
   const { data: companyWallet } = useGetCompanyWallet();
@@ -112,13 +112,15 @@ export const SchedulePayrollDrawer = () => {
     refetch: refetchPayrolls,
   } = useGetAllPayrolls();
 
-  // Normalize response to array (supports both summary and payroll shapes)
+  // Normalize response to array, filtering to idle payrolls only (the only
+  // status that can be rescheduled)
   const payrolls: ListPayroll[] = useMemo(() => {
     const shaped = payrollsResponse as unknown as
       | { data?: ListPayroll[]; items?: ListPayroll[] }
       | undefined;
     const data = shaped?.data ?? shaped?.items ?? [];
-    return Array.isArray(data) ? data : [];
+    const all = Array.isArray(data) ? data : [];
+    return all.filter((p) => normalizeStatus(p.status) === 'idle');
   }, [payrollsResponse]);
 
   // Sort by payment date (default: earliest first)
@@ -176,8 +178,6 @@ export const SchedulePayrollDrawer = () => {
     return payrolls.find((p) => p.id === selectedPayrollId) ?? null;
   }, [payrolls, selectedPayrollId]);
 
-  const status = selectedPayroll?.status !== `idle`;
-
   const statusBanner = getStatusBanner(
     selectedPayroll?.status,
     selectedPayroll?.paymentDate
@@ -190,8 +190,8 @@ export const SchedulePayrollDrawer = () => {
     });
   const approvals = (approvalsResponse?.data ?? []) as PayrollApproval[];
 
-  const { mutateAsync: createPayroll, isPending: isCreatingPayroll } =
-    useCreatePayroll();
+  const { mutateAsync: schedulePayroll, isPending: isSchedulingPayroll } =
+    useSchedulePayroll();
 
   const handleDateSelection = async (date: Date | undefined) => {
     if (!date) {
@@ -199,10 +199,15 @@ export const SchedulePayrollDrawer = () => {
       return;
     }
 
+    if (!selectedPayrollId) {
+      toast.error('Please select a payroll from the list first.');
+      return;
+    }
+
     setSelectedDate(date);
 
-    await createPayroll(
-      { payrollPolicyId: '', paymentDate: date.toISOString() },
+    await schedulePayroll(
+      { payrollId: selectedPayrollId, paymentDate: date.toISOString() },
       {
         onSuccess: () => {
           toast.success('Payroll scheduled successfully.', {
@@ -211,7 +216,7 @@ export const SchedulePayrollDrawer = () => {
           setIsChangeDateModalOpen(false);
           refetchPayrolls();
         },
-        onError: (error) => {
+        onError: (error: Error) => {
           const axiosError = error as AxiosError<{ message?: string }>;
           const message =
             axiosError.response?.data?.message ?? 'Failed to schedule payroll.';
@@ -491,7 +496,7 @@ export const SchedulePayrollDrawer = () => {
           <DrawerFooter className="border-t p-6">
             <div className="flex gap-3">
               <MainButton
-                variant="outline"
+                variant="destructiveOutline"
                 // onClick={() => onOpenChange(false)}
                 className="border-destructive text-destructive flex-1"
               >
@@ -501,6 +506,7 @@ export const SchedulePayrollDrawer = () => {
                 variant="primary"
                 type="button"
                 onClick={() => setIsChangeDateModalOpen(true)}
+                isDisabled={!selectedPayrollId}
                 className="flex-1"
               >
                 Schedule Payroll
@@ -517,7 +523,7 @@ export const SchedulePayrollDrawer = () => {
         selectedDate={selectedDate}
         onDateSelect={setSelectedDate}
         onContinue={handleDateSelection}
-        isSubmitting={isCreatingPayroll}
+        isSubmitting={isSchedulingPayroll}
       />
     </>
   );

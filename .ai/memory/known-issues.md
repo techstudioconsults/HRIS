@@ -15,3 +15,11 @@ Format:
 - **Workaround**: Define agents explicitly in the `agent` key of `kilo.json` using `{file:.kilo/agent/<name>.md}` prompt references. This loads the agent MD content correctly while preserving the file-based separation of concerns.
 - **Mitigation Plan**: Fixed in `kilo.json` — all 6 blackbox agents (architect, planner, backend-implementer, frontend-implementer, reviewer, optimizer) are now registered via the `agent` config key.
 - **Date**: 2026-04-29
+
+---
+
+- **Issue**: `GeneratePayrollDrawer` referenced undefined `isCreating` — mutation loading state not destructured from `useCreatePayroll()`.
+- **Impact**: Runtime `ReferenceError` when opening the Generate Payroll drawer.
+- **Workaround**: N/A — bug prevented drawer from rendering.
+- **Mitigation Plan**: Fixed by destructuring `isPending` as `isCreating` from `useCreatePayroll()` (TanStack Query v5 `UseMutationResult`). All other mutation hooks in the payroll module already follow this pattern.
+- **Date**: 2026-05-03

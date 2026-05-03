@@ -22,12 +22,14 @@ import { makeModalParams } from './use-modal-search-params';
 export type PayrollModal =
   | 'schedule-payroll'
   | 'generate-payroll'
+  | 'create-payroll'
   | 'fund-wallet'
   | 'fund-wallet-account';
 
 const PAYROLL_MODAL_NAMES = [
   'schedule-payroll',
   'generate-payroll',
+  'create-payroll',
   'fund-wallet',
   'fund-wallet-account',
 ] as const satisfies readonly PayrollModal[];
@@ -57,6 +59,7 @@ export const usePayrollModalParams = () => {
 
   const isSchedulePayrollOpen = isOpen('schedule-payroll');
   const isGeneratePayrollOpen = isOpen('generate-payroll');
+  const isCreatePayrollOpen = isOpen('create-payroll');
   const isFundWalletOpen = isOpen('fund-wallet');
   const isFundWalletAccountOpen = isOpen('fund-wallet-account');
 
@@ -74,6 +77,8 @@ export const usePayrollModalParams = () => {
       payrollRunId ? { id: payrollRunId } : undefined
     );
 
+  const openCreatePayroll = () => openModal('create-payroll');
+
   const openFundWallet = () => openModal('fund-wallet');
 
   /** Called internally when the fund-wallet form submits and transitions to step 2. */
@@ -87,12 +92,14 @@ export const usePayrollModalParams = () => {
     // Derived predicates
     isSchedulePayrollOpen,
     isGeneratePayrollOpen,
+    isCreatePayrollOpen,
     isFundWalletOpen,
     isFundWalletAccountOpen,
 
     // Actions
     openSchedulePayroll,
     openGeneratePayroll,
+    openCreatePayroll,
     openFundWallet,
     openFundWalletAccount,
     closeModal,

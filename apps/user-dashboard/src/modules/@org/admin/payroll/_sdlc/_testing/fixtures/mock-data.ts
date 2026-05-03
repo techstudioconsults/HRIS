@@ -1,8 +1,8 @@
 export {
-  mockPayrollSetup,
-  mockPayrollRun,
-  mockRosterEntries,
-  mockPayslip,
-  mockWallet,
-  mockWalletTransactions,
+  MOCK_POLICY_ID,
+  mockPayrollPolicy,
+  mockCompanyWallet,
+  mockPayrolls,
+  mockPayslipsByPayroll,
+  mockApprovals,
 } from '../../_api/mocks/mock-data';

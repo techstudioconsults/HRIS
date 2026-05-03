@@ -177,6 +177,7 @@ export interface PayrollApproval extends Record<string, unknown> {
     avatar: string | null;
   };
   approvedAt: string;
+  approverRole?: string;
 }
 
 // ─── Component prop types ─────────────────────────────────────────────────────

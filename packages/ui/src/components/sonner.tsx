@@ -28,7 +28,7 @@ const Toaster = ({ ...properties }: ToasterProps) => {
           cancelButton: '',
           closeButton: '!absolute !-right-4 !-top-1 !relative-auto !ml-auto',
           error: '!text-destructive !bg-background',
-          success: '!text-success !bg-background',
+          success: '!text-info !bg-background',
           warning: '!text-warning-600 !bg-background',
           info: '!text-info !bg-background ',
         },

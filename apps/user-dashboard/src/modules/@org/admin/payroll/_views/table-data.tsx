@@ -63,7 +63,7 @@ export const usePayrollRowActions = () => {
       if (payslip.status !== 'failed' || isRetryingPayroll) return;
 
       await retryPayroll(
-        { payslipIds: [payslip.id] },
+        { payrollId: payslip.payrollId, payslipIds: [payslip.id] },
         {
           onSuccess: () => {
             toast.success('Payroll retry has been queued for this employee.');

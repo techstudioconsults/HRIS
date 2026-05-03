@@ -173,7 +173,7 @@ export const AlertModal: React.FC<AlertModalProperties> = ({
 
   const config = alertConfig[type];
   const resolvedConfirmVariant = confirmVariant ?? config.buttonVariant;
-  const resolvedCancelVariant = cancelVariant ?? 'outline';
+  const resolvedCancelVariant = cancelVariant ?? 'destructiveOutline';
 
   const onChange = (open: boolean) => {
     if (!open) {

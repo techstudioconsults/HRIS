@@ -35,11 +35,11 @@ export const ResourcesHeader = ({ onSearch }: ResourcesHeaderProperties) => {
             />
             <div className={`flex items-center w-full lg:w-auto gap-2`}>
               <MainButton
-                variant="default"
-                isLeftIconVisible={true}
+                variant="primaryOutline"
+                isLeftIconVisible
                 icon={<Icon name="FolderAdd" variant={`Outline`} />}
                 onClick={openCreateFolder}
-                className={`w-full bg-primary/10 text-primary`}
+                className={`w-full`}
               >
                 Create Folder
               </MainButton>

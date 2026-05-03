@@ -44,7 +44,7 @@ export const DashboardHeader = () => {
           value={undefined}
           onValueChange={() => {}}
           placeholder="Select overview period"
-          triggerClassName="lg:w-[20rem] justify-between w-full"
+          triggerClassName="lg:w-[20rem] w-full"
         />
 
         {/* Desktop CTAs — hidden on mobile */}

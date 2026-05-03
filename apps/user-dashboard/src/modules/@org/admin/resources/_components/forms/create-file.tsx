@@ -164,7 +164,7 @@ export const CreateFileForm = ({ onClose }: CreateFileFormProperties) => {
           <MainButton
             className="w-full"
             type="button"
-            variant="outline"
+            variant="destructiveOutline"
             isDisabled={isSubmitting || isPending}
             onClick={handleCancel}
           >

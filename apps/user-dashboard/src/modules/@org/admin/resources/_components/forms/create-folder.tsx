@@ -69,13 +69,13 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
           <FormField
             name="name"
             placeholder="Enter folder name"
-            className="!h-14 w-full"
+            className="h-14! w-full"
             label="Folder Name"
             type="text"
             required
           />
           {errors.name && (
-            <p className="text-sm text-red-600">{errors.name.message}</p>
+            <p className="text-sm text-destructive">{errors.name.message}</p>
           )}
         </div>
 
@@ -98,7 +98,7 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
           <MainButton
             className="w-full"
             type="button"
-            variant="outline"
+            variant="destructiveOutline"
             isDisabled={isSubmitting || isPending}
             onClick={handleCancel}
           >

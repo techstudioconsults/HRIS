@@ -174,7 +174,7 @@ export const GenerateRunPayrollDrawer = ({
                     </button>
                   </div>
                 }
-                className="flex flex-col items-center justify-center gap-4 bg-gradient-to-r from-brand-gradient-from to-brand-gradient-to text-center"
+                className="flex flex-col items-center justify-center gap-4 bg-linear-to-r from-brand-gradient-from to-brand-gradient-to text-center"
                 titleColor="text-white"
               />
             </section>

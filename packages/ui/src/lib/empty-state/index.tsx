@@ -112,7 +112,8 @@ export const EmptyState = ({
             <div className="flex flex-wrap items-center justify-center gap-2">
               {image ? (
                 <Image
-                  src={image.src}
+                  // src={image.src}
+                  src={`/images/logo.png`}
                   alt={image.alt}
                   width={image.width || 200}
                   height={image.height || 200}
@@ -123,7 +124,8 @@ export const EmptyState = ({
                 images?.map((img, index) => (
                   <Image
                     key={index}
-                    src={img.src}
+                    // src={img.src}
+                    src={`/images/logo.png`}
                     alt={img.alt}
                     width={img.width || 200}
                     height={img.height || 200}

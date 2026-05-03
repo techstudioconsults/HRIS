@@ -276,7 +276,7 @@ export const subTeamColumn: IColumnDefinition<Team>[] = [
     header: 'Team Members',
     accessorKey: 'members',
     render: (_value: unknown, team: Team) => (
-      <Badge variant={`primary`}>{team.members}</Badge>
+      <Badge variant={`primary`}>{team.members ?? '—'}</Badge>
     ),
   },
   {

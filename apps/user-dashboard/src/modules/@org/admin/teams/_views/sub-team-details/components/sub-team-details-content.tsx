@@ -16,8 +16,6 @@ import {
 import { EmptyState, ErrorEmptyState } from '@workspace/ui/lib/empty-state';
 import { SearchInput } from '@/modules/@org/shared';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { toast } from 'sonner';
-
 import empty1 from '~/images/empty-state.svg';
 import { useEmployeeRowActions } from '@/modules/@org/admin/employee/_views/table-data';
 import { useEmployeeService } from '@/modules/@org/admin/employee/services/use-service';
@@ -31,6 +29,7 @@ interface SubTeamDetailsContentProps {
   onAddEmployee: () => void;
   onAddRole: () => void;
   onEditRole?: (role: Role) => void;
+  onDeleteRole?: (role: Role) => void;
 }
 
 const SubTeamDetailsContent = ({
@@ -38,6 +37,7 @@ const SubTeamDetailsContent = ({
   onAddEmployee,
   onAddRole,
   onEditRole,
+  onDeleteRole,
 }: SubTeamDetailsContentProps) => {
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearch] = useDebounce(searchInput, 300);
@@ -55,8 +55,9 @@ const SubTeamDetailsContent = ({
   if (debouncedSearch.trim()) {
     membersFilters.search = debouncedSearch.trim();
   }
-  const { data: employeesResp, isLoading: isLoadingMembers } =
-    useGetAllEmployees(membersFilters, { enabled: !!teamId });
+  const { data: employeesResp } = useGetAllEmployees(membersFilters, {
+    enabled: !!teamId,
+  });
   const members: Employee[] = employeesResp?.data?.items ?? [];
 
   const {
@@ -103,7 +104,7 @@ const SubTeamDetailsContent = ({
 
   return (
     <>
-      <TeamStatsCards teamData={teamData} />
+      <TeamStatsCards teamData={teamData} variant="sub-team" />
 
       <section>
         <Tabs defaultValue="members" className="w-full space-y-4">
@@ -132,11 +133,13 @@ const SubTeamDetailsContent = ({
                   rowActions={getEmployeeRowActions}
                   showPagination={false}
                   enableRowSelection={true}
+                  mobileCardView={true}
                   enableColumnVisibility={true}
                   enableSorting={true}
                   enableFiltering={true}
-                  mobileCardView={true}
+                  showColumnCustomization={false}
                 />
+
                 <EmployeeDeleteModal />
               </>
             ) : (
@@ -164,6 +167,7 @@ const SubTeamDetailsContent = ({
           <TabsContent value="roles">
             {rolesData && rolesData.length > 0 ? (
               <AdvancedDataTable
+                showColumnCustomization={false}
                 data={rolesData as RoleRow[]}
                 columns={roleColumns}
                 rowActions={(role: RoleRow) => [
@@ -191,9 +195,7 @@ const SubTeamDetailsContent = ({
                             />
                           ),
                           onClick: () => {
-                            toast.info(
-                              'Role delete will be available in a future update.'
-                            );
+                            onDeleteRole?.(role as Role);
                           },
                         } as IRowAction<RoleRow>,
                       ]
@@ -218,7 +220,10 @@ const SubTeamDetailsContent = ({
                 ]}
                 title="No roles configured."
                 description="Define roles with permissions to control what sub-team members can access."
-                // button handled by parent
+                button={{
+                  text: 'Add Role',
+                  onClick: onAddRole,
+                }}
               />
             )}
           </TabsContent>

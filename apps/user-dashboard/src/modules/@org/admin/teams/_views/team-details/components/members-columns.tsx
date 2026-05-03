@@ -2,7 +2,6 @@
 
 import { Badge } from '@workspace/ui/components/badge';
 import type { IColumnDefinition } from '@workspace/ui/lib/table';
-import { cn } from '@workspace/ui/lib/utils';
 import Image from 'next/image';
 import { useMemo } from 'react';
 
@@ -85,22 +84,6 @@ export function useMembersColumns(
             {employee?.employmentDetails?.workMode ?? 'N/A'}
           </span>
         ),
-      },
-      {
-        header: 'Sub Team',
-        accessorKey: 'subTeam',
-        render: (_, employee: Employee) => {
-          const isDirectMember =
-            employee?.employmentDetails?.team?.id === teamId;
-          const subTeamName = isDirectMember
-            ? null
-            : employee?.employmentDetails?.team?.name;
-          return (
-            <span className={cn('text-sm', !subTeamName && 'text-destructive')}>
-              {subTeamName ?? 'Unassigned'}
-            </span>
-          );
-        },
       },
       {
         header: 'Status',

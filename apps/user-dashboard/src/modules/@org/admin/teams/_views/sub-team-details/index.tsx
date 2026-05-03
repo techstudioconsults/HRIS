@@ -44,6 +44,7 @@ const SubTeamDetails = ({ params }: SubTeamDetailsProps) => {
     useGetRoles,
     useCreateRole,
     useUpdateRole,
+    useDeleteRole,
   } = useTeamService();
   const { useUpdateTeam } = useOnboardingService();
   const { useGetAllEmployees, useUpdateEmployee } = useEmployeeService();
@@ -60,12 +61,15 @@ const SubTeamDetails = ({ params }: SubTeamDetailsProps) => {
   const deleteTeamMutation = useDeleteTeam();
   const createRoleMutation = useCreateRole();
   const updateRoleMutation = useUpdateRole();
+  const { mutateAsync: deleteRole } = useDeleteRole();
   const { mutateAsync: updateEmployee, isPending: isAssigning } =
     useUpdateEmployee();
 
   // ── UI state (non-URL) ───────────────────────────────────────────────────────
   const [isEditSubTeamOpen, setIsEditSubTeamOpen] = useState(false);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [isDeleteRoleConfirmOpen, setIsDeleteRoleConfirmOpen] = useState(false);
+  const [roleToDelete, setRoleToDelete] = useState<Role | null>(null);
   const [editingSubTeam, setEditingSubTeam] = useState<Team | null>(null);
   const [currentRole, setCurrentRole] = useState<Role | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -169,6 +173,28 @@ const SubTeamDetails = ({ params }: SubTeamDetailsProps) => {
     }
   };
 
+  // ── Delete Role ───────────────────────────────────────────────────────────────
+  const handleDeleteRole = async (roleId: string) => {
+    const roleName = currentRole?.name;
+    setIsSubmitting(true);
+    try {
+      await deleteRole(roleId);
+      await queryClient.invalidateQueries({ queryKey: queryKeys.team.list() });
+      await queryClient.invalidateQueries({ queryKey: ['roles', id] });
+      toast.success(
+        `Role${roleName ? ` "${roleName}"` : ''} deleted successfully!`
+      );
+      closeModal();
+      setCurrentRole(null);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to delete role.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   // ── Delete Sub-team ────────────────────────────────────────────────────────────
   const handleDeleteSubTeam = async () => {
     setIsSubmitting(true);
@@ -251,6 +277,10 @@ const SubTeamDetails = ({ params }: SubTeamDetailsProps) => {
             setCurrentRole(role);
             handleOpenRoleDialog(role);
           }}
+          onDeleteRole={(role) => {
+            setRoleToDelete(role);
+            setIsDeleteRoleConfirmOpen(true);
+          }}
         />
       </section>
 
@@ -310,6 +340,7 @@ const SubTeamDetails = ({ params }: SubTeamDetailsProps) => {
               await handleAddRole(id, roleData);
             }
           }}
+          onDelete={currentRole ? handleDeleteRole : undefined}
           onCancel={(e) => {
             e?.preventDefault?.();
             closeModal();
@@ -374,6 +405,29 @@ const SubTeamDetails = ({ params }: SubTeamDetailsProps) => {
         title="Delete Sub-team"
         description={`Are you sure you want to delete "${teamData?.name}"? This action cannot be undone.`}
         confirmText={isSubmitting ? 'Deleting...' : 'Delete Sub-team'}
+        cancelText="Cancel"
+      />
+
+      {/* Delete Role Confirmation */}
+      <AlertModal
+        isOpen={isDeleteRoleConfirmOpen}
+        onClose={() => {
+          if (!isSubmitting) {
+            setIsDeleteRoleConfirmOpen(false);
+            setRoleToDelete(null);
+          }
+        }}
+        onConfirm={async () => {
+          if (!roleToDelete?.id) return;
+          await handleDeleteRole(roleToDelete.id);
+          setIsDeleteRoleConfirmOpen(false);
+          setRoleToDelete(null);
+        }}
+        loading={isSubmitting}
+        type="warning"
+        title="Delete Role"
+        description={`Are you sure you want to delete "${roleToDelete?.name}"? This action cannot be undone.`}
+        confirmText={isSubmitting ? 'Deleting...' : 'Delete Role'}
         cancelText="Cancel"
       />
 

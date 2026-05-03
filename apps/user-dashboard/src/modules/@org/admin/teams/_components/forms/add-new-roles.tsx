@@ -100,9 +100,11 @@ export const RolesAndPermission = ({
   isSubmitting = false,
 }: RolesAndPermissionProperties) => {
   const [isDeleting, setIsDeleting] = useState(false);
-  const [roles, setRoles] = useState<TeamsFormRole[]>([
-    { name: '', permissions: [] },
-  ]);
+  const [roles, setRoles] = useState<TeamsFormRole[]>(() =>
+    initialData
+      ? [{ name: initialData.name, permissions: initialData.permissions ?? [] }]
+      : [{ name: '', permissions: [] }]
+  );
   const [openPermissions, setOpenPermissions] = useState<boolean[]>([false]);
   const [isSubmittingRoles, setIsSubmittingRoles] = useState(false);
   const [submissionProgress, setSubmissionProgress] = useState(0);
@@ -141,6 +143,16 @@ export const RolesAndPermission = ({
     );
   };
 
+  // Sync roles state when initialData changes (e.g. dialog reopens with a different role)
+  useEffect(() => {
+    if (initialData) {
+      setRoles([
+        { name: initialData.name, permissions: initialData.permissions ?? [] },
+      ]);
+      setOpenPermissions([false]);
+    }
+  }, [initialData?.id]);
+
   // Keep openPermissions array in sync with roles array
   useEffect(() => {
     if (openPermissions.length !== roles.length) {
@@ -150,14 +162,28 @@ export const RolesAndPermission = ({
 
   const methods = useForm({
     defaultValues: {
-      roles: [{ name: '', permissions: [] }],
+      name: initialData?.name ?? '',
+      roles: [{ name: initialData?.name ?? '', permissions: [] }],
     },
   });
 
+  // Reset form name field when initialData changes
+  useEffect(() => {
+    if (initialData) {
+      methods.reset({
+        name: initialData.name,
+        roles: [{ name: initialData.name, permissions: [] }],
+      });
+    }
+  }, [initialData?.id]);
+
+  const formName = methods.watch('name');
+
   // Check if all roles have valid names and at least one permission
-  const allRolesValid = roles.every(
-    (role) => role.name.trim().length > 0 && role.permissions.length > 0
-  );
+  const allRolesValid = roles.every((role, i) => {
+    const name = isEdit && i === 0 ? (formName ?? role.name) : role.name;
+    return name.trim().length > 0 && role.permissions.length > 0;
+  });
 
   const handleSubmitForm = async () => {
     if (isSubmittingRoles) return;
@@ -167,7 +193,13 @@ export const RolesAndPermission = ({
     setCurrentSubmittingRole(0);
     setSubmissionStatus('Preparing to create roles...');
 
-    const validRoles = roles.filter(
+    // In edit mode the name comes from the react-hook-form field, not the local roles state
+    const mergedRoles =
+      isEdit && formName
+        ? roles.map((r, i) => (i === 0 ? { ...r, name: formName } : r))
+        : roles;
+
+    const validRoles = mergedRoles.filter(
       (role) => role.name.trim() && role.permissions.length > 0
     );
     const totalRoles = validRoles.length;

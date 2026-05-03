@@ -80,13 +80,10 @@ export const useTeamService = () => {
           permissions,
         }: { roleId: string; name?: string; permissions?: string[] }
       ) => service.updateRole(roleId, { name, permissions })
-      // {
-      //   onSuccess: (_, { roleId }) => {
-      //     // Invalidate all role queries
-      //     return [["roles"]];
-      //   },
-      // },
     );
+
+  const useDeleteRole = () =>
+    useServiceMutation((service, roleId: string) => service.deleteRole(roleId));
 
   const useAssignEmployeeToTeam = () =>
     useServiceMutation(
@@ -129,6 +126,7 @@ export const useTeamService = () => {
     useDeleteTeam,
     useCreateRole,
     useUpdateRole,
+    useDeleteRole,
     useAssignEmployeeToTeam,
   };
 };

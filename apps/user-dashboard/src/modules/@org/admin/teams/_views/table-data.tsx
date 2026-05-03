@@ -35,7 +35,7 @@ export const teamColumn: IColumnDefinition<Team>[] = [
     header: 'Team Members',
     accessorKey: 'members',
     render: (_value: unknown, team: Team) => (
-      <span className="text-primary font-medium">
+      <span className="text-primary text-sm font-medium">
         {team.members || 0} members
       </span>
     ),

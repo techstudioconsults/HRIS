@@ -26,7 +26,7 @@ export interface PayrollTableSectionProps {
   /** Number of selected rows for the bulk footer */
   selectedCount: number;
   /** Selection change callback */
-  onSelectionChange: (selected: string[]) => void;
+  onSelectionChange: (selected: Payslip[]) => void;
 
   /** Whether there are failed payslips for retry */
   hasFailedPayslips: boolean;

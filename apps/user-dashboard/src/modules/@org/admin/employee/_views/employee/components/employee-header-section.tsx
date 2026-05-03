@@ -97,7 +97,7 @@ export const EmployeeHeaderSection = ({
                 </Link>
                 <Link href="/admin/employees/bulk-import">
                   <DropdownMenuItem>
-                    <Icon name="Upload" variant="Outline" />
+                    <Icon name="FileSpreadsheet" variant="Outline" />
                     Bulk Import
                   </DropdownMenuItem>
                 </Link>
@@ -150,15 +150,6 @@ export const EmployeeHeaderSection = ({
               className="h-10 rounded-md w-fit px-2.5 lg:px-6"
               size={`icon`}
             />
-            <MainButton
-              href="/admin/employees/bulk-import"
-              variant="primaryOutline"
-              isLeftIconVisible
-              icon={<Icon name={`Upload`} variant={`Outline`} />}
-              className={`w-full!`}
-            >
-              Bulk Import
-            </MainButton>
             <MainButton
               href="/admin/employees/add-employee"
               variant="primary"

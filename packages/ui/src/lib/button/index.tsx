@@ -25,7 +25,6 @@ type Variant =
   | 'secondary'
   | 'ghost'
   | 'link'
-  | 'accent'
   | 'accentOutline';
 type Size = 'default' | 'sm' | 'lg' | 'xl' | '2xl' | 'link' | 'icon' | 'circle';
 

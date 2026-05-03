@@ -23,3 +23,19 @@ Format:
 - **Workaround**: N/A — bug prevented drawer from rendering.
 - **Mitigation Plan**: Fixed by destructuring `isPending` as `isCreating` from `useCreatePayroll()` (TanStack Query v5 `UseMutationResult`). All other mutation hooks in the payroll module already follow this pattern.
 - **Date**: 2026-05-03
+
+---
+
+- **Issue**: `MainButton` variant `"accent"` not assignable to shadcn `Button` variant type — the `Variant` type union in `MainButton` declared `'accent'` but the underlying `buttonVariants` cva had no `accent` key (only `accentOutline`). Caused 3 TS2322 errors blocking push.
+- **Impact**: Blocked `pre-push` hook, preventing `git push`.
+- **Workaround**: N/A — type error blocked build/push.
+- **Mitigation Plan**: Removed `'accent'` from `MainButton`'s `Variant` type union. The single usage in `navbar/index.tsx` (`variant="accent"`) was changed to `variant="ghost"` (already used nearby for "Contact Me"). `'accentOutline'` remains available.
+- **Date**: 2026-05-03
+
+---
+
+- **Issue**: `GeneratePayrollDrawer` referenced undefined `isCreating` — mutation loading state not destructured from `useCreatePayroll()`.
+- **Impact**: Runtime `ReferenceError` when opening the Generate Payroll drawer.
+- **Workaround**: N/A — bug prevented drawer from rendering.
+- **Mitigation Plan**: Fixed by destructuring `isPending` as `isCreating` from `useCreatePayroll()` (TanStack Query v5 `UseMutationResult`). All other mutation hooks in the payroll module already follow this pattern.
+- **Date**: 2026-05-03

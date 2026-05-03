@@ -125,7 +125,7 @@ export const EmployeeTableSection = ({
         onSelectionChange={handleSelectionChange}
         customFooterRenderer={() =>
           selectedCount > 0 ? (
-            <div className="flex flex-col gap-3 rounded-b-lg border-t bg-primary/5 px-4 py-3 sm:flex-row sm:items-center">
+            <div className="flex flex-col gap-3 rounded-b-lg border-t py-3 sm:flex-row sm:items-center">
               <span className="text-sm font-medium text-primary">
                 {selectedCount} row{selectedCount > 1 ? 's' : ''} selected
               </span>

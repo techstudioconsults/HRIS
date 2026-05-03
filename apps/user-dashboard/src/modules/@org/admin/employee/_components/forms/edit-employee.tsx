@@ -246,7 +246,7 @@ export const EditEmployeeForm = () => {
     formDataToSend.append('firstName', formData.firstName);
     formDataToSend.append('lastName', formData.lastName);
     formDataToSend.append('email', formData.email);
-    // formDataToSend.append('phoneNumber', formData.phoneNumber);
+    formDataToSend.append('phoneNumber', formData.phoneNumber);
 
     // Team and role
     formDataToSend.append('teamId', formData.teamId);

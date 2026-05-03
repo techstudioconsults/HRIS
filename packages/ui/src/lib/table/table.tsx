@@ -545,85 +545,90 @@ export function AdvancedDataTable<T extends DataItem>({
     }
 
     return (
-      <div className="flex items-center justify-between px-4 lg:px-6">
-        {tabs && tabs.length > 0 ? (
-          <>
-            <Label htmlFor="view-selector" className="sr-only">
-              View
-            </Label>
-            <Select value={activeTab} onValueChange={handleTabChange}>
-              <SelectTrigger
-                className="flex w-fit @4xl/main:hidden"
-                size="sm"
-                id="view-selector"
-              >
-                <SelectValue placeholder="Select a view" />
-              </SelectTrigger>
-              <SelectContent>
-                {tabs.map((tab) => (
-                  <SelectItem key={tab.value} value={tab.value}>
-                    {tab.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <TabsList
-              className="**:data-[slot=badge]:bg-muted-foreground/30 hidden
+      <>
+        {customFooterRenderer && customFooterRenderer()}
+        <div className="flex items-center justify-between px-4 lg:px-6">
+          {tabs && tabs.length > 0 ? (
+            <>
+              <Label htmlFor="view-selector" className="sr-only">
+                View
+              </Label>
+              <Select value={activeTab} onValueChange={handleTabChange}>
+                <SelectTrigger
+                  className="flex w-fit @4xl/main:hidden"
+                  size="sm"
+                  id="view-selector"
+                >
+                  <SelectValue placeholder="Select a view" />
+                </SelectTrigger>
+                <SelectContent>
+                  {tabs.map((tab) => (
+                    <SelectItem key={tab.value} value={tab.value}>
+                      {tab.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <TabsList
+                className="**:data-[slot=badge]:bg-muted-foreground/30 hidden
             **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex"
-            >
-              {tabs.map((tab) => (
-                <TabsTrigger key={tab.value} value={tab.value}>
-                  {tab.label}
-                  {tab.badge && <Badge variant="secondary">{tab.badge}</Badge>}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </>
-        ) : null}
+              >
+                {tabs.map((tab) => (
+                  <TabsTrigger key={tab.value} value={tab.value}>
+                    {tab.label}
+                    {tab.badge && (
+                      <Badge variant="secondary">{tab.badge}</Badge>
+                    )}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </>
+          ) : null}
 
-        <div className="flex items-center gap-2">
-          {showColumnCustomization && enableColumnVisibility && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="primaryOutline" size="sm">
-                  <Columns3 />
-                  <span className="hidden lg:inline">Customize Columns</span>
-                  <span className="lg:hidden">Columns</span>
-                  <ChevronDown />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                {table
-                  .getAllColumns()
-                  .filter(
-                    (column) =>
-                      column.accessorFn !== undefined && column.getCanHide()
-                  )
-                  .map((column) => {
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={column.id}
-                        className="capitalize"
-                        checked={column.getIsVisible()}
-                        onCheckedChange={(value) =>
-                          column.toggleVisibility(value)
-                        }
-                      >
-                        {column.id}
-                      </DropdownMenuCheckboxItem>
-                    );
-                  })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-          {showAddButton && onAddClick && (
-            <Button variant="primaryOutline" size="sm" onClick={onAddClick}>
-              <Plus />
-              <span className="hidden lg:inline">{addButtonText}</span>
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {showColumnCustomization && enableColumnVisibility && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="primaryOutline" size="sm">
+                    <Columns3 />
+                    <span className="hidden lg:inline">Customize Columns</span>
+                    <span className="lg:hidden">Columns</span>
+                    <ChevronDown />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  {table
+                    .getAllColumns()
+                    .filter(
+                      (column) =>
+                        column.accessorFn !== undefined && column.getCanHide()
+                    )
+                    .map((column) => {
+                      return (
+                        <DropdownMenuCheckboxItem
+                          key={column.id}
+                          className="capitalize"
+                          checked={column.getIsVisible()}
+                          onCheckedChange={(value) =>
+                            column.toggleVisibility(value)
+                          }
+                        >
+                          {column.id}
+                        </DropdownMenuCheckboxItem>
+                      );
+                    })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+            {showAddButton && onAddClick && (
+              <Button variant="primaryOutline" size="sm" onClick={onAddClick}>
+                <Plus />
+                <span className="hidden lg:inline">{addButtonText}</span>
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
+      </>
     );
   };
 
@@ -1062,8 +1067,6 @@ export function AdvancedDataTable<T extends DataItem>({
           </div>
         </div>
       )}
-
-      {customFooterRenderer && customFooterRenderer()}
     </div>
   );
 }

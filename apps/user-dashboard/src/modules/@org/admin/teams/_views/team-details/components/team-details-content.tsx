@@ -28,11 +28,15 @@ import { SearchInput } from '@/modules/@org/shared';
 interface TeamDetailsContentProps {
   teamId: string;
   onEditSubTeam: (team: Team) => void;
+  onAddSubTeamRole?: (team: Team) => void;
+  onAddSubTeamMembers?: (team: Team) => void;
 }
 
 const TeamDetailsContent = ({
   teamId,
   onEditSubTeam,
+  onAddSubTeamRole,
+  onAddSubTeamMembers,
 }: TeamDetailsContentProps) => {
   const { tab, setTab } = useTeamDetailsModalParams();
 
@@ -48,7 +52,9 @@ const TeamDetailsContent = ({
   // ── Sub-team row actions ───────────────────────────────────────────────────
   const { getRowActions, DeleteConfirmationModal } = useSubTeamRowActions(
     onEditSubTeam,
-    teamId
+    teamId,
+    onAddSubTeamRole,
+    onAddSubTeamMembers
   );
 
   // ── Search: local input state, debounced before API call ──────────────────

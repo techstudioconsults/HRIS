@@ -1,337 +1,384 @@
 'use client';
 
+import { queryKeys } from '@/lib/react-query/query-keys';
+import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onboarding-service';
 import { useSubTeamModalParams } from '@/lib/nuqs/use-sub-team-modal-params';
-import { Badge } from '@workspace/ui/components/badge';
-import { BreadCrumb } from '@workspace/ui/lib/breadcrumb';
-import { DashboardHeader } from '@workspace/ui/lib/dashboard';
-import { ReusableDialog } from '@workspace/ui/lib/dialog';
-import { EmptyState, ErrorEmptyState } from '@workspace/ui/lib/empty-state';
-import { AdvancedDataTable } from '@workspace/ui/lib/table';
-import { MainButton } from '@workspace/ui/lib/button';
-import { Icon } from '@workspace/ui/lib/icons/icon';
-import Image from 'next/image';
-import { useCallback, useMemo, useState } from 'react';
-import { useDebounce } from 'use-debounce';
 import { useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
-import empty1 from '~/images/empty-state.svg';
-import AddNewMembers from '../../_components/forms/add-new-members';
-import type { MemberAssignment } from '../../types';
-import { CardGroup } from '../../../../_components/card-group';
-import { DashboardCard } from '../../../../_components/dashboard-card';
-import { useEmployeeRowActions } from '../../../employee/_views/table-data';
-import { useEmployeeService } from '../../../employee/services/use-service';
 import { useTeamService } from '../../services/use-service';
-import { SubTeamDetailsSkeleton } from './skeleton';
-import { formatDate } from '@/lib/formatters';
-import { SearchInput } from '@/modules/@org/shared';
+import { useSubTeamRowActions } from '@/modules/@org/admin/teams/_views/table-data';
+import { SubTeamDetailsHeader } from './components/sub-team-details-header';
+import { SubTeamDetailsContent } from './components/sub-team-details-content';
+import { TeamForm } from '@/modules/@org/onboarding/_components/forms/team/team-form';
+import { AddNewEmployees } from '../../_components/forms/add-new-employees';
+import { RolesAndPermission } from '../../_components/forms/add-new-roles';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
+import { AlertModal } from '@workspace/ui/lib/dialog';
+import { useEmployeeService } from '@/modules/@org/admin/employee/services/use-service';
+import type { OnboardingSchemaTeam as TeamFormType } from '@/modules/@org/onboarding/types';
 
-// Sub Team Details Header Component
-const SubTeamDetailsHeader = ({
-  teamId,
-  onAddMemberClick,
-}: {
-  teamId: string;
-  onAddMemberClick: () => void;
-}) => {
-  const { useGetTeamsById } = useTeamService();
-  const { data: teamData } = useGetTeamsById(teamId, { enabled: !!teamId });
+interface SubTeamDetailsProps {
+  params: { id: string };
+}
 
-  const parentName =
-    typeof teamData?.parent === 'object' && teamData?.parent !== null
-      ? (teamData.parent as { name?: string }).name
-      : undefined;
-  const parentId =
-    typeof teamData?.parent === 'object' && teamData?.parent !== null
-      ? (teamData.parent as { id?: string }).id
-      : teamData?.parent;
-
-  return (
-    <DashboardHeader
-      title="Sub Team Details"
-      subtitle={
-        <BreadCrumb
-          items={[
-            { label: 'Teams', href: '/admin/teams' },
-            {
-              label: parentName || 'Parent Team',
-              href: `/admin/teams/${parentId}`,
-            },
-            { label: teamData?.name || '', href: `/admin/teams/${teamId}` },
-          ]}
-        />
-      }
-      actionComponent={
-        <MainButton
-          variant="primary"
-          size="lg"
-          isLeftIconVisible
-          icon={<Icon name="Plus" />}
-          onClick={onAddMemberClick}
-        >
-          Add Member
-        </MainButton>
-      }
-    />
-  );
-};
-
-// Sub Team Details Content Component
-const SubTeamDetailsContent = ({ teamId }: { teamId: string }) => {
-  const { isAddMemberOpen, openAddMember, closeModal } =
-    useSubTeamModalParams();
-
-  const { useGetTeamsById } = useTeamService();
-  const {
-    data: teamData,
-    isLoading: isLoadingTeam,
-    isError: isErrorTeam,
-    refetch,
-  } = useGetTeamsById(teamId, { enabled: !!teamId });
-
-  // ── Search: debounced input ───────────────────────────────────────────────
-  const [searchInput, setSearchInput] = useState('');
-  const [debouncedSearch] = useDebounce(searchInput, 300);
-
-  const handleSearchChange = useCallback((query: string) => {
-    setSearchInput(query);
-  }, []);
-
-  // ── Members: backend search via /employees?teamId=&search= ────────────────
-  const { useGetAllEmployees } = useEmployeeService();
-  const membersFilters: Filters = { teamId };
-  if (debouncedSearch.trim()) {
-    membersFilters.search = debouncedSearch.trim();
-  }
-  const { data: employeesResp, isLoading: isLoadingMembers } =
-    useGetAllEmployees(membersFilters, { enabled: !!teamId });
-
-  const members: Employee[] = employeesResp?.data?.items ?? [];
-
-  const { getRowActions, DeleteConfirmationModal, setActiveEmployee } =
-    useEmployeeRowActions();
-  const columns = useMemo<IColumnDefinition<Employee>[]>(
-    () => [
-      {
-        header: 'Team Member',
-        accessorKey: 'firstName',
-        render: (_, employee: Employee) => (
-          <div
-            className={'flex w-fit items-center gap-2'}
-            onMouseEnter={() => setActiveEmployee(employee)}
-            onFocus={() => setActiveEmployee(employee)}
-            tabIndex={0}
-          >
-            <Image
-              src={
-                typeof employee.avatar === 'string' &&
-                employee.avatar.length > 0
-                  ? employee.avatar
-                  : 'https://res.cloudinary.com/kingsleysolomon/image/upload/v1742989662/byte-alley/fisnolvvuvfiebxskgbs.svg'
-              }
-              alt={employee.firstName}
-              width={100}
-              height={100}
-              className={`bg-low-grey-III h-8 w-8 rounded-full object-cover`}
-            />
-            <div className="flex flex-col space-y-2">
-              <span className="text-sm font-medium">{`${employee.firstName} ${employee.lastName}`}</span>
-            </div>
-          </div>
-        ),
-      },
-      {
-        header: 'Email',
-        accessorKey: 'email',
-        render: (_, employee: Employee) => (
-          <span className="text-sm">{employee?.email || 'N/A'}</span>
-        ),
-      },
-      {
-        header: 'Role',
-        accessorKey: 'role',
-        render: (_, employee: Employee) => (
-          <span className="text-sm">
-            {employee?.employmentDetails?.role?.name || 'N/A'}
-          </span>
-        ),
-      },
-      {
-        header: 'Work Mode',
-        accessorKey: 'workMode',
-        render: (_, employee: Employee) => (
-          <span className="text-sm capitalize">
-            {employee?.employmentDetails?.workMode || 'N/A'}
-          </span>
-        ),
-      },
-      {
-        header: 'Status',
-        accessorKey: 'status',
-        render: (_, employee: Employee) => (
-          <Badge
-            className="min-w-fit"
-            variant={employee.status === `active` ? `success` : `warning`}
-          >
-            {employee.status === `active` ? 'Active' : 'On Leave'}
-          </Badge>
-        ),
-      },
-    ],
-    [setActiveEmployee]
-  );
-
-  if (isLoadingTeam || isLoadingMembers) {
-    return <SubTeamDetailsSkeleton />;
-  }
-
-  if (isErrorTeam) {
-    return <ErrorEmptyState onRetry={refetch} />;
-  }
-
-  return (
-    <>
-      <CardGroup>
-        <DashboardCard
-          title="Team Name"
-          value={<p className="text-base">{teamData?.name}</p>}
-          className="flex flex-col items-center justify-center gap-4 text-center"
-        />
-        <DashboardCard
-          title="Team Manager"
-          value={
-            <p className="text-base">
-              {teamData?.manager?.name || 'No manager assigned'}
-            </p>
-          }
-          className="flex flex-col items-center justify-center gap-4 text-center"
-        />
-        <DashboardCard
-          title="Team Members"
-          value={<p className="text-base">{members.length}</p>}
-          className="flex flex-col items-center justify-center gap-4 text-center"
-        />
-        <DashboardCard
-          title="Created On"
-          value={<p className="text-base">{formatDate(teamData?.createdAt)}</p>}
-          className="flex flex-col items-center justify-center gap-4 text-center"
-        />
-      </CardGroup>
-
-      <section className="space-y-4">
-        <div className="relative w-full sm:w-72">
-          <SearchInput
-            placeholder="Search members..."
-            onSearch={handleSearchChange}
-            className="h-10"
-          />
-        </div>
-        {members.length > 0 ? (
-          <>
-            <AdvancedDataTable
-              data={members}
-              columns={columns}
-              rowActions={getRowActions}
-              showPagination={false}
-              enableDragAndDrop={true}
-              enableRowSelection={true}
-              enableColumnVisibility={true}
-              enableSorting={true}
-              enableFiltering={true}
-              mobileCardView={true}
-              showColumnCustomization={false}
-            />
-            <DeleteConfirmationModal />
-          </>
-        ) : (
-          <EmptyState
-            className="bg-background"
-            images={[
-              {
-                src: empty1.src,
-                alt: 'No team member',
-                width: 100,
-                height: 100,
-              },
-            ]}
-            title="No team member yet."
-            description="Add members to this team to collaborate and assign roles."
-            button={{
-              text: 'Add Member',
-              onClick: openAddMember,
-            }}
-          />
-        )}
-      </section>
-    </>
-  );
-};
-
-const SubTeamDetails = ({ params }: { params: { id: string } }) => {
+const SubTeamDetails = ({ params }: SubTeamDetailsProps) => {
   const { id } = params;
-  const { isAddMemberOpen, openAddMember, closeModal } =
-    useSubTeamModalParams();
-  const { useGetTeamsById, useAssignEmployeeToTeam } = useTeamService();
-  const { data: teamData } = useGetTeamsById(id, { enabled: !!id });
+  const router = useRouter();
   const queryClient = useQueryClient();
-  const { mutateAsync: assignEmployee, isPending: isAssigning } =
-    useAssignEmployeeToTeam();
 
-  // Derive the parent team id from the team's parent field
-  const parentTeamId = (() => {
-    const parent: unknown = (teamData as unknown as { parent?: unknown })
-      ?.parent;
-    if (
-      parent &&
-      typeof parent === 'object' &&
-      (parent as { id?: string }).id
-    ) {
-      return (parent as { id: string }).id;
-    }
-    if (typeof parent === 'string') return parent;
-    return id;
-  })();
+  const {
+    isEmployeeOpen,
+    openEmployeeDialog,
+    closeModal,
+    isRoleOpen,
+    openRoleDialog,
+  } = useSubTeamModalParams();
 
-  const handleAddMember = async (assignment: MemberAssignment) => {
-    await assignEmployee({
-      employeeId: assignment.employeeId,
-      teamId: id,
-      roleId: assignment.roleId,
-    });
-    // Refresh the members list for this sub-team
-    await queryClient.invalidateQueries({
-      queryKey: ['employee', 'list'],
-    });
-    await queryClient.invalidateQueries({
-      queryKey: ['team', 'details', id],
-    });
+  const {
+    useGetTeamsById,
+    useDeleteTeam,
+    useGetRoles,
+    useCreateRole,
+    useUpdateRole,
+  } = useTeamService();
+  const { useUpdateTeam } = useOnboardingService();
+  const { useGetAllEmployees, useUpdateEmployee } = useEmployeeService();
+
+  const { data: teamData } = useGetTeamsById(id, { enabled: !!id });
+  const { data: rolesData } = useGetRoles(id, { enabled: !!id });
+  const { data: allEmployeesData } = useGetAllEmployees(
+    { page: 1 },
+    { enabled: isEmployeeOpen }
+  );
+
+  // ── Mutations (hoisted to top level — never call hooks inside callbacks) ────
+  const updateTeamMutation = useUpdateTeam();
+  const deleteTeamMutation = useDeleteTeam();
+  const createRoleMutation = useCreateRole();
+  const updateRoleMutation = useUpdateRole();
+  const { mutateAsync: updateEmployee, isPending: isAssigning } =
+    useUpdateEmployee();
+
+  // ── UI state (non-URL) ───────────────────────────────────────────────────────
+  const [isEditSubTeamOpen, setIsEditSubTeamOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [editingSubTeam, setEditingSubTeam] = useState<Team | null>(null);
+  const [currentRole, setCurrentRole] = useState<Role | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Row actions hook (provides DeleteConfirmationModal component)
+  const { DeleteConfirmationModal } = useSubTeamRowActions((team: Team) => {
+    setEditingSubTeam(team);
+    setIsEditSubTeamOpen(true);
+  }, id);
+
+  // ── Edit Sub-team Name ────────────────────────────────────────────────────────
+  const closeEditModal = () => {
+    setIsEditSubTeamOpen(false);
+    setEditingSubTeam(null);
   };
 
+  const handleUpdateSubTeamName = async (data: { name: string }) => {
+    const targetId = editingSubTeam?.id || id;
+    setIsSubmitting(true);
+    try {
+      await updateTeamMutation.mutateAsync(
+        { teamId: targetId, name: data.name },
+        {
+          onError: (error) => {
+            toast.error(
+              error instanceof AxiosError && error.response?.data?.message
+                ? error.response.data.message
+                : 'Failed to update sub-team name'
+            );
+          },
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.team.list() });
+            queryClient.invalidateQueries({
+              queryKey: queryKeys.team.details(targetId),
+            });
+            toast.success('Sub-team name updated successfully!');
+            closeEditModal();
+          },
+        }
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // ── Add Role ───────────────────────────────────────────────────────────────────
+  const handleOpenRoleDialog = (role?: Role) => {
+    setCurrentRole(role ?? null);
+    openRoleDialog(id, { id: role?.id });
+  };
+
+  const handleAddRole = async (teamId: string, data: Role) => {
+    setIsSubmitting(true);
+    try {
+      await createRoleMutation.mutateAsync(
+        {
+          name: data.name,
+          teamId,
+          permissions: data.permissions || [],
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.team.list() });
+            queryClient.invalidateQueries({ queryKey: ['roles', teamId] });
+            closeModal();
+            toast.success(`Role "${data.name}" created successfully!`);
+          },
+          onError: (error) => {
+            const msg =
+              error instanceof AxiosError
+                ? error.response?.data.message
+                : 'Failed to create role';
+            toast.error(msg);
+          },
+        }
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleUpdateRole = async (roleId: string, data: Role) => {
+    setIsSubmitting(true);
+    try {
+      await updateRoleMutation.mutateAsync({
+        roleId,
+        name: data.name,
+        permissions: data.permissions,
+      });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.team.list() });
+      await queryClient.invalidateQueries({ queryKey: ['roles', id] });
+      toast.success(`Role "${data.name}" updated successfully!`);
+      closeModal();
+      setCurrentRole(null);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to update role.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // ── Delete Sub-team ────────────────────────────────────────────────────────────
+  const handleDeleteSubTeam = async () => {
+    setIsSubmitting(true);
+    try {
+      const response = await deleteTeamMutation.mutateAsync(id, {
+        onError: (error) => {
+          toast.error(
+            error instanceof AxiosError && error.response?.data?.message
+              ? error.response.data.message
+              : 'Failed to delete sub-team'
+          );
+        },
+        onSuccess: (res) => {
+          if (res?.success) {
+            toast.success(`Sub-team "${teamData?.name}" deleted successfully!`);
+            router.push('/admin/teams');
+          }
+        },
+      });
+      if (response?.success) {
+        router.push('/admin/teams');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // ── Employee Assignment — PATCH /employees/:id ─────────────────────────────
+  const handleAssignEmployee = async (data: {
+    employeeId: string;
+    roleId: string;
+    customPermissions?: string[];
+  }) => {
+    const formData = new FormData();
+    formData.append('teamId', id);
+    formData.append('roleId', data.roleId);
+    if (data.customPermissions) {
+      data.customPermissions.forEach((perm, i) => {
+        formData.append(`permissions[${i}]`, perm);
+      });
+    }
+    try {
+      await updateEmployee({ id: data.employeeId, data: formData });
+      await queryClient.invalidateQueries({ queryKey: ['employee', 'list'] });
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.team.details(id),
+      });
+      toast.success('Employee assigned successfully!');
+      closeModal();
+    } catch (error) {
+      toast.error(
+        error instanceof AxiosError && error.response?.data?.message
+          ? error.response.data.message
+          : 'Failed to assign employee'
+      );
+      throw error;
+    }
+  };
+
+  // ── Render ─────────────────────────────────────────────────────────────────────
   return (
     <>
       <section className="space-y-8">
-        <SubTeamDetailsHeader teamId={id} onAddMemberClick={openAddMember} />
-        <SubTeamDetailsContent teamId={id} />
+        <SubTeamDetailsHeader
+          teamId={id}
+          onAddEmployee={() => openEmployeeDialog(id)}
+          onAddRole={() => handleOpenRoleDialog()}
+          onEditSubTeam={() => {
+            setEditingSubTeam(teamData ?? null);
+            setIsEditSubTeamOpen(true);
+          }}
+          onDeleteSubTeam={() => setIsDeleteConfirmOpen(true)}
+        />
+
+        <SubTeamDetailsContent
+          teamId={id}
+          onAddEmployee={() => openEmployeeDialog(id)}
+          onAddRole={() => handleOpenRoleDialog()}
+          onEditRole={(role) => {
+            setCurrentRole(role);
+            handleOpenRoleDialog(role);
+          }}
+        />
       </section>
 
+      {/* ── DIALOGS ──────────────────────────────────────────────────────────────── */}
+
+      {/* Edit Sub-team Name */}
       <ReusableDialog
-        open={isAddMemberOpen}
+        open={isEditSubTeamOpen}
         onOpenChange={(open) => {
-          if (!open) closeModal();
+          if (!open) closeEditModal();
         }}
-        title="Assign Members"
-        description="Assign existing parent team members to this sub-team."
+        title="Edit Sub-team Name"
+        description="Update the name of this sub-team"
         trigger={<span />}
         className="min-w-2xl"
       >
-        <AddNewMembers
-          parentTeamId={parentTeamId}
-          availableRoles={[]}
-          onSubmit={handleAddMember}
-          onCancel={closeModal}
-          isSubmitting={isAssigning}
+        <TeamForm
+          initialData={
+            editingSubTeam
+              ? ({
+                  id: editingSubTeam.id,
+                  name: editingSubTeam.name,
+                  roles: [],
+                } as TeamFormType)
+              : undefined
+          }
+          onSubmit={handleUpdateSubTeamName}
+          onCancel={closeEditModal}
+          isSubmitting={isSubmitting}
         />
       </ReusableDialog>
+
+      {/* Add / Edit Role Modal */}
+      <ReusableDialog
+        open={isRoleOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            closeModal();
+            setCurrentRole(null);
+          }
+        }}
+        title={currentRole ? 'Edit Role' : 'Create Role'}
+        description={
+          currentRole
+            ? 'Modify the role details'
+            : 'Create a new role for this sub-team'
+        }
+        trigger={<span />}
+        className="min-w-2xl"
+      >
+        <RolesAndPermission
+          initialData={currentRole ?? undefined}
+          onSubmit={async (roleData) => {
+            if (currentRole) {
+              await handleUpdateRole(currentRole.id, roleData);
+            } else {
+              await handleAddRole(id, roleData);
+            }
+          }}
+          onCancel={(e) => {
+            e?.preventDefault?.();
+            closeModal();
+            setCurrentRole(null);
+          }}
+          onComplete={() => {
+            closeModal();
+            setCurrentRole(null);
+          }}
+          isSubmitting={isSubmitting}
+          isEdit={!!currentRole}
+        />
+      </ReusableDialog>
+
+      {/* Add Employee Modal */}
+      <ReusableDialog
+        open={isEmployeeOpen}
+        onOpenChange={(open) => {
+          if (!open) closeModal();
+        }}
+        title="Add Employees"
+        description="Assign employees to this sub-team and set their roles"
+        trigger={<span />}
+        className="lg:min-w-2xl"
+      >
+        <AddNewEmployees
+          onSubmit={handleAssignEmployee}
+          onCancel={(e) => {
+            e?.preventDefault?.();
+            closeModal();
+          }}
+          isSubmitting={isAssigning}
+          availableRoles={
+            rolesData?.map((r) => ({
+              id: r.id,
+              name: r.name,
+              description: `Role with ${r.permissions?.length || 0} permissions`,
+            })) || []
+          }
+          availableEmployees={
+            allEmployeesData?.data?.items?.map((emp: Employee) => ({
+              id: emp.id,
+              name: `${emp.firstName} ${emp.lastName}`,
+              email: emp.email,
+            })) || []
+          }
+        />
+      </ReusableDialog>
+
+      {/* Delete Sub-team Confirmation */}
+      <AlertModal
+        isOpen={isDeleteConfirmOpen}
+        onClose={() => {
+          if (!isSubmitting) setIsDeleteConfirmOpen(false);
+        }}
+        onConfirm={async () => {
+          await handleDeleteSubTeam();
+          setIsDeleteConfirmOpen(false);
+        }}
+        loading={isSubmitting}
+        type="warning"
+        title="Delete Sub-team"
+        description={`Are you sure you want to delete "${teamData?.name}"? This action cannot be undone.`}
+        confirmText={isSubmitting ? 'Deleting...' : 'Delete Sub-team'}
+        cancelText="Cancel"
+      />
+
+      {/* Sub-team row action delete modal */}
+      <DeleteConfirmationModal />
     </>
   );
 };

@@ -121,6 +121,12 @@ export interface AddNewMembersProperties {
   isSubmitting?: boolean;
 }
 
+// ── sub-team-details (subteam management) ───────────────────────────────────────
+
+export interface SubTeamDetailsState {
+  // Inherits all team functionality
+}
+
 // ── add-new-roles.tsx ─────────────────────────────────────────────────────────
 
 /**

@@ -54,12 +54,7 @@ export function BulkImportEmployee() {
       />
 
       {/* Step wizard card */}
-      <div
-        className={cn(
-          'bg-background rounded-2xl border p-6 shadow-sm',
-          'space-y-8'
-        )}
-      >
+      <div className={cn('bg-background rounded-2xl p-6 shadow', 'space-y-8')}>
         {/* Stepper */}
         <ImportStepper currentStep={step} />
 

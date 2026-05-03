@@ -1,40 +1,90 @@
 'use client';
 
+import { parseAsString, useQueryState } from 'nuqs';
+import { useCallback } from 'react';
 import { makeModalParams } from './use-modal-search-params';
+import type { ModalMode } from './use-modal-search-params';
 
-const SUB_TEAM_MODAL_NAMES = ['add-member'] as const;
+// ── Modal name union for the /admin/teams/sub-team/[id] page ─────────────────
 
-const useSubTeamModalBase = makeModalParams(SUB_TEAM_MODAL_NAMES);
+export type SubTeamModal = 'add-member' | 'role' | 'employee';
+
+// ── Internal base hook (modal + modalId + modalMode) ─────────────────────────
+
+const useSubTeamModalBase = makeModalParams<SubTeamModal>([
+  'add-member',
+  'role',
+  'employee',
+]);
 
 /**
  * Modal URL-state hook for the `/admin/teams/sub-team/[id]` page.
  *
  * Manages:
- *  - `modal`: 'add-member'
+ *  - `modal`: 'add-member' | 'role' | 'employee'
+ *  - `modalId`: entity ID (role edit modals)
+ *  - `modalMode`: 'create' | 'edit'
+ *  - `subTeamId`: sub-team context for role/employee dialogs
  *
- * Note: There are two "Add Member" dialog instances in the sub-team-details
- * view (one in the header, one in the empty state). Both read from and write
- * to the same URL param via this hook, so they stay in sync.
+ * Mirrors the pattern established in `useTeamsModalParams` for the teams page.
  */
 export const useSubTeamModalParams = () => {
-  const { modal, modalId, modalMode, openModal, closeModal, isOpen } =
-    useSubTeamModalBase();
+  const base = useSubTeamModalBase();
+  const [subTeamId, setSubTeamId] = useQueryState('subTeamId', parseAsString);
 
-  const isAddMemberOpen = isOpen('add-member');
+  // ── Openers ────────────────────────────────────────────────────────────────
 
-  const openAddMember = () => openModal('add-member');
+  const openAddMember = useCallback(() => base.openModal('add-member'), [base]);
+
+  const openRoleDialog = useCallback(
+    async (parentSubTeamId: string, opts?: { id?: string }) => {
+      await setSubTeamId(parentSubTeamId);
+      return base.openModal('role', {
+        id: opts?.id,
+        mode: (opts?.id ? 'edit' : 'create') as ModalMode,
+      });
+    },
+    [base, setSubTeamId]
+  );
+
+  const openEmployeeDialog = useCallback(
+    async (parentSubTeamId: string) => {
+      await setSubTeamId(parentSubTeamId);
+      return base.openModal('employee');
+    },
+    [base, setSubTeamId]
+  );
+
+  const closeModal = useCallback(async () => {
+    await setSubTeamId(null);
+    return base.closeModal();
+  }, [base, setSubTeamId]);
+
+  // ── Derived booleans ────────────────────────────────────────────────────────
+
+  const isAddMemberOpen = base.isOpen('add-member');
+  const isRoleOpen = base.isOpen('role');
+  const isEmployeeOpen = base.isOpen('employee');
 
   return {
-    modal,
-    modalId,
-    modalMode,
+    // raw params
+    modal: base.modal,
+    modalId: base.modalId,
+    modalMode: base.modalMode,
+    subTeamId,
 
-    // Derived predicates
-    isAddMemberOpen,
-
-    // Actions
+    // openers / closer
     openAddMember,
+    openRoleDialog,
+    openEmployeeDialog,
     closeModal,
-    isOpen,
+
+    // derived booleans
+    isAddMemberOpen,
+    isRoleOpen,
+    isEmployeeOpen,
+
+    // generic helper
+    isOpen: base.isOpen,
   };
 };

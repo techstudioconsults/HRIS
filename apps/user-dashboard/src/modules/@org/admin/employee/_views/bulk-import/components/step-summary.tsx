@@ -1,7 +1,6 @@
 'use client';
 
 import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
 import {
   Table,
   TableBody,
@@ -147,36 +146,42 @@ export function StepSummary({
       <div className="flex flex-wrap gap-3">
         {/* Download CSV report */}
         {hasFailures && (
-          <Button
-            variant="outline"
+          <MainButton
+            variant="primaryOutline"
             onClick={() => onDownloadReport(summary)}
             aria-label="Download CSV failure report"
+            isLeftIconVisible
+            icon={
+              <Icon
+                name="Download"
+                size={16}
+                className="mr-2"
+                aria-hidden="true"
+              />
+            }
           >
-            <Icon
-              name="Download"
-              size={16}
-              className="mr-2"
-              aria-hidden="true"
-            />
             Download Failure Report ({summary.failed})
-          </Button>
+          </MainButton>
         )}
 
         {/* Retry failed rows */}
         {hasFailures && (
-          <Button
-            variant="outline"
+          <MainButton
+            variant="primaryOutline"
             onClick={() => onRetryFailed([...summary.failedRows])}
             aria-label={`Retry ${summary.failed} failed rows`}
+            isLeftIconVisible
+            icon={
+              <Icon
+                name="RefreshCw"
+                size={16}
+                className="mr-2"
+                aria-hidden="true"
+              />
+            }
           >
-            <Icon
-              name="RefreshCw"
-              size={16}
-              className="mr-2"
-              aria-hidden="true"
-            />
             Retry Failed ({summary.failed})
-          </Button>
+          </MainButton>
         )}
 
         {/* Start a new import */}

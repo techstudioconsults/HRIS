@@ -156,10 +156,8 @@ const useTeamRowActionsBase = (
             }
           },
         },
-        ...(onAddRole && teamType === 'team'
-          ? [{ type: 'separator' } as IRowAction<Team>]
-          : []),
-        ...(onAddRole && teamType === 'team'
+        ...(onAddRole ? [{ type: 'separator' } as IRowAction<Team>] : []),
+        ...(onAddRole
           ? [
               {
                 label: 'Add Role',
@@ -170,10 +168,11 @@ const useTeamRowActionsBase = (
               } as IRowAction<Team>,
             ]
           : []),
-        ...(onAddEmployees && teamType === 'team'
+        ...(onAddEmployees
           ? [
               {
-                label: 'Add Employees',
+                label:
+                  teamType === 'sub-team' ? 'Add Members' : 'Add Employees',
                 onClick: () => {
                   setActiveTeam(team);
                   onAddEmployees(team);
@@ -291,13 +290,15 @@ export const subTeamColumn: IColumnDefinition<Team>[] = [
 
 export const useSubTeamRowActions = (
   onEditTeam?: (team: Team) => void,
-  id?: string
+  id?: string,
+  onAddRole?: (team: Team) => void,
+  onAddMembers?: (team: Team) => void
 ) => {
   return useTeamRowActionsBase(
     'sub-team',
-    undefined,
+    onAddMembers,
     onEditTeam,
-    undefined,
+    onAddRole,
     id
   );
 };

@@ -7,12 +7,16 @@ import {
   ErrorEmptyState,
   FilteredEmptyState,
 } from '@workspace/ui/lib/empty-state';
+import { AlertModal } from '@workspace/ui/lib/dialog';
+import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
 import empty1 from '~/images/empty-state.svg';
 import { useEmployeeService } from '../../../services/use-service';
 import { employeeColumn, useEmployeeRowActions } from '../../table-data';
+import { useBulkEmployeeActions } from '../../../hooks/use-bulk-employee-actions';
 import type { EmployeeTableSectionProperties } from '../../../types';
 
 export const EmployeeTableSection = ({
@@ -27,6 +31,16 @@ export const EmployeeTableSection = ({
 }: EmployeeTableSectionProperties) => {
   const router = useRouter();
   const { getRowActions, DeleteConfirmationModal } = useEmployeeRowActions();
+  const {
+    selectedCount,
+    handleSelectionChange,
+    isBulkDeleteModalOpen,
+    isBulkDeleting,
+    openBulkDeleteModal,
+    closeBulkDeleteModal,
+    handleBulkDelete,
+    handleBulkExport,
+  } = useBulkEmployeeActions();
   const { useGetAllEmployees } = useEmployeeService();
 
   const {
@@ -108,8 +122,53 @@ export const EmployeeTableSection = ({
         enableFiltering={true}
         mobileCardView={true}
         showColumnCustomization={false}
+        onSelectionChange={handleSelectionChange}
+        customFooterRenderer={() =>
+          selectedCount > 0 ? (
+            <div className="flex flex-col gap-3 rounded-b-lg border-t bg-primary/5 px-4 py-3 sm:flex-row sm:items-center">
+              <span className="text-sm font-medium text-primary">
+                {selectedCount} row{selectedCount > 1 ? 's' : ''} selected
+              </span>
+              <div className="flex items-center gap-2 sm:ml-auto">
+                <MainButton
+                  variant="primaryOutline"
+                  onClick={handleBulkExport}
+                  isLeftIconVisible
+                  icon={<Icon name="DocumentDownload" variant="Outline" />}
+                >
+                  Export CSV
+                </MainButton>
+                <MainButton
+                  variant="destructive"
+                  onClick={openBulkDeleteModal}
+                  isLeftIconVisible
+                  icon={<Icon name="Trash" variant="Outline" />}
+                >
+                  Delete Selected
+                </MainButton>
+              </div>
+            </div>
+          ) : null
+        }
       />
       <DeleteConfirmationModal />
+      <AlertModal
+        isOpen={isBulkDeleteModalOpen}
+        onClose={closeBulkDeleteModal}
+        onConfirm={() => {
+          void handleBulkDelete();
+        }}
+        loading={isBulkDeleting}
+        type="warning"
+        title="Delete selected employees"
+        description={`Are you sure you want to delete ${selectedCount} employee${selectedCount > 1 ? 's' : ''}? This action cannot be undone.`}
+        confirmText={
+          isBulkDeleting
+            ? 'Deleting...'
+            : `Delete ${selectedCount} employee${selectedCount > 1 ? 's' : ''}`
+        }
+        cancelText="Cancel"
+      />
     </>
   );
 };

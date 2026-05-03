@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import {
   Tabs,
@@ -14,8 +14,10 @@ import {
   type IRowAction,
 } from '@workspace/ui/lib/table';
 import { EmptyState, ErrorEmptyState } from '@workspace/ui/lib/empty-state';
+import { MainButton } from '@workspace/ui/lib/button';
 import { SearchInput } from '@/modules/@org/shared';
 import { Icon } from '@workspace/ui/lib/icons/icon';
+import { toast } from 'sonner';
 import empty1 from '~/images/empty-state.svg';
 import { useEmployeeRowActions } from '@/modules/@org/admin/employee/_views/table-data';
 import { useEmployeeService } from '@/modules/@org/admin/employee/services/use-service';
@@ -41,6 +43,47 @@ const SubTeamDetailsContent = ({
 }: SubTeamDetailsContentProps) => {
   const [searchInput, setSearchInput] = useState('');
   const [debouncedSearch] = useDebounce(searchInput, 300);
+
+  const [selectedMembers, setSelectedMembers] = useState<Employee[]>([]);
+
+  const handleMembersSelectionChange = useCallback((rows: Employee[]) => {
+    setSelectedMembers(rows);
+  }, []);
+
+  const handleExportMembers = useCallback(() => {
+    if (selectedMembers.length === 0) return;
+    const headers = [
+      'First Name',
+      'Last Name',
+      'Email',
+      'Role',
+      'Department',
+      'Status',
+    ];
+    const rows = selectedMembers.map((member) => [
+      member.firstName,
+      member.lastName,
+      member.email,
+      member.employmentDetails?.role?.name ?? '',
+      member.employmentDetails?.team?.name ?? '',
+      member.status,
+    ]);
+    const csvContent = [headers, ...rows]
+      .map((row) =>
+        row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+      )
+      .join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `sub-team-members-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success(
+      `Exported ${selectedMembers.length} member${selectedMembers.length > 1 ? 's' : ''} to CSV.`
+    );
+  }, [selectedMembers]);
 
   const { useGetTeamsById, useGetRoles } = useTeamService();
   const {
@@ -138,6 +181,29 @@ const SubTeamDetailsContent = ({
                   enableSorting={true}
                   enableFiltering={true}
                   showColumnCustomization={false}
+                  onSelectionChange={handleMembersSelectionChange}
+                  customFooterRenderer={() =>
+                    selectedMembers.length > 0 ? (
+                      <div className="flex flex-col gap-3 rounded-b-lg border-t bg-primary/5 px-4 py-3 sm:flex-row sm:items-center">
+                        <span className="text-sm font-medium text-primary">
+                          {selectedMembers.length} row
+                          {selectedMembers.length > 1 ? 's' : ''} selected
+                        </span>
+                        <div className="sm:ml-auto">
+                          <MainButton
+                            variant="primaryOutline"
+                            onClick={handleExportMembers}
+                            isLeftIconVisible
+                            icon={
+                              <Icon name="DocumentDownload" variant="Outline" />
+                            }
+                          >
+                            Export CSV
+                          </MainButton>
+                        </div>
+                      </div>
+                    ) : null
+                  }
                 />
 
                 <EmployeeDeleteModal />

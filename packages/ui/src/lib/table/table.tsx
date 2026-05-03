@@ -149,6 +149,7 @@ interface IAdvancedTableProperties<
   customRowRenderer?: (row: Row<T>) => React.ReactNode;
   customHeaderRenderer?: () => React.ReactNode;
   customFooterRenderer?: () => React.ReactNode;
+  onSelectionChange?: (selectedRows: T[]) => void;
   emptyState?: React.ReactNode;
 }
 
@@ -401,6 +402,7 @@ export function AdvancedDataTable<T extends DataItem>({
   customRowRenderer: _customRowRenderer, // eslint-disable-line @typescript-eslint/no-unused-vars
   customHeaderRenderer,
   customFooterRenderer,
+  onSelectionChange,
   emptyState,
   className,
 }: IAdvancedTableProperties<T>) {
@@ -489,6 +491,16 @@ export function AdvancedDataTable<T extends DataItem>({
       getFacetedUniqueValues: getFacetedUniqueValues(),
     }),
   });
+
+  // Notify parent when row selection changes
+  React.useEffect(() => {
+    if (!onSelectionChange) return;
+    const selectedRows = table
+      .getSelectedRowModel()
+      .rows.map((row) => row.original);
+    onSelectionChange(selectedRows);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rowSelection]);
 
   function handleDragEnd(event: DragEndEvent) {
     if (!enableDragAndDrop) return;

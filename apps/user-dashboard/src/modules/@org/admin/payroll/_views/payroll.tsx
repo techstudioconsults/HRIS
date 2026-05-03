@@ -33,7 +33,9 @@ import { DashboardCard } from '../../../_components/dashboard-card';
 import { usePayrollService } from '../services/use-service';
 import { usePayrollStore } from '../stores/payroll-store';
 import type { Payroll, PayrollApproval } from '../types';
+import { AlertModal } from '@workspace/ui/lib/dialog';
 import { getPayrollColumns, usePayrollRowActions } from './table-data';
+import { useBulkPayrollActions } from '../hook/use-bulk-payroll-actions';
 
 export const PayrollView = () => {
   const { getRowActions, DeleteConfirmationModal } = usePayrollRowActions();
@@ -79,6 +81,17 @@ export const PayrollView = () => {
   const [isWalletBalanceVisible, setIsWalletBalanceVisible] = useState(true);
   const [showNoPayrollBanner, setShowNoPayrollBanner] = useState(false);
   const [selectedPayrollId, setSelectedPayrollId] = useState<string>('');
+
+  const {
+    selectedCount,
+    handleSelectionChange,
+    isBulkDeleteModalOpen,
+    isBulkDeleting,
+    openBulkDeleteModal,
+    closeBulkDeleteModal,
+    handleBulkDelete,
+    handleBulkExport,
+  } = useBulkPayrollActions({ payrollId: selectedPayrollId });
   const [isApprovalProgressOpen, setIsApprovalProgressOpen] = useState(false);
   const [isDevApprovalActionsOpen, setIsDevApprovalActionsOpen] =
     useState(false);
@@ -745,6 +758,34 @@ export const PayrollView = () => {
             showColumnCustomization={false}
             desktopTableClassname={`xl:block!`}
             mobileTableClassname={`xl:hidden!`}
+            onSelectionChange={handleSelectionChange}
+            customFooterRenderer={() =>
+              selectedCount > 0 ? (
+                <div className="flex flex-col gap-3 rounded-b-lg border-t bg-primary/5 px-4 py-3 sm:flex-row sm:items-center">
+                  <span className="text-sm font-medium text-primary">
+                    {selectedCount} row{selectedCount > 1 ? 's' : ''} selected
+                  </span>
+                  <div className="flex items-center gap-2 sm:ml-auto">
+                    <MainButton
+                      variant="primaryOutline"
+                      onClick={handleBulkExport}
+                      isLeftIconVisible
+                      icon={<Icon name="DocumentDownload" variant="Outline" />}
+                    >
+                      Export CSV
+                    </MainButton>
+                    <MainButton
+                      variant="destructive"
+                      onClick={openBulkDeleteModal}
+                      isLeftIconVisible
+                      icon={<Icon name="Trash" variant="Outline" />}
+                    >
+                      Remove Selected
+                    </MainButton>
+                  </div>
+                </div>
+              ) : null
+            }
           />
         )}
       </section>
@@ -799,6 +840,25 @@ export const PayrollView = () => {
 
       {/* Remove employee from payroll confirmation */}
       <DeleteConfirmationModal />
+
+      {/* Bulk remove confirmation */}
+      <AlertModal
+        isOpen={isBulkDeleteModalOpen}
+        onClose={closeBulkDeleteModal}
+        onConfirm={() => {
+          void handleBulkDelete();
+        }}
+        loading={isBulkDeleting}
+        type="warning"
+        title="Remove selected employees from payroll"
+        description={`Are you sure you want to remove ${selectedCount} employee${selectedCount > 1 ? 's' : ''} from this payroll? This action cannot be undone.`}
+        confirmText={
+          isBulkDeleting
+            ? 'Removing...'
+            : `Remove ${selectedCount} employee${selectedCount > 1 ? 's' : ''}`
+        }
+        cancelText="Cancel"
+      />
     </section>
   );
 };

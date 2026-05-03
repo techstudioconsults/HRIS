@@ -7,8 +7,12 @@ import {
   TabsTrigger,
 } from '@workspace/ui/components/tabs';
 import { ErrorEmptyState } from '@workspace/ui/lib/empty-state';
+import { MainButton } from '@workspace/ui/lib/button';
+import { Icon } from '@workspace/ui/lib/icons/icon';
+import { toast } from 'sonner';
 import { useCallback, useState } from 'react';
 import { useDebounce } from 'use-debounce';
+import { formatDate } from '@/lib/formatters';
 
 import {
   useTeamDetailsModalParams,
@@ -39,6 +43,73 @@ const TeamDetailsContent = ({
   onAddSubTeamMembers,
 }: TeamDetailsContentProps) => {
   const { tab, setTab } = useTeamDetailsModalParams();
+
+  // ── Bulk selection state ───────────────────────────────────────────────────
+  const [selectedMembers, setSelectedMembers] = useState<Employee[]>([]);
+  const [selectedSubTeams, setSelectedSubTeams] = useState<Team[]>([]);
+
+  const handleMembersSelectionChange = useCallback((rows: Employee[]) => {
+    setSelectedMembers(rows);
+  }, []);
+
+  const handleSubTeamsSelectionChange = useCallback((rows: Team[]) => {
+    setSelectedSubTeams(rows);
+  }, []);
+
+  const exportToCsv = useCallback((rows: Array<string[]>, filename: string) => {
+    const csvContent = rows
+      .map((row) =>
+        row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+      )
+      .join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+  }, []);
+
+  const handleExportMembers = useCallback(() => {
+    if (selectedMembers.length === 0) return;
+    exportToCsv(
+      [
+        ['First Name', 'Last Name', 'Email', 'Role', 'Department', 'Status'],
+        ...selectedMembers.map((member) => [
+          member.firstName,
+          member.lastName,
+          member.email,
+          member.employmentDetails?.role?.name ?? '',
+          member.employmentDetails?.team?.name ?? '',
+          member.status,
+        ]),
+      ],
+      `team-members-${new Date().toISOString().split('T')[0]}.csv`
+    );
+    toast.success(
+      `Exported ${selectedMembers.length} member${selectedMembers.length > 1 ? 's' : ''} to CSV.`
+    );
+  }, [exportToCsv, selectedMembers]);
+
+  const handleExportSubTeams = useCallback(() => {
+    if (selectedSubTeams.length === 0) return;
+    exportToCsv(
+      [
+        ['Sub-team Name', 'Team Lead', 'Members', 'Created On'],
+        ...selectedSubTeams.map((subTeam) => [
+          subTeam.name,
+          subTeam.manager?.name ?? '',
+          String(subTeam.members ?? 0),
+          formatDate(subTeam.createdAt as string),
+        ]),
+      ],
+      `sub-teams-${new Date().toISOString().split('T')[0]}.csv`
+    );
+    toast.success(
+      `Exported ${selectedSubTeams.length} sub-team${selectedSubTeams.length > 1 ? 's' : ''} to CSV.`
+    );
+  }, [exportToCsv, selectedSubTeams]);
 
   // ── Team stats ─────────────────────────────────────────────────────────────
   const { useGetTeamsById } = useTeamService();
@@ -86,8 +157,10 @@ const TeamDetailsContent = ({
   // (backend has no search endpoint for sub-teams yet)
   const allSubTeams: Team[] = (teamData?.subteams ?? []) as unknown as Team[];
   const subTeams: Team[] = debouncedSearch.trim()
-    ? allSubTeams.filter((t) =>
-        t.name?.toLowerCase().includes(debouncedSearch.trim().toLowerCase())
+    ? allSubTeams.filter((subTeam) =>
+        subTeam.name
+          ?.toLowerCase()
+          .includes(debouncedSearch.trim().toLowerCase())
       )
     : allSubTeams;
 
@@ -126,6 +199,30 @@ const TeamDetailsContent = ({
               columns={membersColumns}
               rowActions={getEmployeeRowActions}
               DeleteModal={EmployeeDeleteModal}
+              isLoading={isLoadingMembers}
+              onSelectionChange={handleMembersSelectionChange}
+              customFooterRenderer={() =>
+                selectedMembers.length > 0 ? (
+                  <div className="flex flex-col gap-3 rounded-b-lg border-t bg-primary/5 px-4 py-3 sm:flex-row sm:items-center">
+                    <span className="text-sm font-medium text-primary">
+                      {selectedMembers.length} row
+                      {selectedMembers.length > 1 ? 's' : ''} selected
+                    </span>
+                    <div className="sm:ml-auto">
+                      <MainButton
+                        variant="primaryOutline"
+                        onClick={handleExportMembers}
+                        isLeftIconVisible
+                        icon={
+                          <Icon name="DocumentDownload" variant="Outline" />
+                        }
+                      >
+                        Export CSV
+                      </MainButton>
+                    </div>
+                  </div>
+                ) : null
+              }
             />
           </TabsContent>
 
@@ -135,6 +232,29 @@ const TeamDetailsContent = ({
               rowActions={getRowActions}
               DeleteModal={DeleteConfirmationModal}
               isLoading={isLoadingTeam}
+              onSelectionChange={handleSubTeamsSelectionChange}
+              customFooterRenderer={() =>
+                selectedSubTeams.length > 0 ? (
+                  <div className="flex flex-col gap-3 rounded-b-lg border-t bg-primary/5 px-4 py-3 sm:flex-row sm:items-center">
+                    <span className="text-sm font-medium text-primary">
+                      {selectedSubTeams.length} row
+                      {selectedSubTeams.length > 1 ? 's' : ''} selected
+                    </span>
+                    <div className="sm:ml-auto">
+                      <MainButton
+                        variant="primaryOutline"
+                        onClick={handleExportSubTeams}
+                        isLeftIconVisible
+                        icon={
+                          <Icon name="DocumentDownload" variant="Outline" />
+                        }
+                      >
+                        Export CSV
+                      </MainButton>
+                    </div>
+                  </div>
+                ) : null
+              }
             />
           </TabsContent>
         </Tabs>

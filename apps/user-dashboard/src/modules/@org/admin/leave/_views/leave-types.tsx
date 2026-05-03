@@ -24,6 +24,7 @@ import type { LeaveType } from '../types';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { leaveTypeColumns } from '@/modules/@org/admin/leave/_views/table-data';
 import type { IRowAction } from '@workspace/ui/lib/table';
+import { useBulkLeaveTypeActions } from './use-bulk-leave-type-actions';
 
 const LeaveTypesView = () => {
   const { useGetLeaveTypes, useGetLeaveTypeById, useDeleteLeaveType } =
@@ -40,6 +41,18 @@ const LeaveTypesView = () => {
   } = useLeaveAdminModalParams();
 
   const [searchQuery, setSearchQuery] = useState('');
+
+  const {
+    selectedCount: bulkSelectedCount,
+    handleSelectionChange,
+    isBulkDeleteModalOpen,
+    isBulkDeleting,
+    openBulkDeleteModal,
+    closeBulkDeleteModal,
+    handleBulkDelete,
+    handleBulkExport,
+  } = useBulkLeaveTypeActions();
+
   // Destructive confirm stays as useState — never persist
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   // Local entity state — non-URL-serializable; used only for delete confirm and edit form
@@ -290,6 +303,35 @@ const LeaveTypesView = () => {
             enableFiltering={false}
             mobileCardView={true}
             showColumnCustomization={false}
+            onSelectionChange={handleSelectionChange}
+            customFooterRenderer={() =>
+              bulkSelectedCount > 0 ? (
+                <div className="flex flex-col gap-3 rounded-b-lg border-t bg-primary/5 px-4 py-3 sm:flex-row sm:items-center">
+                  <span className="text-sm font-medium text-primary">
+                    {bulkSelectedCount} row{bulkSelectedCount > 1 ? 's' : ''}{' '}
+                    selected
+                  </span>
+                  <div className="flex items-center gap-2 sm:ml-auto">
+                    <MainButton
+                      variant="primaryOutline"
+                      onClick={handleBulkExport}
+                      isLeftIconVisible
+                      icon={<Icon name="DocumentDownload" variant="Outline" />}
+                    >
+                      Export CSV
+                    </MainButton>
+                    <MainButton
+                      variant="destructive"
+                      onClick={openBulkDeleteModal}
+                      isLeftIconVisible
+                      icon={<Icon name="Trash" variant="Outline" />}
+                    >
+                      Delete Selected
+                    </MainButton>
+                  </div>
+                </div>
+              ) : null
+            }
           />
         </div>
       </section>
@@ -362,6 +404,25 @@ const LeaveTypesView = () => {
         title="Delete Leave Type"
         description={`You're about to delete "${selectedLeaveType?.name}". This action cannot be undone.`}
         confirmText="Delete"
+        cancelText="Cancel"
+      />
+
+      {/* Bulk delete confirmation */}
+      <AlertModal
+        type="warning"
+        isOpen={isBulkDeleteModalOpen}
+        onClose={closeBulkDeleteModal}
+        onConfirm={() => {
+          void handleBulkDelete();
+        }}
+        loading={isBulkDeleting}
+        title="Delete selected leave types"
+        description={`Are you sure you want to delete ${bulkSelectedCount} leave type${bulkSelectedCount > 1 ? 's' : ''}? This action cannot be undone.`}
+        confirmText={
+          isBulkDeleting
+            ? 'Deleting...'
+            : `Delete ${bulkSelectedCount} leave type${bulkSelectedCount > 1 ? 's' : ''}`
+        }
         cancelText="Cancel"
       />
     </div>

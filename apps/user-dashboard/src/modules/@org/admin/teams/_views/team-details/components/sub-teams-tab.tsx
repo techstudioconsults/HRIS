@@ -13,6 +13,8 @@ interface SubTeamsTabProps {
   rowActions: (row: Team) => IRowAction<Team>[];
   DeleteModal: () => React.JSX.Element;
   isLoading?: boolean;
+  onSelectionChange?: (rows: Team[]) => void;
+  customFooterRenderer?: () => React.ReactNode;
 }
 
 const SubTeamsTab = ({
@@ -20,6 +22,8 @@ const SubTeamsTab = ({
   rowActions,
   DeleteModal,
   isLoading = false,
+  onSelectionChange,
+  customFooterRenderer,
 }: SubTeamsTabProps) => {
   const router = useRouter();
 
@@ -54,6 +58,8 @@ const SubTeamsTab = ({
         enableFiltering={true}
         mobileCardView={true}
         showColumnCustomization={false}
+        onSelectionChange={onSelectionChange}
+        customFooterRenderer={customFooterRenderer}
       />
       <DeleteModal />
     </>

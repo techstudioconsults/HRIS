@@ -12,6 +12,8 @@ interface MembersTabProps {
   rowActions: (row: Employee) => IRowAction<Employee>[];
   DeleteModal: () => React.JSX.Element;
   isLoading?: boolean;
+  onSelectionChange?: (rows: Employee[]) => void;
+  customFooterRenderer?: () => React.ReactNode;
 }
 
 const MembersTab = ({
@@ -20,6 +22,8 @@ const MembersTab = ({
   rowActions,
   DeleteModal,
   isLoading = false,
+  onSelectionChange,
+  customFooterRenderer,
 }: MembersTabProps) => {
   if (isLoading) return <TableSkeleton />;
 
@@ -49,6 +53,8 @@ const MembersTab = ({
         enableFiltering={true}
         mobileCardView={true}
         showColumnCustomization={false}
+        onSelectionChange={onSelectionChange}
+        customFooterRenderer={customFooterRenderer}
       />
       <DeleteModal />
     </>

@@ -66,6 +66,12 @@ export const GeneratePayrollDrawer = ({
     return formatDate(draftDate);
   })();
 
+  const draftPaydayDate = (() => {
+    if (!payday || payday <= 0) return null;
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), payday);
+  })();
+
   const handleGenerate = async (paymentDate?: string) => {
     const policyId = payrollPolicy?.id;
     if (!policyId) {
@@ -95,7 +101,7 @@ export const GeneratePayrollDrawer = ({
   };
 
   const handleInstantGenerate = () => {
-    handleGenerate(new Date().toISOString());
+    handleGenerate(draftPaydayDate ? draftPaydayDate.toISOString() : undefined);
   };
 
   const handleScheduledGenerate = async (date: Date | undefined) => {
@@ -280,7 +286,7 @@ export const GeneratePayrollDrawer = ({
                 isDisabled={isCreating}
                 className="flex-1"
               >
-                {isCreating ? 'Generating...' : 'Generate Instant'}
+                {isCreating ? 'Generating...' : 'Generate Payroll'}
               </MainButton>
             </div>
           </DrawerFooter>

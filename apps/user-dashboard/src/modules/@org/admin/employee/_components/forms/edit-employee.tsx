@@ -16,7 +16,7 @@ import { DashboardHeader } from '@workspace/ui/lib/dashboard';
 import { ErrorEmptyState } from '@workspace/ui/lib/empty-state';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
-import FileUpload from '@workspace/ui/lib/file-upload/file-upload';
+import { FileUploader } from '@workspace/ui/components/core/miscellaneous/file-uploader';
 import { AxiosError } from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -608,10 +608,16 @@ export const EditEmployeeForm = () => {
                 Replace or add supporting employee documents (optional).
               </p>
               <div className="grid grid-cols-1 gap-4 md:gap-8">
-                <FileUpload
-                  onFileChange={handleFilesSelected}
-                  acceptedFileTypes=".pdf,.doc,.docx"
+                <FileUploader
+                  accept={{
+                    'application/pdf': ['.pdf'],
+                    'application/msword': ['.doc'],
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                      ['.docx'],
+                  }}
                   maxFiles={3}
+                  multiple
+                  onChange={handleFilesSelected}
                 />
               </div>
             </fieldset>

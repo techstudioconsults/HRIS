@@ -28,7 +28,7 @@ export const UserLeaveHeader = ({ onCreateRequest }: UserLeaveHeaderProps) => {
           </GenericDropdown>
           {onCreateRequest && (
             <MainButton
-              icon={<Icon name="Plus" size={16} />}
+              icon={<Icon name="Add" size={16} variant={`Bold`} />}
               isLeftIconVisible
               variant="primary"
               onClick={onCreateRequest}

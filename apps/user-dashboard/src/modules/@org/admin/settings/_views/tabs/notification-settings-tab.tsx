@@ -217,13 +217,13 @@ export const NotificationSettingsTab = () => {
                 label="Email Notifications"
                 checked={emailEnabled}
                 onToggle={(value) => handleChannelToggle('email', value)}
-                disabled={isDisabled}
+                disabled
               />
               <ChannelToggle
                 label="In-app Notifications"
                 checked={inAppEnabled}
                 onToggle={(value) => handleChannelToggle('inApp', value)}
-                disabled={isDisabled}
+                disabled
               />
             </div>
 

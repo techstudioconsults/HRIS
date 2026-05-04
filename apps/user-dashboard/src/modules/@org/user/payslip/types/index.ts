@@ -21,10 +21,6 @@ export interface UserPayslip {
   deductions: PayslipLineItem[];
 }
 
-export interface PayslipSummaryCardProps {
-  netPay: number;
-}
-
 export interface PayslipItemCardProps {
   payslip: UserPayslip;
   onViewPayslip: (payslip: UserPayslip) => void;

@@ -14,7 +14,12 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { useResourceService } from '../../services/use-service';
-import { formatDate, formatFileSize, getFileIcon } from '../../utils/format';
+import {
+  formatDate,
+  formatFileSize,
+  getFileIcon,
+  isImageMimetype,
+} from '../../utils/format';
 import type { FileCardProperties } from '../../types';
 import { Separator } from '@workspace/ui/components/separator';
 import { Card } from '@workspace/ui/components/card';
@@ -23,7 +28,6 @@ export const FileCard = ({ file }: FileCardProperties) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { useDownloadFile, useRemoveFileById } = useResourceService();
 
-  // Delete file mutation
   const { mutateAsync: removeFileMutation, isPending } = useRemoveFileById();
   const { mutateAsync: downloadFileMutation } = useDownloadFile();
 
@@ -46,11 +50,10 @@ export const FileCard = ({ file }: FileCardProperties) => {
       if (file.id) {
         await downloadFileMutation(file.id);
       } else if (file.url) {
-        // Fallback: open the file URL if no id
         window.open(file.url, '_blank');
       }
     } catch {
-      // ...optionally handle error (toast/snackbar)...
+      // download errors are handled by the mutation
     }
   };
 
@@ -60,26 +63,40 @@ export const FileCard = ({ file }: FileCardProperties) => {
     }
   };
 
+  const showImagePreview = isImageMimetype(file.mimetype) && file.url;
+
   return (
     <>
-      <Card className="group rounded-lg p-4 shadow transition-all">
-        <div className="flex items-start justify-between">
-          <div className="flex min-w-0 flex-1 items-start gap-3">
+      <Card className="group overflow-hidden rounded-lg shadow transition-all">
+        {/* Preview area */}
+        <div className="bg-muted flex h-28 items-center justify-center border-b">
+          {showImagePreview ? (
+            // eslint-disable-next-line @next/next/no-img-element -- file.url domain is dynamic and not constrainable via remotePatterns
+            <img
+              src={file.url}
+              alt={file.name}
+              className="h-28 w-full object-cover"
+            />
+          ) : (
             <Image
               src={getFileIcon(file.mimetype)}
               alt={`${file.mimetype} icon`}
-              width={500}
-              height={500}
-              className="mt-1 size-5 lg:size-10 shrink-0 object-contain"
+              width={56}
+              height={56}
+              className="size-14 object-contain"
             />
-            <div className="min-w-0 flex-1">
-              <h6 className="truncate text-sm font-medium" title={file.name}>
-                {file.name}
-              </h6>
-              <p className="text-muted-foreground mt-1 text-[8px] lg:text-xs">
-                {formatFileSize(file.size)} • {formatDate(file.createdAt)}
-              </p>
-            </div>
+          )}
+        </div>
+
+        {/* File info */}
+        <div className="flex items-start justify-between p-3">
+          <div className="min-w-0 flex-1">
+            <h6 className="truncate text-sm font-medium" title={file.name}>
+              {file.name}
+            </h6>
+            <p className="text-muted-foreground mt-0.5 text-[10px]">
+              {formatFileSize(file.size)} • {formatDate(file.createdAt)}
+            </p>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -90,7 +107,7 @@ export const FileCard = ({ file }: FileCardProperties) => {
                 icon={<Icon name="More" size={16} variant={`Outline`} />}
                 isIconOnly
                 size={`icon`}
-              ></MainButton>
+              />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48 shadow-none">
               <DropdownMenuItem disabled onClick={handleDownload}>
@@ -98,12 +115,7 @@ export const FileCard = ({ file }: FileCardProperties) => {
                 Download File
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleView}>
-                <Icon
-                  name="Eye"
-                  size={16}
-                  className="mr-2"
-                  variant={`Outline`}
-                />
+                <Icon name="Eye" size={16} className="mr-2" variant="Outline" />
                 View File
               </DropdownMenuItem>
               <Separator className="bg-border/40 my-1" />
@@ -115,7 +127,7 @@ export const FileCard = ({ file }: FileCardProperties) => {
                   name="Trash"
                   size={16}
                   className="text-destructive mr-2"
-                  variant={`Outline`}
+                  variant="Outline"
                 />
                 Delete File
               </DropdownMenuItem>
@@ -124,7 +136,6 @@ export const FileCard = ({ file }: FileCardProperties) => {
         </div>
       </Card>
 
-      {/* Delete File Dialog */}
       <AlertModal
         type="warning"
         isOpen={deleteDialogOpen}

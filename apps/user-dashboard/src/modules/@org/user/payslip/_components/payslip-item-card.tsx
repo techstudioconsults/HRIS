@@ -10,7 +10,7 @@ export const PayslipItemCard = ({
   onViewPayslip,
 }: PayslipItemCardProps) => {
   return (
-    <Card className="space-y-4 rounded-md  p-5 shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)]">
+    <Card className="space-y-4 rounded-xl  p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <div className="flex h-13 w-13 items-center justify-center rounded-md bg-primary/10">
@@ -33,13 +33,16 @@ export const PayslipItemCard = ({
           </div>
         </div>
 
-        <Badge className="bg-success/10 text-success">
+        <Badge
+          className="min-w-fit capitalize"
+          variant={payslip.status === 'paid' ? 'success' : 'warning'}
+        >
           {payslip.status === 'paid' ? 'Paid' : payslip.status}
         </Badge>
       </div>
 
       <MainButton
-        variant={`primaryOutline`}
+        variant={`primary`}
         className="w-full"
         onClick={() => onViewPayslip(payslip)}
       >

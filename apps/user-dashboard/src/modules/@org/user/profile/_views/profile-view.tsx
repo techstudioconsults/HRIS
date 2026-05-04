@@ -197,9 +197,8 @@ export function UserProfileView() {
     : '';
 
   return (
-    <Wrapper className="my-0! max-w-200 p-0">
+    <Wrapper className="my-0! max-w-800 p-0">
       <DashboardHeader title="My Profile" />
-
       <Card className="p-6">
         {isLoading && <ProfileSkeleton />}
 

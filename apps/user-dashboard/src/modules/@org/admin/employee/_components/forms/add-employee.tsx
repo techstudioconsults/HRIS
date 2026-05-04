@@ -25,7 +25,7 @@ import { useEmployeeService } from '../../services/use-service';
 import type { RoleInput, RoleLite } from '../../types';
 import { routes } from '@/lib/routes/routes';
 import { PhoneInput } from '@/components/shared/phone-input';
-import FileUpload from '@workspace/ui/lib/file-upload/file-upload';
+import { FileUploader } from '@workspace/ui/components/core/miscellaneous/file-uploader';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 
 export const AddEmployeeForm = () => {
@@ -489,10 +489,16 @@ export const AddEmployeeForm = () => {
                 Upload supporting documents for this employee (optional).
               </p>
               <div className="grid grid-cols-1 gap-4 md:gap-8">
-                <FileUpload
-                  onFileChange={handleFilesSelected}
-                  acceptedFileTypes=".pdf,.doc,.docx"
+                <FileUploader
+                  accept={{
+                    'application/pdf': ['.pdf'],
+                    'application/msword': ['.doc'],
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                      ['.docx'],
+                  }}
                   maxFiles={3}
+                  multiple
+                  onChange={handleFilesSelected}
                 />
               </div>
             </fieldset>

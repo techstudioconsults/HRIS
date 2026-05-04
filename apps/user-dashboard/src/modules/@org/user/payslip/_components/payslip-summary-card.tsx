@@ -5,10 +5,21 @@ import Coin from '~/images/dashboard/coin.svg';
 import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useState } from 'react';
-import type { PayslipSummaryCardProps } from '../types';
+import { useSession } from '@/lib/session';
+import { useUserProfileService } from '@/modules/@org/user/profile';
 
-export const PayslipSummaryCard = ({ netPay }: PayslipSummaryCardProps) => {
+export const PayslipSummaryCard = () => {
   const [isValueShown, setShowValue] = useState(false);
+
+  const { data: session } = useSession();
+  const employeeId = session?.user?.employee?.id;
+
+  const { useGetMyProfile } = useUserProfileService();
+  const { data: profile } = useGetMyProfile(employeeId ?? '', {
+    enabled: !!employeeId,
+  });
+
+  const netPay = profile?.payProfile?.netPay ?? 0;
 
   const showValue = () => {
     setShowValue((prev) => !prev);

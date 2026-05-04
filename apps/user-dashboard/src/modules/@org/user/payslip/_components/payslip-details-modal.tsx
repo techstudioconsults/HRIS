@@ -89,8 +89,11 @@ export const PayslipDetailsModal = ({
                   <h2 className="text-xl lg:text-2xl font-semibold text-foreground">
                     {payslip.monthLabel} Payslip
                   </h2>
-                  <Badge className="bg-success/10 text-success rounded-full px-4 py-1 text-xs font-medium">
-                    Paid
+                  <Badge
+                    className="min-w-fit capitalize"
+                    variant={payslip.status === 'paid' ? 'success' : 'warning'}
+                  >
+                    {payslip.status}
                   </Badge>
                 </div>
               </div>

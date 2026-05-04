@@ -98,7 +98,7 @@ export const EmptyState = ({
     primaryAction?.variant === 'destructive' ? 'bg-danger-50' : undefined;
 
   return (
-    <Empty className={cn('border-none', className)}>
+    <Empty className={cn('border-none bg-background dark:bg-muted', className)}>
       <EmptyHeader className={headerClassName}>
         {/* Media rendering based on variant or fallback */}
         {variant === 'icon' && icon && (

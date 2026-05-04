@@ -64,8 +64,6 @@ export const UserPayslipView = () => {
     () => (data?.data?.items ?? []).map(mapToUserPayslip),
     [data]
   );
-  const latestNetPay = payslips[0]?.netPay ?? 0;
-
   // On cold-refresh: recover selectedPayslip from fetched list via modalId
   const resolvedPayslip: UserPayslip | null = useMemo(() => {
     if (!isPayslipDetailsOpen || !modalId) return null;
@@ -85,9 +83,9 @@ export const UserPayslipView = () => {
   };
 
   return (
-    <Wrapper className="my-0! max-w-200 p-0">
-      <DashboardHeader title="Payslip" />
-      <PayslipSummaryCard netPay={latestNetPay} />
+    <Wrapper className="my-0! p-0 max-w-800">
+      <DashboardHeader title="Payslip" subtitle={`View your payslip records`} />
+      <PayslipSummaryCard />
       <PayslipGrid payslips={payslips} onViewPayslip={handleViewPayslip} />
       <PayslipDetailsModal
         open={isPayslipDetailsOpen}

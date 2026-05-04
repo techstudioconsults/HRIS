@@ -10,6 +10,8 @@ import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { useAuthService } from '../../services/use-auth-service';
+import { getAuthErrorMessage } from '../../services/auth-errors';
+import { toast } from 'sonner';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { Card } from '@workspace/ui/components/card';
 
@@ -45,7 +47,9 @@ export const ResetPassword = () => {
       onSuccess: () => {
         router.push(`/login`);
       },
-      onError: () => {},
+      onError: (error) => {
+        toast.error(getAuthErrorMessage(error, 'reset-password'));
+      },
     });
   };
 

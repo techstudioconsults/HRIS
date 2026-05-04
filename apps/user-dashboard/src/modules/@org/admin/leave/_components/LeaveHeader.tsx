@@ -54,19 +54,19 @@ export const LeaveHeader = ({ onSearch }: LeaveHeaderProperties) => {
               placeholder="Search leave requests..."
               onSearch={onSearch}
             />
-            <GenericDropdown
-              contentClassName="bg-background"
-              trigger={
-                <Button className="h-10 rounded-md px-3">
-                  <Icon variant={`Outline`} name="Filter" size={16} />
-                  <span className="hidden lg:block">Filter</span>
-                </Button>
-              }
-            >
-              <section className="text-muted-foreground min-w-[220px] p-3 text-sm">
-                Basic filtering for leave requests will be available soon.
-              </section>
-            </GenericDropdown>
+            {/*<GenericDropdown*/}
+            {/*  contentClassName="bg-background"*/}
+            {/*  trigger={*/}
+            {/*    <Button disabled variant={`primaryOutline`} className={`h-10`}>*/}
+            {/*      <Icon variant={`Outline`} name="Filter" size={16} />*/}
+            {/*      <span className="hidden lg:block">Filter</span>*/}
+            {/*    </Button>*/}
+            {/*  }*/}
+            {/*>*/}
+            {/*  <section className="text-muted-foreground min-w-55 p-3 text-sm">*/}
+            {/*    Basic filtering for leave requests will be available soon.*/}
+            {/*  </section>*/}
+            {/*</GenericDropdown>*/}
           </div>
           <div className="hidden lg:flex">
             <MainButton

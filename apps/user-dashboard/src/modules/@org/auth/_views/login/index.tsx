@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useSession } from '@/lib/session';
 import { useAuthService } from '../../services/use-auth-service';
+import { getAuthErrorMessage } from '../../services/auth-errors';
 
 export const Login = () => {
   const router = useRouter();
@@ -47,8 +48,7 @@ export const Login = () => {
       await refresh();
       router.push('/login/continue');
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Login failed';
-      setError('password', { message });
+      setError('password', { message: getAuthErrorMessage(error, 'login') });
     }
   };
 

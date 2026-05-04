@@ -1,8 +1,8 @@
 # Current Feature Context
 
-**Feature Name**: Bugfix — `MainButton` variant `"accent"` not assignable to shadcn `Button` variant type
+**Feature Name**: Employee Avatar Upload — Employee Details View
 **Status**: Done
-**Phase**: Bugfix
+**Phase**: Complete
 **Started**: 2026-05-03
 **Completed**: 2026-05-03
 
@@ -10,26 +10,24 @@
 
 ## Summary
 
-The `MainButton` component's `Variant` type union included `'accent'` but the underlying
-shadcn `Button` component's `buttonVariants` (cva) never defined a plain `'accent'` variant
-— only `'accentOutline'`. This caused TS2322 errors at all 3 places where `MainButton`
-passes `variant` to the `<Button>`.
-
-## Root Cause
-
-`packages/ui/src/lib/button/index.tsx:28` declared `'accent'` in the `Variant` type union,
-but `packages/ui/src/components/button.tsx:12-34` (the `buttonVariants` cva object) has no
-`accent` key — only `accentOutline`.
-
-## Fix
-
-1. **`packages/ui/src/lib/button/index.tsx`** — Removed `'accent'` from the `Variant` type.
-   `'accentOutline'` remains (it has a valid cva variant definition).
-
-2. **`src/components/shared/navbar/index.tsx:30`** — Changed the single `variant={'accent'}`
-   usage (user profile button) to `variant={'ghost'}` — already used nearby for "Contact Me".
+Added `EmployeeAvatarUpload` component to the employee details sidebar card.
+Clicking/activating the avatar opens a file picker; the selected image is sent via PATCH
+`/employees/:id` with `FormData` key `avatar`. Optimistic preview shown immediately;
+spinner overlay while uploading; cache invalidation handled by existing `useUpdateEmployee` hook.
 
 ## Files Changed
 
-1. `packages/ui/src/lib/button/index.tsx` — removed `'accent'` from `Variant` type union
-2. `apps/user-dashboard/src/components/shared/navbar/index.tsx` — changed `accent` to `ghost`
+1. `apps/user-dashboard/src/modules/@org/admin/employee/_views/employee-details/index.tsx`
+   - Added `EmployeeAvatarUpload` inline component (lines 166–289)
+   - Added `useRef`, `useState` to React imports
+   - Added `toast` from `sonner`
+
+## Implementation Details
+
+- **Optimistic preview**: `URL.createObjectURL` shown immediately on file select
+- **Stale avatar fix**: preview cleared via `useEffect` watching `avatarUrl` (waits for server refetch, avoids flash)
+- **Memory cleanup**: `pendingObjectUrlRef` tracks blob URL; revoked on error or unmount
+- **Accessibility**: `role="button"`, `tabIndex`, `aria-label`, `aria-disabled`, `onKeyDown` (Enter/Space)
+- **File validation**: JPEG/PNG/WebP only, max 5 MB — user-friendly toast on rejection
+- **Loading UX**: spinner overlay forced `opacity-100` while uploading (touch device safe)
+- **Error handling**: revert preview + `toast.error` from sonner

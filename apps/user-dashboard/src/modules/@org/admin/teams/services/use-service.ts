@@ -48,6 +48,18 @@ export const useTeamService = () => {
     );
 
   // Mutations
+  const useUpdateTeam = () =>
+    useServiceMutation(
+      (service, { id, data }: { id: string; data: FormData }) =>
+        service.updateTeam(id, data),
+      {
+        invalidateQueries: (_, { id }) => [
+          queryKeys.team.list(),
+          queryKeys.team.details(id),
+        ],
+      }
+    );
+
   const useDeleteTeam = () =>
     useServiceMutation((service, id: string) => service.deleteTeam(id), {
       onSuccess: () => {
@@ -123,6 +135,7 @@ export const useTeamService = () => {
     useDownloadTeams,
 
     // Mutations
+    useUpdateTeam,
     useDeleteTeam,
     useCreateRole,
     useUpdateRole,

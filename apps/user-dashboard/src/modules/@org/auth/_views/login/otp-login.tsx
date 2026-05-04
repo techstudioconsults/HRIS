@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useAuthService } from '../../services/use-auth-service';
+import { getAuthErrorMessage } from '../../services/auth-errors';
 
 export const OTPLogin = () => {
   const router = useRouter();
@@ -23,6 +24,7 @@ export const OTPLogin = () => {
 
   const {
     handleSubmit,
+    setError,
     formState: { isValid },
   } = methods;
 
@@ -33,7 +35,11 @@ export const OTPLogin = () => {
           router.push(`/login/otp-verify?email=${data.email}`);
         }
       },
-      onError: () => {},
+      onError: (error) => {
+        setError('email', {
+          message: getAuthErrorMessage(error, 'otp-request'),
+        });
+      },
     });
   };
 

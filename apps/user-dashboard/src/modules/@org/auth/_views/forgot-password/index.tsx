@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { useAuthService } from '../../services/use-auth-service';
+import { getAuthErrorMessage } from '../../services/auth-errors';
 import { Card } from '@workspace/ui/components/card';
 
 export const ForgotPassword = () => {
@@ -27,6 +28,7 @@ export const ForgotPassword = () => {
 
   const {
     handleSubmit,
+    setError,
     formState: { isValid },
   } = methods;
 
@@ -35,7 +37,11 @@ export const ForgotPassword = () => {
       onSuccess: () => {
         router.push(`/reset-password?email=${encodeURIComponent(data.email)}`);
       },
-      onError: () => {},
+      onError: (error) => {
+        setError('email', {
+          message: getAuthErrorMessage(error, 'forgot-password'),
+        });
+      },
     });
   };
 

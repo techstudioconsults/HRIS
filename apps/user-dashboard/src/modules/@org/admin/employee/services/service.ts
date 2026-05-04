@@ -58,9 +58,11 @@ export class EmployeeService {
   }
 
   async updateEmployee(id: string, data: FormData) {
+    const headers = { 'Content-Type': 'multipart/form-data' };
     const response = await this.http.patch<ApiResponse<Employee>>(
       `/employees/${id}`,
-      data
+      data,
+      headers
     );
     if (response?.status === 200) {
       return response.data.data;

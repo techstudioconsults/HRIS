@@ -10,6 +10,8 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useSession } from '@/lib/session';
 import { OTPInput } from '../../_components/input-otp';
 import { useAuthService } from '../../services/use-auth-service';
+import { getAuthErrorMessage } from '../../services/auth-errors';
+import { toast } from 'sonner';
 
 export const InputOtpCard = () => {
   const email = useDecodedSearchParameters('email');
@@ -56,8 +58,9 @@ export const InputOtpCard = () => {
       await refresh();
       router.push('/login/continue');
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Invalid OTP';
-      setError('password', { message });
+      setError('password', {
+        message: getAuthErrorMessage(error, 'otp-verify'),
+      });
     }
   };
 
@@ -66,8 +69,12 @@ export const InputOtpCard = () => {
       await requestOTP(
         { email },
         {
-          onError: () => {},
-          onSuccess: () => {},
+          onSuccess: () => {
+            toast.success('A new OTP has been sent to your email.');
+          },
+          onError: (error) => {
+            toast.error(getAuthErrorMessage(error, 'otp-request'));
+          },
         }
       );
     }

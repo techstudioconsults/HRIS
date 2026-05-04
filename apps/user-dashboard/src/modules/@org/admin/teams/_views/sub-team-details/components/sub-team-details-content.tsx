@@ -109,9 +109,14 @@ const SubTeamDetailsContent = ({
     setActiveEmployee,
   } = useEmployeeRowActions();
 
-  const { data: rolesData } = useGetRoles(teamId, {
-    enabled: !!teamId,
-  });
+  const { data: rolesRaw } = useGetRoles(teamId, { enabled: !!teamId });
+  const rolesData = useMemo(
+    () =>
+      (rolesRaw ?? []).filter(
+        (role: Role) => role.name?.toLowerCase().trim() !== 'default'
+      ),
+    [rolesRaw]
+  );
 
   type RoleRow = Role & Record<string, unknown>;
 

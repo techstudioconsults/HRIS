@@ -58,9 +58,11 @@ export class TeamService {
   }
 
   async updateTeam(id: string, data: FormData) {
+    const headers = { 'Content-Type': 'multipart/form-data' };
     const response = await this.http.patch<{ data: Team }>(
       `/teams/${id}`,
-      data
+      data,
+      headers
     );
     if (response?.status === 200) {
       return response.data.data;

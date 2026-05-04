@@ -1,3 +1,30 @@
+# Hide Default Teams & Roles from Tables
+
+**Feature**: Filter "default" teams/sub-teams/roles from all table views
+**Status**: Done
+**Date**: 2026-05-03
+
+## What Was Done
+
+Applied a client-side `name.toLowerCase().trim() !== 'default'` filter at every
+table render point. Items are hidden from display only — never deleted from the API.
+
+## Files Changed
+
+1. `teams/_views/team/components/team-table-section.tsx`
+   - Added `visibleTeams` filter before `hasTeams` check and `AdvancedDataTable` data prop
+
+2. `teams/_views/team-details/components/team-details-content.tsx`
+   - Filtered `allSubTeams` before applying search filter
+
+3. `teams/_views/sub-team-details/components/sub-team-details-content.tsx`
+   - Renamed `rolesData` → `rolesRaw`, derived filtered `rolesData` from it
+
+4. `teams/_views/team/index.tsx`
+   - Added `.filter()` on `rolesData` before mapping to `availableRoles` prop on `AddNewEmployees`
+
+---
+
 # Payroll MSW Mock Data and Handlers
 
 **Feature**: Payroll MSW Mock — Generate/Reschedule/Payslip + Multi-Payroll Combobox

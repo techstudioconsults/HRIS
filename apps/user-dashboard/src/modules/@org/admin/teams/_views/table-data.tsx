@@ -72,7 +72,8 @@ const useTeamRowActionsBase = (
   onAddEmployees?: (team: Team) => void,
   onEditTeam?: (team: Team) => void,
   onAddRole?: (team: Team) => void,
-  parentId?: string
+  parentId?: string,
+  onAssignManager?: (team: Team) => void
 ) => {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -180,6 +181,25 @@ const useTeamRowActionsBase = (
               } as IRowAction<Team>,
             ]
           : []),
+        ...(onAssignManager
+          ? [
+              {
+                label: 'Assign Manager / Lead',
+                icon: (
+                  <Icon
+                    variant={'Outline'}
+                    name={`Profile2User`}
+                    size={4}
+                    aria-hidden="true"
+                  />
+                ),
+                onClick: () => {
+                  setActiveTeam(team);
+                  onAssignManager(team);
+                },
+              } as IRowAction<Team>,
+            ]
+          : []),
         { type: 'separator' },
         {
           label: 'Delete team',
@@ -203,7 +223,15 @@ const useTeamRowActionsBase = (
 
       return baseActions;
     },
-    [teamType, onAddEmployees, onEditTeam, onAddRole, setActiveTeam, router]
+    [
+      teamType,
+      onAddEmployees,
+      onEditTeam,
+      onAddRole,
+      onAssignManager,
+      setActiveTeam,
+      router,
+    ]
   );
 
   // Listen to global delete requests dispatched by useTeamShortcuts
@@ -252,9 +280,17 @@ const useTeamRowActionsBase = (
 export const useTeamRowActions = (
   onAddEmployees?: (team: Team) => void,
   onEditTeam?: (team: Team) => void,
-  onAddRole?: (team: Team) => void
+  onAddRole?: (team: Team) => void,
+  onAssignManager?: (team: Team) => void
 ) => {
-  return useTeamRowActionsBase('team', onAddEmployees, onEditTeam, onAddRole);
+  return useTeamRowActionsBase(
+    'team',
+    onAddEmployees,
+    onEditTeam,
+    onAddRole,
+    undefined,
+    onAssignManager
+  );
 };
 
 export const subTeamColumn: IColumnDefinition<Team>[] = [
@@ -292,13 +328,15 @@ export const useSubTeamRowActions = (
   onEditTeam?: (team: Team) => void,
   id?: string,
   onAddRole?: (team: Team) => void,
-  onAddMembers?: (team: Team) => void
+  onAddMembers?: (team: Team) => void,
+  onAssignManager?: (team: Team) => void
 ) => {
   return useTeamRowActionsBase(
     'sub-team',
     onAddMembers,
     onEditTeam,
     onAddRole,
-    id
+    id,
+    onAssignManager
   );
 };

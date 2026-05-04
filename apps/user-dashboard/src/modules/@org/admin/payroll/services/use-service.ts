@@ -460,12 +460,12 @@ export const usePayrollService = () => {
 
   // Payslips
   const useGetPayslips = (
-    payrollID: string,
+    payrollID: string | undefined,
     filters: Filters = {},
     options?: any
   ) =>
     useServiceQuery(
-      queryKeys.payroll.payslips(payrollID, filters),
+      queryKeys.payroll.payslips(payrollID ?? '', filters),
       (service) => service.getPayslips(payrollID, filters),
       options
     );

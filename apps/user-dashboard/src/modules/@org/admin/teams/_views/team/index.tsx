@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 import { useDebounce } from 'use-debounce';
 
 import { AddNewEmployees } from '../../_components/forms/add-new-employees';
+import { AssignManagerDialog } from '../../_components/forms/assign-manager-dialog';
 import { RolesAndPermission } from '../../_components/forms/add-new-roles';
 import { useTeamEditing } from '../../_hooks/use-team-editing';
 import { useEmployeeService } from '../../../employee/services/use-service';
@@ -119,10 +120,17 @@ export const AllTeams = () => {
     isSubmitting: isEditSubmitting,
   } = useTeamEditing();
 
+  const [assignManagerTeam, setAssignManagerTeam] = useState<Team | null>(null);
+
+  const handleOpenAssignManagerDialog = (team: Team) => {
+    setAssignManagerTeam(team);
+  };
+
   const { getRowActions, DeleteConfirmationModal } = useTeamRowActions(
     handleOpenEmployeeDialog,
     handleOpenEditDialog,
-    handleOpenRoleDialog
+    handleOpenRoleDialog,
+    handleOpenAssignManagerDialog
   );
 
   const handleOpenTeamDialog = (team?: TeamFormType) => {
@@ -511,17 +519,22 @@ export const AllTeams = () => {
             }}
             isSubmitting={isSubmitting}
             availableRoles={
-              rolesData?.map(
-                (role: {
-                  id: any;
-                  name: any;
-                  permissions: string | any[];
-                }) => ({
-                  id: role.id,
-                  name: role.name,
-                  description: `Role with ${role.permissions.length} permissions`,
-                })
-              ) || []
+              rolesData
+                ?.filter(
+                  (role: { name: any }) =>
+                    role.name?.toLowerCase().trim() !== 'default'
+                )
+                .map(
+                  (role: {
+                    id: any;
+                    name: any;
+                    permissions: string | any[];
+                  }) => ({
+                    id: role.id,
+                    name: role.name,
+                    description: `Role with ${role.permissions.length} permissions`,
+                  })
+                ) || []
             }
             availableEmployees={
               employeesData?.data?.items?.map((employee: Employee) => ({
@@ -535,6 +548,14 @@ export const AllTeams = () => {
       </ReusableDialog>
 
       <DeleteConfirmationModal />
+
+      <AssignManagerDialog
+        team={assignManagerTeam}
+        open={!!assignManagerTeam}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) setAssignManagerTeam(null);
+        }}
+      />
 
       {/* Edit Team Dialog (from row action — uses useTeamEditing, not workflow store) */}
       <ReusableDialog

@@ -4,6 +4,7 @@ import { EmptyState } from '@workspace/ui/lib/empty-state';
 import { AdvancedDataTable, TableSkeleton } from '@workspace/ui/lib/table';
 import type { IRowAction } from '@workspace/ui/lib/table';
 import { useRouter } from 'next/navigation';
+import { routes } from '@/lib/routes/routes';
 
 import empty1 from '~/images/empty-state.svg';
 import { subTeamColumn } from '../../table-data';
@@ -52,7 +53,7 @@ const SubTeamsTab = ({
         enableRowSelection={true}
         enableColumnVisibility={true}
         onRowClick={(team: Team) => {
-          if (team?.id) router.push(`/admin/teams/sub-team/${team.id}`);
+          if (team?.id) router.push(routes.admin.teams.subTeam(team.id));
         }}
         enableSorting={true}
         enableFiltering={true}

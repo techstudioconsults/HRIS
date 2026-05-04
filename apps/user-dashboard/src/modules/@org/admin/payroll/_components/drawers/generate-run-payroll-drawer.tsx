@@ -26,6 +26,7 @@ import { toast } from 'sonner';
 
 import { DashboardCard } from '../../../../_components/dashboard-card';
 import { usePayrollService } from '../../services/use-service';
+import { routes } from '@/lib/routes/routes';
 import { usePayrollStore } from '../../stores/payroll-store';
 import type {
   PayrollApproval,
@@ -358,7 +359,7 @@ export const GenerateRunPayrollDrawer = ({
         onClose={() => setIsRunSubmittedAlertOpen(false)}
         onConfirm={() => {
           setIsRunSubmittedAlertOpen(false);
-          router.push('/admin/payroll');
+          router.push(routes.admin.payroll.list());
         }}
         type="success"
         title="Payroll Submitted for Approval"

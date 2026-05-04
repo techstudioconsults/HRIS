@@ -66,6 +66,7 @@ export const useOnboardingService = () => {
         invalidateQueries: () => [
           queryKeys.onboarding.teams(),
           queryKeys.onboarding.teamsWithRoles(),
+          queryKeys.employee.teams(),
         ],
       }
     );
@@ -78,6 +79,7 @@ export const useOnboardingService = () => {
         invalidateQueries: () => [
           queryKeys.onboarding.teams(),
           queryKeys.onboarding.teamsWithRoles(),
+          queryKeys.employee.teams(),
         ],
       }
     );
@@ -89,6 +91,7 @@ export const useOnboardingService = () => {
         invalidateQueries: () => [
           queryKeys.onboarding.teams(),
           queryKeys.onboarding.teamsWithRoles(),
+          queryKeys.employee.teams(),
         ],
       }
     );
@@ -103,6 +106,7 @@ export const useOnboardingService = () => {
         invalidateQueries: (_data, variables) => [
           queryKeys.onboarding.roles(variables.teamId),
           queryKeys.onboarding.teamsWithRoles(),
+          queryKeys.employee.teams(),
         ],
       }
     );
@@ -126,6 +130,7 @@ export const useOnboardingService = () => {
         invalidateQueries: (_data, variables) => [
           queryKeys.onboarding.roles(variables.teamId),
           queryKeys.onboarding.teamsWithRoles(),
+          queryKeys.employee.teams(),
         ],
       }
     );
@@ -134,7 +139,10 @@ export const useOnboardingService = () => {
     useServiceMutation(
       (service, roleId: string) => service.deleteRole(roleId),
       {
-        invalidateQueries: () => [queryKeys.onboarding.teamsWithRoles()],
+        invalidateQueries: () => [
+          queryKeys.onboarding.teamsWithRoles(),
+          queryKeys.employee.teams(),
+        ],
       }
     );
 

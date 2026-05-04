@@ -1,6 +1,7 @@
 import { MainButton } from '@workspace/ui/lib/button';
 import Link from 'next/link';
 import { Card } from '@workspace/ui/components/card';
+import { routes } from '@/lib/routes/routes';
 
 export const CheckMailCard = () => {
   return (
@@ -18,7 +19,10 @@ export const CheckMailCard = () => {
       </MainButton>
       <p className="text-grey-500 mt-4 text-center text-sm">
         Don&apos;t have an account?{' '}
-        <Link href="/register" className="text-primary hover:underline">
+        <Link
+          href={routes.auth.register()}
+          className="text-primary hover:underline"
+        >
           Sign Up
         </Link>
       </p>

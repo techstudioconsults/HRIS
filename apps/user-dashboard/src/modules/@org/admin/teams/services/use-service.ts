@@ -48,12 +48,25 @@ export const useTeamService = () => {
     );
 
   // Mutations
+  const useUpdateTeam = () =>
+    useServiceMutation(
+      (service, { id, data }: { id: string; data: FormData }) =>
+        service.updateTeam(id, data),
+      {
+        invalidateQueries: (_, { id }) => [
+          ['teams', 'list'] as unknown as readonly unknown[],
+          queryKeys.team.details(id),
+          queryKeys.employee.teams(),
+        ],
+      }
+    );
+
   const useDeleteTeam = () =>
     useServiceMutation((service, id: string) => service.deleteTeam(id), {
-      onSuccess: () => {
-        // Invalidate all team list queries
-        return [queryKeys.team.list()];
-      },
+      invalidateQueries: () => [
+        ['teams', 'list'] as unknown as readonly unknown[],
+        queryKeys.employee.teams(),
+      ],
     });
 
   const useCreateRole = () =>
@@ -63,10 +76,10 @@ export const useTeamService = () => {
         roleData: { name: string; teamId: string; permissions: string[] }
       ) => service.createRole(roleData),
       {
-        onSuccess: (_, { teamId }) => {
-          // Invalidate roles for this team
-          return [['roles', teamId]];
-        },
+        invalidateQueries: (_, { teamId }) => [
+          ['roles', teamId] as readonly unknown[],
+          queryKeys.employee.teams(),
+        ],
       }
     );
 
@@ -79,11 +92,19 @@ export const useTeamService = () => {
           name,
           permissions,
         }: { roleId: string; name?: string; permissions?: string[] }
-      ) => service.updateRole(roleId, { name, permissions })
+      ) => service.updateRole(roleId, { name, permissions }),
+      {
+        invalidateQueries: () => [queryKeys.employee.teams()],
+      }
     );
 
   const useDeleteRole = () =>
-    useServiceMutation((service, roleId: string) => service.deleteRole(roleId));
+    useServiceMutation(
+      (service, roleId: string) => service.deleteRole(roleId),
+      {
+        invalidateQueries: () => [queryKeys.employee.teams()],
+      }
+    );
 
   const useAssignEmployeeToTeam = () =>
     useServiceMutation(
@@ -123,6 +144,7 @@ export const useTeamService = () => {
     useDownloadTeams,
 
     // Mutations
+    useUpdateTeam,
     useDeleteTeam,
     useCreateRole,
     useUpdateRole,

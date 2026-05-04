@@ -4,7 +4,7 @@ import { FileFormData, fileSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
-import FileUpload from '@workspace/ui/lib/file-upload/file-upload';
+import { FileUploader } from '@workspace/ui/components/core/miscellaneous/file-uploader';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -144,17 +144,23 @@ export const CreateFileForm = ({ onClose }: CreateFileFormProperties) => {
 
         <div className="flex w-full flex-col gap-4 pt-4">
           <label className="text-sm font-medium">Files</label>
-          <FileUpload
-            onFileChange={handleFilesSelected}
-            acceptedFileTypes=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+          <FileUploader
+            value={selectedFiles}
+            accept={{
+              'application/pdf': ['.pdf'],
+              'application/msword': ['.doc'],
+              'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                ['.docx'],
+              'application/vnd.ms-excel': ['.xls'],
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                ['.xlsx'],
+              'image/jpeg': ['.jpg', '.jpeg'],
+              'image/png': ['.png'],
+            }}
             maxFiles={10}
+            multiple
+            onValueChange={handleFilesSelected}
           />
-          {selectedFiles.length > 0 && (
-            <p className="text-sm text-gray-600">
-              {selectedFiles.length} file{selectedFiles.length > 1 ? 's' : ''}{' '}
-              selected
-            </p>
-          )}
           {errors.file && (
             <p className="text-sm text-red-600">{errors.file.message}</p>
           )}

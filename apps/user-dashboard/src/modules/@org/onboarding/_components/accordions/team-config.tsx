@@ -268,14 +268,18 @@ export const TeamConfig = () => {
     );
   }
 
+  const visibleTeams = (teams ?? []).filter(
+    (team) => team.name?.toLowerCase().trim() !== 'default'
+  );
+
   return (
     <>
       <Accordion
         type="multiple"
         className="w-full space-y-4"
-        defaultValue={teams?.map((team) => team.id!)}
+        defaultValue={visibleTeams.map((team) => team.id!)}
       >
-        {teams?.map((team) => (
+        {visibleTeams.map((team) => (
           <AccordionItem key={team.id} value={team.id!}>
             <AccordionTrigger className="flex-row-reverse border p-4 text-left text-sm md:text-[16px]">
               <div className="flex w-full items-center justify-between">
@@ -327,54 +331,59 @@ export const TeamConfig = () => {
               </div>
             </AccordionTrigger>
             <AccordionContent className="mt-0.5 space-y-4 rounded-md border border-t p-4 font-medium">
-              {team?.roles?.length > 0 ? (
-                team.roles.map((role: Role) => (
-                  <div
-                    key={role.id}
-                    className="flex w-full items-center justify-between"
-                  >
-                    <p>{role.name}</p>
-                    <div className="flex items-center gap-4 text-xs">
-                      <span
-                        className="flex cursor-pointer items-center text-gray-600 hover:text-gray-900"
-                        onClick={() => handleOpenRoleDialog(team, role)}
-                      >
-                        <Icon
-                          variant={`Outline`}
-                          name="Edit"
-                          size={16}
-                          className="mr-2"
-                        />
-                      </span>
-                      <span
-                        className="text-destructive hover:text-destructive flex cursor-pointer items-center"
-                        onClick={() => {
-                          if (isDeletingRole) return;
-                          handleDeleteRole(team.id!, role.id!);
-                        }}
-                      >
-                        {isDeletingRole && deletingRoleId === role.id ? (
+              {(() => {
+                const visibleRoles = (team.roles ?? []).filter(
+                  (role: Role) => role.name?.toLowerCase().trim() !== 'default'
+                );
+                return visibleRoles.length > 0 ? (
+                  visibleRoles.map((role: Role) => (
+                    <div
+                      key={role.id}
+                      className="flex w-full items-center justify-between"
+                    >
+                      <p>{role.name}</p>
+                      <div className="flex items-center gap-4 text-xs">
+                        <span
+                          className="flex cursor-pointer items-center text-gray-600 hover:text-gray-900"
+                          onClick={() => handleOpenRoleDialog(team, role)}
+                        >
                           <Icon
                             variant={`Outline`}
-                            name="Loader2"
+                            name="Edit"
                             size={16}
-                            className="mr-2 animate-spin"
+                            className="mr-2"
                           />
-                        ) : (
-                          <Icon
-                            variant={`Outline`}
-                            name="Trash"
-                            size={16}
-                            className="mr-2 text-danger"
-                          />
-                        )}
-                      </span>
+                        </span>
+                        <span
+                          className="text-destructive hover:text-destructive flex cursor-pointer items-center"
+                          onClick={() => {
+                            if (isDeletingRole) return;
+                            handleDeleteRole(team.id!, role.id!);
+                          }}
+                        >
+                          {isDeletingRole && deletingRoleId === role.id ? (
+                            <Icon
+                              variant={`Outline`}
+                              name="Loader2"
+                              size={16}
+                              className="mr-2 animate-spin"
+                            />
+                          ) : (
+                            <Icon
+                              variant={`Outline`}
+                              name="Trash"
+                              size={16}
+                              className="mr-2 text-danger"
+                            />
+                          )}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-500">No roles added yet</p>
-              )}
+                  ))
+                ) : (
+                  <p className="text-gray-500">No roles added yet</p>
+                );
+              })()}
               <div className="mt-4">
                 <span
                   data-tour="add-role-button"

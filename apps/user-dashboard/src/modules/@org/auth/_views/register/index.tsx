@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useAuthService } from '../../services/use-auth-service';
+import { routes } from '@/lib/routes/routes';
 import { InfoTooltip } from '@workspace/ui/lib/tooltip';
 
 export const Register = () => {
@@ -41,7 +42,7 @@ export const Register = () => {
   const handleSubmitForm = async (data: RegisterFormData) => {
     await signUp(data, {
       onSuccess: () => {
-        router.push(`/login`);
+        router.push(routes.auth.login());
       },
       onError: () => {},
     });
@@ -174,7 +175,10 @@ export const Register = () => {
         <div className="mt-6 text-center text-sm text-gray-500">
           <p>
             Have an account already?{' '}
-            <Link href="/login" className="text-primary hover:underline">
+            <Link
+              href={routes.auth.login()}
+              className="text-primary hover:underline"
+            >
               Log In
             </Link>
           </p>

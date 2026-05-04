@@ -26,6 +26,14 @@ Format:
 
 ---
 
+- **Issue**: `filter()` / `map()` called inline (not in `useMemo`) when passing arrays to `AdvancedDataTable` causes infinite re-render loop — table watches `data` in an internal `useEffect`; a new array reference on every render triggers `setState` → loop.
+- **Impact**: "Maximum update depth exceeded" crash on any view that passes a filtered/mapped array directly as `data` prop to `AdvancedDataTable`.
+- **Workaround**: N/A — crashes the page.
+- **Mitigation Plan**: Always wrap derived array props with `useMemo` keyed on the source data. Fixed in `team-table-section.tsx`, `team-details-content.tsx`, `sub-team-details-content.tsx`.
+- **Date**: 2026-05-03
+
+---
+
 - **Issue**: `MainButton` variant `"accent"` not assignable to shadcn `Button` variant type — the `Variant` type union in `MainButton` declared `'accent'` but the underlying `buttonVariants` cva had no `accent` key (only `accentOutline`). Caused 3 TS2322 errors blocking push.
 - **Impact**: Blocked `pre-push` hook, preventing `git push`.
 - **Workaround**: N/A — type error blocked build/push.

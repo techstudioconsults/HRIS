@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 
 import { useResourceService } from '../../services/use-service';
 import type { CreateFolderFormProperties } from '../../types';
-import FileUpload from '@workspace/ui/lib/file-upload/file-upload';
+import { FileUploader } from '@workspace/ui/components/core/miscellaneous/file-uploader';
 
 export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -81,17 +81,23 @@ export const CreateFolderForm = ({ onClose }: CreateFolderFormProperties) => {
 
         <div className="flex w-full flex-col gap-4 pt-4">
           <label className="text-sm font-medium">Files (Optional)</label>
-          <FileUpload
-            onFileChange={handleFilesSelected}
-            acceptedFileTypes=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+          <FileUploader
+            value={selectedFiles}
+            accept={{
+              'application/pdf': ['.pdf'],
+              'application/msword': ['.doc'],
+              'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                ['.docx'],
+              'application/vnd.ms-excel': ['.xls'],
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                ['.xlsx'],
+              'image/jpeg': ['.jpg', '.jpeg'],
+              'image/png': ['.png'],
+            }}
             maxFiles={10}
+            multiple
+            onValueChange={handleFilesSelected}
           />
-          {selectedFiles.length > 0 && (
-            <p className="text-sm text-gray-600">
-              {selectedFiles.length} file{selectedFiles.length > 1 ? 's' : ''}{' '}
-              selected
-            </p>
-          )}
         </div>
 
         <div className="flex w-full items-center justify-between gap-4 pt-4">

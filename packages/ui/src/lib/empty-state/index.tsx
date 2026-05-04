@@ -98,7 +98,7 @@ export const EmptyState = ({
     primaryAction?.variant === 'destructive' ? 'bg-danger-50' : undefined;
 
   return (
-    <Empty className={cn('border-none', className)}>
+    <Empty className={cn('border-none bg-background dark:bg-muted', className)}>
       <EmptyHeader className={headerClassName}>
         {/* Media rendering based on variant or fallback */}
         {variant === 'icon' && icon && (
@@ -115,8 +115,10 @@ export const EmptyState = ({
                   // src={image.src}
                   src={`/images/logo.png`}
                   alt={image.alt}
-                  width={image.width || 200}
-                  height={image.height || 200}
+                  width={32}
+                  height={32}
+                  // width={image.width || 200}
+                  // height={image.height || 200}
                   className="object-contain"
                   priority
                 />
@@ -127,8 +129,10 @@ export const EmptyState = ({
                     // src={img.src}
                     src={`/images/logo.png`}
                     alt={img.alt}
-                    width={img.width || 200}
-                    height={img.height || 200}
+                    // width={img.width || 200}
+                    // height={img.height || 200}
+                    width={32}
+                    height={32}
                     className="object-contain"
                     priority
                   />

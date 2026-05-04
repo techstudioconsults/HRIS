@@ -5,6 +5,7 @@ import { useCallback, useEffect } from 'react';
 
 import { TeamSetupForm } from '../../_components/forms/team-setup';
 import { stepTwoTourSteps } from '../../config/tour-steps';
+import { routes } from '@/lib/routes/routes';
 import { useTour } from '@workspace/ui/context/tour-context';
 
 export const TeamSetupPage = () => {
@@ -42,7 +43,7 @@ export const TeamSetupPage = () => {
           </p>
         </div>
         <div className="flex gap-4">
-          <MainButton href="/onboarding/step-1" variant="primaryOutline">
+          <MainButton href={routes.onboarding.step1()} variant="primaryOutline">
             Back
           </MainButton>
         </div>

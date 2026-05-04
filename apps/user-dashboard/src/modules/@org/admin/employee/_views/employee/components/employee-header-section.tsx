@@ -16,6 +16,7 @@ import { useCallback, useTransition } from 'react';
 import { FilterForm } from '../../../_components/forms/filter-form';
 import { useEmployeeService } from '../../../services/use-service';
 import type { EmployeeHeaderSectionProperties } from '../../../types';
+import { routes } from '@/lib/routes/routes';
 
 export const EmployeeHeaderSection = ({
   apiFilters,
@@ -89,13 +90,13 @@ export const EmployeeHeaderSection = ({
                   <Icon name="DocumentDownload" variant="Outline" />
                   {isExporting ? 'Exporting...' : 'Export Employees'}
                 </DropdownMenuItem>
-                <Link href="/admin/employees/add-employee">
+                <Link href={routes.admin.employees.add()}>
                   <DropdownMenuItem>
                     <Icon name="Add" variant="Bold" />
                     Add Employee
                   </DropdownMenuItem>
                 </Link>
-                <Link href="/admin/employees/bulk-import">
+                <Link href={routes.admin.employees.bulkImport()}>
                   <DropdownMenuItem>
                     <Icon name="FileSpreadsheet" variant="Outline" />
                     Bulk Import
@@ -151,7 +152,7 @@ export const EmployeeHeaderSection = ({
               size={`icon`}
             />
             <MainButton
-              href="/admin/employees/add-employee"
+              href={routes.admin.employees.add()}
               variant="primary"
               isLeftIconVisible
               icon={<Icon name={`Add`} variant={`Bold`} />}

@@ -1,50 +1,58 @@
-# Payroll MSW Mock Data and Handlers
+# File Upload Consolidation
 
-**Feature**: Payroll MSW Mock — Generate/Reschedule/Payslip + Multi-Payroll Combobox
-**Status**: Done
-**Date**: 2026-05-03
-
----
+**Feature**: Replace `FileUpload` (old lib component) with `FileUploader` (canonical component)
+**Status**: Complete
+**Date**: 2026-05-04
 
 ## What Was Done
 
-Rewrote the two stale MSW mock files for the payroll module so they match
-the real endpoint paths used by `service.ts`.
+Consolidated two file upload components into one canonical `FileUploader` exported from
+`packages/ui/src/components/core/miscellaneous/file-uploader.tsx`.
 
-### mock-data.ts
+### Improved `file-uploader.tsx`
 
-- All types declared inline (no import from `../../types`) to avoid circular dependency.
-- `MOCK_POLICY_ID = 'policy_01'` exported as a named constant.
-- `mockPayrollPolicy` — status: complete, payday: 25, monthly, 1 bonus (Performance fixed 50_000), 1 deduction (Pension percentage 8), 2 approvers (Ngozi Adeyemi HR Director + Chidi Eze Finance Manager).
-- `mockCompanyWallet` — First Bank, balance: 50_000_000.
-- `mockPayrolls` — 4 entries (Feb completed, Mar completed, Apr partially_completed, May idle), all share policyId and walletBalance.
-- `mockPayslipsByPayroll` — `Record<string, Payslip[]>` with 2 payslips per payroll (8 total). Built via a shared `buildPayslip` helper. Feb/Mar: both paid. Apr: one paid + one failed. May: both pending.
-- `mockApprovals` — 2 pending approval entries for `payroll_may_2026`.
+- Added `formatBytes(bytes, decimals)` helper — used in dropzone hint and file list
+- Added `onChange?: (files: File[]) => void` prop alongside `onValueChange` for simple form consumer usage
+- Fixed `HTMLAttributes<HTMLDivElement>` conflict by using `Omit<..., 'onChange'>`
+- Improved rejection error messages — now shows specific reason per file
+- Improved dropzone UI: drag-active state uses primary colour, shows max files + per-file size + accepted extensions
+- Uncommented and fixed file size display in `FileCard`
+- Max size default raised from 2 MB to 5 MB
 
-### handlers.ts
+### Consumer files updated (5 files)
 
-- `const BASE = '/api/v1'` pattern.
-- Mutable in-memory state: `let payrollsDb` and `let payslipsDb` (immutable-style updates via spread).
-- `await delay(200–500)` on every handler.
-- 10 handlers covering all endpoints in `service.ts`:
-  1. GET /payroll-policy/company
-  2. GET /wallets/company
-  3. GET /payrolls
-  4. GET /payrolls/:id (404 if missing)
-  5. POST /payrolls (creates new idle payroll, returns 201)
-  6. PATCH /payrolls/:id (updates paymentDate, 404 if missing)
-  7. POST /payrolls/:id/run (transitions to awaiting, returns 201)
-  8. GET /payrolls/:id/approvals (returns mockApprovals for may, [] otherwise)
-  9. GET /payslips?payrollId=... (filtered + paginated)
-  10. POST /payslips (409 on duplicate employee+payroll, creates pending payslip, returns 201)
+| File                          | Change                                                                                                                                                                  |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `add-employee.tsx`            | Removed old `FileUpload` import + empty `<FileUploader />`, added properly configured `FileUploader` with `onChange`                                                    |
+| `edit-employee.tsx`           | Replaced `FileUpload` import and usage with `FileUploader` + proper `accept` map                                                                                        |
+| `resources/create-file.tsx`   | Replaced `FileUpload` with `FileUploader`, removed redundant "N files selected" paragraph, uses `value` + `onValueChange` for controlled state (allows cancel to reset) |
+| `resources/create-folder.tsx` | Same as create-file                                                                                                                                                     |
 
-### \_testing/fixtures/mock-data.ts (incidental fix)
+### Avatar uploads untouched
 
-Updated the thin re-export barrel to export the new named exports
-(old names like `mockPayrollSetup` / `mockPayrollRun` no longer exist).
+`employee-details/index.tsx` and `user/profile/_views/profile-view.tsx` use native `<input type="file">` with instant upload on select — this is the correct pattern and was left as-is.
 
-## Files Changed
+### Old component
 
-- `apps/user-dashboard/src/modules/@org/admin/payroll/_sdlc/_api/mocks/mock-data.ts`
-- `apps/user-dashboard/src/modules/@org/admin/payroll/_sdlc/_api/mocks/handlers.ts`
-- `apps/user-dashboard/src/modules/@org/admin/payroll/_sdlc/_testing/fixtures/mock-data.ts`
+`packages/ui/src/lib/file-upload/file-upload.tsx` — still present but no consumer references it. Can be deleted when ready.
+
+## What Comes Next
+
+- Delete `packages/ui/src/lib/file-upload/file-upload.tsx` when ready (no consumers remain)
+- Consider exporting `FileUploader` from the UI package root barrel for even simpler import paths
+
+---
+
+# Previous: Notification Settings Tab Wiring
+
+**Feature**: Wire email/inApp notification channel toggles to PATCH /employees/:id
+**Status**: Complete
+**Date**: 2026-05-04
+
+Rewrote `notification-settings-tab.tsx`:
+
+- Removed useForm / FormProvider / Save/Cancel buttons / AlertModal
+- Used raw `Switch` components firing `PATCH /employees/:id` immediately on change
+- Optimistic update with revert-on-error
+- Hydrates from `profile.notifications.email/inApp` via `useGetMyProfile`
+- Category checkboxes remain local state only (no API wired yet)

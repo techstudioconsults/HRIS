@@ -6,7 +6,6 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@workspace/ui/components/avatar';
-import { Badge } from '@workspace/ui/components/badge';
 import {
   Drawer,
   DrawerClose,
@@ -40,13 +39,11 @@ export const GeneratePayrollDrawer = ({
   const { isCreatePayrollOpen, closeModal: closeCreatePayroll } =
     usePayrollModalParams();
 
-  const { useGetCompanyWallet, useCreatePayroll, useGetApprovedBanks } =
-    usePayrollService();
+  const { useGetCompanyWallet, useCreatePayroll } = usePayrollService();
 
   const { data: companyWallet } = useGetCompanyWallet();
   const { mutateAsync: createPayroll, isPending: isCreating } =
     useCreatePayroll();
-  const { data: approvedBanks } = useGetApprovedBanks();
 
   const [isNetPayVisible, setIsNetPayVisible] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -167,7 +164,7 @@ export const GeneratePayrollDrawer = ({
                 title="Processing Bank"
                 value={
                   <p className="text-base">
-                    {approvedBanks?.data?.[0]?.name ?? '—'}
+                    {companyWallet?.data?.bankName ?? '—'}
                   </p>
                 }
                 className="bg-muted flex flex-col items-center justify-center gap-4 text-center shadow-none"
@@ -248,9 +245,6 @@ export const GeneratePayrollDrawer = ({
                             </p>
                           </div>
                         </div>
-                        <Badge className="rounded-full bg-warning-50 px-4 py-2 text-warning">
-                          Pending
-                        </Badge>
                       </section>
                     );
                   })

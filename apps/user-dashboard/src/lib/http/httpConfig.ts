@@ -23,6 +23,10 @@ http.interceptors.request.use(
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
+    // Let the browser set Content-Type (with boundary) for multipart requests
+    if (config.data instanceof FormData) {
+      config.headers.delete('Content-Type');
+    }
     return config;
   },
   (error) => Promise.reject(error)

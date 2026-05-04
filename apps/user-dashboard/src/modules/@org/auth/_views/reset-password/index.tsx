@@ -10,6 +10,9 @@ import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { useAuthService } from '../../services/use-auth-service';
+import { getAuthErrorMessage } from '../../services/auth-errors';
+import { toast } from 'sonner';
+import { routes } from '@/lib/routes/routes';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { Card } from '@workspace/ui/components/card';
 
@@ -43,9 +46,11 @@ export const ResetPassword = () => {
 
     await resetPassword(tokenizedData, {
       onSuccess: () => {
-        router.push(`/login`);
+        router.push(routes.auth.login());
       },
-      onError: () => {},
+      onError: (error) => {
+        toast.error(getAuthErrorMessage(error, 'reset-password'));
+      },
     });
   };
 
@@ -95,7 +100,7 @@ export const ResetPassword = () => {
 
         <span className={`flex items-center justify-center`}>
           <Link
-            href="/register"
+            href={routes.auth.register()}
             className="text-grey-500 font-medium hover:underline text-primary w-fit mt-4
           flex items-center justify-center gap-2 text-sm"
           >

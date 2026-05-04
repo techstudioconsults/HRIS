@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 
 import { useEmployeeShortcuts } from '../../employee/hooks/use-employee-shortcuts';
 import { useEmployeeService } from '../services/use-service';
+import { routes } from '@/lib/routes/routes';
 
 export const useEmployeeRowActions = () => {
   const router = useRouter();
@@ -73,7 +74,7 @@ export const useEmployeeRowActions = () => {
           ),
           onClick: () => {
             setActiveEmployee(employee);
-            router.push(`/admin/employees/${employee.id}`);
+            router.push(routes.admin.employees.detail(employee.id));
           },
           // Accessibility improvement: assistive label for action
           ariaLabel: `View ${employee.firstName} ${employee.lastName}`,
@@ -91,9 +92,7 @@ export const useEmployeeRowActions = () => {
           ),
           onClick: () => {
             setActiveEmployee(employee);
-            router.push(
-              `/admin/employees/edit-employee?employeeid=${employee.id}`
-            );
+            router.push(routes.admin.employees.edit(employee.id));
           },
           ariaLabel: `Edit ${employee.firstName} ${employee.lastName}`,
         },

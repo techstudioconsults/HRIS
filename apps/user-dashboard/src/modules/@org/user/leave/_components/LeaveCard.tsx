@@ -44,6 +44,7 @@ export const LeaveCard = ({ request, onViewDetails }: LeaveCardProps) => {
         </div>
         {/* Action Button */}
         <MainButton
+          variant={`primary`}
           className="w-full hover:bg-muted"
           onClick={() => onViewDetails?.(request)}
         >

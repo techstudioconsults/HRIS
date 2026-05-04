@@ -1,67 +1,146 @@
 'use client';
 
 import { Checkbox } from '@workspace/ui/components/checkbox';
-import { MainButton } from '@workspace/ui/lib/button';
-import { AlertModal } from '@workspace/ui/lib/dialog';
-import { SwitchField } from '@workspace/ui/lib/inputs/FormFields';
+import { Switch } from '@workspace/ui/components/switch';
 import { cn } from '@workspace/ui/lib/utils';
-import { useMemo, useState } from 'react';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
-import type {
-  NotificationCategoryKey,
-  NotificationSettingsFormValues,
-} from '../../types';
+import { useSession } from '@/lib/session';
+import { useUserProfileService } from '@/modules/@org/user/profile';
+import type { NotificationCategoryKey } from '../../types';
 
-const DEFAULT_VALUES: NotificationSettingsFormValues = {
-  emailNotifications: true,
-  inAppNotifications: false,
-  categories: {
-    newEmployeeAdded: true,
-    employeeTermination: true,
-    newRoleCreated: true,
-    newTeamCreated: true,
-    resourceUploaded: true,
-    probationReviewDue: false,
-    salaryDisbursement: false,
-    walletTopUp: true,
-    paydayReminder: true,
-    loginFromNewDevice: true,
-    passwordChange: true,
-    rolePermissionChanges: false,
-  },
-};
-
-function CategoryCheckbox({
-  name,
+function ChannelToggle({
   label,
+  description,
+  checked,
+  onToggle,
+  disabled,
 }: {
-  name: `categories.${NotificationCategoryKey}`;
   label: string;
+  description?: string;
+  checked: boolean;
+  onToggle: (value: boolean) => void;
+  disabled: boolean;
 }) {
   return (
-    <Controller
-      name={name}
-      render={({ field }) => (
-        <label className="flex items-center gap-2 text-sm">
-          <Checkbox
-            className={`border-primary/30 data-[state=checked]:border-primary data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary`}
-            checked={Boolean(field.value)}
-            onCheckedChange={(checked) => field.onChange(Boolean(checked))}
-          />
-          <span className="text-muted-foreground">{label}</span>
-        </label>
-      )}
-    />
+    <div className="flex items-center justify-between gap-4">
+      <div>
+        <p className="text-base font-medium">{label}</p>
+        {description && (
+          <p className="text-muted-foreground text-xs">{description}</p>
+        )}
+      </div>
+      <Switch
+        checked={checked}
+        onCheckedChange={onToggle}
+        disabled={disabled}
+      />
+    </div>
   );
 }
 
-export const NotificationSettingsTab = () => {
-  const methods = useForm<NotificationSettingsFormValues>({
-    defaultValues: DEFAULT_VALUES,
-  });
+function CategoryCheckbox({
+  label,
+  checked,
+  onToggle,
+}: {
+  label: string;
+  checked: boolean;
+  onToggle: (value: boolean) => void;
+}) {
+  return (
+    <label className="flex items-center gap-2 text-sm cursor-pointer">
+      <Checkbox
+        className={cn(
+          `border-primary/30`,
+          `data-[state=checked]:border-primary
+          data-[state=checked]:bg-primary/10
+          data-[state=checked]:text-primary`,
+          `data-[state=checked]:dark:border-muted-foreground
+          data-[state=checked]:dark:bg-primary
+          data-[state=checked]:dark:text-white`
+        )}
+        checked={checked}
+        onCheckedChange={(value) => onToggle(Boolean(value))}
+      />
+      <span className="text-muted-foreground">{label}</span>
+    </label>
+  );
+}
 
-  const [updatedModalOpen, setUpdatedModalOpen] = useState(false);
+const DEFAULT_CATEGORIES: Record<NotificationCategoryKey, boolean> = {
+  newEmployeeAdded: true,
+  employeeTermination: true,
+  newRoleCreated: true,
+  newTeamCreated: true,
+  resourceUploaded: true,
+  probationReviewDue: false,
+  salaryDisbursement: false,
+  walletTopUp: true,
+  paydayReminder: true,
+  loginFromNewDevice: true,
+  passwordChange: true,
+  rolePermissionChanges: false,
+};
+
+export const NotificationSettingsTab = () => {
+  const { data: session } = useSession();
+  const employeeId = session?.user?.id ?? '';
+
+  const { useGetMyProfile, useUpdateMyProfile } = useUserProfileService();
+  const { data: profile, isLoading } = useGetMyProfile(employeeId);
+  const { mutate: updateProfile, isPending: isSaving } = useUpdateMyProfile();
+
+  const [emailEnabled, setEmailEnabled] = useState(true);
+  const [inAppEnabled, setInAppEnabled] = useState(false);
+  const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
+
+  // Hydrate channel state from server profile
+  useEffect(() => {
+    if (!profile?.notifications) return;
+    setEmailEnabled(profile.notifications.email);
+    setInAppEnabled(profile.notifications.inApp);
+  }, [profile]);
+
+  const handleChannelToggle = (field: 'email' | 'inApp', value: boolean) => {
+    const previous = field === 'email' ? emailEnabled : inAppEnabled;
+
+    // Optimistic update
+    if (field === 'email') setEmailEnabled(value);
+    else setInAppEnabled(value);
+
+    const formData = new FormData();
+    formData.append(
+      'notifications[email]',
+      String(field === 'email' ? value : emailEnabled)
+    );
+    formData.append(
+      'notifications[inApp]',
+      String(field === 'inApp' ? value : inAppEnabled)
+    );
+
+    updateProfile(
+      { employeeId, data: formData },
+      {
+        onError: () => {
+          // Revert on failure
+          if (field === 'email') setEmailEnabled(previous);
+          else setInAppEnabled(previous);
+          toast.error(
+            'Failed to update notification preference. Please try again.'
+          );
+        },
+      }
+    );
+  };
+
+  const handleCategoryToggle = (
+    key: NotificationCategoryKey,
+    value: boolean
+  ) => {
+    setCategories((previous) => ({ ...previous, [key]: value }));
+  };
 
   const groupedCategories = useMemo(
     () => [
@@ -105,10 +184,7 @@ export const NotificationSettingsTab = () => {
     []
   );
 
-  const onSubmit = () => {
-    // UI feedback modal (API wiring pending)
-    setUpdatedModalOpen(true);
-  };
+  const isDisabled = isLoading || isSaving;
 
   return (
     <section className="space-y-6">
@@ -116,96 +192,63 @@ export const NotificationSettingsTab = () => {
         <h3 className="text-xl font-semibold">Notification Settings</h3>
       </div>
 
-      <FormProvider {...methods}>
-        <form
-          onSubmit={methods.handleSubmit(onSubmit)}
-          className="rounded-lg p-4 sm:p-8 shadow bg-background"
-        >
-          <div className="grid gap-10 lg:grid-cols-[560px_1fr]">
-            {/* Left descriptors */}
-            <div className="space-y-10">
-              <div className="space-y-1">
-                <h4 className="text-lg font-semibold">Notification Channels</h4>
-                <p className="text-muted-foreground text-xs">
-                  Choose your preferred way of receiving notifications
-                </p>
-              </div>
-              <div className="space-y-1">
-                <h4 className="text-lg font-semibold">
-                  Notification Categories
-                </h4>
-                <p className="text-muted-foreground text-xs">
-                  Toggle on/off for specific events
-                </p>
-              </div>
+      <div className="rounded-lg p-4 sm:p-8 shadow bg-background">
+        <div className="grid gap-10 lg:grid-cols-[560px_1fr]">
+          {/* Left descriptors */}
+          <div className="space-y-10">
+            <div className="space-y-1">
+              <h4 className="text-lg font-semibold">Notification Channels</h4>
+              <p className="text-muted-foreground text-xs">
+                Choose your preferred way of receiving notifications
+              </p>
             </div>
-
-            {/* Right controls */}
-            <div className="space-y-10">
-              <div className="space-y-4">
-                <SwitchField
-                  name="emailNotifications"
-                  label="Email Notifications"
-                  className="flex items-center justify-between !text-base"
-                  labelClassname="text-base"
-                />
-                <SwitchField
-                  name="inAppNotifications"
-                  label="In-app Notifications"
-                  className="flex items-center justify-between"
-                  labelClassname="text-base"
-                />
-              </div>
-
-              <div className="space-y-8">
-                {groupedCategories.map((group) => (
-                  <div key={group.title} className="space-y-3">
-                    <p className="text-lg font-semibold">{group.title}</p>
-                    <div className={cn('space-y-2')}>
-                      {group.items.map((item) => (
-                        <CategoryCheckbox
-                          key={item.key}
-                          name={`categories.${item.key}`}
-                          label={item.label}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex items-center gap-4">
-                <MainButton
-                  variant="outline"
-                  type="button"
-                  className="w-full sm:w-[137px]"
-                  onClick={() => methods.reset(DEFAULT_VALUES)}
-                >
-                  Cancel
-                </MainButton>
-                <MainButton
-                  variant="primary"
-                  type="submit"
-                  className="w-full sm:w-[137px]"
-                >
-                  Save Changes
-                </MainButton>
-              </div>
+            <div className="space-y-1">
+              <h4 className="text-lg font-semibold">Notification Categories</h4>
+              <p className="text-muted-foreground text-xs">
+                Toggle on/off for specific events
+              </p>
             </div>
           </div>
-        </form>
 
-        <AlertModal
-          isOpen={updatedModalOpen}
-          onClose={() => setUpdatedModalOpen(false)}
-          onConfirm={() => setUpdatedModalOpen(false)}
-          type="success"
-          title="Settings Updated"
-          description="Notification settings have been successfully updated."
-          confirmText="Continue"
-          showCancelButton={false}
-        />
-      </FormProvider>
+          {/* Right controls */}
+          <div className="space-y-10">
+            <div className="space-y-4">
+              <ChannelToggle
+                label="Email Notifications"
+                checked={emailEnabled}
+                onToggle={(value) => handleChannelToggle('email', value)}
+                disabled
+              />
+              <ChannelToggle
+                label="In-app Notifications"
+                checked={inAppEnabled}
+                onToggle={(value) => handleChannelToggle('inApp', value)}
+                disabled
+              />
+            </div>
+
+            <div className="space-y-8">
+              {groupedCategories.map((group) => (
+                <div key={group.title} className="space-y-3">
+                  <p className="text-lg font-semibold">{group.title}</p>
+                  <div className="space-y-2">
+                    {group.items.map((item) => (
+                      <CategoryCheckbox
+                        key={item.key}
+                        label={item.label}
+                        checked={categories[item.key]}
+                        onToggle={(value) =>
+                          handleCategoryToggle(item.key, value)
+                        }
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 };

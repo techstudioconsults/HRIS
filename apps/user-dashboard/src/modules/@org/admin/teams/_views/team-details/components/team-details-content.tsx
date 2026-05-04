@@ -10,7 +10,7 @@ import { ErrorEmptyState } from '@workspace/ui/lib/empty-state';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { toast } from 'sonner';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { formatDate } from '@/lib/formatters';
 
@@ -20,6 +20,7 @@ import {
 } from '@/lib/nuqs/use-team-details-modal-params';
 import { useTeamService } from '../../../services/use-service';
 import { useSubTeamRowActions } from '../../table-data';
+import { AssignManagerDialog } from '../../../_components/forms/assign-manager-dialog';
 import { TeamDetailsSkeleton } from '../skeleton';
 import { useMembersColumns } from './members-columns';
 import { MembersTab } from './members-tab';
@@ -120,12 +121,18 @@ const TeamDetailsContent = ({
     refetch,
   } = useGetTeamsById(teamId, { enabled: !!teamId });
 
+  // ── Assign manager state ──────────────────────────────────────────────────
+  const [assignManagerSubTeam, setAssignManagerSubTeam] = useState<Team | null>(
+    null
+  );
+
   // ── Sub-team row actions ───────────────────────────────────────────────────
   const { getRowActions, DeleteConfirmationModal } = useSubTeamRowActions(
     onEditSubTeam,
     teamId,
     onAddSubTeamRole,
-    onAddSubTeamMembers
+    onAddSubTeamMembers,
+    (team) => setAssignManagerSubTeam(team)
   );
 
   // ── Search: local input state, debounced before API call ──────────────────
@@ -155,14 +162,25 @@ const TeamDetailsContent = ({
 
   // ── Sub-teams: frontend filter on embedded teamData.subteams ────────────────
   // (backend has no search endpoint for sub-teams yet)
-  const allSubTeams: Team[] = (teamData?.subteams ?? []) as unknown as Team[];
-  const subTeams: Team[] = debouncedSearch.trim()
-    ? allSubTeams.filter((subTeam) =>
-        subTeam.name
-          ?.toLowerCase()
-          .includes(debouncedSearch.trim().toLowerCase())
-      )
-    : allSubTeams;
+  const allSubTeams: Team[] = useMemo(
+    () =>
+      ((teamData?.subteams ?? []) as unknown as Team[]).filter(
+        (subTeam) => subTeam.name?.toLowerCase().trim() !== 'default'
+      ),
+
+    [teamData?.subteams]
+  );
+  const subTeams: Team[] = useMemo(
+    () =>
+      debouncedSearch.trim()
+        ? allSubTeams.filter((subTeam) =>
+            subTeam.name
+              ?.toLowerCase()
+              .includes(debouncedSearch.trim().toLowerCase())
+          )
+        : allSubTeams,
+    [allSubTeams, debouncedSearch]
+  );
 
   const membersColumns = useMembersColumns(teamId, setActiveEmployee);
 
@@ -259,6 +277,14 @@ const TeamDetailsContent = ({
           </TabsContent>
         </Tabs>
       </section>
+
+      <AssignManagerDialog
+        team={assignManagerSubTeam}
+        open={!!assignManagerSubTeam}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) setAssignManagerSubTeam(null);
+        }}
+      />
     </>
   );
 };

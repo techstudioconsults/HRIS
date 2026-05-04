@@ -13,7 +13,6 @@ export type {
 export type {
   UserPayslip,
   PayslipLineItem,
-  PayslipSummaryCardProps,
   PayslipItemCardProps,
   PayslipGridProps,
   PayslipDetailsModalProps,

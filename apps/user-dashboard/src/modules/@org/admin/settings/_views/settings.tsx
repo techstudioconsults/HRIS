@@ -8,8 +8,8 @@ import {
 } from '@workspace/ui/components/tabs';
 import { DashboardHeader } from '@workspace/ui/lib/dashboard';
 import { cn } from '@workspace/ui/lib/utils';
-import { useState } from 'react';
 
+import { useSettingsModalParams } from '@/lib/nuqs/use-settings-modal-params';
 import { AccountSettingsTab } from './tabs/account-settings-tab';
 import { HRSettingsTab } from './tabs/hr-settings-tab';
 import { NotificationSettingsTab } from './tabs/notification-settings-tab';
@@ -23,7 +23,7 @@ const tabTriggerClassName = cn(
 );
 
 export const SettingsView = () => {
-  const [tab, setTab] = useState<SettingsTab>('account');
+  const { settingsTab, setSettingsTab } = useSettingsModalParams();
 
   return (
     <section className="space-y-6">
@@ -33,19 +33,14 @@ export const SettingsView = () => {
       />
 
       <Tabs
-        value={tab}
-        onValueChange={(value) => setTab(value as SettingsTab)}
+        value={settingsTab}
+        onValueChange={(value) => setSettingsTab(value as SettingsTab)}
         className="w-full"
       >
-        <TabsList className="flex relative h-auto w-full flex-wrap items-center gap-6 bg-transparent pb-6">
-          {/*<GradientMask*/}
-          {/*  direction={`left`}*/}
-          {/*  className={`from-[#F8F8F9] dark:from-[#0f1216] h-10 translate-y-25 z-1 lg:translate-y-10`}*/}
-          {/*/>*/}
-          {/*<GradientMask*/}
-          {/*  direction={`right`}*/}
-          {/*  className={`from-[#F8F8F9] dark:from-[#0f1216] z-1 h-10 translate-y-25 lg:translate-y-10`}*/}
-          {/*/>*/}
+        <TabsList
+          className="flex relative bg-background dark:bg-muted rounded-lg
+         shadow h-auto w-full flex-wrap items-center gap-6 border-none py-1"
+        >
           <TabsTrigger value="account" className={tabTriggerClassName}>
             Account
           </TabsTrigger>

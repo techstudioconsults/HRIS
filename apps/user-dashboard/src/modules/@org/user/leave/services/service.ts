@@ -42,7 +42,7 @@ export class UserLeaveService {
   // =============================
   async getLeaveRequests(filters: QueryParameters = {}) {
     const response = await this.http.get<PaginatedApiResponse<LeaveRequest>>(
-      '/leave-request',
+      '/leave-requests',
       filters
     );
     if (response?.status === 200) {
@@ -52,7 +52,7 @@ export class UserLeaveService {
 
   async getLeaveRequestById(id: string) {
     const response = await this.http.get<{ data: LeaveRequest }>(
-      `/leave-request/${id}`
+      `/leave-requests/${id}`
     );
     if (response?.status === 200) {
       return response.data.data;
@@ -69,7 +69,7 @@ export class UserLeaveService {
       formData.append('document', data.document);
     }
     const response = await this.http.post<{ data: LeaveRequest }>(
-      '/leave-request',
+      '/leave-requests',
       formData
     );
     if (response?.status === 201) {
@@ -85,7 +85,7 @@ export class UserLeaveService {
     if (data.reason) formData.append('reason', data.reason);
     if (data.document) formData.append('document', data.document);
     const response = await this.http.patch<{ data: LeaveRequest }>(
-      `/leave-request/${id}`,
+      `/leave-requests/${id}`,
       formData
     );
     if (response?.status === 200) {
@@ -95,7 +95,7 @@ export class UserLeaveService {
 
   async approveLeaveRequest(id: string) {
     const response = await this.http.patch<{ data: LeaveRequest }>(
-      `/leave-request/${id}/approve`
+      `/leave-requests/${id}/approve`
     );
     if (response?.status === 200) {
       return response.data.data;
@@ -104,7 +104,7 @@ export class UserLeaveService {
 
   async rejectLeaveRequest(id: string, data: RejectLeaveRequestPayload) {
     const response = await this.http.patch<{ data: LeaveRequest }>(
-      `/leave-request/${id}/reject`,
+      `/leave-requests/${id}/reject`,
       data
     );
     if (response?.status === 200) {
@@ -116,7 +116,7 @@ export class UserLeaveService {
     const response = await this.http.delete<{
       success: boolean;
       message: string;
-    }>(`/leave-request/${id}`);
+    }>(`/leave-requests/${id}`);
     if (response?.status === 200) {
       return response.data;
     }

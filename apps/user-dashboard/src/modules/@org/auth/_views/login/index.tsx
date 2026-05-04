@@ -10,6 +10,8 @@ import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useSession } from '@/lib/session';
 import { useAuthService } from '../../services/use-auth-service';
+import { getAuthErrorMessage } from '../../services/auth-errors';
+import { routes } from '@/lib/routes/routes';
 
 export const Login = () => {
   const router = useRouter();
@@ -45,10 +47,9 @@ export const Login = () => {
       if (!sessionRes.ok) throw new Error('Failed to establish session');
 
       await refresh();
-      router.push('/login/continue');
+      router.push(routes.auth.loginContinue());
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Login failed';
-      setError('password', { message });
+      setError('password', { message: getAuthErrorMessage(error, 'login') });
     }
   };
 
@@ -79,7 +80,7 @@ export const Login = () => {
               />
               <div className="flex justify-end">
                 <Link
-                  href="/forgot-password"
+                  href={routes.auth.forgotPassword()}
                   className="text-primary text-sm font-medium hover:underline"
                 >
                   Forgot Password?
@@ -113,7 +114,7 @@ export const Login = () => {
 
         <section>
           <MainButton
-            href={`/login/otp`}
+            href={routes.auth.loginOtp()}
             variant="outline"
             className="w-full"
             size={`2xl`}
@@ -125,7 +126,10 @@ export const Login = () => {
         <section>
           <p className="text-grey-500 mt-4 text-center text-sm">
             Don&apos;t have an account?{' '}
-            <Link href="/register" className="text-primary hover:underline">
+            <Link
+              href={routes.auth.register()}
+              className="text-primary hover:underline"
+            >
               Sign Up
             </Link>
           </p>

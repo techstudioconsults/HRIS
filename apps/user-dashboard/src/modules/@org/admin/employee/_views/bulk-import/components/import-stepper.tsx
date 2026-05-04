@@ -42,13 +42,13 @@ interface ImportStepperProperties {
 export function ImportStepper({ currentStep }: ImportStepperProperties) {
   return (
     <nav aria-label="Import progress steps">
-      <ol className="flex items-center gap-0">
+      <ol className="flex items-center justify-evenly gap-0">
         {STEPS.map((step, index) => {
           const state = getStepState(step.key, currentStep);
           const isLast = index === STEPS.length - 1;
 
           return (
-            <li key={step.key} className="flex flex-1 items-center">
+            <li key={step.key} className="flex items-center">
               {/* Step indicator */}
               <div className="flex flex-col items-center gap-1">
                 <span

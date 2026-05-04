@@ -7,6 +7,7 @@ import { MainButton } from '@workspace/ui/lib/button';
 import { useEffect } from 'react';
 
 import { welcomeTourSteps } from '../../config/tour-steps';
+import { routes } from '@/lib/routes/routes';
 import {
   tourSegments,
   transcriptLines,
@@ -51,7 +52,7 @@ export const Welcome = () => {
             />
             <div data-tour="skip-tour-button">
               <MainButton
-                href={`/onboarding/step-1`}
+                href={routes.onboarding.step1()}
                 className={`w-full lg:w-fit`}
                 variant={`primaryOutline`}
               >

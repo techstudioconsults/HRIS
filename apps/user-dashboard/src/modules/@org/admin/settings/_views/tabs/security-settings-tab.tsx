@@ -50,6 +50,7 @@ export const SecuritySettingsTab = () => {
             {/* Right form */}
             <div className="space-y-4">
               <FormField
+                disabled
                 name="oldPassword"
                 label="Old Password"
                 type="password"
@@ -57,6 +58,7 @@ export const SecuritySettingsTab = () => {
                 className="h-14"
               />
               <FormField
+                disabled
                 name="newPassword"
                 label="New Password"
                 type="password"
@@ -64,6 +66,7 @@ export const SecuritySettingsTab = () => {
                 className="h-14"
               />
               <FormField
+                disabled
                 name="confirmNewPassword"
                 label="Confirm New Password"
                 type="password"
@@ -73,25 +76,28 @@ export const SecuritySettingsTab = () => {
 
               <div className="flex items-center gap-4 pt-2">
                 <MainButton
-                  variant="outline"
+                  disabled
+                  variant="primaryOutline"
                   type="button"
-                  className="w-full sm:w-[137px]"
+                  className="w-full sm:w-34.25"
                   size="xl"
                   onClick={() => methods.reset(DEFAULT_VALUES)}
                 >
                   Cancel
                 </MainButton>
                 <MainButton
+                  disabled
                   size="xl"
                   variant="primary"
                   type="submit"
-                  className="w-full sm:w-[137px]"
+                  className="w-full sm:w-34.25"
                 >
                   Save Changes
                 </MainButton>
               </div>
               <div className="mt-8">
                 <SwitchField
+                  disabled
                   name="enable2fa"
                   label="Enable 2factor authentication"
                   className="flex items-center justify-between"

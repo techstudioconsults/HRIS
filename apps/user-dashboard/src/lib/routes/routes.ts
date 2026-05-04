@@ -1,6 +1,65 @@
 // Define route patterns with access control
 import { ACCESS_LEVELS, MODULE_PERMISSIONS } from '@/lib/auth-types';
 
+// ---------------------------------------------------------------------------
+// Typed navigation route factories
+// Usage: router.push(routes.admin.employees.list())
+//        <Link href={routes.admin.employees.detail(id)} />
+// ---------------------------------------------------------------------------
+export const routes = {
+  root: () => '/',
+  auth: {
+    login: () => '/login',
+    loginContinue: () => '/login/continue',
+    loginOtp: () => '/login/otp',
+    loginOtpVerify: (email: string) =>
+      `/login/otp-verify?email=${encodeURIComponent(email)}`,
+    forgotPassword: () => '/forgot-password',
+    resetPassword: (email: string) =>
+      `/reset-password?email=${encodeURIComponent(email)}`,
+    register: () => '/register',
+  },
+  onboarding: {
+    welcome: () => '/onboarding/welcome',
+    step1: () => '/onboarding/step-1',
+    step2: () => '/onboarding/step-2',
+    step3: () => '/onboarding/step-3',
+  },
+  admin: {
+    dashboard: () => '/admin/dashboard',
+    profile: () => '/admin/profile',
+    settings: () => '/admin/settings',
+    employees: {
+      list: () => '/admin/employees',
+      detail: (id: string) => `/admin/employees/${id}`,
+      add: () => '/admin/employees/add-employee',
+      edit: (id: string) => `/admin/employees/edit-employee?employeeid=${id}`,
+      bulkImport: () => '/admin/employees/bulk-import',
+    },
+    teams: {
+      list: () => '/admin/teams',
+      detail: (id: string) => `/admin/teams/${id}`,
+      subTeam: (id: string) => `/admin/teams/sub-team/${id}`,
+    },
+    leave: {
+      list: () => '/admin/leave',
+      types: () => '/admin/leave/type',
+      setup: () => '/admin/leave/setup',
+    },
+    payroll: {
+      list: () => '/admin/payroll',
+      setup: () => '/admin/payroll/setup',
+    },
+  },
+  user: {
+    dashboard: () => '/user/dashboard',
+    profile: () => '/user/profile',
+    leave: () => '/user/leave',
+    payslip: () => '/user/payslip',
+    activities: () => '/user/activities',
+  },
+};
+
 export const ROUTE_CONFIGS = [
   // Public routes - accessible to everyone
   {

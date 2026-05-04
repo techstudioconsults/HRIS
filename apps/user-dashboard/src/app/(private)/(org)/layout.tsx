@@ -22,7 +22,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       adminName={session?.user.employee.fullName || ''}
       adminRole={session?.user.employee.role?.name || ''}
       adminEmail={session?.user.employee.email || ''}
-      notifications={[]}
     />
   );
 
@@ -31,7 +30,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       adminName={session?.user.employee.fullName || ''}
       adminRole={session?.user.employee.role?.name || ''}
       adminEmail={session?.user.employee.email || ''}
-      notifications={[]}
       showSidebarTrigger={false}
       sticky={false}
     />

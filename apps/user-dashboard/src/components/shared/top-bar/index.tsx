@@ -1,9 +1,10 @@
 'use client';
 
 import { AppEventsListener } from '@/components/shared/app-events-listener';
-import { useIsPWA } from '@/lib/pwa/pwa-provider';
 import { getTopBarTitle } from '@/lib/routes/top-bar-title';
+import { useSession } from '@/lib/session';
 import { GlobalSearchInput } from '@/modules/@org/shared/search-input';
+import { useAppService } from '@/services/app/use-app-service';
 import { SidebarTrigger } from '@workspace/ui/components/sidebar';
 import {
   NotificationWidget,
@@ -15,6 +16,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { useLogout } from '@/modules/@org/auth/hooks/use-logout';
+import { routes } from '@/lib/routes/routes';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { Button } from '@workspace/ui/components/button';
 import type { TopBarProperties } from './types';
@@ -24,18 +26,29 @@ export default function TopBar({
   adminEmail,
   adminAvatar,
   adminRole,
-  notifications = [],
   className = '',
   showSidebarTrigger = true,
   sticky = true,
 }: TopBarProperties) {
-  const isPWA = useIsPWA();
   const pathname = usePathname();
   const [hideMobileSearch, setHideMobileSearch] = useState(true);
   const router = useRouter();
   const handleLogout = useLogout();
-  const [notificationsList, setNotificationsList] =
-    useState<Notification[]>(notifications);
+
+  const { data: session } = useSession();
+  const employeeId = session?.user.employee.id;
+
+  const {
+    useGetNotifications,
+    useMarkNotificationRead,
+    useMarkAllNotificationsRead,
+    useClearAllNotifications,
+  } = useAppService();
+
+  const { data: notifications = [] } = useGetNotifications(employeeId);
+  const { mutate: markRead } = useMarkNotificationRead(employeeId);
+  const { mutate: markAllRead } = useMarkAllNotificationsRead(employeeId);
+  const { mutate: clearAll } = useClearAllNotifications(employeeId);
 
   const handleNotificationClick = (notification: Notification) => {
     if (notification.actionUrl) {
@@ -44,23 +57,18 @@ export default function TopBar({
   };
 
   const handleMarkAsRead = (notificationId: string) => {
-    setNotificationsList((previous) =>
-      previous.map((n) => (n.id === notificationId ? { ...n, read: true } : n))
-    );
+    markRead(notificationId);
   };
 
   const handleMarkAllAsRead = () => {
-    setNotificationsList((previous) =>
-      previous.map((n) => ({ ...n, read: true }))
-    );
+    markAllRead();
   };
 
   const handleClearAll = () => {
-    setNotificationsList([]);
+    clearAll();
   };
 
   const title = getTopBarTitle(pathname);
-  console.log(title, isPWA);
   return (
     <>
       <header
@@ -97,7 +105,7 @@ export default function TopBar({
               />
             </Button>
             <NotificationWidget
-              notifications={notificationsList}
+              notifications={notifications}
               onNotificationClick={handleNotificationClick}
               onMarkAsRead={handleMarkAsRead}
               onMarkAllAsRead={handleMarkAllAsRead}
@@ -108,8 +116,14 @@ export default function TopBar({
               userEmail={adminEmail}
               userAvatar={adminAvatar}
               userRole={adminRole}
-              onProfileClick={() => router.push('/profile')}
-              onSettingsClick={() => router.push('/settings')}
+              onProfileClick={() =>
+                router.push(
+                  pathname.startsWith('/admin')
+                    ? routes.admin.profile()
+                    : routes.user.profile()
+                )
+              }
+              onSettingsClick={() => router.push(routes.admin.settings())}
               onLogout={handleLogout}
             />
           </div>

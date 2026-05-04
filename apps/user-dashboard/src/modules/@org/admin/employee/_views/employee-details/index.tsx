@@ -17,11 +17,13 @@ import Image from 'next/image';
 
 import { useEmployeeService } from '../../services/use-service';
 import { EmployeeDetailsSkeleton } from './loader';
+import { routes } from '@/lib/routes/routes';
 import { formatDate } from '@/lib/formatters';
 import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 import { AnyIconName } from '@workspace/ui/lib/icons/types';
 import { Button } from '@workspace/ui/components/button';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 const getInitials = (firstName?: string, lastName?: string) => {
   const fullName = `${firstName ?? ''} ${lastName ?? ''}`.trim();
@@ -107,12 +109,12 @@ const EmployeeDetailsHeader = ({
     subtitle={
       <BreadCrumb
         items={[
-          { label: 'Employees', href: '/admin/employees' },
+          { label: 'Employees', href: routes.admin.employees.list() },
           {
             label: employeeName || 'Employee Profile',
             href: employeeId
-              ? `/admin/employees/${employeeId}`
-              : '/admin/employees',
+              ? routes.admin.employees.detail(employeeId)
+              : routes.admin.employees.list(),
           },
         ]}
         showHome={true}
@@ -126,8 +128,8 @@ const EmployeeDetailsHeader = ({
             icon={<Icon name="Edit" variant={`Bold`} />}
             href={
               employeeId
-                ? `/admin/employees/edit-employee?employeeid=${employeeId}`
-                : '/admin/employees/edit-employee'
+                ? routes.admin.employees.edit(employeeId)
+                : routes.admin.employees.add()
             }
             variant="primary"
             className="w-full sm:w-auto"
@@ -162,9 +164,140 @@ const EmployeeDetailsHeader = ({
   />
 );
 
+const AVATAR_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const AVATAR_MAX_BYTES = 5 * 1024 * 1024;
+
+const EmployeeAvatarUpload = ({
+  employeeId,
+  avatarUrl,
+  firstName,
+  lastName,
+}: {
+  employeeId: string;
+  avatarUrl: string;
+  firstName?: string;
+  lastName?: string;
+}) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const pendingObjectUrlRef = useRef<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const { useUpdateEmployee } = useEmployeeService();
+  const { mutate: updateEmployee, isPending: isUploading } =
+    useUpdateEmployee();
+
+  // Revoke any pending blob URL when the server-confirmed avatar arrives or on unmount
+  React.useEffect(() => {
+    if (previewUrl && avatarUrl && !avatarUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+      pendingObjectUrlRef.current = null;
+    }
+  }, [avatarUrl, previewUrl]);
+
+  React.useEffect(() => {
+    return () => {
+      if (pendingObjectUrlRef.current) {
+        URL.revokeObjectURL(pendingObjectUrlRef.current);
+      }
+    };
+  }, []);
+
+  const triggerPicker = () => {
+    if (!isUploading) fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!AVATAR_ALLOWED_TYPES.includes(file.type)) {
+      toast.error('Only JPEG, PNG, and WebP images are allowed.');
+      event.target.value = '';
+      return;
+    }
+    if (file.size > AVATAR_MAX_BYTES) {
+      toast.error('Image must be smaller than 5 MB.');
+      event.target.value = '';
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    pendingObjectUrlRef.current = objectUrl;
+    setPreviewUrl(objectUrl);
+
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    updateEmployee(
+      { id: employeeId, data: formData },
+      {
+        onSuccess: () => {
+          toast.success('Avatar updated successfully');
+          // previewUrl cleared via useEffect when refetched avatarUrl arrives
+        },
+        onError: () => {
+          if (pendingObjectUrlRef.current) {
+            URL.revokeObjectURL(pendingObjectUrlRef.current);
+            pendingObjectUrlRef.current = null;
+          }
+          setPreviewUrl(null);
+          toast.error('Failed to update avatar. Please try again.');
+        },
+      }
+    );
+
+    event.target.value = '';
+  };
+
+  return (
+    <div
+      role="button"
+      tabIndex={isUploading ? -1 : 0}
+      aria-label="Upload employee avatar"
+      aria-disabled={isUploading}
+      className="relative group cursor-pointer"
+      onClick={triggerPicker}
+      onKeyDown={(event) => {
+        if (!isUploading && (event.key === 'Enter' || event.key === ' ')) {
+          event.preventDefault();
+          fileInputRef.current?.click();
+        }
+      }}
+    >
+      <Avatar className="border-primary/20 bg-muted size-32 border shadow-lg group-hover:brightness-90 transition-[filter]">
+        <AvatarImage src={previewUrl || avatarUrl || ''} />
+        <AvatarFallback className="bg-primary-50 text-2xl font-bold text-primary-75">
+          {getInitials(firstName, lastName)}
+        </AvatarFallback>
+      </Avatar>
+      <span className="absolute bottom-1 right-1 flex size-8 items-center justify-center rounded-full border-2 border-background bg-primary shadow-sm">
+        {isUploading ? (
+          <Icon
+            name="Loader2"
+            className="text-primary-foreground animate-spin"
+            size={16}
+          />
+        ) : (
+          <Icon name="Pencil" className="text-primary-foreground" size={14} />
+        )}
+      </span>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+        disabled={isUploading}
+      />
+    </div>
+  );
+};
+
 const EmployeeDetailsContent = ({
+  employeeId,
   employeeData,
 }: {
+  employeeId: string;
   employeeData: Employee;
 }) => {
   const fullName =
@@ -181,12 +314,12 @@ const EmployeeDetailsContent = ({
         shadow-sm lg:col-span-4 lg:sticky lg:top-20 lg:h-fit md:p-8"
         >
           <div className="flex flex-col items-center text-center">
-            <Avatar className="border-primary/20 bg-muted size-32 border shadow-lg">
-              <AvatarImage src={employeeData?.avatar || ''} />
-              <AvatarFallback className=" bg-primary-50 text-2xl font-bold text-primary-75">
-                {getInitials(employeeData?.firstName, employeeData?.lastName)}
-              </AvatarFallback>
-            </Avatar>
+            <EmployeeAvatarUpload
+              employeeId={employeeId}
+              avatarUrl={employeeData?.avatar || ''}
+              firstName={employeeData?.firstName}
+              lastName={employeeData?.lastName}
+            />
 
             <h2 className="mt-6 text-2xl font-bold">{fullName || 'N/A'}</h2>
             <p className="text-muted-foreground mt-2 text-base">
@@ -393,7 +526,10 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
         employeeId={employeeData.id}
         employeeName={employeeName}
       />
-      <EmployeeDetailsContent employeeData={employeeData} />
+      <EmployeeDetailsContent
+        employeeId={employeeData.id}
+        employeeData={employeeData}
+      />
     </section>
   );
 };

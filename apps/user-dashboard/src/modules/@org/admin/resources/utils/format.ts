@@ -2,6 +2,13 @@
  * Format utilities for resources module
  */
 
+const IMAGE_MIME_PREFIXES = ['image/'];
+
+export const isImageMimetype = (mimetype?: string): boolean => {
+  if (!mimetype) return false;
+  return IMAGE_MIME_PREFIXES.some((prefix) => mimetype.startsWith(prefix));
+};
+
 /**
  * Get file icon based on file type/extension
  */

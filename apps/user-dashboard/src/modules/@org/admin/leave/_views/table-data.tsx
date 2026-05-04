@@ -3,10 +3,15 @@ import { useLeaveAdminModalParams } from '@/lib/nuqs/use-leave-admin-modal-param
 import { Badge } from '@workspace/ui/components/badge';
 import { calculateDaysBetween, cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import Image from 'next/image';
 
 import { useLeaveStore } from '../stores/leave-store';
 import type { LeaveRequest, LeaveType } from '../types';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@workspace/ui/components/avatar';
+import { NameTooltip } from '@workspace/ui/lib/tooltip';
 
 export const useLeaveRowActions = () => {
   // URL state: modal open + entity ID (survives refresh)
@@ -35,29 +40,37 @@ export const useLeaveRowActions = () => {
 export const leaveColumns: IColumnDefinition<LeaveRequest>[] = [
   {
     header: 'Employee',
-    accessorKey: 'employeeName',
+    accessorKey: 'employee',
     render: (_value, row) => {
       const request = row as LeaveRequest;
       return (
-        <div className="flex items-center gap-3">
-          {request.employeeAvatar && (
-            <div className={`size-10 relative`}>
-              <Image
-                src={request.employeeAvatar}
-                alt={request.employeeName}
-                fill
-                className="rounded-full object-cover"
-              />
-            </div>
-          )}
-          <span className="font-medium text-sm truncate">{request.id}</span>
+        <div className="group hover:bg-muted/60 flex w-fit cursor-pointer items-center gap-2 rounded-md px-1 py-0.5 transition-colors">
+          <Avatar className={`bg-primary`}>
+            <AvatarImage
+              src={request.employee.avatar || ''}
+              alt={request.employee.name}
+            />
+            <AvatarFallback className="rounded-lg bg-transparent text-sm text-white">
+              {request.employee.name.slice(0, 2).toUpperCase() || 'CN'}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col space-y-1">
+            <NameTooltip name={request.employee.name}>
+              <span className="text-sm font-medium tracking-wide capitalize">
+                {request.employee.name}
+              </span>
+            </NameTooltip>
+            <span className="muted-foreground text-[10px] uppercase">
+              ID: {request.employee.id.slice(0, 8)}
+            </span>
+          </div>
         </div>
       );
     },
   },
   {
     header: 'Leave Type',
-    accessorKey: 'leaveTypeName',
+    accessorKey: 'type',
     render: (_value, row) => (
       <span className="text-sm truncate">{row.type}</span>
     ),

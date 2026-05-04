@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { OnboardingEmployeeInput } from '../../../_views/step-three';
 import { useOnboardingService } from '../../../services/use-onboarding-service';
 import { EmployeeConfig } from '../../accordions/employee-config';
+import { routes } from '@/lib/routes/routes';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 
 export const EmployeeSetupForm = () => {
@@ -125,7 +126,7 @@ export const EmployeeSetupForm = () => {
               Proceed to Dashboard
             </MainButton>
             <MainButton
-              href={`/admin/dashboard`}
+              href={routes.admin.dashboard()}
               type="button"
               variant="link"
               className="w-full font-medium"

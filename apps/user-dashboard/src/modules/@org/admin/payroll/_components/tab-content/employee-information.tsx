@@ -3,6 +3,7 @@ import { Card, CardContent } from '@workspace/ui/components/card';
 import { MainButton } from '@workspace/ui/lib/button';
 
 import type { EmployeeInformationProperties } from '../../types';
+import { routes } from '@/lib/routes/routes';
 
 const EmployeeInformation = ({ payslip }: EmployeeInformationProperties) => {
   const employee = payslip?.employee;
@@ -71,7 +72,7 @@ const EmployeeInformation = ({ payslip }: EmployeeInformationProperties) => {
         variant="primary"
         size="xl"
         className="w-full"
-        href={employee ? `/admin/employees/${employee.id}` : undefined}
+        href={employee ? routes.admin.employees.detail(employee.id) : undefined}
         isDisabled={!employee}
       >
         View Full Profile

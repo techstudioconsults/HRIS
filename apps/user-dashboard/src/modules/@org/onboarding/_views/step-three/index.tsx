@@ -4,6 +4,7 @@ import { MainButton } from '@workspace/ui/lib/button';
 import { useCallback, useEffect } from 'react';
 
 import { EmployeeSetupForm } from '../../_components/forms/employee/employee-setup';
+import { routes } from '@/lib/routes/routes';
 import { stepThreeTourSteps } from '../../config/tour-steps';
 import { useTour } from '@workspace/ui/context/tour-context';
 export type {
@@ -48,7 +49,7 @@ export const EmployeeSetup = () => {
           </p>
         </div>
         <div className="flex gap-4">
-          <MainButton href="/onboarding/step-2" variant="primaryOutline">
+          <MainButton href={routes.onboarding.step2()} variant="primaryOutline">
             Back
           </MainButton>
         </div>

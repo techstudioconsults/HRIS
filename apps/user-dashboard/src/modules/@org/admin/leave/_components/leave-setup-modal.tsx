@@ -7,6 +7,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useLeaveService } from '../services/use-service';
 import type { LeaveType } from '../types';
+import { routes } from '@/lib/routes/routes';
 
 /**
  * Lightweight reminder modal for admin leave setup.
@@ -95,7 +96,7 @@ export const LeaveSetupModal = () => {
             className="w-full"
             onClick={() => {
               setOpen(false);
-              router.push('/admin/leave/type');
+              router.push(routes.admin.leave.types());
             }}
           >
             Manage Leave Types

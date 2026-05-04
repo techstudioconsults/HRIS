@@ -33,6 +33,7 @@ import { usePayrollStore } from '../stores/payroll-store';
 import type { Payroll, PayrollApproval } from '../types';
 import { AlertModal } from '@workspace/ui/lib/dialog';
 import { getPayrollColumns, usePayrollRowActions } from './table-data';
+import { routes } from '@/lib/routes/routes';
 import { useBulkPayrollActions } from '../hook/use-bulk-payroll-actions';
 import { PayrollTableSection } from './payroll-table-section';
 
@@ -462,7 +463,7 @@ export const PayrollView = () => {
                     <Icon name={`MoneyTime`} variant={`Outline`} />
                     Schedule Payroll
                   </DropdownMenuItem>
-                  <Link href={`/admin/payroll/setup`}>
+                  <Link href={routes.admin.payroll.setup()}>
                     <DropdownMenuItem>
                       <Icon name={`Setting2`} variant={`Outline`} />
                       Payroll Settings
@@ -543,7 +544,7 @@ export const PayrollView = () => {
                   Schedule Payroll
                 </DropdownMenuItem>
 
-                <Link href={`/admin/payroll/setup`}>
+                <Link href={routes.admin.payroll.setup()}>
                   <DropdownMenuItem>
                     <Icon name={`Setting2`} variant={`Outline`} />
                     Payroll Settings

@@ -5,6 +5,7 @@ import { useCallback, useEffect } from 'react';
 
 import { CompanyProfile } from '../../_components/forms/company-profile';
 import { stepOneTourSteps } from '../../config/tour-steps';
+import { routes } from '@/lib/routes/routes';
 import { useTour } from '@workspace/ui/context/tour-context';
 
 export const StepOne = () => {
@@ -44,7 +45,10 @@ export const StepOne = () => {
           </p>
         </div>
         <div className="flex gap-4">
-          <MainButton href={`/onboarding/welcome`} variant="primaryOutline">
+          <MainButton
+            href={routes.onboarding.welcome()}
+            variant="primaryOutline"
+          >
             Back
           </MainButton>
         </div>

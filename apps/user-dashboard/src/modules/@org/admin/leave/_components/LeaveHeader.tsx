@@ -9,6 +9,7 @@ import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useRouter } from 'next/navigation';
 import { LeaveHeaderProperties } from '@/modules/@org/admin/leave/types';
+import { routes } from '@/lib/routes/routes';
 
 export const LeaveHeader = ({ onSearch }: LeaveHeaderProperties) => {
   const router = useRouter();
@@ -41,7 +42,7 @@ export const LeaveHeader = ({ onSearch }: LeaveHeaderProperties) => {
               >
                 <DropdownMenuItem
                   onClick={() => {
-                    router.push('/admin/leave/type');
+                    router.push(routes.admin.leave.types());
                   }}
                 >
                   <Icon name="DocumentDownload" variant="Outline" />
@@ -54,25 +55,25 @@ export const LeaveHeader = ({ onSearch }: LeaveHeaderProperties) => {
               placeholder="Search leave requests..."
               onSearch={onSearch}
             />
-            <GenericDropdown
-              contentClassName="bg-background"
-              trigger={
-                <Button className="h-10 rounded-md px-3">
-                  <Icon variant={`Outline`} name="Filter" size={16} />
-                  <span className="hidden lg:block">Filter</span>
-                </Button>
-              }
-            >
-              <section className="text-muted-foreground min-w-[220px] p-3 text-sm">
-                Basic filtering for leave requests will be available soon.
-              </section>
-            </GenericDropdown>
+            {/*<GenericDropdown*/}
+            {/*  contentClassName="bg-background"*/}
+            {/*  trigger={*/}
+            {/*    <Button disabled variant={`primaryOutline`} className={`h-10`}>*/}
+            {/*      <Icon variant={`Outline`} name="Filter" size={16} />*/}
+            {/*      <span className="hidden lg:block">Filter</span>*/}
+            {/*    </Button>*/}
+            {/*  }*/}
+            {/*>*/}
+            {/*  <section className="text-muted-foreground min-w-55 p-3 text-sm">*/}
+            {/*    Basic filtering for leave requests will be available soon.*/}
+            {/*  </section>*/}
+            {/*</GenericDropdown>*/}
           </div>
           <div className="hidden lg:flex">
             <MainButton
               variant="primary"
               onClick={() => {
-                router.push('/admin/leave/type');
+                router.push(routes.admin.leave.types());
               }}
             >
               Manage Leave Types

@@ -18,6 +18,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { useOnboardingService } from '../../services/use-onboarding-service';
+import { routes } from '@/lib/routes/routes';
 
 export const CompanyProfile = () => {
   const { useGetCompanyProfile, useUpdateCompanyProfile } =
@@ -84,7 +85,7 @@ export const CompanyProfile = () => {
         toast.success("Company's Profile", {
           description: `Company profile saved successfully`,
         });
-        router.push(`/onboarding/step-2`);
+        router.push(routes.onboarding.step2());
       },
       onError: (error) => {
         toast.error('Failed to save company profile', {
@@ -324,7 +325,7 @@ export const CompanyProfile = () => {
             <div className="flex w-full items-center justify-center py-5">
               <Link
                 data-tour="skip-form"
-                href={`/admin/dashboard`}
+                href={routes.admin.dashboard()}
                 className="text-primary font-medium hover:underline"
               >
                 Skip for Later

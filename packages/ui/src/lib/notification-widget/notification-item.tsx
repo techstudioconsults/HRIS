@@ -50,35 +50,36 @@ export function NotificationItem({
   return (
     <div
       className={cn(
-        'group relative flex cursor-pointer gap-3 rounded-lg border p-3 transition-all hover:shadow-sm',
-        notification.read
-          ? 'bg-background border-border opacity-75'
-          : notificationColors[notification.type]
+        'group relative flex cursor-pointer gap-3 p-3 px-6 transition-all hover:bg-primary/5'
+        // notification.read
+        // ? 'bg-background border-border opacity-75'
+        // : notificationColors[notification.type]
       )}
       onClick={handleClick}
     >
       {/* Unread Indicator */}
-      {!notification.read && (
-        <div className="absolute top-3 right-3 size-2 rounded-full bg-blue-600" />
-      )}
+      {/*{!notification.read && (*/}
+      {/*  <div className="absolute top-3 right-3 size-2 rounded-full bg-primary" />*/}
+      {/*)}*/}
 
       {/* Avatar or Icon */}
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         {notification.avatar ? (
-          <Avatar className="size-10">
+          <Avatar className="size-5">
             <AvatarImage src={notification.avatar} alt={notification.title} />
             <AvatarFallback>{notification.title[0]}</AvatarFallback>
           </Avatar>
         ) : (
           <div
             className={cn(
-              'flex size-10 items-center justify-center rounded-full',
-              notification.type === 'info' && 'bg-blue-100 dark:bg-blue-900/30',
+              'flex size-8 items-center justify-center rounded-full',
+              notification.type === 'info' && 'bg-primary/10 dark:bg-info/30',
               notification.type === 'success' &&
-                'bg-green-100 dark:bg-green-900/30',
+                'bg-success/10 dark:bg-success',
               notification.type === 'warning' &&
                 'bg-amber-100 dark:bg-amber-900/30',
-              notification.type === 'error' && 'bg-red-100 dark:bg-red-900/30',
+              notification.type === 'error' &&
+                'bg-destructive/10 dark:bg-destructive/30',
               notification.type === 'system' &&
                 'bg-gray-100 dark:bg-gray-900/30'
             )}
@@ -95,10 +96,10 @@ export function NotificationItem({
             {notification.title}
           </h4>
         </div>
-        <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">
+        <p className="text-muted-foreground mt-1 line-clamp-2 text-xs">
           {notification.message}
         </p>
-        <span className="text-muted-foreground mt-2 inline-block text-xs">
+        <span className="text-muted-foreground mt-2 inline-block text-[8px]">
           {formatDistanceToNow(notification.timestamp, { addSuffix: true })}
         </span>
       </div>

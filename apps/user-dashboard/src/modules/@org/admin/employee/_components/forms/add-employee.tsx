@@ -23,8 +23,9 @@ import { toast } from 'sonner';
 
 import { useEmployeeService } from '../../services/use-service';
 import type { RoleInput, RoleLite } from '../../types';
+import { routes } from '@/lib/routes/routes';
 import { PhoneInput } from '@/components/shared/phone-input';
-import FileUpload from '@workspace/ui/lib/file-upload/file-upload';
+import { FileUploader } from '@workspace/ui/components/core/miscellaneous/file-uploader';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 
 export const AddEmployeeForm = () => {
@@ -69,10 +70,12 @@ export const AddEmployeeForm = () => {
   );
   const normalizedDerivedRoles = useMemo<RoleLite[]>(
     () =>
-      ((selectedTeam?.roles ?? []) as RoleInput[]).map((r) => ({
-        id: String(r.id),
-        name: r.name,
-      })),
+      ((selectedTeam?.roles ?? []) as RoleInput[])
+        .filter((r) => r.name?.toLowerCase().trim() !== 'default')
+        .map((r) => ({
+          id: String(r.id),
+          name: r.name,
+        })),
     [selectedTeam]
   );
 
@@ -180,7 +183,7 @@ export const AddEmployeeForm = () => {
       onSuccess: () => {
         // Invalidate or update any relevant queries here if needed
         toast.success('Employee Added Successfully');
-        router.push('/admin/employees');
+        router.push(routes.admin.employees.list());
       },
       onError: (error: any) => {
         toast.error('Something went wrong', {
@@ -214,7 +217,7 @@ export const AddEmployeeForm = () => {
         subtitle={
           <BreadCrumb
             items={[
-              { label: 'Employee', href: '/admin/employees' },
+              { label: 'Employee', href: routes.admin.employees.list() },
               { label: 'Add Employee', href: '' },
             ]}
             showHome={true}
@@ -369,10 +372,14 @@ export const AddEmployeeForm = () => {
                       : `Select a department`
                   }
                   className="bg-background border-border h-14! w-full"
-                  options={teams.map((team) => ({
-                    value: String(team.id),
-                    label: team.name,
-                  }))}
+                  options={teams
+                    .filter(
+                      (team) => team.name?.toLowerCase().trim() !== 'default'
+                    )
+                    .map((team) => ({
+                      value: String(team.id),
+                      label: team.name,
+                    }))}
                   required
                 />
                 <FormField
@@ -482,10 +489,16 @@ export const AddEmployeeForm = () => {
                 Upload supporting documents for this employee (optional).
               </p>
               <div className="grid grid-cols-1 gap-4 md:gap-8">
-                <FileUpload
-                  onFileChange={handleFilesSelected}
-                  acceptedFileTypes=".pdf,.doc,.docx"
+                <FileUploader
+                  accept={{
+                    'application/pdf': ['.pdf'],
+                    'application/msword': ['.doc'],
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                      ['.docx'],
+                  }}
                   maxFiles={3}
+                  multiple
+                  onChange={handleFilesSelected}
                 />
               </div>
             </fieldset>
@@ -496,7 +509,7 @@ export const AddEmployeeForm = () => {
             <MainButton
               type="button"
               variant="destructiveOutline"
-              onClick={() => router.push('/admin/employees')}
+              onClick={() => router.push(routes.admin.employees.list())}
               isDisabled={isSubmitting}
               className="w-full"
             >

@@ -11,6 +11,8 @@ import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { useAuthService } from '../../services/use-auth-service';
+import { getAuthErrorMessage } from '../../services/auth-errors';
+import { routes } from '@/lib/routes/routes';
 import { Card } from '@workspace/ui/components/card';
 
 export const ForgotPassword = () => {
@@ -27,15 +29,20 @@ export const ForgotPassword = () => {
 
   const {
     handleSubmit,
+    setError,
     formState: { isValid },
   } = methods;
 
   const handleSubmitForm = async (data: ForgotPasswordData) => {
     await forgotPassword(data, {
       onSuccess: () => {
-        router.push(`/reset-password?email=${encodeURIComponent(data.email)}`);
+        router.push(routes.auth.resetPassword(data.email));
       },
-      onError: () => {},
+      onError: (error) => {
+        setError('email', {
+          message: getAuthErrorMessage(error, 'forgot-password'),
+        });
+      },
     });
   };
 
@@ -77,7 +84,10 @@ export const ForgotPassword = () => {
 
         <p className="text-grey-500 mt-4 text-center text-sm">
           Don&apos;t have an account?{' '}
-          <Link href="/register" className="text-primary hover:underline">
+          <Link
+            href={routes.auth.register()}
+            className="text-primary hover:underline"
+          >
             Sign Up
           </Link>
         </p>

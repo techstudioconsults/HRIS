@@ -57,13 +57,20 @@ export type PlaceholderPanelProperties = {
 // Roles Management tab
 // ---------------------------------------------------------------------------
 
+export type RoleAssignedEmployee = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  avatar: string;
+};
+
 export type RoleRow = {
   id: string;
   name: string;
   teamId: string;
   teamName: string;
   permissions: string[];
-  usersAssigned: string;
+  assignedEmployees: RoleAssignedEmployee[];
   lastModified: string;
 };
 

@@ -16,7 +16,7 @@ import { DashboardHeader } from '@workspace/ui/lib/dashboard';
 import { ErrorEmptyState } from '@workspace/ui/lib/empty-state';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
-import FileUpload from '@workspace/ui/lib/file-upload/file-upload';
+import { FileUploader } from '@workspace/ui/components/core/miscellaneous/file-uploader';
 import { AxiosError } from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -25,6 +25,7 @@ import { toast } from 'sonner';
 
 import { useEmployeeService } from '../../services/use-service';
 import { Icon } from '@workspace/ui/lib/icons/icon';
+import { routes } from '@/lib/routes/routes';
 
 export const EditEmployeeForm = () => {
   const router = useRouter();
@@ -190,10 +191,12 @@ export const EditEmployeeForm = () => {
 
   // Stable, memoized options for selects with fallbacks to preserve current values
   const teamOptions = useMemo(() => {
-    const base = teams.map((team) => ({
-      value: String(team.id),
-      label: team.name,
-    }));
+    const base = teams
+      .filter((team) => team.name?.toLowerCase().trim() !== 'default')
+      .map((team) => ({
+        value: String(team.id),
+        label: team.name,
+      }));
     const currentTeamId = formValues?.teamId || selectedTeamId;
     if (currentTeamId && !base.some((opt) => opt.value === currentTeamId)) {
       base.push({
@@ -211,10 +214,12 @@ export const EditEmployeeForm = () => {
 
   const roleOptions = useMemo(() => {
     const rolesArray = Array.isArray(derivedRoles) ? derivedRoles : [];
-    const base = rolesArray.map((role: Role) => ({
-      value: String(role.id),
-      label: role.name,
-    }));
+    const base = rolesArray
+      .filter((role: Role) => role.name?.toLowerCase().trim() !== 'default')
+      .map((role: Role) => ({
+        value: String(role.id),
+        label: role.name,
+      }));
     const currentRoleId = formValues?.roleId || selectedRoleId;
     if (currentRoleId && !base.some((opt) => opt.value === currentRoleId)) {
       base.push({
@@ -237,7 +242,7 @@ export const EditEmployeeForm = () => {
   const onSubmit = async (formData: EmployeeFormData) => {
     if (!employeeId) {
       toast.error('No employee specified');
-      return router.push('/admin/employees');
+      return router.push(routes.admin.employees.list());
     }
 
     const formDataToSend = new FormData();
@@ -246,7 +251,7 @@ export const EditEmployeeForm = () => {
     formDataToSend.append('firstName', formData.firstName);
     formDataToSend.append('lastName', formData.lastName);
     formDataToSend.append('email', formData.email);
-    // formDataToSend.append('phoneNumber', formData.phoneNumber);
+    formDataToSend.append('phoneNumber', formData.phoneNumber);
 
     // Team and role
     formDataToSend.append('teamId', formData.teamId);
@@ -291,7 +296,7 @@ export const EditEmployeeForm = () => {
       {
         onSuccess: async () => {
           toast.success('Employee Profile Updated');
-          router.push(`/admin/employees/${employeeId}`);
+          router.push(routes.admin.employees.detail(employeeId));
         },
         onError: (error) => {
           const errorMessage =
@@ -325,7 +330,7 @@ export const EditEmployeeForm = () => {
         subtitle={
           <BreadCrumb
             items={[
-              { label: 'Employee', href: '/admin/employees' },
+              { label: 'Employee', href: routes.admin.employees.list() },
               { label: 'Edit Employee', href: '' },
             ]}
             showHome={true}
@@ -603,10 +608,16 @@ export const EditEmployeeForm = () => {
                 Replace or add supporting employee documents (optional).
               </p>
               <div className="grid grid-cols-1 gap-4 md:gap-8">
-                <FileUpload
-                  onFileChange={handleFilesSelected}
-                  acceptedFileTypes=".pdf,.doc,.docx"
+                <FileUploader
+                  accept={{
+                    'application/pdf': ['.pdf'],
+                    'application/msword': ['.doc'],
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                      ['.docx'],
+                  }}
                   maxFiles={3}
+                  multiple
+                  onChange={handleFilesSelected}
                 />
               </div>
             </fieldset>

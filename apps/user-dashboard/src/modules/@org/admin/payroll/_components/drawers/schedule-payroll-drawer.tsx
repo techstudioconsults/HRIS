@@ -34,6 +34,7 @@ import empty1 from '~/images/empty-state.svg';
 import { usePayrollModalParams } from '@/lib/nuqs/use-payroll-modal-params';
 import { DashboardCard } from '../../../../_components/dashboard-card';
 import { usePayrollService } from '../../services/use-service';
+import { routes } from '@/lib/routes/routes';
 import type { ListPayroll, PayrollApproval } from '../../types';
 
 // Pure helpers (moved to module scope to satisfy lint rule requiring outer scope for arrow functions)
@@ -225,7 +226,7 @@ export const SchedulePayrollDrawer = () => {
             action: {
               label: 'Payroll Settings',
               onClick: () => {
-                router.push('/admin/payroll/setup');
+                router.push(routes.admin.payroll.setup());
               },
             },
           });

@@ -18,6 +18,7 @@ import {
 } from 'recharts';
 import { CHART_COLORS } from '@/lib/chart-colors';
 import { useDashboardService } from '@/modules/@org/admin/dashboard/services/use-dashboard-service';
+import { useDashboardOverviewPeriod } from '@/lib/nuqs/use-dashboard-overview-period';
 
 const STATIC_FALLBACK = [
   { month: 'Jan', amount: 5_000_000 },
@@ -40,9 +41,9 @@ function formatCurrencyShort(value: number) {
 }
 
 export function PayrollLineChart() {
-  const currentYear = new Date().getFullYear();
+  const [year] = useDashboardOverviewPeriod();
   const { useGetPayrollSummary } = useDashboardService();
-  const { data: monthlySummary, isPending } = useGetPayrollSummary(currentYear);
+  const { data: monthlySummary, isPending } = useGetPayrollSummary(year);
 
   if (isPending) {
     return (

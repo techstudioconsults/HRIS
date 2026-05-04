@@ -21,6 +21,8 @@ import { useEmployeeService } from '@/modules/@org/admin/employee/services/use-s
 import { useLeaveService } from '@/modules/@org/admin/leave/services/use-service';
 import { useDashboardService } from '@/modules/@org/admin/dashboard/services/use-dashboard-service';
 import { formatCurrency } from '@/lib/formatters';
+import { useDashboardOverviewPeriod } from '@/lib/nuqs/use-dashboard-overview-period';
+import type { ComboBoxOption } from '@workspace/ui/lib/select-dropdown/combo-box';
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -119,7 +121,7 @@ export const DashboardHeader = () => {
   const [isExporting, startExportTransition] = useTransition();
   const { data: session, status } = useSession();
 
-  const currentYear = new Date().getFullYear();
+  const [year, setYear] = useDashboardOverviewPeriod();
 
   const { useGetAllEmployees } = useEmployeeService();
   const { useGetLeaveRequests } = useLeaveService();
@@ -134,8 +136,8 @@ export const DashboardHeader = () => {
     status: 'pending',
     limit: 1000,
   });
-  const { data: payrollMonths } = useGetPayrollSummary(currentYear);
-  const { data: attendanceMonths } = useGetAttendanceOverview(currentYear);
+  const { data: payrollMonths } = useGetPayrollSummary(year);
+  const { data: attendanceMonths } = useGetAttendanceOverview(year);
   const { data: distributionEntries } = useGetLeaveDistribution();
 
   const newJoinersCount = useMemo(() => {
@@ -175,10 +177,19 @@ export const DashboardHeader = () => {
     return Math.round((totalPresent / total) * 100);
   }, [attendanceMonths]);
 
+  const yearOptions = useMemo<ComboBoxOption[]>(() => {
+    const currentYear = new Date().getFullYear();
+    const options: ComboBoxOption[] = [];
+    for (let y = 2020; y <= currentYear; y++) {
+      options.push({ value: String(y), label: String(y) });
+    }
+    return options;
+  }, []);
+
   const handleExport = () => {
     startExportTransition(() => {
       const csvContent = buildDashboardCsv({
-        year: currentYear,
+        year,
         payrollMonths,
         attendanceMonths,
         distributionEntries,
@@ -189,7 +200,7 @@ export const DashboardHeader = () => {
       });
 
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      saveAs(blob, `dashboard-summary-${currentYear}.csv`);
+      saveAs(blob, `dashboard-summary-${year}.csv`);
     });
   };
 
@@ -215,12 +226,11 @@ export const DashboardHeader = () => {
 
       <div className="flex justify-between items-center gap-4">
         <ComboBox
-          options={[]}
-          value={undefined}
-          onValueChange={() => {}}
+          options={yearOptions}
+          value={String(year)}
+          onValueChange={(v) => setYear(Number(v))}
           placeholder="Select overview period"
           triggerClassName="lg:w-[20rem] w-full"
-          disabled
         />
 
         {/* Desktop CTAs */}

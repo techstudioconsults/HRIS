@@ -10,12 +10,13 @@ import { useEmployeeService } from '@/modules/@org/admin/employee/services/use-s
 import { useLeaveService } from '@/modules/@org/admin/leave/services/use-service';
 import { useDashboardService } from '@/modules/@org/admin/dashboard/services/use-dashboard-service';
 import { formatCurrency } from '@/lib/formatters';
+import { useDashboardOverviewPeriod } from '@/lib/nuqs/use-dashboard-overview-period';
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
 export const CardSection = () => {
   const navigate = useRouter();
-  const currentYear = new Date().getFullYear();
+  const [year] = useDashboardOverviewPeriod();
 
   const { useGetAllEmployees } = useEmployeeService();
   const { useGetLeaveRequests } = useLeaveService();
@@ -27,9 +28,9 @@ export const CardSection = () => {
   const { data: leaveRequestsResponse, isPending: isLeavesPending } =
     useGetLeaveRequests({ status: 'pending', limit: 1000 });
   const { data: payrollMonths, isPending: isPayrollPending } =
-    useGetPayrollSummary(currentYear);
+    useGetPayrollSummary(year);
   const { data: attendanceMonths, isPending: isAttendancePending } =
-    useGetAttendanceOverview(currentYear);
+    useGetAttendanceOverview(year);
 
   const newJoinersCount = useMemo(() => {
     if (!employeesResponse) return 0;

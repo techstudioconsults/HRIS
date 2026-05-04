@@ -16,6 +16,7 @@ import { Skeleton } from '@workspace/ui/components/skeleton';
 import * as React from 'react';
 import { Bar, BarChart, CartesianGrid, Legend, XAxis, YAxis } from 'recharts';
 import { useDashboardService } from '@/modules/@org/admin/dashboard/services/use-dashboard-service';
+import { useDashboardOverviewPeriod } from '@/lib/nuqs/use-dashboard-overview-period';
 
 const STATIC_FALLBACK = [
   { month: 'Jan', present: 250, absent: 55, late: 10 },
@@ -40,17 +41,16 @@ export function AttendanceBarChart() {
     setIsClient(true);
   }, []);
 
-  const currentYear = new Date().getFullYear();
+  const [year] = useDashboardOverviewPeriod();
   const { useGetAttendanceOverview } = useDashboardService();
-  const { data: monthlyAttendance, isPending } =
-    useGetAttendanceOverview(currentYear);
+  const { data: monthlyAttendance, isPending } = useGetAttendanceOverview(year);
 
   if (!isClient || isPending) {
     return (
       <Card className="w-full">
         <CardHeader>
           <CardTitle>Attendance Overview</CardTitle>
-          <p className="text-muted-foreground text-sm">This year</p>
+          <p className="text-muted-foreground text-sm">{year}</p>
         </CardHeader>
         <CardContent className="p-0">
           <Skeleton className="h-75 w-full" />
@@ -73,7 +73,7 @@ export function AttendanceBarChart() {
     <Card className="w-full">
       <CardHeader>
         <CardTitle>Attendance Overview</CardTitle>
-        <p className="text-muted-foreground text-sm">This year</p>
+        <p className="text-muted-foreground text-sm">{year}</p>
       </CardHeader>
       <CardContent className="p-0">
         <ChartContainer config={chartConfig} className="h-75 w-full">

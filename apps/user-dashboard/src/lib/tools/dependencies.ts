@@ -9,6 +9,7 @@ import { UserProfileService } from '@/modules/@org/user/profile/services/service
 import { AuthService } from '@/modules/@org/auth/services/auth.service';
 import { OnboardingService } from '@/modules/@org/onboarding/services/service';
 import { AppService } from '@/services/app/app.service';
+import { DashboardService } from '@/modules/@org/admin/dashboard/services/dashboard.service';
 
 import { HttpAdapter } from '../http/http-adapter';
 
@@ -27,6 +28,7 @@ const dependencies = {
   USER_LEAVE_SERVICE: Symbol('UserLeaveService'),
   USER_PAYSLIP_SERVICE: Symbol('UserPayslipService'),
   USER_PROFILE_SERVICE: Symbol('UserProfileService'),
+  DASHBOARD_SERVICE: Symbol('DashboardService'),
 };
 
 const httpAdapter = new HttpAdapter();
@@ -41,6 +43,7 @@ const leaveService = new LeaveService(httpAdapter);
 const userLeaveService = new UserLeaveService(httpAdapter);
 const userPayslipService = new UserPayslipService(httpAdapter);
 const userProfileService = new UserProfileService(httpAdapter);
+const dashboardService = new DashboardService(httpAdapter);
 class DependencyContainer implements IDependencyContainer {
   _dependencies = {};
 
@@ -69,5 +72,6 @@ container.add(dependencies.LEAVE_SERVICE, leaveService);
 container.add(dependencies.USER_LEAVE_SERVICE, userLeaveService);
 container.add(dependencies.USER_PAYSLIP_SERVICE, userPayslipService);
 container.add(dependencies.USER_PROFILE_SERVICE, userProfileService);
+container.add(dependencies.DASHBOARD_SERVICE, dashboardService);
 
 export { container, dependencies };

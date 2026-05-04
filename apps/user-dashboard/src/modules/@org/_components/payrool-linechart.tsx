@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@workspace/ui/components/card';
+import { Skeleton } from '@workspace/ui/components/skeleton';
 import {
   Area,
   AreaChart,
@@ -16,18 +17,19 @@ import {
   YAxis,
 } from 'recharts';
 import { CHART_COLORS } from '@/lib/chart-colors';
+import { useDashboardService } from '@/modules/@org/admin/dashboard/services/use-dashboard-service';
+import { useDashboardOverviewPeriod } from '@/lib/nuqs/use-dashboard-overview-period';
 
-// Payroll data from your Figma design
-const payrollData = [
+const STATIC_FALLBACK = [
   { month: 'Jan', amount: 5_000_000 },
   { month: 'Feb', amount: 5_500_000 },
   { month: 'Mar', amount: 5_000_000 },
   { month: 'Apr', amount: 6_500_000 },
   { month: 'May', amount: 7_000_000 },
-  { month: 'Jun', amount: 6_789_000 }, // N5,789,000 from your Figma
+  { month: 'Jun', amount: 6_789_000 },
 ];
 
-const formatCurrency = (value: number) => {
+function formatCurrencyShort(value: number) {
   return new Intl.NumberFormat('en-NG', {
     style: 'currency',
     currency: 'NGN',
@@ -36,28 +38,49 @@ const formatCurrency = (value: number) => {
   })
     .format(value)
     .replace('NGN', '₦');
-};
+}
 
 export function PayrollLineChart() {
+  const [year] = useDashboardOverviewPeriod();
+  const { useGetPayrollSummary } = useDashboardService();
+  const { data: monthlySummary, isPending } = useGetPayrollSummary(year);
+
+  if (isPending) {
+    return (
+      <Card className="w-full shadow">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">
+            Monthly Payroll Summary
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0 px-0">
+          <Skeleton className="h-[300px] w-full" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const chartData =
+    monthlySummary && monthlySummary.length > 0
+      ? monthlySummary.map((monthRecord) => ({
+          month: monthRecord.month,
+          amount: monthRecord.total,
+        }))
+      : STATIC_FALLBACK;
+
   return (
-    <Card className=" w-full shadow">
+    <Card className="w-full shadow">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold ">
+        <CardTitle className="text-lg font-semibold">
           Monthly Payroll Summary
         </CardTitle>
-        {/* <p className="text-sm text-gray-500">This year</p> */}
       </CardHeader>
       <CardContent className="pt-0 px-0">
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
-              data={payrollData}
-              margin={{
-                top: 20,
-                right: 30,
-                left: 20,
-                bottom: 10,
-              }}
+              data={chartData}
+              margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
             >
               <defs>
                 <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
@@ -83,26 +106,27 @@ export function PayrollLineChart() {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12 }}
-                // className={`text-muted-foreground text-sm`}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12 }}
                 tickFormatter={(value) =>
-                  formatCurrency(value).replace('₦', '')
+                  formatCurrencyShort(value as number).replace('₦', '')
                 }
               />
               <Tooltip
                 content={({ active, payload }) => {
                   if (active && payload && payload.length > 0) {
+                    const payloadItem = payload[0]?.payload as {
+                      month: string;
+                      amount: number;
+                    };
                     return (
                       <div className="rounded-md border border-gray-200 p-3 shadow-md">
-                        <p className="font-semibold">
-                          {payload[0].payload.month}
-                        </p>
+                        <p className="font-semibold">{payloadItem.month}</p>
                         <p className="text-blue-600">
-                          {formatCurrency(payload[0].payload.amount)}
+                          {formatCurrencyShort(payloadItem.amount)}
                         </p>
                       </div>
                     );

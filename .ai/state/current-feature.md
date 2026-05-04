@@ -1,38 +1,27 @@
 # Current Feature Context
 
-**Feature Name**: Notification System Refactor — Real API Shape + Mutations + SSE Refresh
-**Status**: Done
-**Phase**: Complete
+**Feature Name**: Dashboard Overview Period (Year Selector)
+**Status**: In Progress
+**Phase**: Implementation
 **Started**: 2026-05-04
-**Completed**: 2026-05-04
 
 ## Summary
 
-Refactored the app notification system to match the real backend API shape, wired
-mark-as-read/clear-all mutations, and added SSE-driven notification list invalidation
-so the bell badge updates in real time without polling.
+Wire the ComboBox in DashboardHeader as a year selector (2020–current year).
+The selected year flows to all endpoint calls that accept a `year` parameter
+(payroll summary, attendance overview). Persisted via nuqs URL query param `?year=`.
+
+## Files Created
+
+| File                                        | Purpose                                 |
+| ------------------------------------------- | --------------------------------------- |
+| `lib/nuqs/use-dashboard-overview-period.ts` | Shared nuqs hook for `year` query param |
 
 ## Files Modified
 
-| File                                          | Change                                                                                                                                                                                                                                  |
-| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `services/app/app.service.ts`                 | `NotificationDTO` → `AppNotification` (real API shape); fixed `ApiEnvelope`; updated mapper; added `markNotificationRead`, `markAllNotificationsRead`, `clearAllNotifications`; fixed `actionUrl` routing (salary.paid → /user/payslip) |
-| `services/app/use-app-service.ts`             | Added `useMarkNotificationRead`, `useMarkAllNotificationsRead`, `useClearAllNotifications` mutations; bulk mutations derive `employeeId` from variables (no stale closure)                                                              |
-| `components/shared/app-events-listener.tsx`   | Invalidates `notification.list(employeeId)` on every SSE event; uses `useSession` for employeeId                                                                                                                                        |
-| `components/shared/top-bar/index.tsx`         | Self-fetches notifications via `useSession` + `useAppService`; uses `mutate` (not `mutateAsync`) for fire-and-forget mutation calls matching widget's sync handler contract                                                             |
-| `components/shared/top-bar/types.ts`          | Removed `notifications` prop (TopBar self-fetches)                                                                                                                                                                                      |
-| `app/(private)/(org)/layout.tsx`              | Removed `useGetNotifications` and `notifications` prop passthrough                                                                                                                                                                      |
-| `components/shared/top-bar/example-usage.tsx` | Updated to remove `notifications` prop                                                                                                                                                                                                  |
-
-## Review Findings (All Resolved)
-
-- [x] `handleMarkAsRead` async mismatch → changed to `mutate` (sync fire-and-forget)
-- [x] Stale closure in bulk mutation `invalidateQueries` → now derives `employeeId` from mutation variables
-- [x] Wrong `actionUrl` for salary.paid → `/user/payslip` (was `/admin/payroll`)
-- Pre-existing infrastructure issue (4-arg `onSuccess` in `use-service-query.ts`) — not in scope, not introduced here
-
-## Key Decisions
-
-- TopBar self-fetches notifications (uses `useSession` internally) — removes prop-drilling
-- SSE invalidation in `AppEventsListener` (already has `queryClient` + all events) — minimal change for live badge
-- `mutate` instead of `mutateAsync` — matches `onMarkAsRead?: (id: string) => void` widget contract exactly
+| File                                               | Change                                                                    |
+| -------------------------------------------------- | ------------------------------------------------------------------------- |
+| `admin/dashboard/_components/dashboard-header.tsx` | Enable ComboBox with year options, wire year to data hooks and CSV export |
+| `admin/dashboard/_components/card-section.tsx`     | Use `year` from nuqs instead of `currentYear`                             |
+| `@org/_components/payrool-linechart.tsx`           | Use `year` from nuqs instead of `currentYear`                             |
+| `@org/_components/attendance-barchart.tsx`         | Use `year` from nuqs, update subtitle to show selected year               |

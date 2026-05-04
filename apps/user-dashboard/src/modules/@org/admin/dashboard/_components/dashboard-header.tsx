@@ -13,6 +13,7 @@ import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useSession } from '@/lib/session';
 import Link from 'next/link';
+import { routes } from '@/lib/routes/routes';
 import { Button } from '@workspace/ui/components/button';
 import { cn } from '@workspace/ui/lib/utils';
 
@@ -53,7 +54,7 @@ export const DashboardHeader = () => {
           variant="primary"
           isLeftIconVisible={true}
           icon={<Icon variant="Bold" name="Add" />}
-          href="/admin/employees/add-employee"
+          href={routes.admin.employees.add()}
           className="hidden lg:flex w-full"
         >
           Add Employee

@@ -4,6 +4,7 @@ import { dependencies } from '@/lib/tools/dependencies';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 
 import { useRouter } from 'next/navigation';
+import { routes } from '@/lib/routes/routes';
 
 import { ActiveUser } from '@/modules/@org/admin/dashboard/_views/active-user';
 import { NewUser } from '@/modules/@org/admin/dashboard/_views/new-user';
@@ -29,7 +30,7 @@ const BaseDashboardHomePage = () => {
       icon: '/images/verify_email.svg',
       // isCompleted: user?.password_is_set,
       isCompleted: false,
-      action: () => router.push(`/dashboard/settings`),
+      action: () => router.push(routes.admin.settings()),
     },
     {
       title: 'Add your first employee',
@@ -37,7 +38,7 @@ const BaseDashboardHomePage = () => {
       buttonLabel: 'Configure',
       icon: '/images/profile.svg',
       isCompleted: false,
-      action: () => router.push(`/dashboard/profile`),
+      action: () => router.push(routes.admin.profile()),
     },
     {
       title: 'Set up clock-in system',
@@ -53,7 +54,7 @@ const BaseDashboardHomePage = () => {
       buttonLabel: 'Configure',
       icon: '/images/payout.svg',
       isCompleted: false,
-      action: () => router.push(`/dashboard/settings?tab=payment`),
+      action: () => router.push(routes.admin.settings()),
     },
     {
       title: 'Invite other HR team members',

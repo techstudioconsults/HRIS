@@ -9,6 +9,7 @@ import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useRouter } from 'next/navigation';
 import { LeaveHeaderProperties } from '@/modules/@org/admin/leave/types';
+import { routes } from '@/lib/routes/routes';
 
 export const LeaveHeader = ({ onSearch }: LeaveHeaderProperties) => {
   const router = useRouter();
@@ -41,7 +42,7 @@ export const LeaveHeader = ({ onSearch }: LeaveHeaderProperties) => {
               >
                 <DropdownMenuItem
                   onClick={() => {
-                    router.push('/admin/leave/type');
+                    router.push(routes.admin.leave.types());
                   }}
                 >
                   <Icon name="DocumentDownload" variant="Outline" />
@@ -72,7 +73,7 @@ export const LeaveHeader = ({ onSearch }: LeaveHeaderProperties) => {
             <MainButton
               variant="primary"
               onClick={() => {
-                router.push('/admin/leave/type');
+                router.push(routes.admin.leave.types());
               }}
             >
               Manage Leave Types

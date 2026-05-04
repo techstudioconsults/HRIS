@@ -11,6 +11,7 @@ import {
 } from 'kbar';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useMemo } from 'react';
+import { routes } from '@/lib/routes/routes';
 
 export function KBarProviderWrapper({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -23,21 +24,21 @@ export function KBarProviderWrapper({ children }: { children: ReactNode }) {
         name: 'Home',
         shortcut: ['h'],
         keywords: 'go home',
-        perform: () => router.push('/'),
+        perform: () => router.push(routes.root()),
       },
       {
         id: 'dashboard',
         name: 'Dashboard',
         shortcut: ['g', 'd'],
         keywords: 'go dashboard',
-        perform: () => router.push('/dashboard'),
+        perform: () => router.push(routes.admin.dashboard()),
       },
       {
         id: 'settings',
         name: 'Settings',
         shortcut: ['g', 's'],
         keywords: 'go settings',
-        perform: () => router.push('/settings'),
+        perform: () => router.push(routes.admin.settings()),
       },
     ],
     [router]

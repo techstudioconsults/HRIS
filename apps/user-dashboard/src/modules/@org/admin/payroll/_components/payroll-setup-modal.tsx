@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { payrollSetupTourSteps } from '../config/tour-steps';
 import { usePayrollService } from '../services/use-service';
 import { usePayrollStore } from '../stores/payroll-store';
+import { routes } from '@/lib/routes/routes';
 
 export const PayrollSetupSettingsModal = () => {
   const router = useRouter();
@@ -63,10 +64,8 @@ export const PayrollSetupSettingsModal = () => {
     >
       <div className="space-y-6">
         <div className="bg-primary/10 border-primary-75 rounded-lg border p-5">
-          <h6 className="mb-3 font-semibold text-gray-900">
-            What you&apos;ll do:
-          </h6>
-          <ul className="ml-4 space-y-2 text-sm text-gray-700">
+          <h6 className="mb-3 font-semibold ">What you&apos;ll do:</h6>
+          <ul className="ml-4 space-y-2 text-sm text-muted-foreground">
             <li className="flex items-center">
               <span className="mr-2 size-1 shrink-0 rounded-full bg-gray-400" />
               Your employees&apos; salary data will appear here automatically
@@ -89,7 +88,7 @@ export const PayrollSetupSettingsModal = () => {
             onClick={() => {
               localStorage.setItem('payroll-setup-modal-seen', 'true');
               startTour(payrollSetupTourSteps);
-              router.push('/admin/payroll/setup');
+              router.push(routes.admin.payroll.setup());
             }}
           >
             Set Up Payroll
@@ -97,7 +96,7 @@ export const PayrollSetupSettingsModal = () => {
 
           <MainButton
             onClick={handleRemindMeLater}
-            className="text-center text-sm text-gray-600 hover:text-gray-800 hover:underline"
+            className="text-center text-sm text-muted-foreground/50 hover:text-muted-foreground hover:underline"
           >
             Remind me later
           </MainButton>

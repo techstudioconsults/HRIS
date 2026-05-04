@@ -150,7 +150,7 @@ export const AccountSettingsTab = () => {
                       ? 'Loading...'
                       : 'Enter company name'
                   }
-                  className="border-border !h-14 w-full"
+                  className="border-border h-14! w-full"
                   disabled={isDisabled}
                   required
                 />
@@ -177,7 +177,7 @@ export const AccountSettingsTab = () => {
                   placeholder={
                     isLoadingCompanyProfile ? 'Loading...' : 'Select industry'
                   }
-                  className="bg-background border-border !h-14 w-full"
+                  className="bg-background border-border h-14! w-full"
                   options={industryOptions}
                   disabled={isDisabled}
                   required
@@ -192,7 +192,7 @@ export const AccountSettingsTab = () => {
                       ? 'Loading...'
                       : 'Select company size'
                   }
-                  className="bg-background border-border !h-14 w-full"
+                  className="bg-background border-border h-14! w-full"
                   options={sizeOptions}
                   disabled={isDisabled}
                   required
@@ -244,7 +244,7 @@ export const AccountSettingsTab = () => {
                   placeholder={
                     isLoadingCompanyProfile ? 'Loading...' : 'Enter address'
                   }
-                  className="border-border !h-14 w-full"
+                  className="border-border h-14! w-full"
                   disabled={isDisabled}
                   required
                 />
@@ -258,7 +258,7 @@ export const AccountSettingsTab = () => {
                       ? 'Loading...'
                       : 'Enter address (optional)'
                   }
-                  className="border-border !h-14 w-full"
+                  className="border-border h-14! w-full"
                   disabled={isDisabled}
                 />
 
@@ -280,8 +280,8 @@ export const AccountSettingsTab = () => {
                             : 'Select your country'
                         }
                         disabled={isDisabled || countriesLoading}
-                        className={cn(
-                          'h-14',
+                        triggerClassName={cn(
+                          'h-14 border-border',
                           fieldState.error && 'border-destructive'
                         )}
                       />
@@ -309,8 +309,8 @@ export const AccountSettingsTab = () => {
                               : 'Select a country first'
                         }
                         disabled={isDisabled || statesLoading || !countryValue}
-                        className={cn(
-                          'h-14',
+                        triggerClassName={cn(
+                          'h-14 border-border',
                           fieldState.error && 'border-destructive'
                         )}
                       />
@@ -338,8 +338,8 @@ export const AccountSettingsTab = () => {
                               : 'Select a country first'
                         }
                         disabled={isDisabled || citiesLoading || !countryValue}
-                        className={cn(
-                          'h-14',
+                        triggerClassName={cn(
+                          'h-14 border-border',
                           fieldState.error && 'border-destructive'
                         )}
                       />
@@ -354,7 +354,7 @@ export const AccountSettingsTab = () => {
                   placeholder={
                     isLoadingCompanyProfile ? 'Loading...' : 'Enter postal code'
                   }
-                  className="border-border !h-14 w-full"
+                  className="border-border h-14! w-full"
                   disabled={isDisabled}
                   required
                 />
@@ -365,7 +365,7 @@ export const AccountSettingsTab = () => {
               <MainButton
                 type="button"
                 variant="outline"
-                className="text-destructive border-destructive w-full sm:w-[200px]"
+                className="text-destructive border-destructive w-full sm:w-50"
                 isDisabled={isSaving}
                 onClick={() => {
                   if (lastLoadedValuesReference.current)
@@ -377,7 +377,7 @@ export const AccountSettingsTab = () => {
               <MainButton
                 type="submit"
                 variant="primary"
-                className="w-full sm:w-[200px]"
+                className="w-full sm:w-50"
                 isDisabled={isDisabled || !isValid}
                 isLoading={isSaving}
               >

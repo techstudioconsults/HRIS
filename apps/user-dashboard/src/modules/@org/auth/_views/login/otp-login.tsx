@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useAuthService } from '../../services/use-auth-service';
 import { getAuthErrorMessage } from '../../services/auth-errors';
+import { routes } from '@/lib/routes/routes';
 
 export const OTPLogin = () => {
   const router = useRouter();
@@ -32,7 +33,7 @@ export const OTPLogin = () => {
     await requestOTP(data, {
       onSuccess: (response) => {
         if (response?.success) {
-          router.push(`/login/otp-verify?email=${data.email}`);
+          router.push(routes.auth.loginOtpVerify(data.email));
         }
       },
       onError: (error) => {
@@ -93,7 +94,7 @@ export const OTPLogin = () => {
 
         <div>
           <MainButton
-            href={`/login`}
+            href={routes.auth.login()}
             type="button"
             variant="primaryOutline"
             className="w-full"
@@ -103,7 +104,10 @@ export const OTPLogin = () => {
           </MainButton>
           <p className="text-grey-500 mt-4 text-center text-sm">
             Don&apos;t have an account?{' '}
-            <Link href="/register" className="text-primary hover:underline">
+            <Link
+              href={routes.auth.register()}
+              className="text-primary hover:underline"
+            >
               Sign Up
             </Link>
           </p>

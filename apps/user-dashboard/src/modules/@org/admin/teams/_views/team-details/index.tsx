@@ -18,6 +18,7 @@ import { AddNewEmployees } from '../../_components/forms/add-new-employees';
 import { RolesAndPermission } from '../../_components/forms/add-new-roles';
 import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { useEmployeeService } from '@/modules/@org/admin/employee/services/use-service';
+import { routes } from '@/lib/routes/routes';
 
 // ── TeamDetails (orchestrator) ────────────────────────────────────────────────
 const TeamDetails = ({ params }: { params: { id: string } }) => {
@@ -139,7 +140,7 @@ const TeamDetails = ({ params }: { params: { id: string } }) => {
       onSuccess: (response) => {
         if (response?.success) {
           toast.success(`Team "${teamData?.name}" deleted successfully!`);
-          router.push('/admin/teams');
+          router.push(routes.admin.teams.list());
         }
       },
     });

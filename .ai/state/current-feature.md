@@ -1,33 +1,30 @@
 # Current Feature Context
 
-**Feature Name**: Employee Avatar Upload — Employee Details View
+**Feature Name**: Routes Migration — Typed Constants
 **Status**: Done
 **Phase**: Complete
-**Started**: 2026-05-03
-**Completed**: 2026-05-03
-
----
+**Started**: 2026-05-04
+**Completed**: 2026-05-04
 
 ## Summary
 
-Added `EmployeeAvatarUpload` component to the employee details sidebar card.
-Clicking/activating the avatar opens a file picker; the selected image is sent via PATCH
-`/employees/:id` with `FormData` key `avatar`. Optimistic preview shown immediately;
-spinner overlay while uploading; cache invalidation handled by existing `useUpdateEmployee` hook.
+Replaced all inline route strings across 42 files with typed factory calls from
+`src/lib/routes/routes.ts`. Zero new TypeScript errors introduced.
 
-## Files Changed
+## Decision
 
-1. `apps/user-dashboard/src/modules/@org/admin/employee/_views/employee-details/index.tsx`
-   - Added `EmployeeAvatarUpload` inline component (lines 166–289)
-   - Added `useRef`, `useState` to React imports
-   - Added `toast` from `sonner`
+Added `routes` factory export to the existing `src/lib/routes/routes.ts` file
+(which already contained `ROUTE_CONFIGS` for auth/access control).
+No new file needed — same module, second export.
 
-## Implementation Details
+## Files Created / Modified
 
-- **Optimistic preview**: `URL.createObjectURL` shown immediately on file select
-- **Stale avatar fix**: preview cleared via `useEffect` watching `avatarUrl` (waits for server refetch, avoids flash)
-- **Memory cleanup**: `pendingObjectUrlRef` tracks blob URL; revoked on error or unmount
-- **Accessibility**: `role="button"`, `tabIndex`, `aria-label`, `aria-disabled`, `onKeyDown` (Enter/Space)
-- **File validation**: JPEG/PNG/WebP only, max 5 MB — user-friendly toast on rejection
-- **Loading UX**: spinner overlay forced `opacity-100` while uploading (touch device safe)
-- **Error handling**: revert preview + `toast.error` from sonner
+- **Modified**: `src/lib/routes/routes.ts` — added `routes` factory object
+- **Updated**: 41 consumer files across auth, employees, teams, leave, payroll,
+  onboarding, user, and shared components
+
+## Bug Fixed in Migration
+
+- `top-bar/index.tsx`: `router.push('profile')` was missing the leading `/` —
+  fixed to context-aware `routes.admin.profile()` / `routes.user.profile()`
+  based on `pathname.startsWith('/admin')`

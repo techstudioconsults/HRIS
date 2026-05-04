@@ -28,6 +28,7 @@ import {
   PaginationPrevious,
 } from '@workspace/ui/components/pagination';
 import type { EmployeeTableProperties } from '../types';
+import { routes } from '@/lib/routes/routes';
 
 function TableRow(props: { children: ReactNode }) {
   return null;
@@ -80,7 +81,7 @@ export function EmployeeTable({
             >
               Export
             </MainButton>
-            <Link href="/admin/employees/add-employee">
+            <Link href={routes.admin.employees.add()}>
               <MainButton
                 variant="primary"
                 isLeftIconVisible={true}
@@ -209,7 +210,7 @@ export function EmployeeTable({
                       className="bg-white shadow-lg"
                     >
                       <DropdownMenuItem>Edit Employee</DropdownMenuItem>
-                      <Link href={`/admin/employees/${employee.id}`}>
+                      <Link href={routes.admin.employees.detail(employee.id)}>
                         <DropdownMenuItem>View Employee</DropdownMenuItem>
                       </Link>
                     </DropdownMenuContent>

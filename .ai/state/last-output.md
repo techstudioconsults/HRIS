@@ -1,77 +1,138 @@
-# Hide Default Teams & Roles from Tables
+# Routes Migration — Inline Strings to Typed Constants
 
-**Feature**: Filter "default" teams/sub-teams/roles from all table views
-**Status**: Done
-**Date**: 2026-05-03
-
-## What Was Done
-
-Applied a client-side `name.toLowerCase().trim() !== 'default'` filter at every
-table render point. Items are hidden from display only — never deleted from the API.
-
-## Files Changed
-
-1. `teams/_views/team/components/team-table-section.tsx`
-   - Added `visibleTeams` filter before `hasTeams` check and `AdvancedDataTable` data prop
-
-2. `teams/_views/team-details/components/team-details-content.tsx`
-   - Filtered `allSubTeams` before applying search filter
-
-3. `teams/_views/sub-team-details/components/sub-team-details-content.tsx`
-   - Renamed `rolesData` → `rolesRaw`, derived filtered `rolesData` from it
-
-4. `teams/_views/team/index.tsx`
-   - Added `.filter()` on `rolesData` before mapping to `availableRoles` prop on `AddNewEmployees`
-
----
-
-# Payroll MSW Mock Data and Handlers
-
-**Feature**: Payroll MSW Mock — Generate/Reschedule/Payslip + Multi-Payroll Combobox
-**Status**: Done
-**Date**: 2026-05-03
-
----
+**Feature**: Migrate all inline route strings to `routes.*()` factory calls
+**Status**: Complete
+**Date**: 2026-05-04
 
 ## What Was Done
 
-Rewrote the two stale MSW mock files for the payroll module so they match
-the real endpoint paths used by `service.ts`.
+Replaced all inline hardcoded route strings across 37 files with typed `routes.*()` factory calls from `@/lib/routes/routes`. Zero new TypeScript errors introduced.
 
-### mock-data.ts
+### Files Modified
 
-- All types declared inline (no import from `../../types`) to avoid circular dependency.
-- `MOCK_POLICY_ID = 'policy_01'` exported as a named constant.
-- `mockPayrollPolicy` — status: complete, payday: 25, monthly, 1 bonus (Performance fixed 50_000), 1 deduction (Pension percentage 8), 2 approvers (Ngozi Adeyemi HR Director + Chidi Eze Finance Manager).
-- `mockCompanyWallet` — First Bank, balance: 50_000_000.
-- `mockPayrolls` — 4 entries (Feb completed, Mar completed, Apr partially_completed, May idle), all share policyId and walletBalance.
-- `mockPayslipsByPayroll` — `Record<string, Payslip[]>` with 2 payslips per payroll (8 total). Built via a shared `buildPayslip` helper. Feb/Mar: both paid. Apr: one paid + one failed. May: both pending.
-- `mockApprovals` — 2 pending approval entries for `payroll_may_2026`.
+**Auth (6 files)**
 
-### handlers.ts
+- `src/modules/@org/auth/_views/input-otp-card/index.tsx`
+- `src/modules/@org/auth/_views/forgot-password/index.tsx`
+- `src/modules/@org/auth/_views/reset-password/index.tsx`
+- `src/modules/@org/auth/_views/register/index.tsx`
+- `src/modules/@org/auth/_components/checkmail-card.tsx`
+- `src/app/(public)/(auth)/login/continue/page.tsx`
 
-- `const BASE = '/api/v1'` pattern.
-- Mutable in-memory state: `let payrollsDb` and `let payslipsDb` (immutable-style updates via spread).
-- `await delay(200–500)` on every handler.
-- 10 handlers covering all endpoints in `service.ts`:
-  1. GET /payroll-policy/company
-  2. GET /wallets/company
-  3. GET /payrolls
-  4. GET /payrolls/:id (404 if missing)
-  5. POST /payrolls (creates new idle payroll, returns 201)
-  6. PATCH /payrolls/:id (updates paymentDate, 404 if missing)
-  7. POST /payrolls/:id/run (transitions to awaiting, returns 201)
-  8. GET /payrolls/:id/approvals (returns mockApprovals for may, [] otherwise)
-  9. GET /payslips?payrollId=... (filtered + paginated)
-  10. POST /payslips (409 on duplicate employee+payroll, creates pending payslip, returns 201)
+**Employees (8 files)**
 
-### \_testing/fixtures/mock-data.ts (incidental fix)
+- `src/modules/@org/admin/employee/_components/forms/add-employee.tsx`
+- `src/modules/@org/admin/employee/_components/forms/edit-employee.tsx`
+- `src/modules/@org/admin/employee/hooks/use-employee-shortcuts.ts`
+- `src/modules/@org/admin/employee/_views/employee/components/employee-table-section.tsx`
+- `src/modules/@org/admin/employee/_views/table-data.tsx`
+- `src/modules/@org/admin/employee/_views/employee-details/index.tsx`
+- `src/modules/@org/admin/employee/_views/employee/index.tsx`
+- `src/modules/@org/admin/employee/_views/employee/components/employee-header-section.tsx`
+- `src/modules/@org/admin/dashboard/_components/dashboard-header.tsx`
 
-Updated the thin re-export barrel to export the new named exports
-(old names like `mockPayrollSetup` / `mockPayrollRun` no longer exist).
+**Teams (8 files)**
 
-## Files Changed
+- `src/modules/@org/admin/teams/_hooks/use-team-shortcuts.ts`
+- `src/modules/@org/admin/teams/hooks/use-team-shortcuts.ts`
+- `src/modules/@org/admin/teams/_views/sub-team-details/index.tsx`
+- `src/modules/@org/admin/teams/_views/team/components/team-table-section.tsx`
+- `src/modules/@org/admin/teams/_views/team-details/index.tsx`
+- `src/modules/@org/admin/teams/_views/team-details/components/sub-teams-tab.tsx`
+- `src/modules/@org/admin/teams/_components/team-table.tsx`
 
-- `apps/user-dashboard/src/modules/@org/admin/payroll/_sdlc/_api/mocks/mock-data.ts`
-- `apps/user-dashboard/src/modules/@org/admin/payroll/_sdlc/_api/mocks/handlers.ts`
-- `apps/user-dashboard/src/modules/@org/admin/payroll/_sdlc/_testing/fixtures/mock-data.ts`
+**Leave (3 files)**
+
+- `src/modules/@org/admin/leave/_components/forms/leave-setup-form.tsx`
+- `src/modules/@org/admin/leave/_components/LeaveHeader.tsx`
+- `src/modules/@org/admin/leave/_components/leave-setup-modal.tsx`
+
+**Payroll (5 files)**
+
+- `src/modules/@org/admin/payroll/_components/drawers/generate-run-payroll-drawer.tsx`
+- `src/modules/@org/admin/payroll/_components/drawers/schedule-payroll-drawer.tsx`
+- `src/modules/@org/admin/payroll/_components/forms/payroll-setup-form.tsx`
+- `src/modules/@org/admin/payroll/_components/payroll-setup-modal.tsx`
+- `src/modules/@org/admin/payroll/_components/tab-content/employee-information.tsx`
+- `src/modules/@org/admin/payroll/_views/payroll.tsx`
+
+**Onboarding (7 files)**
+
+- `src/modules/@org/onboarding/_components/forms/company-profile.tsx`
+- `src/modules/@org/onboarding/_components/forms/team-setup.tsx`
+- `src/modules/@org/onboarding/_components/forms/employee/employee-setup.tsx`
+- `src/modules/@org/onboarding/_views/welcome/index.tsx`
+- `src/modules/@org/onboarding/_views/step-one/index.tsx`
+- `src/modules/@org/onboarding/_views/step-two/index.tsx`
+- `src/modules/@org/onboarding/_views/step-three/index.tsx`
+
+**User / KBar (3 files)**
+
+- `src/modules/@org/user/home/_views/recent-activities.tsx`
+- `src/modules/@org/admin/dashboard/dashboard-home.tsx`
+- `src/modules/@org/user/home/_views/home-page.tsx`
+- `src/lib/kbar/kbar-provider.tsx`
+
+---
+
+# Previous: User Profile Page + `/api/profile` Route Handler
+
+**Feature**: Profile page for logged-in employees
+**Status**: Implementation Complete — Pending Review
+**Date**: 2026-05-04
+
+## What Was Done
+
+Built the full frontend profile feature in 6 new files + 3 modified files.
+
+### New Files
+
+1. `src/modules/@org/user/profile/services/service.ts`
+   — `UserProfileService` with `getMyProfile(id)` → `GET /employees/:id`
+   — `updateMyProfile(id, data)` → `PATCH /employees/:id` (FormData, multipart)
+
+2. `src/modules/@org/user/profile/services/use-service.ts`
+   — `useUserProfileService()` returning `useGetMyProfile(employeeId)` + `useUpdateMyProfile()`
+   — Keyed on `queryKeys.profile.current()` → `['user', 'profile', 'current']`
+   — `enabled: !!employeeId` guard prevents fetching before session loads
+
+3. `src/modules/@org/user/profile/_views/profile-view.tsx`
+   — `UserProfileView` client component
+   — Reads `session.user.id` via `useSession()` for the employee ID
+   — Renders avatar, fullName, email, role, personal info (phone, gender, DOB, status), employment details (team, role, type, work mode, start date)
+   — Loading: `ProfileSkeleton` (grid of Skeleton cells)
+   — Error: inline error message
+
+4. `src/modules/@org/user/profile/index.ts`
+   — Barrel: exports `UserProfileView`, `useUserProfileService`
+
+5. `src/app/(private)/(org)/user/profile/page.tsx`
+   — Thin page shell at `/user/profile`
+
+6. `src/app/api/profile/route.ts`
+   — `GET /api/profile` Route Handler (the "repo backend" endpoint)
+   — Reads `__hris_meta` cookie server-side, verifies HMAC, returns `{ id, fullName, email, role, permissions }`
+   — Returns standard `{ status, data, timestamp }` envelope
+   — No upstream call needed — session metadata is self-contained
+
+### Modified Files
+
+7. `src/lib/react-query/query-keys.ts`
+   — Added `profile: { current: () => ['user', 'profile', 'current'] as const }`
+
+8. `src/lib/tools/dependencies.ts`
+   — Added `USER_PROFILE_SERVICE: Symbol('UserProfileService')`
+   — Instantiated `userProfileService = new UserProfileService(httpAdapter)`
+   — Registered in DI container
+
+9. `src/modules/@org/user/index.ts`
+   — Added `export * from './profile'`
+
+## What Comes Next
+
+Reviewer agent should check:
+
+- Session guard: does the page correctly handle unauthenticated access (middleware already guards `/user/*`)?
+- Error state UX — is inline error message enough or should there be a retry button?
+- `useUpdateMyProfile` is wired but the view is read-only — acceptable for v1, flag for follow-up
+- TypeScript: zero new errors introduced (all pre-existing)

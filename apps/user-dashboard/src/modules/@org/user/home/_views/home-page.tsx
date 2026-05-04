@@ -4,6 +4,7 @@ import { dependencies } from '@/lib/tools/dependencies';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 
 import { useRouter } from 'next/navigation';
+import { routes } from '@/lib/routes/routes';
 
 import { WithDependency } from '@/HOC/withDependencies';
 import { Onboarding } from '@/modules/@org/user/home/_views/onboarding';
@@ -33,7 +34,7 @@ const HomePage = () => {
       icon: <Card />,
       // isCompleted: user?.password_is_set,
       isCompleted: false,
-      action: () => router.push(`/dashboard/settings`),
+      action: () => router.push(routes.user.dashboard()),
     },
     {
       title: 'Acknowledge HR Policies',
@@ -42,7 +43,7 @@ const HomePage = () => {
       buttonLabel: 'Acknowledge Policy',
       icon: <Gavel />,
       isCompleted: false,
-      action: () => router.push(`/dashboard/profile`),
+      action: () => router.push(routes.user.profile()),
     },
     {
       title: 'Review Payroll Info',

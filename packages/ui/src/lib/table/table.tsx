@@ -707,7 +707,7 @@ export function AdvancedDataTable<T extends DataItem>({
               </Table>
             </DndContext>
           ) : (
-            <Table className={`shadow-md`}>
+            <Table className={`shadow-md bg-background dark:bg-muted/30`}>
               <TableHeader className="bg-muted! sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id} className="border-border/50">

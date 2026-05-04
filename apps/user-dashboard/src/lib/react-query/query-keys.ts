@@ -74,5 +74,8 @@ export const queryKeys = {
     list: (filters?: Filters) => ['userPayslip', 'list', filters] as const,
     details: (id: string) => ['userPayslip', 'detail', id] as const,
   },
+  profile: {
+    current: () => ['user', 'profile', 'current'] as const,
+  },
   // Add other domains as needed
 };

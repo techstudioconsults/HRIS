@@ -15,6 +15,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { useLogout } from '@/modules/@org/auth/hooks/use-logout';
+import { routes } from '@/lib/routes/routes';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { Button } from '@workspace/ui/components/button';
 import type { TopBarProperties } from './types';
@@ -108,8 +109,14 @@ export default function TopBar({
               userEmail={adminEmail}
               userAvatar={adminAvatar}
               userRole={adminRole}
-              onProfileClick={() => router.push('/profile')}
-              onSettingsClick={() => router.push('/settings')}
+              onProfileClick={() =>
+                router.push(
+                  pathname.startsWith('/admin')
+                    ? routes.admin.profile()
+                    : routes.user.profile()
+                )
+              }
+              onSettingsClick={() => router.push(routes.admin.settings())}
               onLogout={handleLogout}
             />
           </div>

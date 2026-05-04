@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
 import { useAuthStore } from '../stores/auth-store';
+import { routes } from '@/lib/routes/routes';
 
 export function useLogout() {
   const router = useRouter();
@@ -12,6 +13,6 @@ export function useLogout() {
   return useCallback(async () => {
     await fetch('/api/auth/session', { method: 'DELETE' });
     logout();
-    router.push('/login');
+    router.push(routes.auth.login());
   }, [logout, router]);
 }

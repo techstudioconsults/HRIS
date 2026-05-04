@@ -8,6 +8,7 @@ import { useDebounce } from 'use-debounce';
 
 import { EmployeeHeaderSection } from './components/employee-header-section';
 import { EmployeeTableSection } from './components/employee-table-section';
+import { routes } from '@/lib/routes/routes';
 
 export const AllEmployees = () => {
   const {
@@ -113,7 +114,7 @@ export const AllEmployees = () => {
                 flow.
               </p>
               <Link
-                href="/admin/employees/bulk-import"
+                href={routes.admin.employees.bulkImport()}
                 className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-success-500 underline-offset-4 hover:text-success-400 hover:underline"
               >
                 Try it out

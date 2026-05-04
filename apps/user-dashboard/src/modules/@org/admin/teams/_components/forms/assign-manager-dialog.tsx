@@ -20,6 +20,7 @@ import { cn } from '@workspace/ui/lib/utils';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { useEmployeeService } from '@/modules/@org/admin/employee/services/use-service';
 import { useTeamService } from '../../services/use-service';
 
@@ -37,10 +38,14 @@ export const AssignManagerDialog = ({
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>('');
   const [isComboOpen, setIsComboOpen] = useState(false);
 
+  const queryClient = useQueryClient();
   const { useGetAllEmployees } = useEmployeeService();
   const { useUpdateTeam } = useTeamService();
   const { data: employeesResp, isLoading: isLoadingEmployees } =
-    useGetAllEmployees({ page: 1 }, { enabled: open });
+    useGetAllEmployees(
+      { page: 1, teamId: team?.id ?? '' },
+      { enabled: open && !!team?.id }
+    );
   const { mutate: updateTeam, isPending: isSubmitting } = useUpdateTeam();
 
   const employees: Employee[] = employeesResp?.data?.items ?? [];
@@ -65,6 +70,7 @@ export const AssignManagerDialog = ({
       { id: team.id, data: formData },
       {
         onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['teams'] });
           toast.success(
             `${selectedEmployee?.firstName} ${selectedEmployee?.lastName} assigned as manager/lead of "${team.name}"`
           );
@@ -121,7 +127,7 @@ export const AssignManagerDialog = ({
               <Command>
                 <CommandInput placeholder="Search by name or email..." />
                 <CommandList>
-                  <CommandEmpty>No employees found.</CommandEmpty>
+                  <CommandEmpty>No members found in this team.</CommandEmpty>
                   <CommandGroup>
                     {employees.map((employee) => (
                       <CommandItem

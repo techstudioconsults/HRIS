@@ -2,6 +2,7 @@
 
 import { ROLES } from '@/lib/auth-types';
 import { getDashboardRoute } from '@/lib/routes/redirect-helpers';
+import { routes } from '@/lib/routes/routes';
 import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onboarding-service';
 import { SuspenseLoading } from '@workspace/ui/lib/loading';
 import { useSession } from '@/lib/session';
@@ -33,7 +34,7 @@ const PostLoginContinuePage = () => {
     }
 
     if (status !== 'authenticated') {
-      router.replace('/login');
+      router.replace(routes.auth.login());
       return;
     }
 
@@ -53,7 +54,7 @@ const PostLoginContinuePage = () => {
       return;
     }
 
-    router.replace('/onboarding/welcome');
+    router.replace(routes.onboarding.welcome());
   }, [
     employeeId,
     isOwner,

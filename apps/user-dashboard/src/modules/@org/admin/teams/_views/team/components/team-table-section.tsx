@@ -18,6 +18,7 @@ import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { useBulkTeamActions } from '../../../hooks/use-bulk-team-actions';
 import type { TeamTableSectionProperties } from '../../../types';
+import { routes } from '@/lib/routes/routes';
 
 export const TeamTableSection = ({
   apiFilters,
@@ -112,7 +113,7 @@ export const TeamTableSection = ({
         onPageChange={handlePageChange}
         onRowClick={(team: any) => {
           if (team?.id) {
-            router.push(`/admin/teams/${team.id}`);
+            router.push(routes.admin.teams.detail(team.id));
           }
         }}
         rowActions={rowActions}

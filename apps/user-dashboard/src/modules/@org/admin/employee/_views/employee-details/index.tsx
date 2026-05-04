@@ -17,6 +17,7 @@ import Image from 'next/image';
 
 import { useEmployeeService } from '../../services/use-service';
 import { EmployeeDetailsSkeleton } from './loader';
+import { routes } from '@/lib/routes/routes';
 import { formatDate } from '@/lib/formatters';
 import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 import { AnyIconName } from '@workspace/ui/lib/icons/types';
@@ -108,12 +109,12 @@ const EmployeeDetailsHeader = ({
     subtitle={
       <BreadCrumb
         items={[
-          { label: 'Employees', href: '/admin/employees' },
+          { label: 'Employees', href: routes.admin.employees.list() },
           {
             label: employeeName || 'Employee Profile',
             href: employeeId
-              ? `/admin/employees/${employeeId}`
-              : '/admin/employees',
+              ? routes.admin.employees.detail(employeeId)
+              : routes.admin.employees.list(),
           },
         ]}
         showHome={true}
@@ -127,8 +128,8 @@ const EmployeeDetailsHeader = ({
             icon={<Icon name="Edit" variant={`Bold`} />}
             href={
               employeeId
-                ? `/admin/employees/edit-employee?employeeid=${employeeId}`
-                : '/admin/employees/edit-employee'
+                ? routes.admin.employees.edit(employeeId)
+                : routes.admin.employees.add()
             }
             variant="primary"
             className="w-full sm:w-auto"
@@ -263,21 +264,23 @@ const EmployeeAvatarUpload = ({
         }
       }}
     >
-      <Avatar className="border-primary/20 bg-muted size-32 border shadow-lg">
+      <Avatar className="border-primary/20 bg-muted size-32 border shadow-lg group-hover:brightness-90 transition-[filter]">
         <AvatarImage src={previewUrl || avatarUrl || ''} />
         <AvatarFallback className="bg-primary-50 text-2xl font-bold text-primary-75">
           {getInitials(firstName, lastName)}
         </AvatarFallback>
       </Avatar>
-      <div
-        className={`absolute inset-0 rounded-full bg-black/40 flex items-center justify-center transition-opacity ${isUploading ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
-      >
+      <span className="absolute bottom-1 right-1 flex size-8 items-center justify-center rounded-full border-2 border-background bg-primary shadow-sm">
         {isUploading ? (
-          <Icon name="Loader2" className="text-white animate-spin" size={24} />
+          <Icon
+            name="Loader2"
+            className="text-primary-foreground animate-spin"
+            size={16}
+          />
         ) : (
-          <Icon name="Upload" className="text-white" size={24} />
+          <Icon name="Pencil" className="text-primary-foreground" size={14} />
         )}
-      </div>
+      </span>
       <input
         ref={fileInputRef}
         type="file"

@@ -24,6 +24,7 @@ import type {
   PayrollSetupFormValues,
 } from '../../types';
 import { BonusDeductionManager } from '../bonus-deduction-manager';
+import { routes } from '@/lib/routes/routes';
 
 const sectionClassName =
   'space-y-4 rounded-xl border border-border/60 bg-background/60 px-4 pb-4 pt-3 md:px-5 md:pb-5 md:pt-4';
@@ -178,7 +179,7 @@ export const PayrollSetupForm = () => {
       <h1 className="text-2xl font-bold">Payroll Setup</h1>
       <BreadCrumb
         items={[
-          { label: 'Payroll', href: '/admin/payroll' },
+          { label: 'Payroll', href: routes.admin.payroll.list() },
           { label: 'Setup Payroll' },
         ]}
         className="mb-6"
@@ -331,7 +332,7 @@ export const PayrollSetupForm = () => {
         onClose={() => setIsSubmittedAlertOpen(false)}
         onConfirm={() => {
           setIsSubmittedAlertOpen(false);
-          router.push('/admin/payroll');
+          router.push(routes.admin.payroll.list());
           if (policy?.status === `incomplete`) {
             startTour(payrollSetupTourStep);
           }

@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useSession } from '@/lib/session';
+import { routes } from '@/lib/routes/routes';
 import { OTPInput } from '../../_components/input-otp';
 import { useAuthService } from '../../services/use-auth-service';
 import { getAuthErrorMessage } from '../../services/auth-errors';
@@ -56,7 +57,7 @@ export const InputOtpCard = () => {
       if (!sessionRes.ok) throw new Error('Failed to establish session');
 
       await refresh();
-      router.push('/login/continue');
+      router.push(routes.auth.loginContinue());
     } catch (error) {
       setError('password', {
         message: getAuthErrorMessage(error, 'otp-verify'),
@@ -127,7 +128,7 @@ export const InputOtpCard = () => {
             <p className="text-grey-500 mt-4 text-center text-sm">
               Wrong email?{' '}
               <Link
-                href="/login/otp"
+                href={routes.auth.loginOtp()}
                 className="text-primary font-medium hover:underline"
               >
                 Change email

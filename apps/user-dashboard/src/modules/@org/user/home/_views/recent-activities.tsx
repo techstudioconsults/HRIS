@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { routes } from '@/lib/routes/routes';
 import { Card } from '@workspace/ui/components/card';
 import { ActivityItem } from '../_components/activity-item';
 import type { RecentActivitiesProps } from '../types';
@@ -17,7 +18,7 @@ export const RecentActivities: React.FC<RecentActivitiesProps> = ({
           Recent Activities
         </h2>
         <Link
-          href="/user/activities"
+          href={routes.user.activities()}
           className="text-base lg:text-lg font-normal leading-[1.45]  hover:text-primary transition-colors"
         >
           See all

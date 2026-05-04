@@ -3,6 +3,7 @@
 import { useActiveTarget } from '@/context/active-target';
 import { useShortcuts } from '@workspace/ui/hooks';
 import { useRouter } from 'next/navigation';
+import { routes } from '@/lib/routes/routes';
 
 export function useTeamShortcuts() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export function useTeamShortcuts() {
       when: () => !!activeTeam,
       run: () => {
         if (!activeTeam) return;
-        router.push(`/admin/teams/${activeTeam.id}`);
+        router.push(routes.admin.teams.detail(activeTeam.id));
       },
     },
     {

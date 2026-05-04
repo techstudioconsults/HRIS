@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { useTeamService } from '../../services/use-service';
+import { routes } from '@/lib/routes/routes';
 import { useSubTeamRowActions } from '@/modules/@org/admin/teams/_views/table-data';
 import { SubTeamDetailsHeader } from './components/sub-team-details-header';
 import { SubTeamDetailsContent } from './components/sub-team-details-content';
@@ -210,7 +211,7 @@ const SubTeamDetails = ({ params }: SubTeamDetailsProps) => {
         onSuccess: (res) => {
           if (res?.success) {
             toast.success(`Sub-team "${teamData?.name}" deleted successfully!`);
-            router.push('/admin/teams');
+            router.push(routes.admin.teams.list());
           }
         },
       });

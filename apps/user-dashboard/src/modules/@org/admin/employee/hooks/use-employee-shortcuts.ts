@@ -3,6 +3,7 @@
 import { useActiveTarget } from '@/context/active-target';
 import { useShortcuts } from '@workspace/ui/hooks';
 import { useRouter } from 'next/navigation';
+import { routes } from '@/lib/routes/routes';
 
 export function useEmployeeShortcuts() {
   const { entity: activeEmployee } = useActiveTarget<Employee>();
@@ -14,16 +15,14 @@ export function useEmployeeShortcuts() {
         combo: 'mod+v',
         run: () =>
           activeEmployee &&
-          router.push(`/admin/employees/${activeEmployee.id}`),
+          router.push(routes.admin.employees.detail(activeEmployee.id)),
         when: () => !!activeEmployee,
       },
       {
         combo: 'mod+e',
         run: () =>
           activeEmployee &&
-          router.push(
-            `/admin/employees/edit-employee?employeeid=${activeEmployee.id}`
-          ),
+          router.push(routes.admin.employees.edit(activeEmployee.id)),
         when: () => !!activeEmployee,
       },
       {

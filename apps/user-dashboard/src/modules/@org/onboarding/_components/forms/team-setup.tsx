@@ -7,6 +7,7 @@ import { Icon } from '@workspace/ui/lib/icons/icon';
 import Link from 'next/link';
 
 import { TeamConfig } from '../accordions/team-config';
+import { routes } from '@/lib/routes/routes';
 
 export const TeamSetupForm = () => {
   return (
@@ -33,7 +34,7 @@ export const TeamSetupForm = () => {
         <div className="mt-8">
           <div>
             <MainButton
-              href={`/onboarding/step-3`}
+              href={routes.onboarding.step3()}
               type="button"
               variant="primary"
               className="w-full"
@@ -46,7 +47,7 @@ export const TeamSetupForm = () => {
           <div className="flex w-full items-center justify-center py-5">
             <Link
               data-tour="skip-form"
-              href={`/admin/dashboard`}
+              href={routes.admin.dashboard()}
               className="text-primary text-sm font-medium hover:underline"
             >
               Skip for Later

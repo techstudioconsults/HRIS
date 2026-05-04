@@ -3,12 +3,19 @@
 import { useRolesManagementSearchParameters } from '@/lib/nuqs/use-roles-management-search-parameters';
 import { useSettingsModalParams } from '@/lib/nuqs/use-settings-modal-params';
 import { queryKeys } from '@/lib/react-query/query-keys';
+import { formatDate } from '@/lib/formatters';
 import { FilterForm } from '@/modules/@org/admin/teams/_components/forms/filter-form';
 import { useTeamService } from '@/modules/@org/admin/teams/services/use-service';
+import { useEmployeeService } from '@/modules/@org/admin/employee/services/use-service';
 import { RolesAndPermission } from '@/modules/@org/onboarding/_components/forms/roles&permission';
 import { useOnboardingService } from '@/modules/@org/onboarding/services/use-onboarding-service';
 import { SearchInput } from '@/modules/@org/shared/search-input';
 import { useQueryClient } from '@tanstack/react-query';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@workspace/ui/components/avatar';
 import { Button } from '@workspace/ui/components/button';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
 import { ReusableDialog } from '@workspace/ui/lib/dialog';
@@ -27,7 +34,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { useDebounce } from 'use-debounce';
 
-import type { RoleRow, RoleToggleState } from '../../types';
+import type {
+  RoleAssignedEmployee,
+  RoleRow,
+  RoleToggleState,
+} from '../../types';
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -35,6 +46,7 @@ export const RolesManagementTab = () => {
   const queryClient = useQueryClient();
   const { useGetTeamsWithRoles } = useOnboardingService();
   const { useCreateRole, useUpdateRole } = useTeamService();
+  const { useGetAllEmployees } = useEmployeeService();
 
   const {
     page,
@@ -68,6 +80,7 @@ export const RolesManagementTab = () => {
 
   const { data: teamsWithRoles = [], isLoading: isLoadingTeams } =
     useGetTeamsWithRoles();
+  const { data: employeesResp } = useGetAllEmployees({ page: 1, limit: 200 });
   const { mutateAsync: createRoleMutation, isPending: isCreating } =
     useCreateRole();
   const { mutateAsync: updateRoleMutation, isPending: isUpdating } =
@@ -76,6 +89,9 @@ export const RolesManagementTab = () => {
   // Local input state (debounced) to throttle URL updates via nuqs
   const [searchInput, setSearchInput] = useState(search || '');
   const [debouncedSearch] = useDebounce(searchInput, 300);
+
+  // Members modal
+  const [selectedRole, setSelectedRole] = useState<RoleRow | null>(null);
 
   // UI-only role activation state (until backend endpoints are wired)
   const [roleActiveOverrides, setRoleActiveOverrides] = useState<
@@ -121,27 +137,85 @@ export const RolesManagementTab = () => {
 
   const effectiveTeamId = teamId === 'all' ? null : teamId;
 
+  const allEmployees: Employee[] = useMemo(
+    () => (employeesResp as any)?.data?.items ?? [],
+    [employeesResp]
+  );
+
+  // Secondary lookup: (teamId, roleNameLower) → canonical roleId from teamsWithRoles.
+  // Used as fallback when the employee list endpoint omits role.id.
+  const roleNameToIdLookup = useMemo(() => {
+    const lookup: Record<string, Record<string, string>> = {};
+    for (const team of Array.isArray(teamsWithRoles)
+      ? (teamsWithRoles as any[])
+      : []) {
+      const teamId = String(team.id);
+      lookup[teamId] = {};
+      for (const role of Array.isArray(team.roles) ? team.roles : []) {
+        if (role.name) {
+          lookup[teamId][String(role.name).toLowerCase()] = String(role.id);
+        }
+      }
+    }
+    return lookup;
+  }, [teamsWithRoles]);
+
+  const roleEmployeeMap = useMemo(() => {
+    const map: Record<string, RoleAssignedEmployee[]> = {};
+    for (const employee of allEmployees) {
+      const details = employee.employmentDetails;
+
+      // Primary: use role.id directly if the API returns it
+      let roleId: string | null = details?.role?.id
+        ? String(details.role.id)
+        : null;
+
+      // Fallback: resolve via (teamId, roleName) when role.id is absent
+      if (!roleId) {
+        const teamId = details?.team?.id ? String(details.team.id) : null;
+        const roleName = details?.role?.name
+          ? String(details.role.name).toLowerCase()
+          : null;
+        if (teamId && roleName) {
+          roleId = roleNameToIdLookup[teamId]?.[roleName] ?? null;
+        }
+      }
+
+      if (!roleId) continue;
+      if (!map[roleId]) map[roleId] = [];
+      map[roleId].push({
+        id: employee.id,
+        firstName: employee.firstName,
+        lastName: employee.lastName,
+        avatar: employee.avatar ?? '',
+      });
+    }
+    return map;
+  }, [allEmployees, roleNameToIdLookup]);
+
   const allRoles = useMemo<RoleRow[]>(() => {
     const teams = Array.isArray(teamsWithRoles)
       ? (teamsWithRoles as any[])
       : [];
     const flattened: RoleRow[] = [];
     for (const team of teams) {
+      if (team.name?.toLowerCase().trim() === 'default') continue;
       const roles: any[] = Array.isArray(team.roles) ? team.roles : [];
       for (const role of roles) {
+        if (role.name?.toLowerCase().trim() === 'default') continue;
         flattened.push({
           id: String(role.id),
           name: String(role.name),
           teamId: String(team.id),
           teamName: String(team.name),
           permissions: Array.isArray(role.permissions) ? role.permissions : [],
-          usersAssigned: '—',
-          lastModified: '—',
+          assignedEmployees: roleEmployeeMap[String(role.id)] ?? [],
+          lastModified: role.updatedAt ?? role.createdAt ?? '',
         });
       }
     }
     return flattened;
-  }, [teamsWithRoles]);
+  }, [teamsWithRoles, roleEmployeeMap]);
 
   const columns = useMemo<IColumnDefinition<RoleRow>[]>(
     () => [
@@ -159,11 +233,67 @@ export const RolesManagementTab = () => {
       },
       {
         header: 'Users Assigned',
-        accessorKey: 'usersAssigned',
+        accessorKey: 'assignedEmployees',
+        render: (_value, row) => {
+          const employees = row.assignedEmployees;
+          if (!employees.length) {
+            return <span className="text-muted-foreground text-sm">—</span>;
+          }
+          const MAX_VISIBLE = 5;
+          const visible = employees.slice(0, MAX_VISIBLE);
+          const overflow = employees.length - MAX_VISIBLE;
+          return (
+            <button
+              type="button"
+              onClick={() => setSelectedRole(row)}
+              className="group flex items-center gap-2.5 rounded-md transition-colors
+              hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              <div className="flex -space-x-2">
+                {visible.map((employee) => (
+                  <div
+                    key={employee.id}
+                    title={`${employee.firstName} ${employee.lastName}`}
+                    className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full border-2 border-background ring-0"
+                  >
+                    {employee.avatar ? (
+                      <img
+                        src={employee.avatar}
+                        alt={`${employee.firstName} ${employee.lastName}`}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-primary/10 text-[9px] font-semibold uppercase text-primary">
+                        {employee.firstName[0]}
+                        {employee.lastName[0]}
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {overflow > 0 && (
+                  <div
+                    title={`${overflow} more user${overflow > 1 ? 's' : ''}`}
+                    className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-background bg-muted text-[9px] font-semibold text-muted-foreground"
+                  >
+                    +{overflow}
+                  </div>
+                )}
+              </div>
+              <span className="text-muted-foreground group-hover:text-primary text-xs transition-colors">
+                {employees.length} user{employees.length !== 1 ? 's' : ''}
+              </span>
+            </button>
+          );
+        },
       },
       {
         header: 'Last Modified',
         accessorKey: 'lastModified',
+        render: (value) => (
+          <span className="text-muted-foreground text-sm">
+            {value ? formatDate(String(value)) : '—'}
+          </span>
+        ),
       },
     ],
     []
@@ -404,7 +534,7 @@ export const RolesManagementTab = () => {
             <GenericDropdown
               contentClassName="bg-background"
               trigger={
-                <Button className="h-10 rounded-md">
+                <Button variant={`primaryOutline`} className="h-10 rounded-md">
                   <Icon name="Filter" size={16} variant={`Outline`} />
                   <span className="hidden lg:block">Filter</span>
                 </Button>
@@ -445,7 +575,7 @@ export const RolesManagementTab = () => {
             <MainButton
               variant="primary"
               isLeftIconVisible
-              icon={<Icon name="Plus" size={16} />}
+              icon={<Icon name="Add" size={16} variant={`Bold`} />}
               className="w-full"
               onClick={openCreateDialog}
             >
@@ -463,7 +593,7 @@ export const RolesManagementTab = () => {
           </div>
         ) : (
           <AdvancedDataTable
-            className="min-h-0"
+            className="min-h-0 bg-background"
             data={pageItems}
             columns={columns}
             rowActions={(row): IRowAction<RoleRow>[] => [
@@ -491,7 +621,7 @@ export const RolesManagementTab = () => {
             emptyState={
               <p className="text-muted-foreground text-sm">No roles found.</p>
             }
-            showPagination
+            showPagination={false}
             currentPage={pageSafe}
             totalPages={totalPages}
             itemsPerPage={pageSize}
@@ -608,6 +738,48 @@ export const RolesManagementTab = () => {
               closeRoleEditor();
             }}
           />
+        </div>
+      </ReusableDialog>
+
+      {/* Role Members Modal */}
+      <ReusableDialog
+        open={!!selectedRole}
+        onOpenChange={(open) => {
+          if (!open) setSelectedRole(null);
+        }}
+        title={selectedRole ? `${selectedRole.name}s` : ''}
+        description={
+          selectedRole
+            ? `${selectedRole.assignedEmployees.length}
+             user${selectedRole.assignedEmployees.length !== 1 ? 's' : ''} assigned to this role in ${selectedRole.teamName}`
+            : ''
+        }
+        trigger={null}
+        className="max-w-md"
+      >
+        <div className="mt-1 max-h-[60vh] space-y-1 overflow-y-auto pr-1">
+          {selectedRole?.assignedEmployees.map((employee) => (
+            <div
+              key={employee.id}
+              className="flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-muted/50"
+            >
+              <Avatar className="h-9 w-9 shrink-0">
+                <AvatarImage
+                  src={employee.avatar}
+                  alt={`${employee.firstName} ${employee.lastName}`}
+                />
+                <AvatarFallback className="bg-primary/10 text-xs font-semibold uppercase text-primary">
+                  {employee.firstName[0]}
+                  {employee.lastName[0]}
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium">
+                  {employee.firstName} {employee.lastName}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </ReusableDialog>
     </section>

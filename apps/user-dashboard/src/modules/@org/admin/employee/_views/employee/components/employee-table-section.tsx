@@ -18,6 +18,7 @@ import { useEmployeeService } from '../../../services/use-service';
 import { employeeColumn, useEmployeeRowActions } from '../../table-data';
 import { useBulkEmployeeActions } from '../../../hooks/use-bulk-employee-actions';
 import type { EmployeeTableSectionProperties } from '../../../types';
+import { routes } from '@/lib/routes/routes';
 
 export const EmployeeTableSection = ({
   apiFilters,
@@ -92,7 +93,7 @@ export const EmployeeTableSection = ({
         description="Once you add team members, you'll see their details here, including department, role, work status, and more."
         button={{
           text: 'Add New Employee',
-          onClick: () => router.push('/admin/employees/add-employee'),
+          onClick: () => router.push(routes.admin.employees.add()),
         }}
       />
     );
@@ -112,7 +113,7 @@ export const EmployeeTableSection = ({
         rowActions={getRowActions}
         onRowClick={(employee: any) => {
           if (employee?.id) {
-            router.push(`/admin/employees/${employee.id}`);
+            router.push(routes.admin.employees.detail(employee.id));
           }
         }}
         showPagination={true}

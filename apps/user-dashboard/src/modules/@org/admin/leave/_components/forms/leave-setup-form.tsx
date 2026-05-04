@@ -16,6 +16,7 @@ import { getApiErrorMessage } from '@/lib/tools/api-error-message';
 import { useLeaveService } from '../../services/use-service';
 import { useLeaveStore } from '../../stores/leave-store';
 import type { LeaveSetupFormValues } from '../../types';
+import { routes } from '@/lib/routes/routes';
 
 const leaveSetupSchema = z
   .object({
@@ -267,7 +268,7 @@ export const LeaveSetupForm = () => {
         cancelText="Close"
         onConfirm={() => {
           setIsSubmittedAlertOpen(false);
-          router.push('/admin/leave/type');
+          router.push(routes.admin.leave.types());
         }}
       />
     </section>

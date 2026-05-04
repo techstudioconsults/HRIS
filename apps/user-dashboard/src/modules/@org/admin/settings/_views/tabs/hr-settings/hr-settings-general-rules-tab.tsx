@@ -10,11 +10,11 @@ import type { GeneralHRRulesFormValues } from '../../../types';
 
 const DEFAULT_VALUES: GeneralHRRulesFormValues = {
   probationLength: '',
-  autoConfirmAfterProbation: true,
+  autoConfirmAfterProbation: false,
   requireManualConfirmationReview: false,
   minimumNoticePeriodDays: undefined,
-  probationReminders: true,
-  workAnniversaryReminders: true,
+  probationReminders: false,
+  workAnniversaryReminders: false,
 };
 
 const probationLengthOptions = [
@@ -56,6 +56,7 @@ export function HRSettingsGeneralRulesTab() {
             </div>
             <div className="space-y-4">
               <FormField
+                disabled
                 name="probationLength"
                 label="Probation Length"
                 type="select"
@@ -65,12 +66,14 @@ export function HRSettingsGeneralRulesTab() {
               />
 
               <SwitchField
+                disabled
                 name="autoConfirmAfterProbation"
                 label="Auto-confirm after probation"
                 className="text-muted-foreground flex items-center justify-between gap-4"
               />
 
               <SwitchField
+                disabled
                 name="requireManualConfirmationReview"
                 label="Require manual confirmation review"
                 className="text-muted-foreground flex items-center justify-between gap-4"
@@ -87,6 +90,7 @@ export function HRSettingsGeneralRulesTab() {
             </div>
             <div>
               <FormField
+                disabled
                 name="minimumNoticePeriodDays"
                 label="Minimum notice period"
                 type="number"
@@ -105,11 +109,13 @@ export function HRSettingsGeneralRulesTab() {
             </div>
             <div className="space-y-4">
               <SwitchField
+                disabled
                 name="probationReminders"
                 label="Probation reminders"
                 className="text-muted-foreground flex items-center justify-between gap-4"
               />
               <SwitchField
+                disabled
                 name="workAnniversaryReminders"
                 label="Work anniversary reminders"
                 className="text-muted-foreground flex items-center justify-between gap-4"
@@ -122,7 +128,7 @@ export function HRSettingsGeneralRulesTab() {
               <MainButton
                 variant="outline"
                 type="button"
-                className="w-full sm:w-[137px]"
+                className="w-full sm:w-34.25"
                 onClick={() => methods.reset(DEFAULT_VALUES)}
               >
                 Cancel
@@ -130,7 +136,7 @@ export function HRSettingsGeneralRulesTab() {
               <MainButton
                 variant="primary"
                 type="submit"
-                className="w-full sm:w-[137px]"
+                className="w-full sm:w-34.25"
               >
                 Save Changes
               </MainButton>

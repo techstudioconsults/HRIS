@@ -23,7 +23,7 @@ export const HRSettingsTab = () => {
       </div>
 
       <Tabs defaultValue="leave" className="w-full">
-        <TabsList className="relative flex h-auto w-fit flex-wrap items-center gap-10 bg-transparent pb-2">
+        <TabsList className="relative flex h-auto w-fit flex-wrap items-center gap-10 bg-background dark:bg-muted border-none px-4  py-1 rounded-lg shadow">
           <TabsTrigger value="leave" className={subTabTriggerClassName}>
             Leave
           </TabsTrigger>

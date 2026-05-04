@@ -1,7 +1,6 @@
 'use client';
 
 import { AppEventsListener } from '@/components/shared/app-events-listener';
-import { useIsPWA } from '@/lib/pwa/pwa-provider';
 import { getTopBarTitle } from '@/lib/routes/top-bar-title';
 import { GlobalSearchInput } from '@/modules/@org/shared/search-input';
 import { SidebarTrigger } from '@workspace/ui/components/sidebar';
@@ -12,7 +11,7 @@ import {
 import { UserMenu } from '@workspace/ui/lib/user-menu';
 import { cn } from '@workspace/ui/lib/utils';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useLogout } from '@/modules/@org/auth/hooks/use-logout';
 import { routes } from '@/lib/routes/routes';
@@ -30,7 +29,6 @@ export default function TopBar({
   showSidebarTrigger = true,
   sticky = true,
 }: TopBarProperties) {
-  const isPWA = useIsPWA();
   const pathname = usePathname();
   const [hideMobileSearch, setHideMobileSearch] = useState(true);
   const router = useRouter();
@@ -38,12 +36,17 @@ export default function TopBar({
   const [notificationsList, setNotificationsList] =
     useState<Notification[]>(notifications);
 
+  useEffect(() => {
+    setNotificationsList(notifications);
+  }, [notifications]);
+
   const handleNotificationClick = (notification: Notification) => {
     if (notification.actionUrl) {
       router.push(notification.actionUrl);
     }
   };
 
+  // TODO: Wire mark-read & clear-all to PATCH / DELETE API endpoints when available
   const handleMarkAsRead = (notificationId: string) => {
     setNotificationsList((previous) =>
       previous.map((n) => (n.id === notificationId ? { ...n, read: true } : n))
@@ -61,7 +64,6 @@ export default function TopBar({
   };
 
   const title = getTopBarTitle(pathname);
-  console.log(title, isPWA);
   return (
     <>
       <header

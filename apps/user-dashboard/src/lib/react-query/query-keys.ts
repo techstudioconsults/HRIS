@@ -77,5 +77,8 @@ export const queryKeys = {
   profile: {
     current: () => ['user', 'profile', 'current'] as const,
   },
+  notification: {
+    list: (employeeId: string) => ['notification', 'list', employeeId] as const,
+  },
   // Add other domains as needed
 };

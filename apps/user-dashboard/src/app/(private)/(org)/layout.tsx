@@ -13,16 +13,21 @@ import { ReactNode } from 'react';
 import { AppSideBar } from '@/components/shared/navbar/AppSidebar';
 import { LayoutSelector, AppLayout } from '@/components/layouts';
 import { PWADockNav } from '@/components/shared/navbar/pwa-dock-nav';
+import { useAppService } from '@/services/app/use-app-service';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
+  const { useGetNotifications } = useAppService();
+  const { data: notifications = [] } = useGetNotifications(
+    session?.user.employee.id
+  );
 
   const topBar = (
     <TopBar
       adminName={session?.user.employee.fullName || ''}
       adminRole={session?.user.employee.role?.name || ''}
       adminEmail={session?.user.employee.email || ''}
-      notifications={[]}
+      notifications={notifications}
     />
   );
 
@@ -31,7 +36,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       adminName={session?.user.employee.fullName || ''}
       adminRole={session?.user.employee.role?.name || ''}
       adminEmail={session?.user.employee.email || ''}
-      notifications={[]}
+      notifications={notifications}
       showSidebarTrigger={false}
       sticky={false}
     />

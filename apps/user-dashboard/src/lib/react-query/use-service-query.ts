@@ -33,13 +33,16 @@ export function createServiceHooks<TService>(serviceSymbol: symbol) {
    * @param serviceMethod - Method to call on the service
    * @param options - Additional query options
    */
-  const useServiceQuery = <TData, TError = Error>(
+  const useServiceQuery = <TData, TSelect = TData, TError = Error>(
     queryKey: readonly unknown[],
     serviceMethod: (service: TService) => Promise<TData>,
-    options?: Omit<UseQueryOptions<TData, TError>, 'queryKey' | 'queryFn'>
-  ): UseQueryResult<TData, TError> => {
+    options?: Omit<
+      UseQueryOptions<TData, TError, TSelect>,
+      'queryKey' | 'queryFn'
+    >
+  ): UseQueryResult<TSelect, TError> => {
     const service = useService();
-    return useQuery<TData, TError>({
+    return useQuery<TData, TError, TSelect>({
       queryKey,
       queryFn: () => serviceMethod(service),
       ...options,
@@ -52,16 +55,16 @@ export function createServiceHooks<TService>(serviceSymbol: symbol) {
    * @param serviceMethod - Method to call on the service
    * @param options - Additional query options
    */
-  const useSuspenseServiceQuery = <TData, TError = Error>(
+  const useSuspenseServiceQuery = <TData, TSelect = TData, TError = Error>(
     queryKey: readonly unknown[],
     serviceMethod: (service: TService) => Promise<TData>,
     options?: Omit<
-      UseSuspenseQueryOptions<TData, TError>,
+      UseSuspenseQueryOptions<TData, TError, TSelect>,
       'queryKey' | 'queryFn'
     >
-  ): UseSuspenseQueryResult<TData, TError> => {
+  ): UseSuspenseQueryResult<TSelect, TError> => {
     const service = useService();
-    return useSuspenseQuery<TData, TError>({
+    return useSuspenseQuery<TData, TError, TSelect>({
       queryKey,
       queryFn: () => serviceMethod(service),
       ...options,

@@ -17,21 +17,20 @@ export interface LeaveType {
 
 export interface LeaveRequest {
   id: string;
-  employeeId: string;
-  employeeName: string;
-  employeeAvatar?: string;
-  leaveTypeId: string;
-  type?: string;
-  leaveTypeName: string;
+  employee: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+  type: string;
   startDate: string;
   endDate: string;
-  days: number;
+  days?: number;
   reason: string;
   status: 'pending' | 'approved' | 'rejected';
-  approvedBy?: string;
-  approvedAt?: string;
+  documentUrl?: string;
+  rejectionReason: string | null;
   createdAt: string;
-  updatedAt: string;
 }
 
 export interface CompanyLeavePolicy {

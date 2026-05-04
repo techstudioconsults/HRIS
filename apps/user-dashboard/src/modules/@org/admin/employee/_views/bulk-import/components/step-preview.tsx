@@ -1,7 +1,6 @@
 'use client';
 
 import { Badge } from '@workspace/ui/components/badge';
-import { Button } from '@workspace/ui/components/button';
 import {
   Table,
   TableBody,
@@ -215,15 +214,22 @@ export function StepPreview({
 
       {/* Actions */}
       <div className="flex gap-3">
-        <Button variant="outline" onClick={onGoBack} disabled={isStarting}>
-          <Icon
-            name="ChevronLeft"
-            size={16}
-            className="mr-1"
-            aria-hidden="true"
-          />
+        <MainButton
+          variant="primaryOutline"
+          isLeftIconVisible
+          icon={
+            <Icon
+              name="ChevronLeft"
+              size={16}
+              className="mr-1"
+              aria-hidden="true"
+            />
+          }
+          onClick={onGoBack}
+          disabled={isStarting}
+        >
           Back
-        </Button>
+        </MainButton>
         <MainButton
           variant="primary"
           isDisabled={validRows.length === 0 || isStarting}

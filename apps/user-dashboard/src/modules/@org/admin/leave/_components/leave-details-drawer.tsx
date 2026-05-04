@@ -7,14 +7,18 @@ import { Badge } from '@workspace/ui/components/badge';
 import { MainButton } from '@workspace/ui/lib/button';
 import { ReusableDialog } from '@workspace/ui/lib/dialog/Dialog';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { cn } from '@workspace/ui/lib/utils';
-import Image from 'next/image';
+import { cn, calculateDaysBetween } from '@workspace/ui/lib/utils';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { useLeaveService } from '../services/use-service';
 import { useLeaveStore } from '../stores/leave-store';
 import type { LeaveRequest } from '../types';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@workspace/ui/components/avatar';
 
 export function LeaveDetailsDrawer() {
   // ── URL state (nuqs) — drawer open + entity ID survive refresh  ──────────
@@ -114,25 +118,24 @@ export function LeaveDetailsDrawer() {
             {/* Employee Info */}
             <div className="rounded-lg flex items-center justify-between py-4">
               <div className="flex items-center gap-4">
-                {leaveRequest.employeeAvatar ? (
-                  <Image
-                    src={leaveRequest.employeeAvatar}
-                    alt={leaveRequest.employeeName}
-                    width={64}
-                    height={64}
-                    className="size-16 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="flex size-16 items-center justify-center rounded-full bg-gray-200">
-                    <Icon name="User" size={32} className="text-gray-500" />
-                  </div>
-                )}
+                <div className="group hover:bg-muted/60 flex w-fit cursor-pointer items-center gap-2 rounded-md px-1 py-0.5 transition-colors">
+                  <Avatar className={`bg-primary size-20`}>
+                    <AvatarImage
+                      src={leaveRequest.employee.avatar || ''}
+                      alt={leaveRequest.employee.name}
+                    />
+                    <AvatarFallback className="rounded-lg bg-transparent text-sm text-white">
+                      {leaveRequest.employee.name.slice(0, 2).toUpperCase() ||
+                        'CN'}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
                 <div>
                   <h3 className="text-lg font-semibold">
-                    {leaveRequest.employeeName}
+                    {leaveRequest.employee.name}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Employee ID: {leaveRequest.employeeId}
+                  <p className="text-xs text-muted-foreground uppercase">
+                    Employee ID: {leaveRequest.employee.id.slice(0, 8)}
                   </p>
                 </div>
               </div>
@@ -172,7 +175,13 @@ export function LeaveDetailsDrawer() {
                     <Icon name="Clock" size={18} />
                     <span>Duration</span>
                   </div>
-                  <p className="mt-1 font-medium">{leaveRequest.days} day(s)</p>
+                  <p className="mt-1 font-medium">
+                    {calculateDaysBetween(
+                      leaveRequest.startDate,
+                      leaveRequest.endDate
+                    )}{' '}
+                    day(s)
+                  </p>
                 </div>
 
                 <div className="rounded-md bg-primary/10 p-4">
@@ -211,22 +220,6 @@ export function LeaveDetailsDrawer() {
                   {formatDate(leaveRequest.createdAt)}
                 </p>
               </div>
-
-              {leaveRequest.approvedBy && leaveRequest.approvedAt && (
-                <div className="rounded-lg border p-4">
-                  <p className="text-sm font-medium text-foreground">
-                    {leaveRequest.status === 'approved'
-                      ? 'Approved By'
-                      : 'Action By'}
-                  </p>
-                  <p className="mt-1 text-sm text-foreground">
-                    {leaveRequest.approvedBy}
-                  </p>
-                  <p className="text-muted-foreground mt-1 text-xs">
-                    {formatDate(leaveRequest.approvedAt)}
-                  </p>
-                </div>
-              )}
             </div>
 
             {leaveRequest.status === 'pending' && (

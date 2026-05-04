@@ -2,7 +2,7 @@ import { queryKeys } from '@/lib/react-query/query-keys';
 import { createServiceHooks } from '@/lib/react-query/use-service-query';
 import { dependencies } from '@/lib/tools/dependencies';
 
-import { AppService } from './app.service';
+import { AppService, mapNotificationDTO } from '@/services/app/app.service';
 
 export const useAppService = () => {
   const { useServiceQuery } = createServiceHooks<AppService>(
@@ -10,9 +10,19 @@ export const useAppService = () => {
   );
 
   // Queries
-  const useGetAllProducts = () =>
-    useServiceQuery(queryKeys.product.list(), (service) =>
-      service.getAllProducts(``)
+  // const useGetAllProducts = () =>
+  //   useServiceQuery(queryKeys.product.list(), (service) =>
+  //     service.getAllProducts(``)
+  //   );
+
+  const useGetNotifications = (employeeId: string | undefined) =>
+    useServiceQuery(
+      queryKeys.notification.list(employeeId ?? ''),
+      (service) => service.getAllNotifications(employeeId ?? ''),
+      {
+        enabled: !!employeeId,
+        select: (envelope) => envelope.data.map(mapNotificationDTO),
+      }
     );
 
   // Mutations would go here
@@ -20,7 +30,8 @@ export const useAppService = () => {
 
   return {
     // Queries
-    useGetAllProducts,
+    // useGetAllProducts,
+    useGetNotifications,
 
     // Mutations
   };

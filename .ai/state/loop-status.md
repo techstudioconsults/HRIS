@@ -1,16 +1,16 @@
 # Current Loop Status
 
-**Current Loop**: task
-**Feature**: Routes Migration — Typed Constants
-**Current Phase**: Done
-**Last Handoff**: complete — 2026-05-04
+**Current Loop**: frontend-feature
+**Feature**: TopBar Notification Bell — API Wiring
+**Current Phase**: Complete
+**Last Handoff**: reviewer → done — 2026-05-04
 
 **Blocking Issues**: None
 
 **Phase Gates:**
 
-- [x] Audit all inline route strings
-- [x] Create ClickUp task (https://app.clickup.com/t/869d5a4y3)
-- [x] Implement `routes` factory in `src/lib/routes/routes.ts`
-- [x] Migrate 41 consumer files
-- [x] Zero new TS errors confirmed
+- [x] Plan (Analysis & Design)
+- [x] Implementation (DTO, query keys, hooks, layout wiring, TopBar sync)
+- [x] TypeScript check (0 new errors)
+- [x] Review (approved with changes — all resolved)
+- [ ] Optimize (optional — staleTime, structural sharing)

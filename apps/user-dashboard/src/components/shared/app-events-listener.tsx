@@ -14,6 +14,7 @@ import {
   INotificationPayload,
 } from '@/lib/sse/use-notifications';
 import { usePayrollService } from '@/modules/@org/admin/payroll/services/use-service';
+import { useSession } from '@/lib/session';
 import { AnyIconName } from '@workspace/ui/lib/icons/types';
 import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { MainButton } from '@workspace/ui/lib/button';
@@ -149,6 +150,8 @@ export const AppEventsListener = () => {
   const { on } = useSSE();
   const pathname = usePathname();
   const inPayrollRoute = pathname.includes('/admin/payroll');
+  const { data: session } = useSession();
+  const employeeId = session?.user.employee.id;
 
   const [banners, setBanners] = useState<BaseNotification[]>([]);
   const [modal, setModal] = useState<BaseNotification | null>(null);
@@ -328,6 +331,13 @@ export const AppEventsListener = () => {
         invalidatePayrollQueries(false);
       }
 
+      // Every SSE event may produce a persisted notification — refresh the bell list
+      if (employeeId) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.notification.list(employeeId),
+        });
+      }
+
       if (mapped.render === 'toast') {
         const message =
           mapped.title && mapped.body
@@ -386,7 +396,7 @@ export const AppEventsListener = () => {
         });
       }
     },
-    [queryClient, inPayrollRoute]
+    [queryClient, inPayrollRoute, employeeId]
   );
 
   useEffect(() => {

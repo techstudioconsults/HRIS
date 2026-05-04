@@ -133,7 +133,7 @@ export const EmployeeInformationDrawer = ({
   }, [payslip?.employee?.id]);
 
   const { data: historyResponse, isLoading: isHistoryLoading } = useGetPayslips(
-    '',
+    undefined,
     {
       employeeId: payslip?.employee?.id,
     },

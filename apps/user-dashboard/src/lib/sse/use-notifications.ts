@@ -40,7 +40,15 @@ function unwrapPayload(input: unknown): INotificationPayload {
   return input as INotificationPayload;
 }
 
-export function useNotifications(userId?: string, token?: string) {
+/**
+ * Opens a single SSE channel and returns a pub/sub interface.
+ *
+ * @param channelPath - Path segment appended to NEXT_PUBLIC_SSE_PROGRESS_CHANNEL,
+ *   e.g. `notifications/users/${userId}` or `notifications/payrolls/${employeeId}`.
+ *   Pass undefined/empty to keep the connection closed.
+ * @param token - Bearer token for authentication.
+ */
+export function useNotifications(channelPath?: string, token?: string) {
   const sourceReference = useRef<EventSource | null>(null);
   const statusReference = useRef<Status>('idle');
   const [status, setStatus] = useState<Status>('idle');
@@ -116,7 +124,7 @@ export function useNotifications(userId?: string, token?: string) {
   );
 
   useEffect(() => {
-    if (!userId || !token) {
+    if (!channelPath || !token) {
       close();
       return;
     }
@@ -124,7 +132,7 @@ export function useNotifications(userId?: string, token?: string) {
     updateStatus('connecting');
 
     const eventSource = new EventSource(
-      `${process.env.NEXT_PUBLIC_SSE_PROGRESS_CHANNEL}/notifications/users/${userId}`,
+      `${process.env.NEXT_PUBLIC_SSE_PROGRESS_CHANNEL}/${channelPath}`,
       {
         fetch: (input: any, init: any) => {
           return fetch(input, {
@@ -179,7 +187,7 @@ export function useNotifications(userId?: string, token?: string) {
       updateStatus('closed');
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, token, updateStatus]);
+  }, [channelPath, token, updateStatus]);
 
   const getStatus = useCallback(() => statusReference.current, []);
 

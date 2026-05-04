@@ -353,20 +353,6 @@ export type PayrollRunStore = RunProgress & {
   reset: () => void;
 };
 
-// ─── SSE event registry ───────────────────────────────────────────────────────
-
-export const EventRegistry = {
-  PAYROLL_APPROVE_REQUEST: 'payroll.approve.request',
-  PAYROLL_APPROVED: 'payroll.approve.success',
-  PAYROLL_REJECTED: 'payroll.approve.rejected',
-  PAYROLL_COMPLETED: 'payroll.completed',
-  PAYROLL_STATUS: 'payroll.status',
-  SALARY_PAID: 'salary.paid',
-  WALLET_CREATED_SUCCESS: 'wallet.created.success',
-} as const;
-
-export type EventNameType = (typeof EventRegistry)[keyof typeof EventRegistry];
-
 // ─── Payroll UI store state & actions ─────────────────────────────────────────
 
 export interface PayrollUIState {

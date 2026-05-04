@@ -1,6 +1,5 @@
 'use client';
 
-import { Check, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 import { EmptyState } from '@workspace/ui/lib/empty-state';
@@ -16,6 +15,7 @@ import { cn } from '../utils';
 import { Separator } from '@workspace/ui/components/separator';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { NotificationWidgetProperties } from '@/lib/notification-widget/types';
+import { MainButton } from '@workspace/ui/lib/button';
 
 export function NotificationWidget({
   notifications,
@@ -80,25 +80,25 @@ export function NotificationWidget({
           {notifications.length > 0 && (
             <div className="flex items-center gap-1">
               {unreadCount > 0 && (
-                <Button
-                  variant="ghost"
+                <MainButton
+                  disabled
                   size="icon"
                   className="size-8"
                   onClick={handleMarkAllAsRead}
+                  isIconOnly
+                  icon={<Icon name={`CheckCircle2`} className="size-4" />}
                   title="Mark all as read"
-                >
-                  <Check className="size-4" />
-                </Button>
+                />
               )}
-              <Button
-                variant="ghost"
+              <MainButton
+                disabled
                 size="icon"
                 className="text-destructive hover:text-destructive size-8"
                 onClick={handleClearAll}
+                isIconOnly
+                icon={<Icon name={`Trash2`} className="size-4" />}
                 title="Clear all"
-              >
-                <Trash2 className="size-4" />
-              </Button>
+              />
             </div>
           )}
         </div>
@@ -113,7 +113,7 @@ export function NotificationWidget({
           />
         ) : (
           <ScrollArea className={cn('overflow-y-auto')} style={{ maxHeight }}>
-            <div className="flex flex-col gap-2 p-2">
+            <div className="flex flex-col gap-2 py-2">
               {notifications.map((notification) => (
                 <NotificationItem
                   key={notification.id}
@@ -132,6 +132,7 @@ export function NotificationWidget({
             <Separator />
             <div className="p-2">
               <Button
+                disabled
                 variant="ghost"
                 className="text-primary hover:bg-primary/10 hover:text-primary w-full text-sm font-medium"
                 onClick={() => {

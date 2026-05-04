@@ -2,7 +2,9 @@
 
 import { AppEventsListener } from '@/components/shared/app-events-listener';
 import { getTopBarTitle } from '@/lib/routes/top-bar-title';
+import { useSession } from '@/lib/session';
 import { GlobalSearchInput } from '@/modules/@org/shared/search-input';
+import { useAppService } from '@/services/app/use-app-service';
 import { SidebarTrigger } from '@workspace/ui/components/sidebar';
 import {
   NotificationWidget,
@@ -11,7 +13,7 @@ import {
 import { UserMenu } from '@workspace/ui/lib/user-menu';
 import { cn } from '@workspace/ui/lib/utils';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useLogout } from '@/modules/@org/auth/hooks/use-logout';
 import { routes } from '@/lib/routes/routes';
@@ -24,7 +26,6 @@ export default function TopBar({
   adminEmail,
   adminAvatar,
   adminRole,
-  notifications = [],
   className = '',
   showSidebarTrigger = true,
   sticky = true,
@@ -33,12 +34,21 @@ export default function TopBar({
   const [hideMobileSearch, setHideMobileSearch] = useState(true);
   const router = useRouter();
   const handleLogout = useLogout();
-  const [notificationsList, setNotificationsList] =
-    useState<Notification[]>(notifications);
 
-  useEffect(() => {
-    setNotificationsList(notifications);
-  }, [notifications]);
+  const { data: session } = useSession();
+  const employeeId = session?.user.employee.id;
+
+  const {
+    useGetNotifications,
+    useMarkNotificationRead,
+    useMarkAllNotificationsRead,
+    useClearAllNotifications,
+  } = useAppService();
+
+  const { data: notifications = [] } = useGetNotifications(employeeId);
+  const { mutate: markRead } = useMarkNotificationRead(employeeId);
+  const { mutate: markAllRead } = useMarkAllNotificationsRead(employeeId);
+  const { mutate: clearAll } = useClearAllNotifications(employeeId);
 
   const handleNotificationClick = (notification: Notification) => {
     if (notification.actionUrl) {
@@ -46,21 +56,16 @@ export default function TopBar({
     }
   };
 
-  // TODO: Wire mark-read & clear-all to PATCH / DELETE API endpoints when available
   const handleMarkAsRead = (notificationId: string) => {
-    setNotificationsList((previous) =>
-      previous.map((n) => (n.id === notificationId ? { ...n, read: true } : n))
-    );
+    markRead(notificationId);
   };
 
   const handleMarkAllAsRead = () => {
-    setNotificationsList((previous) =>
-      previous.map((n) => ({ ...n, read: true }))
-    );
+    markAllRead();
   };
 
   const handleClearAll = () => {
-    setNotificationsList([]);
+    clearAll();
   };
 
   const title = getTopBarTitle(pathname);
@@ -100,7 +105,7 @@ export default function TopBar({
               />
             </Button>
             <NotificationWidget
-              notifications={notificationsList}
+              notifications={notifications}
               onNotificationClick={handleNotificationClick}
               onMarkAsRead={handleMarkAsRead}
               onMarkAllAsRead={handleMarkAllAsRead}

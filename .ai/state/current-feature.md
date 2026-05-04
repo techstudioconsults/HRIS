@@ -1,39 +1,38 @@
 # Current Feature Context
 
-**Feature Name**: TopBar Notification Bell — API Wiring
+**Feature Name**: Notification System Refactor — Real API Shape + Mutations + SSE Refresh
 **Status**: Done
-**Phase**: Optimizer (optional)
+**Phase**: Complete
 **Started**: 2026-05-04
 **Completed**: 2026-05-04
 
 ## Summary
 
-Wire the `GET /notifications/users/{employeeID}` endpoint into the notification bell icon
-in the TopBar component so real notification data flows from the backend instead of `[]`.
+Refactored the app notification system to match the real backend API shape, wired
+mark-as-read/clear-all mutations, and added SSE-driven notification list invalidation
+so the bell badge updates in real time without polling.
 
-## Files Created / Modified
+## Files Modified
 
-| File                                   | Action   | Description                                                                                                          |
-| -------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------- |
-| `services/app/app.service.ts`          | Modified | Added `NotificationDTO`, `ApiEnvelope<T>` (exported), `mapNotificationDTO`, typed returns, contextual error messages |
-| `lib/react-query/query-keys.ts`        | Modified | Added `notification.list(employeeId)` key factory                                                                    |
-| `lib/react-query/use-service-query.ts` | Modified | Added `TSelect` generic to `useServiceQuery` and `useSuspenseServiceQuery` for select transform support              |
-| `services/app/use-app-service.ts`      | Modified | Added `useGetNotifications(employeeId)` hook with `select` mapper                                                    |
-| `app/(private)/(org)/layout.tsx`       | Modified | Wire `useGetNotifications` → pass real data to `TopBar`                                                              |
-| `components/shared/top-bar/index.tsx`  | Modified | Sync prop→state via `useEffect`, removed `console.log`, removed unused `isPWA`                                       |
+| File                                          | Change                                                                                                                                                                                                                                  |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `services/app/app.service.ts`                 | `NotificationDTO` → `AppNotification` (real API shape); fixed `ApiEnvelope`; updated mapper; added `markNotificationRead`, `markAllNotificationsRead`, `clearAllNotifications`; fixed `actionUrl` routing (salary.paid → /user/payslip) |
+| `services/app/use-app-service.ts`             | Added `useMarkNotificationRead`, `useMarkAllNotificationsRead`, `useClearAllNotifications` mutations; bulk mutations derive `employeeId` from variables (no stale closure)                                                              |
+| `components/shared/app-events-listener.tsx`   | Invalidates `notification.list(employeeId)` on every SSE event; uses `useSession` for employeeId                                                                                                                                        |
+| `components/shared/top-bar/index.tsx`         | Self-fetches notifications via `useSession` + `useAppService`; uses `mutate` (not `mutateAsync`) for fire-and-forget mutation calls matching widget's sync handler contract                                                             |
+| `components/shared/top-bar/types.ts`          | Removed `notifications` prop (TopBar self-fetches)                                                                                                                                                                                      |
+| `app/(private)/(org)/layout.tsx`              | Removed `useGetNotifications` and `notifications` prop passthrough                                                                                                                                                                      |
+| `components/shared/top-bar/example-usage.tsx` | Updated to remove `notifications` prop                                                                                                                                                                                                  |
 
-## Review Findings (Resolved)
+## Review Findings (All Resolved)
 
-- [x] Removed unused `isPWA` variable and import
-- [x] Exported `ApiEnvelope<T>` for reuse
-- [x] Added context to `throw new Error()` messages
-- [x] Removed `as Notification[]` cast (unnecessary with TSelect generic)
-- [x] ESLint: 0 errors, 0 warnings
-- [x] TypeScript: 0 new errors
+- [x] `handleMarkAsRead` async mismatch → changed to `mutate` (sync fire-and-forget)
+- [x] Stale closure in bulk mutation `invalidateQueries` → now derives `employeeId` from mutation variables
+- [x] Wrong `actionUrl` for salary.paid → `/user/payslip` (was `/admin/payroll`)
+- Pre-existing infrastructure issue (4-arg `onSuccess` in `use-service-query.ts`) — not in scope, not introduced here
 
-## Decisions
+## Key Decisions
 
-- Mutations (mark-read, clear-all) remain local state only — no PATCH/DELETE endpoints exist yet
-- DTO-to-UI mapper in hook's `select` — clean separation, easy to adjust if API shape differs
-- `enabled: !!employeeId` prevents query flight before session is hydrated
-- `useServiceQuery` and `useSuspenseServiceQuery` now accept `TSelect` generic for typed `select` transforms (backward compatible)
+- TopBar self-fetches notifications (uses `useSession` internally) — removes prop-drilling
+- SSE invalidation in `AppEventsListener` (already has `queryClient` + all events) — minimal change for live badge
+- `mutate` instead of `mutateAsync` — matches `onMarkAsRead?: (id: string) => void` widget contract exactly

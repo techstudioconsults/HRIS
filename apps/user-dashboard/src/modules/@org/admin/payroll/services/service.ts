@@ -300,11 +300,11 @@ export class PayrollService {
   // Payslips CRUD
   // =============================
 
-  async getPayslips(payrollID: string, filters: Filters) {
+  async getPayslips(payrollID: string | undefined, filters: Filters) {
     const response = await this.http.get<PaginatedApiResponse<Payslip>>(
       `/payslips`,
       {
-        payrollId: payrollID,
+        ...(payrollID ? { payrollId: payrollID } : {}),
         ...filters,
       }
     );

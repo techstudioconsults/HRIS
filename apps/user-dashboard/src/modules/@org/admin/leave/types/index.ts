@@ -1,6 +1,7 @@
 // Leave Module Types
 
 export interface LeaveType {
+  [key: string]: unknown;
   id: string;
   name: string;
   days: number;
@@ -16,6 +17,7 @@ export interface LeaveType {
 }
 
 export interface LeaveRequest {
+  [key: string]: unknown;
   id: string;
   employee: {
     id: string;

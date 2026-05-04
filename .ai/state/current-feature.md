@@ -1,6 +1,6 @@
 # Current Feature Context
 
-**Feature Name**: Notification System Refactor — Real API Shape + Mutations + SSE Refresh
+**Feature Name**: Admin Dashboard — ActiveUser Component (Live Data Wiring)
 **Status**: Done
 **Phase**: Complete
 **Started**: 2026-05-04
@@ -8,31 +8,33 @@
 
 ## Summary
 
-Refactored the app notification system to match the real backend API shape, wired
-mark-as-read/clear-all mutations, and added SSE-driven notification list invalidation
-so the bell badge updates in real time without polling.
+Wired the admin dashboard `ActiveUser` view with real API data across five widgets.
+
+## Files Created
+
+| File                                                             | Purpose                                                                        |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `modules/@org/admin/dashboard/types/dashboard-api.ts`            | Types: PayrollMonthSummary, AttendanceMonthRecord, LeaveDistributionEntry      |
+| `modules/@org/admin/dashboard/services/dashboard.service.ts`     | DashboardService: payroll summary, attendance overview, leave distribution     |
+| `modules/@org/admin/dashboard/services/use-dashboard-service.ts` | Hooks: useGetPayrollSummary, useGetAttendanceOverview, useGetLeaveDistribution |
 
 ## Files Modified
 
-| File                                          | Change                                                                                                                                                                                                                                  |
-| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `services/app/app.service.ts`                 | `NotificationDTO` → `AppNotification` (real API shape); fixed `ApiEnvelope`; updated mapper; added `markNotificationRead`, `markAllNotificationsRead`, `clearAllNotifications`; fixed `actionUrl` routing (salary.paid → /user/payslip) |
-| `services/app/use-app-service.ts`             | Added `useMarkNotificationRead`, `useMarkAllNotificationsRead`, `useClearAllNotifications` mutations; bulk mutations derive `employeeId` from variables (no stale closure)                                                              |
-| `components/shared/app-events-listener.tsx`   | Invalidates `notification.list(employeeId)` on every SSE event; uses `useSession` for employeeId                                                                                                                                        |
-| `components/shared/top-bar/index.tsx`         | Self-fetches notifications via `useSession` + `useAppService`; uses `mutate` (not `mutateAsync`) for fire-and-forget mutation calls matching widget's sync handler contract                                                             |
-| `components/shared/top-bar/types.ts`          | Removed `notifications` prop (TopBar self-fetches)                                                                                                                                                                                      |
-| `app/(private)/(org)/layout.tsx`              | Removed `useGetNotifications` and `notifications` prop passthrough                                                                                                                                                                      |
-| `components/shared/top-bar/example-usage.tsx` | Updated to remove `notifications` prop                                                                                                                                                                                                  |
-
-## Review Findings (All Resolved)
-
-- [x] `handleMarkAsRead` async mismatch → changed to `mutate` (sync fire-and-forget)
-- [x] Stale closure in bulk mutation `invalidateQueries` → now derives `employeeId` from mutation variables
-- [x] Wrong `actionUrl` for salary.paid → `/user/payslip` (was `/admin/payroll`)
-- Pre-existing infrastructure issue (4-arg `onSuccess` in `use-service-query.ts`) — not in scope, not introduced here
+| File                                                | Change                                                                                     |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `lib/react-query/query-keys.ts`                     | Added `dashboard.*` query keys                                                             |
+| `lib/tools/dependencies.ts`                         | Registered DASHBOARD_SERVICE + added missing container.add()                               |
+| `_components/leave-piechart.tsx`                    | Self-fetches leave distribution; skeleton loading; fallback to static                      |
+| `_components/payrool-linechart.tsx`                 | Self-fetches payroll summary; skeleton loading; fallback to static                         |
+| `_components/attendance-barchart.tsx`               | Self-fetches attendance overview; skeleton loading; fallback to static                     |
+| `admin/dashboard/_components/card-section.tsx`      | Live: new joiners (30d employee filter), pending leaves count, total net pay, attendance % |
+| `admin/dashboard/_components/recent-activities.tsx` | Live: notifications API via useAppService + useSession                                     |
 
 ## Key Decisions
 
-- TopBar self-fetches notifications (uses `useSession` internally) — removes prop-drilling
-- SSE invalidation in `AppEventsListener` (already has `queryClient` + all events) — minimal change for live badge
-- `mutate` instead of `mutateAsync` — matches `onMarkAsRead?: (id: string) => void` widget contract exactly
+- Payroll summary response nesting: `response.data.data.data` (extra `data` key in envelope)
+- Attendance overview response: `response.data.data` (direct array under `data`)
+- New joiners: `GET /employees?limit=1000` + client-side filter by createdAt within 30 days
+- Chart components self-fetch — no prop drilling through LeaveAndPayroll / AttendanceAndRecentActivities wrappers
+- Skeleton shown inline inside DashboardCard `value` prop (accepts ReactNode)
+- Zero new TypeScript errors introduced

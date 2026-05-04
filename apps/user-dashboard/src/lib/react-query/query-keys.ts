@@ -80,5 +80,12 @@ export const queryKeys = {
   notification: {
     list: (employeeId: string) => ['notification', 'list', employeeId] as const,
   },
+  dashboard: {
+    payrollSummary: (year: number) =>
+      ['dashboard', 'payroll-summary', year] as const,
+    attendanceOverview: (year: number) =>
+      ['dashboard', 'attendance-overview', year] as const,
+    leaveDistribution: () => ['dashboard', 'leave-distribution'] as const,
+  },
   // Add other domains as needed
 };

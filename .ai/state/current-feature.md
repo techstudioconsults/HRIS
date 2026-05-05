@@ -1,27 +1,18 @@
 # Current Feature Context
 
-**Feature Name**: Dashboard Overview Period (Year Selector)
-**Status**: In Progress
-**Phase**: Implementation
-**Started**: 2026-05-04
+**Feature Name**: Suspend & Terminate Employee
+**Status**: Complete
+**Phase**: Done
+**Started**: 2026-05-05
 
 ## Summary
 
-Wire the ComboBox in DashboardHeader as a year selector (2020–current year).
-The selected year flows to all endpoint calls that accept a `year` parameter
-(payroll summary, attendance overview). Persisted via nuqs URL query param `?year=`.
-
-## Files Created
-
-| File                                        | Purpose                                 |
-| ------------------------------------------- | --------------------------------------- |
-| `lib/nuqs/use-dashboard-overview-period.ts` | Shared nuqs hook for `year` query param |
+Wire the "Suspend Employee" and "Terminate Employee" dropdown items in the employee-detail view.
+Both actions call `PATCH /employees/:id` with `status: inactive` via the existing `useUpdateEmployee` hook.
+Each action is gated behind an `AlertDialog` confirmation (local `useState` per ADR-001 — destructive dialogs excluded from URL persistence).
 
 ## Files Modified
 
-| File                                               | Change                                                                    |
-| -------------------------------------------------- | ------------------------------------------------------------------------- |
-| `admin/dashboard/_components/dashboard-header.tsx` | Enable ComboBox with year options, wire year to data hooks and CSV export |
-| `admin/dashboard/_components/card-section.tsx`     | Use `year` from nuqs instead of `currentYear`                             |
-| `@org/_components/payrool-linechart.tsx`           | Use `year` from nuqs instead of `currentYear`                             |
-| `@org/_components/attendance-barchart.tsx`         | Use `year` from nuqs, update subtitle to show selected year               |
+| File | Change |
+| ---- | ------ |
+| `modules/@org/admin/employee/_views/employee-details/index.tsx` | Added AlertDialog imports; enabled Suspend/Terminate dropdown items with `onSelect` handlers; added `isSuspendDialogOpen` / `isTerminateDialogOpen` state + `handleSuspendConfirm` / `handleTerminateConfirm` mutation handlers in `EmployeeDetails`; added two `AlertDialog` modals |

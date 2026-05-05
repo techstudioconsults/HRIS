@@ -4,6 +4,7 @@ import './globals.css';
 
 import { cn } from '@workspace/ui/lib/utils';
 import React from 'react';
+import Script from 'next/script';
 import { Providers } from '@/components/providers';
 import { Playfair_Display, Work_Sans } from 'next/font/google';
 
@@ -60,6 +61,12 @@ export default async function RootLayout({
         )}
       >
         <Providers>{children}</Providers>
+        <Script
+          src="https://cdn.jsdelivr.net/npm/chatsy@latest/dist/chatsy.min.js"
+          data-agent-id="dq2sJy3X4OyH6Y"
+          data-button-background-color="#FFFFFF"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

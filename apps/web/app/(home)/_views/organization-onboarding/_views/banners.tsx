@@ -35,7 +35,7 @@ export const TourBanner = () => {
   return (
     <Wrapper
       data-tour-banner
-      className="bg-primary/10 relative z-10 h-full py-4 lg:py-[66px] lg:px-[58px]! my-0! rounded-[18px]"
+      className="bg-primary/10 relative z-10 h-full py-4 lg:py-16.5 lg:px-14.5! my-0! rounded-[18px]"
     >
       <div className="flex justify-center flex-col-reverse md:flex-row items-center gap-5 lg:gap-10">
         <div className="flex-1 space-y-10">

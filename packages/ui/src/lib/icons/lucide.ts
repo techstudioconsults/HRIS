@@ -8,6 +8,7 @@ export {
   X,
   ArrowLeft,
   ChevronLeft,
+  ChevronUp,
   AlertCircle,
   ChevronRight,
   ChevronLeftCircle,

@@ -6,6 +6,7 @@
 @import './base.css';
 @import './utilities.css';
 @import './animations.css';
+
 @plugin 'tailwindcss-animate';
 
 @source "../../../apps/**/*.{ts,tsx}";
@@ -20,6 +21,7 @@
 /* Base typography and element styles */
 /* Utility components and custom styles */
 /* Animation utilities and keyframes */
+
 
 .cc-shadow {
     box-shadow: 0 10px 22px 0 #B3D4FF1A,

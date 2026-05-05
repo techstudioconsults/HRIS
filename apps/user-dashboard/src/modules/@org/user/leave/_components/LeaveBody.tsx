@@ -6,6 +6,7 @@ import empty1 from '~/images/empty-state.svg';
 import { useUserLeaveService } from '@/modules/@org/user';
 import type { UserLeaveBodyProps } from '../types';
 import { LeaveCard } from './LeaveCard';
+import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 
 export const UserLeaveBody = ({
   searchQuery = '',
@@ -47,14 +48,16 @@ export const UserLeaveBody = ({
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
-      {filtered.map((request) => (
-        <LeaveCard
-          key={request.id}
-          request={request}
-          onViewDetails={onViewDetails}
-        />
-      ))}
-    </div>
+    <Wrapper className={`max-w-300 my-0! p-0`}>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+        {filtered.map((request) => (
+          <LeaveCard
+            key={request.id}
+            request={request}
+            onViewDetails={onViewDetails}
+          />
+        ))}
+      </div>
+    </Wrapper>
   );
 };

@@ -17,6 +17,7 @@ import {
 } from '@workspace/ui/components/avatar';
 import { Card } from '@workspace/ui/components/card';
 import { DropdownMenuItem } from '@workspace/ui/components/dropdown-menu';
+import { Input } from '@workspace/ui/components/input';
 import { BreadCrumb } from '@workspace/ui/lib/breadcrumb';
 import { DashboardHeader } from '@workspace/ui/lib/dashboard';
 import { ErrorEmptyState } from '@workspace/ui/lib/empty-state';
@@ -110,13 +111,21 @@ const DetailsFieldset = ({
 const EmployeeDetailsHeader = ({
   employeeId,
   employeeName,
+  isSuspended,
+  isTerminated,
   onSuspend,
+  onUnsuspend,
   onTerminate,
+  onUndoTerminate,
 }: {
   employeeId?: string;
   employeeName?: string;
+  isSuspended: boolean;
+  isTerminated: boolean;
   onSuspend?: () => void;
+  onUnsuspend?: () => void;
   onTerminate?: () => void;
+  onUndoTerminate?: () => void;
 }) => (
   <DashboardHeader
     title="Employee Details"
@@ -170,14 +179,17 @@ const EmployeeDetailsHeader = ({
         >
           <DropdownMenuItem disabled>Download Profile PDF</DropdownMenuItem>
           <DropdownMenuItem disabled>Reset Password</DropdownMenuItem>
-          <DropdownMenuItem onSelect={onSuspend}>
-            Suspend Employee
+          <DropdownMenuItem
+            onSelect={isSuspended ? onUnsuspend : onSuspend}
+            disabled={isTerminated}
+          >
+            {isSuspended ? 'Unsuspend Employee' : 'Suspend Employee'}
           </DropdownMenuItem>
           <DropdownMenuItem
-            onSelect={onTerminate}
+            onSelect={isTerminated ? onUndoTerminate : onTerminate}
             className="text-destructive focus:text-destructive"
           >
-            Terminate Employee
+            {isTerminated ? 'Undo Termination' : 'Terminate Employee'}
           </DropdownMenuItem>
         </GenericDropdown>
       </div>
@@ -531,7 +543,11 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
   const { mutate: updateEmployee, isPending: isUpdating } = useUpdateEmployee();
 
   const [isSuspendDialogOpen, setIsSuspendDialogOpen] = useState(false);
+  const [isUnsuspendDialogOpen, setIsUnsuspendDialogOpen] = useState(false);
   const [isTerminateDialogOpen, setIsTerminateDialogOpen] = useState(false);
+  const [isUndoTerminateDialogOpen, setIsUndoTerminateDialogOpen] =
+    useState(false);
+  const [terminateInputValue, setTerminateInputValue] = useState('');
 
   const handleSuspendConfirm = () => {
     if (!employeeData) return;
@@ -551,19 +567,56 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
     );
   };
 
+  const handleUnsuspendConfirm = () => {
+    if (!employeeData) return;
+    const formData = new FormData();
+    formData.append('status', 'active');
+    updateEmployee(
+      { id: employeeData.id, data: formData },
+      {
+        onSuccess: () => {
+          setIsUnsuspendDialogOpen(false);
+          toast.success(`${employeeData.firstName} has been reinstated.`);
+        },
+        onError: () => {
+          toast.error('Failed to reinstate employee. Please try again.');
+        },
+      }
+    );
+  };
+
   const handleTerminateConfirm = () => {
     if (!employeeData) return;
     const formData = new FormData();
-    formData.append('status', 'inactive');
+    formData.append('status', 'terminated');
     updateEmployee(
       { id: employeeData.id, data: formData },
       {
         onSuccess: () => {
           setIsTerminateDialogOpen(false);
+          setTerminateInputValue('');
           toast.success(`${employeeData.firstName} has been terminated.`);
         },
         onError: () => {
           toast.error('Failed to terminate employee. Please try again.');
+        },
+      }
+    );
+  };
+
+  const handleUndoTerminateConfirm = () => {
+    if (!employeeData) return;
+    const formData = new FormData();
+    formData.append('status', 'active');
+    updateEmployee(
+      { id: employeeData.id, data: formData },
+      {
+        onSuccess: () => {
+          setIsUndoTerminateDialogOpen(false);
+          toast.success(`${employeeData.firstName} has been reinstated.`);
+        },
+        onError: () => {
+          toast.error('Failed to reinstate employee. Please try again.');
         },
       }
     );
@@ -581,20 +634,27 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
 
   const employeeName =
     `${employeeData.firstName} ${employeeData.lastName}`.trim();
+  const isSuspended = employeeData.status === 'inactive';
+  const isTerminated = employeeData.status === 'terminated';
 
   return (
     <section className="space-y-6">
       <EmployeeDetailsHeader
         employeeId={employeeData.id}
         employeeName={employeeName}
+        isSuspended={isSuspended}
+        isTerminated={isTerminated}
         onSuspend={() => setIsSuspendDialogOpen(true)}
+        onUnsuspend={() => setIsUnsuspendDialogOpen(true)}
         onTerminate={() => setIsTerminateDialogOpen(true)}
+        onUndoTerminate={() => setIsUndoTerminateDialogOpen(true)}
       />
       <EmployeeDetailsContent
         employeeId={employeeData.id}
         employeeData={employeeData}
       />
 
+      {/* Suspend */}
       <AlertDialog
         open={isSuspendDialogOpen}
         onOpenChange={setIsSuspendDialogOpen}
@@ -604,7 +664,7 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
             <AlertDialogTitle>Suspend Employee</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to suspend <strong>{employeeName}</strong>?
-              Their account will be set to inactive.
+              Their account will be deactivated until reinstated.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -619,26 +679,109 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Unsuspend */}
       <AlertDialog
-        open={isTerminateDialogOpen}
-        onOpenChange={setIsTerminateDialogOpen}
+        open={isUnsuspendDialogOpen}
+        onOpenChange={setIsUnsuspendDialogOpen}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Terminate Employee</AlertDialogTitle>
+            <AlertDialogTitle>Reinstate Employee</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to terminate <strong>{employeeName}</strong>
-              ? This action will set their account to inactive.
+              Are you sure you want to reinstate <strong>{employeeName}</strong>
+              ? Their account will be reactivated.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isUpdating}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleUnsuspendConfirm}
+              disabled={isUpdating}
+            >
+              {isUpdating ? 'Reinstating…' : 'Reinstate'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Terminate — two-step confirmation */}
+      <AlertDialog
+        open={isTerminateDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) setTerminateInputValue('');
+          setIsTerminateDialogOpen(open);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-destructive">
+              Terminate Employee
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-4">
+                <p>
+                  You are about to permanently terminate{' '}
+                  <strong>{employeeName}</strong>. This action is{' '}
+                  <strong>irreversible</strong> — their employment record will
+                  be closed and access revoked immediately.
+                </p>
+                <div className="rounded-md border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                  This is an irreversible process. Terminated employees cannot
+                  be reactivated through this system.
+                </div>
+                <div className="space-y-2">
+                  <p className="text-foreground text-sm font-medium">
+                    Type the employee ID to confirm:
+                  </p>
+                  <code className="block rounded bg-muted px-3 py-1.5 text-xs font-mono text-muted-foreground select-all">
+                    {employeeData.id}
+                  </code>
+                  <Input
+                    placeholder="Paste or type the employee ID"
+                    value={terminateInputValue}
+                    onChange={(event) =>
+                      setTerminateInputValue(event.target.value)
+                    }
+                    disabled={isUpdating}
+                    autoComplete="off"
+                  />
+                </div>
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isUpdating}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleTerminateConfirm}
-              disabled={isUpdating}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={isUpdating || terminateInputValue !== employeeData.id}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50"
             >
               {isUpdating ? 'Terminating…' : 'Terminate'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Undo Termination */}
+      <AlertDialog
+        open={isUndoTerminateDialogOpen}
+        onOpenChange={setIsUndoTerminateDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Undo Termination</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to reinstate <strong>{employeeName}</strong>
+              ? Their account will be reactivated.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isUpdating}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleUndoTerminateConfirm}
+              disabled={isUpdating}
+            >
+              {isUpdating ? 'Reinstating…' : 'Reinstate'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

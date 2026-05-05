@@ -10,14 +10,21 @@
  * xl              (1280px+)   : 15px  — standard desktop (~0.9375× scale)
  * 2xl             (1536px+)   : 16px  — large display, restore full scale
  */
-@media (min-width: 1024px) {
-    html { font-size: 14px; }
+
+html {
+    font-size: 13px;
 }
-/*@media (min-width: 1280px) {*/
-/*    html { font-size: 13px; }*/
-/*}*/
+
+@media (min-width: 1024px) {
+    html {
+        font-size: 14px;
+    }
+}
+
 @media (min-width: 1536px) {
-    html { font-size: 16px; }
+    html {
+        font-size: 16px;
+    }
 }
 
 @layer base {

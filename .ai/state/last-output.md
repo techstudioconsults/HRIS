@@ -1,3 +1,30 @@
+# Suspend / Terminate Employee Fixes
+
+**Feature**: Correct suspend/terminate status payloads + toggle UX + two-step terminate confirm
+**Status**: Complete
+**Date**: 2026-05-05
+
+### Fixes applied (`employee-details/index.tsx`)
+
+1. **Payloads corrected** — suspend sends `inactive`, terminate sends `terminated` (both previously sent `inactive`)
+2. **Unsuspend toggle** — dropdown item reads "Unsuspend Employee" when `status === 'inactive'`; clicking it sends `active` via new `handleUnsuspendConfirm`
+3. **Terminate disabled** — dropdown terminate item disabled when `status === 'terminated'`; suspend/unsuspend items also disabled when terminated
+4. **Two-step terminate** — modal shows irreversible warning banner + displays employee UUID + requires user to type the exact ID before confirm button enables; input cleared on modal close
+
+---
+
+# Web App Favicon
+
+**Feature**: Add brand favicon to `apps/web`
+**Status**: Complete
+**Date**: 2026-05-05
+
+Copied icon assets from `apps/user-dashboard/public/icons/` to `apps/web/public/icons/`.
+Added `metadata` export to `apps/web/app/layout.tsx` with `icons` config (192px, 512px, Apple touch icon).
+Web app was showing the Vercel default because layout had no metadata export at all.
+
+---
+
 # File Upload Consolidation
 
 **Feature**: Replace `FileUpload` (old lib component) with `FileUploader` (canonical component)

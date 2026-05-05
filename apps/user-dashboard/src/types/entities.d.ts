@@ -25,7 +25,7 @@ declare global {
   type EmploymentType = 'full time' | 'part time' | 'contract' | null;
   type WorkMode = 'remote' | 'hybrid' | 'onsite' | null;
   type EmploymentStatus = 'active' | 'inactive' | 'leave' | 'terminated';
-  type Status = 'active' | 'inactive' | 'terminated';
+  type Status = 'active' | 'inactive' | 'leave' | 'terminated';
 
   // ============================================================================
   // DOMAIN ENTITIES

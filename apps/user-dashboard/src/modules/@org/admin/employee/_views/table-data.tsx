@@ -153,17 +153,6 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
     render: (_, employee: Employee) => (
       <>
         <div className="group hover:bg-muted/60 flex w-fit cursor-pointer items-center gap-2 rounded-md px-1 py-0.5 transition-colors">
-          {/* <Image
-            src={
-              typeof employee.avatar === "string" && employee.avatar.length > 0
-                ? employee.avatar
-                : "https://res.cloudinary.com/kingsleysolomon/image/upload/v1699879092/techstudio/icons/avatar_vvgjji_zzdq9m.png"
-            }
-            alt={employee.firstName}
-            width={100}
-            height={100}
-            className="bg-muted ring-border group-hover:ring-primary/40 h-8 w-8 rounded-full object-cover ring-1"
-          /> */}
           <Avatar className={`bg-primary`}>
             <AvatarImage
               src={employee.avatar || ''}
@@ -219,13 +208,24 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
   {
     header: 'Status',
     accessorKey: 'status',
-    render: (_, employee: Employee) => (
-      <Badge
-        className="min-w-fit capitalize"
-        variant={employee.status === 'active' ? 'success' : 'warning'}
-      >
-        {employee.status}
-      </Badge>
-    ),
+    render: (_, employee: Employee) => {
+      const statusVariantMap: Record<
+        Status,
+        'success' | 'warning' | 'info' | 'danger'
+      > = {
+        active: 'success',
+        inactive: 'warning',
+        leave: 'info',
+        terminated: 'danger',
+      };
+      return (
+        <Badge
+          className="min-w-fit capitalize"
+          variant={statusVariantMap[employee.status] ?? 'warning'}
+        >
+          {employee.status}
+        </Badge>
+      );
+    },
   },
 ];

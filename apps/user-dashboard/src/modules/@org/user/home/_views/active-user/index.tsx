@@ -1,16 +1,54 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { DashboardBanner } from '@/modules/@org/admin/dashboard/_components/home-banner';
 import { useSession } from '@/lib/session';
 import { RecentActivities } from '@/modules/@org/user/home/_views/recent-activities';
-import { RECENT_ACTIVITIES } from '@/modules/@org/user/home/constants/recent-activities';
 import { CardGroup } from '@/modules/@org/_components/card-group';
 import { UserDashboardCard } from '@/modules/@org/user/home/_components/user-dashboard-card';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
+import { useAppService } from '@/services/app/use-app-service';
+import type { Notification } from '@workspace/ui/lib/notification-widget';
+import type { Activity, ActivityType } from '../../types';
+
+function notificationTypeToActivityType(
+  type: Notification['type']
+): ActivityType {
+  switch (type) {
+    case 'success':
+      return 'approved';
+    case 'error':
+      return 'rejected';
+    default:
+      return 'submitted';
+  }
+}
+
+function mapNotificationsToActivities(
+  notifications: Notification[]
+): Activity[] {
+  return notifications.map((notification) => ({
+    id: notification.id,
+    type: notificationTypeToActivityType(notification.type),
+    title: notification.title,
+    message: notification.message,
+    timestamp: notification.timestamp,
+  }));
+}
 
 export const ActiveUser: React.FC = () => {
   const { data: session } = useSession();
   const userName = session?.user.employee.fullName;
+  const employeeId = session?.user.employee.id;
+
+  const { useGetNotifications } = useAppService();
+  const { data: notifications, isLoading: isLoadingNotifications } =
+    useGetNotifications(employeeId);
+
+  const activities = useMemo(
+    () => mapNotificationsToActivities(notifications ?? []),
+    [notifications]
+  );
+
   return (
     <Wrapper className="my-0! p-0">
       <DashboardBanner
@@ -41,7 +79,10 @@ export const ActiveUser: React.FC = () => {
           link={`/user/attendance`}
         />
       </CardGroup>
-      <RecentActivities activities={RECENT_ACTIVITIES} />
+      <RecentActivities
+        activities={activities}
+        isLoading={isLoadingNotifications}
+      />
     </Wrapper>
   );
 };

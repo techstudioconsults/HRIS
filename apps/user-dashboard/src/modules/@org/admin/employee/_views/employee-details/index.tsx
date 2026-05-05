@@ -1,6 +1,16 @@
 'use client';
 
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@workspace/ui/components/alert-dialog';
+import {
   Avatar,
   AvatarFallback,
   AvatarImage,
@@ -100,9 +110,13 @@ const DetailsFieldset = ({
 const EmployeeDetailsHeader = ({
   employeeId,
   employeeName,
+  onSuspend,
+  onTerminate,
 }: {
   employeeId?: string;
   employeeName?: string;
+  onSuspend?: () => void;
+  onTerminate?: () => void;
 }) => (
   <DashboardHeader
     title="Employee Details"
@@ -156,8 +170,15 @@ const EmployeeDetailsHeader = ({
         >
           <DropdownMenuItem disabled>Download Profile PDF</DropdownMenuItem>
           <DropdownMenuItem disabled>Reset Password</DropdownMenuItem>
-          <DropdownMenuItem disabled>Suspend Employee</DropdownMenuItem>
-          <DropdownMenuItem disabled>Terminate Employee</DropdownMenuItem>
+          <DropdownMenuItem onSelect={onSuspend}>
+            Suspend Employee
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={onTerminate}
+            className="text-destructive focus:text-destructive"
+          >
+            Terminate Employee
+          </DropdownMenuItem>
         </GenericDropdown>
       </div>
     }
@@ -499,13 +520,54 @@ const EmployeeDetailsContent = ({
 };
 
 export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
-  const { useGetEmployeeById } = useEmployeeService();
+  const { useGetEmployeeById, useUpdateEmployee } = useEmployeeService();
   const {
     data: employeeData,
     isLoading: isLoadingEmployee,
     isError: isErrorEmployee,
     refetch,
   } = useGetEmployeeById(params.id);
+
+  const { mutate: updateEmployee, isPending: isUpdating } = useUpdateEmployee();
+
+  const [isSuspendDialogOpen, setIsSuspendDialogOpen] = useState(false);
+  const [isTerminateDialogOpen, setIsTerminateDialogOpen] = useState(false);
+
+  const handleSuspendConfirm = () => {
+    if (!employeeData) return;
+    const formData = new FormData();
+    formData.append('status', 'inactive');
+    updateEmployee(
+      { id: employeeData.id, data: formData },
+      {
+        onSuccess: () => {
+          setIsSuspendDialogOpen(false);
+          toast.success(`${employeeData.firstName} has been suspended.`);
+        },
+        onError: () => {
+          toast.error('Failed to suspend employee. Please try again.');
+        },
+      }
+    );
+  };
+
+  const handleTerminateConfirm = () => {
+    if (!employeeData) return;
+    const formData = new FormData();
+    formData.append('status', 'inactive');
+    updateEmployee(
+      { id: employeeData.id, data: formData },
+      {
+        onSuccess: () => {
+          setIsTerminateDialogOpen(false);
+          toast.success(`${employeeData.firstName} has been terminated.`);
+        },
+        onError: () => {
+          toast.error('Failed to terminate employee. Please try again.');
+        },
+      }
+    );
+  };
 
   if (isLoadingEmployee) {
     return <EmployeeDetailsSkeleton />;
@@ -525,11 +587,62 @@ export const EmployeeDetails = ({ params }: { params: { id: string } }) => {
       <EmployeeDetailsHeader
         employeeId={employeeData.id}
         employeeName={employeeName}
+        onSuspend={() => setIsSuspendDialogOpen(true)}
+        onTerminate={() => setIsTerminateDialogOpen(true)}
       />
       <EmployeeDetailsContent
         employeeId={employeeData.id}
         employeeData={employeeData}
       />
+
+      <AlertDialog
+        open={isSuspendDialogOpen}
+        onOpenChange={setIsSuspendDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Suspend Employee</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to suspend <strong>{employeeName}</strong>?
+              Their account will be set to inactive.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isUpdating}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleSuspendConfirm}
+              disabled={isUpdating}
+            >
+              {isUpdating ? 'Suspending…' : 'Suspend'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={isTerminateDialogOpen}
+        onOpenChange={setIsTerminateDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Terminate Employee</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to terminate <strong>{employeeName}</strong>
+              ? This action will set their account to inactive.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isUpdating}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleTerminateConfirm}
+              disabled={isUpdating}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isUpdating ? 'Terminating…' : 'Terminate'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   );
 };

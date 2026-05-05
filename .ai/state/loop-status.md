@@ -1,16 +1,16 @@
 # Current Loop Status
 
 **Current Loop**: frontend-feature
-**Feature**: Dashboard Overview Period (Year Selector)
-**Current Phase**: Implementation
-**Last Handoff**: Planner → Frontend Implementer — 2026-05-04
+**Feature**: Suspend & Terminate Employee
+**Current Phase**: Done
+**Last Handoff**: Implementation complete — 2026-05-05
 
 **Blocking Issues**: None
 
 **Phase Gates:**
 
 - [x] Plan
-- [ ] Implementation
-- [ ] TypeScript check
-- [ ] Review
-- [ ] Optimize
+- [x] Implementation
+- [x] TypeScript check (clean — no new errors introduced)
+- [x] Review
+- [x] Optimize

@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useAuthService } from '../../services/use-auth-service';
-import { getAuthErrorMessage } from '../../services/auth-errors';
+import { getApiErrorMessage } from '@/lib/tools/api-error-message';
 import { routes } from '@/lib/routes/routes';
 import { InfoTooltip } from '@workspace/ui/lib/tooltip';
 import { toast } from 'sonner';
@@ -47,7 +47,7 @@ export const Register = () => {
         router.push(routes.auth.login());
       },
       onError: (error) => {
-        toast.error(getAuthErrorMessage(error, 'register'));
+        toast.error(getApiErrorMessage(error));
       },
     });
   };

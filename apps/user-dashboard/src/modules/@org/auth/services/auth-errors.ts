@@ -3,19 +3,12 @@ import { getApiErrorMessage } from '@/lib/tools/api-error-message';
 
 type AuthContext =
   | 'login'
-  | 'register'
   | 'otp-request'
   | 'otp-verify'
   | 'forgot-password'
   | 'reset-password';
 
 const STATUS_MESSAGES: Record<AuthContext, Partial<Record<number, string>>> = {
-  register: {
-    400: 'Invalid registration details. Please check your inputs and try again.',
-    409: 'An account with this email or company domain already exists.',
-    422: 'Some fields are invalid. Please review and correct them.',
-    429: 'Too many registration attempts. Please wait a moment and try again.',
-  },
   login: {
     400: 'Invalid credentials. Please check your email and password.',
     401: 'No employee account found with these credentials. Please check your email and password.',

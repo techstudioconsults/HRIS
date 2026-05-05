@@ -76,9 +76,9 @@ export const Footer = () => {
                 autoComplete="email"
                 inputMode="email"
                 placeholder="Email address"
-                className="bg-white border-none min-h-[52px] rounded-[6px] px-5 text-black w-full"
+                className="bg-white border-none min-h-13 rounded-[6px] px-5 text-black w-full"
               />
-              <MainButton variant={`primary`} size={`xl`}>
+              <MainButton variant={`primary`} size={`2xl`}>
                 Subscribe
               </MainButton>
             </div>

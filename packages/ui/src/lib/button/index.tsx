@@ -119,7 +119,7 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
     );
 
     const buttonClasses = cn(
-      'transition-all duration-300 ease-in-out rounded-md',
+      'transition-all duration-300 ease-in-out rounded-md shadow-none',
       isDisabled && '',
       className
     );

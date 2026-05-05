@@ -75,7 +75,7 @@ svg {
 }
 
 .leave-svg {
-    @apply -translate-x-2.5 sm:translate-x-[-150px] lg:-translate-x-2.5;
+    /*@apply -translate-x-2.5 sm:-translate-x-37.5 lg:-translate-x-2.5;*/
 }
 
 
@@ -129,4 +129,23 @@ svg {
 
 .footer-logo-svg {
     overflow: hidden;
+}
+
+/* ─── Onboarding stepper image crossfade ───────────────────────── */
+@keyframes step-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes step-fade-out {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .step-fade-in,
+    .step-fade-out {
+        animation: none !important;
+        opacity: 1 !important;
+    }
 }

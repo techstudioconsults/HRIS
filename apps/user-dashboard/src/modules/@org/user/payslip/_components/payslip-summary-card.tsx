@@ -28,7 +28,7 @@ export const PayslipSummaryCard = () => {
   return (
     <section
       className={cn(
-        'bg-primary flex w-full flex-col items-start gap-4 overflow-hidden rounded-lg p-4 shadow sm:p-6 lg:px-10',
+        'bg-primary h-70 flex w-full flex-col items-start gap-4 overflow-hidden rounded-lg p-4 shadow sm:p-6 lg:px-10',
         'bg-[url(/images/dashboard/Lines.svg)] bg-size-[180%] bg-right bg-no-repeat sm:bg-size-[130%] lg:bg-cover'
       )}
     >

@@ -29,7 +29,7 @@ export const OurProductCard = ({
       <div
         className={cn(
           'relative px-3 lg:px-6 pb-3',
-          isWide ? 'h-80 md:h-[330px] lg:h-84' : 'h-[300px] md:h-80'
+          isWide ? 'h-80 md:h-82.5 lg:h-84' : 'h-75 md:h-80'
         )}
       >
         <div

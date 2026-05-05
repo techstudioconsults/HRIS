@@ -12,23 +12,33 @@ import {
 import { useState, useEffect } from 'react';
 import { HELP_CENTER_DATA } from '../../constants/help-center';
 
+const findActiveCategorySlug = (currentPathname: string): string | null => {
+  const activeCategory = HELP_CENTER_DATA.find((category) =>
+    category.articles.some(
+      (article) =>
+        currentPathname === `/help-center/${category.slug}/${article.slug}`
+    )
+  );
+  return activeCategory?.slug ?? null;
+};
+
 export const HelpSidebar = () => {
   const pathname = usePathname();
-  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
+  // Pre-expand the active category on first render to prevent layout shift
+  const [expandedCategories, setExpandedCategories] = useState<string[]>(() => {
+    const slug = findActiveCategorySlug(pathname);
+    return slug ? [slug] : [];
+  });
+
+  // Expand active category and scroll to top on every navigation
   useEffect(() => {
-    const activeCategory = HELP_CENTER_DATA.find((category) =>
-      category.articles.some(
-        (article) =>
-          pathname === `/help-center/${category.slug}/${article.slug}`
-      )
-    );
-    if (activeCategory && !expandedCategories.includes(activeCategory.slug)) {
-      setExpandedCategories((prev) => [
-        ...new Set([...prev, activeCategory.slug]),
-      ]);
+    const slug = findActiveCategorySlug(pathname);
+    if (slug) {
+      setExpandedCategories((prev) => [...new Set([...prev, slug])]);
     }
-  }, [pathname, expandedCategories]);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [pathname]);
 
   return (
     <aside className="w-full lg:col-span-4 lg:self-start">

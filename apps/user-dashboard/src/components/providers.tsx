@@ -11,6 +11,7 @@ import { Toast } from '@workspace/ui/lib/Toast';
 import { KBarProviderWrapper } from '@/lib/kbar/kbar-provider';
 import { Suspense } from 'react';
 import { PwaRegistration } from '@/components/pwa/pwa-registration';
+import { IOSInstallPrompt } from '@/components/pwa/ios-install-prompt';
 import { PWAProvider } from '@/lib/pwa/pwa-provider';
 import { SessionProvider } from '@/lib/session';
 import { MswProvider } from '@/components/msw-provider';
@@ -36,6 +37,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                     {/* <NetworkStatusModal /> */}
                     <KBarProviderWrapper>
                       <PwaRegistration />
+                      <IOSInstallPrompt />
                       <Suspense>{children}</Suspense>
                     </KBarProviderWrapper>
                   </TooltipProvider>

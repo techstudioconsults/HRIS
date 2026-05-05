@@ -96,7 +96,7 @@ export const Register = () => {
                 content={
                   <span className={`text-xs`}>
                     Used to identify your organization and help verify employee
-                    emails (e.g. https://techstudiohr.com).
+                    emails (e.g. www.techstudiohr.com).
                   </span>
                 }
                 side={'left'}

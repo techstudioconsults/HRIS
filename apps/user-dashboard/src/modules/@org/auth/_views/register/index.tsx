@@ -9,8 +9,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useAuthService } from '../../services/use-auth-service';
+import { getAuthErrorMessage } from '../../services/auth-errors';
 import { routes } from '@/lib/routes/routes';
 import { InfoTooltip } from '@workspace/ui/lib/tooltip';
+import { toast } from 'sonner';
 
 export const Register = () => {
   const router = useRouter();
@@ -44,7 +46,9 @@ export const Register = () => {
       onSuccess: () => {
         router.push(routes.auth.login());
       },
-      onError: () => {},
+      onError: (error) => {
+        toast.error(getAuthErrorMessage(error, 'register'));
+      },
     });
   };
 
@@ -92,7 +96,7 @@ export const Register = () => {
                 content={
                   <span className={`text-xs`}>
                     Used to identify your organization and help verify employee
-                    emails (e.g. https://techstudiohr.com).
+                    emails (e.g. www.techstudiohr.com).
                   </span>
                 }
                 side={'left'}

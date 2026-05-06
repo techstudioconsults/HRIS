@@ -21,7 +21,6 @@ const UserLeaveView = () => {
     isRequestLeaveOpen,
     isLeaveDetailsOpen,
     isEditLeaveOpen,
-    modalId,
     openRequestLeave,
     openLeaveDetails,
     openEditLeave,

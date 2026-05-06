@@ -32,7 +32,8 @@ export const useAppService = () => {
 
   const useMarkAllNotificationsRead = (employeeId: string | undefined) =>
     useServiceMutation(
-      (service, _: void) => service.markAllNotificationsRead(),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      (service, _unused: void) => service.markAllNotificationsRead(),
       {
         invalidateQueries: () => [
           queryKeys.notification.list(employeeId ?? ''),
@@ -41,9 +42,15 @@ export const useAppService = () => {
     );
 
   const useClearAllNotifications = (employeeId: string | undefined) =>
-    useServiceMutation((service, _: void) => service.clearAllNotifications(), {
-      invalidateQueries: () => [queryKeys.notification.list(employeeId ?? '')],
-    });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    useServiceMutation(
+      (service, _unused: void) => service.clearAllNotifications(),
+      {
+        invalidateQueries: () => [
+          queryKeys.notification.list(employeeId ?? ''),
+        ],
+      }
+    );
 
   return {
     useGetNotifications,

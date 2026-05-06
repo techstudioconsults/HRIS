@@ -25,16 +25,6 @@ const notificationIcons: Record<NotificationType, React.ReactNode> = {
   system: <Info className="size-4 text-gray-500" />,
 };
 
-const notificationColors: Record<NotificationType, string> = {
-  info: 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900',
-  success:
-    'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-900',
-  warning:
-    'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900',
-  error: 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-900',
-  system: 'bg-gray-50 dark:bg-gray-950/20 border-gray-200 dark:border-gray-900',
-};
-
 export function NotificationItem({
   notification,
   onClick,

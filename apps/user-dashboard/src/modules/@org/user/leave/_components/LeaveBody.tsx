@@ -15,19 +15,16 @@ export const UserLeaveBody = ({
   const { useGetLeaveRequests } = useUserLeaveService();
   const { data, isLoading } = useGetLeaveRequests();
 
-  const requests = data?.items ?? [];
-
   const query = searchQuery.toLowerCase();
 
-  const filtered = useMemo(
-    () =>
-      requests.filter(
-        (request) =>
-          request.type?.toLowerCase().includes(query) ||
-          request.reason?.toLowerCase().includes(query)
-      ),
-    [requests, query]
-  );
+  const filtered = useMemo(() => {
+    const requests = data?.items ?? [];
+    return requests.filter(
+      (request) =>
+        request.type?.toLowerCase().includes(query) ||
+        request.reason?.toLowerCase().includes(query)
+    );
+  }, [data?.items, query]);
 
   if (isLoading) {
     return (

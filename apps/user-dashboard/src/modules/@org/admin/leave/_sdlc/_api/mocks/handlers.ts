@@ -88,7 +88,7 @@ export const leaveHandlers = [
     });
   }),
 
-  http.get('/api/v1/leave/balance/:employeeId', ({ params }) => {
+  http.get('/api/v1/leave/balance/:employeeId', () => {
     return HttpResponse.json({
       status: 'success',
       data: [],

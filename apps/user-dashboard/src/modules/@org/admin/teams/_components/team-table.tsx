@@ -5,7 +5,7 @@ import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -30,7 +30,7 @@ import {
 import type { EmployeeTableProperties } from '../types';
 import { routes } from '@/lib/routes/routes';
 
-function TableRow(props: { children: ReactNode }) {
+function TableRow() {
   return null;
 }
 

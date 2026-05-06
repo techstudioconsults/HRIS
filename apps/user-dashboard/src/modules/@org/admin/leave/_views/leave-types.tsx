@@ -110,7 +110,10 @@ const LeaveTypesView = () => {
     if (Array.isArray(nestedItems)) return nestedItems;
     return [];
   })();
-  const effectiveLeaveTypes = safeLeaveTypes.length > 0 ? safeLeaveTypes : [];
+  const effectiveLeaveTypes = useMemo(
+    () => (safeLeaveTypes.length > 0 ? safeLeaveTypes : []),
+    [safeLeaveTypes]
+  );
 
   const filteredLeaveTypes = useMemo(() => {
     if (!searchQuery.trim()) return effectiveLeaveTypes;
@@ -149,7 +152,7 @@ const LeaveTypesView = () => {
     {
       label: ``,
       type: `separator`,
-      onClick: (_row: LeaveType) => {
+      onClick: () => {
         // separator — no action
       },
     },

@@ -2,11 +2,9 @@
 
 import { cn } from '@workspace/ui/lib/utils';
 import Image from 'next/image';
-import { useState, type ComponentProps } from 'react';
+import { type ComponentProps } from 'react';
 
 export function BlurImage(properties: ComponentProps<typeof Image>) {
-  const [isLoading, setLoading] = useState(true);
-
   return (
     <Image
       {...properties}

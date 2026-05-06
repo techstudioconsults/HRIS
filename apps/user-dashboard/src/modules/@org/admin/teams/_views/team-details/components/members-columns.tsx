@@ -98,6 +98,6 @@ export function useMembersColumns(
         ),
       },
     ],
-    [setActiveEmployee, teamId]
+    [setActiveEmployee]
   );
 }

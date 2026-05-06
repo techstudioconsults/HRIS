@@ -182,7 +182,7 @@ export const getPayrollColumns = (): IColumnDefinition<Payslip>[] => [
   {
     header: 'Role',
     accessorKey: 'employeeId',
-    // @ts-ignore
+    // @ts-expect-error -- render callback signature mismatch with TanStack Table types
     render: (_value: unknown, payslip: Payslip) => (
       <span className="text-sm capitalize">
         {payslip.employee?.role?.name ?? ''}
@@ -192,7 +192,7 @@ export const getPayrollColumns = (): IColumnDefinition<Payslip>[] => [
   {
     header: 'Gross Pay',
     accessorKey: 'grossPay',
-    // @ts-ignore
+    // @ts-expect-error -- render callback signature mismatch with TanStack Table types
     render: (_value: unknown, payslip: Payslip) => (
       <span className="text-sm">{formatCurrency(payslip.grossPay)}</span>
     ),
@@ -200,7 +200,7 @@ export const getPayrollColumns = (): IColumnDefinition<Payslip>[] => [
   {
     header: 'Deduction',
     accessorKey: 'totalDeductions',
-    // @ts-ignore
+    // @ts-expect-error -- render callback signature mismatch with TanStack Table types
     render: (_value: unknown, payslip: Payslip) => (
       <span className="text-sm">{formatCurrency(payslip.totalDeductions)}</span>
     ),
@@ -208,7 +208,7 @@ export const getPayrollColumns = (): IColumnDefinition<Payslip>[] => [
   {
     header: 'Bonus',
     accessorKey: 'totalBonuses',
-    // @ts-ignore
+    // @ts-expect-error -- render callback signature mismatch with TanStack Table types
     render: (_value: unknown, payslip: Payslip) => (
       <span className="text-sm">{formatCurrency(payslip.totalBonuses)}</span>
     ),
@@ -216,7 +216,7 @@ export const getPayrollColumns = (): IColumnDefinition<Payslip>[] => [
   {
     header: 'Net Pay',
     accessorKey: 'netPay',
-    // @ts-ignore
+    // @ts-expect-error -- render callback signature mismatch with TanStack Table types
     render: (_value: unknown, payslip: Payslip) => (
       <span className="text-success text-sm">
         {formatCurrency(payslip.netPay)}
@@ -226,7 +226,7 @@ export const getPayrollColumns = (): IColumnDefinition<Payslip>[] => [
   {
     header: 'Status',
     accessorKey: 'status',
-    // @ts-ignore
+    // @ts-expect-error -- render callback signature mismatch with TanStack Table types
     render: (_value: unknown, payslip: Payslip) => (
       <Badge
         className={cn(

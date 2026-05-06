@@ -233,9 +233,10 @@ export const AppEventsListener = () => {
         await queryClient.invalidateQueries({
           queryKey: queryKeys.payroll.list({}),
         });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        const message = error?.response?.data?.message ?? failedFallback;
+      } catch (error: unknown) {
+        const message =
+          (error as { response?: { data?: { message?: string } } })?.response
+            ?.data?.message ?? failedFallback;
         toast.error(failedTitle, { description: message });
       }
     },
@@ -402,8 +403,9 @@ export const AppEventsListener = () => {
 
   useEffect(() => {
     // Wildcard subscription to capture any future events without explicit mapping at registration
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const offAll = on('*', (payload: any) => handleNotification(payload));
+    const offAll = on('*', (payload: unknown) =>
+      handleNotification(payload as INotificationPayload)
+    );
     return () => offAll();
   }, [on, handleNotification]);
 

@@ -1,27 +1,42 @@
-# Fix Integration Tests — Auth & Onboarding
+# Session employeeId Guard Fix
 
-**Feature**: Bugfix - Failing Tests
+**Feature**: Bugfix - employeeId=undefined in leave request query
 **Status**: Complete
 **Date**: 2026-05-06
 
-### Root Causes
+## Bug
 
-6 integration tests failed because the source code was refactored following best practices:
+`UserLeaveBody` fires `GET /api/v1/leave-requests?employeeId=undefined` during session loading, causing a 500 error from the backend.
 
-| Test | Root Cause |
-|------|-----------|
-| Auth I-01, I-05 | Code no longer calls `toast.success` on login/OTP success — only `router.push` |
-| Auth I-02, I-06 | Code replaced toast with `setError` (inline form field errors) for failure feedback |
-| Auth I-07 | Toast success message changed from `'Request Sent Successfully'` to `'A new OTP has been sent to your email.'` |
-| Onboarding I-02 | Schema now requires `industry` and `size` fields — test didn't fill them → form stayed invalid → button disabled → mutation never called |
+## Root Cause
 
-### Fixes Applied
+`useSession()` returns `null`/`undefined` while fetching the session token from `GET /api/auth/token`. During this loading window, `sessionData?.user?.employee?.id` evaluates to `undefined`. The `useGetLeaveRequests` query had no `enabled` guard, so it fired immediately with `employeeId: undefined`, which reached the backend as the string `"undefined"`.
 
-- **Auth I-01/I-05**: Removed `mockToast.success` expectations, kept `mockPush` navigation check
-- **Auth I-02/I-06**: Replaced toast assertions with `mockLoginWithPassword`/`mockLoginWithOTP` spy call + `mockPush` not-called checks
-- **Auth I-07**: Updated expected toast message to `'A new OTP has been sent to your email.'`
-- **Onboarding I-02**: Added `user.type` calls for industry and size fields
+## Fix
 
-### Result
-- 61 tests pass, 0 failures across all packages
-- `pnpm turbo run test` passes clean
+Added `enabled: !!employeeId` guard to the `useGetLeaveRequests` call in `UserLeaveBody.tsx`. The query now defers until the session resolves and the employee ID is available.
+
+Also:
+
+- Removed a stray `console.log(sessionData?.user?.employee?.id)` left in production code
+- Fixed pre-existing type error in `RequestLeaveModal.tsx`: `useGetLeaveTypes()` called with no args when the hook requires `Filters`
+- Removed unused `RejectLeaveRequestPayload` imports from `user/leave/services/service.ts` and `user/leave/services/use-service.ts`
+
+## Verification
+
+- `pnpm run typecheck` — clean
+- `pnpm run lint` — clean
+- `pnpm run test` — 61 pass, 0 fail
+
+## Context
+
+Other session-dependent hooks (`useGetNotifications` in `use-app-service.ts`, `useGetMyProfile` in `user/profile/services/use-service.ts`) already had `enabled: !!employeeId` guards built into their service implementations. The `UserLeaveBody` component was the only caller bypassing this pattern.
+
+## Files Changed
+
+| File                                                            | Change                                                     |
+| --------------------------------------------------------------- | ---------------------------------------------------------- |
+| `src/modules/@org/user/leave/_components/LeaveBody.tsx`         | Added `enabled: !!employeeId` guard; removed `console.log` |
+| `src/modules/@org/user/leave/_components/RequestLeaveModal.tsx` | Fixed `useGetLeaveTypes({})` — passed empty Filters        |
+| `src/modules/@org/user/leave/services/service.ts`               | Removed unused `RejectLeaveRequestPayload` import          |
+| `src/modules/@org/user/leave/services/use-service.ts`           | Removed unused `RejectLeaveRequestPayload` import          |

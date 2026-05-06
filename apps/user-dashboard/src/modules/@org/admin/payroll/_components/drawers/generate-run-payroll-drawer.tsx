@@ -99,11 +99,10 @@ export const GenerateRunPayrollDrawer = ({
             setPayrollSelectedDate(selectedDate);
           }, 300);
         },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onError: (error: any) => {
+        onError: (error: unknown) => {
           const message =
-            error?.response?.data?.message ??
-            'Failed to run payroll. Please try again.';
+            (error as { response?: { data?: { message?: string } } })?.response
+              ?.data?.message ?? 'Failed to run payroll. Please try again.';
           toast.error('Something went wrong. ', {
             description: message,
           });

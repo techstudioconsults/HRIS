@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { AlertModal } from '@workspace/ui/lib/dialog';
@@ -115,8 +114,10 @@ export function BonusDeductionManager({
 
     const response =
       type === 'bonus'
-        ? await createBonus.mutateAsync(payload as any)
-        : await createDeduction.mutateAsync(payload as any);
+        ? // @ts-expect-error: pending type refinement — mutation expects required payrollPolicyId; payload may use payProfileId
+          await createBonus.mutateAsync(payload as unknown)
+        : // @ts-expect-error: pending type refinement — mutation expects required payrollPolicyId; payload may use payProfileId
+          await createDeduction.mutateAsync(payload as unknown);
 
     const data =
       (response as ApiResponse<PayrollAPIEntity> | undefined)?.data ??

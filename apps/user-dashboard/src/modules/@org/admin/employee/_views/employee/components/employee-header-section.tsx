@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import ExportAction from '@/components/shared/export-action';
@@ -42,7 +41,7 @@ export const EmployeeHeaderSection = ({
   };
 
   const handleFilterChange = useCallback(
-    (newFilters: any) => {
+    (newFilters: Filters) => {
       onFilterChange(newFilters);
     },
     [onFilterChange]

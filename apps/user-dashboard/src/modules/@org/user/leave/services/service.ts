@@ -4,7 +4,6 @@ import type {
   CreateLeaveRequestPayload,
   LeaveRequest,
   LeaveType,
-  RejectLeaveRequestPayload,
   UpdateLeaveRequestPayload,
 } from '../types';
 
@@ -18,10 +17,10 @@ export class UserLeaveService {
   // =============================
   // Leave Types - User can view only
   // =============================
-  async getLeaveTypes(filters: QueryParameters = {}) {
+  async getLeaveTypes(filters: Filters) {
     const response = await this.http.get<PaginatedApiResponse<LeaveType>>(
       '/leaves',
-      filters
+      { ...filters }
     );
     if (response?.status === 200) {
       return response.data.data.items;
@@ -40,10 +39,10 @@ export class UserLeaveService {
   // =============================
   // Leave Requests
   // =============================
-  async getLeaveRequests(filters: QueryParameters = {}) {
+  async getLeaveRequests(filters: Filters) {
     const response = await this.http.get<PaginatedApiResponse<LeaveRequest>>(
       '/leave-requests',
-      filters
+      { ...filters }
     );
     if (response?.status === 200) {
       return response.data.data;
@@ -93,24 +92,24 @@ export class UserLeaveService {
     }
   }
 
-  async approveLeaveRequest(id: string) {
-    const response = await this.http.patch<{ data: LeaveRequest }>(
-      `/leave-requests/${id}/approve`
-    );
-    if (response?.status === 200) {
-      return response.data.data;
-    }
-  }
+  // async approveLeaveRequest(id: string) {
+  //   const response = await this.http.patch<{ data: LeaveRequest }>(
+  //     `/leave-requests/${id}/approve`
+  //   );
+  //   if (response?.status === 200) {
+  //     return response.data.data;
+  //   }
+  // }
 
-  async rejectLeaveRequest(id: string, data: RejectLeaveRequestPayload) {
-    const response = await this.http.patch<{ data: LeaveRequest }>(
-      `/leave-requests/${id}/reject`,
-      data
-    );
-    if (response?.status === 200) {
-      return response.data.data;
-    }
-  }
+  // async rejectLeaveRequest(id: string, data: RejectLeaveRequestPayload) {
+  //   const response = await this.http.patch<{ data: LeaveRequest }>(
+  //     `/leave-requests/${id}/reject`,
+  //     data
+  //   );
+  //   if (response?.status === 200) {
+  //     return response.data.data;
+  //   }
+  // }
 
   async deleteLeaveRequest(id: string) {
     const response = await this.http.delete<{

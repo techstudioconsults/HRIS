@@ -4,7 +4,6 @@ import { createServiceHooks } from '@/lib/react-query/use-service-query';
 import { dependencies } from '@/lib/tools/dependencies';
 import type {
   CreateLeaveRequestPayload,
-  RejectLeaveRequestPayload,
   UpdateLeaveRequestPayload,
 } from '../types';
 import { UserLeaveService } from './service';
@@ -16,7 +15,7 @@ export const useUserLeaveService = () => {
   const { useServiceQuery, useServiceMutation } =
     createServiceHooks<UserLeaveService>(dependencies.USER_LEAVE_SERVICE);
   // Leave Types
-  const useGetLeaveTypes = (filters: Record<string, any> = {}, options?: any) =>
+  const useGetLeaveTypes = (filters: Filters, options?: any) =>
     useServiceQuery(
       queryKeys.leave.types(),
       (service) => service.getLeaveTypes(filters),
@@ -29,10 +28,7 @@ export const useUserLeaveService = () => {
       { enabled: !!id, ...options }
     );
   // Leave Requests - Read
-  const useGetLeaveRequests = (
-    filters: Record<string, any> = {},
-    options?: any
-  ) =>
+  const useGetLeaveRequests = (filters: Filters, options?: any) =>
     useServiceQuery(
       queryKeys.leave.requests(filters),
       (service) => service.getLeaveRequests(filters),
@@ -64,20 +60,20 @@ export const useUserLeaveService = () => {
       (service, id: string) => service.deleteLeaveRequest(id),
       { invalidateQueries: () => [['leave', 'requests'] as const] }
     );
-  // Leave Request Actions
-  const useApproveLeaveRequest = () =>
-    useServiceMutation(
-      (service, id: string) => service.approveLeaveRequest(id),
-      { invalidateQueries: () => [['leave', 'requests'] as const] }
-    );
-  const useRejectLeaveRequest = () =>
-    useServiceMutation(
-      (
-        service,
-        { id, data }: { id: string; data: RejectLeaveRequestPayload }
-      ) => service.rejectLeaveRequest(id, data),
-      { invalidateQueries: () => [['leave', 'requests'] as const] }
-    );
+  // // Leave Request Actions
+  // const useApproveLeaveRequest = () =>
+  //   useServiceMutation(
+  //     (service, id: string) => service.approveLeaveRequest(id),
+  //     { invalidateQueries: () => [['leave', 'requests'] as const] }
+  //   );
+  // const useRejectLeaveRequest = () =>
+  //   useServiceMutation(
+  //     (
+  //       service,
+  //       { id, data }: { id: string; data: RejectLeaveRequestPayload }
+  //     ) => service.rejectLeaveRequest(id, data),
+  //     { invalidateQueries: () => [['leave', 'requests'] as const] }
+  //   );
   return {
     // Leave Types
     useGetLeaveTypes,
@@ -89,7 +85,7 @@ export const useUserLeaveService = () => {
     useUpdateLeaveRequest,
     useDeleteLeaveRequest,
     // Leave Request Actions
-    useApproveLeaveRequest,
-    useRejectLeaveRequest,
+    // useApproveLeaveRequest,
+    // useRejectLeaveRequest,
   };
 };

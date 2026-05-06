@@ -17,8 +17,9 @@ export const RequestLeaveModal = ({
   const { useGetLeaveTypes, useCreateLeaveRequest, useUpdateLeaveRequest } =
     useUserLeaveService();
 
-  const { data: leaveTypesData, isLoading: isLoadingTypes } =
-    useGetLeaveTypes();
+  const { data: leaveTypesData, isLoading: isLoadingTypes } = useGetLeaveTypes(
+    {}
+  );
   const { mutateAsync: createLeaveRequest, isPending: isCreating } =
     useCreateLeaveRequest();
   const { mutateAsync: updateLeaveRequest, isPending: isUpdating } =

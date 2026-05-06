@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { formatCurrency } from '@/lib/formatters';
 
 import {
@@ -28,8 +26,8 @@ const mapAdjustmentsToBonusDeduction = (
 
 export const SalaryDetails = ({ payslip }: { payslip: Payslip | null }) => {
   const profileId = payslip
-    ? (payslip as any)?.payProfileId ||
-      (payslip as any)?.payrollProfileId ||
+    ? payslip.payProfileId ||
+      (payslip['payrollProfileId'] as string | undefined) ||
       undefined
     : undefined;
 

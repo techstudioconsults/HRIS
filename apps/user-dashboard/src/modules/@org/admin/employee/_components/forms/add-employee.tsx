@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 // import { AlertDialog } from "@/components/ui/alert-dialog";
@@ -106,7 +105,7 @@ export const AddEmployeeForm = () => {
     if (
       selectedTeamId &&
       selectedRoleId &&
-      !normalizedDerivedRoles.some((r: any) => r.id === selectedRoleId)
+      !normalizedDerivedRoles.some((r) => r.id === selectedRoleId)
     ) {
       setValue('roleId', '');
     }
@@ -116,7 +115,7 @@ export const AddEmployeeForm = () => {
   useEffect(() => {
     if (selectedBankName) {
       const selectedBank = banks.find(
-        (bank: any) => bank.name === selectedBankName
+        (bank: { name: string; code: string }) => bank.name === selectedBankName
       );
       if (selectedBank) {
         setValue('bankCode', selectedBank.code);
@@ -189,9 +188,10 @@ export const AddEmployeeForm = () => {
         toast.success('Employee Added Successfully');
         router.push(routes.admin.employees.list());
       },
-      onError: (error: any) => {
+      onError: (error: unknown) => {
         toast.error('Something went wrong', {
-          description: error?.response?.data?.message,
+          description: (error as { response?: { data?: { message?: string } } })
+            ?.response?.data?.message,
         });
       },
     });
@@ -439,7 +439,7 @@ export const AddEmployeeForm = () => {
                         <ComboBox
                           value={value || ''}
                           onValueChange={onChange}
-                          options={banks.map((bank: any) => ({
+                          options={banks.map((bank: { name: string }) => ({
                             value: bank.name,
                             label: bank.name,
                           }))}

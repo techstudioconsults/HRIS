@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { AdvancedDataTable, TableSkeleton } from '@workspace/ui/lib/table';
@@ -111,7 +110,7 @@ export const EmployeeTableSection = ({
         hasNextPage={employeeData.data.metadata.hasNextPage}
         onPageChange={handlePageChange}
         rowActions={getRowActions}
-        onRowClick={(employee: any) => {
+        onRowClick={(employee: { id?: string }) => {
           if (employee?.id) {
             router.push(routes.admin.employees.detail(employee.id));
           }

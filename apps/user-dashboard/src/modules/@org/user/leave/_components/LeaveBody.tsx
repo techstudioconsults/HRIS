@@ -7,13 +7,19 @@ import { useUserLeaveService } from '@/modules/@org/user';
 import type { UserLeaveBodyProps } from '../types';
 import { LeaveCard } from './LeaveCard';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
+import { useSession } from '@/lib/session';
 
 export const UserLeaveBody = ({
   searchQuery = '',
   onViewDetails,
 }: UserLeaveBodyProps) => {
+  const { data: sessionData } = useSession();
+  const employeeId = sessionData?.user?.employee?.id;
   const { useGetLeaveRequests } = useUserLeaveService();
-  const { data, isLoading } = useGetLeaveRequests();
+  const { data, isLoading } = useGetLeaveRequests(
+    { employeeId },
+    { enabled: !!employeeId }
+  );
 
   const query = searchQuery.toLowerCase();
 

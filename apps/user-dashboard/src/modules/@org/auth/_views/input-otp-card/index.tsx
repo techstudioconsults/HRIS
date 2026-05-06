@@ -25,6 +25,7 @@ export const InputOtpCard = () => {
 
   const methods = useForm<LoginOTPFormData>({
     resolver: zodResolver(loginOTPSchema),
+    mode: 'onChange',
     defaultValues: {
       email: email || '',
       password: '',

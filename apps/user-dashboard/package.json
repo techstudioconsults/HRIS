@@ -70,6 +70,7 @@
     "@workspace/eslint-config": "workspace:*",
     "@workspace/test-utils": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
+    "@tanstack/react-query-devtools": "^5.83.0",
     "esbuild": "0.25.12",
     "msw": "^2.13.5",
     "postcss": "8.5.10",

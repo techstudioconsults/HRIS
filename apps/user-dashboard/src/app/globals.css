@@ -136,3 +136,20 @@
   flex: 1;
 }
 
+/* ============================================================================
+ * Form Validation Feedback Animation
+ * ============================================================================ */
+
+@keyframes field-valid-fade {
+  0% { opacity: 1; transform: translateY(0); }
+  70% { opacity: 0.4; }
+  100% { opacity: 0; transform: translateY(-4px); }
+}
+
+.animate-valid-feedback {
+  animation: field-valid-fade 2s ease-out forwards;
+  color: #10b981; /* Tailwind emerald-500 */
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+

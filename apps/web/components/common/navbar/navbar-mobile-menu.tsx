@@ -44,7 +44,7 @@ export const NavbarMobileMenu = ({ links }: NavbarMobileMenuProps) => {
           aria-controls="mobile-navbar-menu"
           aria-haspopup="dialog"
           aria-label="Toggle navigation menu"
-          variant="outline"
+          variant="primaryOutline"
           isIconOnly
           size="icon"
           className="lg:hidden"
@@ -159,7 +159,7 @@ export const NavbarMobileMenu = ({ links }: NavbarMobileMenuProps) => {
                 <MainButton
                   variant="primary"
                   size="xl"
-                  href="/regsiter"
+                  href="/register"
                   className="w-full"
                 >
                   Start Free Trial

@@ -207,7 +207,7 @@ const StyleGuide: FC = () => {
         <div className="group flex h-full flex-col items-start justify-between rounded-lg border px-5 py-5">
           <h2 className="mb-3 text-2xl font-semibold">Outline Button</h2>
           <div className="flex items-center gap-4">
-            <MainButton variant="outline">Button CTA</MainButton>
+            <MainButton variant="primaryOutline">Button CTA</MainButton>
           </div>
         </div>
         <div className="group flex h-full flex-col items-start justify-between rounded-lg border px-5 py-5">
@@ -252,7 +252,7 @@ const StyleGuide: FC = () => {
           <h2 className="mb-3 text-2xl font-semibold">Icon Only Button</h2>
           <div className="flex items-center gap-4">
             <MainButton
-              variant="outline"
+              variant="primaryOutline"
               size="icon"
               isIconOnly={true}
               icon={<Icon name="Plus" />}
@@ -265,7 +265,7 @@ const StyleGuide: FC = () => {
           </h2>
           <div className="flex items-center gap-4">
             <MainButton
-              variant="outline"
+              variant="primaryOutline"
               size="circle"
               isIconOnly={true}
               icon={<Icon name="Plus" />}

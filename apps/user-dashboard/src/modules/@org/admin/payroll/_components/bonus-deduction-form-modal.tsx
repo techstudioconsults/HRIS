@@ -140,7 +140,7 @@ export function BonusDeductionFormModal({
             <MainButton
               className="w-full"
               type="button"
-              variant="outline"
+              variant="primaryOutline"
               onClick={handleCancel}
               isDisabled={isSubmitting}
             >

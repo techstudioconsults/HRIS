@@ -53,6 +53,7 @@ export const CTA = ({
             </MainButton>
             {showSecondaryButton && (
               <MainButton
+                variant={`primaryOutline`}
                 className={`font-bold w-full`}
                 size={`2xl`}
                 href={secondaryButtonHref}

@@ -244,7 +244,7 @@ export const LeaveSetupForm = () => {
             <div className="flex gap-4">
               <MainButton
                 type="button"
-                variant="outline"
+                variant="primaryOutline"
                 onClick={() => router.back()}
               >
                 Cancel

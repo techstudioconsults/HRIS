@@ -119,7 +119,7 @@ export const Login = () => {
         <section>
           <MainButton
             href={routes.auth.loginOtp()}
-            variant="outline"
+            variant="primaryOutline"
             className="w-full"
             size={`2xl`}
           >

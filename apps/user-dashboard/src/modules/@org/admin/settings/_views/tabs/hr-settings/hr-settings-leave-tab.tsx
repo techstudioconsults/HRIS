@@ -325,7 +325,7 @@ export function HRSettingsLeaveTab() {
       >
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
           <MainButton
-            variant="outline"
+            variant="primaryOutline"
             type="button"
             onClick={() => setDeleteDialogOpen(false)}
             isDisabled={isDeleting}

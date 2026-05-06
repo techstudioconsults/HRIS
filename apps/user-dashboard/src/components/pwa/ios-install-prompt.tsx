@@ -192,7 +192,11 @@ export function IOSInstallPrompt() {
           </li>
         </ol>
 
-        <Button className="w-full mt-6" variant="outline" onClick={handleClose}>
+        <Button
+          className="w-full mt-6"
+          variant="primaryOutline"
+          onClick={handleClose}
+        >
           Maybe later
         </Button>
       </DrawerContent>

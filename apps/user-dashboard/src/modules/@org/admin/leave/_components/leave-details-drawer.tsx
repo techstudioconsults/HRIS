@@ -247,7 +247,7 @@ export function LeaveDetailsDrawer() {
                         {isRejecting ? 'Rejecting...' : 'Confirm Rejection'}
                       </MainButton>
                       <MainButton
-                        variant="outline"
+                        variant="primaryOutline"
                         onClick={() => {
                           setShowRejectForm(false);
                           setRejectionReason('');

@@ -49,7 +49,7 @@ export const TeamForm = ({
         <div className="flex justify-end gap-4">
           <MainButton
             type="button"
-            variant="outline"
+            variant="primaryOutline"
             onClick={onCancel}
             isDisabled={isSubmitting || rhfSubmitting}
           >

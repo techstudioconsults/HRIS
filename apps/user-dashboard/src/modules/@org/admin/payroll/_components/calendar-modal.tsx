@@ -102,7 +102,7 @@ export const CalendarModal = ({
         {/* Action Buttons */}
         <div className="flex gap-3">
           <MainButton
-            variant="outline"
+            variant="primaryOutline"
             onClick={handleCancel}
             className="text-destructive border-destructive flex-1"
             isDisabled={isSubmitting}

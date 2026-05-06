@@ -9,7 +9,7 @@ export function KBarToggle() {
 
   return (
     <MainButton
-      variant="outline"
+      variant="primaryOutline"
       onClick={query.toggle}
       className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
       aria-label="Open command palette"

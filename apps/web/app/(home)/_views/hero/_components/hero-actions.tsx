@@ -9,7 +9,7 @@ export const HeroActions = () => {
           isExternal
           size="xl"
           variant={'primary'}
-          className="w-full"
+          className="w-[70%] md:w-full"
         >
           Start Free Trial
         </MainButton>
@@ -19,7 +19,7 @@ export const HeroActions = () => {
           isExternal
           size="xl"
           variant={'primaryOutline'}
-          className="w-full bg-background"
+          className="w-[70%] md:w-full bg-background"
           href={`/login`}
         >
           Login

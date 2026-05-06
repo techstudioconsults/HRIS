@@ -310,7 +310,7 @@ export const GenerateRunPayrollDrawer = ({
               >
                 Run Payroll
               </MainButton>
-              {/* <MainButton variant="outline" onClick={handleSchedulePayment} className="flex-1">
+              {/* <MainButton variant="primaryOutline" onClick={handleSchedulePayment} className="flex-1">
                 Schedule Payment
               </MainButton> */}
             </div>

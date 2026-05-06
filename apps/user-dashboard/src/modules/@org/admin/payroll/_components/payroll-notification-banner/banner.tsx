@@ -133,7 +133,7 @@ export const PayrollNotificationBanner = ({
           </div>
           <div className="flex items-start gap-5">
             {!payrollPolicyStatus && (
-              <MainButton variant="outline" onClick={onFundWallet}>
+              <MainButton variant="primaryOutline" onClick={onFundWallet}>
                 Fund Wallet
               </MainButton>
             )}

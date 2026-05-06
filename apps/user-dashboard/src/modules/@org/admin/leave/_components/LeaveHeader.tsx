@@ -29,7 +29,7 @@ export const LeaveHeader = ({ onSearch }: LeaveHeaderProperties) => {
                   <Button
                     size="icon"
                     className="rounded-md size-10"
-                    variant="default"
+                    variant="primaryOutline"
                   >
                     <Icon
                       name="More"

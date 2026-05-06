@@ -147,7 +147,7 @@ export function FundWalletFormModal({
               <MainButton
                 className="w-full"
                 type="button"
-                variant="outline"
+                variant="primaryOutline"
                 onClick={handleCancel}
                 isDisabled={isPending}
               >

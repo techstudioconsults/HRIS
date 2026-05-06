@@ -480,7 +480,7 @@ export const PayrollView = () => {
                   <Button
                     size={`icon`}
                     className={`size-10 rounded-md`}
-                    variant="default"
+                    variant="primaryOutline"
                   >
                     <Icon
                       name="More"

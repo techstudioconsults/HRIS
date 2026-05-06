@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { dependencies } from '@/lib/tools/dependencies';
 import { Wrapper } from '@workspace/ui/components/core/layout/wrapper';
 
@@ -38,7 +39,7 @@ const BaseDashboardHomePage = () => {
       buttonLabel: 'Configure',
       icon: '/images/profile.svg',
       isCompleted: false,
-      action: () => router.push(routes.admin.profile()),
+      action: () => router.push(routes.admin.teams.list()),
     },
     {
       title: 'Set up clock-in system',
@@ -46,7 +47,7 @@ const BaseDashboardHomePage = () => {
       buttonLabel: 'Configure',
       icon: '/images/first_product.svg',
       isCompleted: false,
-      action: () => router.push(`/dashboard/products/new`),
+      action: () => router.push(`/`),
     },
     {
       title: 'Configure payroll info',
@@ -66,13 +67,24 @@ const BaseDashboardHomePage = () => {
     },
   ];
 
-  const completedSteps =
-    ONBOARDING_STEPS.filter((step) => step.isCompleted).length || 7;
+  const [hasSkippedOnboarding, setHasSkippedOnboarding] = useState(false);
+
+  const completedSteps = ONBOARDING_STEPS.filter(
+    (step) => step.isCompleted
+  ).length;
+
+  // User chose to skip onboarding — show the active dashboard immediately
+  if (hasSkippedOnboarding) {
+    return <ActiveUser />;
+  }
   // Less than 4 steps completed -> Onboarding
   if (completedSteps < 4) {
     return (
       <Wrapper className="max-w-200 my-0! p-0">
-        <Onboarding steps={ONBOARDING_STEPS} />
+        <Onboarding
+          steps={ONBOARDING_STEPS}
+          onSkip={() => setHasSkippedOnboarding(true)}
+        />
       </Wrapper>
     );
   }

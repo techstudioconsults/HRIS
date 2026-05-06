@@ -8,7 +8,7 @@ import { OnboardingHeader } from './onboarding-header';
 import { useSession } from '@/lib/session';
 import type { OnboardingProperties } from '../../types';
 
-export const Onboarding = ({ steps }: OnboardingProperties) => {
+export const Onboarding = ({ steps, onSkip }: OnboardingProperties) => {
   const completedSteps = steps.filter((step) => step.isCompleted).length || 4;
   const { data: session } = useSession();
   return (
@@ -39,6 +39,14 @@ export const Onboarding = ({ steps }: OnboardingProperties) => {
             className={cn(step.isCompleted && 'hidden')}
           />
         ))}
+      </div>
+      <div className={`py-5 flex justify-center items-center`}>
+        <button
+          onClick={onSkip}
+          className={`hover:underline hover:text-primary text-center text-gray text-xs`}
+        >
+          Skip, I will handle this later.
+        </button>
       </div>
     </div>
   );

@@ -35,6 +35,7 @@ export interface Activity {
 
 export interface OnboardingProperties {
   steps: OnboardingStep[];
+  onSkip?: () => void;
 }
 
 export interface OnboardingHeaderProperties {

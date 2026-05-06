@@ -5,7 +5,6 @@ import './globals.css';
 import { cn } from '@workspace/ui/lib/utils';
 import React from 'react';
 import { Providers } from '@/components/providers';
-import { PwaSplashGuard } from '@/components/pwa/splash-guard';
 import { Playfair_Display, Work_Sans } from 'next/font/google';
 
 export const metadata: Metadata = {
@@ -202,12 +201,7 @@ export default async function RootLayout({
           `font-sans antialiased`
         )}
       >
-        {/* PWA splash screen FOUC guard — hidden on React hydration */}
-        <div className="pwa-splash-screen" />
-        <Providers>
-          <PwaSplashGuard />
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

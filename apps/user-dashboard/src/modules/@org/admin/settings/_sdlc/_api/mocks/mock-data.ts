@@ -12,7 +12,7 @@ export const mockAccountSettings: AccountSettings = {
   organisationId: 'org_01',
   name: 'Techstudio Academy Ltd',
   logoUrl: null,
-  contactEmail: 'admin@techstudioacademy.com',
+  contactEmail: 'admin@example.com',
   phone: '+234 800 000 0000',
   address: '10 Admiralty Way, Lekki Phase 1, Lagos',
   registrationNumber: 'RC-1234567',

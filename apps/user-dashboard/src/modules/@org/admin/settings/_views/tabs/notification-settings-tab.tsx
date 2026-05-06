@@ -89,8 +89,8 @@ export const NotificationSettingsTab = () => {
   const employeeId = session?.user?.id ?? '';
 
   const { useGetMyProfile, useUpdateMyProfile } = useUserProfileService();
-  const { data: profile, isLoading } = useGetMyProfile(employeeId);
-  const { mutate: updateProfile, isPending: isSaving } = useUpdateMyProfile();
+  const { data: profile } = useGetMyProfile(employeeId);
+  const { mutate: updateProfile } = useUpdateMyProfile();
 
   const [emailEnabled, setEmailEnabled] = useState(true);
   const [inAppEnabled, setInAppEnabled] = useState(false);
@@ -183,8 +183,6 @@ export const NotificationSettingsTab = () => {
     ],
     []
   );
-
-  const isDisabled = isLoading || isSaving;
 
   return (
     <section className="space-y-6">

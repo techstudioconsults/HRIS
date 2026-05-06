@@ -123,6 +123,7 @@ export interface AddNewMembersProperties {
 
 // ── sub-team-details (subteam management) ───────────────────────────────────────
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface SubTeamDetailsState {
   // Inherits all team functionality
 }

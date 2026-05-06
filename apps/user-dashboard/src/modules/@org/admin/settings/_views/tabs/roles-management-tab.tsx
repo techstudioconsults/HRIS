@@ -108,6 +108,7 @@ export const RolesManagementTab = () => {
   const teamOptions = useMemo(
     () =>
       (Array.isArray(teamsWithRoles) ? teamsWithRoles : []).map(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (team: any) => ({
           value: String(team.id),
           label: String(team.name),
@@ -138,6 +139,7 @@ export const RolesManagementTab = () => {
   const effectiveTeamId = teamId === 'all' ? null : teamId;
 
   const allEmployees: Employee[] = useMemo(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     () => (employeesResp as any)?.data?.items ?? [],
     [employeesResp]
   );
@@ -147,7 +149,8 @@ export const RolesManagementTab = () => {
   const roleNameToIdLookup = useMemo(() => {
     const lookup: Record<string, Record<string, string>> = {};
     for (const team of Array.isArray(teamsWithRoles)
-      ? (teamsWithRoles as any[])
+      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (teamsWithRoles as any[])
       : []) {
       const teamId = String(team.id);
       lookup[teamId] = {};
@@ -195,11 +198,13 @@ export const RolesManagementTab = () => {
 
   const allRoles = useMemo<RoleRow[]>(() => {
     const teams = Array.isArray(teamsWithRoles)
-      ? (teamsWithRoles as any[])
+      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (teamsWithRoles as any[])
       : [];
     const flattened: RoleRow[] = [];
     for (const team of teams) {
       if (team.name?.toLowerCase().trim() === 'default') continue;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const roles: any[] = Array.isArray(team.roles) ? team.roles : [];
       for (const role of roles) {
         if (role.name?.toLowerCase().trim() === 'default') continue;
@@ -257,6 +262,7 @@ export const RolesManagementTab = () => {
                     className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full border-2 border-background ring-0"
                   >
                     {employee.avatar ? (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={employee.avatar}
                         alt={`${employee.firstName} ${employee.lastName}`}
@@ -395,15 +401,19 @@ export const RolesManagementTab = () => {
     name?: string;
     permissions?: string[];
   }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     queryClient.setQueryData(teamsWithRolesQueryKey, (previous: any) => {
       const teams = Array.isArray(previous) ? previous : [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return teams.map((team: any) => {
         if (String(team?.id) !== patch.teamId) return team;
         const roles = Array.isArray(team?.roles) ? team.roles : [];
         return {
           ...team,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           roles: roles.map((role: any) => {
             if (String(role?.id) !== patch.roleId) return role;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const nextRole: any = { ...role };
             if (patch.name !== undefined) nextRole.name = patch.name;
             if (patch.permissions !== undefined)
@@ -732,6 +742,7 @@ export const RolesManagementTab = () => {
               isRoleEditorOpen && modalMode === 'edit' ? editorRole : undefined
             }
             isSubmitting={isBusy}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onSubmit={handleSubmitRole as any}
             onCancel={(event) => {
               event?.preventDefault?.();

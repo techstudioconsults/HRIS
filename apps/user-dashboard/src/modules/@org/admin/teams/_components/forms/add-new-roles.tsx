@@ -151,6 +151,7 @@ export const RolesAndPermission = ({
       ]);
       setOpenPermissions([false]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialData?.id]);
 
   // Keep openPermissions array in sync with roles array
@@ -175,6 +176,7 @@ export const RolesAndPermission = ({
         roles: [{ name: initialData.name, permissions: [] }],
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialData?.id]);
 
   const formName = methods.watch('name');

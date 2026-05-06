@@ -138,7 +138,11 @@ export const AddEmployeeForm = () => {
     formDataToSend.append('phoneNumber', formData.phoneNumber);
 
     // Add password for new employees
-    formDataToSend.append('password', 'PleaseSetAdefaultHere1.');
+    formDataToSend.append(
+      'password',
+      process.env.NEXT_PUBLIC_DEFAULT_EMPLOYEE_PASSWORD ??
+        'PleaseSetAdefaultHere1.'
+    );
 
     // Team and role
     formDataToSend.append('teamId', formData.teamId);
@@ -278,7 +282,7 @@ export const AddEmployeeForm = () => {
                   label="Work Email"
                   type="email"
                   placeholder={
-                    loadingTeams ? `Loading email...` : `Johndoe@gmail.com`
+                    loadingTeams ? `Loading email...` : `email@example.com`
                   }
                   className="border-border h-14! w-full"
                   required

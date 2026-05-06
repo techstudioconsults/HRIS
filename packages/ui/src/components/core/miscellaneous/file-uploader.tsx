@@ -12,7 +12,6 @@ import {
   FileVideo,
   FileAudio,
   FileImage,
-  LucideFileUp,
   X,
 } from 'lucide-react';
 import Image from 'next/image';

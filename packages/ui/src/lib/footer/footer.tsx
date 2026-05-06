@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@workspace/ui/lib/utils';
-import { LucideGithub, LucideLinkedin } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import { FC } from 'react';
 
 import { MainButton } from '../button';
@@ -17,19 +17,19 @@ export const Footer: FC = () => {
           <p>Find me in:</p>
           <div>
             <MainButton
-              icon={<LucideLinkedin />}
+              icon={<Globe />}
               isIconOnly
               size={'icon'}
               className={`h-12 w-12`}
             />
             <MainButton
-              icon={<LucideLinkedin />}
+              icon={<Globe />}
               isIconOnly
               size={'icon'}
               className={`h-12 w-12`}
             />
             <MainButton
-              icon={<LucideLinkedin />}
+              icon={<Globe />}
               isIconOnly
               size={'icon'}
               className={`h-12 w-12`}
@@ -38,7 +38,7 @@ export const Footer: FC = () => {
         </div>
         <div className={`hidden lg:block`}>
           <MainButton variant={`ghost`}>
-            @Kinxlo <LucideGithub />
+            @Kinxlo <Globe />
           </MainButton>
         </div>
       </section>

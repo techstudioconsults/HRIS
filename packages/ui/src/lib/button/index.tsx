@@ -138,11 +138,7 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
       if (external) {
         return (
           <a
-            href={cn(
-              process.env.NODE_ENV === `production`
-                ? `https://dashboard.techstudiohr.com${href}`
-                : `http://localhost:3000${href}`
-            )}
+            href={`${process.env.NEXT_PUBLIC_APP_URL ?? (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')}${href}`}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={ariaLabel}

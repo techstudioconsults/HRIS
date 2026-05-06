@@ -46,14 +46,14 @@ export function SSEProvider({ children }: { children: ReactNode }) {
         offPayroll();
       };
     },
-    [userChannel.on, payrollChannel.on]
+    [userChannel.on, payrollChannel.on] // eslint-disable-line react-hooks/exhaustive-deps
   ) as typeof userChannel.on;
 
   // Close both connections
   const close = useCallback(() => {
     userChannel.close();
     payrollChannel.close();
-  }, [userChannel.close, payrollChannel.close]);
+  }, [userChannel.close, payrollChannel.close]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Report open if either channel is live
   const status = useMemo(
@@ -66,7 +66,7 @@ export function SSEProvider({ children }: { children: ReactNode }) {
 
   const getStatus = useCallback(
     () => (status === 'open' ? 'open' : userChannel.getStatus()),
-    [status, userChannel.getStatus]
+    [status, userChannel.getStatus] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const value = useMemo<SSEContextValue>(

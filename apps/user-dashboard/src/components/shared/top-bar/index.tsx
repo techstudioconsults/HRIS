@@ -61,11 +61,11 @@ export default function TopBar({
   };
 
   const handleMarkAllAsRead = () => {
-    markAllRead();
+    markAllRead(undefined);
   };
 
   const handleClearAll = () => {
-    clearAll();
+    clearAll(undefined);
   };
 
   const title = getTopBarTitle(pathname);

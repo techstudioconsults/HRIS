@@ -1,7 +1,20 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
-  "globalEnv": ["AUTH_SECRET", "BACKEND_URL", "NODE_ENV"],
+  "globalEnv": [
+    "AUTH_SECRET",
+    "BACKEND_URL",
+    "NODE_ENV",
+    "NEXT_PUBLIC_BASE_URL",
+    "NEXT_PUBLIC_SSE_PROGRESS_CHANNEL",
+    "NEXT_PUBLIC_USE_PAYROLL_MOCKS",
+    "NEXT_PUBLIC_SSE_URL",
+    "NEXT_PUBLIC_CHATSY_AGENT_ID",
+    "NEXT_PUBLIC_CHATSY_SCRIPT_URL",
+    "NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME",
+    "NEXT_PUBLIC_APP_URL",
+    "NEXT_PUBLIC_DEFAULT_EMPLOYEE_PASSWORD"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

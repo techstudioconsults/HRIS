@@ -62,8 +62,11 @@ export default async function RootLayout({
       >
         <Providers>{children}</Providers>
         <Script
-          src="https://cdn.jsdelivr.net/npm/chatsy@latest/dist/chatsy.min.js"
-          data-agent-id="dq2sJy3X4OyH6Y"
+          src={
+            process.env.NEXT_PUBLIC_CHATSY_SCRIPT_URL ??
+            'https://cdn.jsdelivr.net/npm/chatsy@latest/dist/chatsy.min.js'
+          }
+          data-agent-id={process.env.NEXT_PUBLIC_CHATSY_AGENT_ID}
           data-button-background-color="#FFFFFF"
           strategy="afterInteractive"
         />

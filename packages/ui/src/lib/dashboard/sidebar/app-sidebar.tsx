@@ -163,7 +163,7 @@ export function AppSidebar({
   secondaryTitle,
   ...properties
 }: AppSidebarProperties) {
-  const { state } = useSidebar();
+  useSidebar();
   const resolved = {
     user: user ?? defaultData.user,
     teams: teams ?? defaultData.teams,

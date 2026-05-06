@@ -31,17 +31,12 @@ export const useAppService = () => {
     );
 
   const useMarkAllNotificationsRead = (employeeId: string | undefined) =>
-    useServiceMutation(
-      (service, _: void) => service.markAllNotificationsRead(),
-      {
-        invalidateQueries: () => [
-          queryKeys.notification.list(employeeId ?? ''),
-        ],
-      }
-    );
+    useServiceMutation((service) => service.markAllNotificationsRead(), {
+      invalidateQueries: () => [queryKeys.notification.list(employeeId ?? '')],
+    });
 
   const useClearAllNotifications = (employeeId: string | undefined) =>
-    useServiceMutation((service, _: void) => service.clearAllNotifications(), {
+    useServiceMutation((service) => service.clearAllNotifications(), {
       invalidateQueries: () => [queryKeys.notification.list(employeeId ?? '')],
     });
 

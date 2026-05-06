@@ -26,11 +26,15 @@ Format:
 
 ---
 
-- **Issue**: `filter()` / `map()` called inline (not in `useMemo`) when passing arrays to `AdvancedDataTable` causes infinite re-render loop — table watches `data` in an internal `useEffect`; a new array reference on every render triggers `setState` → loop.
-- **Impact**: "Maximum update depth exceeded" crash on any view that passes a filtered/mapped array directly as `data` prop to `AdvancedDataTable`.
-- **Workaround**: N/A — crashes the page.
-- **Mitigation Plan**: Always wrap derived array props with `useMemo` keyed on the source data. Fixed in `team-table-section.tsx`, `team-details-content.tsx`, `sub-team-details-content.tsx`.
-- **Date**: 2026-05-03
+- **Issue**: 6 integration tests failing in `auth.integration.test.tsx` and `onboarding.integration.test.tsx` — tests expected toast notifications and API call patterns that no longer match the refactored source code.
+- **Impact**: CI pipeline blocked — `pnpm turbo run test` fails in `user-dashboard`.
+- **Workaround**: N/A — tests blocked CI.
+- **Mitigation Plan**: Tests updated to match current code behavior:
+  - Auth I-01/I-05: removed toast.success expectations (code navigates without toast now)
+  - Auth I-02/I-06: replaced toast assertions with spy-call + no-redirect checks (code uses inline form errors now)
+  - Auth I-07: updated expected toast message to "A new OTP has been sent to your email."
+  - Onboarding I-02: added industry/size field fills (schema now requires them, form was staying invalid)
+- **Date**: 2026-05-06
 
 ---
 

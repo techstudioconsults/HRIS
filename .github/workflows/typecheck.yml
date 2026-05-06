@@ -1,0 +1,14 @@
+name: Typecheck
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  typecheck:
+    name: Typecheck
+    uses: ./.github/workflows/setup-turbo.yml
+    with:
+      task: typecheck

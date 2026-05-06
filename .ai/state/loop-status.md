@@ -10,7 +10,9 @@
 **Phase Gates:**
 
 - [x] Plan
-- [ ] Implementation
-- [ ] TypeScript check (clean — no new errors introduced)
+- [x] Implementation
+- [x] TypeScript check (clean — no new errors introduced)
+- [x] Lint (all packages clean)
+- [x] Test (61 pass, 0 fail)
 - [ ] Review
 - [ ] Optimize

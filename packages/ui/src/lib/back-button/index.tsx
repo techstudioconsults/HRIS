@@ -5,8 +5,6 @@ import { cn } from '../utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { AnyIconName } from '@workspace/ui/lib/icons/types';
 import { IconProps } from 'iconsax-react';
-import { MainButton } from '@workspace/ui/lib/button';
-
 interface BackButtonProperties {
   href?: string;
   onClick?: () => void;

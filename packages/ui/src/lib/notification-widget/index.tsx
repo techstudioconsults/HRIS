@@ -14,7 +14,7 @@ import { ScrollArea } from '@workspace/ui/components/scroll-area';
 import { cn } from '../utils';
 import { Separator } from '@workspace/ui/components/separator';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { NotificationWidgetProperties } from '@/lib/notification-widget/types';
+import { NotificationWidgetProperties } from './types';
 import { MainButton } from '@workspace/ui/lib/button';
 
 export function NotificationWidget({

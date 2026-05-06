@@ -3,7 +3,7 @@
 import { queryClient } from '@/lib/react-query/query-client';
 import { useEffect } from 'react';
 
-import { useAuthStore } from './auth-store';
+import { useAuthStore } from '@/modules/@org/auth/stores/auth-store';
 import { type StoreProviderProperties } from './types';
 
 /**

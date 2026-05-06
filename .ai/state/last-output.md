@@ -1,42 +1,30 @@
-# Session employeeId Guard Fix
+# Admin Dashboard Onboarding — Skip Action
 
-**Feature**: Bugfix - employeeId=undefined in leave request query
+**Feature**: Implement "Skip, I will handle this later" in Admin onboarding view
 **Status**: Complete
 **Date**: 2026-05-06
 
-## Bug
+## Problem
 
-`UserLeaveBody` fires `GET /api/v1/leave-requests?employeeId=undefined` during session loading, causing a 500 error from the backend.
+The "Skip, I will handle this later" link in the Admin dashboard onboarding view navigated to `/admin/dashboard` — the same page — making it a no-op. The user could never actually skip onboarding and reach the `ActiveUser` view.
 
 ## Root Cause
 
-`useSession()` returns `null`/`undefined` while fetching the session token from `GET /api/auth/token`. During this loading window, `sessionData?.user?.employee?.id` evaluates to `undefined`. The `useGetLeaveRequests` query had no `enabled` guard, so it fired immediately with `employeeId: undefined`, which reached the backend as the string `"undefined"`.
+The `<Link href={'/admin/dashboard'}>` simply re-rendered the same route. Since all `ONBOARDING_STEPS` have `isCompleted: false` hardcoded, the view logic in `dashboard-home.tsx` always returned the `<Onboarding>` component (the `completedSteps < 4` branch).
 
 ## Fix
 
-Added `enabled: !!employeeId` guard to the `useGetLeaveRequests` call in `UserLeaveBody.tsx`. The query now defers until the session resolves and the employee ID is available.
+Added in-memory skip state to `dashboard-home.tsx` using `useState(false)`. When the user clicks "Skip," the `hasSkippedOnboarding` state flips to `true`, and the view logic renders `<ActiveUser />` directly. State resets on page refresh — intentional, as this is an admin convenience, not a critical user flow.
 
-Also:
+### Changes
 
-- Removed a stray `console.log(sessionData?.user?.employee?.id)` left in production code
-- Fixed pre-existing type error in `RequestLeaveModal.tsx`: `useGetLeaveTypes()` called with no args when the hook requires `Filters`
-- Removed unused `RejectLeaveRequestPayload` imports from `user/leave/services/service.ts` and `user/leave/services/use-service.ts`
+| File                                                           | Change                                                                                      |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `src/modules/@org/admin/dashboard/types/index.ts`              | Added `onSkip?: () => void` to `OnboardingProperties`                                       |
+| `src/modules/@org/admin/dashboard/dashboard-home.tsx`          | Added `useState(hasSkippedOnboarding)`, early-return guard, `onSkip` prop                   |
+| `src/modules/@org/admin/dashboard/_views/onboarding/index.tsx` | Destructured `onSkip`, replaced `<Link>` with `<button>`, removed unused `next/link` import |
 
 ## Verification
 
-- `pnpm run typecheck` — clean
-- `pnpm run lint` — clean
-- `pnpm run test` — 61 pass, 0 fail
-
-## Context
-
-Other session-dependent hooks (`useGetNotifications` in `use-app-service.ts`, `useGetMyProfile` in `user/profile/services/use-service.ts`) already had `enabled: !!employeeId` guards built into their service implementations. The `UserLeaveBody` component was the only caller bypassing this pattern.
-
-## Files Changed
-
-| File                                                            | Change                                                     |
-| --------------------------------------------------------------- | ---------------------------------------------------------- |
-| `src/modules/@org/user/leave/_components/LeaveBody.tsx`         | Added `enabled: !!employeeId` guard; removed `console.log` |
-| `src/modules/@org/user/leave/_components/RequestLeaveModal.tsx` | Fixed `useGetLeaveTypes({})` — passed empty Filters        |
-| `src/modules/@org/user/leave/services/service.ts`               | Removed unused `RejectLeaveRequestPayload` import          |
-| `src/modules/@org/user/leave/services/use-service.ts`           | Removed unused `RejectLeaveRequestPayload` import          |
+- `pnpm run typecheck` — clean (no errors)
+- `pnpm run lint` — clean (no errors)

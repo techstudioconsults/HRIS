@@ -1,5 +1,5 @@
 import { Input } from '@workspace/ui/components/input';
-import { MainButton } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
 import Image from 'next/image';
 
 import left1 from '~/images/left1.svg';

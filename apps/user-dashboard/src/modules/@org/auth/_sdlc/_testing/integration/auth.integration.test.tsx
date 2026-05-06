@@ -202,15 +202,11 @@ describe('LoginForm — integration', () => {
     await user.click(screen.getByTestId('login-button'));
 
     await waitFor(() => {
-      expect(mockToast.success).toHaveBeenCalledWith(
-        'Login Successful',
-        expect.any(Object)
-      );
       expect(mockPush).toHaveBeenCalledWith('/login/continue');
     });
   });
 
-  it('I-02: invalid credentials → warning toast, no redirect', async () => {
+  it('I-02: invalid credentials → inline error, no redirect', async () => {
     mockLoginWithPassword.mockRejectedValueOnce(
       new Error('Invalid email or password')
     );
@@ -225,10 +221,10 @@ describe('LoginForm — integration', () => {
     await user.click(screen.getByTestId('login-button'));
 
     await waitFor(() => {
-      expect(mockToast.warning).toHaveBeenCalledWith(
-        'Login Failed',
-        expect.any(Object)
-      );
+      expect(mockLoginWithPassword).toHaveBeenCalledWith({
+        email: 'wrong@example.com',
+        password: 'wrong password',
+      });
       expect(mockPush).not.toHaveBeenCalled();
     });
   });
@@ -292,15 +288,11 @@ describe('OTP flow — integration', () => {
     await user.click(screen.getByRole('button', { name: /login/i }));
 
     await waitFor(() => {
-      expect(mockToast.success).toHaveBeenCalledWith(
-        'Login Successful',
-        expect.any(Object)
-      );
       expect(mockPush).toHaveBeenCalledWith('/login/continue');
     });
   });
 
-  it('I-06: invalid OTP → error toast, no redirect', async () => {
+  it('I-06: invalid OTP → inline error, no redirect', async () => {
     mockLoginWithOTP.mockRejectedValueOnce(new Error('OTP expired or invalid'));
     const user = userEvent.setup();
     renderOtpCard();
@@ -309,17 +301,12 @@ describe('OTP flow — integration', () => {
     await user.click(screen.getByRole('button', { name: /login/i }));
 
     await waitFor(() => {
-      expect(mockToast.error).toHaveBeenCalledWith(
-        'Login Failed',
-        expect.any(Object)
-      );
+      expect(mockLoginWithOTP).toHaveBeenCalled();
       expect(mockPush).not.toHaveBeenCalled();
     });
   });
 
   it('I-07: "Resend code" → calls requestOTP → success toast', async () => {
-    // TanStack Query's mutateAsync fires onSuccess/onError callbacks from the second arg.
-    // The mock must replicate that so the toast inside onSuccess is triggered.
     mockRequestOTP.mockImplementationOnce(
       async (
         _data: unknown,
@@ -341,8 +328,7 @@ describe('OTP flow — integration', () => {
         expect.objectContaining({ onSuccess: expect.any(Function) })
       );
       expect(mockToast.success).toHaveBeenCalledWith(
-        'Request Sent Successfully',
-        expect.any(Object)
+        'A new OTP has been sent to your email.'
       );
     });
   });

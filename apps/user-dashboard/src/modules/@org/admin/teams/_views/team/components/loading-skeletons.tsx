@@ -1,5 +1,5 @@
-import { DashboardHeader } from '@/components/shared/dashboard/dashboard-header';
-import { Skeleton } from '@/components/ui/skeleton';
+import { DashboardHeader } from '@workspace/ui/lib/dashboard/dashboard-header';
+import { Skeleton } from '@workspace/ui/components/skeleton';
 
 export const HeaderSkeleton = () => {
   return (

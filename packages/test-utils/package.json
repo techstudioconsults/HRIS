@@ -11,6 +11,7 @@
     "./vitest.config": "./vitest.config.mjs"
   },
   "scripts": {
+    "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",

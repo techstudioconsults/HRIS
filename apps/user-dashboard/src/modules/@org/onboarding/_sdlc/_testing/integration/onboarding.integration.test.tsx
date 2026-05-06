@@ -223,6 +223,8 @@ describe('CompanyProfile (Step 1) — integration', () => {
 
     // Fill all required fields so the form's isValid flag becomes true.
     await user.type(screen.getByLabelText(/company'?s?\s*name/i), 'Acme Corp');
+    await user.type(screen.getByLabelText(/industry/i), 'Technology');
+    await user.type(screen.getByLabelText(/company size/i), '1-10');
     await user.type(
       screen.getByLabelText(/address line 1/i),
       '1 Innovation Drive'

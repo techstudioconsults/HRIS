@@ -31,6 +31,10 @@ export interface TeamApiResponse {
   updatedAt: string;
 }
 
+export interface TeamListResponse {
+  items: Team[];
+}
+
 export interface RoleApiResponse {
   id: string;
   name: string;
@@ -38,6 +42,10 @@ export interface RoleApiResponse {
   permissions: string[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface RoleListResponse {
+  items: Role[];
 }
 
 // ============================================================================

@@ -1,18 +1,22 @@
 import { HttpAdapter } from '@/lib/http/http-adapter';
 
-import { RoleApiResponse, TeamApiResponse } from '../onboarding/types';
+import {
+  RoleApiResponse,
+  RoleListResponse,
+  TeamListResponse,
+} from '../onboarding/types';
 
 // Fetch all teams and include their roles
 export async function getTeamsWithRoles(http: HttpAdapter): Promise<Team[]> {
-  const response = await http.get<ApiResponse<TeamApiResponse>>(`/teams`);
+  const response = await http.get<ApiResponse<TeamListResponse>>(`/teams`);
   if (response?.status !== 200) return [];
 
-  return await Promise.all(
-    response.data.data.items.map(async (team: Team) => {
+  return (await Promise.all(
+    (response.data.data.items ?? []).map(async (team: Team) => {
       const roles = await getRoles(http, team.id);
       return { id: team.id, name: team.name, roles };
     })
-  );
+  )) as unknown as Team[];
 }
 
 // Fetch roles for a given team
@@ -20,16 +24,16 @@ export async function getRoles(
   http: HttpAdapter,
   teamId: string
 ): Promise<Role[]> {
-  const response = await http.get<ApiResponse<RoleApiResponse>>(
+  const response = await http.get<ApiResponse<RoleListResponse>>(
     `/roles?teamId=${teamId}`
   );
   if (response?.status !== 200) return [];
-  return response.data.data.items.map((role: Role) => ({
+  return (response.data.data.items ?? []).map((role: Role) => ({
     id: role.id,
     name: role.name,
     teamId: role.teamId,
     permissions: role.permissions as Permission[],
-  }));
+  })) as unknown as Role[];
 }
 
 // Create a role

@@ -1,33 +1,27 @@
-# Enable TanStack React Query Devtools
+# Fix Integration Tests — Auth & Onboarding
 
-**Feature**: Devtools Enablement
+**Feature**: Bugfix - Failing Tests
 **Status**: Complete
 **Date**: 2026-05-06
 
-### What Was Done
+### Root Causes
 
-#### Step 1: Fix package version
-- **File**: `apps/user-dashboard/package.json` line 73
-- Changed `"@tanstack/react-query-devtools": ""` → `"@tanstack/react-query-devtools": "^5.83.0"`
+6 integration tests failed because the source code was refactored following best practices:
 
-#### Step 2: Install
-- Ran `pnpm install --filter user-dashboard` — succeeded
-- Installed `@tanstack/react-query-devtools@5.100.9` (latest matching ^5.83.0)
-- Minor peer dep warning: devtools 5.100.9 wants `@tanstack/react-query@^5.100.9`, project has 5.100.5 — benign patch mismatch, no runtime issue
+| Test | Root Cause |
+|------|-----------|
+| Auth I-01, I-05 | Code no longer calls `toast.success` on login/OTP success — only `router.push` |
+| Auth I-02, I-06 | Code replaced toast with `setError` (inline form field errors) for failure feedback |
+| Auth I-07 | Toast success message changed from `'Request Sent Successfully'` to `'A new OTP has been sent to your email.'` |
+| Onboarding I-02 | Schema now requires `industry` and `size` fields — test didn't fill them → form stayed invalid → button disabled → mutation never called |
 
-#### Step 3: Enable devtools in provider
-- **File**: `apps/user-dashboard/src/lib/react-query/query-provider.tsx`
-- Added import: `import { ReactQueryDevtools } from '@tanstack/react-query-devtools';`
-- Replaced commented-out JSX `{/*<ReactQueryDevtools initialIsOpen={false} />*/}` with active `<ReactQueryDevtools initialIsOpen={false} />`
-- No `NODE_ENV` guard needed — TanStack Devtools are tree-shaken from production bundles automatically
+### Fixes Applied
 
-#### Step 4: Verify
-- `npx tsc --noEmit` — **zero errors** in `query-provider.tsx`
-- Pre-existing unrelated TS errors unchanged
+- **Auth I-01/I-05**: Removed `mockToast.success` expectations, kept `mockPush` navigation check
+- **Auth I-02/I-06**: Replaced toast assertions with `mockLoginWithPassword`/`mockLoginWithOTP` spy call + `mockPush` not-called checks
+- **Auth I-07**: Updated expected toast message to `'A new OTP has been sent to your email.'`
+- **Onboarding I-02**: Added `user.type` calls for industry and size fields
 
-### Files Changed
-
-| File | Action |
-|------|--------|
-| `apps/user-dashboard/package.json` | **MODIFY** — fix empty devtools version |
-| `apps/user-dashboard/src/lib/react-query/query-provider.tsx` | **MODIFY** — import + render ReactQueryDevtools |
+### Result
+- 61 tests pass, 0 failures across all packages
+- `pnpm turbo run test` passes clean

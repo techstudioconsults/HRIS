@@ -1,11 +1,20 @@
 'use client';
 
-import { FormField } from '@/components/shared/inputs/FormFields';
+import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useDebounce } from 'use-debounce';
 
-import type { PayrollFilterTeam, PayrollFilterValues } from '../../types';
+import type { PayrollFilterTeam } from '../../types';
+
+export interface PayrollFilterValues {
+  teamId?: string;
+  roleId?: string;
+  status?: string;
+  sortBy?: string;
+  limit?: string;
+  page?: string;
+}
 
 export const PayrollFilterForm = ({
   initialFilters,
@@ -65,7 +74,9 @@ export const PayrollFilterForm = ({
               { value: 'all', label: 'All Departments' },
               ...teams.map((team) => ({ value: team.id, label: team.name })),
             ]}
-            onChange={(event) => handleTeamChange(event.target.value)}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              handleTeamChange(event.target.value)
+            }
             className="!h-10"
           />
 
@@ -80,7 +91,7 @@ export const PayrollFilterForm = ({
               { value: 'all', label: 'All Roles' },
               ...roles.map((role) => ({ value: role.id, label: role.name })),
             ]}
-            onChange={(event) =>
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               handleFilterChange('roleId', event.target.value)
             }
             className="!h-10"
@@ -99,7 +110,7 @@ export const PayrollFilterForm = ({
               { value: 'failed', label: 'Failed' },
               { value: 'cancelled', label: 'Cancelled' },
             ]}
-            onChange={(event) =>
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               handleFilterChange('status', event.target.value)
             }
             className="!h-10"
@@ -120,7 +131,7 @@ export const PayrollFilterForm = ({
               { value: 'created_at_asc', label: 'Created Date (Oldest)' },
               { value: 'created_at_desc', label: 'Created Date (Newest)' },
             ]}
-            onChange={(event) =>
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               handleFilterChange('sortBy', event.target.value)
             }
             className="!h-10"
@@ -138,7 +149,7 @@ export const PayrollFilterForm = ({
               { value: '20', label: '20' },
               { value: '50', label: '50' },
             ]}
-            onChange={(event) =>
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               handleFilterChange('limit', event.target.value)
             }
             className="!h-10"

@@ -2,8 +2,8 @@ import { Input } from '@workspace/ui/components/input';
 import { LucideSearch, X } from 'lucide-react';
 import { useState } from 'react';
 
-import { MainButton } from '@workspace/ui/lib';
-import { ReusableDialog } from '@workspace/ui/lib';
+import { MainButton } from '@workspace/ui/lib/button';
+import { ReusableDialog } from '@workspace/ui/lib/dialog';
 
 export const SearchDialog = () => {
   const [isOpen, setIsOpen] = useState(false);

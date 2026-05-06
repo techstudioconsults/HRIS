@@ -12,6 +12,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
+  TableRow,
 } from '@workspace/ui/components/table';
 import {
   DropdownMenu,
@@ -29,10 +30,6 @@ import {
 } from '@workspace/ui/components/pagination';
 import type { EmployeeTableProperties } from '../types';
 import { routes } from '@/lib/routes/routes';
-
-function TableRow() {
-  return null;
-}
 
 export function EmployeeTable({
   employees,

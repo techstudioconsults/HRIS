@@ -1,0 +1,14 @@
+name: Test
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  test:
+    name: Test
+    uses: ./.github/workflows/setup-turbo.yml
+    with:
+      task: test

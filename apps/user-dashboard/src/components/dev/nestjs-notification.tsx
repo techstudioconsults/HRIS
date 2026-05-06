@@ -1,7 +1,12 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuthStore } from '@/stores/auth-store';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@workspace/ui/components/card';
+import { useAuthStore } from '@/modules/@org/auth/stores/auth-store';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Properties } from './types';
 
@@ -15,7 +20,7 @@ export default function NestjsNotification({ endpoint }: Properties) {
 
   const userId = useMemo(() => {
     if (!user || typeof user !== 'object') return;
-    const object = user as Record<string, unknown>;
+    const object = user as unknown as Record<string, unknown>;
     if (typeof object['id'] === 'string' && object['id'])
       return object['id'] as string;
     const employee = object['employee'] as Record<string, unknown> | undefined;

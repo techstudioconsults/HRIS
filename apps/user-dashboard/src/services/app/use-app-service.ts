@@ -31,26 +31,14 @@ export const useAppService = () => {
     );
 
   const useMarkAllNotificationsRead = (employeeId: string | undefined) =>
-    useServiceMutation(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      (service, _unused: void) => service.markAllNotificationsRead(),
-      {
-        invalidateQueries: () => [
-          queryKeys.notification.list(employeeId ?? ''),
-        ],
-      }
-    );
+    useServiceMutation((service) => service.markAllNotificationsRead(), {
+      invalidateQueries: () => [queryKeys.notification.list(employeeId ?? '')],
+    });
 
   const useClearAllNotifications = (employeeId: string | undefined) =>
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    useServiceMutation(
-      (service, _unused: void) => service.clearAllNotifications(),
-      {
-        invalidateQueries: () => [
-          queryKeys.notification.list(employeeId ?? ''),
-        ],
-      }
-    );
+    useServiceMutation((service) => service.clearAllNotifications(), {
+      invalidateQueries: () => [queryKeys.notification.list(employeeId ?? '')],
+    });
 
   return {
     useGetNotifications,

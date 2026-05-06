@@ -46,3 +46,7 @@ when launching the app from the home screen instead of a branded splash with the
 ## Side Task — Completed
 - **Forgot Password Flow UX Fix**: Replaced `router.push` navigation with `AlertModal` success
   confirmation on forgot-password form. See `last-output.md` for details.
+
+- **Integration Test Fixes (2026-05-06)**: Fixed 6 failing integration tests that blocked CI.
+  Root causes: auth refactoring removed toast calls in favor of inline form errors;
+  onboarding schema now requires industry/size fields. See `known-issues.md` for full details.

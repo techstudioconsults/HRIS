@@ -11,8 +11,9 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useAuthService } from '../../services/use-auth-service';
 import { getApiErrorMessage } from '@/lib/tools/api-error-message';
 import { routes } from '@/lib/routes/routes';
-import { InfoTooltip } from '@workspace/ui/lib/tooltip';
 import { toast } from 'sonner';
+import { FieldValidFeedback } from '../../_components/field-valid-feedback';
+import { Icon } from '@workspace/ui/lib/icons/icon';
 
 export const Register = () => {
   const router = useRouter();
@@ -20,6 +21,7 @@ export const Register = () => {
   const { mutateAsync: signUp, isPending } = useSignUp();
   const methods = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
+    mode: 'onChange',
     defaultValues: {
       companyName: '',
       domain: '',
@@ -69,6 +71,7 @@ export const Register = () => {
               name={'companyName'}
               required
             />
+            <FieldValidFeedback name="companyName" />
             <FormField
               placeholder={`Enter first name`}
               className={`h-14 w-full`}
@@ -76,6 +79,7 @@ export const Register = () => {
               name={'firstName'}
               required
             />
+            <FieldValidFeedback name="firstName" />
             <FormField
               placeholder={`Enter last name`}
               className={`h-14 w-full`}
@@ -83,6 +87,7 @@ export const Register = () => {
               name={'lastName'}
               required
             />
+            <FieldValidFeedback name="lastName" />
             <div>
               <FormField
                 placeholder={`Enter company domain e.g www.techstudiohr.com`}
@@ -91,17 +96,19 @@ export const Register = () => {
                 name={'domain'}
                 required
               />
-              <InfoTooltip
-                className={`text-success`}
-                content={
-                  <span className={`text-xs`}>
-                    Used to identify your organization and help verify employee
-                    emails (e.g. www.techstudiohr.com).
-                  </span>
-                }
-                side={'left'}
-                iconSize={12}
-              />
+              <FieldValidFeedback name="domain" />
+              <div className="flex items-start gap-1.5 mt-1">
+                <Icon
+                  name={`InfoCircle`}
+                  size={14}
+                  className="text-muted-foreground shrink-0 mt-0.5"
+                  aria-hidden="true"
+                />
+                <p className="text-xs text-muted-foreground italic">
+                  Used to identify your organization and help verify employee
+                  emails (e.g. www.techstudiohr.com).
+                </p>
+              </div>
             </div>
             <FormField
               placeholder={`Enter email address`}
@@ -110,6 +117,7 @@ export const Register = () => {
               name={'email'}
               required
             />
+            <FieldValidFeedback name="email" />
             <FormField
               type={`password`}
               placeholder={`Enter password`}
@@ -117,6 +125,10 @@ export const Register = () => {
               label={`Create Password`}
               name={'password'}
               required
+            />
+            <FieldValidFeedback
+              name="password"
+              message="Password meets requirements"
             />
             <div className="space-y-1">
               <FormField

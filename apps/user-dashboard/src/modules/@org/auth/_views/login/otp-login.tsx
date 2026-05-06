@@ -11,6 +11,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useAuthService } from '../../services/use-auth-service';
 import { getAuthErrorMessage } from '../../services/auth-errors';
 import { routes } from '@/lib/routes/routes';
+import { FieldValidFeedback } from '../../_components/field-valid-feedback';
 
 export const OTPLogin = () => {
   const router = useRouter();
@@ -18,6 +19,7 @@ export const OTPLogin = () => {
   const { mutateAsync: requestOTP, isPending } = useRequestOTP();
   const methods = useForm<LoginOTPFFormData>({
     resolver: zodResolver(loginOTPFormSchema),
+    mode: 'onChange',
     defaultValues: {
       email: '',
     },
@@ -63,6 +65,7 @@ export const OTPLogin = () => {
               name={'email'}
               required
             />
+            <FieldValidFeedback name="email" />
           </section>
           <div className="pt-8">
             <MainButton

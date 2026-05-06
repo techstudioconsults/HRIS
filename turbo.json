@@ -28,6 +28,10 @@
     "test:coverage": {
       "outputs": ["coverage/**"]
     },
+    "test:e2e": {
+      "cache": false,
+      "inputs": ["src/**", "playwright.config.ts", "tests/**"]
+    },
     "dev": {
       "cache": false,
       "persistent": true

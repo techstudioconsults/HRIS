@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { ForgotPasswordData, forgotPasswordSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BackButton } from '@workspace/ui/lib/back-button';
@@ -7,21 +8,23 @@ import { FormHeader } from '@workspace/ui/lib/form-header';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { useAuthService } from '../../services/use-auth-service';
 import { getAuthErrorMessage } from '../../services/auth-errors';
+import { AlertModal } from '@workspace/ui/lib/dialog';
 import { routes } from '@/lib/routes/routes';
 import { Card } from '@workspace/ui/components/card';
+import { FieldValidFeedback } from '../../_components/field-valid-feedback';
 
 export const ForgotPassword = () => {
-  const router = useRouter();
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { useForgotPassword } = useAuthService();
   const { mutateAsync: forgotPassword, isPending } = useForgotPassword();
 
   const methods = useForm<ForgotPasswordData>({
     resolver: zodResolver(forgotPasswordSchema),
+    mode: 'onChange',
     defaultValues: {
       email: '',
     },
@@ -36,7 +39,7 @@ export const ForgotPassword = () => {
   const handleSubmitForm = async (data: ForgotPasswordData) => {
     await forgotPassword(data, {
       onSuccess: () => {
-        router.push(routes.auth.resetPassword(data.email));
+        setShowSuccessModal(true);
       },
       onError: (error) => {
         setError('email', {
@@ -66,6 +69,7 @@ export const ForgotPassword = () => {
               name={'email'}
               type={`email`}
             />
+            <FieldValidFeedback name="email" />
           </section>
           <div className="pt-8">
             <MainButton
@@ -92,6 +96,17 @@ export const ForgotPassword = () => {
           </Link>
         </p>
       </FormProvider>
+
+      <AlertModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        onConfirm={() => setShowSuccessModal(false)}
+        type="success"
+        title="Check Your Email"
+        description="We've sent a password reset link to your email address. Please check your inbox and follow the instructions to reset your password."
+        confirmText="Got It"
+        showCancelButton={false}
+      />
     </Card>
   );
 };

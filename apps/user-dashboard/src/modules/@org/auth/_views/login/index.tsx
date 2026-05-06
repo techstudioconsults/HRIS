@@ -12,6 +12,7 @@ import { useSession } from '@/lib/session';
 import { useAuthService } from '../../services/use-auth-service';
 import { getAuthErrorMessage } from '../../services/auth-errors';
 import { routes } from '@/lib/routes/routes';
+import { FieldValidFeedback } from '../../_components/field-valid-feedback';
 
 export const Login = () => {
   const router = useRouter();
@@ -21,6 +22,7 @@ export const Login = () => {
 
   const methods = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
+    mode: 'onChange',
     defaultValues: {
       email: '',
       password: '',
@@ -69,6 +71,7 @@ export const Login = () => {
               name={'email'}
               required
             />
+            <FieldValidFeedback name="email" />
             <div className="space-y-2">
               <FormField
                 type={`password`}
@@ -78,6 +81,7 @@ export const Login = () => {
                 name={'password'}
                 required
               />
+              <FieldValidFeedback name="password" />
               <div className="flex justify-end">
                 <Link
                   href={routes.auth.forgotPassword()}

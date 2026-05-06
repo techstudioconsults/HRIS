@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { routes } from '@/lib/routes/routes';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
 import { Card } from '@workspace/ui/components/card';
+import { FieldValidFeedback } from '../../_components/field-valid-feedback';
 
 export const ResetPassword = () => {
   const token = useSearchParameters('token');
@@ -23,6 +24,7 @@ export const ResetPassword = () => {
   const { mutateAsync: resetPassword, isPending } = useResetPassword();
   const methods = useForm<ResetPasswordData>({
     resolver: zodResolver(resetPasswordSchema),
+    mode: 'onChange',
     defaultValues: {
       password: '',
       confirmPassword: '',
@@ -55,7 +57,7 @@ export const ResetPassword = () => {
   };
 
   return (
-    <Card className="mx-auto max-w-[589px] w-full rounded-xl p-8 shadow">
+    <Card className="mx-auto max-w-147.25 w-full rounded-xl p-8 shadow">
       <div className={`mb-8 space-y-2`}>
         <h3 className="text-[32px]/[120%] font-semibold tracking-[-2%]">
           Reset Password
@@ -75,6 +77,10 @@ export const ResetPassword = () => {
               label={`New Password`}
               name={'password'}
             />
+            <FieldValidFeedback
+              name="password"
+              message="Password meets requirements"
+            />
             <FormField
               type={`password`}
               placeholder={`Enter password`}
@@ -82,6 +88,7 @@ export const ResetPassword = () => {
               label={`Confirm Password`}
               name={'confirmPassword'}
             />
+            <FieldValidFeedback name="confirmPassword" />
           </section>
           <div className="pt-8">
             <MainButton
@@ -100,7 +107,7 @@ export const ResetPassword = () => {
 
         <span className={`flex items-center justify-center`}>
           <Link
-            href={routes.auth.register()}
+            href={routes.auth.login()}
             className="text-grey-500 font-medium hover:underline text-primary w-fit mt-4
           flex items-center justify-center gap-2 text-sm"
           >

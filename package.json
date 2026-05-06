@@ -16,6 +16,7 @@
     "test:watch": "turbo test:watch",
     "test:ui": "turbo test:ui",
     "test:coverage": "turbo test:coverage",
+    "test:e2e": "echo 'No E2E tests configured yet — configure Playwright per app and add test:e2e script'",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "changeset": "changeset",
     "changeset:version": "changeset version",

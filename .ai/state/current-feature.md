@@ -42,3 +42,7 @@ when launching the app from the home screen instead of a branded splash with the
 | `src/app/head.tsx` | Delete (dead code) |
 | `scripts/generate-splash-screens.mjs` | Create — generates PNG files |
 | `public/splash/*.png` | Create — all iOS device splash images |
+
+## Side Task — Completed
+- **Forgot Password Flow UX Fix**: Replaced `router.push` navigation with `AlertModal` success
+  confirmation on forgot-password form. See `last-output.md` for details.

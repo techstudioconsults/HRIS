@@ -1,12 +1,13 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-# Use base branch from Husky env (HUSKY_GIT_PARAMS); fallback to origin/main
-BASE_BRANCH="origin/main"
-
 git pull origin main
 
-pnpm turbo run typecheck --filter=[$BASE_BRANCH...HEAD] || {
+# shellcheck disable=SC2102
+pnpm turbo run typecheck --filter=[origin/main...HEAD] || {
   echo "Type checking failed — run 'pnpm typecheck' locally to see full output"
+  exit 1
+}
+
+# shellcheck disable=SC2102
+pnpm turbo run build --filter=[origin/main...HEAD] || {
+  echo "Build failed — run 'pnpm build' locally to see full output"
   exit 1
 }

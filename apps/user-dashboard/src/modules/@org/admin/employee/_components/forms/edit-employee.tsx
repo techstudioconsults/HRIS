@@ -399,7 +399,7 @@ export const EditEmployeeForm = () => {
                   label="Work Email"
                   type="email"
                   placeholder={
-                    loadingEmployee ? `Loading email...` : `Johndoe@gmail.com`
+                    loadingEmployee ? `Loading email...` : `email@example.com`
                   }
                   className="border-border h-14! w-full"
                   disabled={isHydrating || isSubmitting}

@@ -8,7 +8,7 @@
     "./setup": "./src/setup.ts",
     "./fixtures": "./src/fixtures.ts",
     "./mocks": "./src/mocks.ts",
-    "./vitest.config": "./vitest.config.ts"
+    "./vitest.config": "./vitest.config.mjs"
   },
   "scripts": {
     "test": "vitest run --passWithNoTests",

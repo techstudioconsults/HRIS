@@ -204,7 +204,11 @@ export const SingleEmployeeForm = ({ index }: SingleEmployeeFormProperties) => {
         <input
           type="hidden"
           name={`employees.${index}.password`}
-          value={employee?.password || 'PleaseSetAdefaultHere1.'}
+          value={
+            employee?.password ||
+            (process.env.NEXT_PUBLIC_DEFAULT_EMPLOYEE_PASSWORD ??
+              'PleaseSetAdefaultHere1.')
+          }
         />
         <input
           type="hidden"

@@ -93,7 +93,9 @@ export function mapRowsToPayloads(
       accountNumber: String(raw[EXCEL_HEADERS.ACCOUNT_NUMBER] ?? '').trim(),
       bankCode: String(raw[EXCEL_HEADERS.BANK_CODE] ?? '').trim(),
       // Default password — employee must reset on first login
-      password: 'PleaseSetAdefaultHere1.',
+      password:
+        process.env.NEXT_PUBLIC_DEFAULT_EMPLOYEE_PASSWORD ??
+        'PleaseSetAdefaultHere1.',
     };
   });
 }

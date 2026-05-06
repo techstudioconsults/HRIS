@@ -39,7 +39,9 @@ export const EmployeeSetupForm = () => {
           lastName: '',
           email: '',
           phoneNumber: '',
-          password: 'PleaseSetAdefaultHere1.',
+          password:
+            process.env.NEXT_PUBLIC_DEFAULT_EMPLOYEE_PASSWORD ??
+            'PleaseSetAdefaultHere1.',
           teamId: '',
           roleId: '',
         },

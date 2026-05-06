@@ -7,12 +7,10 @@ import baseConfig from '@workspace/test-utils/vitest.config';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// @ts-expect-error -- Vite version mismatch between baseConfig and defineConfig
 export default mergeConfig(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   baseConfig as any,
   defineConfig({
-    // @ts-expect-error -- Vite version mismatch
     plugins: [react()],
     test: {
       setupFiles: [

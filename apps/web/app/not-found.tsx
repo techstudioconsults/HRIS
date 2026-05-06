@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { Button } from '@workspace/ui/components/button';
 import { CTA } from '../components/common';
+import { MainButton } from '@workspace/ui/lib/button';
 
 export default function NotFound() {
   return (
@@ -23,20 +23,23 @@ export default function NotFound() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
-            <Button
-              className="bg-primary hover:bg-primary-400 text-white px-8 h-[52px] text-base font-bold rounded-[10px] w-full sm:w-auto"
-              asChild
+            <MainButton
+              variant="primaryOutline"
+              size="xl"
+              href="/"
+              className="w-full sm:w-auto"
             >
-              <Link href="/">Back to Home</Link>
-            </Button>
+              Back to Home
+            </MainButton>
 
-            <Button
-              variant="outline"
-              className="border-primary text-primary hover:bg-primary/5 px-8 h-[52px] text-base font-bold rounded-[10px] w-full sm:w-auto"
-              asChild
+            <MainButton
+              variant="primaryOutline"
+              size="xl"
+              href="/help-center"
+              className="w-full sm:w-auto"
             >
-              <Link href="/help-center">Visit Help Center</Link>
-            </Button>
+              Visit Help Center
+            </MainButton>
           </div>
         </div>
       </section>

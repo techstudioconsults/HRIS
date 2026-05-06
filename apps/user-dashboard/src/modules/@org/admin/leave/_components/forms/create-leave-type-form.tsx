@@ -168,7 +168,7 @@ export const CreateLeaveTypeForm = ({
         <div className="flex gap-3 pt-2">
           <MainButton
             type="button"
-            variant="outline"
+            variant="primaryOutline"
             className="w-full"
             onClick={handleCancel}
             isDisabled={isPending}

@@ -308,7 +308,7 @@ export const PayrollSetupForm = () => {
                 router.back();
               }}
               type="button"
-              variant="outline"
+              variant="primaryOutline"
               className="w-50"
               isDisabled={isPending}
             >

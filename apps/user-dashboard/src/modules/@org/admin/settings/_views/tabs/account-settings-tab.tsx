@@ -364,7 +364,7 @@ export const AccountSettingsTab = () => {
             <div className="flex w-full flex-col gap-3 pt-2 sm:flex-row sm:justify-start">
               <MainButton
                 type="button"
-                variant="outline"
+                variant="primaryOutline"
                 className="text-destructive border-destructive w-full sm:w-50"
                 isDisabled={isSaving}
                 onClick={() => {

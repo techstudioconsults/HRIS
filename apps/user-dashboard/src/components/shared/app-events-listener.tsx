@@ -546,7 +546,7 @@ export const AppEventsListener = () => {
                 {a.label}
               </MainButton>
             ))}
-            <MainButton variant="outline" onClick={() => setModal(null)}>
+            <MainButton variant="primaryOutline" onClick={() => setModal(null)}>
               Close
             </MainButton>
           </div>

@@ -62,7 +62,7 @@ export function EmployeeTable({
             />
             <MainButton
               className="border-gray-75 bg-background border px-3 text-black dark:text-white"
-              variant="outline"
+              variant="primaryOutline"
               isLeftIconVisible={true}
               size="lg"
               icon={<Icon name="Filter" />}
@@ -71,7 +71,7 @@ export function EmployeeTable({
             </MainButton>
             <MainButton
               className="border-gray-75 bg-background border px-3 text-black dark:text-white"
-              variant="outline"
+              variant="primaryOutline"
               size="lg"
               isLeftIconVisible={true}
               icon={<Icon name="DocumentDownload" />}

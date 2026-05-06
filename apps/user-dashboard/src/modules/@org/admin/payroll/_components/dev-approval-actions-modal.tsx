@@ -120,7 +120,7 @@ export const DevApprovalActionsModal = ({
                     Accept
                   </MainButton>
                   <MainButton
-                    variant="outline"
+                    variant="primaryOutline"
                     className="h-8"
                     isDisabled={isDecidingApproval || status === 'declined'}
                     onClick={() => {

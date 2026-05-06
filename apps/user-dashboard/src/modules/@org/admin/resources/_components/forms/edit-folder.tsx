@@ -79,7 +79,7 @@ export const EditFolderForm = ({
           <MainButton
             className="w-full"
             type="button"
-            variant="outline"
+            variant="primaryOutline"
             isDisabled={isSubmitting || isPending}
             onClick={handleCancel}
           >

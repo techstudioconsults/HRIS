@@ -286,7 +286,7 @@ export const LeaveDetailsModal = ({
                     {isDeleting ? 'Cancelling...' : 'Yes, Cancel Request'}
                   </MainButton>
                   <MainButton
-                    variant="outline"
+                    variant="primaryOutline"
                     onClick={() => setShowCancelConfirm(false)}
                     className="flex-1"
                     isLeftIconVisible={false}

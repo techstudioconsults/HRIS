@@ -124,7 +124,7 @@ const CountrySelect = ({
       <PopoverTrigger asChild>
         <Button
           type="button"
-          variant="outline"
+          variant="primaryOutline"
           className={cn(
             'flex gap-1 rounded-s-lg rounded-e-none border-r-0 px-3 focus:z-10',
             buttonClassName

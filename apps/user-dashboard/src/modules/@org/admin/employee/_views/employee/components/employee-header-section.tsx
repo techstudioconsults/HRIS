@@ -71,7 +71,7 @@ export const EmployeeHeaderSection = ({
                   <Button
                     size="icon"
                     className="shadow rounded-md p-2.5"
-                    variant="default"
+                    variant="primaryOutline"
                   >
                     <Icon
                       name="More"

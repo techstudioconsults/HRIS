@@ -126,7 +126,7 @@ export function HRSettingsGeneralRulesTab() {
           <div className="grid gap-6 md:grid-cols-[580px_1fr]">
             <div className="gap-4 flex items-center">
               <MainButton
-                variant="outline"
+                variant="primaryOutline"
                 type="button"
                 className="w-full sm:w-34.25"
                 onClick={() => methods.reset(DEFAULT_VALUES)}

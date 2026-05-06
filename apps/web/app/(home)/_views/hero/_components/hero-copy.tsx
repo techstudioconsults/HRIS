@@ -8,20 +8,13 @@ export const HeroCopy = () => {
           data-header-text
           className="mx-auto max-w-4xl text-3xl font-semibold tracking-[-0.02em] text-zinc-800 sm:text-4xl md:text-5xl lg:text-[62px] lg:leading-[1.2]"
         >
-          <span data-h1 className="inline-block">
-            HR &amp; Payroll software built
-          </span>
-        </h1>
-        <h1
-          data-header-text
-          className="mx-auto max-w-4xl text-3xl font-semibold tracking-[-0.02em] text-zinc-800 sm:text-4xl md:text-5xl lg:text-[62px] lg:leading-[1.2]"
-        >
-          <span data-h1 className="inline-block">
-            for <Emphasis>modern African</Emphasis> teams
+          <span data-h1>
+            HR &amp; Payroll software built for{' '}
+            <Emphasis>modern African</Emphasis> teams
           </span>
         </h1>
       </header>
-      <p className="mx-auto max-w-[507px] text-balance text-sm tracking-[-0.02em] text-zinc-500 sm:text-base md:text-lg lg:text-[20px] lg:leading-[1.4]">
+      <p className="mx-auto max-w-126.75 text-balance text-base tracking-[-0.02em] sm:text-base md:text-lg lg:text-[20px] lg:leading-[1.4]">
         Manage employees, run payroll, and automate HR operations all in one
         powerful platform.
       </p>

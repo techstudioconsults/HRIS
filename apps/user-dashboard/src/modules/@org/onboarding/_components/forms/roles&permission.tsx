@@ -336,7 +336,7 @@ export const RolesAndPermission = ({
           )}
           <MainButton
             type="button"
-            variant="outline"
+            variant="primaryOutline"
             onClick={onCancel}
             isDisabled={isSubmitting || isDeleting}
             className="w-full"

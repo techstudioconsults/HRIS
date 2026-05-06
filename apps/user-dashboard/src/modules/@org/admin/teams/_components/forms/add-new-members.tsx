@@ -432,7 +432,7 @@ export const AddNewMembers = ({
         <div className="flex flex-col gap-4 sm:flex-row">
           <MainButton
             type="button"
-            variant="outline"
+            variant="primaryOutline"
             onClick={onCancel}
             isDisabled={isSubmitting || isBatchSubmitting}
             className="w-full"

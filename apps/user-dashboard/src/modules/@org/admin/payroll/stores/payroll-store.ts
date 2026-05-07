@@ -7,8 +7,6 @@ export type { PayrollUIState, PayrollUIActions } from '../types';
 
 const initialState: PayrollUIState = {
   showPayrollSettingsSetupModal: false,
-  // showFundWalletFormModal, showFundWalletAccountModal, showSchedulePayrollDrawer,
-  // and showRunPayrollDrawer removed — now managed by nuqs (usePayrollModalParams).
   showAddEmployeeToPayrollModal: false,
   hidePayrollNotificationBanner: true,
   payrollSelectedDate: undefined,
@@ -16,6 +14,7 @@ const initialState: PayrollUIState = {
   walletSetupCompleted: false,
   showEmployeeInformationDrawer: false,
   selectedPayslipId: null,
+  activePayslip: null,
   employeeInformationActiveTab: 'employee-information',
 };
 
@@ -37,6 +36,7 @@ export const usePayrollStore = create<PayrollUIState & PayrollUIActions>()(
       setShowEmployeeInformationDrawer: (open) =>
         set({ showEmployeeInformationDrawer: open }),
       setSelectedPayslipId: (id) => set({ selectedPayslipId: id }),
+      setActivePayslip: (payslip) => set({ activePayslip: payslip }),
       setEmployeeInformationActiveTab: (tab) =>
         set({ employeeInformationActiveTab: tab }),
       resetUI: () => set(initialState),

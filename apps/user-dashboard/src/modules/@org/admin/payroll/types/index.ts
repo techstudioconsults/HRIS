@@ -380,6 +380,7 @@ export interface PayrollUIState {
   payrollSelectedDate?: Date;
   showEmployeeInformationDrawer: boolean;
   selectedPayslipId: string | null;
+  activePayslip: Payslip | null;
   /**
    * Indicates that the company wallet setup has just been completed
    * via the FundWalletFormModal flow.
@@ -402,6 +403,7 @@ export interface PayrollUIActions {
   setWalletSetupCompleted: (status: boolean) => void;
   setShowEmployeeInformationDrawer: (open: boolean) => void;
   setSelectedPayslipId: (id: string | null) => void;
+  setActivePayslip: (payslip: Payslip | null) => void;
   setEmployeeInformationActiveTab: (
     tab: 'employee-information' | 'salary-details' | 'payroll-history'
   ) => void;

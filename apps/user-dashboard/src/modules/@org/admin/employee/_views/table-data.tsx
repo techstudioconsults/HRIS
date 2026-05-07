@@ -68,7 +68,7 @@ export const useEmployeeRowActions = () => {
       return [
         {
           label: 'View employee',
-          // kbd: "Ctrl+V",
+          kbd: 'V',
           icon: (
             <Icon name="Eye" size={16} aria-hidden="true" variant={`Outline`} />
           ),
@@ -81,7 +81,7 @@ export const useEmployeeRowActions = () => {
         },
         {
           label: 'Edit employee',
-          // kbd: "Ctrl+E",
+          kbd: 'E',
           icon: (
             <Icon
               name="Edit"

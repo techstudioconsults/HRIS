@@ -17,7 +17,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = resolve(__dirname, '..', 'public');
 const SPLASH_DIR = resolve(PUBLIC_DIR, 'splash');
 const LOGO_PATH = resolve(PUBLIC_DIR, 'images', 'logo.png');
-const BRAND_COLOR = '#0f172a';
+const BRAND_COLOR = { r: 0, g: 0, b: 0, alpha: 0 };
 
 const DEVICES = [
   // ── iPhone SE, 6, 7, 8 ──────────────────────────────────────────
@@ -258,12 +258,12 @@ async function generate() {
 
     // Create base canvas
     let composite = sharp({
-      create: { width, height, channels: 3, background: BRAND_COLOR },
+      create: { width, height, channels: 4, background: BRAND_COLOR },
     });
 
     // Overlay logo if available
     if (logoBuffer) {
-      const logoSize = Math.round(Math.min(width, height) * 0.25);
+      const logoSize = Math.round(Math.min(width, height) * 0.15);
       const resizedLogo = await sharp(logoBuffer)
         .resize(logoSize, logoSize, { fit: 'inside' })
         .toBuffer();

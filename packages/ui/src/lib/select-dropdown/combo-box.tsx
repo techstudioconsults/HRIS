@@ -90,7 +90,7 @@ export function ComboBox({
             hover:text-primary hover:border-primary focus:text-primary focus:border-primary
              active:text-primary active:border-primary transition-colors flex w-full rounded-md px-3 py-2 text-sm
               shadow-none file:border-0 file:bg-transparent file:text-sm file:font-medium 
-               placeholder:text-gray-200 focus:ring-2 focus:ring-offset-2
+               placeholder:text-gray-200 focus:ring-1
                 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50`,
             'border border-border justify-between hover:border-primary-75 hover:text-primary',
             readOnly && 'pointer-events-none cursor-default',

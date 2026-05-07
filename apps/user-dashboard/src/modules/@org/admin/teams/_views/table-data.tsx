@@ -123,7 +123,7 @@ const useTeamRowActionsBase = (
       const baseActions: IRowAction<Team>[] = [
         {
           label: 'View team',
-          // kbd: "Ctrl+V",
+          kbd: 'V',
           icon: (
             <Icon
               variant={'Outline'}
@@ -139,7 +139,7 @@ const useTeamRowActionsBase = (
         },
         {
           label: 'Edit team',
-          // kbd: "Ctrl+E",
+          kbd: 'E',
           icon: (
             <Icon
               variant={'Outline'}
@@ -203,7 +203,7 @@ const useTeamRowActionsBase = (
         { type: 'separator' },
         {
           label: 'Delete team',
-          // kbd: "Ctrl+Del",
+          kbd: 'Del',
           variant: 'destructive',
           icon: (
             <Icon

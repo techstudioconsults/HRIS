@@ -12,21 +12,21 @@ export function useEmployeeShortcuts() {
   useShortcuts(
     [
       {
-        combo: 'mod+v',
+        combo: 'v',
         run: () =>
           activeEmployee &&
           router.push(routes.admin.employees.detail(activeEmployee.id)),
         when: () => !!activeEmployee,
       },
       {
-        combo: 'mod+e',
+        combo: 'e',
         run: () =>
           activeEmployee &&
           router.push(routes.admin.employees.edit(activeEmployee.id)),
         when: () => !!activeEmployee,
       },
       {
-        combo: 'mod+backspace',
+        combo: 'backspace',
         run: () => {
           if (!activeEmployee) return;
           const event_ = new CustomEvent('employee:request-delete');
@@ -35,7 +35,7 @@ export function useEmployeeShortcuts() {
         when: () => !!activeEmployee,
       },
       {
-        combo: 'mod+delete',
+        combo: 'delete',
         run: () => {
           if (!activeEmployee) return;
           const event_ = new CustomEvent('employee:request-delete');

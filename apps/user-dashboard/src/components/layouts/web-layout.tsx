@@ -22,10 +22,10 @@ export function WebLayout({
   sidebar,
 }: WebLayoutProps) {
   return (
-    <div className="web-layout flex min-h-screen flex-col bg-background">
+    <div className="web-layout flex min-h-screen flex-col">
       {/* Header */}
       {header && (
-        <header className="border-b border-border bg-background">
+        <header className="border-b border-border">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">{header}</div>
         </header>
       )}

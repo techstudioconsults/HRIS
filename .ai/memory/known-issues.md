@@ -50,6 +50,14 @@ Format:
 
 ---
 
+- **Issue**: Preferences tab uses thick `border-2 border-primary` for selected button state in all 4 toggle button groups (Accent Color, Mode, Sidebar Layout, Collapse Mode). Active buttons should use a focus-style `ring-2 ring-primary` instead of a colored border.
+- **Impact**: Visual inconsistency — selected buttons show a thick colored border rather than a focus-like ring appearance. Collapse Mode section also missing `focus-visible` ring classes.
+- **Workaround**: N/A — visual bug only.
+- **Mitigation Plan**: Fixed in `preferences-settings-tab.tsx` — changed all 4 button groups from `border-2` → `border` (thin base), selected state from `border-primary` → `ring-2 ring-primary`, hover from `border`-based to `ring`-based (`hover:ring-2 hover:ring-primary/30`), and added missing `focus-visible:ring-2` to Collapse Mode section.
+- **Date**: 2026-05-07
+
+---
+
 - **Issue**: `UserLeaveBody` fires `GET /leave-requests?employeeId=undefined` during session loading, causing a 500 error from the backend. `useSession()` returns null/undefined while fetching the session token, and the query's `employeeId` filter evaluates to `undefined` before the session resolves.
 - **Impact**: User leave page fails with 500 on first load; requires refresh after session is established.
 - **Workaround**: Refresh the page after login — session is cached on subsequent loads.

@@ -9,7 +9,7 @@ import { useSession } from '@/lib/session';
 import { useMemo } from 'react';
 import { useModeToggle } from '@workspace/ui/components/core/layout/ThemeToggle/use-theme-toggle';
 import { Logo } from '@workspace/ui/lib/logo';
-
+import { useDashboardPreferences } from '@/lib/preferences/dashboard-preferences-provider';
 const EMPTY_NAV_ITEMS: typeof adminNavItems = [];
 
 export function AppSideBar() {
@@ -18,6 +18,7 @@ export function AppSideBar() {
   const theme = useModeToggle();
   const { state } = useSidebar();
   const { data: session } = useSession();
+  const { preferences } = useDashboardPreferences();
 
   const roleName = session?.user.employee.role.name;
   const userName = session?.user.employee.fullName.toUpperCase();
@@ -30,15 +31,22 @@ export function AppSideBar() {
         name: companyProfile?.name ?? '',
         logo:
           state === 'collapsed' ? (
-            <Logo key="collapsed-logo" logo={'/images/logo.png'} />
+            <Logo
+              key="collapsed-logo"
+              logo={'/images/logo.png'}
+              width={32}
+              height={32}
+            />
           ) : (
             <Logo
-              key="expanded-logo"
-              logo={'/images/logo-white.svg'}
-              className="w-50"
+              key="collapsed-logo"
+              logo={'/images/logo.png'}
+              width={36}
+              height={36}
             />
           ),
-        plan: companyProfile?.domain ?? '',
+        plan: companyProfile?.domain ?? 'PRO',
+        // plan: 'Team',
       },
     ],
     [companyProfile?.name, companyProfile?.domain, state]
@@ -47,13 +55,15 @@ export function AppSideBar() {
   return (
     <Sidebar
       theme={theme}
+      variant={preferences.sidebarVariant}
+      collapsible={preferences.sidebarCollapsible}
       navMainTitle={isAdmin ? 'ADMIN' : ''}
       navMain={isAdmin ? adminNavItems : EMPTY_NAV_ITEMS}
       secondaryTitle={isUser ? userName : ''}
       navSecondary={isUser ? userNavItems : EMPTY_NAV_ITEMS}
       className={cn(
-        'z-50 bg-sidebar-bg text-sidebar-foreground',
-        state === 'collapsed' ? 'px-4 md:px-0' : 'px-4 md:px-6'
+        'z-50'
+        // state === 'collapsed' ? 'px-4 md:px-0' : 'px-4 md:px-6'
       )}
       teams={teams}
     />

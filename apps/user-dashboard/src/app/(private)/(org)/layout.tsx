@@ -13,23 +13,39 @@ import { ReactNode } from 'react';
 import { AppSideBar } from '@/components/shared/navbar/AppSidebar';
 import { LayoutSelector, AppLayout } from '@/components/layouts';
 import { PWADockNav } from '@/components/shared/navbar/pwa-dock-nav';
+import { useUserProfileService } from '@/modules/@org/user/profile';
+import { DashboardPreferencesProvider } from '@/lib/preferences/dashboard-preferences-provider';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { data: session } = useSession();
+  const employeeId = session?.user?.id ?? '';
+
+  // Fetch the current user's profile to get the avatar URL for the top-bar.
+  // The profile query key ['user', 'profile', 'current'] is invalidated by
+  // both useUpdateMyProfile and useUpdateEmployee mutations after image uploads.
+  const { useGetMyProfile } = useUserProfileService();
+  const { data: profile } = useGetMyProfile(employeeId);
+
+  const adminAvatar = profile?.avatar ?? '';
+  const adminName = session?.user.employee.fullName || '';
+  const adminRole = session?.user.employee.role?.name || '';
+  const adminEmail = session?.user.employee.email || '';
 
   const topBar = (
     <TopBar
-      adminName={session?.user.employee.fullName || ''}
-      adminRole={session?.user.employee.role?.name || ''}
-      adminEmail={session?.user.employee.email || ''}
+      adminName={adminName}
+      adminRole={adminRole}
+      adminEmail={adminEmail}
+      adminAvatar={adminAvatar}
     />
   );
 
   const topBarPWA = (
     <TopBar
-      adminName={session?.user.employee.fullName || ''}
-      adminRole={session?.user.employee.role?.name || ''}
-      adminEmail={session?.user.employee.email || ''}
+      adminName={adminName}
+      adminRole={adminRole}
+      adminEmail={adminEmail}
+      adminAvatar={adminAvatar}
       showSidebarTrigger={false}
       sticky={false}
     />
@@ -42,28 +58,30 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   );
 
   return (
-    <TourProvider>
-      <ActiveTargetProvider>
-        <LayoutSelector
-          header={topBar}
-          renderPWA={({ children: layoutChildren }) => (
-            <AppLayout header={topBarPWA} nav={<PWADockNav />}>
-              {layoutChildren}
-            </AppLayout>
-          )}
-          renderWeb={({ header, children: layoutChildren }) => (
-            <SidebarProvider>
-              <AppSideBar />
-              <SidebarInset className="bg-[#f7f9fc] dark:bg-background">
-                {header}
+    <DashboardPreferencesProvider>
+      <TourProvider>
+        <ActiveTargetProvider>
+          <LayoutSelector
+            header={topBar}
+            renderPWA={({ children: layoutChildren }) => (
+              <AppLayout header={topBarPWA} nav={<PWADockNav />}>
                 {layoutChildren}
-              </SidebarInset>
-            </SidebarProvider>
-          )}
-        >
-          {content}
-        </LayoutSelector>
-      </ActiveTargetProvider>
-    </TourProvider>
+              </AppLayout>
+            )}
+            renderWeb={({ header, children: layoutChildren }) => (
+              <SidebarProvider>
+                <AppSideBar />
+                <SidebarInset>
+                  {header}
+                  {layoutChildren}
+                </SidebarInset>
+              </SidebarProvider>
+            )}
+          >
+            {content}
+          </LayoutSelector>
+        </ActiveTargetProvider>
+      </TourProvider>
+    </DashboardPreferencesProvider>
   );
 }

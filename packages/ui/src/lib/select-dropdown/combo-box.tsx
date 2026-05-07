@@ -85,13 +85,14 @@ export function ComboBox({
           aria-expanded={open}
           disabled={disabled}
           className={cn(
-            `bg-background dark:bg-primary-50 text-muted-foreground ring-offset-background focus-visible:ring-ring h-10 border-border
+            `bg-background dark:bg-primary-50 text-muted-foreground ring-offset-background 
+            focus-visible:ring-ring h-10 
             hover:text-primary hover:border-primary focus:text-primary focus:border-primary
              active:text-primary active:border-primary transition-colors flex w-full rounded-md px-3 py-2 text-sm
               shadow-none file:border-0 file:bg-transparent file:text-sm file:font-medium 
-              placeholder:text-gray-200 focus-visible:ring-2 focus-visible:ring-offset-2
-               focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50`,
-            'bg-background border border-transparent justify-between hover:border-primary-75 hover:text-primary',
+               placeholder:text-gray-200 focus:ring-1
+                focus:outline-none disabled:cursor-not-allowed disabled:opacity-50`,
+            'border border-border justify-between hover:border-primary-75 hover:text-primary',
             readOnly && 'pointer-events-none cursor-default',
             triggerClassName
           )}

@@ -75,6 +75,9 @@ export const useEmployeeService = () => {
             ['employee', 'list'],
             queryKeys.employee.details(id),
             ['payrolls', 'list'], // partial matches all payroll list variants
+            // Invalidate the current user's profile so the top-bar avatar
+            // reflects the latest image after an employee update (e.g. avatar change)
+            queryKeys.profile.current(),
           ];
           if (Array.isArray(payrollIds)) {
             for (const pid of payrollIds) {

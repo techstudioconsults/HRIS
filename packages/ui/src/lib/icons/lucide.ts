@@ -49,4 +49,10 @@ export {
   LucideThumbsDown,
   LucideThumbsUp,
   BellOff,
+  Sun,
+  Moon,
+  Monitor,
+  LayoutDashboard,
+  GripVertical,
+  Palette,
 } from 'lucide-react';

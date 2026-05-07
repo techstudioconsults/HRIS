@@ -1,54 +1,100 @@
-# PWA iOS Splash Screen — Three Critical Fixes
+# Preferences Tab — Active Button Ring Fix
 
-**Feature**: PWA iOS Splash Screen Fix — orientation media queries, FOUC guard component, FOUC CSS
+**Feature**: Replace `border`-based active state with `ring`-based (focus-style) indicator
 **Status**: Complete
 **Date**: 2026-05-07
 
-## Fixes Applied
+## Summary
 
-### Issue 1: Landscape/Portrait Orientation in Media Queries (BLOCKING BUG)
-
-All 28 splash screen entries in `layout.tsx` `appleWebApp.startupImage` had identical media queries
-for portrait and landscape variants. iOS Safari always picked the first (portrait) image — landscape
-devices showed a stretched portrait splash.
-
-**Fix**: Added `and (orientation: portrait)` to all 14 portrait entries and `and (orientation: landscape)`
-to all 14 landscape entries in both `layout.tsx` and `scripts/generate-splash-screens.mjs`.
-
-### Issue 2: Missing PwaSplashGuard Component (FOUC Guard)
-
-Created `src/components/pwa/pwa-splash-guard.tsx` — a client component that:
-
-- Renders a full-viewport branded overlay (#0f172a background + logo.png) as body's first child
-- Sets `document.documentElement.dataset.splash = 'ready'` via `requestAnimationFrame` after React hydrates
-- CSS transition fades it out when `data-splash="ready"` is set
-
-### Issue 3: FOUC Guard CSS in globals.css
-
-Added `.pwa-splash-guard` styles to `src/app/globals.css`:
-
-- Fixed overlay with high z-index, flexbox centered logo with pulse animation
-- `html[data-splash="ready"] .pwa-splash-guard` → fades out via opacity transition
-- `@media not (display-mode: standalone)` → hidden in browser mode
+All 4 button groups in the Preferences tab (Accent Color, Mode, Sidebar Layout, Collapse Mode)
+used thick `border-2 border-primary` to indicate the selected state. Changed to a focus-style
+`ring-2 ring-primary` indicator instead.
 
 ## Changes
 
-| File                                      | Action                                                                                                                               |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `src/components/pwa/pwa-splash-guard.tsx` | **Created** — FOUC guard client component                                                                                            |
-| `src/app/layout.tsx`                      | Added `and (orientation: portrait/landscape)` to all 28 media queries; added `<PwaSplashGuard />` before `<Providers>`; added import |
-| `src/app/globals.css`                     | Appended `.pwa-splash-guard` CSS with animation, fade-out, and `@media not (display-mode: standalone)` guard                         |
-| `scripts/generate-splash-screens.mjs`     | Updated all 28 `media` strings to include `and (orientation: ...)`                                                                   |
+| Change             | Before                                  | After                                                   |
+| ------------------ | --------------------------------------- | ------------------------------------------------------- |
+| Base border        | `border-2`                              | `border` (thin structural)                              |
+| Selected           | `border-primary bg-primary/5 shadow-sm` | `ring-2 ring-primary bg-primary/5 shadow-sm`            |
+| Hover              | `hover:border-primary/50`               | `hover:ring-2 hover:ring-primary/30`                    |
+| Collapse Mode a11y | Missing `focus-visible:ring-2`          | Added `focus-visible:outline-none focus-visible:ring-2` |
+
+## Files Modified
+
+| File                                                                                           | Action                                                               |
+| ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `apps/user-dashboard/src/modules/@org/admin/settings/_views/tabs/preferences-settings-tab.tsx` | Updated all 4 button groups (L135-139, L173-177, L228-232, L264-267) |
 
 ## Verification
 
-- `pnpm run typecheck` — clean (no errors)
-- `pnpm run lint` — clean (no errors, no warnings)
-- All 28 orientation suffixes verified in both layout.tsx and generate-splash-screens.mjs
+- `pnpm run typecheck` — 4/4 clean
+- `pnpm run lint` — clean (0 warnings, 0 errors)
 
-## Technical Notes
+---
 
-- **Why iOS ignores manifest splash**: iOS WKWebView only supports proprietary `<link rel="apple-touch-startup-image">` tags — it completely ignores Web App Manifest splash/background_color. Only Android/Chrome uses manifest-based splash.
-- **Why splash fails in React apps**: iOS determines the splash image from `<head>` at page load time, BEFORE JavaScript executes. If splash `<link>` tags are injected client-side, they appear after the native splash decision window has passed.
-- **Why orientation matters**: Without `(orientation: ...)` in the media query, iOS picks the first matching entry — always portrait if it comes first. Landscape devices get a stretched/blown-up portrait splash.
-- **iOS caching**: iOS aggressively caches splash assets. Testing changes may require: delete Home Screen icon → clear Safari website data → restart device → re-add to Home Screen.
+# Preferences Panel — Refactor & Theme Variant Fix
+
+**Feature**: Preferences panel cleanup + working theme variant switching
+**Status**: Complete
+**Date**: 2026-05-07
+
+## Summary
+
+Rewrote the Preferences tab to remove useless features (sidebar position, content density) and
+implement working theme variant switching with instant apply (no save button).
+
+## Changes
+
+### 1. Removed useless features
+
+- **Sidebar position** (left/right) — removed from types, provider, tab UI, and AppSidebar usage
+- **Content density** (comfortable/compact) — removed from types, provider, and tab UI
+- Both had no working implementation
+
+### 2. Theme variant switching
+
+The `packages/ui/src/styles/theme.css` defines accent color theme classes:
+
+- `theme-default` — neutral gray
+- `theme-blue` — blue accent
+- `theme-green` — lime/green accent
+- `theme-amber` — amber accent
+- `theme-mono` — monospace font, no rounded corners, no shadows
+
+The selected theme class is applied to `<html>` via `document.documentElement.classList`.
+Changes are instant — no save button, no refresh needed.
+
+### 3. Instant changes architecture
+
+- **No React Hook Form** — removed form wrapper and "Save Preferences" button
+- Clicking a theme variant or mode option immediately:
+  1. Applies the DOM change (classList for variant, `setTheme()` for mode)
+  2. Persists to localStorage via `updatePreferences()`
+- Only "Reset to Defaults" button remains
+
+### 4. Anti-flash inline script
+
+Added a synchronous `<script>` block in `layout.tsx` that reads `localStorage` and applies
+the theme variant class to `<html>` before React hydrates, preventing FOUC on page load.
+
+### 5. Provider rewrite
+
+Rewrote `DashboardPreferencesProvider` to use `useState` (reactive context) instead of
+stale `useMemo` with empty deps. This ensures `preferences` in the context updates
+when `updatePreferences` is called, making the UI reactive to clicks.
+
+## Files Modified
+
+| File                                                                                           | Action                                                                                                                  |
+| ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `apps/user-dashboard/src/modules/@org/admin/settings/types/index.ts`                           | Removed `SidebarPosition`, `ContentDensity` types and fields; updated `PreferencesFormValues` and `DEFAULT_PREFERENCES` |
+| `apps/user-dashboard/src/lib/preferences/dashboard-preferences-provider.tsx`                   | Rewrote: `useState` for reactivity, removed content density logic, always applies theme class, simplified `applyDOM`    |
+| `apps/user-dashboard/src/modules/@org/admin/settings/_views/tabs/preferences-settings-tab.tsx` | Rewrote: no form, instant changes, only Accent Color + Theme Mode sections + Reset button                               |
+| `apps/user-dashboard/src/components/shared/navbar/AppSidebar.tsx`                              | Removed `useDashboardPreferences` import and `side={preferences.sidebarPosition}` prop                                  |
+| `apps/user-dashboard/src/app/layout.tsx`                                                       | Added inline anti-flash `<script>` to apply saved theme class before hydration                                          |
+
+## Verification
+
+- `pnpm run typecheck` — 4 successful, 4 total (clean)
+- `pnpm run lint` (user-dashboard) — clean (0 warnings, 0 errors)
+- `pnpm run test` — all 61 tests pass, 0 fail

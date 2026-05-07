@@ -2,6 +2,7 @@
 
 import { AppEventsListener } from '@/components/shared/app-events-listener';
 import { getTopBarTitle } from '@/lib/routes/top-bar-title';
+import { useDashboardPreferences } from '@/lib/preferences/dashboard-preferences-provider';
 import { useSession } from '@/lib/session';
 import { GlobalSearchInput } from '@/modules/@org/shared/search-input';
 import { useAppService } from '@/services/app/use-app-service';
@@ -69,12 +70,18 @@ export default function TopBar({
   };
 
   const title = getTopBarTitle(pathname);
+
+  const { preferences } = useDashboardPreferences();
+  const isFloating = preferences.sidebarVariant === 'floating';
+
   return (
     <>
       <header
         className={cn(
-          'bg-background top-0 z-20 w-full',
-          sticky ? 'sticky' : 'static',
+          'bg-background z-20 w-full',
+          isFloating
+            ? 'sticky top-2 rounded-lg border shadow-sm'
+            : cn(sticky ? 'sticky top-0' : 'static'),
           className
         )}
       >

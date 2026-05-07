@@ -7,17 +7,20 @@ import { AlertModal } from '@workspace/ui/lib/dialog';
 import { cn } from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { AxiosError } from 'axios';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { usePayrollService } from '../services/use-service';
 import { usePayrollStore } from '../stores/payroll-store';
+import { usePayrollShortcuts } from '../hooks/use-payroll-shortcuts';
 import { Payslip } from '../types';
 
 export const usePayrollRowActions = () => {
   const {
+    activePayslip,
     setShowEmployeeInformationDrawer,
     setSelectedPayslipId,
+    setActivePayslip,
     setEmployeeInformationActiveTab,
   } = usePayrollStore();
   const { useDeletePayslip, useRetryPayroll } = usePayrollService();
@@ -25,6 +28,8 @@ export const usePayrollRowActions = () => {
     useDeletePayslip();
   const { mutateAsync: retryPayroll, isPending: isRetryingPayroll } =
     useRetryPayroll();
+
+  usePayrollShortcuts();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [payslipToDelete, setPayslipToDelete] = useState<Payslip | null>(null);
@@ -81,12 +86,23 @@ export const usePayrollRowActions = () => {
     [isRetryingPayroll, retryPayroll]
   );
 
+  useEffect(() => {
+    const onDeleteRequest = () => {
+      if (!activePayslip) return;
+      setPayslipToDelete(activePayslip);
+      setIsDeleteModalOpen(true);
+    };
+    window.addEventListener('payroll:request-delete', onDeleteRequest);
+    return () =>
+      window.removeEventListener('payroll:request-delete', onDeleteRequest);
+  }, [activePayslip]);
+
   const getRowActions = (payslip: Payslip): IRowAction<Payslip>[] => [
     {
       label: 'View employee payroll details',
+      kbd: 'V',
       onClick: () => {
-        // Use employeeId so the drawer can fetch via
-        // GET /payrolls/{{payrollId}}/payslips?employeeId={{employeeId}}
+        setActivePayslip(payslip);
         setSelectedPayslipId(payslip.id ?? null);
         setEmployeeInformationActiveTab('employee-information');
         setShowEmployeeInformationDrawer(true);
@@ -111,7 +127,9 @@ export const usePayrollRowActions = () => {
             : []),
           {
             label: 'Edit employee payroll',
+            kbd: 'E',
             onClick: () => {
+              setActivePayslip(payslip);
               setSelectedPayslipId(payslip?.id ?? null);
               setEmployeeInformationActiveTab('salary-details');
               setShowEmployeeInformationDrawer(true);
@@ -127,6 +145,7 @@ export const usePayrollRowActions = () => {
           { type: 'separator' as const },
           {
             label: 'Remove employee from payroll',
+            kbd: 'Del',
             variant: 'destructive' as const,
             onClick: () => {
               setPayslipToDelete(payslip);

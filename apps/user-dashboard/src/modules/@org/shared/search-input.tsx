@@ -33,18 +33,24 @@ export const SearchInput = ({
   }, [debouncedQuery, onSearch]);
 
   return (
-    <div className={`relative border rounded-md ${className}`}>
+    <div
+      className={cn(
+        `relative border rounded-md`,
+        `focus-within:ring-2 focus-within:border-transparent focus-within:ring-ring transition-all duration-100`,
+        className
+      )}
+    >
       <Icon
         name="SearchNormal1"
         size={16}
-        className="absolute text-primary top-1/2 left-3 -translate-y-1/2 transform"
+        className="absolute top-1/2 left-3 -translate-y-1/2 transform"
         variant={`Outline`}
       />
       <Input
         disabled={isDisabled}
         type="search"
         placeholder={placeholder}
-        className="h-full placeholder:text-xs placeholder:text-primary-200 dark:placeholder:text-muted-foreground
+        className="h-full placeholder:text-xs dark:placeholder:text-muted-foreground
         dark:bg-primary-50 border-none pr-4 pl-10 shadow-none"
         value={searchQuery}
         onChange={(event) => setSearchQuery(event.target.value)}
@@ -150,17 +156,13 @@ export function GlobalSearchInput({
           className={cn(
             'dark:bg-primary-50 relative border flex h-10 ' +
               'items-center gap-2 rounded-md px-3 transition-colors ' +
-              'group-hover:text-primary',
+              'group-hover:text-primary ' +
+              'focus-within:ring-2 focus-within:border-transparent focus-within:ring-ring transition-all duration-200',
             disabled && 'cursor-not-allowed opacity-50',
             className
           )}
         >
-          <Icon
-            name="SearchNormal1"
-            size={16}
-            className={`text-primary`}
-            variant={`Outline`}
-          />
+          <Icon name="SearchNormal1" size={16} variant={`Outline`} />
           <Input
             ref={inputReference}
             type="text"
@@ -170,7 +172,7 @@ export function GlobalSearchInput({
             onKeyDown={handleKeyDown}
             onFocus={() => setOpen(true)}
             disabled={disabled}
-            className="h-full flex-1 border-none shadow-none placeholder:text-primary-200 dark:placeholder:text-muted-foreground
+            className="h-full flex-1 border-none shadow-none dark:placeholder:text-muted-foreground
             placeholder:text-sm bg-transparent! p-0 text-sm focus-visible:ring-0
             focus-visible:ring-offset-0 focus:outline-none"
           />

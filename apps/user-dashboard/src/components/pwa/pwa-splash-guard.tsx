@@ -2,12 +2,14 @@
 
 import { useEffect } from 'react';
 
+const SPLASH_DELAY_MS = 1000;
+
 export function PwaSplashGuard() {
   useEffect(() => {
-    const frame = requestAnimationFrame(() => {
+    const timer = setTimeout(() => {
       document.documentElement.dataset.splash = 'ready';
-    });
-    return () => cancelAnimationFrame(frame);
+    }, SPLASH_DELAY_MS);
+    return () => clearTimeout(timer);
   }, []);
 
   return (

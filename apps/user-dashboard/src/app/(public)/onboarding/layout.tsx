@@ -11,7 +11,7 @@ function OnboardingLayout({ children }: { children: React.ReactNode }) {
       <TourProvider>
         <main>
           <section
-            className={`bg-background sticky overflow-hidden top-0 z-10 flex items-center border-b`}
+            className={`sticky overflow-hidden top-0 z-10 flex items-center border-b`}
           >
             <Wrapper className={`my-5! lg:my-20!`}>
               <Logo logo={`/images/logo.svg`} width={214} />

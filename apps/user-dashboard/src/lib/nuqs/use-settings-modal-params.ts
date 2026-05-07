@@ -12,6 +12,7 @@ const SETTINGS_TABS: SettingsTab[] = [
   'hr',
   'notifications',
   'security',
+  'preferences',
 ];
 
 const useSettingsModalBase = makeModalParams(SETTINGS_MODAL_NAMES);

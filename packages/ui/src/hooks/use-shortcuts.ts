@@ -25,6 +25,14 @@ export function normalizeCombo(combo: string): NormalizedCombo {
   };
 }
 
+function isTextInputFocused(): boolean {
+  const el = document.activeElement;
+  if (!el) return false;
+  const tag = el.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+  return (el as HTMLElement).isContentEditable;
+}
+
 export function eventMatches(event: KeyboardEvent, combo: NormalizedCombo) {
   const isMac =
     typeof navigator !== 'undefined' && /mac/i.test(navigator.platform);
@@ -63,6 +71,7 @@ export function useShortcuts(actions: ShortcutAction[], deps: unknown[] = []) {
     }));
 
     const handler = (event: KeyboardEvent) => {
+      if (isTextInputFocused()) return;
       for (const act of normalized) {
         if (act.when && !act.when()) continue;
         if (eventMatches(event, act.parsed)) {

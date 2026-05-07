@@ -11,7 +11,7 @@ export function useTeamShortcuts() {
 
   useShortcuts([
     {
-      combo: 'mod+v',
+      combo: 'v',
       when: () => !!activeTeam,
       run: () => {
         if (!activeTeam) return;
@@ -19,7 +19,7 @@ export function useTeamShortcuts() {
       },
     },
     {
-      combo: 'mod+e',
+      combo: 'e',
       when: () => !!activeTeam,
       run: () => {
         if (!activeTeam) return;
@@ -27,7 +27,7 @@ export function useTeamShortcuts() {
       },
     },
     {
-      combo: 'mod+backspace',
+      combo: 'backspace',
       when: () => !!activeTeam,
       run: () => {
         if (!activeTeam) return;
@@ -35,7 +35,7 @@ export function useTeamShortcuts() {
       },
     },
     {
-      combo: 'mod+delete',
+      combo: 'delete',
       when: () => !!activeTeam,
       run: () => {
         if (!activeTeam) return;

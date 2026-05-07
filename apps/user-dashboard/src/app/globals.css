@@ -153,3 +153,43 @@
   font-weight: 500;
 }
 
+/* ============================================================================
+ * PWA Splash Guard — prevents white flash between native splash and React
+ * hydration. CSS-only initial paint, fades out after React hydrates.
+ * ============================================================================ */
+
+.pwa-splash-guard {
+  display: none;
+}
+
+.pwa-splash-guard__logo {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  animation: pwa-splash-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pwa-splash-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+html[data-splash="ready"] .pwa-splash-guard {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease-out;
+}
+
+@media (display-mode: standalone) {
+  .pwa-splash-guard {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #0f172a;
+  }
+}
+

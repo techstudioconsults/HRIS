@@ -133,12 +133,17 @@ const MainButton = forwardRef<HTMLButtonElement, ButtonProperties>(
     };
 
     if (href) {
-      const external = /^https?:\/\//.test(href) || isExternal;
+      const isAbsolute = /^https?:\/\//.test(href);
+      const external = isAbsolute || isExternal;
 
       if (external) {
+        const resolvedHref = isAbsolute
+          ? href
+          : `${process.env.NEXT_PUBLIC_DASHBOARD_URL ?? (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')}${href}`;
+
         return (
           <a
-            href={`${process.env.NEXT_PUBLIC_APP_URL ?? (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')}${href}`}
+            href={resolvedHref}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={ariaLabel}

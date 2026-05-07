@@ -2,7 +2,7 @@
 
 **Feature Name**: PWA iOS Splash Screen Fix
 **Status**: In Progress
-**Phase**: Planning
+**Phase**: Implementation (three fixes applied)
 **Started**: 2026-05-05
 
 ## Summary
@@ -25,44 +25,39 @@ when launching the app from the home screen instead of a branded splash with the
 
 4. **No CSS FOUC guard** — No branded fallback for the flash between HTML load and React hydration.
 
+5. **Identical landscape/portrait media queries** — iOS picks portrait image for landscape devices (first match wins).
+
 ## Scope
 
 - **App**: `apps/user-dashboard` only
-- **Files to create/modify**: layout.tsx, manifest.ts, globals.css, splash generator script,
-  splash PNG assets
-- **Files to delete**: `src/app/head.tsx` (dead code)
+- **Files created**: `src/components/pwa/pwa-splash-guard.tsx`
+- **Files modified**: `src/app/layout.tsx`, `src/app/globals.css`, `scripts/generate-splash-screens.mjs`
+- **Files deleted**: `src/app/head.tsx` (dead code, deleted in prior iteration)
 
-## Files to Change
+## Completed Fixes (2026-05-07)
 
-| File                                  | Action                                                              |
-| ------------------------------------- | ------------------------------------------------------------------- |
-| `src/app/layout.tsx`                  | Add `appleWebApp.startupImage` to Metadata API; add CSS splash HTML |
-| `src/app/manifest.ts`                 | Improve manifest config                                             |
-| `src/app/globals.css`                 | Add splash screen CSS animation                                     |
-| `src/app/head.tsx`                    | Delete (dead code)                                                  |
-| `scripts/generate-splash-screens.mjs` | Create — generates PNG files                                        |
-| `public/splash/*.png`                 | Create — all iOS device splash images                               |
+### Fix 1: Orientation Media Queries
 
-## Side Task — Completed
+Added `and (orientation: portrait)` to all 14 portrait entries and `and (orientation: landscape)` to all 14 landscape entries in both `layout.tsx` and `generate-splash-screens.mjs`.
 
-- **Forgot Password Flow UX Fix**: Replaced `router.push` navigation with `AlertModal` success
-  confirmation on forgot-password form. See `last-output.md` for details.
+### Fix 2: PwaSplashGuard Component
 
-- **Integration Test Fixes (2026-05-06)**: Fixed 6 failing integration tests that blocked CI.
-  Root causes: auth refactoring removed toast calls in favor of inline form errors;
-  onboarding schema now requires industry/size fields. See `known-issues.md` for full details.
+Created `src/components/pwa/pwa-splash-guard.tsx` — client component renders branded overlay, sets `data-splash="ready"` after hydration.
 
-- **CI Pipeline Fixes (2026-05-06)**: Fixed 2 CI-only bugs:
-  1. **Crypto verify realm error**: 3 SessionManager unit tests (U-11, U-12, U-13) failed on Node.js 20 CI with `SubtleCrypto.verify()` rejecting jsdom-realm `ArrayBuffer`. Fixed by changing test environment to `node` via `// @vitest-environment node` pragma and guarding shared setup's `window.matchMedia` mock.
-  2. **Typecheck SVG imports**: 21 `TS2307` errors for `~/images/*.svg` imports because `next-env.d.ts` (auto-generated, gitignored) doesn't exist in CI. Fixed by adding `src/types/images.d.ts` with committed image module declarations. See `known-issues.md`.
+### Fix 3: FOUC Guard CSS
 
-- **PWA iOS Splash Screen Fix (2026-05-06)**: Completed the core deliverables:
-  1. Deleted `head.tsx` (dead code in Next.js 16)
-  2. Added 28 device-specific splash PNGs via `appleWebApp.startupImage` in layout.tsx Metadata API
-  3. Created `scripts/generate-splash-screens.mjs` for splash asset generation
-  4. Updated manifest.ts (orientation: any, prefer_related_applications: false)
-  5. Added CSS FOUC guard with `PwaSplashGuard` client component
-  6. Fixed ESLint (removed unused Script import, cleared commented code)
-     See `last-output.md` for details.
+Added `.pwa-splash-guard` CSS to `globals.css` with pulse animation, fade-out transition on `html[data-splash="ready"]`, and hidden in browser mode via `@media not (display-mode: standalone)`.
 
-- **Session employeeId Guard Fix (2026-05-06)**: `UserLeaveBody` fired `GET /leave-requests?employeeId=undefined` before session resolved, causing backend 500. Added `enabled: !!employeeId` to defer the query until session loads. Also removed leftover `console.log` and fixed a pre-existing `RequestLeaveModal` type error. See `known-issues.md`.
+## Verification
+
+- `pnpm run typecheck` — clean
+- `pnpm run lint` — clean
+- All 28 orientation suffixes verified in both layout.tsx and generate-splash-screens.mjs
+
+## Previous Side Tasks — Completed
+
+- **Forgot Password Flow UX Fix**: Replaced `router.push` navigation with `AlertModal` success confirmation on forgot-password form.
+- **Integration Test Fixes (2026-05-06)**: Fixed 6 failing integration tests. Root causes: auth refactoring removed toast calls; onboarding schema now requires industry/size fields.
+- **CI Pipeline Fixes (2026-05-06)**: Fixed crypto verify realm error in SessionManager tests and SVG imports typecheck on CI.
+- **PWA iOS Splash Screen Fix (2026-05-06)**: Core deliverables: deleted head.tsx, added 28 device-specific splash PNGs, created generate script, updated manifest, added CSS FOUC guard.
+- **Session employeeId Guard Fix (2026-05-06)**: `UserLeaveBody` fired `GET /leave-requests?employeeId=undefined`. Added `enabled: !!employeeId`.

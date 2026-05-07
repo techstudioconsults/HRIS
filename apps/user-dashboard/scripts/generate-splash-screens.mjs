@@ -26,14 +26,14 @@ const DEVICES = [
     height: 1334,
     scale: 2,
     orientation: 'portrait',
-    media: '(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)',
+    media: '(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)',
   },
   {
     width: 1334,
     height: 750,
     scale: 2,
     orientation: 'landscape',
-    media: '(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)',
+    media: '(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)',
   },
   // ── iPhone 8+, 7+, 6+ ───────────────────────────────────────────
   {
@@ -41,14 +41,14 @@ const DEVICES = [
     height: 2208,
     scale: 3,
     orientation: 'portrait',
-    media: '(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)',
+    media: '(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)',
   },
   {
     width: 2208,
     height: 1242,
     scale: 3,
     orientation: 'landscape',
-    media: '(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)',
+    media: '(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)',
   },
   // ── iPhone X, XS, 11 Pro ────────────────────────────────────────
   {
@@ -56,14 +56,14 @@ const DEVICES = [
     height: 2436,
     scale: 3,
     orientation: 'portrait',
-    media: '(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)',
+    media: '(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)',
   },
   {
     width: 2436,
     height: 1125,
     scale: 3,
     orientation: 'landscape',
-    media: '(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)',
+    media: '(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)',
   },
   // ── iPhone XR, 11 ───────────────────────────────────────────────
   {
@@ -71,14 +71,14 @@ const DEVICES = [
     height: 1792,
     scale: 2,
     orientation: 'portrait',
-    media: '(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)',
+    media: '(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)',
   },
   {
     width: 1792,
     height: 828,
     scale: 2,
     orientation: 'landscape',
-    media: '(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)',
+    media: '(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)',
   },
   // ── iPhone XS Max, 11 Pro Max ───────────────────────────────────
   {
@@ -86,14 +86,14 @@ const DEVICES = [
     height: 2688,
     scale: 3,
     orientation: 'portrait',
-    media: '(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)',
+    media: '(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)',
   },
   {
     width: 2688,
     height: 1242,
     scale: 3,
     orientation: 'landscape',
-    media: '(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)',
+    media: '(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)',
   },
   // ── iPhone 12, 13, 14 ───────────────────────────────────────────
   {
@@ -101,14 +101,14 @@ const DEVICES = [
     height: 2532,
     scale: 3,
     orientation: 'portrait',
-    media: '(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)',
+    media: '(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)',
   },
   {
     width: 2532,
     height: 1170,
     scale: 3,
     orientation: 'landscape',
-    media: '(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)',
+    media: '(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)',
   },
   // ── iPhone 12/13/14 Pro Max ─────────────────────────────────────
   {
@@ -116,14 +116,14 @@ const DEVICES = [
     height: 2778,
     scale: 3,
     orientation: 'portrait',
-    media: '(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)',
+    media: '(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)',
   },
   {
     width: 2778,
     height: 1284,
     scale: 3,
     orientation: 'landscape',
-    media: '(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)',
+    media: '(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)',
   },
   // ── iPhone 14 Pro, 15, 16 ───────────────────────────────────────
   {
@@ -131,14 +131,14 @@ const DEVICES = [
     height: 2556,
     scale: 3,
     orientation: 'portrait',
-    media: '(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)',
+    media: '(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)',
   },
   {
     width: 2556,
     height: 1179,
     scale: 3,
     orientation: 'landscape',
-    media: '(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)',
+    media: '(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)',
   },
   // ── iPhone 15/16 Pro Max ────────────────────────────────────────
   {
@@ -146,14 +146,14 @@ const DEVICES = [
     height: 2796,
     scale: 3,
     orientation: 'portrait',
-    media: '(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)',
+    media: '(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)',
   },
   {
     width: 2796,
     height: 1290,
     scale: 3,
     orientation: 'landscape',
-    media: '(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)',
+    media: '(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: landscape)',
   },
   // ── iPad Mini ───────────────────────────────────────────────────
   {
@@ -161,14 +161,14 @@ const DEVICES = [
     height: 2048,
     scale: 2,
     orientation: 'portrait',
-    media: '(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)',
+    media: '(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)',
   },
   {
     width: 2048,
     height: 1536,
     scale: 2,
     orientation: 'landscape',
-    media: '(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)',
+    media: '(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)',
   },
   // ── iPad 10.2" / Air ────────────────────────────────────────────
   {
@@ -176,14 +176,14 @@ const DEVICES = [
     height: 2160,
     scale: 2,
     orientation: 'portrait',
-    media: '(device-width: 810px) and (device-height: 1080px) and (-webkit-device-pixel-ratio: 2)',
+    media: '(device-width: 810px) and (device-height: 1080px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)',
   },
   {
     width: 2160,
     height: 1620,
     scale: 2,
     orientation: 'landscape',
-    media: '(device-width: 810px) and (device-height: 1080px) and (-webkit-device-pixel-ratio: 2)',
+    media: '(device-width: 810px) and (device-height: 1080px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)',
   },
   // ── iPad Pro 10.5" ──────────────────────────────────────────────
   {
@@ -191,14 +191,14 @@ const DEVICES = [
     height: 2224,
     scale: 2,
     orientation: 'portrait',
-    media: '(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)',
+    media: '(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)',
   },
   {
     width: 2224,
     height: 1668,
     scale: 2,
     orientation: 'landscape',
-    media: '(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)',
+    media: '(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)',
   },
   // ── iPad Pro 11" ────────────────────────────────────────────────
   {
@@ -206,14 +206,14 @@ const DEVICES = [
     height: 2388,
     scale: 2,
     orientation: 'portrait',
-    media: '(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)',
+    media: '(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)',
   },
   {
     width: 2388,
     height: 1668,
     scale: 2,
     orientation: 'landscape',
-    media: '(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)',
+    media: '(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)',
   },
   // ── iPad Pro 12.9" ──────────────────────────────────────────────
   {
@@ -221,14 +221,14 @@ const DEVICES = [
     height: 2732,
     scale: 2,
     orientation: 'portrait',
-    media: '(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)',
+    media: '(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)',
   },
   {
     width: 2732,
     height: 2048,
     scale: 2,
     orientation: 'landscape',
-    media: '(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)',
+    media: '(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)',
   },
 ];
 

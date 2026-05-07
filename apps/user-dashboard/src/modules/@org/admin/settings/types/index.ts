@@ -4,7 +4,36 @@ export type SettingsTab =
   | 'notifications'
   | 'security'
   | 'payroll'
-  | 'hr';
+  | 'hr'
+  | 'preferences';
+
+// ---------------------------------------------------------------------------
+// Preferences tab
+// ---------------------------------------------------------------------------
+
+export type ThemeMode = 'light' | 'dark' | 'system';
+
+export type ColorTheme = 'default' | 'blue' | 'green' | 'amber' | 'mono';
+
+export type SidebarVariant = 'sidebar' | 'floating' | 'inset';
+
+export type SidebarCollapsible = 'offcanvas' | 'icon';
+
+export type PreferencesFormValues = {
+  theme: ThemeMode;
+  colorTheme: ColorTheme;
+  sidebarVariant: SidebarVariant;
+  sidebarCollapsible: SidebarCollapsible;
+};
+
+export const PREFERENCES_STORAGE_KEY = 'hris_user_preferences';
+
+export const DEFAULT_PREFERENCES: PreferencesFormValues = {
+  theme: 'system',
+  colorTheme: 'default',
+  sidebarVariant: 'sidebar',
+  sidebarCollapsible: 'offcanvas',
+};
 
 // ---------------------------------------------------------------------------
 // HR Settings — General Rules tab

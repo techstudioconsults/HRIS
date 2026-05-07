@@ -2,8 +2,8 @@
 
 **Current Loop**: frontend-feature
 **Feature**: PWA iOS Splash Screen Fix
-**Current Phase**: Planning
-**Last Handoff**: Plan written — 2026-05-05
+**Current Phase**: Review
+**Last Handoff**: Implementation complete — 2026-05-07
 
 **Blocking Issues**: None
 
@@ -16,3 +16,5 @@
 - [x] Test (61 pass, 0 fail)
 - [ ] Review
 - [ ] Optimize
+
+**Side Task — Top-Bar Avatar Fix**: Completed 2026-05-07 — see `.ai/state/last-output.md` for details.

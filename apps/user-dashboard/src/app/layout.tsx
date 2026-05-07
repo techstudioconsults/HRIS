@@ -199,9 +199,29 @@ export default async function RootLayout({
         className={cn(
           fontSans.variable,
           fontMono.variable,
-          `font-sans antialiased`
+          `font-sans antialiased bg-[#f7f9fc] dark:bg-background`
         )}
       >
+        {/* Apply saved theme variant before hydration to avoid flash */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var prefs = JSON.parse(localStorage.getItem('hris_user_preferences'));
+                  if (prefs && prefs.colorTheme) {
+                    var root = document.documentElement;
+                    var classes = ['theme-default', 'theme-blue', 'theme-green', 'theme-amber', 'theme-mono'];
+                    for (var i = 0; i < classes.length; i++) {
+                      root.classList.remove(classes[i]);
+                    }
+                    root.classList.add('theme-' + prefs.colorTheme);
+                  }
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
         <PwaSplashGuard />
         <Providers>{children}</Providers>
       </body>

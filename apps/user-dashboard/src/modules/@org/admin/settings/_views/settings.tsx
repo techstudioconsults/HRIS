@@ -13,6 +13,7 @@ import { useSettingsModalParams } from '@/lib/nuqs/use-settings-modal-params';
 import { AccountSettingsTab } from './tabs/account-settings-tab';
 import { HRSettingsTab } from './tabs/hr-settings-tab';
 import { NotificationSettingsTab } from './tabs/notification-settings-tab';
+import { PreferencesSettingsTab } from './tabs/preferences-settings-tab';
 import { RolesManagementTab } from './tabs/roles-management-tab';
 import { SecuritySettingsTab } from './tabs/security-settings-tab';
 import type { SettingsTab } from '../types';
@@ -56,6 +57,9 @@ export const SettingsView = () => {
           <TabsTrigger value="security" className={tabTriggerClassName}>
             Security Settings
           </TabsTrigger>
+          <TabsTrigger value="preferences" className={tabTriggerClassName}>
+            Preferences
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="account" className="mt-6">
@@ -76,6 +80,10 @@ export const SettingsView = () => {
 
         <TabsContent value="security" className="mt-6">
           <SecuritySettingsTab />
+        </TabsContent>
+
+        <TabsContent value="preferences" className="mt-6">
+          <PreferencesSettingsTab />
         </TabsContent>
       </Tabs>
     </section>

@@ -1,9 +1,9 @@
 # Current Loop Status
 
-**Current Loop**: frontend-feature
-**Feature**: PWA iOS Splash Screen Fix
-**Current Phase**: Review
-**Last Handoff**: Implementation complete — 2026-05-07
+**Current Loop**: bugfix
+**Feature**: Preferences Tab Active Button Ring Fix
+**Current Phase**: Done
+**Last Handoff**: Complete — 2026-05-07
 
 **Blocking Issues**: None
 

@@ -199,7 +199,7 @@ export default async function RootLayout({
         className={cn(
           fontSans.variable,
           fontMono.variable,
-          `font-sans antialiased bg-[#f7f9fc] dark:bg-background`
+          `font-sans antialiased bg-[#f7f9fc]! dark:bg-background!`
         )}
       >
         {/* Apply saved theme variant before hydration to avoid flash */}

@@ -132,10 +132,10 @@ export const PreferencesSettingsTab = () => {
                     type="button"
                     onClick={() => handleAccentColorChange(option.value)}
                     className={cn(
-                      'flex flex-col items-center gap-2 rounded-lg border-2 p-4 text-center transition-all',
-                      'hover:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                      'flex flex-col items-center gap-2 rounded-lg border p-4 text-center transition-all',
+                      'hover:ring-2 hover:ring-ring/30 focus-visible:outline-none focus-visible:ring-2',
                       isSelected
-                        ? 'border-primary bg-primary/5 shadow-sm'
+                        ? 'ring-2 ring-ring bg-ring/5 shadow-sm'
                         : 'border-border bg-transparent'
                     )}
                     aria-pressed={isSelected}
@@ -170,10 +170,10 @@ export const PreferencesSettingsTab = () => {
                     type="button"
                     onClick={() => handleThemeModeChange(option.value)}
                     className={cn(
-                      'flex items-center gap-3 rounded-lg border-2 p-4 text-left transition-all',
-                      'hover:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                      'flex items-center gap-3 rounded-lg border p-4 text-left transition-all',
+                      'hover:ring-2 hover:ring-ring/30 focus-visible:outline-none focus-visible:ring-2',
                       isSelected
-                        ? 'border-primary bg-primary/5 shadow-sm'
+                        ? 'ring-2 ring-ring bg-ring/5 shadow-sm'
                         : 'border-border bg-transparent'
                     )}
                     aria-pressed={isSelected}
@@ -183,7 +183,7 @@ export const PreferencesSettingsTab = () => {
                       className={cn(
                         'flex size-10 items-center justify-center rounded-full',
                         isSelected
-                          ? 'bg-primary text-primary-foreground'
+                          ? 'bg-ring text-white'
                           : 'bg-muted text-muted-foreground'
                       )}
                     >
@@ -225,10 +225,10 @@ export const PreferencesSettingsTab = () => {
                     type="button"
                     onClick={() => handleSidebarVariantChange(option.value)}
                     className={cn(
-                      'flex flex-col gap-2 rounded-lg border-2 p-4 text-left transition-all',
-                      'hover:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                      'flex flex-col gap-2 rounded-lg border p-4 text-left transition-all',
+                      'hover:ring-2 hover:ring-ring/30 focus-visible:outline-none focus-visible:ring-2',
                       isSelected
-                        ? 'border-primary bg-primary/5 shadow-sm'
+                        ? 'ring-2 ring-ring bg-ring/5 shadow-sm'
                         : 'border-border bg-transparent'
                     )}
                     aria-pressed={isSelected}
@@ -261,10 +261,10 @@ export const PreferencesSettingsTab = () => {
                     type="button"
                     onClick={() => handleSidebarCollapsibleChange(option.value)}
                     className={cn(
-                      'flex flex-col gap-2 rounded-lg border-2 p-4 text-left transition-all',
-                      'hover:border-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                      'flex flex-col gap-2 rounded-lg border p-4 text-left transition-all',
+                      'hover:ring-2 hover:ring-ring/30 focus-visible:outline-none focus-visible:ring-2',
                       isSelected
-                        ? 'border-primary bg-primary/5 shadow-sm'
+                        ? 'ring-2 ring-ring bg-ring/5 shadow-sm'
                         : 'border-border bg-transparent'
                     )}
                     aria-pressed={isSelected}
@@ -284,7 +284,7 @@ export const PreferencesSettingsTab = () => {
           <div className="flex w-full flex-col gap-3 pt-2 sm:flex-row sm:justify-start">
             <MainButton
               type="button"
-              variant="primaryOutline"
+              variant="destructiveOutline"
               className="text-destructive border-destructive w-full sm:w-50"
               onClick={handleReset}
             >

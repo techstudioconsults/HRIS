@@ -267,8 +267,8 @@
     --muted-foreground: oklch(76% 0.01 260);
 
     /* Accent */
-    --accent: oklch(30% 0.02 260);
-    --accent-foreground: oklch(95% 0.01 260);
+    --accent: oklch(0.8 0.17 70);
+    --accent-foreground: oklch(0.25 0 0);
 
     /* Border/input/ring */
     --border: oklch(38% 0.02 260 / 0.55);
@@ -425,7 +425,8 @@
     --color-link: var(--link);
     --color-border: var(--border);
     --color-input: var(--input);
-    --color-ring: var(--ring);
+    /*--color-ring: var(--ring);*/
+    --color-ring: var(--primary);
 
 
     /* Shadows */

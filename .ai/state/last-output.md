@@ -1,3 +1,37 @@
+# Preferences Tab — Active Button Ring Fix
+
+**Feature**: Replace `border`-based active state with `ring`-based (focus-style) indicator
+**Status**: Complete
+**Date**: 2026-05-07
+
+## Summary
+
+All 4 button groups in the Preferences tab (Accent Color, Mode, Sidebar Layout, Collapse Mode)
+used thick `border-2 border-primary` to indicate the selected state. Changed to a focus-style
+`ring-2 ring-primary` indicator instead.
+
+## Changes
+
+| Change             | Before                                  | After                                                   |
+| ------------------ | --------------------------------------- | ------------------------------------------------------- |
+| Base border        | `border-2`                              | `border` (thin structural)                              |
+| Selected           | `border-primary bg-primary/5 shadow-sm` | `ring-2 ring-primary bg-primary/5 shadow-sm`            |
+| Hover              | `hover:border-primary/50`               | `hover:ring-2 hover:ring-primary/30`                    |
+| Collapse Mode a11y | Missing `focus-visible:ring-2`          | Added `focus-visible:outline-none focus-visible:ring-2` |
+
+## Files Modified
+
+| File                                                                                           | Action                                                               |
+| ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `apps/user-dashboard/src/modules/@org/admin/settings/_views/tabs/preferences-settings-tab.tsx` | Updated all 4 button groups (L135-139, L173-177, L228-232, L264-267) |
+
+## Verification
+
+- `pnpm run typecheck` — 4/4 clean
+- `pnpm run lint` — clean (0 warnings, 0 errors)
+
+---
+
 # Preferences Panel — Refactor & Theme Variant Fix
 
 **Feature**: Preferences panel cleanup + working theme variant switching

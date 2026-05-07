@@ -33,7 +33,13 @@ export const SearchInput = ({
   }, [debouncedQuery, onSearch]);
 
   return (
-    <div className={`relative border rounded-md ${className}`}>
+    <div
+      className={cn(
+        `relative border rounded-md`,
+        `focus-within:ring-2 focus-within:border-transparent focus-within:ring-ring transition-all duration-100`,
+        className
+      )}
+    >
       <Icon
         name="SearchNormal1"
         size={16}
@@ -150,7 +156,8 @@ export function GlobalSearchInput({
           className={cn(
             'dark:bg-primary-50 relative border flex h-10 ' +
               'items-center gap-2 rounded-md px-3 transition-colors ' +
-              'group-hover:text-primary',
+              'group-hover:text-primary ' +
+              'focus-within:ring-2 focus-within:border-transparent focus-within:ring-ring transition-all duration-200',
             disabled && 'cursor-not-allowed opacity-50',
             className
           )}

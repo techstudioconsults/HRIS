@@ -427,6 +427,7 @@
     --color-input: var(--input);
     --color-ring: var(--ring);
 
+
     /* Shadows */
     --box-shadow: var(--shadow);
     --box-shadow-sm: var(--shadow-sm);

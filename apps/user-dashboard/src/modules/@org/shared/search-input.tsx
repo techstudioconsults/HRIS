@@ -43,14 +43,14 @@ export const SearchInput = ({
       <Icon
         name="SearchNormal1"
         size={16}
-        className="absolute text-primary top-1/2 left-3 -translate-y-1/2 transform"
+        className="absolute top-1/2 left-3 -translate-y-1/2 transform"
         variant={`Outline`}
       />
       <Input
         disabled={isDisabled}
         type="search"
         placeholder={placeholder}
-        className="h-full placeholder:text-xs placeholder:text-primary-200 dark:placeholder:text-muted-foreground
+        className="h-full placeholder:text-xs dark:placeholder:text-muted-foreground
         dark:bg-primary-50 border-none pr-4 pl-10 shadow-none"
         value={searchQuery}
         onChange={(event) => setSearchQuery(event.target.value)}
@@ -162,12 +162,7 @@ export function GlobalSearchInput({
             className
           )}
         >
-          <Icon
-            name="SearchNormal1"
-            size={16}
-            className={`text-primary`}
-            variant={`Outline`}
-          />
+          <Icon name="SearchNormal1" size={16} variant={`Outline`} />
           <Input
             ref={inputReference}
             type="text"
@@ -177,7 +172,7 @@ export function GlobalSearchInput({
             onKeyDown={handleKeyDown}
             onFocus={() => setOpen(true)}
             disabled={disabled}
-            className="h-full flex-1 border-none shadow-none placeholder:text-primary-200 dark:placeholder:text-muted-foreground
+            className="h-full flex-1 border-none shadow-none dark:placeholder:text-muted-foreground
             placeholder:text-sm bg-transparent! p-0 text-sm focus-visible:ring-0
             focus-visible:ring-offset-0 focus:outline-none"
           />

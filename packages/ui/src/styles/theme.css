@@ -67,6 +67,10 @@
     --primary: var(--color-neutral-600);
     --primary-foreground: var(--color-neutral-50);
 
+    body {
+        --font-sans: var(--font-mono);
+    }
+
     @variant dark {
         --primary: var(--color-neutral-500);
         --primary-foreground: var(--color-neutral-50);

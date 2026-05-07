@@ -36,7 +36,7 @@ export const Onboarding = ({ steps, onSkip }: OnboardingProperties) => {
             }}
             icon={step.icon}
             isCompleted={step.isCompleted}
-            className={cn(step.isCompleted && 'hidden')}
+            className={cn(step.isCompleted && 'border-success/30 bg-success/5')}
           />
         ))}
       </div>

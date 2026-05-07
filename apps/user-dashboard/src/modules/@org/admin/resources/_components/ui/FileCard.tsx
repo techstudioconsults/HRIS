@@ -14,15 +14,11 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { useResourceService } from '../../services/use-service';
-import {
-  formatDate,
-  formatFileSize,
-  getFileIcon,
-  isImageMimetype,
-} from '../../utils/format';
+import { formatDate, getFileIcon, isImageMimetype } from '../../utils/format';
 import type { FileCardProperties } from '../../types';
 import { Separator } from '@workspace/ui/components/separator';
 import { Card } from '@workspace/ui/components/card';
+import { formatFileSize } from '@workspace/ui/lib/utils';
 
 export const FileCard = ({ file }: FileCardProperties) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -67,36 +63,35 @@ export const FileCard = ({ file }: FileCardProperties) => {
 
   return (
     <>
-      <Card className="group overflow-hidden rounded-lg shadow transition-all">
-        {/* Preview area */}
-        <div className="bg-muted flex h-28 items-center justify-center border-b">
-          {showImagePreview ? (
-            // eslint-disable-next-line @next/next/no-img-element -- file.url domain is dynamic and not constrainable via remotePatterns
-            <img
-              src={file.url}
-              alt={file.name}
-              className="h-28 w-full object-cover"
-            />
-          ) : (
-            <Image
-              src={getFileIcon(file.mimetype)}
-              alt={`${file.mimetype} icon`}
-              width={56}
-              height={56}
-              className="size-14 object-contain"
-            />
-          )}
-        </div>
-
-        {/* File info */}
-        <div className="flex items-start justify-between p-3">
-          <div className="min-w-0 flex-1">
-            <h6 className="truncate text-sm font-medium" title={file.name}>
-              {file.name}
-            </h6>
-            <p className="text-muted-foreground mt-0.5 text-[10px]">
-              {formatFileSize(file.size)} • {formatDate(file.createdAt)}
-            </p>
+      <Card className="group cursor-pointer rounded-lg p-4 shadow transition-all hover:shadow-md">
+        <div className="flex items-start justify-between">
+          <div className="flex min-w-0 flex-1 items-start gap-3">
+            <div className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-md">
+              {showImagePreview ? (
+                // eslint-disable-next-line @next/next/no-img-element -- file.url domain is dynamic and not constrainable via remotePatterns
+                <img
+                  src={file.url}
+                  alt={file.name}
+                  className="size-full rounded-md object-cover"
+                />
+              ) : (
+                <Image
+                  src={getFileIcon(file.mimetype)}
+                  alt={`${file.mimetype} icon`}
+                  width={28}
+                  height={28}
+                  className="size-7 object-contain"
+                />
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <h6 className="truncate text-sm font-medium" title={file.name}>
+                {file.name}
+              </h6>
+              <p className="text-muted-foreground mt-0.5 text-[10px]">
+                {formatFileSize(file.size)} • {formatDate(file.createdAt)}
+              </p>
+            </div>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

@@ -3,7 +3,7 @@
 import { Badge } from '@workspace/ui/components/badge';
 import { MainButton } from '@workspace/ui/lib/button';
 import { ReusableDialog } from '@workspace/ui/lib/dialog';
-import { cn } from '@workspace/ui/lib/utils';
+import { capitalize, cn } from '@workspace/ui/lib/utils';
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
@@ -82,10 +82,7 @@ export const DevApprovalActionsModal = ({
             const status = (approval.status ?? 'pending')
               .toString()
               .toLowerCase();
-            const statusLabel =
-              status.length > 0
-                ? status.charAt(0).toUpperCase() + status.slice(1)
-                : 'Pending';
+            const statusLabel = status ? capitalize(status) : 'Pending';
 
             return (
               <section

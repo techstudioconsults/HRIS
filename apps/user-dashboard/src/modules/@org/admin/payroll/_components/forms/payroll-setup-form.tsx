@@ -6,7 +6,7 @@ import { AlertModal } from '@workspace/ui/lib/dialog';
 import { BreadCrumb } from '@workspace/ui/lib/breadcrumb';
 import { FormField, MultiSelect } from '@workspace/ui/lib/inputs/FormFields';
 import { MainButton } from '@workspace/ui/lib/button';
-import { cn } from '@workspace/ui/lib/utils';
+import { capitalize, cn } from '@workspace/ui/lib/utils';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
@@ -96,10 +96,7 @@ export const PayrollSetupForm = () => {
     const current = (policyData?.data as CompanyPayrollPolicy | undefined)
       ?.frequency;
     if (current && !base.some((o) => o.value === current)) {
-      const titleCased = current
-        .split(' ')
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
+      const titleCased = current.split(' ').map(capitalize).join(' ');
       return [{ value: current, label: titleCased }, ...base];
     }
     return base;

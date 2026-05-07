@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
+import { capitalize } from '../lib/utils';
 
 type BreadcrumbItem = {
   title: string;
@@ -36,7 +37,7 @@ export function useBreadcrumbs() {
     return segments.map((segment, index) => {
       const path = `/${segments.slice(0, index + 1).join('/')}`;
       return {
-        title: segment.charAt(0).toUpperCase() + segment.slice(1),
+        title: capitalize(segment),
         link: path,
       };
     });

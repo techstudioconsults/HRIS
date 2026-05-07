@@ -1,8 +1,13 @@
 'use client';
 
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@workspace/ui/components/avatar';
 import { Badge } from '@workspace/ui/components/badge';
 import type { IColumnDefinition } from '@workspace/ui/lib/table';
-import Image from 'next/image';
+import { formatInitials } from '@workspace/ui/lib/utils';
 import { useMemo } from 'react';
 
 // ── Response-shape type guards ────────────────────────────────────────────────
@@ -42,18 +47,15 @@ export function useMembersColumns(
             onFocus={() => setActiveEmployee(employee)}
             tabIndex={0}
           >
-            <Image
-              src={
-                typeof employee.avatar === 'string' &&
-                employee.avatar.length > 0
-                  ? employee.avatar
-                  : ``
-              }
-              alt={`${employee.firstName} ${employee.lastName}`}
-              width={32}
-              height={32}
-              className="h-8 w-8 rounded-full object-cover"
-            />
+            <Avatar className="size-8">
+              <AvatarImage
+                src={employee.avatar ?? ''}
+                alt={`${employee.firstName} ${employee.lastName}`}
+              />
+              <AvatarFallback className="text-xs">
+                {formatInitials(`${employee.firstName} ${employee.lastName}`)}
+              </AvatarFallback>
+            </Avatar>
             <span className="text-sm font-medium">
               {`${employee.firstName} ${employee.lastName}`}
             </span>

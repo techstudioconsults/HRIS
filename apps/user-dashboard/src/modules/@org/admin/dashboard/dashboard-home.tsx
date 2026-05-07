@@ -21,7 +21,7 @@ const BaseDashboardHomePage = () => {
       description: '',
       buttonLabel: 'Configure',
       icon: '/images/verify_email.svg',
-      isCompleted: false,
+      isCompleted: true,
       action: () => {},
     },
     {

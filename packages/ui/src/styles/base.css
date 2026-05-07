@@ -15,11 +15,11 @@ html {
     font-size: 16px;
 }
 
-/*@media (min-width: 1024px) {*/
-/*    html {*/
-/*        font-size: 14px;*/
-/*    }*/
-/*}*/
+@media (min-width: 1024px) {
+    html {
+        font-size: 15px;
+    }
+}
 
 @media (min-width: 1536px) {
     html {
@@ -30,6 +30,15 @@ html {
 @layer base {
     * {
         @apply border-border outline-ring/50;
+    }
+
+    /* Enforce 16px font-size on all native form controls globally.
+       Tailwind `text-*` utilities will still override this at the component level
+       where needed, but raw inputs/selects/textareas get 16px by default. */
+    input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="color"]),
+    select,
+    textarea {
+        font-size: 16px;
     }
 
     body {

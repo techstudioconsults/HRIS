@@ -4,6 +4,7 @@ import { useRolesManagementSearchParameters } from '@/lib/nuqs/use-roles-managem
 import { useSettingsModalParams } from '@/lib/nuqs/use-settings-modal-params';
 import { queryKeys } from '@/lib/react-query/query-keys';
 import { formatDate } from '@/lib/formatters';
+import { formatInitials } from '@workspace/ui/lib/utils';
 import { FilterForm } from '@/modules/@org/admin/teams/_components/forms/filter-form';
 import { useTeamService } from '@/modules/@org/admin/teams/services/use-service';
 import { useEmployeeService } from '@/modules/@org/admin/employee/services/use-service';
@@ -270,8 +271,9 @@ export const RolesManagementTab = () => {
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-primary/10 text-[9px] font-semibold uppercase text-primary">
-                        {employee.firstName[0]}
-                        {employee.lastName[0]}
+                        {formatInitials(
+                          `${employee.firstName} ${employee.lastName}`
+                        )}
                       </div>
                     )}
                   </div>
@@ -780,8 +782,7 @@ export const RolesManagementTab = () => {
                   alt={`${employee.firstName} ${employee.lastName}`}
                 />
                 <AvatarFallback className="bg-primary/10 text-xs font-semibold uppercase text-primary">
-                  {employee.firstName[0]}
-                  {employee.lastName[0]}
+                  {formatInitials(`${employee.firstName} ${employee.lastName}`)}
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0">

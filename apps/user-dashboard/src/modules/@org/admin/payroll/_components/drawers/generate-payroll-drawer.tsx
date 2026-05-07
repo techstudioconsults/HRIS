@@ -17,6 +17,7 @@ import {
 } from '@workspace/ui/components/drawer';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
+import { capitalize, formatInitials } from '@workspace/ui/lib/utils';
 import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -131,8 +132,7 @@ export const GeneratePayrollDrawer = ({
                     Generate Payroll
                   </DrawerTitle>
                   <DrawerDescription>
-                    Create a new payroll run for{' '}
-                    {frequency.charAt(0).toUpperCase() + frequency.slice(1)}{' '}
+                    Create a new payroll run for {capitalize(frequency)}{' '}
                     processing
                   </DrawerDescription>
                 </div>
@@ -212,13 +212,7 @@ export const GeneratePayrollDrawer = ({
                   </div>
                 ) : (
                   approvers.map((approver) => {
-                    const initials =
-                      approver.name
-                        .split(' ')
-                        .map((part) => part.charAt(0))
-                        .join('')
-                        .toUpperCase()
-                        .slice(0, 2) || 'AP';
+                    const initials = formatInitials(approver.name) || 'AP';
 
                     return (
                       <section

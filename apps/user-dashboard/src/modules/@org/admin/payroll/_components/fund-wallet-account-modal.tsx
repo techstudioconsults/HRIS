@@ -5,6 +5,7 @@ import { usePayrollModalParams } from '@/lib/nuqs/use-payroll-modal-params';
 import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
+import { formatAccountNumber } from '@/lib/formatters';
 import { useEffect, useState } from 'react';
 
 import { generatePayrollTourStep } from '../config/tour-steps';
@@ -103,7 +104,9 @@ export function FundWalletAccountModal({
                   <p className="mb-1 text-xs text-gray-500">Account Number</p>
                   <div className="flex items-center gap-2">
                     <p className="font-semibold">
-                      {companyWalletData?.data?.accountNumber}
+                      {formatAccountNumber(
+                        companyWalletData?.data?.accountNumber ?? ''
+                      )}
                     </p>
                     <button
                       onClick={handleCopyAccountNumber}

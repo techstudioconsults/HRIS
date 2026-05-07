@@ -29,23 +29,18 @@ import Image from 'next/image';
 import { useEmployeeService } from '../../services/use-service';
 import { EmployeeDetailsSkeleton } from './loader';
 import { routes } from '@/lib/routes/routes';
-import { formatDate } from '@/lib/formatters';
+import {
+  formatAccountNumber,
+  formatCurrency,
+  formatDate,
+  formatPhoneNumber,
+} from '@/lib/formatters';
+import { formatInitials } from '@workspace/ui/lib/utils';
 import { GradientMask } from '@workspace/ui/lib/gradient-mask';
 import { AnyIconName } from '@workspace/ui/lib/icons/types';
 import { Button } from '@workspace/ui/components/button';
 import React, { ReactNode, useRef, useState } from 'react';
 import { toast } from 'sonner';
-
-const getInitials = (firstName?: string, lastName?: string) => {
-  const fullName = `${firstName ?? ''} ${lastName ?? ''}`.trim();
-  if (!fullName) return 'NA';
-  return fullName
-    .split(' ')
-    .slice(0, 2)
-    .map((name) => name.charAt(0))
-    .join('')
-    .toUpperCase();
-};
 
 const getStatusClassName = (status?: string) => {
   switch ((status ?? '').toLowerCase()) {
@@ -107,6 +102,151 @@ const DetailsFieldset = ({
     <div className="space-y-3">{children}</div>
   </fieldset>
 );
+
+const getDocumentFileName = (url: string): string => {
+  try {
+    const pathname = new URL(url).pathname;
+    const segments = pathname.split('/').filter(Boolean);
+    return segments[segments.length - 1] || 'document';
+  } catch {
+    const segments = url.split('/').filter(Boolean);
+    return segments[segments.length - 1] || 'document';
+  }
+};
+
+const getDocumentExtension = (filename: string): string => {
+  const parts = filename.split('.');
+  return parts.length > 1 ? parts.pop()!.toLowerCase() : '';
+};
+
+const isPreviewableImage = (ext: string): boolean => {
+  return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(ext);
+};
+
+const isPDF = (ext: string): boolean => ext === 'pdf';
+
+const DocumentPreview = ({ url }: { url: string }) => {
+  const filename = getDocumentFileName(url);
+  const ext = getDocumentExtension(filename);
+
+  if (isPreviewableImage(ext)) {
+    return (
+      <div className="space-y-4">
+        <div className="border-border relative overflow-hidden rounded-lg border bg-muted/30">
+          <Image
+            src={url}
+            alt={filename}
+            width={800}
+            height={600}
+            className="max-h-96 w-full object-contain"
+            unoptimized
+          />
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm font-medium truncate">{filename}</p>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" asChild>
+              <a href={url} target="_blank" rel="noopener noreferrer">
+                <Icon name="Eye" className="mr-1.5 size-4" />
+                View
+              </a>
+            </Button>
+            <Button size="sm" variant="outline" asChild>
+              <a href={url} download={filename}>
+                <Icon name="Download" className="mr-1.5 size-4" />
+                Download
+              </a>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="border-border flex flex-col items-center gap-4 rounded-lg border bg-muted/30 p-6 text-center sm:flex-row sm:text-left">
+        <div className="bg-background flex size-14 shrink-0 items-center justify-center rounded-lg border shadow-sm">
+          {isPDF(ext) ? (
+            <Image
+              src="/images/pdf-icon.svg"
+              width={28}
+              height={36}
+              alt="PDF"
+            />
+          ) : (
+            <Icon
+              name="DocumentText"
+              className="text-muted-foreground size-7"
+            />
+          )}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold">{filename}</p>
+          <p className="text-muted-foreground mt-0.5 text-xs uppercase">
+            {ext || 'FILE'}
+          </p>
+        </div>
+        <div className="flex shrink-0 gap-2">
+          <Button size="sm" variant="outline" asChild>
+            <a href={url} target="_blank" rel="noopener noreferrer">
+              <Icon name="Eye" className="mr-1.5 size-4" />
+              View
+            </a>
+          </Button>
+          <Button size="sm" variant="outline" asChild>
+            <a href={url} download={filename}>
+              <Icon name="Download" className="mr-1.5 size-4" />
+              Download
+            </a>
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const AccountNumberField = ({ accountNumber }: { accountNumber?: string }) => {
+  const [visible, setVisible] = useState(false);
+
+  if (!accountNumber) {
+    return (
+      <div className="flex items-start gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+            Account Number
+          </p>
+          <p className="text-foreground truncate text-sm font-medium">N/A</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-start gap-3">
+      <div className="min-w-0 flex-1">
+        <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+          Account Number
+        </p>
+        <div className="flex items-center gap-2">
+          <p className="text-foreground truncate text-sm font-medium tabular-nums">
+            {visible
+              ? formatAccountNumber(accountNumber, accountNumber.length)
+              : formatAccountNumber(accountNumber)}
+          </p>
+          <button
+            type="button"
+            onClick={() => setVisible((v) => !v)}
+            className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
+            aria-label={visible ? 'Hide account number' : 'Show account number'}
+          >
+            <Icon name={visible ? 'EyeSlash' : 'Eye'} className="size-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const EmployeeDetailsHeader = ({
   employeeId,
@@ -300,7 +440,7 @@ const EmployeeAvatarUpload = ({
       <Avatar className="border-primary/20 bg-muted size-32 border shadow-lg group-hover:brightness-90 transition-[filter]">
         <AvatarImage src={previewUrl || avatarUrl || ''} />
         <AvatarFallback className="bg-primary-50 text-2xl font-bold text-primary-75">
-          {getInitials(firstName, lastName)}
+          {formatInitials(`${firstName ?? ''} ${lastName ?? ''}`) || 'NA'}
         </AvatarFallback>
       </Avatar>
       <span className="absolute bottom-1 right-1 flex size-8 items-center justify-center rounded-full border-2 border-background bg-primary shadow-sm">
@@ -384,7 +524,7 @@ const EmployeeDetailsContent = ({
             <DetailsItem
               icon={<Icon className={`text-primary`} name="Call" />}
               label="Phone"
-              value={employeeData?.phoneNumber}
+              value={formatPhoneNumber(employeeData?.phoneNumber ?? '')}
             />
           </fieldset>
 
@@ -432,7 +572,7 @@ const EmployeeDetailsContent = ({
                 <DetailsItem label="Work Email" value={employeeData?.email} />
                 <DetailsItem
                   label="Phone Number"
-                  value={employeeData?.phoneNumber}
+                  value={formatPhoneNumber(employeeData?.phoneNumber ?? '')}
                 />
               </div>
             </DetailsFieldset>
@@ -480,15 +620,18 @@ const EmployeeDetailsContent = ({
               <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 <DetailsItem
                   label="Monthly Salary"
-                  value={employeeData?.payProfile.baseSalary}
+                  value={
+                    employeeData?.payProfile.baseSalary != null
+                      ? formatCurrency(employeeData.payProfile.baseSalary)
+                      : '-'
+                  }
                 />
                 <DetailsItem
                   label="Bank Name"
                   value={employeeData?.payProfile.bankName}
                 />
-                <DetailsItem
-                  label="Account Number"
-                  value={employeeData?.payProfile.accountNumber}
+                <AccountNumberField
+                  accountNumber={employeeData?.payProfile.accountNumber}
                 />
                 <DetailsItem
                   label="Account Name"
@@ -499,32 +642,30 @@ const EmployeeDetailsContent = ({
           </Card>
 
           {/* Employee Documents */}
-          {employeeData?.document && (
-            <Card className="border-border bg-background p-6 shadow-sm md:p-8">
-              <fieldset className="space-y-4">
-                <legend className="text-base font-semibold text-foreground">
-                  Employee Documents
-                </legend>
-                <div className="border-border flex w-full flex-col gap-4 rounded-lg border bg-muted/30 p-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-3">
-                    <Image
-                      src="/images/pdf-icon.svg"
-                      width={32}
-                      height={44}
-                      alt="PDF Icon"
+          <Card className="border-border p-6 shadow-sm md:p-8">
+            <DetailsFieldset icon="DocumentText" legend="Employee Documents">
+              {employeeData?.document ? (
+                <DocumentPreview url={employeeData.document} />
+              ) : (
+                <div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
+                  <div className="bg-muted flex size-16 items-center justify-center rounded-full">
+                    <Icon
+                      name="DocumentText"
+                      className="text-muted-foreground size-8"
                     />
-                    <div>
-                      <p className="text-sm font-semibold">Employment Letter</p>
-                      <p className="text-muted-foreground text-xs">
-                        Uploaded on Jan 12, 2024 - 245 KB
-                      </p>
-                    </div>
                   </div>
-                  <Icon name="More" className="rotate-90" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">
+                      No documents uploaded
+                    </p>
+                    <p className="text-muted-foreground mt-1 text-xs">
+                      Upload employment letters, contracts, or other documents
+                    </p>
+                  </div>
                 </div>
-              </fieldset>
-            </Card>
-          )}
+              )}
+            </DetailsFieldset>
+          </Card>
         </div>
       </div>
     </section>

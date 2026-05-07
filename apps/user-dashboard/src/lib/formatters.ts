@@ -132,3 +132,57 @@ export const formatTime = (date: string) => {
     hour12: true,
   });
 };
+
+export function formatCurrencyCompact(amount: number): string {
+  if (Number.isNaN(amount)) return 'NGN 0';
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    notation: 'compact',
+    currencyDisplay: 'symbol',
+    maximumFractionDigits: 1,
+  }).format(amount);
+}
+
+export function formatAccountNumber(
+  accountNumber: string,
+  visible = 4
+): string {
+  const digits = accountNumber.replace(/\D/g, '');
+  if (!digits) return '';
+
+  if (visible <= 0) {
+    return digits
+      .replace(/\d/g, '*')
+      .replace(/(.{4})/g, '$1 ')
+      .trim();
+  }
+
+  if (visible >= digits.length) {
+    return digits.replace(/(.{4})/g, '$1 ').trim();
+  }
+
+  const maskCount = digits.length - visible;
+  const masked = digits
+    .split('')
+    .map((char, i) => (i < maskCount ? '*' : char))
+    .join('');
+
+  return masked.replace(/(.{4})/g, '$1 ').trim();
+}
+
+export function formatPhoneNumber(phone: string): string {
+  const cleaned = phone.replace(/\D/g, '');
+  if (!cleaned) return '';
+
+  let digits = cleaned;
+  if (digits.startsWith('234') && digits.length === 13) {
+    digits = '0' + digits.slice(3);
+  }
+
+  if (digits.startsWith('0') && digits.length === 11) {
+    return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`;
+  }
+
+  return phone;
+}

@@ -2,7 +2,7 @@
 import { formatDate } from '@/lib/formatters';
 import { Badge } from '@workspace/ui/components/badge';
 import { Card, CardContent } from '@workspace/ui/components/card';
-import { calculateDaysBetween, cn } from '@workspace/ui/lib/utils';
+import { capitalize, calculateDaysBetween, cn } from '@workspace/ui/lib/utils';
 import { MainButton } from '@workspace/ui/lib/button';
 import type { LeaveCardProps, LeaveRequest } from '../types';
 const STATUS_STYLES: Record<LeaveRequest['status'], string> = {
@@ -11,8 +11,7 @@ const STATUS_STYLES: Record<LeaveRequest['status'], string> = {
   rejected: 'bg-destructive/10 text-destructive',
 };
 export const LeaveCard = ({ request, onViewDetails }: LeaveCardProps) => {
-  const statusLabel =
-    request.status.charAt(0).toUpperCase() + request.status.slice(1);
+  const statusLabel = capitalize(request.status);
   return (
     <Card className="overflow-hidden shadow-sm transition-shadow hover:shadow-md">
       <CardContent className="space-y-4 p-6">

@@ -14,6 +14,7 @@ import { BreadCrumb } from '@workspace/ui/lib/breadcrumb';
 import { ComboBox } from '@workspace/ui/lib/select-dropdown/combo-box';
 import { DashboardHeader } from '@workspace/ui/lib/dashboard';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
+import { CompanyDomainHint } from '@workspace/ui/lib/inputs/domain-hint';
 import { MainButton } from '@workspace/ui/lib/button';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -25,7 +26,6 @@ import type { RoleInput, RoleLite } from '../../types';
 import { routes } from '@/lib/routes/routes';
 import { PhoneInput } from '@/components/shared/phone-input';
 import { FileUploader } from '@workspace/ui/components/core/miscellaneous/file-uploader';
-import { Icon } from '@workspace/ui/lib/icons/icon';
 
 export const AddEmployeeForm = () => {
   const router = useRouter();
@@ -210,8 +210,6 @@ export const AddEmployeeForm = () => {
     'space-y-4 rounded-xl border border-border/60 bg-background/60 px-4 pb-4 pt-3 md:px-5 md:pb-5 md:pt-4';
   const legendClassName =
     'text-foreground block w-fit bg-background px-2 text-lg font-semibold leading-6 tracking-tight';
-  const sectionHintClassName =
-    'text-muted-foreground -mt-1 text-sm flex items-center gap-2';
 
   return (
     <div className="space-y-8">
@@ -235,10 +233,6 @@ export const AddEmployeeForm = () => {
             {/* Personal Information Section */}
             <fieldset className={sectionClassName}>
               <legend className={legendClassName}>Personal Information</legend>
-              <p className={sectionHintClassName}>
-                <Icon name={'InfoCircle'} className={`text-primary`} />
-                Add the employee&apos;s core profile and contact details.
-              </p>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
                 <FormField
                   name="firstName"
@@ -277,16 +271,19 @@ export const AddEmployeeForm = () => {
                   options={genderOptions}
                   required
                 />
-                <FormField
-                  name="email"
-                  label="Work Email"
-                  type="email"
-                  placeholder={
-                    loadingTeams ? `Loading email...` : `email@example.com`
-                  }
-                  className="border-border h-14! w-full"
-                  required
-                />
+                <div>
+                  <FormField
+                    name="email"
+                    label="Work Email"
+                    type="email"
+                    placeholder={
+                      loadingTeams ? `Loading email...` : `email@example.com`
+                    }
+                    className="border-border h-14! w-full"
+                    required
+                  />
+                  <CompanyDomainHint />
+                </div>
                 <div className="space-y-2">
                   <Label className="text-[16px] font-medium">
                     Phone Number
@@ -328,10 +325,6 @@ export const AddEmployeeForm = () => {
             {/* Employment Details Section */}
             <fieldset className={sectionClassName}>
               <legend className={legendClassName}>Employment Details</legend>
-              <p className={sectionHintClassName}>
-                <Icon name={'InfoCircle'} className={`text-primary`} />
-                Configure job setup, department, and role assignment.
-              </p>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
                 <FormField
                   name="startDate"
@@ -414,10 +407,6 @@ export const AddEmployeeForm = () => {
             {/* Salary Details Section */}
             <fieldset className={sectionClassName}>
               <legend className={legendClassName}>Salary Details</legend>
-              <p className={sectionHintClassName}>
-                <Icon name={'InfoCircle'} className={`text-primary`} />
-                Capture payroll and bank account information.
-              </p>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
                 <FormField
                   name="baseSalary"
@@ -488,10 +477,6 @@ export const AddEmployeeForm = () => {
             {/* Documents Section */}
             <fieldset className={sectionClassName}>
               <legend className={legendClassName}>Employee Documents</legend>
-              <p className={sectionHintClassName}>
-                <Icon name={'InfoCircle'} className={`text-primary`} />
-                Upload supporting documents for this employee (optional).
-              </p>
               <div className="grid grid-cols-1 gap-4 md:gap-8">
                 <FileUploader
                   accept={{

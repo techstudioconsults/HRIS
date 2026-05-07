@@ -34,6 +34,8 @@ interface FormFieldProperties {
     | 'date';
   placeholder?: string;
   required?: boolean;
+  /** Suppress the red asterisk indicator even when required=true. Used for auth forms where every field is expected to be filled. */
+  hideRequiredIndicator?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
   options?: { value: string; label: string }[];
@@ -51,6 +53,7 @@ export function FormField({
   type = 'text',
   placeholder,
   required = false,
+  hideRequiredIndicator = false,
   disabled = false,
   readOnly = false,
   options = [],
@@ -79,7 +82,9 @@ export function FormField({
         <div>
           <Label htmlFor={name} className="text-sm lg:text-[16px] font-medium">
             {label}
-            {required && <span className="text-destructive -ml-1">*</span>}
+            {required && !hideRequiredIndicator && (
+              <span className="text-destructive -ml-1">*</span>
+            )}
           </Label>
           {labelDetailedNode && (
             <div className="text-mid-grey-II text-xs">{labelDetailedNode}</div>
@@ -93,7 +98,7 @@ export function FormField({
         render={({ field }) => {
           const inputClassName = cn(
             'flex h-10 w-full rounded-md border border-border' +
-              ' bg-background px-3 py-2 text-sm placeholder:text-gray-200 ' +
+              ' bg-background px-3 py-2 text-base placeholder:text-gray-200 ' +
               'focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary' +
               ' disabled:cursor-not-allowed disabled:opacity-50 transition-all shadow-none',
             error && 'border-destructive',
@@ -254,6 +259,7 @@ export function MultiSelect({
   options,
   placeholder = 'Select options',
   required = false,
+  hideRequiredIndicator = false,
   disabled = false,
   readOnly = false,
   className = '',
@@ -264,6 +270,8 @@ export function MultiSelect({
   options: { value: string; label: string; thumbnail?: string | File | null }[];
   placeholder?: string;
   required?: boolean;
+  /** Suppress the red asterisk indicator even when required=true. */
+  hideRequiredIndicator?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
   className?: string;
@@ -280,7 +288,9 @@ export function MultiSelect({
       {label && (
         <Label className="text-[16px] font-medium">
           {label}
-          {required && <span className="text-destructive ml-1">*</span>}
+          {required && !hideRequiredIndicator && (
+            <span className="text-destructive ml-1">*</span>
+          )}
         </Label>
       )}
 
@@ -391,6 +401,7 @@ export function SwitchField({
   labelClassname,
   name,
   required = false,
+  hideRequiredIndicator = false,
   disabled = false,
   readOnly = false,
   description,
@@ -401,6 +412,8 @@ export function SwitchField({
   labelClassname?: string;
   name: string;
   required?: boolean;
+  /** Suppress the red asterisk indicator even when required=true. */
+  hideRequiredIndicator?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
   className?: string;
@@ -420,7 +433,9 @@ export function SwitchField({
           <div className={`space-y-1`}>
             <Label className={cn('h-fit font-medium', labelClassname)}>
               {label}
-              {required && <span className="text-destructive ml-1">*</span>}
+              {required && !hideRequiredIndicator && (
+                <span className="text-destructive ml-1">*</span>
+              )}
             </Label>
             <p className={`text-gray text-xs`}>{description}</p>
           </div>

@@ -4,6 +4,7 @@ import { RegisterFormData, registerSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormHeader } from '@workspace/ui/lib/form-header';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
+import { CompanyDomainHint } from '@workspace/ui/lib/inputs/domain-hint';
 import { MainButton } from '@workspace/ui/lib/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -13,7 +14,6 @@ import { getApiErrorMessage } from '@/lib/tools/api-error-message';
 import { routes } from '@/lib/routes/routes';
 import { toast } from 'sonner';
 import { FieldValidFeedback } from '../../_components/field-valid-feedback';
-import { Icon } from '@workspace/ui/lib/icons/icon';
 
 export const Register = () => {
   const router = useRouter();
@@ -70,6 +70,7 @@ export const Register = () => {
               label={`Company's Name`}
               name={'companyName'}
               required
+              hideRequiredIndicator
             />
             <FieldValidFeedback name="companyName" />
             <FormField
@@ -78,6 +79,7 @@ export const Register = () => {
               label={`First Name`}
               name={'firstName'}
               required
+              hideRequiredIndicator
             />
             <FieldValidFeedback name="firstName" />
             <FormField
@@ -86,6 +88,7 @@ export const Register = () => {
               label={`Last Name`}
               name={'lastName'}
               required
+              hideRequiredIndicator
             />
             <FieldValidFeedback name="lastName" />
             <div>
@@ -95,20 +98,10 @@ export const Register = () => {
                 label={`Company Domain`}
                 name={'domain'}
                 required
+                hideRequiredIndicator
               />
               <FieldValidFeedback name="domain" />
-              <div className="flex items-start gap-1.5 mt-1">
-                <Icon
-                  name={`InfoCircle`}
-                  size={14}
-                  className="text-muted-foreground shrink-0 mt-0.5"
-                  aria-hidden="true"
-                />
-                <p className="text-xs text-muted-foreground italic">
-                  Used to identify your organization and help verify employee
-                  emails (e.g. www.techstudiohr.com).
-                </p>
-              </div>
+              <CompanyDomainHint />
             </div>
             <FormField
               placeholder={`Enter email address`}
@@ -116,6 +109,7 @@ export const Register = () => {
               label={`Work Email Address`}
               name={'email'}
               required
+              hideRequiredIndicator
             />
             <FieldValidFeedback name="email" />
             <FormField
@@ -125,6 +119,7 @@ export const Register = () => {
               label={`Create Password`}
               name={'password'}
               required
+              hideRequiredIndicator
             />
             <FieldValidFeedback
               name="password"
@@ -138,6 +133,7 @@ export const Register = () => {
                 label={`Confirm Password`}
                 name={'confirmPassword'}
                 required
+                hideRequiredIndicator
               />
               {showPasswordStatus && (
                 <p

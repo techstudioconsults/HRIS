@@ -92,9 +92,9 @@ export const FolderCard = ({ folder }: FolderCardProperties) => {
       >
         <div className="flex items-start justify-between">
           <div className="flex min-w-0 flex-1 items-start gap-3">
-            <span>
-              <Icon name="Folder" size={20} className="text-primary" />
-            </span>
+            <div className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-md">
+              <Icon name="Folder" size={28} className="text-primary" />
+            </div>
             <div className="min-w-0 flex-1">
               <h6 className="truncate text-sm font-medium" title={folder.name}>
                 {folder.name}

@@ -20,7 +20,7 @@ const buttonVariants = cva(
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive-hover',
         destructiveOutline:
-          'border border-danger-75 hover:bg-danger-50 text-danger bg-background shadow-none',
+          'border-none border-danger-75 hover:bg-danger-50 text-danger bg-background shadow-none',
         subtle: 'bg-subtle text-subtle-foreground hover:bg-subtle-hover',
         loading:
           'bg-loading text-loading-foreground hover:bg-loading-hover opacity-50 hover:opacity-100 transition-opacity duration-500 ease-out',

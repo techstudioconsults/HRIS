@@ -70,6 +70,7 @@ export const Login = () => {
               label={`Email Address`}
               name={'email'}
               required
+              hideRequiredIndicator
             />
             <FieldValidFeedback name="email" />
             <div className="space-y-2">
@@ -80,6 +81,7 @@ export const Login = () => {
                 label={`Password`}
                 name={'password'}
                 required
+                hideRequiredIndicator
               />
               <FieldValidFeedback name="password" />
               <div className="flex justify-end">

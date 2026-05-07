@@ -1,6 +1,7 @@
 'use client';
 
 import { formatCurrency } from '@/lib/formatters';
+import { capitalize } from '@workspace/ui/lib/utils';
 import EmployeeInformation from '@/modules/@org/admin/payroll/_components/tab-content/employee-information';
 import { SalaryDetails } from '@/modules/@org/admin/payroll/_components/tab-content/salary-details';
 import { usePayrollService } from '@/modules/@org/admin/payroll/services/use-service';
@@ -72,7 +73,7 @@ const formatStatusLabel = (status: PayslipStatus) => {
     return 'Confirmed';
   }
 
-  return `${status.charAt(0).toUpperCase()}${status.slice(1)}`;
+  return capitalize(status);
 };
 
 const getErrorMessage = (error: unknown, fallback: string) => {

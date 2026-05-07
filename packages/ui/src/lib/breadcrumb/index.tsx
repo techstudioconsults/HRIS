@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
 import { Icon } from '@workspace/ui/lib/icons/icon';
+import { capitalize } from '../utils';
 
 interface BreadcrumbItem {
   label: string;
@@ -50,10 +51,7 @@ export const BreadCrumb = ({
       const isLast = index === pathSegments.length - 1;
 
       breadcrumbItems.push({
-        label: segment
-          .split('-')
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' '),
+        label: segment.split('-').map(capitalize).join(' '),
         href: isLast ? undefined : currentPath,
       });
     }

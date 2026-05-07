@@ -64,6 +64,7 @@ export const OTPLogin = () => {
               label={`Email Address`}
               name={'email'}
               required
+              hideRequiredIndicator
             />
             <FieldValidFeedback name="email" />
           </section>

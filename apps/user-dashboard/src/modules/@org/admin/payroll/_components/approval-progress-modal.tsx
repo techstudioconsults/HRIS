@@ -8,7 +8,7 @@ import {
 import { Badge } from '@workspace/ui/components/badge';
 import { ReusableDialog } from '@workspace/ui/lib/dialog';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { cn } from '@workspace/ui/lib/utils';
+import { capitalize, cn, formatInitials } from '@workspace/ui/lib/utils';
 import type { AnyIconName } from '@workspace/ui/lib/icons/types';
 import type { ReactNode } from 'react';
 
@@ -109,15 +109,8 @@ export const ApprovalProgressModal = ({
 
                   const name = approval.employee.name ?? 'Approver';
                   const role = (approval.approverRole as ReactNode) ?? '';
-                  const initials =
-                    name
-                      .split(' ')
-                      .map((part) => part.charAt(0))
-                      .join('')
-                      .toUpperCase()
-                      .slice(0, 2) || 'AP';
-                  const statusLabel =
-                    status.charAt(0).toUpperCase() + status.slice(1);
+                  const initials = formatInitials(name) || 'AP';
+                  const statusLabel = capitalize(status);
                   const timestamp =
                     status !== 'pending' && approval.approvedAt
                       ? formatTimestamp(approval.approvedAt)

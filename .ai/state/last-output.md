@@ -1,8 +1,60 @@
-# Preferences Tab — Active Button Ring Fix
+# Global Input 16px Font, Auth Required Indicators, Company Domain Hint
 
-**Feature**: Replace `border`-based active state with `ring`-based (focus-style) indicator
+**Feature**: Three-part frontend task — global input sizing, auth form cleanup, reusable domain hint
 **Status**: Complete
 **Date**: 2026-05-07
+
+## Summary
+
+Three tasks completed:
+
+1. All form inputs, selects, and textareas now use 16px font-size globally
+2. Auth route forms (login, signup, OTP) no longer show required `*` indicators
+3. Company domain hint extracted from signup into reusable `CompanyDomainHint` component,
+   shared across signup, add-employee, and edit-employee forms
+
+## Changes
+
+### Task 1: Global 16px Font-Size for Form Inputs
+
+| File                                        | Change                                                                                                                                  |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/ui/src/styles/base.css`           | Added `input:not([type="checkbox"]...), select, textarea { font-size: 16px; }` inside `@layer base` to catch raw/unstyled form elements |
+| `packages/ui/src/components/select.tsx`     | Changed `SelectTrigger` base class from `text-sm` to `text-base`                                                                        |
+| `packages/ui/src/lib/inputs/FormFields.tsx` | Changed `inputClassName` template from `text-sm` to `text-base` so all fields rendered via `FormField` get 16px                         |
+
+Note: The `utilities.css` already had `input, textarea, select { font-size: 16px; }` but it was trumped by Tailwind `text-sm` utility classes. The component-level fixes address those overrides.
+
+### Task 2: Remove Required Indicators from Auth Forms
+
+| File                                                                   | Change                                                                                                                                                                     |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/ui/src/lib/inputs/FormFields.tsx`                            | Added `hideRequiredIndicator?: boolean` prop to `FormField`, `MultiSelect`, and `SwitchField`. When `true`, the red `*` asterisk is suppressed even when `required={true}` |
+| `apps/user-dashboard/src/modules/@org/auth/_views/register/index.tsx`  | Added `hideRequiredIndicator` to all 7 `FormField` usages (companyName, firstName, lastName, domain, email, password, confirmPassword)                                     |
+| `apps/user-dashboard/src/modules/@org/auth/_views/login/index.tsx`     | Added `hideRequiredIndicator` to both `FormField` usages (email, password)                                                                                                 |
+| `apps/user-dashboard/src/modules/@org/auth/_views/login/otp-login.tsx` | Added `hideRequiredIndicator` to the email `FormField`                                                                                                                     |
+
+### Task 3: Extract Company Domain Hint into Reusable Component
+
+| File                                                                                      | Change                                                                                                       |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `packages/ui/src/lib/inputs/domain-hint.tsx`                                              | **New file.** Reusable `CompanyDomainHint` component with InfoCircle icon and helper text                    |
+| `apps/user-dashboard/src/modules/@org/auth/_views/register/index.tsx`                     | Replaced inline hint (10 lines) with `<CompanyDomainHint />` import. Removed unused `Icon` import            |
+| `apps/user-dashboard/src/modules/@org/admin/employee/_components/forms/add-employee.tsx`  | Imported `CompanyDomainHint` and added it below the "Work Email" field (wrapped in a div for proper spacing) |
+| `apps/user-dashboard/src/modules/@org/admin/employee/_components/forms/edit-employee.tsx` | Imported `CompanyDomainHint` and added it below the "Work Email" field                                       |
+
+### Pre-existing Lint Fixes (Cleaned Up to Pass Pipeline)
+
+| File                                                                                | Change                                                                    |
+| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `packages/ui/src/lib/dashboard/sidebar/app-sidebar.tsx`                             | Removed unused `NavUser` import; removed unused `theme` destructured prop |
+| `apps/user-dashboard/src/modules/@org/_components/payrool-linechart.tsx`            | Removed unused `formatCurrencyCompact` import                             |
+| `apps/user-dashboard/src/modules/@org/admin/dashboard/_components/card-section.tsx` | Removed unused `formatCurrency` import                                    |
+
+## Verification
+
+- `pnpm run typecheck` — 4/4 successful, 0 errors
+- `pnpm run lint` — 3/3 successful, 0 warnings, 0 errors
 
 ## Summary
 

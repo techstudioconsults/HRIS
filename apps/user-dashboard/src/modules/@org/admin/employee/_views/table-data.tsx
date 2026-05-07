@@ -10,6 +10,7 @@ import { Badge } from '@workspace/ui/components/badge';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 import { AlertModal } from '@workspace/ui/lib/dialog';
 import { EmailTooltip, NameTooltip } from '@workspace/ui/lib/tooltip';
+import { formatInitials } from '@workspace/ui/lib/utils';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -159,9 +160,8 @@ export const employeeColumn: IColumnDefinition<Employee>[] = [
               alt={`${employee.firstName} ${employee.lastName}`}
             />
             <AvatarFallback className="rounded-lg bg-transparent text-sm text-white">
-              {`${employee.firstName} ${employee.lastName}`
-                .slice(0, 2)
-                .toUpperCase() || 'CN'}
+              {formatInitials(`${employee.firstName} ${employee.lastName}`) ||
+                'CN'}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col space-y-1">

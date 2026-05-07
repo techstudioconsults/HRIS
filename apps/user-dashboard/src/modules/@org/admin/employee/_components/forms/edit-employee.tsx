@@ -15,6 +15,7 @@ import { ComboBox } from '@workspace/ui/lib/select-dropdown/combo-box';
 import { DashboardHeader } from '@workspace/ui/lib/dashboard';
 import { ErrorEmptyState } from '@workspace/ui/lib/empty-state';
 import { FormField } from '@workspace/ui/lib/inputs/FormFields';
+import { CompanyDomainHint } from '@workspace/ui/lib/inputs/domain-hint';
 import { MainButton } from '@workspace/ui/lib/button';
 import { FileUploader } from '@workspace/ui/components/core/miscellaneous/file-uploader';
 import { AxiosError } from 'axios';
@@ -24,7 +25,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { useEmployeeService } from '../../services/use-service';
-import { Icon } from '@workspace/ui/lib/icons/icon';
+
 import { routes } from '@/lib/routes/routes';
 
 export const EditEmployeeForm = () => {
@@ -319,8 +320,6 @@ export const EditEmployeeForm = () => {
     'space-y-4 rounded-xl border border-border/60 bg-background/60 px-4 pb-4 pt-3 md:px-5 md:pb-5 md:pt-4';
   const legendClassName =
     'text-foreground block w-fit bg-background px-2 text-lg font-semibold leading-6 tracking-tight';
-  const sectionHintClassName =
-    'text-muted-foreground -mt-1 text-sm flex items-center gap-2';
 
   return (
     <div className="space-y-8">
@@ -344,10 +343,6 @@ export const EditEmployeeForm = () => {
             {/* Personal Information Section */}
             <fieldset className={sectionClassName}>
               <legend className={legendClassName}>Personal Information</legend>
-              <p className={sectionHintClassName}>
-                <Icon name={'InfoCircle'} />
-                Review and update the employee&apos;s core profile details.
-              </p>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
                 <FormField
                   name="firstName"
@@ -394,17 +389,20 @@ export const EditEmployeeForm = () => {
                   disabled={isHydrating || isSubmitting}
                   required
                 />
-                <FormField
-                  name="email"
-                  label="Work Email"
-                  type="email"
-                  placeholder={
-                    loadingEmployee ? `Loading email...` : `email@example.com`
-                  }
-                  className="border-border h-14! w-full"
-                  disabled={isHydrating || isSubmitting}
-                  required
-                />
+                <div>
+                  <FormField
+                    name="email"
+                    label="Work Email"
+                    type="email"
+                    placeholder={
+                      loadingEmployee ? `Loading email...` : `email@example.com`
+                    }
+                    className="border-border h-14! w-full"
+                    disabled={isHydrating || isSubmitting}
+                    required
+                  />
+                  <CompanyDomainHint />
+                </div>
                 <div className="space-y-2">
                   <Label className="text-[16px] font-medium">
                     Phone Number
@@ -442,10 +440,6 @@ export const EditEmployeeForm = () => {
             {/* Employment Details Section */}
             <fieldset className={sectionClassName}>
               <legend className={legendClassName}>Employment Details</legend>
-              <p className={sectionHintClassName}>
-                <Icon name={'InfoCircle'} />
-                Update department, role, and employment setup.
-              </p>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
                 <FormField
                   name="startDate"
@@ -517,10 +511,6 @@ export const EditEmployeeForm = () => {
             {/* Salary Details Section */}
             <fieldset className={sectionClassName}>
               <legend className={legendClassName}>Salary Details</legend>
-              <p className={sectionHintClassName}>
-                <Icon name={'InfoCircle'} />
-                Update payroll and bank account information.
-              </p>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-8">
                 <FormField
                   name="baseSalary"
@@ -603,10 +593,6 @@ export const EditEmployeeForm = () => {
             {/* Documents Section */}
             <fieldset className={sectionClassName}>
               <legend className={legendClassName}>Employee Documents</legend>
-              <p className={sectionHintClassName}>
-                <Icon name={'InfoCircle'} />
-                Replace or add supporting employee documents (optional).
-              </p>
               <div className="grid grid-cols-1 gap-4 md:gap-8">
                 <FileUploader
                   accept={{

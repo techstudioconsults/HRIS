@@ -17,6 +17,8 @@ import {
   YAxis,
 } from 'recharts';
 import { CHART_COLORS } from '@/lib/chart-colors';
+import { formatCurrency } from '@/lib/formatters';
+import { formatCompactNumber } from '@workspace/ui/lib/utils';
 import { useDashboardService } from '@/modules/@org/admin/dashboard/services/use-dashboard-service';
 import { useDashboardOverviewPeriod } from '@/lib/nuqs/use-dashboard-overview-period';
 
@@ -28,17 +30,6 @@ const STATIC_FALLBACK = [
   { month: 'May', amount: 7_000_000 },
   { month: 'Jun', amount: 6_789_000 },
 ];
-
-function formatCurrencyShort(value: number) {
-  return new Intl.NumberFormat('en-NG', {
-    style: 'currency',
-    currency: 'NGN',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  })
-    .format(value)
-    .replace('NGN', '₦');
-}
 
 export function PayrollLineChart() {
   const [year] = useDashboardOverviewPeriod();
@@ -111,9 +102,7 @@ export function PayrollLineChart() {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fontSize: 12 }}
-                tickFormatter={(value) =>
-                  formatCurrencyShort(value as number).replace('₦', '')
-                }
+                tickFormatter={(value) => formatCompactNumber(value as number)}
               />
               <Tooltip
                 content={({ active, payload }) => {
@@ -126,7 +115,7 @@ export function PayrollLineChart() {
                       <div className="rounded-md border border-gray-200 p-3 shadow-md">
                         <p className="font-semibold">{payloadItem.month}</p>
                         <p className="text-blue-600">
-                          {formatCurrencyShort(payloadItem.amount)}
+                          {formatCurrency(payloadItem.amount)}
                         </p>
                       </div>
                     );

@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useEmployeeService } from '@/modules/@org/admin/employee/services/use-service';
 import { useLeaveService } from '@/modules/@org/admin/leave/services/use-service';
 import { useDashboardService } from '@/modules/@org/admin/dashboard/services/use-dashboard-service';
-import { formatCurrency } from '@/lib/formatters';
+import { formatCurrencyCompact } from '@/lib/formatters';
 import { useDashboardOverviewPeriod } from '@/lib/nuqs/use-dashboard-overview-period';
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
@@ -77,7 +77,7 @@ export const CardSection = () => {
           isPayrollPending ? (
             <Skeleton className="h-8 w-28" />
           ) : (
-            formatCurrency(totalNetPay)
+            formatCurrencyCompact(totalNetPay)
           )
         }
         showTrendIcon={true}

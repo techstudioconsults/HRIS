@@ -42,6 +42,8 @@
 }
 
 /* Date input styling */
+
+
 input[type="date"] {
     position: relative;
 }

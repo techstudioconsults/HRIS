@@ -7,7 +7,12 @@ import { Badge } from '@workspace/ui/components/badge';
 import { MainButton } from '@workspace/ui/lib/button';
 import { ReusableDialog } from '@workspace/ui/lib/dialog/Dialog';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { cn, calculateDaysBetween } from '@workspace/ui/lib/utils';
+import {
+  capitalize,
+  cn,
+  calculateDaysBetween,
+  formatInitials,
+} from '@workspace/ui/lib/utils';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -125,8 +130,7 @@ export function LeaveDetailsDrawer() {
                       alt={leaveRequest.employee.name}
                     />
                     <AvatarFallback className="rounded-lg bg-transparent text-sm text-white">
-                      {leaveRequest.employee.name.slice(0, 2).toUpperCase() ||
-                        'CN'}
+                      {formatInitials(leaveRequest.employee.name) || 'CN'}
                     </AvatarFallback>
                   </Avatar>
                 </div>
@@ -151,8 +155,7 @@ export function LeaveDetailsDrawer() {
                       'bg-destructive/10 text-destructive'
                   )}
                 >
-                  {leaveRequest.status.charAt(0).toUpperCase() +
-                    leaveRequest.status.slice(1)}
+                  {capitalize(leaveRequest.status)}
                 </Badge>
               </div>
             </div>

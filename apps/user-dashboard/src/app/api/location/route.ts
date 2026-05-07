@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { capitalize } from '@workspace/ui/lib/utils';
+
 import {
   type CountryInfo,
   type FormattedCountry,
@@ -95,7 +97,7 @@ async function getCountries(): Promise<NextResponse> {
 
 async function getStates(country: string): Promise<NextResponse> {
   // Capitalize first letter for API compatibility
-  const formattedCountry = country.charAt(0).toUpperCase() + country.slice(1);
+  const formattedCountry = capitalize(country);
 
   const response = await fetch(
     `${COUNTRIES_NOW_API}/countries/states/q?country=${encodeURIComponent(formattedCountry)}`,
@@ -158,8 +160,8 @@ async function getCities(
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          country: country.charAt(0).toUpperCase() + country.slice(1),
-          state: state.charAt(0).toUpperCase() + state.slice(1),
+          country: capitalize(country),
+          state: capitalize(state),
         }),
         next: { revalidate: REVALIDATE_TIME },
       }
@@ -201,7 +203,7 @@ async function getCitiesByCountry(country: string): Promise<NextResponse> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      country: country.charAt(0).toUpperCase() + country.slice(1),
+      country: capitalize(country),
     }),
     next: { revalidate: REVALIDATE_TIME },
   });

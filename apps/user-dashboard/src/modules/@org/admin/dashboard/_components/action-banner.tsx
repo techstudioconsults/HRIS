@@ -45,13 +45,22 @@ export const ActionBanner = ({
             checked={isCompleted}
             className={cn(
               'size-4 lg:size-6 rounded-full border-2',
-              isCompleted ? 'bg-primary border-black' : 'border-primary'
+              isCompleted
+                ? 'data-[state=checked]:bg-success border-success/30'
+                : 'border-primary'
             )}
           />
 
           <div className="flex flex-col gap-4">
             <div className="flex flex-col">
-              <p className="text-foreground text-sm! font-medium">{title}</p>
+              <p
+                className={cn(
+                  'text-sm! font-medium',
+                  isCompleted ? 'text-success' : 'text-foreground'
+                )}
+              >
+                {title}
+              </p>
               {!isCompleted && <p className="text-sm">{description}</p>}
             </div>
           </div>

@@ -24,7 +24,7 @@ import {
 } from '@workspace/ui/lib/table';
 import { MainButton } from '@workspace/ui/lib/button';
 import { Icon } from '@workspace/ui/lib/icons/icon';
-import { cn } from '@workspace/ui/lib/utils';
+import { capitalize, cn, formatInitials } from '@workspace/ui/lib/utils';
 import { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useMemo, useState } from 'react';
@@ -430,18 +430,10 @@ export const SchedulePayrollDrawer = () => {
                         const role = (approval.approverRole as ReactNode) ?? (
                           <></>
                         );
-                        const initials =
-                          name
-                            .split(' ')
-                            .map((part) => part.charAt(0))
-                            .join('')
-                            .toUpperCase()
-                            .slice(0, 2) || 'AP';
-                        const statusLabel =
-                          approval.status && approval.status.length > 0
-                            ? approval.status.charAt(0).toUpperCase() +
-                              approval.status.slice(1)
-                            : 'Pending';
+                        const initials = formatInitials(name) || 'AP';
+                        const statusLabel = approval.status
+                          ? capitalize(approval.status)
+                          : 'Pending';
 
                         return (
                           <section

@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import * as React from 'react';
 
-import { NavMain, NavProjects, NavUser } from '@workspace/ui/lib/dashboard';
+import { NavMain, NavProjects } from '@workspace/ui/lib/dashboard';
 import {
   Sidebar,
   SidebarContent,
@@ -150,7 +150,6 @@ const defaultData: {
 };
 
 export function AppSidebar({
-  theme,
   user,
   teams,
   navMain,

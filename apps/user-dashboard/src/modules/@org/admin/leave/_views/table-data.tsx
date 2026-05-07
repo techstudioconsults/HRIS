@@ -1,7 +1,12 @@
 import { formatDate } from '@/lib/formatters';
 import { useLeaveAdminModalParams } from '@/lib/nuqs/use-leave-admin-modal-params';
 import { Badge } from '@workspace/ui/components/badge';
-import { calculateDaysBetween, cn } from '@workspace/ui/lib/utils';
+import {
+  capitalize,
+  calculateDaysBetween,
+  cn,
+  formatInitials,
+} from '@workspace/ui/lib/utils';
 import { Icon } from '@workspace/ui/lib/icons/icon';
 
 import { useLeaveStore } from '../stores/leave-store';
@@ -51,7 +56,7 @@ export const leaveColumns: IColumnDefinition<LeaveRequest>[] = [
               alt={request.employee.name}
             />
             <AvatarFallback className="rounded-lg bg-transparent text-sm text-white">
-              {request.employee.name.slice(0, 2).toUpperCase() || 'CN'}
+              {formatInitials(request.employee.name) || 'CN'}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col space-y-1">
@@ -112,7 +117,7 @@ export const leaveColumns: IColumnDefinition<LeaveRequest>[] = [
             status === 'rejected' && 'bg-destructive/10 text-destructive'
           )}
         >
-          {status.charAt(0).toUpperCase() + status.slice(1)}
+          {capitalize(status)}
         </Badge>
       );
     },

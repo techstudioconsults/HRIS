@@ -14,7 +14,8 @@ import { Icon } from '@workspace/ui/lib/icons/icon';
 import { toast } from 'sonner';
 import { useSession } from '@/lib/session';
 import { useUserProfileService } from '@/modules/@org/user/profile';
-import { formatDate } from '@/lib/formatters';
+import { formatDate, formatPhoneNumber } from '@/lib/formatters';
+import { formatInitials } from '@workspace/ui/lib/utils';
 
 const AVATAR_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const AVATAR_MAX_BYTES = 5 * 1024 * 1024;
@@ -193,7 +194,7 @@ export function UserProfileView() {
   const fullName = profile ? `${profile.firstName} ${profile.lastName}` : null;
 
   const initials = profile
-    ? `${profile.firstName[0]}${profile.lastName[0]}`.toUpperCase()
+    ? formatInitials(`${profile.firstName} ${profile.lastName}`)
     : '';
 
   return (
@@ -232,7 +233,10 @@ export function UserProfileView() {
             <section className="flex flex-col gap-3">
               <h2 className="text-sm font-semibold">Personal Information</h2>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <ProfileField label="Phone" value={profile.phoneNumber} />
+                <ProfileField
+                  label="Phone"
+                  value={formatPhoneNumber(profile.phoneNumber ?? '')}
+                />
                 <ProfileField label="Gender" value={profile.gender} />
                 <ProfileField
                   label="Date of Birth"

@@ -147,6 +147,7 @@ export const NavbarMobileMenu = ({ links }: NavbarMobileMenuProps) => {
             <div className="mt-4 grid grid-cols-2 gap-3">
               <DrawerClose asChild>
                 <MainButton
+                  isExternal
                   variant="primaryOutline"
                   size="xl"
                   href="/login"
@@ -157,6 +158,7 @@ export const NavbarMobileMenu = ({ links }: NavbarMobileMenuProps) => {
               </DrawerClose>
               <DrawerClose asChild>
                 <MainButton
+                  isExternal
                   variant="primary"
                   size="xl"
                   href="/register"

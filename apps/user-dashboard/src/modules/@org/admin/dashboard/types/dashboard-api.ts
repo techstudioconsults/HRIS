@@ -18,3 +18,18 @@ export interface LeaveDistributionEntry {
   readonly leaves: number;
   readonly percentage: number;
 }
+
+// Company Setup: GET /companies/setup → data.firstTimeSetup
+export interface CompanySetupChecklist {
+  readonly hasTeam: boolean;
+  readonly hasRoles: boolean;
+  readonly hasEmployee: boolean;
+  readonly hasClockInPolicy: boolean;
+  readonly hasPayrollConfig: boolean;
+  readonly hasLeavePolicy: boolean;
+}
+
+export interface CompanySetupData {
+  readonly isComplete: boolean;
+  readonly checklist: CompanySetupChecklist;
+}

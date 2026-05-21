@@ -15,6 +15,7 @@ export interface LeaveType {
   eligibility?: string;
   maxNumberOfRollOver?: number;
   description?: string;
+  balance?: LeaveBalance;
   createdAt?: string;
   updatedAt?: string;
 }

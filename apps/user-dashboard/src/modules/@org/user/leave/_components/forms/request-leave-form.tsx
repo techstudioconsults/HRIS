@@ -61,7 +61,19 @@ export const RequestLeaveForm = ({
   const leaveTypeOptions = safeLeaveTypes.map((leaveType) => ({
     value: leaveType.id,
     label: leaveType.name,
+    balance: leaveType.balance?.remaining,
   }));
+
+  // const leaveBalance = safeLeaveTypes.find((leaveType) => leaveType.id === methods.watch('leaveId'))?.balance?.remaining;
+
+  // Find the selected leave type using the id
+  const selectedLeaveType = safeLeaveTypes.find(
+    (leaveType) => leaveType.id === methods.watch('leaveId')
+  );
+
+  // Get remaining balance
+  const leaveBalance = selectedLeaveType?.balance?.remaining;
+  const leaveTypeName = selectedLeaveType?.name;
 
   const isSubmittingForm = isSubmitting || isFormSubmitting;
 
@@ -77,6 +89,15 @@ export const RequestLeaveForm = ({
           options={leaveTypeOptions}
           required
         />
+        {leaveBalance && (
+          <div className="bg-warning/10  rounded-lg py-4 pl-4">
+            <p className="text-warning-400">
+              You have a balance of{' '}
+              <span className="font-medium">{leaveBalance}</span> remaining{' '}
+              <span className="font-medium">{leaveTypeName}</span> days.
+            </p>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <FormField

@@ -86,6 +86,7 @@ export const queryKeys = {
     attendanceOverview: (year: number) =>
       ['dashboard', 'attendance-overview', year] as const,
     leaveDistribution: () => ['dashboard', 'leave-distribution'] as const,
+    companySetup: () => ['dashboard', 'company-setup'] as const,
   },
   // Add other domains as needed
 };

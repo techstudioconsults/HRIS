@@ -11,9 +11,14 @@ import { ActiveUser } from '@/modules/@org/admin/dashboard/_views/active-user';
 import { NewUser } from '@/modules/@org/admin/dashboard/_views/new-user';
 import { Onboarding } from '@/modules/@org/admin/dashboard/_views/onboarding';
 import { WithDependency } from '@/HOC/withDependencies';
+import { useDashboardService } from './services/use-dashboard-service';
 
 const BaseDashboardHomePage = () => {
   const router = useRouter();
+  const { useGetCompanySetup } = useDashboardService();
+  const { data: setupData } = useGetCompanySetup();
+
+  const checklist = setupData?.checklist;
 
   const ONBOARDING_STEPS: OnboardingStep[] = [
     {
@@ -21,49 +26,48 @@ const BaseDashboardHomePage = () => {
       description: '',
       buttonLabel: 'Configure',
       icon: '/images/verify_email.svg',
-      isCompleted: true,
-      action: () => {},
+      isCompleted: checklist?.hasTeam,
+      action: () => router.push(routes.admin.teams.list()),
     },
     {
       title: 'Create roles and assign permissions',
       description: '',
       buttonLabel: 'Configure',
       icon: '/images/verify_email.svg',
-      // isCompleted: user?.password_is_set,
-      isCompleted: false,
-      action: () => router.push(routes.admin.settings()),
+      isCompleted: checklist?.hasRoles,
+      action: () => router.push(routes.admin.teams.list()),
     },
     {
       title: 'Add your first employee',
       description: '',
       buttonLabel: 'Configure',
       icon: '/images/profile.svg',
-      isCompleted: false,
-      action: () => router.push(routes.admin.teams.list()),
+      isCompleted: checklist?.hasEmployee,
+      action: () => router.push(routes.admin.employees.add()),
     },
     {
       title: 'Set up clock-in system',
       description: '',
       buttonLabel: 'Configure',
       icon: '/images/first_product.svg',
-      isCompleted: false,
-      action: () => router.push(`/`),
+      isCompleted: checklist?.hasClockInPolicy,
+      action: () => router.push(routes.admin.settings()),
     },
     {
       title: 'Configure payroll info',
       description: '',
       buttonLabel: 'Configure',
       icon: '/images/payout.svg',
-      isCompleted: false,
-      action: () => router.push(routes.admin.settings()),
+      isCompleted: checklist?.hasPayrollConfig,
+      action: () => router.push(routes.admin.payroll.setup()),
     },
     {
-      title: 'Invite other HR team members',
+      title: 'Set up leave policy',
       description: '',
       buttonLabel: 'Configure',
       icon: '/images/first_sale.svg',
-      isCompleted: false,
-      action: () => router.push(`/dashboard/products/new`),
+      isCompleted: checklist?.hasLeavePolicy,
+      action: () => router.push(routes.admin.leave.types()),
     },
   ];
 
@@ -73,11 +77,10 @@ const BaseDashboardHomePage = () => {
     (step) => step.isCompleted
   ).length;
 
-  // User chose to skip onboarding — show the active dashboard immediately
-  if (hasSkippedOnboarding) {
+  if (setupData?.isComplete || hasSkippedOnboarding) {
     return <ActiveUser />;
   }
-  // Less than 4 steps completed -> Onboarding
+
   if (completedSteps < 4) {
     return (
       <Wrapper className="max-w-200 my-0! p-0">
@@ -88,11 +91,11 @@ const BaseDashboardHomePage = () => {
       </Wrapper>
     );
   }
-  // Exactly 4 steps completed -> NewUser
-  if (completedSteps >= 4 && completedSteps < ONBOARDING_STEPS.length) {
+
+  if (completedSteps < ONBOARDING_STEPS.length) {
     return <NewUser steps={ONBOARDING_STEPS} completedSteps={completedSteps} />;
   }
-  // All 5 steps completed -> ActiveUser
+
   return <ActiveUser />;
 };
 

@@ -24,9 +24,17 @@ export const useDashboardService = () => {
       service.getLeaveDistribution()
     );
 
+  const useGetCompanySetup = () =>
+    useServiceQuery(
+      queryKeys.dashboard.companySetup(),
+      (service) => service.getCompanySetup(),
+      { refetchOnWindowFocus: true }
+    );
+
   return {
     useGetPayrollSummary,
     useGetAttendanceOverview,
     useGetLeaveDistribution,
+    useGetCompanySetup,
   };
 };

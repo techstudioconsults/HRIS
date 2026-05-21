@@ -2,6 +2,7 @@ import { HttpAdapter } from '@/lib/http/http-adapter';
 
 import type {
   AttendanceMonthRecord,
+  CompanySetupData,
   LeaveDistributionEntry,
   PayrollMonthSummary,
 } from '../types/dashboard-api';
@@ -46,6 +47,16 @@ export class DashboardService {
     >(`/leave-requests/distribution`);
     if (response?.status === 200) {
       return response.data.data;
+    }
+  }
+
+  async getCompanySetup(): Promise<CompanySetupData | undefined> {
+    const response =
+      await this.http.get<ApiResponse<{ firstTimeSetup: CompanySetupData }>>(
+        `/companies/setup`
+      );
+    if (response?.status === 200) {
+      return response.data.data.firstTimeSetup;
     }
   }
 }
